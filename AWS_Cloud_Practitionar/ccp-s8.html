@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗄️ Database Services — AWS CCP বাংলা</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--or:#FF9900;--dk:#080d1a;--bl:#0f1929;--cb:#162236;--bd:#1e3058;--lb:#00a8e1;--tl:#00c7b1;--gr:#00d68f;--re:#ff4757;--yw:#ffd32a;--t1:#e8f4fd;--t2:#8faec8;--t3:#c5dff0;--ok:#00d68f;--er:#ff4757}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit','Hind Siliguri',sans-serif;background:var(--dk);color:var(--t1);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 20%,rgba(0,168,225,.07) 0,transparent 50%),radial-gradient(ellipse at 85% 80%,rgba(255,153,0,.06) 0,transparent 50%);pointer-events:none;z-index:0}
+.hdr{background:linear-gradient(135deg,#0b1320,#162236,#0b1320);border-bottom:2px solid var(--or);padding:14px 24px;position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 30px rgba(255,153,0,.2);gap:12px;flex-wrap:wrap}
+.hdr-left{display:flex;align-items:center;gap:12px}
+.badge{background:linear-gradient(135deg,var(--or),#cc7700);color:#000;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;padding:5px 10px;border-radius:6px;letter-spacing:1px}
+.hdr-title{font-size:1.1rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--or));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-sub{font-family:'Hind Siliguri',sans-serif;font-size:.78rem;color:var(--t2);margin-top:1px}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.stat{padding:5px 12px;border-radius:20px;font-size:.8rem;font-weight:700;cursor:default}
+.stat-ok{background:rgba(0,214,143,.12);border:1px solid rgba(0,214,143,.35);color:var(--gr)}
+.stat-er{background:rgba(255,71,87,.12);border:1px solid rgba(255,71,87,.35);color:var(--re)}
+.stat-pct{background:rgba(255,153,0,.12);border:1px solid rgba(255,153,0,.35);color:var(--or)}
+.reset-btn{background:rgba(255,255,255,.05);border:1px solid var(--bd);color:var(--t2);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:.78rem;transition:all .2s}
+.reset-btn:hover{border-color:var(--re);color:var(--re)}
+.review-btn{background:rgba(0,214,143,.1);border:1px solid rgba(0,214,143,.35);color:var(--gr);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:.78rem;font-weight:700;transition:all .2s}
+.review-btn:hover{background:rgba(0,214,143,.2)}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 16px;position:relative;z-index:1}
+.nav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:28px}
+.chip{background:var(--cb);border:1.5px solid var(--bd);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:center;transition:all .25s;position:relative}
+.chip:hover,.chip.act{border-color:var(--or);background:rgba(255,153,0,.08);transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,153,0,.15)}
+.chip .ico{font-size:1.3rem;display:block;margin-bottom:4px}
+.chip .lbl{font-size:.72rem;font-weight:600;color:var(--t2)}
+.chip.act .lbl{color:var(--or)}
+.chip .pct{position:absolute;top:5px;right:7px;font-size:.65rem;color:var(--gr);font-weight:700}
+.sc{background:var(--cb);border:1.5px solid var(--bd);border-radius:18px;margin-bottom:20px;overflow:hidden;transition:border-color .3s}
+.sc.active-lesson{border-color:rgba(0,168,225,.4)}
+.sc.active-exercise{border-color:rgba(255,153,0,.5)}
+.sh{padding:18px 22px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;gap:12px;background:linear-gradient(135deg,#162236,#0f1929)}
+.sh:hover{background:linear-gradient(135deg,#1a2a40,#131e2e)}
+.sh-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+.sh-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.sh-title{font-size:1rem;font-weight:700;color:#fff}
+.sh-sub{font-family:'Hind Siliguri',sans-serif;font-size:.8rem;color:var(--t2);margin-top:2px}
+.sh-btns{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.btn{padding:8px 16px;border-radius:9px;border:2px solid transparent;cursor:pointer;font-weight:700;font-size:.78rem;transition:all .25s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-l{background:rgba(0,168,225,.12);border-color:rgba(0,168,225,.3);color:var(--lb)}
+.btn-l:hover,.btn-l.active{background:var(--lb);color:#fff;border-color:var(--lb)}
+.btn-e{background:rgba(255,153,0,.12);border-color:rgba(255,153,0,.3);color:var(--or)}
+.btn-e:hover,.btn-e.active{background:var(--or);color:#000;border-color:var(--or)}
+.prog-bar{padding:10px 22px;background:rgba(0,0,0,.15);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
+.mini-track{flex:1;height:4px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.mini-fill{height:100%;background:linear-gradient(90deg,var(--or),var(--gr));border-radius:3px;transition:width .6s ease}
+.prog-txt{font-size:.72rem;color:var(--t2);font-weight:600;white-space:nowrap}
+.col{display:none}
+.col.open{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.lesson{padding:22px}
+.concept{background:linear-gradient(135deg,rgba(0,168,225,.06),rgba(0,168,225,.02));border-left:3px solid var(--lb);border-radius:0 12px 12px 0;padding:16px 20px;margin-bottom:18px}
+.ct{font-size:.95rem;font-weight:700;color:var(--lb);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cb{font-family:'Hind Siliguri',sans-serif;font-size:.95rem;color:var(--t3);line-height:1.85}
+.cb b,.cb strong{color:var(--or)}
+.eng{font-family:'JetBrains Mono',monospace;background:rgba(255,153,0,.12);color:var(--or);padding:1px 6px;border-radius:4px;font-size:.88em;font-weight:600}
+.kp{background:rgba(0,214,143,.05);border:1px solid rgba(0,214,143,.2);border-radius:13px;padding:16px 20px;margin-bottom:18px}
+.kp h4{color:var(--gr);font-size:.85rem;font-weight:700;margin-bottom:10px;font-family:'Hind Siliguri',sans-serif}
+.kp li{font-family:'Hind Siliguri',sans-serif;font-size:.9rem;color:var(--t3);padding:6px 0 6px 20px;position:relative;line-height:1.7;list-style:none;border-bottom:1px solid rgba(255,255,255,.04)}
+.kp li:last-child{border-bottom:none}
+.kp li::before{content:'▸';color:var(--gr);position:absolute;left:0;font-size:.8rem;top:8px}
+.tip{background:linear-gradient(135deg,rgba(255,153,0,.08),rgba(255,153,0,.03));border:1px solid rgba(255,153,0,.3);border-radius:13px;padding:14px 18px;margin-bottom:18px;display:flex;gap:12px}
+.tip .ico{font-size:1.2rem;flex-shrink:0;margin-top:2px}
+.tip p{font-family:'Hind Siliguri',sans-serif;font-size:.88rem;color:var(--t3);line-height:1.75}
+.tip strong{color:var(--or)}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:18px}
+.svc-card{background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:11px;padding:13px 15px;transition:all .25s}
+.svc-card:hover{border-color:var(--or);transform:translateY(-2px)}
+.svc-name{font-family:'JetBrains Mono',monospace;color:var(--or);font-size:.82rem;font-weight:600;margin-bottom:5px}
+.svc-desc{font-family:'Hind Siliguri',sans-serif;font-size:.8rem;color:var(--t2);line-height:1.6}
+.tbl{width:100%;border-collapse:separate;border-spacing:0 5px;margin-bottom:18px}
+.tbl th{background:rgba(0,168,225,.12);color:var(--lb);padding:10px 14px;font-size:.8rem;font-weight:700;text-align:left}
+.tbl td{background:rgba(255,255,255,.02);padding:10px 14px;font-family:'Hind Siliguri',sans-serif;font-size:.85rem;color:var(--t3);border-bottom:1px solid rgba(255,255,255,.04)}
+.tbl tr:hover td{background:rgba(255,255,255,.04)}
+.diagram{margin:0 0 18px;border-radius:13px;overflow:hidden;border:1px solid var(--bd)}
+.diagram svg{display:block;width:100%;height:auto}
+.new-badge{display:inline-block;background:linear-gradient(135deg,var(--gr),#00b077);color:#000;font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:10px;margin-left:8px;vertical-align:middle}
+/* EXERCISE */
+.ex-wrap{padding:22px}
+.ex-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.ex-hdr h3{font-size:1rem;font-weight:700;color:var(--or)}
+.ex-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.ex-tab{padding:7px 14px;border-radius:8px;border:1.5px solid var(--bd);cursor:pointer;font-size:.78rem;font-weight:700;color:var(--t2);background:transparent;transition:all .2s}
+.ex-tab:hover{border-color:var(--or);color:var(--or)}
+.ex-tab.active{background:rgba(255,153,0,.12);border-color:var(--or);color:var(--or)}
+.ex-panel{display:none}
+.ex-panel.open{display:block;animation:fadeIn .2s ease}
+.ex-score{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:12px;padding:12px 18px;margin-bottom:18px}
+.ex-score-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.score-bar{background:rgba(255,255,255,.06);border-radius:6px;height:7px;overflow:hidden}
+.score-fill{height:100%;background:linear-gradient(90deg,var(--or),var(--gr));border-radius:6px;transition:width .6s ease}
+/* MCQ */
+.qcard{background:linear-gradient(135deg,rgba(22,34,54,.9),rgba(15,25,41,.95));border:1.5px solid var(--bd);border-radius:15px;padding:20px;margin-bottom:18px;position:relative;transition:border-color .3s}
+.qcard.ok{border-color:rgba(0,214,143,.5);background:rgba(0,214,143,.04)}
+.qcard.er{border-color:rgba(255,71,87,.5);background:rgba(255,71,87,.04)}
+.qmeta{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.qnum{background:rgba(255,153,0,.15);color:var(--or);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px}
+.qtype{background:rgba(255,255,255,.06);color:var(--t2);font-size:.7rem;padding:3px 10px;border-radius:20px}
+.qscen{background:rgba(0,199,177,.12);color:var(--tl);font-size:.7rem;padding:3px 10px;border-radius:20px;font-weight:600}
+.qdue{background:rgba(255,215,42,.12);color:var(--yw);font-size:.7rem;padding:3px 10px;border-radius:20px;font-weight:600}
+.qtxt{font-family:'Hind Siliguri',sans-serif;font-size:.98rem;color:var(--t1);line-height:1.8;margin-bottom:16px;font-weight:500}
+.opts{display:grid;gap:8px}
+.opt{background:rgba(255,255,255,.03);border:1.5px solid var(--bd);border-radius:11px;padding:12px 16px;cursor:pointer;text-align:left;transition:all .2s;display:flex;align-items:flex-start;gap:12px;font-family:'Hind Siliguri',sans-serif;font-size:.9rem;color:var(--t1);line-height:1.6;width:100%}
+.opt:hover:not(:disabled){border-color:var(--lb);background:rgba(0,168,225,.07);transform:translateX(3px)}
+.opt:disabled{cursor:default;transform:none}
+.opt.cor{border-color:var(--ok);background:rgba(0,214,143,.1);color:var(--ok)}
+.opt.wr{border-color:var(--er);background:rgba(255,71,87,.1);color:var(--er)}
+.opt.sel{border-color:var(--lb);background:rgba(0,168,225,.1)}
+.olet{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0;background:rgba(255,255,255,.07);color:var(--t2);font-family:'JetBrains Mono',monospace}
+.opt.cor .olet{background:var(--ok);color:#000}
+.opt.wr .olet{background:var(--er);color:#fff}
+.opt.sel .olet{background:var(--lb);color:#fff}
+.fb{display:none;margin-top:14px;border-radius:11px;padding:14px 16px;animation:fadeIn .25s}
+.fb.show{display:block}
+.fb.ok-fb{background:rgba(0,214,143,.07);border:1px solid rgba(0,214,143,.3)}
+.fb.er-fb{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3)}
+.fb-title{font-weight:700;font-size:.9rem;margin-bottom:6px}
+.ok-fb .fb-title{color:var(--ok)}
+.er-fb .fb-title{color:var(--er)}
+.fb-exp{font-family:'Hind Siliguri',sans-serif;font-size:.88rem;color:var(--t3);line-height:1.75}
+.fb-exp b{color:var(--or)}
+.nxt-rev{font-size:.75rem;color:var(--t2);margin-top:8px;font-family:'Hind Siliguri',sans-serif}
+/* TRUE/FALSE */
+.tf-card{background:linear-gradient(135deg,rgba(22,34,54,.9),rgba(15,25,41,.95));border:1.5px solid var(--bd);border-radius:15px;padding:20px;margin-bottom:14px;transition:border-color .3s}
+.tf-card.ok{border-color:rgba(0,214,143,.5)}
+.tf-card.er{border-color:rgba(255,71,87,.5)}
+.tf-stmt{font-family:'Hind Siliguri',sans-serif;font-size:.96rem;color:var(--t1);line-height:1.8;margin-bottom:14px;font-weight:500}
+.tf-btns{display:flex;gap:10px}
+.tf-btn{flex:1;padding:10px;border-radius:10px;border:2px solid var(--bd);cursor:pointer;font-size:.9rem;font-weight:700;background:transparent;transition:all .2s}
+.tf-btn.true-btn{color:var(--gr)}
+.tf-btn.false-btn{color:var(--re)}
+.tf-btn:hover:not(:disabled){transform:translateY(-2px)}
+.tf-btn.cor-tf{background:rgba(0,214,143,.15);border-color:var(--gr);color:var(--gr)}
+.tf-btn.wr-tf{background:rgba(255,71,87,.15);border-color:var(--re);color:var(--re)}
+.tf-btn:disabled{cursor:default;transform:none}
+.tf-fb{display:none;margin-top:12px;padding:12px 14px;border-radius:10px;font-family:'Hind Siliguri',sans-serif;font-size:.85rem;line-height:1.7}
+.tf-fb.show{display:block}
+.tf-fb.ok-tf{background:rgba(0,214,143,.07);border:1px solid rgba(0,214,143,.3);color:var(--t3)}
+.tf-fb.er-tf{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3);color:var(--t3)}
+/* MATCHING */
+.match-wrap{margin-bottom:20px}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.match-left,.match-right{display:flex;flex-direction:column;gap:8px}
+.match-item{background:rgba(255,255,255,.03);border:1.5px solid var(--bd);border-radius:10px;padding:11px 15px;font-family:'Hind Siliguri',sans-serif;font-size:.85rem;color:var(--t1);cursor:pointer;transition:all .2s;user-select:none;min-height:44px;display:flex;align-items:center}
+.match-item.selected{border-color:var(--lb);background:rgba(0,168,225,.1);color:var(--lb)}
+.match-item.matched-ok{border-color:var(--ok);background:rgba(0,214,143,.1);color:var(--ok);cursor:default}
+.match-item.matched-er{border-color:var(--er);background:rgba(255,71,87,.1);color:var(--er);cursor:default;animation:shake .3s}
+.match-svc{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;color:var(--or)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.match-score{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:12px;padding:12px 16px;text-align:center;font-size:.9rem;color:var(--t2);font-family:'Hind Siliguri',sans-serif}
+.match-score b{color:var(--or)}
+/* ORDERING */
+.order-wrap{margin-bottom:20px}
+.order-question{font-family:'Hind Siliguri',sans-serif;font-size:.96rem;color:var(--t1);margin-bottom:14px;line-height:1.7}
+.order-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.order-item{background:rgba(255,255,255,.03);border:1.5px solid var(--bd);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:grab;font-family:'Hind Siliguri',sans-serif;font-size:.88rem;color:var(--t1);transition:all .2s;user-select:none}
+.order-item:active{cursor:grabbing;transform:scale(1.02);border-color:var(--or)}
+.order-item.dragging{opacity:.5;border-color:var(--or)}
+.order-item.drag-over{border-color:var(--lb);background:rgba(0,168,225,.07)}
+.order-num{width:28px;height:28px;border-radius:7px;background:rgba(255,153,0,.12);color:var(--or);font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.order-item.cor-order{border-color:var(--ok);background:rgba(0,214,143,.07)}
+.order-item.wr-order{border-color:var(--er);background:rgba(255,71,87,.07)}
+.order-check-btn{background:rgba(255,153,0,.1);border:1px solid rgba(255,153,0,.3);color:var(--or);padding:9px 20px;border-radius:10px;cursor:pointer;font-weight:700;font-size:.82rem;transition:all .2s}
+.order-check-btn:hover{background:rgba(255,153,0,.2)}
+/* FILL BLANK */
+.fib-card{background:linear-gradient(135deg,rgba(22,34,54,.9),rgba(15,25,41,.95));border:1.5px solid var(--bd);border-radius:15px;padding:20px;margin-bottom:14px;transition:border-color .3s}
+.fib-card.ok{border-color:rgba(0,214,143,.5)}
+.fib-card.er{border-color:rgba(255,71,87,.5)}
+.fib-q{font-family:'Hind Siliguri',sans-serif;font-size:.96rem;color:var(--t1);line-height:1.85;margin-bottom:14px}
+.fib-input-wrap{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.fib-input{background:rgba(255,255,255,.05);border:1.5px solid var(--bd);border-radius:9px;padding:9px 14px;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.9rem;width:200px;transition:all .2s;outline:none}
+.fib-input:focus{border-color:var(--lb)}
+.fib-input.ok-inp{border-color:var(--ok);background:rgba(0,214,143,.07)}
+.fib-input.er-inp{border-color:var(--er);background:rgba(255,71,87,.07)}
+.fib-check{background:rgba(0,168,225,.1);border:1px solid rgba(0,168,225,.3);color:var(--lb);padding:9px 18px;border-radius:9px;cursor:pointer;font-weight:700;font-size:.82rem;transition:all .2s}
+.fib-check:hover{background:rgba(0,168,225,.2)}
+.fib-fb{display:none;margin-top:12px;font-family:'Hind Siliguri',sans-serif;font-size:.85rem;line-height:1.7;padding:10px 14px;border-radius:8px}
+.fib-fb.show{display:block}
+.fib-fb.ok-f{background:rgba(0,214,143,.07);border:1px solid rgba(0,214,143,.3);color:var(--gr)}
+.fib-fb.er-f{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3);color:var(--re)}
+/* FLASHCARD */
+.fc-wrap{perspective:1000px;max-width:600px;margin:0 auto 20px}
+.fc-card-outer{width:100%;height:200px;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.fc-card-outer.flipped{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;inset:0;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.fc-front{background:linear-gradient(135deg,var(--cb),var(--bl));border:1.5px solid var(--or)}
+.fc-back{background:linear-gradient(135deg,rgba(0,168,225,.1),rgba(0,214,143,.05));border:1.5px solid var(--gr);transform:rotateY(180deg)}
+.fc-label{font-size:.7rem;font-weight:700;letter-spacing:1px;margin-bottom:10px;opacity:.7;font-family:'JetBrains Mono',monospace}
+.fc-front .fc-label{color:var(--or)}
+.fc-back .fc-label{color:var(--gr)}
+.fc-content{font-family:'Hind Siliguri',sans-serif;font-size:1rem;color:var(--t1);text-align:center;line-height:1.7}
+.fc-front .fc-content{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--or)}
+.fc-hint{font-size:.72rem;color:var(--t2);margin-top:10px;font-family:'Hind Siliguri',sans-serif;text-align:center}
+.fc-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;max-width:600px;margin:0 auto}
+.fc-nav-btn{padding:9px 22px;border-radius:10px;border:1.5px solid var(--bd);cursor:pointer;font-weight:700;font-size:.82rem;background:transparent;color:var(--t1);transition:all .2s}
+.fc-nav-btn:hover{border-color:var(--or);color:var(--or)}
+.fc-counter{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--t2)}
+.fc-known-wrap{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.fc-known{padding:8px 20px;border-radius:10px;cursor:pointer;font-weight:700;font-size:.82rem;transition:all .2s;border:1.5px solid transparent}
+.fc-known-yes{background:rgba(0,214,143,.15);border-color:var(--ok);color:var(--ok)}
+.fc-known-no{background:rgba(255,71,87,.15);border-color:var(--er);color:var(--er)}
+.fc-known:hover{transform:translateY(-2px)}
+/* SCENARIO */
+.case-card{background:linear-gradient(135deg,rgba(0,199,177,.05),rgba(0,168,225,.03));border:1.5px solid rgba(0,199,177,.3);border-radius:15px;padding:20px;margin-bottom:18px}
+.case-scenario{background:rgba(0,0,0,.2);border-left:3px solid var(--tl);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:16px;font-family:'Hind Siliguri',sans-serif;font-size:.92rem;color:var(--t3);line-height:1.8}
+.case-scenario strong{color:var(--tl)}
+.case-q{font-family:'Hind Siliguri',sans-serif;font-size:.95rem;color:var(--t1);margin-bottom:14px;font-weight:600}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--cb);border:1px solid var(--bd);border-radius:13px;padding:12px 20px;font-size:.85rem;font-weight:600;opacity:0;transform:translateY(20px);transition:all .3s;z-index:999;max-width:280px;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok-t{border-color:rgba(0,214,143,.5);color:var(--ok)}
+.toast.er-t{border-color:rgba(255,71,87,.5);color:var(--er)}
+/* EXAM */
+.exam-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;overflow-y:auto;padding:20px}
+.exam-modal.show{display:flex;align-items:flex-start;justify-content:center}
+.exam-box{background:var(--cb);border:1.5px solid var(--bd);border-radius:20px;width:100%;max-width:780px;padding:28px;margin:auto}
+.exam-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.exam-title{font-size:1.2rem;font-weight:800;color:var(--or)}
+.exam-timer{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--t1);background:rgba(255,153,0,.12);padding:8px 18px;border-radius:10px;border:1px solid rgba(255,153,0,.3)}
+.exam-timer.warn{color:var(--re);border-color:rgba(255,71,87,.4);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.6}}
+.exam-prog{background:rgba(255,255,255,.06);border-radius:6px;height:6px;margin-bottom:20px;overflow:hidden}
+.exam-prog-fill{height:100%;background:var(--or);transition:width .3s}
+.exam-nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px;flex-wrap:wrap}
+.ex-nav-btn{padding:10px 22px;border-radius:10px;border:none;cursor:pointer;font-weight:700;font-size:.85rem;transition:all .2s}
+.ex-nav-btn.primary{background:var(--or);color:#000}
+.ex-nav-btn.secondary{background:rgba(255,255,255,.07);color:var(--t1)}
+.ex-nav-btn:hover{transform:translateY(-1px)}
+.exam-result{text-align:center;padding:20px 0}
+.exam-result .score-big{font-size:3rem;font-weight:800;margin-bottom:8px}
+.exam-result .score-label{font-family:'Hind Siliguri',sans-serif;font-size:1.1rem;color:var(--t2)}
+.start-exam-btn{background:linear-gradient(135deg,var(--or),#cc7700);color:#000;border:none;padding:12px 28px;border-radius:12px;font-weight:800;font-size:.95rem;cursor:pointer;margin-top:8px;transition:all .25s}
+.start-exam-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,153,0,.4)}
+/* REVIEW MODAL */
+.review-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;overflow-y:auto;padding:20px}
+.review-modal.show{display:flex;align-items:flex-start;justify-content:center}
+.review-box{background:var(--cb);border:1.5px solid rgba(0,214,143,.3);border-radius:20px;width:100%;max-width:780px;padding:28px;margin:auto}
+@media(max-width:600px){.hdr{padding:10px 14px}.sh{padding:14px 16px}.sh-btns{gap:6px}.btn{padding:7px 12px;font-size:.73rem}.lesson,.ex-wrap{padding:16px}.hdr-title{font-size:.95rem}.match-grid{grid-template-columns:1fr}.fc-card-outer{height:240px}}
+
+.diag-explain{background:rgba(255,153,0,.04);border:1px solid rgba(255,153,0,.18);border-radius:0 0 12px 12px;padding:14px 18px;margin-bottom:18px;margin-top:-1px}
+.diag-explain-title{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--or);font-weight:700;letter-spacing:1px;margin-bottom:10px}
+.diag-step{display:flex;gap:10px;margin-bottom:8px;align-items:flex-start}
+.diag-num{min-width:22px;height:22px;border-radius:6px;background:rgba(255,153,0,.15);color:var(--or);font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;margin-top:1px}
+.diag-txt{font-family:'Hind Siliguri',sans-serif;font-size:.84rem;color:var(--t3);line-height:1.7}
+.diag-txt b{color:var(--or)}
+.diag-txt span.hi{color:var(--lb)}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<div class="hdr">
+  <div class="hdr-left">
+    <span class="badge" style="background:linear-gradient(135deg,#00d68f,#006699);color:#fff">S8</span>
+    <div>
+      <div class="hdr-title">🗄️ Database Services</div>
+      <div class="hdr-sub">AWS Cloud Practitioner — বাংলায় পড়ো, পরীক্ষায় পাশ করো</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <a href="ccp-s7.html" class="nav-btn">← 💰 Cloud Economics & Bi</a>
+    <a href="ccp-hub.html" class="nav-btn">🏠 All Sections</a>
+    
+  </div>
+</div>
+<div class="wrap">
+<div class="sc" id="s8">
+  <div class="sh" onclick="toggleLesson('s8')">
+    <div class="sh-left">
+      <div class="sh-icon" style="background:linear-gradient(135deg,rgba(0,214,143,.2),rgba(0,214,143,.05))">🗄️</div>
+      <div>
+        <div class="sh-title">Database Services</div>
+        <div class="sh-sub">RDS Multi-AZ vs Read Replica, Aurora, DynamoDB, Redshift, Neptune, Athena</div>
+      </div>
+    </div>
+    <div class="sh-btns" onclick="event.stopPropagation()">
+      <button class="btn btn-l active" id="lb-s8" onclick="showLesson('s8')">📖 Lesson</button>
+      <button class="btn btn-e" id="eb-s8" onclick="showExercise('s8')">🎯 Practice</button>
+    </div>
+  </div>
+  <div class="prog-bar"><span class="prog-txt">অগ্রগতি</span><div class="mini-track"><div class="mini-fill" id="pf-s8" style="width:0%"></div></div><span class="prog-txt" id="pt-s8">0/0</span></div>
+  <div class="col open" id="lesson-s8">
+    <div class="lesson">
+<div class="diagram"><svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg">
+<rect width="700" height="180" fill="#0f1929"/>
+<text x="350" y="22" text-anchor="middle" fill="#FF9900" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700">RDS Multi-AZ vs Read Replica</text>
+<rect x="20" y="35" width="310" height="130" rx="10" fill="rgba(0,168,225,0.06)" stroke="#00a8e1" stroke-width="1.5"/>
+<text x="175" y="56" text-anchor="middle" fill="#00a8e1" font-size="11" font-weight="700">Multi-AZ (High Availability)</text>
+<rect x="40" y="65" width="120" height="35" rx="8" fill="rgba(0,214,143,0.12)" stroke="#00d68f" stroke-width="1.5"/>
+<text x="100" y="80" text-anchor="middle" fill="#00d68f" font-size="9" font-weight="700">Primary DB</text>
+<text x="100" y="93" text-anchor="middle" fill="#8faec8" font-size="8">AZ-1 (Writes)</text>
+<rect x="170" y="65" width="140" height="35" rx="8" fill="rgba(255,153,0,0.1)" stroke="#FF9900" stroke-width="1.5"/>
+<text x="240" y="80" text-anchor="middle" fill="#FF9900" font-size="9" font-weight="700">Standby Replica</text>
+<text x="240" y="93" text-anchor="middle" fill="#8faec8" font-size="8">AZ-2 (Synchronous)</text>
+<line x1="160" y1="82" x2="170" y2="82" stroke="#ff4757" stroke-width="1.5" stroke-dasharray="4"/>
+<text x="175" y="120" text-anchor="middle" fill="#e8f4fd" font-size="9">✅ Auto failover if primary fails</text>
+<text x="175" y="136" text-anchor="middle" fill="#8faec8" font-size="8">❌ Standby cannot serve reads</text>
+<text x="175" y="152" text-anchor="middle" fill="#8faec8" font-size="8">Purpose: HIGH AVAILABILITY</text>
+<rect x="370" y="35" width="310" height="130" rx="10" fill="rgba(0,199,177,0.06)" stroke="#00c7b1" stroke-width="1.5"/>
+<text x="525" y="56" text-anchor="middle" fill="#00c7b1" font-size="11" font-weight="700">Read Replica (Scalability)</text>
+<rect x="390" y="65" width="120" height="35" rx="8" fill="rgba(0,214,143,0.12)" stroke="#00d68f" stroke-width="1.5"/>
+<text x="450" y="80" text-anchor="middle" fill="#00d68f" font-size="9" font-weight="700">Primary DB</text>
+<text x="450" y="93" text-anchor="middle" fill="#8faec8" font-size="8">Write operations</text>
+<rect x="530" y="65" width="130" height="35" rx="8" fill="rgba(0,199,177,0.1)" stroke="#00c7b1" stroke-width="1.5"/>
+<text x="595" y="80" text-anchor="middle" fill="#00c7b1" font-size="9" font-weight="700">Read Replica(s)</text>
+<text x="595" y="93" text-anchor="middle" fill="#8faec8" font-size="8">Read queries (async)</text>
+<text x="525" y="120" text-anchor="middle" fill="#e8f4fd" font-size="9">✅ Serve read queries</text>
+<text x="525" y="136" text-anchor="middle" fill="#8faec8" font-size="8">❌ No auto failover</text>
+<text x="525" y="152" text-anchor="middle" fill="#8faec8" font-size="8">Purpose: READ SCALABILITY</text>
+</svg></div>
+<div class="diag-explain">
+<div class="diag-explain-title">📖 DIAGRAM পড়ো — বাংলায়</div>
+<div class="diag-step"><div class="diag-num">১</div><div class="diag-txt"><b>Multi-AZ</b> — Primary DB এবং Standby Replica দুটো আলাদা AZ তে। Synchronous replication। Primary fail হলে <b>automatic failover</b> — Standby Primary হয়। উদ্দেশ্য: <b>High Availability</b>।</div></div>
+<div class="diag-step"><div class="diag-num">২</div><div class="diag-txt"><b>Read Replica</b> — Primary DB থেকে Asynchronous copy। Read queries serve করে। Primary fail হলে auto failover নেই (manually promote করতে হয়)। উদ্দেশ্য: <b>Read Scalability</b>।</div></div>
+<div class="diag-step"><div class="diag-num">৩</div><div class="diag-txt">গুরুত্বপূর্ণ: Multi-AZ Standby <b>read serve করতে পারে না</b>। শুধু failover এর জন্য। Read করতে চাইলে Read Replica।</div></div>
+<div class="diag-step"><div class="diag-num">💡</div><div class="diag-txt">Exam most common question: <b>Multi-AZ = HA (failover)</b>, <b>Read Replica = Performance (reads)</b>। "Disaster recovery" → Multi-AZ। "Read-heavy" → Read Replica।</div></div>
+</div>
+
+<table class="tbl">
+<tr><th>Service</th><th>Type</th><th>Use Case</th></tr>
+<tr><td><span class="eng">RDS</span></td><td>Managed relational SQL</td><td>MySQL, PostgreSQL, Oracle</td></tr>
+<tr><td><span class="eng">Aurora</span></td><td>AWS custom SQL (5x faster)</td><td>High performance, auto 128TB</td></tr>
+<tr><td><span class="eng">DynamoDB</span></td><td>Serverless NoSQL key-value</td><td>Massive scale, ms latency</td></tr>
+<tr><td><span class="eng">ElastiCache</span></td><td>In-memory cache (Redis/Memcached)</td><td>DB query caching</td></tr>
+<tr><td><span class="eng">Redshift</span></td><td>Data warehouse (OLAP)</td><td>BI, analytics, petabyte queries</td></tr>
+<tr><td><span class="eng">Neptune</span></td><td>Graph database</td><td>Social networks, fraud detection</td></tr>
+<tr><td><span class="eng">Athena</span></td><td>Serverless SQL on S3</td><td>Query S3 without setup</td></tr>
+</table>
+<div class="tip"><span class="ico">💡</span><p><strong>Exam Tip:</strong> Multi-AZ = HA (failover)। Read Replica = Read scaling। OLTP = RDS/Aurora। OLAP = Redshift। Serverless NoSQL = DynamoDB। Graph = Neptune। Archive queries = Athena।</p></div>
+</div>
+  </div>
+  <div class="col" id="exercise-s8">
+    <div class="ex-wrap">
+      <div class="ex-hdr"><h3>🎯 Practice — Database Services</h3></div>
+      <div class="ex-tabs"><button class="ex-tab active" onclick="switchTab('s8','mcq',this)">📝 MCQ</button>
+<button class="ex-tab " onclick="switchTab('s8','tf',this)">✅ True/False</button>
+<button class="ex-tab " onclick="switchTab('s8','match',this)">🔗 Matching</button>
+<button class="ex-tab " onclick="switchTab('s8','order',this)">📊 Ordering</button>
+<button class="ex-tab " onclick="switchTab('s8','flash',this)">🃏 Flashcards</button>
+<button class="ex-tab " onclick="switchTab('s8','case',this)">📌 Scenarios</button>
+</div>
+      <div class="ex-panel open" id="panel-s8-mcq"><div id="ex-s8-mcq"></div></div>
+<div class="ex-panel " id="panel-s8-tf"><div id="ex-s8-tf"></div></div>
+<div class="ex-panel " id="panel-s8-match"><div id="ex-s8-match"></div></div>
+<div class="ex-panel " id="panel-s8-order"><div id="ex-s8-order"></div></div>
+<div class="ex-panel " id="panel-s8-flash"><div id="ex-s8-flash"></div></div>
+<div class="ex-panel " id="panel-s8-case"><div id="ex-s8-case"></div></div>
+
+    </div>
+  </div>
+</div>
+</div><!-- /wrap -->
+<!-- EXAM MODAL -->
+<div class="exam-modal" id="examModal">
+  <div class="exam-box">
+    <div id="examStart">
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:2.5rem;margin-bottom:12px">🎯</div>
+        <div class="exam-title" style="font-size:1.4rem;margin-bottom:8px">Exam Simulation</div>
+        <div style="font-family:'Hind Siliguri',sans-serif;color:var(--t2);font-size:.9rem;margin-bottom:20px">65 random questions • 90 minutes • Pass mark 70%<br>Real CLF-C02 exam এর মতো exactly!</div>
+        <button class="start-exam-btn" onclick="startExam()">🚀 শুরু করো</button><br>
+        <button onclick="closeExam()" style="background:none;border:none;color:var(--t2);cursor:pointer;font-size:.85rem;margin-top:14px">বাতিল করো</button>
+      </div>
+    </div>
+    <div id="examRunning" style="display:none">
+      <div class="exam-hdr">
+        <div><div class="exam-title">AWS CCP Simulation</div><div id="examQNum" style="color:var(--t2);font-size:.85rem;margin-top:3px"></div></div>
+        <div class="exam-timer" id="examTimer">90:00</div>
+      </div>
+      <div class="exam-prog"><div class="exam-prog-fill" id="examProgFill" style="width:0%"></div></div>
+      <div id="examQBox"></div>
+      <div class="exam-nav">
+        <button class="ex-nav-btn secondary" onclick="examPrev()">← আগে</button>
+        <span id="examAnswered" style="color:var(--t2);font-size:.82rem"></span>
+        <button class="ex-nav-btn primary" onclick="examNext()">পরে →</button>
+      </div>
+      <div style="text-align:center;margin-top:16px">
+        <button class="ex-nav-btn secondary" onclick="submitExam()" style="background:rgba(0,214,143,.1);border:1px solid rgba(0,214,143,.4);color:var(--gr)">✅ পরীক্ষা জমা দাও</button>
+      </div>
+    </div>
+    <div id="examResult" style="display:none">
+      <div class="exam-result">
+        <div class="score-big" id="examScoreBig"></div>
+        <div class="score-label" id="examScoreLabel"></div>
+        <div id="examResultDetail" style="margin:20px 0;font-family:'Hind Siliguri',sans-serif;color:var(--t2)"></div>
+        <button class="start-exam-btn" onclick="closeExam()">ফিরে যাও</button>
+        <button onclick="startExam()" style="background:none;border:1px solid var(--bd);color:var(--t1);padding:12px 24px;border-radius:12px;cursor:pointer;margin-left:12px;font-weight:700">আবার চেষ্টা করো</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW MODAL -->
+<div class="review-modal" id="reviewModal">
+  <div class="review-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div style="font-size:1.1rem;font-weight:800;color:var(--gr)">🔁 Due for Review</div>
+      <button onclick="closeReview()" style="background:none;border:none;color:var(--t2);cursor:pointer;font-size:.85rem">✕ বন্ধ করো</button>
+    </div>
+    <div id="reviewContent"></div>
+  </div>
+</div>
+
+<script>
+
+// ═══════════════════ DATA ═══════════════════════════════════════════════════
+const Q={
+s1:[
+{q:"Cloud Computing এর কোন বৈশিষ্ট্যটি বলে তুমি নিজেই admin help ছাড়া resources provision করতে পারবে?",o:["On-demand self-service","Broad network access","Resource pooling","Measured service"],a:0,e:"<b>On-demand self-service</b> = কাউকে না জানিয়ে নিজেই resources নাও।"},
+{q:"একটি company তাদের পুরনো data center বন্ধ করে AWS এ যেতে চায়। Cloud এর কোন সুবিধার উদাহরণ?",o:["Pay only for what you use","Go global in minutes","Economies of scale","Stop spending money on data centers"],a:3,e:"<b>Stop spending money on data centers</b> — physical DC maintain এর খরচ ও ঝামেলা শেষ।"},
+{q:"একটি startup জানে না কত traffic আসবে। Cloud এর কোন সুবিধাটি সবচেয়ে relevant?",o:["Trade fixed for variable expense","Benefit from economies of scale","Stop guessing capacity","Increase speed and agility"],a:2,e:"<b>Stop guessing capacity</b> — Auto Scaling দিয়ে automatically বাড়ে-কমে।"},
+{q:"AWS এর কোন service model এ user সবচেয়ে বেশি control পায়?",o:["SaaS","PaaS","IaaS","Serverless"],a:2,e:"<b>IaaS</b> তে সবচেয়ে বেশি control। OS থেকে application সব user manage করে।"},
+{q:"Gmail এবং Office 365 কোন cloud service model এর উদাহরণ?",o:["IaaS","PaaS","SaaS","DaaS"],a:2,e:"<b>SaaS</b> — ready-made software, browser এ use। Infrastructure manage করতে হয় না।"},
+{q:"Shared Responsibility Model অনুযায়ী নিচের কোনটি AWS এর দায়িত্ব?",o:["Customer data encryption","IAM user management","Physical security of data centers","Application security patches"],a:2,e:"<b>Physical security</b> = AWS (Security OF the cloud)। Data encryption, IAM = customer।"},
+{q:"Hybrid cloud কাকে বলে?",o:["Only public cloud","Only private cloud","Combination of public and private cloud","Multiple public clouds"],a:2,e:"<b>Hybrid cloud</b> = Public (AWS) + Private। Sensitive data private, বাকি public।"},
+{q:"AWS Cloud এর কোন বৈশিষ্ট্যটি resources quickly scale করার সুবিধা দেয়?",o:["High Availability","Fault Tolerance","Durability","Rapid Elasticity"],a:3,e:"<b>Rapid Elasticity</b> — instantly scale up/down। NIST এর 5 characteristics এর একটি।"},
+{q:"'Trade capital expense for variable expense' এর মানে কী?",o:["Pay only for use instead of buying hardware upfront","Cloud is always cheaper","AWS gives free hardware","No capital expenses ever"],a:0,e:"আগে কোটি টাকার server কিনতে হতো (CapEx)। Cloud এ use করলে pay করো (OpEx)।"},
+{q:"Managed service (RDS) এ OS patching কার দায়িত্ব?",o:["Customer","AWS","Shared equally","Third-party"],a:1,e:"<b>Managed services</b> এ AWS OS patch করে। EC2 (unmanaged) তে customer নিজে।"},
+{q:"📌 Eid এ e-commerce site traffic ১০x বাড়ে। Cloud এর কোন feature সাহায্য করবে?",o:["Reserved capacity","Elasticity and auto scaling","Dedicated servers","Multi-region deployment"],a:1,e:"<b>Elasticity</b> — peak এ scale up, তারপর scale down। Traditional DC তে extra server কিনে রাখতে হতো।",sc:true},
+{q:"AWS Well-Architected Framework এ কতটি pillars আছে?",o:["3","5","6","8"],a:2,e:"<b>6টি pillars</b>: Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization, Sustainability।"},
+{q:"'Go global in minutes' কীভাবে সম্ভব?",o:["AWS has one huge data center","Internet speed increased","AWS has 34+ Regions worldwide deployable instantly","Special agreements"],a:2,e:"AWS এর <b>৩৪+ Regions</b>। Console থেকে minutes এ যেকোনো region এ deploy।"},
+{q:"EC2 তে OS patching কার দায়িত্ব?",o:["AWS","Customer","Both","Depends on region"],a:1,e:"EC2 = IaaS। <b>Customer</b> OS patching করে। AWS শুধু physical hardware ও hypervisor।"},
+{q:"Cloud Computing এর কোন বৈশিষ্ট্য নিশ্চিত করে multiple customers একই physical infrastructure share করে?",o:["On-demand self-service","Broad network access","Resource pooling","Measured service"],a:2,e:"<b>Resource pooling</b> — physical resources multiple customers এ share (multi-tenant)।"},
+{q:"AWS Migration Strategy — 6 R's এর মধ্যে সবচেয়ে কম effort কোনটি?",o:["Refactor","Replatform","Rehost","Retire"],a:3,e:"<b>Retire</b> = app বন্ধ করো। Effort = zero!"},
+{q:"Well-Architected Framework এর Reliability pillar কীসের উপর focus করে?",o:["Reducing costs","Recovering from failures and meeting demand","Security patches","Environmental impact"],a:1,e:"<b>Reliability</b> = workloads correctly perform করে, failures থেকে recover করে।"},
+{q:"📌 একটি company legacy app যত দ্রুত সম্ভব AWS এ migrate করতে চায়, কোনো code change ছাড়াই। কোন strategy?",o:["Rehost (Lift and shift)","Replatform","Retire","Repurchase"],a:0,e:"<b>Rehost (Lift and Shift)</b> = app কে as-is AWS এ নিয়ে যাও। Code change নেই, fastest migration। EC2 তে same workload চলে।",sc:true},
+{q:"Cloud computing এ 'Measured service' মানে কী?",o:["Cloud is always on","Pay per use model with metered resources","Resources are unlimited","No SLAs apply"],a:1,e:"<b>Measured service</b> = utilities এর মতো metered। যতটুকু use ততটুকু pay।"},
+{q:"AWS Cloud Adoption Framework (CAF) এ কতটি Perspectives আছে?",o:["3","4","6","8"],a:2,e:"<b>AWS CAF = 6 Perspectives</b>। Business, People, Governance (business side) + Platform, Security, Operations (technical side)।"},
+{q:"AWS CAF এর কোন Perspective organizational change management নিয়ে কাজ করে?",o:["Business","People","Governance","Platform"],a:1,e:"<b>People Perspective</b> = organizational culture change, skills development, change management।"},
+{q:"AWS CAF vs Well-Architected Framework পার্থক্য?",o:["Same thing","CAF=migration planning; Well-Architected=post-deployment review","CAF is newer","No difference"],a:1,e:"<b>CAF</b> = cloud adoption ও migration planning করার framework। <b>Well-Architected</b> = deployed workloads কতটা best practice follow করছে তা review।"},
+],
+s2:[
+{q:"📌 EU data residency law মানতে Region choose করার সময় কোন factor সবচেয়ে important?",o:["Latency","Pricing","Compliance","Service availability"],a:2,e:"<b>Compliance</b> = GDPR এর মতো legal requirements সবচেয়ে important।",sc:true},
+{q:"AWS Availability Zone (AZ) কী?",o:["A geographic region","A single data center","One or more DCs with independent power and networking","An Edge Location"],a:2,e:"<b>AZ</b> = physically separate DC cluster। Independent power, cooling, networking।"},
+{q:"CloudFront কোন infrastructure দিয়ে content deliver করে?",o:["Availability Zones","Regions","Local Zones","Edge Locations"],a:3,e:"<b>Edge Locations</b> (৬০০+) — CloudFront content cache করে। CDN এর জন্য।"},
+{q:"Highly available application এর জন্য কোন approach সবচেয়ে ভালো?",o:["Single large EC2","RAID storage only","Single powerful server","Deploy across multiple AZs"],a:3,e:"<b>Multiple AZs</b> — ১টি fail হলে অন্য AZ তে চলে। AWS fundamental best practice।"},
+{q:"AWS Region এ minimum কতটি AZ থাকে?",o:["1","2","3","4"],a:2,e:"Minimum <b>3টি AZ</b> প্রতি Region এ।"},
+{q:"AWS Global Infrastructure সঠিক hierarchy কোনটি?",o:["Region → AZ → Data Center","AZ → Region → Data Center","Data Center → Region → AZ","Edge → AZ → Region"],a:0,e:"<b>Region → AZ → Data Center</b>। Region সবচেয়ে বড়।"},
+{q:"AWS Outposts কী?",o:["AWS infrastructure in your own data center","An Edge Location","A new AZ type","Managed Kubernetes"],a:0,e:"<b>AWS Outposts</b> = AWS hardware তোমার নিজের DC এ। Hybrid cloud।"},
+{q:"Route 53 Latency-based routing কী করে?",o:["Routes to cheapest region","Routes evenly across regions","Routes based on country","Routes users to lowest-latency region"],a:3,e:"<b>Latency-based routing</b> — user এর location থেকে কম latency এর region এ।"},
+{q:"AWS Local Zone কখন ব্যবহার হয়?",o:["Ultra-low latency near large cities","Disaster recovery","Long-term archival","Batch processing"],a:0,e:"<b>Local Zones</b> = city তে ultra-low latency। Gaming, live video, ML inference।"},
+{q:"EC2 instance সবসময় কোথায় চলে?",o:["All AZs simultaneously","All regions automatically","Edge locations","One specific AZ within a region"],a:3,e:"EC2 instance একটি নির্দিষ্ট <b>AZ</b> এ। HA চাইলে multiple AZ তে multiple instances।"},
+{q:"AWS Global Accelerator কীভাবে performance উন্নত করে?",o:["Routes through AWS private global network","Caches at edge locations","Only works with S3","Replaces Route 53"],a:0,e:"<b>Global Accelerator</b> AWS private backbone দিয়ে route। Public internet congestion avoid।"},
+{q:"📌 EU ও Asia উভয়তেই users। দুটো region এ deploy এর প্রধান কারণ?",o:["Only latency","Only compliance","Edge Locations are free","Latency AND data sovereignty compliance"],a:3,e:"দুটো কারণ: <b>Latency কমানো</b> ও <b>Data sovereignty compliance</b>।",sc:true},
+{q:"AWS Local Zone কোন ধরনের workload এর জন্য ব্যবহার হয়?",o:["Ultra-low latency apps near specific cities","Global batch processing","Long-term archival","Database migration"],a:0,e:"<b>Local Zone</b> = major cities কাছে AWS infrastructure। Gaming, media, real-time apps এর জন্য single-digit ms latency।"},
+{q:"একটি Region এর সব AZ এর মধ্যে connection কেমন?",o:["Public internet","Satellite","Dial-up","Low-latency private fiber"],a:3,e:"AZ গুলো <b>high-bandwidth, low-latency private fiber</b> দিয়ে connected।"},
+],
+s3:[
+{q:"📌 Interrupt হলেও restart করা যায় এমন batch job এ সবচেয়ে সস্তা EC2 pricing?",o:["On-Demand","Reserved Instances","Spot Instances","Dedicated Hosts"],a:2,e:"<b>Spot Instances</b> — ৯০% সস্তা। Fault-tolerant workloads এর জন্য।",sc:true},
+{q:"AWS Lambda কোন service model?",o:["IaaS","PaaS","SaaS","Serverless/FaaS"],a:3,e:"<b>Serverless/FaaS</b> — শুধু code লেখো, server manage করো না।"},
+{q:"৩ বছরের predictable workload এ সবচেয়ে বেশি discount কোনটি?",o:["On-Demand","Spot Instances","3-year Reserved All Upfront","Savings Plans"],a:2,e:"<b>3-year Reserved All Upfront</b> সবচেয়ে বেশি discount — ৭২% পর্যন্ত।"},
+{q:"ECS বনাম Fargate পার্থক্য?",o:["ECS is for VMs","ECS is newer","No difference","ECS: manage EC2; Fargate: serverless containers"],a:3,e:"<b>ECS</b> = EC2 cluster manage। <b>Fargate</b> = serverless containers, no EC2 management।"},
+{q:"Elastic Load Balancer এর function কী?",o:["Store data","Scale EC2 automatically","Distribute traffic across multiple targets","Monitor costs"],a:2,e:"<b>ELB</b> traffic কে multiple EC2/containers এ distribute। HA ও fault tolerance।"},
+{q:"Developer শুধু code upload করতে চান, server manage না। কোন service?",o:["EC2","Elastic Beanstalk","VPC","CloudTrail"],a:1,e:"<b>Elastic Beanstalk</b> = PaaS। Code দাও, AWS EC2/LB/AutoScaling manage করে।"},
+{q:"Dedicated Hosts কখন use করবে?",o:["Save costs","Serverless","Software licensing compliance","Dev environments"],a:2,e:"<b>Dedicated Hosts</b> = physical server। Oracle/Windows licensing compliance।"},
+{q:"Auto Scaling Group কী করে?",o:["Backup data","Adjust EC2 count based on demand","Monitor threats","Manage IAM"],a:1,e:"<b>Auto Scaling</b> demand অনুযায়ী EC2 automatically বাড়ায়-কমায়।"},
+{q:"📌 24/7, predictable, ৩ বছরের workload। কোন pricing?",o:["Spot","On-Demand","Reserved Instances","Savings Plans"],a:2,e:"<b>Reserved Instances</b> — 24/7, predictable এ সবচেয়ে cost-effective।",sc:true},
+{q:"AWS Lambda এর maximum execution timeout?",o:["5 min","15 min","1 hour","24 hours"],a:1,e:"Lambda timeout max <b>15 minutes</b>। এর বেশি = EC2 বা ECS।"},
+{q:"On-premises VMs AWS এ migrate করার service?",o:["DataSync","Application Migration Service (MGN)","Snowball","Config"],a:1,e:"<b>AWS MGN</b> = lift-and-shift migration। Agent → replication → cutover।"},
+{q:"Savings Plans বনাম Reserved Instances পার্থক্য?",o:["Same","Savings Plans: flexible type/region; RIs: specific","RIs always cheaper","Savings Plans only for Lambda"],a:1,e:"<b>Savings Plans</b> = hourly spend commit, flexible type/region। <b>Reserved</b> = specific।"},
+{q:"📌 ৪ ঘণ্টার video processing, terminate হলে restart করা যায়। সবচেয়ে সস্তা?",o:["On-Demand","Reserved","Spot","Dedicated Host"],a:2,e:"<b>Spot Instance</b> — fault-tolerant batch job। ৯০% সস্তা।",sc:true},
+{q:"AWS Lightsail কী?",o:["A database service","Simplified cloud with predictable pricing for small projects","A CDN","An IAM service"],a:1,e:"<b>Lightsail</b> = simplified cloud। Small websites, blogs। Fixed monthly pricing।"},
+{q:"6 Migration Strategies (Rs) এর মধ্যে কোনটি SaaS এ switch করে?",o:["Rehost","Replatform","Repurchase","Refactor"],a:2,e:"<b>Repurchase</b> = Drop & Shop। CRM কে Salesforce, Email কে Office 365 এ switch।"},
+{q:"📌 নতুন feature test, ২ সপ্তাহ, commitment নেই। কোন EC2 pricing?",o:["Reserved","Spot","On-Demand","Dedicated"],a:2,e:"Short-term, no commitment = <b>On-Demand</b>। Dev/Test এর জন্য।",sc:true},
+{q:"Amazon SQS এর primary use case কী?",o:["Real-time video streaming","Decoupled message queuing between services","User authentication","DNS management"],a:1,e:"<b>SQS</b> = Simple Queue Service। Producer → Queue → Consumer। Services কে decouple করে — এক service busy থাকলেও messages হারায় না।"},
+{q:"Amazon SNS কোন pattern ব্যবহার করে?",o:["Point-to-point","Publish/Subscribe (Pub/Sub)","Request/Response","Peer-to-peer"],a:1,e:"<b>SNS</b> = Pub/Sub। একটি topic এ publish → সব subscribers (email, SMS, Lambda, SQS) পায়।"},
+{q:"AWS CloudFormation কী করে?",o:["Monitors resources","Infrastructure as Code — YAML/JSON দিয়ে resources create","Optimizes costs","Manages users"],a:1,e:"<b>CloudFormation</b> = IaC। Template deploy করলে Stack তৈরি হয়। Repeatable, version-controlled infrastructure।"},
+{q:"📌 একটি company তাদের AWS infrastructure template হিসেবে store করতে চায় — যেকোনো সময় recreate করা যাবে। কোন service?",o:["AWS Config","AWS CloudFormation","AWS Systems Manager","AWS Elastic Beanstalk"],a:1,e:"<b>CloudFormation</b> = Infrastructure as Code। Template (YAML/JSON) → যেকোনো সময় same infra deploy।",sc:true},
+],
+s4:[
+{q:"S3 তে single object এর maximum size?",o:["1 GB","5 GB","5 TB","Unlimited"],a:2,e:"S3 single object max <b>5 TB</b>। Total storage unlimited।"},
+{q:"৭ বছরের compliance archive এর জন্য সবচেয়ে সস্তা S3 class?",o:["S3 Standard","Standard-IA","Glacier Deep Archive","Intelligent-Tiering"],a:2,e:"<b>Glacier Deep Archive</b> = সবচেয়ে সস্তা। 12h retrieval। Long-term compliance।"},
+{q:"Multiple EC2 instances shared file system access করতে চায়। কোন service?",o:["EFS","EBS","S3","Instance Store"],a:0,e:"<b>EFS</b> = shared NFS file system। Multiple Linux EC2 simultaneously।"},
+{q:"S3 এর durability কত?",o:["99.9%","99.99%","99.999999999% (11 nines)","100%"],a:2,e:"S3 Standard = <b>11 nines</b>। Industry এর সবচেয়ে durable storage।"},
+{q:"EBS vs S3 মূল পার্থক্য?",o:["EBS always faster","S3 only for images","EBS cheaper","EBS: block for EC2; S3: object via internet"],a:3,e:"<b>EBS</b> = EC2 hard drive। <b>S3</b> = internet accessible object storage।"},
+{q:"S3 Intelligent-Tiering কী করে?",o:["Auto-moves to cost-optimal tier based on access patterns","Manually move objects","Faster than Standard","Only with Glacier"],a:0,e:"<b>Intelligent-Tiering</b> access patterns monitor করে automatically tier change করে।"},
+{q:"AWS Snow family কখন ব্যবহার হয়?",o:["Real-time streaming","Database migration only","Serverless","Network too slow for large data migration"],a:3,e:"<b>Snow family</b> = offline physical data transfer। Petabytes internet এ months লাগবে।"},
+{q:"S3 Versioning enable করলে কী হয়?",o:["Every version kept, recover from accidental deletes","Objects deleted after 30 days","Cost reduced","Auto encryption"],a:0,e:"<b>S3 Versioning</b> = সব versions রেখে দেয়। Accidental delete থেকে recover।"},
+{q:"📌 রোজ log, ৩০ দিন পরে rarely access, ৭ বছর compliance। Solution?",o:["All in Standard","EBS","RDS","S3 Lifecycle Policy: Standard → Standard-IA → Glacier Deep Archive"],a:3,e:"<b>S3 Lifecycle Policy</b> — Standard → Standard-IA → Glacier Deep Archive।",sc:true},
+{q:"Amazon FSx কী?",o:["Managed third-party file systems (Windows, Lustre)","EC2 type","Object storage","CDN"],a:0,e:"<b>FSx</b> = managed file systems। Windows (SMB), Lustre (HPC)।"},
+{q:"S3 Transfer Acceleration কী করে?",o:["Compresses files","Auto-encrypts","Reduces cost","Uses CloudFront edges to speed up S3 uploads"],a:3,e:"<b>Transfer Acceleration</b> CloudFront Edge দিয়ে S3 upload speed বাড়ায়।"},
+{q:"EBS Snapshot কী?",o:["Point-in-time backup stored in S3","Real-time backup","Running EC2 copy","Simultaneous clone"],a:0,e:"<b>EBS Snapshot</b> = point-in-time backup, S3 এ stored। Incremental।"},
+{q:"Windows app এর জন্য SMB protocol কোন service?",o:["EFS","S3","FSx for Windows File Server","EBS"],a:2,e:"<b>FSx for Windows</b> = SMB protocol, Active Directory integration।"},
+{q:"S3 Object Lock কী করে?",o:["Encrypts objects","Speeds retrieval","Replicates","Prevents deletion/modification (WORM)"],a:3,e:"<b>S3 Object Lock</b> = WORM (Write Once Read Many)। Regulatory compliance।"},
+{q:"Instance Store vs EBS পার্থক্য?",o:["Instance Store: temporary on host; EBS: persistent","Same thing","EBS cheaper","Instance Store faster network"],a:0,e:"<b>Instance Store</b> = temporary। Stop/terminate এ হারায়। <b>EBS</b> = persistent।"},
+],
+s5:[
+{q:"Public Subnet vs Private Subnet পার্থক্য?",o:["Public has more storage","Private is faster","Public has Internet Gateway route; Private does not","No difference"],a:2,e:"<b>Public</b> = Internet Gateway route আছে। <b>Private</b> = route নেই, internet access নেই।"},
+{q:"Security Group vs NACL পার্থক্য?",o:["SG at subnet level","SG: stateful, instance; NACL: stateless, subnet","Same","NACL newer"],a:1,e:"<b>SG</b> = stateful, instance। <b>NACL</b> = stateless, subnet। SG তে inbound allow → return auto।"},
+{q:"CloudFront এর primary purpose?",o:["Content delivery with low latency via edge locations","DNS resolution","DDoS only","DB caching"],a:0,e:"<b>CloudFront</b> = CDN। Edge Locations এ cache করে কাছ থেকে serve।"},
+{q:"Internet ছাড়া on-premises → AWS dedicated connection?",o:["VPN Gateway","Internet Gateway","AWS Direct Connect","NAT Gateway"],a:2,e:"<b>Direct Connect</b> = dedicated private fiber। Internet use করে না।"},
+{q:"Route 53 এর primary function?",o:["Content delivery","Load balancing","DNS service and domain registration","Firewall"],a:2,e:"<b>Route 53</b> = AWS DNS service। Domain names → IP। Registration, routing।"},
+{q:"NAT Gateway এর কাজ কী?",o:["Allow internet into private","Connect two VPCs","DNS","Private → internet outbound, block inbound"],a:3,e:"<b>NAT Gateway</b> = private instances internet এ যেতে পারে (updates), কিন্তু inbound blocked।"},
+{q:"VPC Peering কী?",o:["Connect two VPCs privately","VPC to internet","VPC to on-premises","Peer review"],a:0,e:"<b>VPC Peering</b> = দুটো VPC AWS private network দিয়ে connect। Transitive নয়।"},
+{q:"AWS PrivateLink কী সমাধান করে?",o:["Reduces EC2 costs","Faster DNS","Access AWS/partner services without internet traffic","Replaces VPN"],a:2,e:"<b>PrivateLink</b> = internet ছাড়া AWS services access। Traffic AWS private network এ।"},
+{q:"📌 3-tier app — web public, app private, DB private। Setup?",o:["All public","All private","NACLs only","Web public (SG: 80/443), app private, DB private with SGs"],a:3,e:"Web → Public, SG 80/443। App → Private, SG from web। DB → Private, SG from app।",sc:true},
+{q:"AWS Transit Gateway কী করে?",o:["Hub to connect multiple VPCs and on-premises","Speeds data transfer","Replaces Internet GW","CDN"],a:0,e:"<b>Transit Gateway</b> = hub-and-spoke। Multiple VPCs + on-premises এক central hub।"},
+{q:"Images ও videos globally কম latency তে serve করতে?",o:["S3 only","EC2 in every region","Amazon CloudFront","Route 53 only"],a:2,e:"<b>CloudFront</b> = ৬০০+ Edge Locations থেকে closest edge দিয়ে serve।"},
+{q:"AWS WAF কী protect করে?",o:["DDoS only","Physical attacks","Network layer only","SQL injection, XSS and web exploits"],a:3,e:"<b>WAF</b> = SQL injection, XSS, bad bots। ALB, CloudFront সামনে।"},
+{q:"📌 Direct Connect fail হলে backup কী?",o:["Another Direct Connect","Site-to-Site VPN","Dedicated Host","CloudFront"],a:1,e:"<b>Site-to-Site VPN</b> = Direct Connect backup। Internet দিয়ে encrypted tunnel।",sc:true},
+{q:"Security Group কি deny rules support করে?",o:["Yes, both allow and deny","Only inbound","No, only allow rules","Only outbound"],a:2,e:"Security Groups শুধু <b>allow rules</b>। Deny করতে NACL use করতে হবে।"},
+{q:"VPC Flow Logs কী করে?",o:["Capture information about IP traffic in/out VPC","Block traffic","Replace Security Groups","Encrypt traffic"],a:0,e:"<b>VPC Flow Logs</b> = network traffic data capture। Security analysis, troubleshooting।"},
+],
+s6:[
+{q:"IAM Principle of Least Privilege কী?",o:["Grant only minimum permissions needed","Give everyone admin","Restrict all by default","Use root only"],a:0,e:"<b>Least Privilege</b> = শুধু কাজের জন্য minimum permission দাও।"},
+{q:"Root Account এর সবচেয়ে important security action?",o:["Use daily","Share with team","Enable MFA and avoid daily use","Delete after IAM users"],a:2,e:"Root = unlimited access। <b>MFA enable</b> + daily use avoid। IAM admin user তৈরি করো।"},
+{q:"AWS Shield কী protect করে?",o:["SQL Injection","Data breaches","DDoS attacks","Phishing"],a:2,e:"<b>AWS Shield</b> = DDoS protection। Standard (free, automatic)। Advanced (paid)।"},
+{q:"📌 Managed service (RDS) এ OS patching কার দায়িত্ব?",o:["Customer","AWS","Shared","Third-party"],a:1,e:"<b>RDS managed</b> এ AWS OS patching করে।",sc:true},
+{q:"AWS GuardDuty কী করে?",o:["A firewall","Vulnerability scanner","DDoS protection","ML-based threat detection using logs"],a:3,e:"<b>GuardDuty</b> = ML দিয়ে logs analyze করে threats detect। No agents needed।"},
+{q:"IAM Role কখন use করবে?",o:["When AWS service needs to access another AWS service","Permanent human users","Console only","Group management"],a:0,e:"<b>IAM Role</b> = temporary credentials। EC2 → S3, Lambda → DynamoDB।"},
+{q:"AWS KMS primary use case?",o:["User authentication","Network encryption","Creating and managing encryption keys","SSL certificates"],a:2,e:"<b>KMS</b> = encryption keys তৈরি ও manage। S3, RDS, EBS encrypt করে।"},
+{q:"SCP (Service Control Policy) কী করে?",o:["Manage IAM users","Replace IAM","Set guardrails restricting services for org accounts","Billing only"],a:2,e:"<b>SCP</b> = organization-level guardrails। Child accounts কোন services use করতে পারবে।"},
+{q:"Amazon Inspector কী করে?",o:["Monitors billing","Network only","Manages SSL","Scans EC2/Lambda for software vulnerabilities"],a:3,e:"<b>Inspector</b> = EC2, Lambda তে software vulnerabilities scan।"},
+{q:"GuardDuty, Inspector, Macie — পার্থক্য?",o:["Same service","GuardDuty=threats, Inspector=vulnerabilities, Macie=S3 sensitive data","GuardDuty for networks only","Macie replaces GuardDuty"],a:1,e:"<b>GuardDuty</b>=runtime threats, <b>Inspector</b>=software vulns, <b>Macie</b>=S3 PII data।"},
+{q:"AWS Secrets Manager কী করে?",o:["Stores and auto-rotates secrets like DB passwords","Manages IAM users","Encrypts S3 only","Manages SSL certs"],a:0,e:"<b>Secrets Manager</b> = passwords, API keys store ও auto-rotate।"},
+{q:"AWS CloudTrail কী করে?",o:["Monitors network traffic","Vulnerability scanning","Records all API calls for auditing","Manages DNS"],a:2,e:"<b>CloudTrail</b> = সব API calls record (who, what, when, where)। Compliance auditing।"},
+{q:"📌 কে S3 bucket delete করেছে জানতে হবে। কোন service?",o:["GuardDuty","AWS CloudTrail","AWS Config","Inspector"],a:1,e:"<b>CloudTrail</b> = API calls log। S3 DeleteBucket কে করেছে, কোন IP, কখন।",sc:true},
+{q:"AWS Config কী করে?",o:["Manages app configs","DDoS protection","Manages DNS","Tracks resource configurations and compliance history"],a:3,e:"<b>Config</b> = resource configurations track ও compliance। 'S3 সবসময় encrypted ছিল?' — Config।"},
+{q:"Amazon CloudWatch কোন ধরনের service?",o:["Monitoring, metrics, logs and alarms service","Security scanning","Database","CDN"],a:0,e:"<b>CloudWatch</b> = AWS monitoring service। CPU, latency, custom metrics track।"},
+{q:"CloudWatch এবং CloudTrail এর মূল পার্থক্য?",o:["Same service","CloudWatch=performance monitoring; CloudTrail=API audit log","CloudTrail newer","CloudWatch costs more"],a:1,e:"<b>CloudWatch</b> = what IS happening। <b>CloudTrail</b> = WHO did what।"},
+{q:"📌 EC2 CPU 90% হলে automatically নতুন instance চালু করতে চাই। কী use করবে?",o:["CloudTrail alarm","CloudWatch Alarm + Auto Scaling","GuardDuty","Config rule"],a:1,e:"<b>CloudWatch Alarm</b> trigger → <b>Auto Scaling</b> নতুন instance চালু।",sc:true},
+{q:"AWS Artifact কী?",o:["CI/CD tool","Deployment service","On-demand AWS compliance reports (SOC, ISO, PCI) portal","Key management"],a:2,e:"<b>AWS Artifact</b> = compliance reports। SOC 2, ISO 27001, PCI DSS download।"},
+{q:"MFA কেন important?",o:["Speeds up login","Replaces passwords","Root only","Adds second security layer beyond passwords"],a:3,e:"<b>MFA</b> = password leak হলেও attacker login করতে পারবে না।"},
+{q:"IAM Access Analyzer কী করে?",o:["Identifies resources shared externally or over-permissive","Syntax checks","Manages MFA","Rotates keys"],a:0,e:"<b>IAM Access Analyzer</b> = external sharing বা over-permissive resources identify করে।"},
+{q:"AWS Security Hub কী করে?",o:["DDoS protection","Aggregates security findings from GuardDuty, Inspector, Macie into one place","Manages IAM users","Encrypts S3 data"],a:1,e:"<b>Security Hub</b> = central security dashboard। GuardDuty, Inspector, Macie এর findings একত্রিত করে। CIS Benchmarks compliance check।"},
+{q:"AWS Systems Manager Parameter Store কী?",o:["Physical server management","Auto scaling service","Secure storage for config values and secrets","DNS management"],a:2,e:"<b>SSM Parameter Store</b> = configuration values ও secrets securely store। Free tier আছে। Secrets Manager এর cheaper alternative।"},
+{q:"📌 Company তাদের web app এ HTTPS enable করতে SSL certificate দরকার। কোন AWS service?",o:["AWS KMS","AWS Shield","AWS Certificate Manager (ACM)","AWS IAM"],a:2,e:"<b>ACM</b> = free SSL/TLS certificates। CloudFront ও ALB এ attach করো। Auto-renewal।",sc:true},
+{q:"Amazon Cognito কী করে?",o:["Manages IAM roles","Network security","Cost management","Provides user sign-up/sign-in for web/mobile apps"],a:3,e:"<b>Cognito</b> = app-level authentication। User Pools (sign-up/in) + Identity Pools (AWS access)। Social login support।"},
+],
+s7:[
+{q:"কোন Support Plan এ dedicated TAM পাওয়া যায়?",o:["Basic","Developer","Business","Enterprise"],a:3,e:"<b>Dedicated TAM</b> = Enterprise plan। Enterprise On-Ramp এ pool of TAMs।"},
+{q:"Deploy করার আগে cost estimate করার tool?",o:["Cost Explorer","Budgets","AWS Pricing Calculator","Cost and Usage Report"],a:2,e:"<b>AWS Pricing Calculator</b> = deploy আগে estimated monthly cost।"},
+{q:"AWS Consolidated Billing এর সুবিধা?",o:["One bill + volume discounts across accounts","Free support for all","Unlimited free tier","Auto cost reduction"],a:0,e:"<b>Consolidated Billing</b> = সব accounts এর bill একটিতে। Usage combine → volume discounts।"},
+{q:"AWS Budgets দিয়ে কী করা যায়?",o:["Auto-reduce costs","View historical trends","Set budgets and alerts when thresholds exceeded","Compare providers"],a:2,e:"<b>Budgets</b> = budget set করো, limit কাছে গেলে email/SNS alert।"},
+{q:"Trusted Advisor কতটি বিভাগে recommendations দেয়?",o:["3","7","10","5"],a:3,e:"<b>Trusted Advisor</b> = ৫টি: Cost Optimization, Performance, Security, Fault Tolerance, Service Limits।"},
+{q:"Production workload এর minimum Support Plan?",o:["Basic","Developer","Business","Enterprise"],a:2,e:"<b>Business</b> = 24/7 support, 1-hour critical response, সব Trusted Advisor checks।"},
+{q:"AWS data transfer কখন charge হয়? (সবচেয়ে common charged scenario)",o:["Inbound (internet → AWS)","Between AZs same region","Outbound (AWS → internet)","S3 ↔ EC2 same region"],a:2,e:"<b>Outbound</b> (AWS → internet) সবচেয়ে বেশি charge হয়। Inbound সাধারণত free। Note: AZ-to-AZ transfer (option B) ও charge হয় কিন্তু exam এ primary answer হলো Outbound।"},
+{q:"AWS Organizations Management Account কী করে?",o:["Creates/manages member accounts, applies SCPs, consolidates billing","Just like any account","Cannot use services","Cheapest"],a:0,e:"<b>Management Account</b> = member accounts create, OUs organize, SCPs apply।"},
+{q:"📌 ৫টি separate AWS accounts। Cost কমাতে?",o:["Delete 4 accounts","Only Reserved Instances","Single EC2","AWS Organizations + Consolidated Billing"],a:3,e:"<b>Organizations + Consolidated Billing</b> = usage combine → volume discounts।",sc:true},
+{q:"AWS Free Tier নতুন account এ কতদিন?",o:["3 months","6 months","12 months","Forever"],a:2,e:"New account এ <b>12 months</b> Free Tier।"},
+{q:"AWS Cost Explorer এর কাজ?",o:["Visualize past/present/forecasted costs","Estimate before deploy","Set budget alerts","Compare providers"],a:0,e:"<b>Cost Explorer</b> = costs visualize। Service breakdown, trends, anomaly detection।"},
+{q:"Business plan এ 'production system down' response time?",o:["24 hours","4 hours","1 hour","15 minutes"],a:2,e:"Business: production down = <b>1 hour</b>। Enterprise critical = 15 min।"},
+{q:"📌 AWS bill unexpectedly বেড়েছে। কোন tool দিয়ে কারণ খুঁজবে?",o:["Pricing Calculator","Budgets only","Trusted Advisor","Cost Explorer filtered by service"],a:3,e:"<b>Cost Explorer</b> = service breakdown করে কোন service এর cost বেড়েছে দেখাবে।",sc:true},
+{q:"Enterprise On-Ramp Support Plan এ critical response time কত?",o:["30 minutes","15 minutes","1 hour","4 hours"],a:0,e:"<b>Enterprise On-Ramp</b> = 30 minutes। Regular Enterprise = 15 minutes।"},
+{q:"AWS Organizations এ SCP কোথায় apply হয়?",o:["Only root account","Individual IAM users","Entire accounts or OUs","Only EC2"],a:2,e:"<b>SCP</b> = accounts বা OUs এ apply। Individual users এ না।"},
+{q:"AWS Cost and Usage Report (CUR) কী?",o:["Daily email","Real-time dashboard","Budget alert","Most detailed billing data to S3"],a:3,e:"<b>CUR</b> = সবচেয়ে detailed billing। Hourly/daily, S3 deliver।"},
+{q:"AWS TCO Calculator কী করে?",o:["Compares on-premises vs cloud total cost of ownership","Shows real-time AWS billing","Sets budget alerts","Monitors performance"],a:0,e:"<b>TCO Calculator</b> = on-premises infrastructure এর cost vs AWS cost compare। Migration কে justify করতে।"},
+{q:"AWS DataSync কী?",o:["Physical data transfer device","Database migration","Backup service only","Online automated data transfer (on-premises → S3/EFS)"],a:3,e:"<b>DataSync</b> = online দ্রুত data transfer। Network এর মাধ্যমে। Snow family = offline। DataSync = online, automated, scheduled।"},
+{q:"AWS Compute Optimizer কী করে?",o:["ML-based right-sizing recommendations for EC2/Lambda/EBS","Creates new EC2 instances","Monitors security","Manages billing"],a:0,e:"<b>Compute Optimizer</b> = ML দিয়ে over/under-provisioned resources খুঁজে সঠিক size recommend করে। Cost ও performance উভয় optimize।"},
+{q:"📌 Company AWS এ migrate করার আগে CFO কে দেখাতে চায় যে cloud সস্তা হবে। কোন tool?",o:["Cost Explorer","AWS Pricing Calculator","AWS TCO Calculator","AWS Budgets"],a:2,e:"<b>TCO Calculator</b> = on-premises vs cloud cost comparison। Migration decision justify করতে। Pricing Calculator = deploy আগে AWS cost estimate।",sc:true},
+],
+s8:[
+{q:"RDS Multi-AZ Deployment এর উদ্দেশ্য?",o:["Improve read performance","Reduce costs","High availability and automatic failover","Global distribution"],a:2,e:"<b>Multi-AZ</b> = primary ও standby আলাদা AZ। Primary fail → auto failover। HA।"},
+{q:"DynamoDB কোন ধরনের database?",o:["Relational SQL","In-memory cache","Fully managed NoSQL key-value","Graph"],a:2,e:"<b>DynamoDB</b> = fully managed serverless NoSQL key-value। Auto scaling, ms latency।"},
+{q:"Amazon Aurora MySQL থেকে কীভাবে আলাদা?",o:["5x faster, auto-scales to 128TB, 6 copies across 3 AZs","Aurora is NoSQL","Aurora Windows only","No replication"],a:0,e:"<b>Aurora</b> = MySQL/PostgreSQL compatible, AWS custom engine। ৫x faster।"},
+{q:"ElastiCache এর primary use case?",o:["Primary database","Long-term archival","File sharing","Cache frequently accessed data in-memory"],a:3,e:"<b>ElastiCache</b> (Redis/Memcached) = in-memory caching। DB queries cache → ms response।"},
+{q:"Data analytics/BI এর জন্য কোন AWS database?",o:["RDS MySQL","DynamoDB","Amazon Redshift","ElastiCache"],a:2,e:"<b>Redshift</b> = cloud data warehouse। Petabytes analytics, OLAP, BI tools।"},
+{q:"DynamoDB Accelerator (DAX) কী?",o:["In-memory cache for DynamoDB, microsecond latency","DynamoDB backup","Query optimizer","Replication"],a:0,e:"<b>DAX</b> = DynamoDB এর in-memory cache। ms → microsecond।"},
+{q:"RDS Read Replica কীসের জন্য?",o:["High availability/failover","Encrypt data","Migration","Scale read operations for read-heavy workloads"],a:3,e:"<b>Read Replica</b> = read-heavy workloads scale। Async copy।"},
+{q:"Amazon Neptune কী ধরনের database?",o:["Relational","Document","Graph","Time-series"],a:2,e:"<b>Neptune</b> = graph database। Social networks, fraud detection।"},
+{q:"AWS DMS কী করে?",o:["Migrates databases with minimal downtime","Backs up databases","Optimizes queries","Encrypts databases"],a:0,e:"<b>DMS</b> = DB migration minimal downtime এ। Source চলতে থাকে।"},
+{q:"Amazon Athena কী?",o:["Relational database","Data warehouse","In-memory","Serverless SQL query service for S3"],a:3,e:"<b>Athena</b> = serverless। S3 এ directly SQL। No setup। Pay per scanned data।"},
+{q:"📌 DB read queries bottleneck, same data বারবার read। Solution?",o:["Add ElastiCache in front of RDS","Larger RDS","Switch to DynamoDB","More Read Replicas"],a:0,e:"<b>ElastiCache</b> = same data বারবার → cache। DB তে না গিয়ে memory থেকে।",sc:true},
+{q:"NoSQL কখন choose করবে?",o:["Complex SQL joins","ACID transactions required","Flexible schema, massive scale, key-value","Complex financial data"],a:2,e:"<b>NoSQL</b> (DynamoDB) = flexible schema, massive scale। SQL = complex joins, ACID।"},
+{q:"📌 ACID transactions ও complex SQL queries দরকার। কোন AWS DB?",o:["DynamoDB","Redshift","Amazon RDS (MySQL/PostgreSQL)","Neptune"],a:2,e:"<b>Amazon RDS</b> = ACID, complex SQL. Financial, ERP applications।",sc:true},
+{q:"Amazon MemoryDB for Redis কী?",o:["Like ElastiCache","Replaces RDS","File storage","Durable Redis-compatible in-memory DB (primary DB capable)"],a:3,e:"<b>MemoryDB</b> = Redis-compatible কিন্তু durable, primary DB হিসেবে use করা যায়।"},
+{q:"RDS Multi-AZ এর standby replica কি read queries serve করতে পারে?",o:["Yes, always","Yes, during failover","No, it is for failover only","Only in same AZ"],a:2,e:"<b>No</b>। Multi-AZ standby = HA only। Reads = Read Replica use করো।"},
+],
+};
+
+const TF={
+s1:[
+{s:"AWS তে resources provision করতে AWS support team কে call করতে হয়।",a:false,e:"ভুল। <b>On-demand self-service</b> = তুমি নিজেই console/API দিয়ে resources নাও।"},
+{s:"IaaS model এ AWS OS patching করে।",a:false,e:"ভুল। EC2 (IaaS) তে <b>customer</b> OS patch করে।"},
+{s:"Hybrid Cloud = Public + Private cloud এর সমন্বয়।",a:true,e:"সঠিক! <b>Hybrid Cloud</b> = Public + Private।"},
+{s:"AWS Well-Architected Framework এ 5টি pillars আছে।",a:false,e:"ভুল। <b>6টি pillars</b>।"},
+{s:"Cloud এ 'Measured service' মানে তুমি যতটুকু use করো ততটুকুই pay করো।",a:true,e:"সঠিক! Pay-as-you-go = Measured service।"},
+{s:"SaaS model এ customer সবচেয়ে বেশি control পায়।",a:false,e:"ভুল। <b>IaaS</b> তে সবচেয়ে বেশি control। SaaS তে সবচেয়ে কম।"},
+{s:"Physical data center security সম্পূর্ণরূপে AWS এর দায়িত্ব।",a:true,e:"সঠিক! Security OF the cloud = AWS।"},
+{s:"'Trade fixed for variable expense' মানে server আগে কিনতে হবে।",a:false,e:"ভুল। মানে server <b>কিনতে হবে না</b> — use করলে pay।"},
+],
+s2:[
+{s:"প্রতিটি AWS Region এ minimum 2টি AZ থাকে।",a:false,e:"ভুল। Minimum <b>3টি AZ</b>।"},
+{s:"Edge Locations Availability Zones এর অংশ।",a:false,e:"ভুল। Edge Locations <b>AZ এর বাইরে</b> — CDN cache।"},
+{s:"AWS Outposts তোমার নিজের data center এ AWS infrastructure স্থাপন করে।",a:true,e:"সঠিক! <b>Outposts</b> = AWS hardware on-premises।"},
+{s:"একটি EC2 instance automatically সব AZs এ replicate হয়।",a:false,e:"ভুল। EC2 instance একটি নির্দিষ্ট <b>AZ</b> এ।"},
+{s:"CloudFront Edge Locations শুধু USA তে আছে।",a:false,e:"ভুল। CloudFront <b>৬০০+ Edge Locations</b> বিশ্বজুড়ে।"},
+{s:"Region selection এ সবচেয়ে গুরুত্বপূর্ণ factor হলো Compliance।",a:true,e:"সঠিক! GDPR, data residency laws = সবচেয়ে important।"},
+],
+s3:[
+{s:"Spot Instances সবচেয়ে সস্তা কিন্তু AWS যেকোনো সময় terminate করতে পারে।",a:true,e:"সঠিক! <b>Spot</b> = ৯০% সস্তা। Fault-tolerant workloads।"},
+{s:"Lambda function সর্বোচ্চ ১ ঘণ্টা চলতে পারে।",a:false,e:"ভুল। Lambda max timeout = <b>15 minutes</b>।"},
+{s:"Elastic Beanstalk ব্যবহার করলে underlying EC2 manage করতে হয় না।",a:true,e:"সঠিক! <b>Elastic Beanstalk</b> = PaaS। AWS সব manage।"},
+{s:"Reserved Instances সবচেয়ে flexible EC2 pricing option।",a:false,e:"ভুল। সবচেয়ে flexible = <b>On-Demand</b> (no commitment)।"},
+{s:"Fargate = EC2 cluster manage করতে হয় না।",a:true,e:"সঠিক! <b>Fargate</b> = serverless containers।"},
+{s:"Dedicated Hosts সবচেয়ে সস্তা EC2 option।",a:false,e:"ভুল। Dedicated Hosts <b>সবচেয়ে দামী</b>।"},
+{s:"Auto Scaling শুধু EC2 instances বাড়াতে পারে, কমাতে পারে না।",a:false,e:"ভুল। Auto Scaling <b>উভয় দিকেই</b> scale করে।"},
+{s:"Amazon SQS এবং SNS একই কাজ করে।",a:false,e:"ভুল। <b>SQS</b> = queue (pull model, point-to-point)। <b>SNS</b> = pub/sub (push, broadcast)। SQS messages wait করে, SNS সাথে সাথে সব subscribers কে push করে।"},
+{s:"AWS CloudFormation Infrastructure as Code (IaC) service।",a:true,e:"সঠিক! Template দিয়ে পুরো infrastructure automate করা যায়।"},
+{s:"Amazon SNS শুধু email notifications পাঠাতে পারে।",a:false,e:"ভুল। SNS = email, SMS, Lambda, SQS, HTTP endpoint — অনেক subscriber type।"},
+],
+s4:[
+{s:"S3 তে single object এর maximum size 5GB।",a:false,e:"ভুল। S3 max = <b>5 TB</b>।"},
+{s:"EFS multiple EC2 instances simultaneously access করতে পারে।",a:true,e:"সঠিক! <b>EFS</b> = shared NFS। Multiple Linux EC2।"},
+{s:"Glacier Deep Archive সবচেয়ে সস্তা কিন্তু retrieval time 12 ঘণ্টা পর্যন্ত।",a:true,e:"সঠিক! সবচেয়ে সস্তা archive।"},
+{s:"EBS volume একসাথে multiple EC2 instances ব্যবহার করতে পারে।",a:false,e:"ভুল — সাধারণত। Standard EBS = <b>one EC2 at a time</b>। Exception: io1/io2 volume এ <b>Multi-Attach</b> feature আছে, কিন্তু exam এ default answer হলো 'one EC2 at a time'।"},
+{s:"S3 Intelligent-Tiering automatically objects কে cheaper tiers এ move করে।",a:true,e:"সঠিক! Access patterns monitor করে auto move।"},
+{s:"Instance Store data EC2 stop করলেও থাকে।",a:false,e:"ভুল। Instance Store = <b>temporary</b>। Stop করলে data হারায়।"},
+{s:"Snow family internet ছাড়া physical device দিয়ে data migrate করে।",a:true,e:"সঠিক! Offline physical device। Petabytes।"},
+],
+s5:[
+{s:"Security Group stateful — inbound allow করলে outbound automatically allowed।",a:true,e:"সঠিক! <b>Stateful</b> = return traffic auto allowed।"},
+{s:"NACL শুধু allow rules support করে।",a:false,e:"ভুল। NACL = <b>allow ও deny</b> উভয়।"},
+{s:"NAT Gateway private subnets কে internet থেকে inbound traffic allow করে।",a:false,e:"ভুল। NAT Gateway শুধু <b>outbound</b>। Inbound blocked।"},
+{s:"VPC Peering transitive — A↔B, B↔C হলে A↔C automatically।",a:false,e:"ভুল। VPC Peering <b>non-transitive</b>।"},
+{s:"Direct Connect internet ব্যবহার করে না।",a:true,e:"সঠিক! Dedicated private fiber। Public internet bypass।"},
+{s:"CloudFront শুধু static content cache করতে পারে।",a:false,e:"ভুল। CloudFront static AND dynamic content handle করে।"},
+{s:"Route 53 এ latency-based routing user কে closest latency region এ route করে।",a:true,e:"সঠিক! Lowest latency region।"},
+],
+s6:[
+{s:"AWS Shield Standard free এবং automatically সব accounts এ active।",a:true,e:"সঠিক! Standard = free, automatic DDoS protection।"},
+{s:"IAM Role permanent credentials provide করে।",a:false,e:"ভুল। IAM Role = <b>temporary credentials</b>।"},
+{s:"CloudTrail সব AWS API calls record করে।",a:true,e:"সঠিক! Who, what, when, where। Note: Default এ Management Events record হয়। S3 object-level এর মতো Data Events আলাদাভাবে enable করতে হয়।"},
+{s:"GuardDuty ব্যবহার করতে EC2 তে agent install করতে হয়।",a:false,e:"ভুল। GuardDuty <b>agentless</b>।"},
+{s:"KMS শুধু S3 encryption support করে।",a:false,e:"ভুল। KMS = S3, RDS, EBS, Lambda সহ অনেক।"},
+{s:"Root account কে daily operations এর জন্য ব্যবহার করা উচিত।",a:false,e:"ভুল। Root = MFA enable, daily use avoid।"},
+{s:"CloudWatch metrics দেখে কে API call করেছে জানা যায়।",a:false,e:"ভুল। API calls দেখতে <b>CloudTrail</b>।"},
+{s:"Amazon Macie ML দিয়ে S3 তে sensitive data খোঁজে।",a:true,e:"সঠিক! PII, credit cards, passport data detect।"},
+{s:"AWS Security Hub নিজেই threats detect করে।",a:false,e:"ভুল। Security Hub নিজে detect করে না। GuardDuty, Inspector, Macie এর findings aggregate করে এক জায়গায় দেখায়।"},
+{s:"AWS Systems Manager Parameter Store বিনামূল্যে secrets store করতে পারে।",a:true,e:"সঠিক! Standard Parameter Store = free। Secrets Manager = paid (auto-rotation সহ)।"},
+{s:"Amazon Cognito User Pools এবং Identity Pools একই জিনিস।",a:false,e:"ভুল। User Pools = authentication (sign-up/in)। Identity Pools = AWS resources access (authorization)।"},
+],
+s7:[
+{s:"AWS Basic Support plan এ 24/7 phone support পাওয়া যায়।",a:false,e:"ভুল। Basic = documents only।"},
+{s:"Consolidated Billing এ সব accounts usage combine হয়ে volume discounts পাওয়া যায়।",a:true,e:"সঠিক! Combined usage → higher tier discounts।"},
+{s:"AWS Pricing Calculator deploy করার পরে actual cost দেখায়।",a:false,e:"ভুল। Pricing Calculator = <b>pre-deployment estimate</b>।"},
+{s:"Trusted Advisor 5টি category তে recommendations দেয়।",a:true,e:"সঠিক! Cost, Performance, Security, Fault Tolerance, Service Limits।"},
+{s:"Enterprise Support plan এ dedicated TAM পাওয়া যায়।",a:true,e:"সঠিক! Enterprise = dedicated TAM। On-Ramp = pool।"},
+{s:"AWS data transfer inbound (internet → AWS) charge হয়।",a:false,e:"ভুল। Inbound সাধারণত free। <b>Outbound</b> charge।"},
+{s:"Free Tier সব AWS accounts এ সবসময় available।",a:false,e:"ভুল — সম্পূর্ণ সত্য নয়। Free Tier ৩ ধরনের: (1) <b>12-Month Free</b> (new account এ), (2) <b>Always Free</b> (Lambda 1M req/month, DynamoDB 25GB — সবসময়), (3) <b>Trials</b>। Statement টি false কারণ 12-month tier শেষ হয়।"},
+],
+s8:[
+{s:"RDS Multi-AZ Standby replica থেকে read queries serve করা যায়।",a:false,e:"ভুল। Multi-AZ standby = HA only। Reads = <b>Read Replica</b>।"},
+{s:"DynamoDB কোনো schema define করতে হয় না।",a:true,e:"সঠিক! DynamoDB = flexible/schemaless NoSQL।"},
+{s:"Amazon Redshift OLTP (transactional) workloads এর জন্য best।",a:false,e:"ভুল। Redshift = <b>OLAP</b> (analytical)।"},
+{s:"ElastiCache primary database হিসেবে ব্যবহার করা উচিত।",a:false,e:"ভুল। ElastiCache = cache layer। Primary DB = RDS, DynamoDB।"},
+{s:"Amazon Aurora MySQL এর চেয়ে ৫ গুণ পর্যন্ত faster।",a:true,e:"সঠিক! Aurora = MySQL compatible, ৫x performance।"},
+{s:"AWS DMS source database migration চলাকালীন বন্ধ রাখে।",a:false,e:"ভুল। DMS = <b>minimal downtime</b>। Source চলতে থাকে।"},
+{s:"Amazon Athena ব্যবহার করতে database setup করতে হয়।",a:false,e:"ভুল। Athena = <b>serverless</b>। S3 এ SQL, no setup।"},
+],
+};
+
+const MATCH={
+s1:{title:"Service Models — Match করো",pairs:[
+{l:"EC2",r:"IaaS — OS তুমি manage করো"},{l:"Elastic Beanstalk",r:"PaaS — শুধু code দাও"},
+{l:"Gmail",r:"SaaS — সব AWS manage"},{l:"Lambda",r:"Serverless — per execution pay"},
+]},
+s3:{title:"EC2 Pricing — Use case match করো",pairs:[
+{l:"On-Demand",r:"Dev/Test, no commitment"},{l:"Reserved 3yr",r:"24/7 steady, max savings"},
+{l:"Spot Instance",r:"Batch, fault-tolerant, 90% off"},{l:"Dedicated Host",r:"Software licensing compliance"},
+{l:"Savings Plans",r:"Flexible, commit hourly spend"},
+]},
+s4:{title:"Storage Services — Match করো",pairs:[
+{l:"S3",r:"Object storage, internet accessible"},{l:"EBS",r:"EC2 block storage, one instance"},
+{l:"EFS",r:"Shared NFS, multiple Linux EC2"},{l:"Glacier Deep Archive",r:"৭+ years compliance, cheapest"},
+{l:"Snowball",r:"Physical offline data migration"},
+{l:"DataSync",r:"Online automated data transfer to S3/EFS"},
+]},
+s5:{title:"Networking — Match করো",pairs:[
+{l:"Security Group",r:"Stateful, instance-level firewall"},{l:"NACL",r:"Stateless, subnet-level, allow+deny"},
+{l:"Internet Gateway",r:"VPC ↔ Public internet"},{l:"NAT Gateway",r:"Private → internet, blocks inbound"},
+{l:"Direct Connect",r:"Dedicated fiber, no internet"},
+]},
+s6:{title:"Security Services — Match করো",pairs:[
+{l:"GuardDuty",r:"ML threat detection, no agents"},{l:"Inspector",r:"Software vulnerability scanner"},
+{l:"Macie",r:"S3 sensitive data (PII) finder"},{l:"CloudTrail",r:"API call audit log"},
+{l:"CloudWatch",r:"Performance metrics & alarms"},{l:"KMS",r:"Encryption key management"},
+{l:"Security Hub",r:"Aggregates all security findings"},
+{l:"Systems Manager",r:"Patch, Parameter Store, Session Manager"},
+]},
+s7:{title:"Billing Tools — Match করো",pairs:[
+{l:"Cost Explorer",r:"Past/present/forecast visualize"},{l:"Budgets",r:"Set threshold, get alerts"},
+{l:"Pricing Calculator",r:"Estimate before deploy"},{l:"CUR",r:"Most detailed billing data"},
+{l:"Trusted Advisor",r:"5-category recommendations"},
+{l:"TCO Calculator",r:"On-premises vs cloud cost compare"},
+{l:"Compute Optimizer",r:"ML rightsizing recommendations"},
+]},
+s8:{title:"Database Services — Match করো",pairs:[
+{l:"RDS",r:"Managed relational SQL"},{l:"DynamoDB",r:"Serverless NoSQL key-value"},
+{l:"Redshift",r:"Data warehouse, OLAP analytics"},{l:"ElastiCache",r:"In-memory cache (Redis)"},
+{l:"Neptune",r:"Graph database"},{l:"Athena",r:"Serverless SQL on S3"},
+]},
+};
+
+const ORDER={
+s1:[{q:"Well-Architected Framework 6 Pillars — AWS Official Document অনুযায়ী সঠিক order এ সাজাও:",items:["Operational Excellence","Security","Reliability","Performance Efficiency","Cost Optimization","Sustainability"],correct:[0,1,2,3,4,5],e:"AWS official documentation এ এই order: <b>OE → Security → Reliability → Performance → Cost → Sustainability</b>। সব pillars equally important — কিন্তু exam এ এই order মনে থাকলে সুবিধা।"}],
+s2:[
+{q:"AWS Infrastructure Hierarchy — সবচেয়ে বড় থেকে ছোট সাজাও:",items:["Region","Availability Zone","Data Center"],correct:[0,1,2],e:"<b>Region → AZ → Data Center</b>।"},
+{q:"Region Choose করার কারণ — সবচেয়ে important থেকে কম:",items:["Compliance / Legal","Latency","Pricing","Service Availability"],correct:[0,1,2,3],e:"<b>Compliance সবচেয়ে important</b>।"},
+],
+s3:[{q:"EC2 Pricing — সবচেয়ে সস্তা থেকে দামী সাজাও:",items:["Spot Instance","Reserved (3yr All Upfront)","Savings Plans","On-Demand","Dedicated Host"],correct:[0,1,2,3,4],e:"<b>Spot (৯০% off) → Reserved 3yr (৭২% off) → Savings Plans (৬৬% off) → On-Demand (no discount) → Dedicated Host (সবচেয়ে দামী)</b>। % off বেশি = price কম।"}],
+s4:[{q:"S3 Storage Classes — সবচেয়ে দামী থেকে সস্তা সাজাও:",items:["S3 Standard","Standard-IA","One Zone-IA","Glacier Instant","Glacier Deep Archive"],correct:[0,1,2,3,4],e:"<b>Standard → Standard-IA → One Zone-IA → Glacier Instant → Deep Archive</b>।"}],
+s7:[{q:"AWS Support Plans — সবচেয়ে সস্তা থেকে দামী সাজাও:",items:["Basic (Free)","Developer ($29+)","Business ($100+)","Enterprise On-Ramp ($5,500+)","Enterprise ($15,000+)"],correct:[0,1,2,3,4],e:"<b>5টি plan</b>। Basic free → Developer → Business → Enterprise On-Ramp → Enterprise।"}],
+s8:[{q:"Database Tiers — Use Case অনুযায়ী সঠিক order এ সাজাও (Cache → NoSQL → SQL → Warehouse):",items:["ElastiCache (In-memory, μs latency)","DynamoDB (Serverless NoSQL)","Aurora / RDS (Relational SQL)","Redshift (Data Warehouse OLAP)"],correct:[0,1,2,3],e:"<b>Cache → NoSQL → SQL → Warehouse</b>: <b>ElastiCache</b>(sub-ms, pure cache) → <b>DynamoDB</b>(serverless NoSQL, ms) → <b>RDS/Aurora</b>(structured relational) → <b>Redshift</b>(petabyte OLAP analytics)। এই order টি use case ও query complexity অনুযায়ী।"}],
+};
+
+const FIB={
+s1:[
+{q:"NIST Cloud Computing এ _____ টি essential characteristics আছে।",a:"5",alt:["five"],e:"5 characteristics: On-demand, Broad network, Resource pooling, Rapid elasticity, Measured service।"},
+{q:"AWS Well-Architected Framework এ _____ টি pillars আছে।",a:"6",alt:["six"],e:"6 pillars: OE, Security, Reliability, Performance, Cost Opt, Sustainability।"},
+{q:"Shared Responsibility Model এ physical DC security হলো _____ এর দায়িত্ব।",a:"AWS",alt:[],e:"Security OF the cloud = AWS।"},
+{q:"IaaS, PaaS, SaaS এর মধ্যে সবচেয়ে বেশি customer control দেয় _____।",a:"IaaS",alt:[],e:"IaaS = OS থেকে application সব customer।"},
+{q:"AWS CAF এ _____ টি Perspectives আছে।",a:"6",alt:["six","ছয়"],e:"Business, People, Governance + Platform, Security, Operations = 6 Perspectives।"},
+{q:"AWS Cloud Adoption Framework এর সংক্ষিপ্ত নাম হলো AWS _____।",a:"CAF",alt:["caf"],e:"Cloud Adoption Framework = CAF। Migration planning framework।"},
+],
+s2:[
+{q:"AWS Region এ minimum _____ টি AZ থাকে।",a:"3",alt:["three"],e:"Minimum 3 AZs per Region।"},
+{q:"CloudFront এর _____ টিরও বেশি Points of Presence (Edge Locations) আছে বিশ্বজুড়ে।",a:"600",alt:["৬০০"],e:"600+ Points of Presence (Edge Locations + Regional Edge Caches) বিশ্বজুড়ে।"},
+],
+s4:[
+{q:"S3 এর durability হলো _____ nines (99.999999999%)।",a:"11",alt:["eleven"],e:"11 nines durability।"},
+{q:"S3 single object এর maximum size হলো _____ TB।",a:"5",alt:["five"],e:"5 TB max।"},
+{q:"EFS শুধু _____ operating system এ কাজ করে।",a:"Linux",alt:[],e:"EFS = NFS protocol। Linux only।"},
+{q:"Amazon _____ একটি message queue service যা services কে decouple করে।",a:"SQS",alt:["sqs"],e:"SQS = Simple Queue Service। Decoupled architecture।"},
+{q:"AWS CloudFormation YAML/JSON _____ দিয়ে infrastructure create করে।",a:"Template",alt:["template"],e:"Template → Stack → AWS Resources।"},
+],
+s6:[
+{q:"EC2 → S3 access দেওয়ার সবচেয়ে secure পদ্ধতি হলো IAM _____।",a:"Role",alt:[],e:"IAM Role = temporary credentials।"},
+{q:"AWS _____ সব API calls record করে audit এর জন্য।",a:"CloudTrail",alt:[],e:"CloudTrail = who did what, when, where।"},
+{q:"Root account secure রাখতে প্রথম কাজ হলো _____ enable করা।",a:"MFA",alt:[],e:"MFA = Multi-Factor Authentication।"},
+{q:"DDoS attacks থেকে protect করে AWS _____।",a:"Shield",alt:[],e:"AWS Shield Standard = free, automatic।"},
+{q:"Security findings কে centrally aggregate করে AWS _____ Hub।",a:"Security",alt:["security"],e:"AWS Security Hub = GuardDuty, Inspector, Macie এর findings একত্রিত।"},
+{q:"EC2 তে SSH ছাড়া access করতে AWS Systems Manager এর _____ Manager ব্যবহার করো।",a:"Session",alt:["session"],e:"SSM Session Manager = browser-based shell access। SSH key দরকার নেই।"},
+],
+s7:[
+{q:"AWS _____ দিয়ে deploy করার আগে cost estimate করা যায়।",a:"Pricing Calculator",alt:["pricing calculator"],e:"Pricing Calculator = pre-deployment estimate।"},
+{q:"Trusted Advisor _____ টি category তে recommendations দেয়।",a:"5",alt:["five"],e:"Cost, Performance, Security, Fault Tolerance, Service Limits।"},
+{q:"Enterprise Support plan এ critical response time হলো _____ minutes।",a:"15",alt:["fifteen"],e:"Enterprise = 15 min। On-Ramp = 30 min।"},
+],
+};
+
+const FLASH={
+s1:[
+{f:"On-demand self-service",b:"কাউকে না জানিয়ে নিজেই resources নাও।"},
+{f:"IaaS",b:"Infrastructure as a Service। EC2। OS তুমি manage।"},
+{f:"PaaS",b:"Platform as a Service। Elastic Beanstalk। Code দাও, বাকি AWS।"},
+{f:"SaaS",b:"Software as a Service। Gmail, Office 365। সব AWS।"},
+{f:"Shared Responsibility",b:"Security OF cloud = AWS। Security IN cloud = তুমি।"},
+{f:"Rapid Elasticity",b:"Instantly scale up/down। NIST characteristic।"},
+{f:"6 Cloud Advantages",b:"Trade CapEx→VarEx, Economies of scale, Stop guessing, Speed, Stop DC spending, Go global।"},
+{f:"Well-Architected 6 Pillars",b:"OE, Security, Reliability, Performance, Cost Optimization, Sustainability।"},
+{f:"AWS CAF",b:"Cloud Adoption Framework। 6 Perspectives: Business, People, Governance + Platform, Security, Operations।"},
+{f:"Well-Architected Tool",b:"Free AWS service। Framework দিয়ে architecture review করে। Console এ available।"},
+],
+s2:[
+{f:"Region",b:"Geographic area। ৩৪+ Regions। Data stays here। Choose: Compliance > Latency > Price।"},
+{f:"Availability Zone",b:"Region এর ভেতরে physically separate DC cluster। Min 3 per Region।"},
+{f:"Edge Location",b:"CloudFront CDN cache। ৬০০+। AZ এর বাইরে।"},
+{f:"AWS Outposts",b:"AWS hardware তোমার DC তে। Hybrid cloud।"},
+{f:"Local Zone",b:"City তে ultra-low latency। Gaming, video streaming।"},
+{f:"AWS Artifact",b:"Compliance reports (SOC, ISO, PCI) download portal।"},
+],
+s3:[
+{f:"On-Demand EC2",b:"No commitment। Per hour/second। Dev/Test। Most flexible।"},
+{f:"Reserved Instance",b:"1-3 year। ৭২% savings। 24/7 steady workload।"},
+{f:"Spot Instance",b:"৯০% off। Interruptible। Batch, fault-tolerant only।"},
+{f:"Dedicated Host",b:"Entire physical server। Software licensing compliance। Most expensive।"},
+{f:"Lambda",b:"Serverless FaaS। Max 15 min। Per execution pay।"},
+{f:"Fargate",b:"Serverless containers। No EC2 management।"},
+{f:"6 Rs Migration",b:"Rehost, Replatform, Refactor, Repurchase, Retire, Retain (+ Relocate = 7th)।"},
+{f:"Amazon SQS",b:"Simple Queue Service। Message queue। Decoupled architecture। Messages lost হয় না।"},
+{f:"Amazon SNS",b:"Simple Notification Service। Pub/Sub। One publish → all subscribers। Email, SMS, Lambda।"},
+{f:"AWS CloudFormation",b:"Infrastructure as Code। YAML/JSON template → Stack → Resources। Repeatable।"},
+],
+s4:[
+{f:"S3 Standard",b:"Frequently accessed। $$$$। 11 nines durability। Instant access।"},
+{f:"Glacier Deep Archive",b:"Cheapest। 12hr retrieval। 7+ year compliance।"},
+{f:"EBS",b:"EC2 block storage। Persistent। One EC2 at a time।"},
+{f:"EFS",b:"Shared NFS। Multiple Linux EC2 simultaneously।"},
+{f:"S3 Lifecycle Policy",b:"Auto-move objects to cheaper tiers based on age।"},
+{f:"Snowball",b:"Physical device। Offline petabyte migration।"},
+],
+s5:[
+{f:"Security Group",b:"Instance-level firewall। Stateful। Allow rules only।"},
+{f:"NACL",b:"Subnet-level firewall। Stateless। Allow + Deny।"},
+{f:"Internet Gateway",b:"VPC ↔ Public Internet।"},
+{f:"NAT Gateway",b:"Private → Internet (outbound only)। Blocks inbound।"},
+{f:"Direct Connect",b:"Dedicated fiber to AWS। No public internet।"},
+{f:"Transit Gateway",b:"Hub for multiple VPCs + on-premises।"},
+{f:"CloudFront",b:"CDN via Edge Locations। Static & dynamic content।"},
+],
+s6:[
+{f:"GuardDuty",b:"ML threat detection। No agents। CloudTrail/Flow Logs/DNS analyze।"},
+{f:"Inspector",b:"Software vulnerability scanner। EC2 & Lambda।"},
+{f:"Macie",b:"S3 sensitive data (PII, credit cards) finder।"},
+{f:"CloudTrail",b:"API call audit log। Who, what, when, where।"},
+{f:"CloudWatch",b:"Metrics, alarms, logs, dashboards। Performance monitoring।"},
+{f:"KMS",b:"Encryption key management।"},
+{f:"Shield",b:"DDoS protection। Standard=free। Advanced=paid।"},
+{f:"IAM Role",b:"Temporary credentials। AWS service-to-service access।"},
+{f:"Least Privilege",b:"Give ONLY minimum permissions needed।"},
+{f:"Security Hub",b:"Central security dashboard। GuardDuty+Inspector+Macie findings aggregate। Single pane।"},
+{f:"Systems Manager (SSM)",b:"EC2 management। Parameter Store (configs), Session Manager (SSH-less), Patch Manager।"},
+{f:"Certificate Manager (ACM)",b:"Free SSL/TLS certificates। CloudFront+ALB তে attach। Auto-renewal।"},
+{f:"Amazon Cognito",b:"App-level auth। User Pools (sign-up/in) + Identity Pools (AWS access)।"},
+],
+s7:[
+{f:"AWS Support Plans",b:"Basic(free)→Developer($29+)→Business($100+)→Enterprise On-Ramp($5,500+)→Enterprise($15,000+)।"},
+{f:"Enterprise TAM",b:"Enterprise = Dedicated TAM। Enterprise On-Ramp = Pool of TAMs। Exam এ key difference!"},
+{f:"Business Response Time",b:"Critical = 1hr। Impaired production = 4hr। 24/7 phone/chat। সব TA checks।"},
+{f:"Enterprise Response Time",b:"Business critical = 15min। On-Ramp = 30min।"},
+{f:"Cost Explorer",b:"Past/present/forecasted costs visualize। Service breakdown। Anomaly detection।"},
+{f:"AWS Budgets",b:"Budget set করো। Threshold এ email/SNS alert। Proactive।"},
+{f:"Pricing Calculator",b:"Deploy করার আগে estimated cost। Architecture plan করো।"},
+{f:"TCO Calculator",b:"On-premises vs AWS cost compare। Migration justify।"},
+{f:"Trusted Advisor",b:"5 categories: Cost Optimization, Performance, Security, Fault Tolerance, Service Limits।"},
+{f:"AWS Organizations SCP",b:"Service Control Policies। Accounts/OUs এ guardrails। Management account থেকে।"},
+{f:"CUR",b:"Cost and Usage Report। Most granular billing data। Hourly। S3 এ deliver।"},
+{f:"Compute Optimizer",b:"ML-based rightsizing। Over-provisioned EC2/Lambda/EBS খুঁজে।"},
+{f:"DataSync",b:"Online automated data transfer। On-premises → S3/EFS। Network দিয়ে।"},
+],
+s8:[
+{f:"RDS Multi-AZ",b:"HIGH AVAILABILITY। Standby আলাদা AZ। Auto failover। Cannot read from standby।"},
+{f:"Read Replica",b:"READ SCALABILITY। Async copy। Serve reads। No auto failover।"},
+{f:"DynamoDB",b:"Serverless NoSQL key-value। Flexible schema। Massive scale। ms latency।"},
+{f:"Aurora",b:"MySQL/PostgreSQL compatible। ৫x faster। 128TB auto scale।"},
+{f:"Redshift",b:"Data warehouse। OLAP। Petabyte analytics।"},
+{f:"ElastiCache",b:"In-memory cache। Redis/Memcached।"},
+{f:"Neptune",b:"Graph database। Social networks, fraud detection।"},
+{f:"Athena",b:"Serverless SQL on S3। No setup। Pay per scan।"},
+],
+};
+
+const CASES={
+s2:[
+{sc:"<strong>FinTech company</strong> European Union এ operations চালু করতে চায়। GDPR মানতে হবে — user data EU তে থাকতে হবে।",q:"AWS Region choose করার সময় সবচেয়ে গুরুত্বপূর্ণ factor?",o:["Lowest cost region","Closest to HQ","EU-based region for GDPR compliance","Region with most services"],a:2,e:"<b>Compliance</b> সবচেয়ে important। GDPR = EU তে data রাখতে হবে। eu-west-1 (Ireland) বা eu-central-1 (Frankfurt)।"},
+{sc:"<strong>Gaming company</strong> South Asia তে players আছে। Game server US এ। Players lag complain করছে।",q:"Latency কমাতে সবচেয়ে ভালো সমাধান?",o:["Upgrade internet","Deploy to ap-south-1 (Mumbai) Region","Use Basic Support","Add more RAM to server"],a:1,e:"<b>Closest Region</b> = ap-south-1 Mumbai। South Asian users এর কাছে। Latency dramatically কমবে।"},
+{sc:"<strong>Media company</strong> এর app একটি AZ তে deploy করা আছে। সেই AZ flood এ down হয়ে গেল।",q:"ভবিষ্যতে এই সমস্যা এড়াতে কী করতে হবে?",o:["Use larger EC2","Deploy across multiple AZs in same Region","Move to different Region only","Use more storage"],a:1,e:"<b>Multiple AZs</b> = High Availability। একটি AZ fail হলে অন্য AZ তে auto failover।"},
+],
+s3:[
+{sc:"<strong>Company X</strong> প্রতি রাত ৩টায় ৬ ঘণ্টার data processing job চালায়। Interrupt হলে restart করা যায়।",q:"কোন EC2 pricing সবচেয়ে উপযুক্ত?",o:["On-Demand","Reserved 1-year","Spot Instance","Dedicated Host"],a:2,e:"<b>Spot Instance</b> — overnight batch, fault-tolerant। ৯০% savings!"},
+{sc:"<strong>FinTech startup</strong> এর production database ২৪/৭। আগামী ৩ বছর predictable traffic। Cost optimize।",q:"কোন EC2 pricing strategy?",o:["On-Demand","Spot Instance","3-year Reserved All Upfront","Savings Plans"],a:2,e:"<b>3-year Reserved All Upfront</b> = ৭২% savings।"},
+],
+s4:[
+{sc:"<strong>E-commerce company</strong> প্রতিদিন হাজারো product images upload করে। Images frequently access হয়। Cost optimize করতে চায়।",q:"কোন S3 storage strategy সবচেয়ে উপযুক্ত?",o:["All in Glacier Deep Archive","S3 Standard for frequent, Lifecycle Policy to IA after 30 days","All in S3 Standard","One Zone-IA only"],a:1,e:"<b>S3 Lifecycle Policy</b>: Frequently accessed → Standard। ৩০ দিন পরে → Standard-IA। Cost optimize।"},
+{sc:"<strong>Healthcare company</strong> regulatory compliance এর জন্য ১০ বছরের patient records রাখতে হবে। Rarely access হবে।",q:"সবচেয়ে cost-effective solution?",o:["S3 Standard","EBS volumes","S3 Glacier Deep Archive","FSx for Windows"],a:2,e:"<b>Glacier Deep Archive</b> = সবচেয়ে সস্তা। Long-term compliance archive। 12hr retrieval acceptable।"},
+{sc:"<strong>Media company</strong> এর multiple Linux video editing servers একই project files share করতে চায়।",q:"কোন storage solution?",o:["EBS volumes on each server","Amazon S3","Amazon EFS","Instance Store"],a:2,e:"<b>EFS</b> = shared NFS। Multiple Linux EC2 simultaneously same files access করতে পারে।"},
+],
+s5:[
+{sc:"<strong>Healthcare company</strong> তাদের on-premises medical records AWS এ connect করতে চায়। Data কখনো public internet দিয়ে যাবে না।",q:"কোন AWS service?",o:["Site-to-Site VPN","AWS Direct Connect","Internet Gateway","VPC Peering"],a:1,e:"<b>Direct Connect</b> = dedicated private fiber। Healthcare compliance।"},
+{sc:"<strong>Media company</strong> video content globally low latency তে serve করতে চায়। Tokyo, London, Brazil।",q:"কোন AWS service?",o:["Multiple EC2 each region","Amazon CloudFront","S3 only","Route 53 only"],a:1,e:"<b>CloudFront</b> = ৬০০+ Edge Locations। Global CDN।"},
+],
+s6:[
+{sc:"<strong>Bank এর security team</strong> জানতে চায় — কেউ unauthorized ভাবে S3 access করেছে কি? Last week এর audit।",q:"কোন AWS service?",o:["GuardDuty","CloudTrail","Inspector","Config"],a:1,e:"<b>CloudTrail</b> = API log। S3 access কে করেছে, কখন, কোন IP।"},
+{sc:"<strong>E-commerce company</strong> এর EC2 তে software vulnerabilities পাওয়া গেছে। Automatically scan চাই।",q:"কোন service?",o:["GuardDuty","Macie","Amazon Inspector","CloudWatch"],a:2,e:"<b>Inspector</b> = software vulnerability scanner। EC2 ও Lambda।"},
+{sc:"<strong>Company</strong> S3 bucket এ customer credit card numbers আছে কিনা check করতে চায়।",q:"কোন service?",o:["GuardDuty","Inspector","Macie","Config"],a:2,e:"<b>Macie</b> = S3 PII ও credit cards ML দিয়ে detect।"},
+],
+s8:[
+{sc:"<strong>Social media</strong> user profiles DB। Read heavy — লক্ষ users same profiles বারবার পড়ছে। DB overloaded।",q:"সবচেয়ে ভালো solution?",o:["Larger RDS","Add ElastiCache in front of RDS","Switch to DynamoDB","More Read Replicas"],a:1,e:"<b>ElastiCache</b> = same data cache করো। Memory থেকে serve।"},
+{sc:"<strong>Analytics company</strong> petabytes historical sales data analyze করতে চায়। Complex SQL, reports, BI।",q:"কোন AWS database?",o:["RDS MySQL","DynamoDB","Amazon Redshift","ElastiCache"],a:2,e:"<b>Redshift</b> = data warehouse, OLAP। Petabyte analytics।"},
+],
+};
+
+// ═══════════════════ STATE ═══════════════════════════════════════════════════
+let S;
+try{S=JSON.parse(localStorage.getItem('awsbnv4')||'{}');}catch(e){S={};}
+['sc','due','ch','iv'].forEach(k=>{if(!S[k])S[k]={};});
+function save(){try{localStorage.setItem('awsbnv4',JSON.stringify(S));}catch(e){}}
+
+// ═══════════════════ TOAST ═══════════════════════════════════════════════════
+let toastT;
+function toast(msg,ok){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast show '+(ok?'ok-t':'er-t');
+  clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ═══════════════════ HEADER STATS ════════════════════════════════════════════
+function updateHeader(){
+  let tot=0,cor=0;
+  Object.keys(Q).forEach(sid=>{
+    if(!S.sc[sid])return;
+    Object.values(S.sc[sid]).forEach(v=>{tot++;if(v===true)cor++;});
+  });
+  const wr=tot-cor,pct=tot?Math.round(cor/tot*100):0;
+  document.getElementById('hOk').textContent='✅ '+cor;
+  document.getElementById('hEr').textContent='❌ '+wr;
+  document.getElementById('hPct').textContent='📊 '+pct+'%';
+}
+
+// ═══════════════════ PROGRESS ════════════════════════════════════════════════
+function updateProg(sid){
+  const qs=Q[sid]||[];
+  if(!S.sc[sid])S.sc[sid]={};
+  let cor=0;
+  qs.forEach((_,i)=>{if(S.sc[sid][i]===true)cor++;});
+  const pct=qs.length?Math.round(cor/qs.length*100):0;
+  const fill=document.getElementById('pf-'+sid);
+  const txt=document.getElementById('pt-'+sid);
+  const np=document.getElementById('np-'+sid);
+  if(fill)fill.style.width=pct+'%';
+  if(txt)txt.textContent=cor+'/'+qs.length;
+  if(np)np.textContent=pct+'%';
+  updateHeader();
+}
+
+function updateAllProg(){
+  Object.keys(Q).forEach(sid=>updateProg(sid));
+}
+
+// ═══════════════════ RESET ═══════════════════════════════════════════════════
+function resetProgress(){
+  if(!confirm('সব progress reset করবে?'))return;
+  S={sc:{},due:{},ch:{},iv:{}};
+  save();
+  // Clear rendered flags
+  document.querySelectorAll('[data-rendered]').forEach(el=>delete el.dataset.rendered);
+  document.querySelectorAll('.qcard,.tf-card,.fib-card').forEach(el=>el.remove());
+  Object.keys(Q).forEach(sid=>{
+    const c=document.getElementById('qs-'+sid);
+    if(c){c.innerHTML='';delete c.dataset.rendered;}
+    ['tf','match','order','fib','flash','case'].forEach(t=>{
+      const el=document.getElementById('ex-'+sid+'-'+t);
+      if(el){el.innerHTML='';delete el.dataset.rendered;}
+    });
+  });
+  updateAllProg();
+  toast('🔄 Reset সম্পন্ন!',true);
+}
+
+// ═══════════════════ NAV ═════════════════════════════════════════════════════
+function goSection(sid,el){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('act'));
+  el.classList.add('act');
+  document.getElementById(sid).scrollIntoView({behavior:'smooth',block:'start'});
+  const L=document.getElementById('lesson-'+sid);
+  const E=document.getElementById('exercise-'+sid);
+  if(!L.classList.contains('open')&&!E.classList.contains('open'))showLesson(sid);
+}
+
+function toggleLesson(sid){
+  const L=document.getElementById('lesson-'+sid);
+  if(L.classList.contains('open')){L.classList.remove('open');setBtn(sid,null);}
+  else showLesson(sid);
+}
+function showLesson(sid){
+  document.getElementById('lesson-'+sid).classList.add('open');
+  document.getElementById('exercise-'+sid).classList.remove('open');
+  setBtn(sid,'lesson');
+  document.getElementById(sid).classList.remove('active-exercise');
+  document.getElementById(sid).classList.add('active-lesson');
+}
+function showExercise(sid){
+  document.getElementById('lesson-'+sid).classList.remove('open');
+  document.getElementById('exercise-'+sid).classList.add('open');
+  setBtn(sid,'exercise');
+  document.getElementById(sid).classList.remove('active-lesson');
+  document.getElementById(sid).classList.add('active-exercise');
+  renderQ(sid);
+  setTimeout(()=>document.getElementById('exercise-'+sid).scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+function setBtn(sid,m){
+  const lb=document.getElementById('lb-'+sid);
+  const eb=document.getElementById('eb-'+sid);
+  if(lb)lb.classList.toggle('active',m==='lesson');
+  if(eb)eb.classList.toggle('active',m==='exercise');
+}
+
+function switchTab(sid,type,el){
+  const wrap=el.closest('.ex-wrap');
+  wrap.querySelectorAll('.ex-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  wrap.querySelectorAll('.ex-panel').forEach(p=>p.classList.remove('open'));
+  const panel=document.getElementById('panel-'+sid+'-'+type);
+  if(panel)panel.classList.add('open');
+  const container=document.getElementById('ex-'+sid+'-'+type);
+  if(!container||container.dataset.rendered)return;
+  if(type==='mcq')renderQ(sid);
+  else if(type==='tf')renderTF(sid);
+  else if(type==='match')renderMatch(sid);
+  else if(type==='order')renderOrder(sid);
+  else if(type==='fib')renderFIB(sid);
+  else if(type==='flash')renderFlash(sid);
+  else if(type==='case')renderCase(sid);
+}
+
+// ═══════════════════ MCQ ════════════════════════════════════════════════════
+function renderQ(sid){
+  const container=document.getElementById('ex-'+sid+'-mcq')||document.getElementById('qs-'+sid);
+  if(!container||container.dataset.rendered)return;
+  container.dataset.rendered='1';
+  if(!S.sc[sid])S.sc[sid]={};
+  const qs=Q[sid];
+  let cor=0; qs.forEach((_,i)=>{if(S.sc[sid][i]===true)cor++;});
+  const pct=qs.length?Math.round(cor/qs.length*100):0;
+  let h=`<div class="ex-score"><div class="ex-score-top"><span style="font-family:'Hind Siliguri',sans-serif;color:var(--t2);font-size:.88rem">MCQ স্কোর</span><span style="font-weight:700;color:var(--gr)">${cor}/${qs.length} (${pct}%)</span></div><div class="score-bar"><div class="score-fill" style="width:${pct}%"></div></div></div>`;
+  qs.forEach((q,i)=>{
+    const key=sid+'_'+i; const isDue=!S.due[key]||Date.now()>=S.due[key];
+    h+=`<div class="qcard" id="qc-${sid}-${i}">
+<div class="qmeta"><span class="qnum">প্রশ্ন ${i+1}</span><span class="qtype">MCQ</span>${q.sc?'<span class="qscen">📌 Scenario</span>':''}${!isDue&&S.sc[sid][i]!==undefined?`<span class="qdue">🔁 ${new Date(S.due[key]).toLocaleDateString('bn-BD')} review</span>`:''}</div>
+<div class="qtxt">${q.q}</div>
+<div class="opts" id="opts-${sid}-${i}">${q.o.map((opt,oi)=>`<button class="opt" onclick="answer('${sid}',${i},${oi})" id="opt-${sid}-${i}-${oi}"><span class="olet">${String.fromCharCode(65+oi)}</span><span>${opt}</span></button>`).join('')}</div>
+<div class="fb" id="fb-${sid}-${i}"></div><div class="nxt-rev" id="nr-${sid}-${i}"></div>
+</div>`;
+  });
+  container.innerHTML=h;
+  qs.forEach((q,i)=>{if(S.sc[sid][i]!==undefined&&S.ch[sid+'_'+i]!==undefined)reveal(sid,i,S.ch[sid+'_'+i],q.a,q.e,false);});
+  updateProg(sid);
+}
+
+function answer(sid,qi,chosen){
+  if(S.sc[sid]&&S.sc[sid][qi]!==undefined)return;
+  const q=Q[sid][qi]; const ok=chosen===q.a;
+  if(!S.sc[sid])S.sc[sid]={};
+  S.sc[sid][qi]=ok; S.ch[sid+'_'+qi]=chosen;
+  const key=sid+'_'+qi;
+  const prev=S.iv[key]||1;
+  S.iv[key]=ok?Math.min(prev*2,90):1;
+  S.due[key]=Date.now()+(ok?S.iv[key]*86400000:600000);
+  save(); reveal(sid,qi,chosen,q.a,q.e,true); updateProg(sid);
+}
+
+function reveal(sid,qi,chosen,correct,exp,animate){
+  const btns=document.querySelectorAll(`#opts-${sid}-${qi} .opt`);
+  btns.forEach((b,oi)=>{
+    b.disabled=true;
+    if(oi===correct)b.classList.add('cor');
+    else if(oi===chosen&&chosen!==correct)b.classList.add('wr');
+    b.querySelector('.olet').textContent=oi===correct?'✓':(oi===chosen&&chosen!==correct?'✗':String.fromCharCode(65+oi));
+  });
+  const isOk=chosen===correct;
+  const fb=document.getElementById(`fb-${sid}-${qi}`);
+  if(fb){fb.className=`fb show ${isOk?'ok-fb':'er-fb'}`;fb.innerHTML=`<div class="fb-title">${isOk?'🎉 সঠিক উত্তর!':'❌ ভুল হয়েছে'}</div><div class="fb-exp">${exp}</div>`;}
+  const nr=document.getElementById(`nr-${sid}-${qi}`);
+  if(nr&&S.due[sid+'_'+qi])nr.textContent=`🕐 পরবর্তী review: ${isOk?new Date(S.due[sid+'_'+qi]).toLocaleDateString('bn-BD'):'১০ মিনিট পরে'}`;
+  if(animate){const card=document.getElementById(`qc-${sid}-${qi}`);if(card)card.classList.add(isOk?'ok':'er');toast(isOk?'🎉 সঠিক! চমৎকার!':'💡 Explanation পড়ো!',isOk);}
+}
+
+// ═══════════════════ TRUE/FALSE ══════════════════════════════════════════════
+function renderTF(sid){
+  const c=document.getElementById('ex-'+sid+'-tf');
+  if(!c||c.dataset.rendered)return; c.dataset.rendered='1';
+  const data=TF[sid];
+  if(!data||!data.length){c.innerHTML='<p style="color:var(--t2);font-family:Hind Siliguri">শীঘ্রই আসছে।</p>';return;}
+  c.innerHTML=data.map((item,i)=>`<div class="tf-card" id="tfc-${sid}-${i}">
+<div class="qmeta"><span class="qnum">TF ${i+1}</span><span class="qtype">True / False</span></div>
+<div class="tf-stmt">${item.s}</div>
+<div class="tf-btns">
+<button class="tf-btn true-btn" onclick="answerTF('${sid}',${i},true,this)">✅ সত্য (True)</button>
+<button class="tf-btn false-btn" onclick="answerTF('${sid}',${i},false,this)">❌ মিথ্যা (False)</button>
+</div>
+<div class="tf-fb" id="tffb-${sid}-${i}"></div>
+</div>`).join('');
+}
+function answerTF(sid,i,chosen,btn){
+  const card=document.getElementById(`tfc-${sid}-${i}`);
+  if(card.dataset.done)return; card.dataset.done='1';
+  const item=TF[sid][i]; const ok=chosen===item.a;
+  const tb=card.querySelector('.true-btn'); const fb=card.querySelector('.false-btn');
+  tb.disabled=true; fb.disabled=true;
+  (item.a===true?tb:fb).classList.add('cor-tf');
+  if(!ok)btn.classList.add('wr-tf');
+  const fbEl=document.getElementById(`tffb-${sid}-${i}`);
+  fbEl.className=`tf-fb show ${ok?'ok-tf':'er-tf'}`;
+  fbEl.innerHTML=`<b>${ok?'🎉 সঠিক!':'❌ ভুল।'}</b> ${item.e}`;
+  card.classList.add(ok?'ok':'er');
+  toast(ok?'🎉 সঠিক!':'💡 Explanation পড়ো!',ok);
+}
+
+// ═══════════════════ MATCHING ════════════════════════════════════════════════
+const matchSt={};
+function renderMatch(sid){
+  const c=document.getElementById('ex-'+sid+'-match');
+  if(!c||c.dataset.rendered)return; c.dataset.rendered='1';
+  const data=MATCH[sid];
+  if(!data){c.innerHTML='<p style="color:var(--t2)">শীঘ্রই আসছে।</p>';return;}
+  matchSt[sid]={sel:null,matched:[],score:0,total:data.pairs.length};
+  const shuffled=[...data.pairs].sort(()=>Math.random()-.5);
+  c.innerHTML=`<p style="font-family:'Hind Siliguri',sans-serif;color:var(--t2);font-size:.88rem;margin-bottom:12px">📌 ${data.title} — বাম থেকে select করো, তারপর ডান থেকে match করো।</p>
+<div class="match-grid">
+<div class="match-left">${data.pairs.map((p,i)=>`<div class="match-item" id="ml-${sid}-${i}" onclick="selL('${sid}',${i})"><span class="match-svc">${p.l}</span></div>`).join('')}</div>
+<div class="match-right">${shuffled.map((p,i)=>{const orig=data.pairs.findIndex(x=>x.r===p.r);return`<div class="match-item" id="mr-${sid}-${i}" data-orig="${orig}" onclick="selR('${sid}',${i},${orig})">${p.r}</div>`;}).join('')}</div>
+</div>
+<div class="match-score" id="ms-${sid}">0 / ${data.pairs.length} matched</div>`;
+}
+function selL(sid,i){
+  const ms=matchSt[sid]; if(ms.matched.includes('L'+i))return;
+  document.querySelectorAll(`#ex-${sid}-match .match-left .match-item`).forEach(el=>el.classList.remove('selected'));
+  document.getElementById(`ml-${sid}-${i}`).classList.add('selected'); ms.sel=i;
+}
+function selR(sid,ri,orig){
+  const ms=matchSt[sid]; if(ms.matched.includes('R'+ri))return;
+  if(ms.sel===null){toast('বাম থেকে আগে select করো!',false);return;}
+  const li=ms.sel; const ok=li===orig;
+  const lEl=document.getElementById(`ml-${sid}-${li}`); const rEl=document.getElementById(`mr-${sid}-${ri}`);
+  if(ok){lEl.classList.remove('selected');lEl.classList.add('matched-ok');rEl.classList.add('matched-ok');ms.matched.push('L'+li,'R'+ri);ms.score++;document.getElementById(`ms-${sid}`).innerHTML=`<b>${ms.score}</b> / ${ms.total} matched ${ms.score===ms.total?'🎉 সব সঠিক!':''}`;toast('✅ সঠিক match!',true);}
+  else{rEl.classList.add('matched-er');setTimeout(()=>rEl.classList.remove('matched-er'),500);toast('❌ ভুল match!',false);}
+  ms.sel=null; document.querySelectorAll(`#ex-${sid}-match .match-left .match-item`).forEach(el=>el.classList.remove('selected'));
+}
+
+// ═══════════════════ ORDERING ════════════════════════════════════════════════
+function renderOrder(sid){
+  const c=document.getElementById('ex-'+sid+'-order');
+  if(!c||c.dataset.rendered)return; c.dataset.rendered='1';
+  const data=ORDER[sid];
+  if(!data||!data.length){c.innerHTML='<p style="color:var(--t2)">শীঘ্রই আসছে।</p>';return;}
+  c.innerHTML=data.map((ex,ei)=>{
+    const shuffled=[...ex.items].map((item,i)=>({item,orig:i})).sort(()=>Math.random()-.5);
+    return`<div class="order-wrap">
+<div class="qmeta"><span class="qnum">Ordering ${ei+1}</span><span class="qtype">Drag & Drop</span></div>
+<div class="order-question">${ex.q}</div>
+<div class="order-list" id="ol-${sid}-${ei}">${shuffled.map((s,pos)=>`<div class="order-item" draggable="true" data-orig="${s.orig}" id="oi-${sid}-${ei}-${pos}" ondragstart="dStart(event,'${sid}',${ei},${pos})" ondragover="dOver(event,'${sid}',${ei},${pos})" ondrop="dDrop(event,'${sid}',${ei},${pos})" ondragleave="event.target.classList.remove('drag-over')">
+<span class="order-num">${pos+1}</span><span>${s.item}</span></div>`).join('')}</div>
+<button class="order-check-btn" onclick="checkOrder('${sid}',${ei})">✅ Check Order</button>
+<div class="tf-fb" id="ofb-${sid}-${ei}" style="margin-top:12px"></div>
+</div>`;
+  }).join('');
+}
+let dragSrc=null;
+function dStart(e,sid,ei,pos){dragSrc={sid,ei,pos};e.target.classList.add('dragging');}
+function dOver(e,sid,ei,pos){e.preventDefault();document.getElementById(`oi-${sid}-${ei}-${pos}`).classList.add('drag-over');}
+function dDrop(e,sid,ei,pos){
+  e.preventDefault();
+  if(!dragSrc||dragSrc.sid!==sid||dragSrc.ei!==ei)return;
+  const src=document.getElementById(`oi-${dragSrc.sid}-${dragSrc.ei}-${dragSrc.pos}`);
+  const tgt=document.getElementById(`oi-${sid}-${ei}-${pos}`);
+  tgt.classList.remove('drag-over');src.classList.remove('dragging');
+  if(dragSrc.pos===pos)return;
+  const list=document.getElementById(`ol-${sid}-${ei}`);
+  const items=[...list.children];
+  const si=items.indexOf(src),ti=items.indexOf(tgt);
+  if(si<ti)list.insertBefore(src,tgt.nextSibling); else list.insertBefore(src,tgt);
+  // Update numbers
+  [...list.children].forEach((el,i)=>{el.querySelector('.order-num').textContent=i+1;});
+  dragSrc=null;
+}
+function checkOrder(sid,ei){
+  const ex=ORDER[sid][ei];
+  const list=document.getElementById(`ol-${sid}-${ei}`);
+  const items=[...list.children];
+  let allOk=true;
+  items.forEach((el,pos)=>{
+    const origVal=parseInt(el.dataset.orig);
+    const ok=origVal===ex.correct[pos];
+    el.classList.remove('cor-order','wr-order');
+    el.classList.add(ok?'cor-order':'wr-order');
+    if(!ok)allOk=false;
+  });
+  const fb=document.getElementById(`ofb-${sid}-${ei}`);
+  fb.className=`tf-fb show ${allOk?'ok-tf':'er-tf'}`;
+  fb.innerHTML=`<b>${allOk?'🎉 সঠিক order!':'❌ ভুল order।'}</b> ${ex.e}`;
+  toast(allOk?'🎉 সঠিক!':'💡 সঠিক order টি দেখো।',allOk);
+}
+
+// ═══════════════════ FILL IN BLANK ══════════════════════════════════════════
+function renderFIB(sid){
+  const c=document.getElementById('ex-'+sid+'-fib');
+  if(!c||c.dataset.rendered)return; c.dataset.rendered='1';
+  const data=FIB[sid];
+  if(!data||!data.length){c.innerHTML='<p style="color:var(--t2)">শীঘ্রই আসছে।</p>';return;}
+  c.innerHTML=data.map((item,i)=>`<div class="fib-card" id="fibc-${sid}-${i}">
+<div class="qmeta"><span class="qnum">Fill ${i+1}</span><span class="qtype">Fill in the Blank</span></div>
+<div class="fib-q">${item.q}</div>
+<div class="fib-input-wrap">
+<input class="fib-input" id="fibi-${sid}-${i}" placeholder="উত্তর লেখো..." onkeydown="if(event.key==='Enter')checkFIB('${sid}',${i})">
+<button class="fib-check" onclick="checkFIB('${sid}',${i})">✅ Check</button>
+</div>
+<div class="fib-fb" id="fibfb-${sid}-${i}"></div>
+</div>`).join('');
+}
+function checkFIB(sid,i){
+  const card=document.getElementById(`fibc-${sid}-${i}`);
+  if(card.dataset.done)return;
+  const item=FIB[sid][i];
+  const inp=document.getElementById(`fibi-${sid}-${i}`);
+  const val=inp.value.trim().toLowerCase();
+  const ok=val===item.a.toLowerCase()||(item.alt||[]).some(a=>val===a.toLowerCase());
+  card.dataset.done='1'; inp.disabled=true;
+  inp.classList.add(ok?'ok-inp':'er-inp');
+  const fb=document.getElementById(`fibfb-${sid}-${i}`);
+  fb.className=`fib-fb show ${ok?'ok-f':'er-f'}`;
+  fb.innerHTML=`<b>${ok?'🎉 সঠিক!':'❌ ভুল। সঠিক উত্তর: '+item.a}</b> ${item.e}`;
+  card.classList.add(ok?'ok':'er');
+  toast(ok?'🎉 সঠিক!':'💡 সঠিক উত্তর দেখো।',ok);
+}
+
+// ═══════════════════ FLASHCARDS ══════════════════════════════════════════════
+const flashSt={};
+function renderFlash(sid){
+  const c=document.getElementById('ex-'+sid+'-flash');
+  if(!c||c.dataset.rendered)return; c.dataset.rendered='1';
+  const data=FLASH[sid];
+  if(!data||!data.length){c.innerHTML='<p style="color:var(--t2)">শীঘ্রই আসছে।</p>';return;}
+  flashSt[sid]={idx:0,known:0,unknown:0,total:data.length};
+  renderFlashCard(sid);
+}
+function renderFlashCard(sid){
+  const c=document.getElementById('ex-'+sid+'-flash');
+  if(!c)return;
+  const st=flashSt[sid]; const data=FLASH[sid];
+  if(st.idx>=data.length){
+    c.innerHTML=`<div style="text-align:center;padding:40px"><div style="font-size:2rem;margin-bottom:12px">🎉</div><div style="font-size:1.1rem;font-weight:700;color:var(--gr);margin-bottom:8px">সব cards শেষ!</div><div style="color:var(--t2);font-family:'Hind Siliguri',sans-serif;margin-bottom:20px">জানো: ${st.known} | জানো না: ${st.unknown}</div><button onclick="flashSt['${sid}']={idx:0,known:0,unknown:0,total:${data.length}};renderFlashCard('${sid}')" class="order-check-btn">🔄 আবার শুরু করো</button></div>`;
+    return;
+  }
+  const card=data[st.idx];
+  c.innerHTML=`<div style="text-align:center;margin-bottom:10px;color:var(--t2);font-size:.82rem;font-family:'JetBrains Mono',monospace">${st.idx+1} / ${data.length} • জানো: ${st.known} ✅  জানো না: ${st.unknown} ❌</div>
+<div class="fc-wrap"><div class="fc-card-outer" id="fc-outer-${sid}" onclick="flipCard('${sid}')">
+<div class="fc-front"><div class="fc-label">SERVICE / CONCEPT</div><div class="fc-content">${card.f}</div><div class="fc-hint">👆 click করে answer দেখো</div></div>
+<div class="fc-back"><div class="fc-label">ANSWER</div><div class="fc-content">${card.b}</div></div>
+</div></div>
+<div class="fc-known-wrap">
+<button class="fc-known fc-known-no" onclick="flashNext('${sid}',false)">❌ জানি না</button>
+<button class="fc-known fc-known-yes" onclick="flashNext('${sid}',true)">✅ জানি</button>
+</div>`;
+}
+function flipCard(sid){document.getElementById(`fc-outer-${sid}`).classList.toggle('flipped');}
+function flashNext(sid,knew){
+  const st=flashSt[sid];
+  if(knew)st.known++;else st.unknown++;
+  st.idx++;
+  renderFlashCard(sid);
+}
+
+// ═══════════════════ SCENARIOS ═══════════════════════════════════════════════
+function renderCase(sid){
+  const c=document.getElementById('ex-'+sid+'-case');
+  if(!c||c.dataset.rendered)return; c.dataset.rendered='1';
+  const data=CASES[sid];
+  if(!data||!data.length){c.innerHTML='<p style="color:var(--t2)">শীঘ্রই আসছে।</p>';return;}
+  c.innerHTML=data.map((item,i)=>`<div class="case-card" id="cc-${sid}-${i}">
+<div class="qmeta"><span class="qnum">Scenario ${i+1}</span><span class="qscen">📌 Real Exam Style</span></div>
+<div class="case-scenario">${item.sc}</div>
+<div class="case-q">${item.q}</div>
+<div class="opts" id="copts-${sid}-${i}">${item.o.map((opt,oi)=>`<button class="opt" onclick="answerCase('${sid}',${i},${oi})" id="co-${sid}-${i}-${oi}"><span class="olet">${String.fromCharCode(65+oi)}</span><span>${opt}</span></button>`).join('')}</div>
+<div class="fb" id="cfb-${sid}-${i}"></div>
+</div>`).join('');
+}
+function answerCase(sid,i,chosen){
+  const card=document.getElementById(`cc-${sid}-${i}`);
+  if(card.dataset.done)return; card.dataset.done='1';
+  const item=CASES[sid][i]; const ok=chosen===item.a;
+  const btns=document.querySelectorAll(`#copts-${sid}-${i} .opt`);
+  btns.forEach((b,oi)=>{b.disabled=true;if(oi===item.a)b.classList.add('cor');else if(oi===chosen&&!ok)b.classList.add('wr');b.querySelector('.olet').textContent=oi===item.a?'✓':(oi===chosen&&!ok?'✗':String.fromCharCode(65+oi));});
+  const fb=document.getElementById(`cfb-${sid}-${i}`);
+  fb.className=`fb show ${ok?'ok-fb':'er-fb'}`;
+  fb.innerHTML=`<div class="fb-title">${ok?'🎉 সঠিক! তুমি real exam এ pass করবে!':'❌ ভুল হয়েছে'}</div><div class="fb-exp">${item.e}</div>`;
+  toast(ok?'🎉 Scenario solved!':'💡 Explanation পড়ো!',ok);
+}
+
+// ═══════════════════ REVIEW DUE ══════════════════════════════════════════════
+function openReview(){
+  const due=[];
+  Object.keys(Q).forEach(sid=>{
+    Q[sid].forEach((q,i)=>{
+      const key=sid+'_'+i;
+      if(S.due[key]&&Date.now()>=S.due[key]&&S.sc[sid]&&S.sc[sid][i]!==undefined){
+        due.push({sid,i,q});
+      }
+    });
+  });
+  const box=document.getElementById('reviewContent');
+  if(!due.length){box.innerHTML='<p style="font-family:\'Hind Siliguri\',sans-serif;color:var(--t2)">এখন কোনো due questions নেই। পরে আবার দেখো! 🎉</p>';}
+  else{
+    box.innerHTML=`<p style="font-family:'Hind Siliguri',sans-serif;color:var(--t2);margin-bottom:16px">${due.length}টি questions review এর জন্য ready!</p>`+
+    due.slice(0,10).map(({sid,i,q})=>`<div class="qcard"><div class="qmeta"><span class="qnum">${sid.toUpperCase()}</span></div><div class="qtxt">${q.q}</div><div class="opts" id="ropts-${sid}-${i}">${q.o.map((opt,oi)=>`<button class="opt" onclick="answerReview('${sid}',${i},${oi})"><span class="olet">${String.fromCharCode(65+oi)}</span><span>${opt}</span></button>`).join('')}</div><div class="fb" id="rfb-${sid}-${i}"></div></div>`).join('');
+  }
+  document.getElementById('reviewModal').classList.add('show');
+}
+function answerReview(sid,qi,chosen){
+  const q=Q[sid][qi]; const ok=chosen===q.a;
+  const btns=document.querySelectorAll(`#ropts-${sid}-${qi} .opt`);
+  btns.forEach((b,oi)=>{b.disabled=true;if(oi===q.a)b.classList.add('cor');else if(oi===chosen&&!ok)b.classList.add('wr');b.querySelector('.olet').textContent=oi===q.a?'✓':(oi===chosen&&!ok?'✗':String.fromCharCode(65+oi));});
+  const fb=document.getElementById(`rfb-${sid}-${qi}`);
+  if(fb){fb.className=`fb show ${ok?'ok-fb':'er-fb'}`;fb.innerHTML=`<div class="fb-title">${ok?'🎉 সঠিক!':'❌ ভুল'}</div><div class="fb-exp">${q.e}</div>`;}
+  if(!S.sc[sid])S.sc[sid]={};
+  S.sc[sid][qi]=ok;
+  const prev=S.iv[sid+'_'+qi]||1;
+  S.iv[sid+'_'+qi]=ok?Math.min(prev*2,90):1;
+  S.due[sid+'_'+qi]=Date.now()+(ok?S.iv[sid+'_'+qi]*86400000:600000);
+  save(); updateAllProg(); toast(ok?'🎉 সঠিক!':'💡 পড়ো!',ok);
+}
+function closeReview(){document.getElementById('reviewModal').classList.remove('show');}
+
+// ═══════════════════ EXAM ════════════════════════════════════════════════════
+let examQ=[],examAns={},examIdx=0,examTimer,examSecs=5400;
+function openExam(){document.getElementById('examModal').classList.add('show');}
+function closeExam(){document.getElementById('examModal').classList.remove('show');clearInterval(examTimer);}
+function startExam(){
+  const pool=[];
+  Object.keys(Q).forEach(sid=>Q[sid].forEach((q,i)=>pool.push({...q,sid,i})));
+  examQ=pool.sort(()=>Math.random()-.5).slice(0,Math.min(65,pool.length));
+  examAns={};examIdx=0;examSecs=5400;
+  document.getElementById('examStart').style.display='none';
+  document.getElementById('examResult').style.display='none';
+  document.getElementById('examRunning').style.display='block';
+  clearInterval(examTimer);
+  examTimer=setInterval(()=>{examSecs--;if(examSecs<=0){clearInterval(examTimer);submitExam();return;}const m=Math.floor(examSecs/60),s=examSecs%60;const tEl=document.getElementById('examTimer');tEl.textContent=m+':'+(s<10?'0':'')+s;tEl.classList.toggle('warn',examSecs<600);},1000);
+  renderExamQ();
+}
+function renderExamQ(){
+  const q=examQ[examIdx];
+  document.getElementById('examQNum').textContent=`প্রশ্ন ${examIdx+1} / ${examQ.length}`;
+  document.getElementById('examProgFill').style.width=(((examIdx+1)/examQ.length)*100)+'%';
+  document.getElementById('examAnswered').textContent=`${Object.keys(examAns).length} answered`;
+  document.getElementById('examQBox').innerHTML=`<div class="qcard" style="margin-bottom:0">${q.sc?'<span class="qscen" style="display:inline-block;margin-bottom:10px">📌 Scenario</span>':''}<div class="qtxt">${q.q}</div><div class="opts">${q.o.map((opt,oi)=>`<button class="opt ${examAns[examIdx]===oi?'sel':''}" onclick="examAnswer(${oi})" ${examAns[examIdx]!==undefined?'disabled':''}>
+<span class="olet">${String.fromCharCode(65+oi)}</span><span>${opt}</span></button>`).join('')}</div></div>`;
+}
+function examAnswer(oi){if(examAns[examIdx]!==undefined)return;examAns[examIdx]=oi;renderExamQ();}
+function examPrev(){if(examIdx>0){examIdx--;renderExamQ();}}
+function examNext(){if(examIdx<examQ.length-1){examIdx++;renderExamQ();}}
+function submitExam(){
+  clearInterval(examTimer);
+  let cor=0;
+  examQ.forEach((q,i)=>{if(examAns[i]===q.a)cor++;});
+  const pct=Math.round(cor/examQ.length*100);
+  const pass=pct>=70;
+  document.getElementById('examRunning').style.display='none';
+  document.getElementById('examResult').style.display='block';
+  const big=document.getElementById('examScoreBig');
+  big.textContent=pct+'%'; big.style.color=pass?'var(--gr)':'var(--re)';
+  document.getElementById('examScoreLabel').textContent=pass?'🎉 পাশ করেছো! CLF-C02 পরীক্ষায় প্রস্তুত!':'❌ আরো পড়ো। Pass mark হলো 70%';
+  document.getElementById('examResultDetail').innerHTML=`সঠিক: ${cor} / ${examQ.length} • সময় নিয়েছো: ${Math.floor((5400-examSecs)/60)} মিনিট`;
+}
+
+// ═══════════════════ INIT ════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  updateAllProg();
+  // Render S1 MCQ by default since it's open
+  setTimeout(()=>{renderQ('s1');},100);
+});
+
+window.addEventListener('DOMContentLoaded',()=>{
+  // Auto-open this section
+  const sc=document.getElementById('s8');
+  if(sc)sc.classList.add('active-lesson');
+  updateAllProg();
+  setTimeout(()=>renderQ('s8'),100);
+});
+</script>
+</body></html>

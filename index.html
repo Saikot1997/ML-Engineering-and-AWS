@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DS & MLOps — বাংলায় শিখি</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#030712; --bg2:#0a0f1e; --sur:#111827; --sur2:#1e2a3d;
+  --b:rgba(99,179,237,.12); --b2:rgba(99,179,237,.28);
+  --a:#38bdf8; --a2:#818cf8; --a3:#34d399; --a4:#fb923c; --a5:#f472b6;
+  --tx:#f0f9ff; --tx2:#94a3b8; --tx3:#475569;
+  --bn:'Hind Siliguri',sans-serif; --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:var(--bn);overflow-x:hidden}
+
+/* stars */
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;border-radius:50%;background:#fff;animation:tw var(--d,3s) ease-in-out infinite var(--dl,0s)}
+@keyframes tw{0%,100%{opacity:var(--mn,.1)}50%{opacity:var(--mx,.7)}}
+#grid{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(56,189,248,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,.025) 1px,transparent 1px);
+  background-size:60px 60px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(3,7,18,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--b);padding:10px 0}
+.nav-i{display:flex;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto;padding:0 24px}
+.logo{font-family:var(--mono);font-size:13px;color:var(--a);letter-spacing:2px;text-decoration:none}
+.logo span{color:var(--a2)}
+.nav-links{display:flex;gap:20px;list-style:none}
+.nav-links a{font-size:12px;color:var(--tx2);text-decoration:none;font-family:var(--mono);transition:color .2s}
+.nav-links a:hover{color:var(--a)}
+
+/* HERO — compact */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:80px 24px 40px;text-align:center;position:relative;z-index:1}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
+.o1{width:500px;height:500px;background:radial-gradient(circle,rgba(56,189,248,.1),transparent 70%);top:5%;left:50%;transform:translateX(-50%)}
+.o2{width:300px;height:300px;background:radial-gradient(circle,rgba(129,140,248,.08),transparent 70%);top:20%;right:2%}
+.o3{width:250px;height:250px;background:radial-gradient(circle,rgba(52,211,153,.06),transparent 70%);bottom:10%;left:2%}
+
+.eye{font-family:var(--mono);font-size:10px;color:var(--a);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;opacity:0;animation:fu .8s .2s forwards}
+h1{font-size:clamp(40px,7vw,80px);font-weight:700;line-height:1.05;margin-bottom:6px;opacity:0;animation:fu .8s .35s forwards}
+.grd{background:linear-gradient(135deg,var(--a),var(--a2) 50%,var(--a5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub-bn{font-size:clamp(16px,2.5vw,22px);color:var(--tx2);font-weight:400;margin-bottom:28px;opacity:0;animation:fu .8s .5s forwards}
+.hero-desc{font-size:15px;color:var(--tx2);max-width:520px;margin:0 auto 32px;opacity:0;animation:fu .8s .65s forwards}
+.cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fu .8s .8s forwards}
+.btn1{background:var(--a);color:#000;padding:12px 28px;border-radius:10px;font-family:var(--mono);font-weight:700;font-size:13px;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn1:hover{background:#7dd3fc;transform:translateY(-2px);box-shadow:0 8px 28px rgba(56,189,248,.3)}
+.btn2{background:transparent;color:var(--tx);padding:12px 28px;border-radius:10px;border:1px solid var(--b2);font-family:var(--mono);font-size:13px;text-decoration:none;transition:all .2s}
+.btn2:hover{border-color:var(--a);color:var(--a);transform:translateY(-2px)}
+
+/* STATS strip */
+.stats{display:flex;gap:0;justify-content:center;margin-bottom:32px;opacity:0;animation:fu .8s .62s forwards;
+  background:var(--sur);border:1px solid var(--b);border-radius:14px;overflow:hidden;max-width:480px;margin-left:auto;margin-right:auto}
+.stat{flex:1;padding:14px 8px;text-align:center;border-right:1px solid var(--b)}
+.stat:last-child{border-right:none}
+.sn{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--a)}
+.sl{font-size:10px;color:var(--tx3);margin-top:2px}
+
+/* ROADMAP SECTION */
+.roadmap-section{padding:60px 0 80px;position:relative;z-index:1}
+.cont{max-width:1100px;margin:0 auto;padding:0 24px}
+.sec-eye{font-family:var(--mono);font-size:10px;color:var(--a);letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;text-align:center}
+.sec-t{font-size:clamp(24px,3vw,36px);font-weight:700;text-align:center;margin-bottom:6px}
+.sec-bn{font-size:15px;color:var(--tx2);text-align:center;margin-bottom:48px}
+
+/* Tab switcher */
+.tabs{display:flex;gap:8px;justify-content:center;margin-bottom:40px}
+.tab{font-family:var(--mono);font-size:12px;padding:8px 20px;border-radius:8px;border:1px solid var(--b);
+  background:transparent;color:var(--tx2);cursor:pointer;transition:all .2s}
+.tab.active{background:var(--a);color:#000;border-color:var(--a);font-weight:700}
+.tab:hover:not(.active){border-color:var(--a2);color:var(--a2)}
+
+/* Roadmap SVG container */
+.roadmap-wrap{background:var(--sur);border:1px solid var(--b);border-radius:20px;padding:32px;overflow-x:auto}
+.roadmap-wrap svg{display:block;margin:0 auto}
+
+/* node hover */
+.rnode{cursor:pointer}
+.rnode:hover rect{filter:brightness(1.3)}
+.rnode:hover text{opacity:.85}
+
+/* AWS card */
+.aws-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px}
+.aws-card{background:var(--sur);border:1px solid rgba(251,146,60,.2);border-radius:14px;padding:24px;
+  text-decoration:none;color:var(--tx);display:flex;align-items:center;gap:16px;transition:all .2s}
+.aws-card:hover{border-color:var(--a4);transform:translateY(-3px);box-shadow:0 12px 40px rgba(251,146,60,.1)}
+.aci{font-size:36px}
+.act{font-weight:600;font-size:16px;margin-bottom:4px}
+.acs{font-size:12px;color:var(--tx3);font-family:var(--mono)}
+.aca{margin-left:auto;color:var(--a4);font-size:20px}
+.aws-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(251,146,60,.1);
+  border:1px solid rgba(251,146,60,.25);color:var(--a4);font-size:11px;font-family:var(--mono);
+  padding:4px 12px;border-radius:20px;margin-bottom:12px}
+
+/* track label */
+.track-label{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  padding:4px 14px;border-radius:20px;display:inline-block;margin-bottom:16px}
+
+@keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fi{opacity:0;transform:translateY(16px);transition:opacity .7s cubic-bezier(.4,0,.2,1),transform .7s cubic-bezier(.4,0,.2,1)}
+.fi.vis{opacity:1;transform:translateY(0)}
+
+footer{border-top:1px solid var(--b);padding:32px 0;text-align:center;position:relative;z-index:1}
+.fl{font-family:var(--mono);font-size:12px;color:var(--a);margin-bottom:6px}
+.ft{font-size:12px;color:var(--tx3)}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--sur2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+<div id="grid"></div>
+
+<nav>
+  <div class="nav-i">
+    <a class="logo" href="index.html">DS<span>&amp;</span>MLOps <span style="color:var(--tx3)">// বাংলায়</span></a>
+    <ul class="nav-links">
+      <li><a href="#roadmap">DS Roadmap</a></li>
+      <li><a href="#mlops-map">MLOps Roadmap</a></li>
+      <li><a href="#aws-section">AWS ☁️</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+  <h1><span class="grd">Data Science</span><br>&amp; MLOps</h1>
+  <p class="sub-bn">বাংলায় শিখি — সহজ ভাষায়, গভীর ধারণা</p>
+
+  <div class="stats fi">
+    <div class="stat"><div class="sn">10</div><div class="sl">DS স্প্রিন্ট</div></div>
+    <div class="stat"><div class="sn">6</div><div class="sl">MLOps স্প্রিন্ট</div></div>
+    <div class="stat"><div class="sn">55+</div><div class="sl">HTML ফাইল</div></div>
+    <div class="stat"><div class="sn">∞</div><div class="sl">অনুশীলন</div></div>
+  </div>
+
+  <p class="hero-desc">Python থেকে Kubernetes পর্যন্ত — একটি ফুল রোডম্যাপ। নিচে ক্লিক করলেই সেই টপিকের ফাইল খুলবে।</p>
+  <div class="cta">
+    <a href="#roadmap" class="btn1">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="5 3 19 12 5 21 5 3"/></svg>
+      Data Science Roadmap
+    </a>
+    <a href="#mlops-map" class="btn1" style="background:var(--a2)">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="5 3 19 12 5 21 5 3"/></svg>
+      MLOps Roadmap
+    </a>
+    <a href="#aws-section" class="btn1" style="background:var(--a4)">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="5 3 19 12 5 21 5 3"/></svg>
+      AWS Roadmap
+    </a>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="roadmap-section" id="roadmap">
+  <div class="cont">
+    <h2 class="sec-t fi">Data Science Roadmap</h2>
+    <p class="sec-bn fi">Sprint 0 → Sprint 9 — ক্লিক করলেই সেই পেজে যাবে</p>
+
+    <div class="roadmap-wrap fi" id="ds-map-wrap">
+      <!-- DS Roadmap SVG — rendered by JS below -->
+    </div>
+
+    <!-- MLOps -->
+    <div style="margin-top:64px" id="mlops-map">
+      <h2 class="sec-t fi" style="margin-bottom:6px">MLOps Roadmap</h2>
+      <p class="sec-bn fi">Sprint 0 → Sprint 5 — Production ML সিস্টেম বানানো</p>
+      <div id="mlops-card-grid" class="fi" style="margin-top:32px"></div>
+    </div>
+
+    <!-- AWS -->
+    <div style="margin-top:64px" id="aws-section">
+      <h2 class="sec-t fi">AWS Roadmap</h2>
+      <p class="sec-bn fi">Cloud Practitioner থেকে Solutions Architect — ক্লিক করলেই সেই পেজে যাবে</p>
+      <div class="roadmap-wrap fi" id="aws-map-wrap"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="fl">DS &amp; MLOps // বাংলায় শিখি</div>
+  <div class="ft">DataScientest Bootcamp — Bengali Learning Edition · Sprint 0–9 DS · Sprint 0–5 MLOps · AWS আলাদা</div>
+</footer>
+
+<script>
+// ── STARS ──
+const SE=document.getElementById('stars');
+for(let i=0;i<100;i++){
+  const s=document.createElement('div');s.className='star';
+  const z=Math.random()*1.8+.4;
+  s.style.cssText=`width:${z}px;height:${z}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*4}s;--dl:${Math.random()*5}s;--mn:${.04+Math.random()*.15};--mx:${.3+Math.random()*.6}`;
+  SE.appendChild(s);
+}
+
+// ── OBSERVER — show .fi items on scroll, with immediate fallback ──
+const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')}),{threshold:.05,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.fi').forEach(el=>obs.observe(el));
+// Fallback: if element is already in viewport on load, show it
+setTimeout(()=>{
+  document.querySelectorAll('.fi:not(.vis)').forEach(el=>{
+    const r=el.getBoundingClientRect();
+    if(r.top < window.innerHeight) el.classList.add('vis');
+  });
+},100);
+
+// ── ROADMAP DATA ──
+// DS: columns = sprints, rows = topics per sprint
+const DS_NODES = [
+  // [id, label_en, label_bn, href, color, col, row]
+  // S0 — Python for Data Science
+  ['s0',  'Python for DS',   'Python ভিত্তি',      'Data_Scientist/python_for_DS.html',          '#38bdf8', 0, 0],
+  // S1 — Data Visualisation
+  ['s1',  'Data Viz',        'ডেটা ভিজ্যুয়ালাইজ', 'Data_Scientist/Data_Visualisation.html',     '#818cf8', 1, 0],
+  // S2 — Programming Tools
+  ['s2',  'Prog. Tools',     'প্রোগ্রামিং টুলস',   'Data_Scientist/Programming_Tools_DS.html',   '#fb923c', 2, 0],
+  // S3 — Machine Learning 1
+  ['s3',  'ML — 1',          'মেশিন লার্নিং ১',    'Data_Scientist/Machine_Learning_1_DS.html',  '#34d399', 3, 0],
+  // S4 — Machine Learning 2
+  ['s4',  'ML — 2',          'মেশিন লার্নিং ২',    'Data_Scientist/Machine_Learning_2_DS.html',  '#f472b6', 4, 0],
+  // S5 — Machine Learning 3
+  ['s5',  'ML — 3',          'মেশিন লার্নিং ৩',    'Data_Scientist/Machine_Learning_3_DS.html',  '#38bdf8', 5, 0],
+  // S6 — Deep Learning
+  ['s6',  'Deep Learning',   'ডিপ লার্নিং',         'Data_Scientist/Deep_Learning_DS.html',       '#818cf8', 6, 0],
+  // S7 — Machine Learning 4
+  ['s7',  'ML — 4',          'মেশিন লার্নিং ৪',    'Data_Scientist/Machine_Learning_4_DS.html',  '#f472b6', 7, 0],
+  // S8 — Data Engineering
+  ['s8',  'Data Eng.',       'ডেটা ইঞ্জিনিয়ারিং',  'Data_Scientist/Data_Engineering_DS.html',    '#34d399', 8, 0],
+  // S9 — MLOps
+  ['s9',  'MLOps',           'MLOps',               'Data_Scientist/MLOps_DS.html',               '#fb923c', 9, 0],
+];
+
+const MLOPS_NODES = [
+  // Sprint 0 — Prerequisites & Foundations
+  ['m0x', 'Course Intro',   'কোর্স পরিচয়',      'mlops/MLOPS_Course_Introduction.html',    '#fb923c', 0, 0],
+  ['m0a', 'Git/GitHub',     'Git',               'mlops/git_github.html',                   '#fb923c', 0, 1],
+  ['m0b', 'FastAPI',        'FastAPI',           'mlops/fastapi.html',                      '#fb923c', 0, 2],
+  ['m0c', 'API/HTTP/JSON',  'Data API',          'mlops/API_HTTP_JSON_Chess_Analytics.html', '#fb923c', 0, 3],
+  ['m0d', 'Data & BigData', 'ডেটা প্রফেশন',     'mlops/Data_BigData_Professions.html',      '#fb923c', 0, 4],
+  // Sprint 1 — Environment & Tools
+  ['m1a', 'Docker',         'Docker',            'mlops/Docker.html',                        '#38bdf8', 1, 0],
+  ['m1b', 'Linux/Bash',     'Linux',             'mlops/Linux_Bash.html',                    '#38bdf8', 1, 1],
+  ['m1c', 'Unit Testing',   'টেস্টিং',           'mlops/unit_testing.html',                  '#38bdf8', 1, 2],
+  ['m1d', 'API Sec. Pt1',   'Security 1',        'mlops/api_security_part1.html',            '#38bdf8', 1, 3],
+  ['m1e', 'API Sec. Pt2',   'Security 2',        'mlops/api_security_part2.html',            '#38bdf8', 1, 4],
+  // Sprint 2 — Experiment Tracking & CI/CD
+  ['m2a', 'MLflow',         'MLflow',            'mlops/mlflow.html',                        '#34d399', 2, 0],
+  ['m2b', 'DVC',            'DVC',               'mlops/dvc.html',                           '#34d399', 2, 1],
+  ['m2c', 'W&B',            'Weight & Bias',     'mlops/Weight&Bias.html',                   '#34d399', 2, 2],
+  ['m2d', 'Jenkins',        'Jenkins',           'mlops/jenkins.html',                       '#34d399', 2, 3],
+  // Sprint 3 — Deployment & Databases
+  ['m3a', 'Airflow',        'Airflow',           'mlops/airflow.html',                       '#818cf8', 3, 0],
+  ['m3b', 'BentoML',        'BentoML',           'mlops/bentoml.html',                       '#818cf8', 3, 1],
+  ['m3c', 'MongoDB',        'MongoDB',           'mlops/mongodb.html',                       '#818cf8', 3, 2],
+  ['m3d', 'Elasticsearch',  'Elastic',           'mlops/elasticsearch.html',                 '#818cf8', 3, 3],
+  ['m3e', 'Database',       'ডেটাবেজ',           'mlops/database.html',                      '#818cf8', 3, 4],
+  // Sprint 4 — Monitoring
+  ['m4a', 'Drift Monitor',  'ড্রিফট',            'mlops/Drift_monitoring.html',              '#f472b6', 4, 0],
+  ['m4b', 'Prometheus',     'Prometheus',        'mlops/prometheus_grafana.html',            '#f472b6', 4, 1],
+  ['m4c', 'Kafka',          'Kafka',             'mlops/kafka.html',                         '#f472b6', 4, 2],
+  // Sprint 5 — Scale & Orchestration
+  ['m5a', 'Kubernetes',     'K8s',               'mlops/kubernetes.html',                    '#38bdf8', 5, 0],
+  ['m5b', 'ZenML',          'ZenML',             'mlops/zenml.html',                         '#38bdf8', 5, 1],
+  ['m5c', 'RAG-LLM',        'RAG / LLM',         'mlops/RAG-LLM.html',                       '#38bdf8', 5, 2],
+  ['m5d', 'Final Project',  'ফাইনাল প্রজেক্ট',  'mlops/mlops_final_Project.html',           '#38bdf8', 5, 3],
+];
+
+const SPRINT_LABELS_DS = [
+  {col:0,label:'S0',sub:'Python DS'},
+  {col:1,label:'S1',sub:'DataViz'},
+  {col:2,label:'S2',sub:'Tools'},
+  {col:3,label:'S3',sub:'ML-1'},
+  {col:4,label:'S4',sub:'ML-2'},
+  {col:5,label:'S5',sub:'ML-3'},
+  {col:6,label:'S6',sub:'DL'},
+  {col:7,label:'S7',sub:'ML-4'},
+  {col:8,label:'S8',sub:'DataEng'},
+  {col:9,label:'S9',sub:'MLOps'},
+];
+const SPRINT_LABELS_MLOPS = [
+  {col:0,label:'S0',sub:'Prereq'},
+  {col:1,label:'S1',sub:'Env'},
+  {col:2,label:'S2',sub:'Track'},
+  {col:3,label:'S3',sub:'Deploy'},
+  {col:4,label:'S4',sub:'Monitor'},
+  {col:5,label:'S5',sub:'Scale'},
+];
+
+
+// ── MLOPS CARD GRID ──
+function buildMLOpsCardGrid(nodes, sprintLabels, containerId) {
+  const COLS = Math.max(...nodes.map(n=>n[5]))+1;
+  const sprintColors = ['#fb923c','#38bdf8','#34d399','#818cf8','#f472b6','#38bdf8'];
+  const sprintBg = [
+    'rgba(251,146,60,0.06)','rgba(56,189,248,0.06)','rgba(52,211,153,0.06)',
+    'rgba(129,140,248,0.06)','rgba(244,114,182,0.06)','rgba(56,189,248,0.06)'
+  ];
+  const sprintBorder = [
+    'rgba(251,146,60,0.18)','rgba(56,189,248,0.18)','rgba(52,211,153,0.18)',
+    'rgba(129,140,248,0.18)','rgba(244,114,182,0.18)','rgba(56,189,248,0.18)'
+  ];
+
+  let html = `<div style="display:grid;grid-template-columns:repeat(${COLS},1fr);gap:16px;overflow-x:auto;">`;
+
+  for(let c=0;c<COLS;c++){
+    const sl = sprintLabels[c];
+    const col_color = sprintColors[c];
+    const col_bg = sprintBg[c];
+    const col_border = sprintBorder[c];
+    const colNodes = nodes.filter(n=>n[5]===c);
+
+    html += `<div style="background:${col_bg};border:1px solid ${col_border};border-radius:16px;padding:18px 14px;display:flex;flex-direction:column;gap:10px;">`;
+    // Sprint header
+    html += `<div style="text-align:center;margin-bottom:6px;border-bottom:1px solid ${col_border};padding-bottom:10px;">`;
+    html += `<div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:${col_color};">${sl.label}</div>`;
+    html += `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#475569;margin-top:2px;letter-spacing:1px;">${sl.sub}</div>`;
+    html += `</div>`;
+
+    // Topic cards
+    colNodes.forEach(([id, label_en, label_bn, href, color, col, row]) => {
+      const safeHref = href.replace(/'/g, "\\'");
+      html += `<div onclick="window.open('${safeHref}','_blank')"
+        style="background:rgba(17,24,39,0.8);border:1px solid ${color}33;border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:4px;"
+        onmouseenter="this.style.borderColor='${color}99';this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px ${color}22'"
+        onmouseleave="this.style.borderColor='${color}33';this.style.transform='translateY(0)';this.style.boxShadow='none'">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:${color};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label_en}</div>
+        <div style="font-family:'Hind Siliguri',sans-serif;font-size:10px;color:rgba(148,163,184,0.8);">${label_bn}</div>
+        <div style="display:flex;align-items:center;gap:4px;margin-top:4px;">
+          <svg width="10" height="10" fill="none" viewBox="0 0 24 24" stroke="${color}" stroke-width="2" opacity="0.6"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9px;color:${color};opacity:0.6;">নতুন ট্যাবে খুলবে</span>
+        </div>
+      </div>`;
+    });
+
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  document.getElementById(containerId).innerHTML = html;
+}
+
+function buildRoadmapSVG(nodes, sprintLabels, containerId) {
+  const COLS = Math.max(...nodes.map(n=>n[5]))+1;
+  const maxRowsPerCol = Array(COLS).fill(0);
+  nodes.forEach(n=>{ maxRowsPerCol[n[5]] = Math.max(maxRowsPerCol[n[5]], n[6]+1); });
+
+  const CW = 110, CH = 44, GAP_X = 18, GAP_Y = 10;
+  const PAD_LEFT = 20, PAD_TOP = 16, LABEL_H = 54;
+
+  const totalW = PAD_LEFT*2 + COLS*CW + (COLS-1)*GAP_X;
+  const maxRows = Math.max(...maxRowsPerCol);
+  const totalH = LABEL_H + PAD_TOP + maxRows*(CH+GAP_Y) + 30;
+
+  let svg = `<svg viewBox="0 0 ${totalW} ${totalH}" width="${totalW}" xmlns="http://www.w3.org/2000/svg">`;
+  svg += `<defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>`;
+
+  // sprint column labels + background bands
+  for(let c=0;c<COLS;c++){
+    const x = PAD_LEFT + c*(CW+GAP_X);
+    const sl = sprintLabels[c];
+    const bandY = LABEL_H + PAD_TOP - 8;
+    const bandH = maxRowsPerCol[c]*(CH+GAP_Y) - GAP_Y + 16;
+    svg += `<rect x="${x-4}" y="${bandY}" width="${CW+8}" height="${bandH}" rx="10" fill="${sl?'rgba(99,179,237,0.03)':'none'}" stroke="rgba(99,179,237,0.07)" stroke-width="0.5"/>`;
+    // sprint label
+    if(sl){
+      svg += `<text x="${x+CW/2}" y="${LABEL_H-34}" text-anchor="middle" fill="#38bdf8" font-size="13" font-family="JetBrains Mono,monospace" font-weight="700">${sl.label}</text>`;
+      svg += `<text x="${x+CW/2}" y="${LABEL_H-18}" text-anchor="middle" fill="#475569" font-size="10" font-family="JetBrains Mono,monospace">${sl.sub}</text>`;
+    }
+  }
+
+  // connector arrows: right edge of col band TOP → left edge of next col band TOP
+  for(let c=0;c<COLS-1;c++){
+    const x1 = PAD_LEFT + c*(CW+GAP_X) + CW + 4;
+    const x2 = PAD_LEFT + (c+1)*(CW+GAP_X) - 4;
+    const y  = LABEL_H + PAD_TOP + CH/2;  // first node vertical center
+    svg += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="rgba(56,189,248,0.35)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr)"/>`;
+  }
+
+  // nodes
+  nodes.forEach(([id, label_en, label_bn, href, color, col, row]) => {
+    const x = PAD_LEFT + col*(CW+GAP_X);
+    const y = LABEL_H + PAD_TOP + row*(CH+GAP_Y);
+    const fillA = color+'22'; const strokeA = color+'88';
+    const safeHref = href.replace(/'/g,"\\'");
+    svg += `<g class="rnode" onclick="window.open('${safeHref}','_blank')" style="cursor:pointer">`;
+    svg += `<rect x="${x}" y="${y}" width="${CW}" height="${CH}" rx="8" fill="${fillA}" stroke="${strokeA}" stroke-width="1"/>`;
+    svg += `<text x="${x+CW/2}" y="${y+15}" text-anchor="middle" dominant-baseline="central" fill="${color}" font-size="11" font-family="JetBrains Mono,monospace" font-weight="700">${label_en}</text>`;
+    svg += `<text x="${x+CW/2}" y="${y+31}" text-anchor="middle" dominant-baseline="central" fill="rgba(148,163,184,0.9)" font-size="10" font-family="Hind Siliguri,sans-serif">${label_bn}</text>`;
+    svg += `</g>`;
+  });
+
+  svg += `</svg>`;
+  document.getElementById(containerId).innerHTML = svg;
+}
+
+buildRoadmapSVG(DS_NODES, SPRINT_LABELS_DS, 'ds-map-wrap');
+buildMLOpsCardGrid(MLOPS_NODES, SPRINT_LABELS_MLOPS, 'mlops-card-grid');
+
+// ── AWS NODES ──
+// Structure: [id, label_en, label_bn, href, color, col, row]
+const AWS_NODES = [
+  // Cloud Practitioner — individual session files
+  ['cp1', 'CCP Overview',   'CCP পরিচয়',           'AWS_Cloud_Practitionar/cloud_practitioner.html', '#fb923c', 0, 0],
+  ['cp2', 'Session 1',      'ক্লাউড কনসেপ্ট',       'AWS_Cloud_Practitionar/ccp-s1.html',             '#fb923c', 0, 1],
+  ['cp3', 'Session 2',      'গ্লোবাল ইনফ্রা',       'AWS_Cloud_Practitionar/ccp-s2.html',             '#fb923c', 0, 2],
+  ['cp4', 'Session 3',      'IAM',                   'AWS_Cloud_Practitionar/ccp-s3.html',             '#fb923c', 0, 3],
+  ['cp5', 'Session 4',      'EC2 & Compute',         'AWS_Cloud_Practitionar/ccp-s4.html',             '#fb923c', 0, 4],
+  ['cp6', 'Session 5',      'S3 & Storage',          'AWS_Cloud_Practitionar/ccp-s5.html',             '#fb923c', 0, 5],
+  ['cp7', 'Session 6',      'ডেটাবেজ',               'AWS_Cloud_Practitionar/ccp-s6.html',             '#fb923c', 0, 6],
+  ['cp8', 'Session 7',      'নেটওয়ার্কিং',           'AWS_Cloud_Practitionar/ccp-s7.html',             '#fb923c', 0, 7],
+  ['cp9', 'Session 8',      'মনিটরিং',               'AWS_Cloud_Practitionar/ccp-s8.html',             '#fb923c', 0, 8],
+  ['cp10','Session 9',      'বিলিং ও খরচ',           'AWS_Cloud_Practitionar/ccp-s9.html',             '#fb923c', 0, 9],
+  // Solutions Architect — individual files
+  ['sa0', 'SAA Overview',   'SAA পরিচয়',            'AWS_Solution_Architect_Associate/aws-saa-main.html', '#facc15', 1, 0],
+  ['sa1', 'SAA Labs',       'ল্যাব গাইড',            'AWS_Solution_Architect_Associate/aws-saa-labs.html', '#facc15', 1, 1],
+  ['sa2', 'Module 1',       'VPC & নেটওয়ার্ক',      'AWS_Solution_Architect_Associate/aws-saa-module1.html','#facc15', 1, 2],
+  ['sa3', 'Module 2',       'কম্পিউট & স্কেলিং',    'AWS_Solution_Architect_Associate/aws-saa-module2.html','#facc15', 1, 3],
+  ['sa4', 'Module 3',       'স্টোরেজ & DB',          'AWS_Solution_Architect_Associate/aws-saa-module3.html','#facc15', 1, 4],
+  ['sa5', 'Module 4',       'Serverless & HA',       'AWS_Solution_Architect_Associate/aws-saa-module4.html','#facc15', 1, 5],
+  ['sa6', 'Lab 1',          'ল্যাব ১',               'AWS_Solution_Architect_Associate/aws-saa-lab1.html',  '#facc15', 1, 6],
+  ['sa7', 'Lab 2',          'ল্যাব ২',               'AWS_Solution_Architect_Associate/aws-saa-lab2.html',  '#facc15', 1, 7],
+  ['sa8', 'Lab 7',          'ল্যাব ৭',               'AWS_Solution_Architect_Associate/aws-saa-lab7.html',  '#facc15', 1, 8],
+  // MLOps AWS column
+  ['ml1', 'SageMaker',      'ML Training',           'mlops/mlops_final_Project.html',                '#34d399', 2, 0],
+  ['ml2', 'S3 + DVC',       'ডেটা ভার্শনিং',         'mlops/mlops_final_Project.html',                '#34d399', 2, 1],
+  ['ml3', 'ECR + ECS',      'Container Deploy',      'mlops/mlops_final_Project.html',                '#34d399', 2, 2],
+  ['ml4', 'CloudWatch',     'মনিটরিং',               'mlops/mlops_final_Project.html',                '#34d399', 2, 3],
+  ['ml5', 'Bedrock',        'Foundation Models',     'mlops/mlops_final_Project.html',                '#34d399', 2, 4],
+];
+
+const AWS_SPRINT_LABELS = [
+  {col:0, label:'CLF-C02', sub:'Cloud Practitioner'},
+  {col:1, label:'SAA-C03', sub:'Solutions Architect'},
+  {col:2, label:'MLOps',   sub:'AWS for ML'},
+];
+
+buildRoadmapSVG(AWS_NODES, AWS_SPRINT_LABELS, 'aws-map-wrap');
+</script>
+</body>
+</html>
