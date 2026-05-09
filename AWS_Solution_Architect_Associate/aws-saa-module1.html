@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 1: Resilient Architecture — AWS SAA বাংলা</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--or:#FF9900;--dk:#080d1a;--bl:#0f1929;--cb:#162236;--bd:#1e3058;--lb:#00a8e1;--tl:#00c7b1;--gr:#00d68f;--re:#ff4757;--yw:#ffd32a;--t1:#e8f4fd;--t2:#8faec8;--t3:#c5dff0;--ok:#00d68f;--er:#ff4757}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit','Hind Siliguri',sans-serif;background:var(--dk);color:var(--t1);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 20%,rgba(255,153,0,.07) 0,transparent 50%),radial-gradient(ellipse at 85% 80%,rgba(0,168,225,.06) 0,transparent 50%);pointer-events:none;z-index:0}
+.hdr{background:linear-gradient(135deg,#0b1320,#162236,#0b1320);border-bottom:2px solid var(--or);padding:14px 24px;position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 30px rgba(255,153,0,.2);gap:12px;flex-wrap:wrap}
+.hdr-left{display:flex;align-items:center;gap:12px}
+.badge{background:linear-gradient(135deg,var(--or),#cc7700);color:#000;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;padding:5px 10px;border-radius:6px;letter-spacing:1px}
+.hdr-title{font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--or));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-sub{font-family:'Hind Siliguri',sans-serif;font-size:.78rem;color:var(--t2);margin-top:1px}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.stat{padding:5px 12px;border-radius:20px;font-size:.8rem;font-weight:700;cursor:default}
+.stat-ok{background:rgba(0,214,143,.12);border:1px solid rgba(0,214,143,.35);color:var(--gr)}
+.stat-er{background:rgba(255,71,87,.12);border:1px solid rgba(255,71,87,.35);color:var(--re)}
+.stat-pct{background:rgba(255,153,0,.12);border:1px solid rgba(255,153,0,.35);color:var(--or)}
+.reset-btn{background:rgba(255,255,255,.05);border:1px solid var(--bd);color:var(--t2);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:.78rem;transition:all .2s}
+.reset-btn:hover{border-color:var(--re);color:var(--re)}
+.home-btn{background:rgba(255,153,0,.1);border:1px solid rgba(255,153,0,.3);color:var(--or);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:.78rem;font-weight:700;transition:all .2s;text-decoration:none}
+.home-btn:hover{background:rgba(255,153,0,.2)}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 16px;position:relative;z-index:1}
+.nav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:28px}
+.chip{background:var(--cb);border:1.5px solid var(--bd);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:center;transition:all .25s;position:relative}
+.chip:hover,.chip.act{border-color:var(--or);background:rgba(255,153,0,.08);transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,153,0,.15)}
+.chip .ico{font-size:1.3rem;display:block;margin-bottom:4px}
+.chip .lbl{font-size:.72rem;font-weight:600;color:var(--t2)}
+.chip.act .lbl{color:var(--or)}
+.chip .pct{position:absolute;top:5px;right:7px;font-size:.65rem;color:var(--gr);font-weight:700}
+.sc{background:var(--cb);border:1.5px solid var(--bd);border-radius:18px;margin-bottom:20px;overflow:hidden;transition:border-color .3s}
+.sc.active-lesson{border-color:rgba(0,168,225,.4)}
+.sc.active-exercise{border-color:rgba(255,153,0,.5)}
+.sh{padding:18px 22px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;gap:12px;background:linear-gradient(135deg,#162236,#0f1929)}
+.sh:hover{background:linear-gradient(135deg,#1a2a40,#131e2e)}
+.sh-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+.sh-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.sh-title{font-size:1rem;font-weight:700;color:#fff}
+.sh-sub{font-family:'Hind Siliguri',sans-serif;font-size:.8rem;color:var(--t2);margin-top:2px}
+.sh-btns{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.btn{padding:8px 16px;border-radius:9px;border:2px solid transparent;cursor:pointer;font-weight:700;font-size:.78rem;transition:all .25s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-l{background:rgba(0,168,225,.12);border-color:rgba(0,168,225,.3);color:var(--lb)}
+.btn-l:hover,.btn-l.active{background:var(--lb);color:#fff;border-color:var(--lb)}
+.btn-e{background:rgba(255,153,0,.12);border-color:rgba(255,153,0,.3);color:var(--or)}
+.btn-e:hover,.btn-e.active{background:var(--or);color:#000;border-color:var(--or)}
+.prog-bar{padding:10px 22px;background:rgba(0,0,0,.15);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
+.mini-track{flex:1;height:4px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.mini-fill{height:100%;background:linear-gradient(90deg,var(--or),var(--gr));border-radius:3px;transition:width .6s ease}
+.prog-txt{font-size:.72rem;color:var(--t2);font-weight:600;white-space:nowrap}
+.col{display:none}
+.col.open{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.lesson{padding:22px}
+.concept{background:linear-gradient(135deg,rgba(0,168,225,.06),rgba(0,168,225,.02));border-left:3px solid var(--lb);border-radius:0 12px 12px 0;padding:16px 20px;margin-bottom:18px}
+.ct{font-size:.95rem;font-weight:700;color:var(--lb);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cb{font-family:'Hind Siliguri',sans-serif;font-size:.95rem;color:var(--t3);line-height:1.85}
+.cb b,.cb strong{color:var(--or)}
+.eng{font-family:'JetBrains Mono',monospace;background:rgba(255,153,0,.12);color:var(--or);padding:1px 6px;border-radius:4px;font-size:.88em;font-weight:600}
+.kp{background:rgba(0,214,143,.05);border:1px solid rgba(0,214,143,.2);border-radius:13px;padding:16px 20px;margin-bottom:18px}
+.kp h4{color:var(--gr);font-size:.85rem;font-weight:700;margin-bottom:10px;font-family:'Hind Siliguri',sans-serif}
+.kp li{font-family:'Hind Siliguri',sans-serif;font-size:.9rem;color:var(--t3);padding:6px 0 6px 20px;position:relative;line-height:1.7;list-style:none;border-bottom:1px solid rgba(255,255,255,.04)}
+.kp li:last-child{border-bottom:none}
+.kp li::before{content:'▸';color:var(--gr);position:absolute;left:0;font-size:.8rem;top:8px}
+.tip{background:linear-gradient(135deg,rgba(255,153,0,.08),rgba(255,153,0,.03));border:1px solid rgba(255,153,0,.3);border-radius:13px;padding:14px 18px;margin-bottom:18px;display:flex;gap:12px}
+.tip .ico{font-size:1.2rem;flex-shrink:0;margin-top:2px}
+.tip p{font-family:'Hind Siliguri',sans-serif;font-size:.88rem;color:var(--t3);line-height:1.75}
+.tip strong{color:var(--or)}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:18px}
+.svc-card{background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:11px;padding:13px 15px;transition:all .25s}
+.svc-card:hover{border-color:var(--or);transform:translateY(-2px)}
+.svc-name{font-family:'JetBrains Mono',monospace;color:var(--or);font-size:.82rem;font-weight:600;margin-bottom:5px}
+.svc-desc{font-family:'Hind Siliguri',sans-serif;font-size:.8rem;color:var(--t2);line-height:1.6}
+.tbl{width:100%;border-collapse:separate;border-spacing:0 5px;margin-bottom:18px}
+.tbl th{background:rgba(0,168,225,.12);color:var(--lb);padding:10px 14px;font-size:.8rem;font-weight:700;text-align:left}
+.tbl td{background:rgba(255,255,255,.02);padding:10px 14px;font-family:'Hind Siliguri',sans-serif;font-size:.85rem;color:var(--t3);border-bottom:1px solid rgba(255,255,255,.04)}
+.tbl tr:hover td{background:rgba(255,255,255,.04)}
+.diagram{margin:0 0 18px;border-radius:13px;overflow:hidden;border:1px solid var(--bd)}
+.diagram svg{display:block;width:100%;height:auto}
+.new-badge{display:inline-block;background:linear-gradient(135deg,var(--gr),#00b077);color:#000;font-size:.65rem;font-weight:800;padding:2px 8px;border-radius:10px;margin-left:8px;vertical-align:middle}
+.ex-wrap{padding:22px}
+.ex-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.ex-hdr h3{font-size:1rem;font-weight:700;color:var(--or)}
+.ex-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.ex-tab{padding:7px 14px;border-radius:8px;border:1.5px solid var(--bd);cursor:pointer;font-size:.78rem;font-weight:700;color:var(--t2);background:transparent;transition:all .2s}
+.ex-tab:hover{border-color:var(--or);color:var(--or)}
+.ex-tab.active{background:rgba(255,153,0,.12);border-color:var(--or);color:var(--or)}
+.ex-panel{display:none}
+.ex-panel.open{display:block;animation:fadeIn .2s ease}
+.ex-score{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:12px;padding:12px 18px;margin-bottom:18px}
+.ex-score-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.score-bar{background:rgba(255,255,255,.06);border-radius:6px;height:7px;overflow:hidden}
+.score-fill{height:100%;background:linear-gradient(90deg,var(--or),var(--gr));border-radius:6px;transition:width .6s ease}
+.qcard{background:linear-gradient(135deg,rgba(22,34,54,.9),rgba(15,25,41,.95));border:1.5px solid var(--bd);border-radius:15px;padding:20px;margin-bottom:18px;position:relative;transition:border-color .3s}
+.qcard.ok{border-color:rgba(0,214,143,.5);background:rgba(0,214,143,.04)}
+.qcard.er{border-color:rgba(255,71,87,.5);background:rgba(255,71,87,.04)}
+.qmeta{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.qnum{background:rgba(255,153,0,.15);color:var(--or);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px}
+.qtype{background:rgba(255,255,255,.06);color:var(--t2);font-size:.7rem;padding:3px 10px;border-radius:20px}
+.qscen{background:rgba(0,199,177,.12);color:var(--tl);font-size:.7rem;padding:3px 10px;border-radius:20px;font-weight:600}
+.qtxt{font-family:'Hind Siliguri',sans-serif;font-size:.98rem;color:var(--t1);line-height:1.8;margin-bottom:16px;font-weight:500}
+.opts{display:grid;gap:8px}
+.opt{background:rgba(255,255,255,.03);border:1.5px solid var(--bd);border-radius:11px;padding:12px 16px;cursor:pointer;text-align:left;transition:all .2s;display:flex;align-items:flex-start;gap:12px;font-family:'Hind Siliguri',sans-serif;font-size:.9rem;color:var(--t1);line-height:1.6;width:100%}
+.opt:hover:not(:disabled){border-color:var(--lb);background:rgba(0,168,225,.07);transform:translateX(3px)}
+.opt:disabled{cursor:default;transform:none}
+.opt.cor{border-color:var(--ok);background:rgba(0,214,143,.1);color:var(--ok)}
+.opt.wr{border-color:var(--er);background:rgba(255,71,87,.1);color:var(--er)}
+.opt.sel{border-color:var(--lb);background:rgba(0,168,225,.1)}
+.olet{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0;background:rgba(255,255,255,.07);color:var(--t2);font-family:'JetBrains Mono',monospace}
+.opt.cor .olet{background:var(--ok);color:#000}
+.opt.wr .olet{background:var(--er);color:#fff}
+.opt.sel .olet{background:var(--lb);color:#fff}
+.fb{display:none;margin-top:14px;border-radius:11px;padding:14px 16px;animation:fadeIn .25s}
+.fb.show{display:block}
+.fb.ok-fb{background:rgba(0,214,143,.07);border:1px solid rgba(0,214,143,.3)}
+.fb.er-fb{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3)}
+.fb-title{font-weight:700;font-size:.9rem;margin-bottom:6px}
+.ok-fb .fb-title{color:var(--ok)}
+.er-fb .fb-title{color:var(--er)}
+.fb-exp{font-family:'Hind Siliguri',sans-serif;font-size:.88rem;color:var(--t3);line-height:1.75}
+.fb-exp b{color:var(--or)}
+.nxt-rev{font-size:.75rem;color:var(--t2);margin-top:8px;font-family:'Hind Siliguri',sans-serif}
+.tf-card{background:linear-gradient(135deg,rgba(22,34,54,.9),rgba(15,25,41,.95));border:1.5px solid var(--bd);border-radius:15px;padding:20px;margin-bottom:14px;transition:border-color .3s}
+.tf-card.ok{border-color:rgba(0,214,143,.5)}
+.tf-card.er{border-color:rgba(255,71,87,.5)}
+.tf-stmt{font-family:'Hind Siliguri',sans-serif;font-size:.96rem;color:var(--t1);line-height:1.8;margin-bottom:14px;font-weight:500}
+.tf-btns{display:flex;gap:10px}
+.tf-btn{flex:1;padding:10px;border-radius:10px;border:2px solid var(--bd);cursor:pointer;font-size:.9rem;font-weight:700;background:transparent;transition:all .2s}
+.tf-btn.true-btn{color:var(--gr)}
+.tf-btn.false-btn{color:var(--re)}
+.tf-btn:hover:not(:disabled){transform:translateY(-2px)}
+.tf-btn.cor-tf{background:rgba(0,214,143,.15);border-color:var(--gr);color:var(--gr)}
+.tf-btn.wr-tf{background:rgba(255,71,87,.15);border-color:var(--re);color:var(--re)}
+.tf-btn:disabled{cursor:default;transform:none}
+.tf-fb{display:none;margin-top:12px;padding:12px 14px;border-radius:10px;font-family:'Hind Siliguri',sans-serif;font-size:.85rem;line-height:1.7}
+.tf-fb.show{display:block}
+.tf-fb.ok-tf{background:rgba(0,214,143,.07);border:1px solid rgba(0,214,143,.3);color:var(--t3)}
+.tf-fb.er-tf{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3);color:var(--t3)}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.match-left,.match-right{display:flex;flex-direction:column;gap:8px}
+.match-item{background:rgba(255,255,255,.03);border:1.5px solid var(--bd);border-radius:10px;padding:11px 15px;font-family:'Hind Siliguri',sans-serif;font-size:.85rem;color:var(--t1);cursor:pointer;transition:all .2s;user-select:none;min-height:44px;display:flex;align-items:center}
+.match-item.selected{border-color:var(--lb);background:rgba(0,168,225,.1);color:var(--lb)}
+.match-item.matched-ok{border-color:var(--ok);background:rgba(0,214,143,.1);color:var(--ok);cursor:default}
+.match-item.matched-er{border-color:var(--er);background:rgba(255,71,87,.1);color:var(--er);cursor:default;animation:shake .3s}
+.match-svc{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:700;color:var(--or)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.match-score{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:12px;padding:12px 16px;text-align:center;font-size:.9rem;color:var(--t2);font-family:'Hind Siliguri',sans-serif}
+.match-score b{color:var(--or)}
+.order-wrap{margin-bottom:20px}
+.order-question{font-family:'Hind Siliguri',sans-serif;font-size:.96rem;color:var(--t1);margin-bottom:14px;line-height:1.7}
+.order-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.order-item{background:rgba(255,255,255,.03);border:1.5px solid var(--bd);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:grab;font-family:'Hind Siliguri',sans-serif;font-size:.88rem;color:var(--t1);transition:all .2s;user-select:none}
+.order-item:active{cursor:grabbing;transform:scale(1.02);border-color:var(--or)}
+.order-item.dragging{opacity:.5;border-color:var(--or)}
+.order-item.drag-over{border-color:var(--lb);background:rgba(0,168,225,.07)}
+.order-num{width:28px;height:28px;border-radius:7px;background:rgba(255,153,0,.12);color:var(--or);font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.order-item.cor-order{border-color:var(--ok);background:rgba(0,214,143,.07)}
+.order-item.wr-order{border-color:var(--er);background:rgba(255,71,87,.07)}
+.order-check-btn{background:rgba(255,153,0,.1);border:1px solid rgba(255,153,0,.3);color:var(--or);padding:9px 20px;border-radius:10px;cursor:pointer;font-weight:700;font-size:.82rem;transition:all .2s;margin-top:4px}
+.order-check-btn:hover{background:rgba(255,153,0,.2)}
+.fib-card{background:linear-gradient(135deg,rgba(22,34,54,.9),rgba(15,25,41,.95));border:1.5px solid var(--bd);border-radius:15px;padding:20px;margin-bottom:14px;transition:border-color .3s}
+.fib-card.ok{border-color:rgba(0,214,143,.5)}
+.fib-card.er{border-color:rgba(255,71,87,.5)}
+.fib-q{font-family:'Hind Siliguri',sans-serif;font-size:.96rem;color:var(--t1);line-height:1.85;margin-bottom:14px}
+.fib-input-wrap{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.fib-input{background:rgba(255,255,255,.05);border:1.5px solid var(--bd);border-radius:9px;padding:9px 14px;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.9rem;width:220px;transition:all .2s;outline:none}
+.fib-input:focus{border-color:var(--lb)}
+.fib-input.ok-inp{border-color:var(--ok);background:rgba(0,214,143,.07)}
+.fib-input.er-inp{border-color:var(--er);background:rgba(255,71,87,.07)}
+.fib-check{background:rgba(0,168,225,.1);border:1px solid rgba(0,168,225,.3);color:var(--lb);padding:9px 18px;border-radius:9px;cursor:pointer;font-weight:700;font-size:.82rem;transition:all .2s}
+.fib-check:hover{background:rgba(0,168,225,.2)}
+.fib-fb{display:none;margin-top:12px;font-family:'Hind Siliguri',sans-serif;font-size:.85rem;line-height:1.7;padding:10px 14px;border-radius:8px}
+.fib-fb.show{display:block}
+.fib-fb.ok-f{background:rgba(0,214,143,.07);border:1px solid rgba(0,214,143,.3);color:var(--gr)}
+.fib-fb.er-f{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3);color:var(--re)}
+.fc-wrap{perspective:1000px;max-width:600px;margin:0 auto 20px}
+.fc-card-outer{width:100%;height:200px;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.fc-card-outer.flipped{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;inset:0;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.fc-front{background:linear-gradient(135deg,var(--cb),var(--bl));border:1.5px solid var(--or)}
+.fc-back{background:linear-gradient(135deg,rgba(0,168,225,.1),rgba(0,214,143,.05));border:1.5px solid var(--gr);transform:rotateY(180deg)}
+.fc-label{font-size:.7rem;font-weight:700;letter-spacing:1px;margin-bottom:10px;opacity:.7;font-family:'JetBrains Mono',monospace}
+.fc-front .fc-label{color:var(--or)}
+.fc-back .fc-label{color:var(--gr)}
+.fc-content{font-family:'Hind Siliguri',sans-serif;font-size:1rem;color:var(--t1);text-align:center;line-height:1.7}
+.fc-front .fc-content{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--or)}
+.fc-hint{font-size:.72rem;color:var(--t2);margin-top:10px;font-family:'Hind Siliguri',sans-serif;text-align:center}
+.fc-known-wrap{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.fc-known{padding:8px 20px;border-radius:10px;cursor:pointer;font-weight:700;font-size:.82rem;transition:all .2s;border:1.5px solid transparent}
+.fc-known-yes{background:rgba(0,214,143,.15);border-color:var(--ok);color:var(--ok)}
+.fc-known-no{background:rgba(255,71,87,.15);border-color:var(--er);color:var(--er)}
+.fc-known:hover{transform:translateY(-2px)}
+.case-card{background:linear-gradient(135deg,rgba(0,199,177,.05),rgba(0,168,225,.03));border:1.5px solid rgba(0,199,177,.3);border-radius:15px;padding:20px;margin-bottom:18px}
+.case-scenario{background:rgba(0,0,0,.2);border-left:3px solid var(--tl);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:16px;font-family:'Hind Siliguri',sans-serif;font-size:.92rem;color:var(--t3);line-height:1.8}
+.case-scenario strong{color:var(--tl)}
+.case-q{font-family:'Hind Siliguri',sans-serif;font-size:.95rem;color:var(--t1);margin-bottom:14px;font-weight:600}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--cb);border:1px solid var(--bd);border-radius:13px;padding:12px 20px;font-size:.85rem;font-weight:600;opacity:0;transform:translateY(20px);transition:all .3s;z-index:999;max-width:280px;pointer-events:none;font-family:'Hind Siliguri',sans-serif}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok-t{border-color:rgba(0,214,143,.5);color:var(--ok)}
+.toast.er-t{border-color:rgba(255,71,87,.5);color:var(--er)}
+@media(max-width:600px){.sh-btns{flex-direction:column}.match-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<div class="hdr">
+  <div class="hdr-left">
+    <span class="badge">MODULE 1</span>
+    <div>
+      <div class="hdr-title">🏗️ Resilient Architecture — SAA-C03</div>
+      <div class="hdr-sub">EC2 • Auto Scaling • Load Balancing • HA Design</div>
+    </div>
+  </div>
+  <div class="stats">
+    <span class="stat stat-ok" id="hOk">✅ 0</span>
+    <span class="stat stat-er" id="hEr">❌ 0</span>
+    <span class="stat stat-pct" id="hPct">📊 0%</span>
+    <a href="aws-saa-main.html" class="home-btn">🏠 Home</a>
+    <button class="reset-btn" onclick="resetProgress()">🔄 Reset</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- NAV -->
+  <div class="nav-grid">
+    <div class="chip act" onclick="goSection('s1',this)"><span class="ico">☁️</span><span class="lbl">Cloud Basics</span><span class="pct" id="np-s1">0%</span></div>
+    <div class="chip" onclick="goSection('s2',this)"><span class="ico">🖥️</span><span class="lbl">EC2 Deep Dive</span><span class="pct" id="np-s2">0%</span></div>
+    <div class="chip" onclick="goSection('s3',this)"><span class="ico">📈</span><span class="lbl">Auto Scaling</span><span class="pct" id="np-s3">0%</span></div>
+    <div class="chip" onclick="goSection('s4',this)"><span class="ico">⚖️</span><span class="lbl">Load Balancing</span><span class="pct" id="np-s4">0%</span></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       S1: CLOUD FUNDAMENTALS FOR SAA
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="sc active-lesson" id="s1">
+    <div class="sh" onclick="toggleLesson('s1')">
+      <div class="sh-left">
+        <div class="sh-icon" style="background:linear-gradient(135deg,rgba(255,153,0,.2),rgba(255,153,0,.05))">☁️</div>
+        <div>
+          <div class="sh-title">SAA Foundation: Architecture Principles</div>
+          <div class="sh-sub">Well-Architected Framework, Design Patterns, Shared Responsibility, HA vs Fault Tolerance</div>
+        </div>
+      </div>
+      <div class="sh-btns" onclick="event.stopPropagation()">
+        <button class="btn btn-l active" id="lb-s1" onclick="showLesson('s1')">📖 Lesson</button>
+        <button class="btn btn-e" id="eb-s1" onclick="showExercise('s1')">🎯 Practice</button>
+      </div>
+    </div>
+    <div class="prog-bar"><span class="prog-txt">অগ্রগতি</span><div class="mini-track"><div class="mini-fill" id="pf-s1" style="width:0%"></div></div><span class="prog-txt" id="pt-s1">0/0</span></div>
+    <div class="col open" id="lesson-s1">
+      <div class="lesson">
+
+        <div class="diagram"><svg viewBox="0 0 700 240" xmlns="http://www.w3.org/2000/svg">
+          <rect width="700" height="240" fill="#0f1929"/>
+          <text x="350" y="26" text-anchor="middle" fill="#FF9900" font-family="JetBrains Mono,monospace" font-size="13" font-weight="700">AWS Well-Architected Framework — 6 Pillars</text>
+          <!-- Pillar boxes -->
+          <rect x="15" y="42" width="102" height="80" rx="10" fill="rgba(255,153,0,0.1)" stroke="#FF9900" stroke-width="1.5"/>
+          <text x="66" y="70" text-anchor="middle" fill="#FF9900" font-size="18">⚙️</text>
+          <text x="66" y="88" text-anchor="middle" fill="#FF9900" font-size="9" font-weight="700">Operational</text>
+          <text x="66" y="100" text-anchor="middle" fill="#FF9900" font-size="9" font-weight="700">Excellence</text>
+          <text x="66" y="116" text-anchor="middle" fill="#8faec8" font-size="8">Run ops well</text>
+          <rect x="127" y="42" width="102" height="80" rx="10" fill="rgba(0,214,143,0.1)" stroke="#00d68f" stroke-width="1.5"/>
+          <text x="178" y="70" text-anchor="middle" fill="#00d68f" font-size="18">🔒</text>
+          <text x="178" y="88" text-anchor="middle" fill="#00d68f" font-size="9" font-weight="700">Security</text>
+          <text x="178" y="116" text-anchor="middle" fill="#8faec8" font-size="8">Protect data</text>
+          <rect x="239" y="42" width="102" height="80" rx="10" fill="rgba(0,168,225,0.1)" stroke="#00a8e1" stroke-width="1.5"/>
+          <text x="290" y="70" text-anchor="middle" fill="#00a8e1" font-size="18">🔄</text>
+          <text x="290" y="88" text-anchor="middle" fill="#00a8e1" font-size="9" font-weight="700">Reliability</text>
+          <text x="290" y="116" text-anchor="middle" fill="#8faec8" font-size="8">Recover fast</text>
+          <rect x="351" y="42" width="102" height="80" rx="10" fill="rgba(0,199,177,0.1)" stroke="#00c7b1" stroke-width="1.5"/>
+          <text x="402" y="70" text-anchor="middle" fill="#00c7b1" font-size="18">⚡</text>
+          <text x="402" y="88" text-anchor="middle" fill="#00c7b1" font-size="9" font-weight="700">Performance</text>
+          <text x="402" y="100" text-anchor="middle" fill="#00c7b1" font-size="9" font-weight="700">Efficiency</text>
+          <text x="402" y="116" text-anchor="middle" fill="#8faec8" font-size="8">Use resources well</text>
+          <rect x="463" y="42" width="102" height="80" rx="10" fill="rgba(255,215,42,0.1)" stroke="#ffd32a" stroke-width="1.5"/>
+          <text x="514" y="70" text-anchor="middle" fill="#ffd32a" font-size="18">💰</text>
+          <text x="514" y="88" text-anchor="middle" fill="#ffd32a" font-size="9" font-weight="700">Cost</text>
+          <text x="514" y="100" text-anchor="middle" fill="#ffd32a" font-size="9" font-weight="700">Optimization</text>
+          <text x="514" y="116" text-anchor="middle" fill="#8faec8" font-size="8">Avoid waste</text>
+          <rect x="575" y="42" width="112" height="80" rx="10" fill="rgba(100,200,100,0.08)" stroke="rgba(100,200,100,0.5)" stroke-width="1.5"/>
+          <text x="631" y="70" text-anchor="middle" fill="#7dd87d" font-size="18">🌱</text>
+          <text x="631" y="88" text-anchor="middle" fill="#7dd87d" font-size="9" font-weight="700">Sustainability</text>
+          <text x="631" y="116" text-anchor="middle" fill="#8faec8" font-size="8">Reduce impact</text>
+          <!-- HA vs FT -->
+          <rect x="15" y="140" width="330" height="85" rx="10" fill="rgba(0,168,225,0.06)" stroke="#00a8e1" stroke-width="1.5"/>
+          <text x="180" y="162" text-anchor="middle" fill="#00a8e1" font-size="11" font-weight="700">High Availability (HA)</text>
+          <text x="30" y="182" fill="#c5dff0" font-size="10">✅ Minimize downtime with failover</text>
+          <text x="30" y="198" fill="#c5dff0" font-size="10">✅ Multi-AZ deployments</text>
+          <text x="30" y="214" fill="#c5dff0" font-size="10">✅ Brief interruption during failover OK</text>
+          <rect x="355" y="140" width="332" height="85" rx="10" fill="rgba(0,214,143,0.06)" stroke="#00d68f" stroke-width="1.5"/>
+          <text x="521" y="162" text-anchor="middle" fill="#00d68f" font-size="11" font-weight="700">Fault Tolerance (FT)</text>
+          <text x="370" y="182" fill="#c5dff0" font-size="10">✅ Zero downtime, no interruption</text>
+          <text x="370" y="198" fill="#c5dff0" font-size="10">✅ Redundant active components</text>
+          <text x="370" y="214" fill="#c5dff0" font-size="10">✅ More expensive than HA</text>
+        </svg></div>
+
+        <div class="concept"><div class="ct">🏗️ SAA পরীক্ষায় Architecture কীভাবে চিন্তা করবে?</div>
+        <div class="cb">SAA পরীক্ষায় scenario দেবে — তোমাকে <b>সবচেয়ে ভালো solution</b> বেছে নিতে হবে। চিন্তার framework:<br><br>
+        1️⃣ <b>Availability requirement</b> — HA চাই না FT? SLA কত?<br>
+        2️⃣ <b>Scalability</b> — Traffic কি বাড়বে-কমবে? Horizontal নাকি Vertical?<br>
+        3️⃣ <b>Cost</b> — "Least expensive" কি requirement?<br>
+        4️⃣ <b>Operational overhead</b> — "Least operational overhead" মানে managed service prefer করো<br>
+        5️⃣ <b>Security</b> — Least privilege, encryption, private subnet
+        </div></div>
+
+        <div class="kp"><h4>✅ SAA Key Architecture Patterns — Exam এ বারবার আসে</h4><ul>
+          <li><span class="eng">Multi-tier (3-tier)</span> — Web (public subnet) → App (private) → DB (private)। Separation of concerns।</li>
+          <li><span class="eng">Microservices</span> — Loosely coupled services। Lambda, ECS, API Gateway। Independent scaling।</li>
+          <li><span class="eng">Event-driven</span> — SQS/SNS → Lambda। Decoupled। Async processing।</li>
+          <li><span class="eng">CQRS</span> — Command/Query separation। Write DB আলাদা, Read DB আলাদা।</li>
+          <li><span class="eng">Disaster Recovery</span> — Pilot Light, Warm Standby, Multi-Site, Backup &amp; Restore।</li>
+        </ul></div>
+
+        <div class="diagram"><svg viewBox="0 0 700 190" xmlns="http://www.w3.org/2000/svg">
+          <defs><marker id="arr" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#8faec8"/></marker></defs>
+          <rect width="700" height="190" fill="#0f1929"/>
+          <text x="350" y="22" text-anchor="middle" fill="#FF9900" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700">Disaster Recovery Strategies — RTO vs RPO Trade-off</text>
+          <!-- Axis -->
+          <line x1="50" y1="160" x2="680" y2="160" stroke="#8faec8" stroke-width="1.5" marker-end="url(#arr)"/>
+          <text x="365" y="178" text-anchor="middle" fill="#8faec8" font-size="9">Cost / Recovery Speed →</text>
+          <!-- Strategies -->
+          <rect x="60" y="80" width="130" height="65" rx="8" fill="rgba(255,71,87,0.1)" stroke="#ff4757" stroke-width="1.5"/>
+          <text x="125" y="102" text-anchor="middle" fill="#ff4757" font-size="10" font-weight="700">Backup &amp; Restore</text>
+          <text x="125" y="118" text-anchor="middle" fill="#8faec8" font-size="8">Hours RTO/RPO</text>
+          <text x="125" y="132" text-anchor="middle" fill="#8faec8" font-size="8">Cheapest 💲</text>
+          <rect x="210" y="65" width="130" height="80" rx="8" fill="rgba(255,153,0,0.1)" stroke="#FF9900" stroke-width="1.5"/>
+          <text x="275" y="87" text-anchor="middle" fill="#FF9900" font-size="10" font-weight="700">Pilot Light</text>
+          <text x="275" y="103" text-anchor="middle" fill="#8faec8" font-size="8">Core infra always on</text>
+          <text x="275" y="119" text-anchor="middle" fill="#8faec8" font-size="8">Scale on failover</text>
+          <text x="275" y="135" text-anchor="middle" fill="#ffd32a" font-size="8">Minutes RTO 💲💲</text>
+          <rect x="360" y="50" width="140" height="95" rx="8" fill="rgba(0,199,177,0.1)" stroke="#00c7b1" stroke-width="1.5"/>
+          <text x="430" y="72" text-anchor="middle" fill="#00c7b1" font-size="10" font-weight="700">Warm Standby</text>
+          <text x="430" y="88" text-anchor="middle" fill="#8faec8" font-size="8">Scaled-down version</text>
+          <text x="430" y="104" text-anchor="middle" fill="#8faec8" font-size="8">always running</text>
+          <text x="430" y="120" text-anchor="middle" fill="#8faec8" font-size="8">Scale up on failover</text>
+          <text x="430" y="136" text-anchor="middle" fill="#00c7b1" font-size="8">Minutes RTO 💲💲💲</text>
+          <rect x="520" y="35" width="150" height="110" rx="8" fill="rgba(0,214,143,0.1)" stroke="#00d68f" stroke-width="1.5"/>
+          <text x="595" y="57" text-anchor="middle" fill="#00d68f" font-size="10" font-weight="700">Multi-Site Active</text>
+          <text x="595" y="73" text-anchor="middle" fill="#00d68f" font-size="10" font-weight="700">/Active</text>
+          <text x="595" y="89" text-anchor="middle" fill="#8faec8" font-size="8">Full copy in 2 regions</text>
+          <text x="595" y="105" text-anchor="middle" fill="#8faec8" font-size="8">Live traffic both sites</text>
+          <text x="595" y="121" text-anchor="middle" fill="#8faec8" font-size="8">Near-zero RTO/RPO</text>
+          <text x="595" y="137" text-anchor="middle" fill="#00d68f" font-size="8">Most Expensive 💲💲💲💲</text>
+        </svg></div>
+
+        <table class="tbl">
+          <tr><th>Pattern</th><th>RTO</th><th>RPO</th><th>Cost</th><th>Use Case</th></tr>
+          <tr><td><span class="eng">Backup &amp; Restore</span></td><td>Hours</td><td>Hours</td><td>💲 সস্তা</td><td>Non-critical data</td></tr>
+          <tr><td><span class="eng">Pilot Light</span></td><td>মিনিট</td><td>মিনিট</td><td>💲💲</td><td>Core systems</td></tr>
+          <tr><td><span class="eng">Warm Standby</span></td><td>মিনিট</td><td>সেকেন্ড</td><td>💲💲💲</td><td>Business critical</td></tr>
+          <tr><td><span class="eng">Multi-Site A/A</span></td><td>সেকেন্ড</td><td>শূন্য</td><td>💲💲💲💲</td><td>Mission critical</td></tr>
+        </table>
+
+        <div class="tip"><span class="ico">💡</span><p><strong>Exam Tip:</strong> <b>RTO</b> = Recovery Time Objective (কত দ্রুত recover করবে)। <b>RPO</b> = Recovery Point Objective (কতটুকু data loss acceptable)। "Lowest RTO/RPO" = Multi-Site। "Lowest cost DR" = Backup &amp; Restore।</p></div>
+
+      </div>
+    </div>
+    <div class="col" id="exercise-s1">
+      <div class="ex-wrap">
+        <div class="ex-hdr"><h3>🎯 Practice — Architecture Principles</h3></div>
+        <div class="ex-tabs">
+          <button class="ex-tab active" onclick="switchTab('s1','mcq',this)">📝 MCQ</button>
+          <button class="ex-tab" onclick="switchTab('s1','tf',this)">✅ True/False</button>
+          <button class="ex-tab" onclick="switchTab('s1','flash',this)">🃏 Flashcards</button>
+          <button class="ex-tab" onclick="switchTab('s1','case',this)">📌 Scenarios</button>
+        </div>
+        <div class="ex-panel open" id="panel-s1-mcq"><div id="ex-s1-mcq"></div></div>
+        <div class="ex-panel" id="panel-s1-tf"><div id="ex-s1-tf"></div></div>
+        <div class="ex-panel" id="panel-s1-flash"><div id="ex-s1-flash"></div></div>
+        <div class="ex-panel" id="panel-s1-case"><div id="ex-s1-case"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       S2: EC2 DEEP DIVE
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="sc" id="s2">
+    <div class="sh" onclick="toggleLesson('s2')">
+      <div class="sh-left">
+        <div class="sh-icon" style="background:linear-gradient(135deg,rgba(0,168,225,.2),rgba(0,168,225,.05))">🖥️</div>
+        <div>
+          <div class="sh-title">EC2 Deep Dive</div>
+          <div class="sh-sub">Instance types, Purchasing options, Placement Groups, Hibernate, User Data, Metadata</div>
+        </div>
+      </div>
+      <div class="sh-btns" onclick="event.stopPropagation()">
+        <button class="btn btn-l active" id="lb-s2" onclick="showLesson('s2')">📖 Lesson</button>
+        <button class="btn btn-e" id="eb-s2" onclick="showExercise('s2')">🎯 Practice</button>
+      </div>
+    </div>
+    <div class="prog-bar"><span class="prog-txt">অগ্রগতি</span><div class="mini-track"><div class="mini-fill" id="pf-s2" style="width:0%"></div></div><span class="prog-txt" id="pt-s2">0/0</span></div>
+    <div class="col open" id="lesson-s2">
+      <div class="lesson">
+
+        <div class="diagram"><svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+          <rect width="700" height="200" fill="#0f1929"/>
+          <text x="350" y="24" text-anchor="middle" fill="#FF9900" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700">EC2 Purchasing Options — Cost vs Flexibility</text>
+          <!-- On-Demand -->
+          <rect x="15" y="38" width="115" height="145" rx="10" fill="rgba(0,168,225,0.08)" stroke="#00a8e1" stroke-width="1.5"/>
+          <text x="72" y="62" text-anchor="middle" fill="#00a8e1" font-size="11" font-weight="700">On-Demand</text>
+          <text x="72" y="80" text-anchor="middle" fill="#ffd32a" font-size="13" font-weight="700">💲💲💲💲</text>
+          <text x="72" y="100" text-anchor="middle" fill="#c5dff0" font-size="8">No commitment</text>
+          <text x="72" y="114" text-anchor="middle" fill="#c5dff0" font-size="8">Pay per hour/sec</text>
+          <text x="72" y="128" text-anchor="middle" fill="#8faec8" font-size="8">Short workloads</text>
+          <text x="72" y="144" text-anchor="middle" fill="#8faec8" font-size="8">Unpredictable</text>
+          <text x="72" y="162" text-anchor="middle" fill="#00a8e1" font-size="8">Max flexibility</text>
+          <!-- Reserved -->
+          <rect x="140" y="38" width="115" height="145" rx="10" fill="rgba(0,214,143,0.08)" stroke="#00d68f" stroke-width="1.5"/>
+          <text x="197" y="62" text-anchor="middle" fill="#00d68f" font-size="11" font-weight="700">Reserved</text>
+          <text x="197" y="80" text-anchor="middle" fill="#ffd32a" font-size="13" font-weight="700">💲💲</text>
+          <text x="197" y="100" text-anchor="middle" fill="#c5dff0" font-size="8">1 or 3 year commit</text>
+          <text x="197" y="114" text-anchor="middle" fill="#00d68f" font-size="8">Up to 72% discount</text>
+          <text x="197" y="128" text-anchor="middle" fill="#8faec8" font-size="8">Steady-state use</text>
+          <text x="197" y="144" text-anchor="middle" fill="#8faec8" font-size="8">Convertible RI</text>
+          <text x="197" y="162" text-anchor="middle" fill="#00d68f" font-size="8">Best savings</text>
+          <!-- Savings Plans -->
+          <rect x="265" y="38" width="115" height="145" rx="10" fill="rgba(0,199,177,0.08)" stroke="#00c7b1" stroke-width="1.5"/>
+          <text x="322" y="55" text-anchor="middle" fill="#00c7b1" font-size="10" font-weight="700">Savings Plans</text>
+          <text x="322" y="72" text-anchor="middle" fill="#ffd32a" font-size="13" font-weight="700">💲💲</text>
+          <text x="322" y="92" text-anchor="middle" fill="#c5dff0" font-size="8">Commit $/hr usage</text>
+          <text x="322" y="108" text-anchor="middle" fill="#c5dff0" font-size="8">Flexible instance</text>
+          <text x="322" y="124" text-anchor="middle" fill="#8faec8" font-size="8">Compute/EC2/SageMaker</text>
+          <text x="322" y="140" text-anchor="middle" fill="#8faec8" font-size="8">Most flexible RI alt</text>
+          <!-- Spot -->
+          <rect x="390" y="38" width="115" height="145" rx="10" fill="rgba(255,71,87,0.08)" stroke="#ff4757" stroke-width="1.5"/>
+          <text x="447" y="62" text-anchor="middle" fill="#ff4757" font-size="11" font-weight="700">Spot</text>
+          <text x="447" y="80" text-anchor="middle" fill="#ffd32a" font-size="13" font-weight="700">💲</text>
+          <text x="447" y="100" text-anchor="middle" fill="#00d68f" font-size="8">Up to 90% discount!</text>
+          <text x="447" y="116" text-anchor="middle" fill="#ff4757" font-size="8">Can be terminated</text>
+          <text x="447" y="130" text-anchor="middle" fill="#8faec8" font-size="8">Batch, flexible jobs</text>
+          <text x="447" y="146" text-anchor="middle" fill="#8faec8" font-size="8">NOT for DB/critical</text>
+          <text x="447" y="162" text-anchor="middle" fill="#ff4757" font-size="8">Cheapest option!</text>
+          <!-- Dedicated Host -->
+          <rect x="515" y="38" width="170" height="145" rx="10" fill="rgba(255,215,42,0.06)" stroke="#ffd32a" stroke-width="1.5"/>
+          <text x="600" y="62" text-anchor="middle" fill="#ffd32a" font-size="11" font-weight="700">Dedicated Host</text>
+          <text x="600" y="80" text-anchor="middle" fill="#ffd32a" font-size="13" font-weight="700">💲💲💲💲💲</text>
+          <text x="600" y="100" text-anchor="middle" fill="#c5dff0" font-size="8">Physical server দেওয়া</text>
+          <text x="600" y="116" text-anchor="middle" fill="#c5dff0" font-size="8">BYOL — per-socket</text>
+          <text x="600" y="132" text-anchor="middle" fill="#8faec8" font-size="8">per-core licensing</text>
+          <text x="600" y="148" text-anchor="middle" fill="#ffd32a" font-size="8">Compliance, Oracle</text>
+          <text x="600" y="164" text-anchor="middle" fill="#8faec8" font-size="8">Most expensive</text>
+        </svg></div>
+
+        <div class="concept"><div class="ct">🖥️ EC2 Instance Types — Family Mnemonics</div>
+        <div class="cb">
+        <b>General Purpose</b> (t, m) — Balance compute/memory/network। Web servers, dev environments।<br>
+        <b>Compute Optimized</b> (c) — CPU-intensive: Batch processing, HPC, gaming servers।<br>
+        <b>Memory Optimized</b> (r, x, z) — Large RAM: In-memory databases, real-time analytics।<br>
+        <b>Storage Optimized</b> (i, d, h) — High I/O: OLTP, data warehousing, Hadoop।<br>
+        <b>Accelerated</b> (p, g, inf) — GPU: Machine learning, video rendering।<br><br>
+        📌 <b>Exam mnemonic:</b> <span class="eng">F-I-G-H-T-D-R-M-C-P-X-Z</span> = "Fight Dr. McPXZ"
+        </div></div>
+
+        <table class="tbl">
+          <tr><th>Purchasing Option</th><th>Use Case</th><th>Discount</th><th>Termination Risk</th></tr>
+          <tr><td><span class="eng">On-Demand</span></td><td>Short, unpredictable workloads</td><td>None</td><td>None</td></tr>
+          <tr><td><span class="eng">Reserved (1yr/3yr)</span></td><td>Steady-state (DB, web servers)</td><td>Up to 72%</td><td>None</td></tr>
+          <tr><td><span class="eng">Savings Plans</span></td><td>Flexible compute savings</td><td>Up to 66%</td><td>None</td></tr>
+          <tr><td><span class="eng">Spot</span></td><td>Fault-tolerant batch jobs</td><td>Up to 90%</td><td>High (AWS can terminate)</td></tr>
+          <tr><td><span class="eng">Dedicated Host</span></td><td>Compliance, BYOL licensing</td><td>None</td><td>None (physical server)</td></tr>
+        </table>
+
+        <div class="concept"><div class="ct">📦 EC2 Placement Groups <span class="new-badge">EXAM</span></div>
+        <div class="cb">
+        <b>Cluster</b> — একই rack এ instances। Ultra-low latency, high throughput। HPC, ML training। <br>🔴 Risk: Rack fail → সব fail।<br><br>
+        <b>Spread</b> — আলাদা hardware এ instances (max 7 per AZ)। Critical applications। High isolation।<br><br>
+        <b>Partition</b> — Groups of instances, আলাদা partitions। Hadoop, Cassandra, Kafka। Partition failure একটিতেই isolate।<br><br>
+        📌 Exam: "Low latency inter-node communication" → <b>Cluster</b>। "Isolate hardware failures" → <b>Spread</b>
+        </div></div>
+
+        <div class="kp"><h4>✅ EC2 Exam Must-Know Facts</h4><ul>
+          <li><span class="eng">User Data</span> — Bootstrap script। Instance launch এর সময় একবার run। Install software, update configs।</li>
+          <li><span class="eng">Instance Metadata</span> — <code>http://169.254.169.254/latest/meta-data/</code> — instance info (IP, IAM role name)।</li>
+          <li><span class="eng">Hibernate</span> — RAM এর contents EBS এ save। Fast restart। RAM ≤150GB। EBS encrypt করা থাকতে হবে।</li>
+          <li><span class="eng">Instance Store</span> — Physically attached। Ephemeral (stop/terminate করলে data হারায়)। Very fast I/O।</li>
+          <li><span class="eng">ENI</span> — Elastic Network Interface। একাধিক ENI attach করা যায়। Failover এ ENI move করা যায়।</li>
+        </ul></div>
+
+        <div class="tip"><span class="ico">💡</span><p><strong>Exam Tip:</strong> Spot Instances ব্যবহার করতে পারবে এমন workloads: Batch processing, Big Data, CI/CD testing, image rendering। Spot block = specific duration। Spot Fleet = mix of Spot + On-Demand।</p></div>
+
+      </div>
+    </div>
+    <div class="col" id="exercise-s2">
+      <div class="ex-wrap">
+        <div class="ex-hdr"><h3>🎯 Practice — EC2</h3></div>
+        <div class="ex-tabs">
+          <button class="ex-tab active" onclick="switchTab('s2','mcq',this)">📝 MCQ</button>
+          <button class="ex-tab" onclick="switchTab('s2','tf',this)">✅ True/False</button>
+          <button class="ex-tab" onclick="switchTab('s2','match',this)">🔗 Matching</button>
+          <button class="ex-tab" onclick="switchTab('s2','fib',this)">✏️ Fill Blank</button>
+          <button class="ex-tab" onclick="switchTab('s2','flash',this)">🃏 Flashcards</button>
+          <button class="ex-tab" onclick="switchTab('s2','case',this)">📌 Scenarios</button>
+        </div>
+        <div class="ex-panel open" id="panel-s2-mcq"><div id="ex-s2-mcq"></div></div>
+        <div class="ex-panel" id="panel-s2-tf"><div id="ex-s2-tf"></div></div>
+        <div class="ex-panel" id="panel-s2-match"><div id="ex-s2-match"></div></div>
+        <div class="ex-panel" id="panel-s2-fib"><div id="ex-s2-fib"></div></div>
+        <div class="ex-panel" id="panel-s2-flash"><div id="ex-s2-flash"></div></div>
+        <div class="ex-panel" id="panel-s2-case"><div id="ex-s2-case"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       S3: AUTO SCALING
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="sc" id="s3">
+    <div class="sh" onclick="toggleLesson('s3')">
+      <div class="sh-left">
+        <div class="sh-icon" style="background:linear-gradient(135deg,rgba(0,214,143,.2),rgba(0,214,143,.05))">📈</div>
+        <div>
+          <div class="sh-title">Auto Scaling Groups (ASG)</div>
+          <div class="sh-sub">Launch Templates, Scaling Policies, Lifecycle Hooks, Cooldown, Warm-up</div>
+        </div>
+      </div>
+      <div class="sh-btns" onclick="event.stopPropagation()">
+        <button class="btn btn-l active" id="lb-s3" onclick="showLesson('s3')">📖 Lesson</button>
+        <button class="btn btn-e" id="eb-s3" onclick="showExercise('s3')">🎯 Practice</button>
+      </div>
+    </div>
+    <div class="prog-bar"><span class="prog-txt">অগ্রগতি</span><div class="mini-track"><div class="mini-fill" id="pf-s3" style="width:0%"></div></div><span class="prog-txt" id="pt-s3">0/0</span></div>
+    <div class="col open" id="lesson-s3">
+      <div class="lesson">
+
+        <div class="diagram"><svg viewBox="0 0 700 210" xmlns="http://www.w3.org/2000/svg">
+          <defs><marker id="arr2" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#8faec8"/></marker></defs>
+          <rect width="700" height="210" fill="#0f1929"/>
+          <text x="350" y="22" text-anchor="middle" fill="#FF9900" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700">Auto Scaling Group — Scale Out Flow</text>
+          <!-- CloudWatch -->
+          <rect x="20" y="60" width="130" height="60" rx="10" fill="rgba(255,153,0,0.1)" stroke="#FF9900" stroke-width="1.5"/>
+          <text x="85" y="86" text-anchor="middle" fill="#FF9900" font-size="10" font-weight="700">☁️ CloudWatch</text>
+          <text x="85" y="104" text-anchor="middle" fill="#8faec8" font-size="9">CPU > 70% alarm</text>
+          <line x1="150" y1="90" x2="185" y2="90" stroke="#8faec8" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <!-- ASG Policy -->
+          <rect x="185" y="60" width="150" height="60" rx="10" fill="rgba(0,168,225,0.1)" stroke="#00a8e1" stroke-width="1.5"/>
+          <text x="260" y="83" text-anchor="middle" fill="#00a8e1" font-size="10" font-weight="700">🎯 Scaling Policy</text>
+          <text x="260" y="100" text-anchor="middle" fill="#8faec8" font-size="9">Target Tracking / Step</text>
+          <text x="260" y="113" text-anchor="middle" fill="#8faec8" font-size="8">Triggers: +2 instances</text>
+          <line x1="335" y1="90" x2="370" y2="90" stroke="#8faec8" stroke-width="1.5" marker-end="url(#arr2)"/>
+          <!-- ASG -->
+          <rect x="370" y="40" width="150" height="140" rx="10" fill="rgba(0,214,143,0.06)" stroke="#00d68f" stroke-width="1.5"/>
+          <text x="445" y="62" text-anchor="middle" fill="#00d68f" font-size="10" font-weight="700">Auto Scaling Group</text>
+          <rect x="385" y="70" width="120" height="22" rx="6" fill="rgba(0,214,143,0.15)"/>
+          <text x="445" y="85" text-anchor="middle" fill="#e8f4fd" font-size="9">EC2 Instance 1 ✅</text>
+          <rect x="385" y="96" width="120" height="22" rx="6" fill="rgba(0,214,143,0.15)"/>
+          <text x="445" y="111" text-anchor="middle" fill="#e8f4fd" font-size="9">EC2 Instance 2 ✅</text>
+          <rect x="385" y="122" width="120" height="22" rx="6" fill="rgba(255,153,0,0.2)" stroke="#FF9900" stroke-dasharray="4"/>
+          <text x="445" y="137" text-anchor="middle" fill="#FF9900" font-size="9">+ New Instance 🆕</text>
+          <rect x="385" y="148" width="120" height="22" rx="6" fill="rgba(255,153,0,0.2)" stroke="#FF9900" stroke-dasharray="4"/>
+          <text x="445" y="163" text-anchor="middle" fill="#FF9900" font-size="9">+ New Instance 🆕</text>
+          <!-- Min/Max/Desired -->
+          <rect x="535" y="50" width="150" height="110" rx="10" fill="rgba(255,215,42,0.07)" stroke="#ffd32a" stroke-width="1.5"/>
+          <text x="610" y="72" text-anchor="middle" fill="#ffd32a" font-size="10" font-weight="700">ASG Settings</text>
+          <text x="545" y="92" fill="#c5dff0" font-size="9">Min: 2 instances</text>
+          <text x="545" y="108" fill="#c5dff0" font-size="9">Desired: 2 → 4</text>
+          <text x="545" y="124" fill="#c5dff0" font-size="9">Max: 6 instances</text>
+          <text x="545" y="148" fill="#8faec8" font-size="8">Launch Template</text>
+          <text x="545" y="162" fill="#8faec8" font-size="8">Multi-AZ enabled</text>
+          <!-- Cooldown -->
+          <rect x="20" y="140" width="330" height="50" rx="8" fill="rgba(0,199,177,0.07)" stroke="rgba(0,199,177,0.3)"/>
+          <text x="185" y="160" text-anchor="middle" fill="#00c7b1" font-size="9" font-weight="700">⏱️ Cooldown Period (default 300s)</text>
+          <text x="185" y="178" text-anchor="middle" fill="#8faec8" font-size="8">After scale-out: wait before next scaling action</text>
+          <!-- Timeline bottom -->
+          <text x="350" y="205" text-anchor="middle" fill="#8faec8" font-size="8">ASG automatically terminates unhealthy instances and replaces them</text>
+        </svg></div>
+
+        <div class="concept"><div class="ct">📈 Auto Scaling Policies</div>
+        <div class="cb">
+        <b>Target Tracking</b> — সবচেয়ে সহজ। "CPU 50% তে রাখো" — AWS নিজেই scale করে। <span class="eng">Recommended</span>।<br><br>
+        <b>Step Scaling</b> — CloudWatch alarm triggers করলে steps এ scale। "CPU 70% → +1, CPU 90% → +3"।<br><br>
+        <b>Simple Scaling</b> — একটি alarm → একটি action। Cooldown শেষ হওয়ার পর পরবর্তী action।<br><br>
+        <b>Scheduled Scaling</b> — Known patterns এর জন্য। "প্রতি সকাল ৯টায় ১০টি instances"।<br><br>
+        <b>Predictive Scaling</b> — ML দিয়ে future traffic predict। Proactive scaling। Load pattern analyze করে।
+        </div></div>
+
+        <div class="kp"><h4>✅ ASG Key Concepts — Exam এ আসে</h4><ul>
+          <li><span class="eng">Launch Template</span> — AMI, instance type, SG, User Data সব একসাথে। Launch Configuration এর modern replacement।</li>
+          <li><span class="eng">Health Checks</span> — EC2 health check (default) বা ELB health check। Unhealthy → terminate ও replace।</li>
+          <li><span class="eng">Lifecycle Hooks</span> — Scale-out/in এ custom actions। "instance চালু হওয়ার আগে software install করো"।</li>
+          <li><span class="eng">Warm-up time</span> — নতুন instance fully ready হতে কতক্ষণ। এই সময় scaling metrics এ count হয় না।</li>
+          <li><span class="eng">Termination Policy</span> — Scale-in এ কোন instance আগে terminate? Default: oldest Launch Config থেকে।</li>
+        </ul></div>
+
+        <div class="tip"><span class="ico">💡</span><p><strong>Exam Tip:</strong> ASG সবসময় Multi-AZ deploy করো — AZ failure এ instances অন্য AZ তে launch হবে। ELB এর সাথে integrate করলে health check automatically হয়।</p></div>
+
+      </div>
+    </div>
+    <div class="col" id="exercise-s3">
+      <div class="ex-wrap">
+        <div class="ex-hdr"><h3>🎯 Practice — Auto Scaling</h3></div>
+        <div class="ex-tabs">
+          <button class="ex-tab active" onclick="switchTab('s3','mcq',this)">📝 MCQ</button>
+          <button class="ex-tab" onclick="switchTab('s3','tf',this)">✅ True/False</button>
+          <button class="ex-tab" onclick="switchTab('s3','order',this)">📊 Ordering</button>
+          <button class="ex-tab" onclick="switchTab('s3','case',this)">📌 Scenarios</button>
+        </div>
+        <div class="ex-panel open" id="panel-s3-mcq"><div id="ex-s3-mcq"></div></div>
+        <div class="ex-panel" id="panel-s3-tf"><div id="ex-s3-tf"></div></div>
+        <div class="ex-panel" id="panel-s3-order"><div id="ex-s3-order"></div></div>
+        <div class="ex-panel" id="panel-s3-case"><div id="ex-s3-case"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       S4: LOAD BALANCING
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="sc" id="s4">
+    <div class="sh" onclick="toggleLesson('s4')">
+      <div class="sh-left">
+        <div class="sh-icon" style="background:linear-gradient(135deg,rgba(255,215,42,.2),rgba(255,215,42,.05))">⚖️</div>
+        <div>
+          <div class="sh-title">Elastic Load Balancers (ELB)</div>
+          <div class="sh-sub">ALB vs NLB vs CLB vs GWLB, Target Groups, SSL Termination, Sticky Sessions</div>
+        </div>
+      </div>
+      <div class="sh-btns" onclick="event.stopPropagation()">
+        <button class="btn btn-l active" id="lb-s4" onclick="showLesson('s4')">📖 Lesson</button>
+        <button class="btn btn-e" id="eb-s4" onclick="showExercise('s4')">🎯 Practice</button>
+      </div>
+    </div>
+    <div class="prog-bar"><span class="prog-txt">অগ্রগতি</span><div class="mini-track"><div class="mini-fill" id="pf-s4" style="width:0%"></div></div><span class="prog-txt" id="pt-s4">0/0</span></div>
+    <div class="col open" id="lesson-s4">
+      <div class="lesson">
+
+        <div class="diagram"><svg viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg">
+          <defs><marker id="arr3" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#8faec8"/></marker></defs>
+          <rect width="700" height="230" fill="#0f1929"/>
+          <text x="350" y="22" text-anchor="middle" fill="#FF9900" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700">ALB — Path-based Routing</text>
+          <!-- Internet -->
+          <ellipse cx="90" cy="115" rx="70" ry="25" fill="rgba(0,168,225,0.1)" stroke="#00a8e1" stroke-width="1.5"/>
+          <text x="90" y="120" text-anchor="middle" fill="#00a8e1" font-size="10" font-weight="700">🌐 Users</text>
+          <line x1="160" y1="115" x2="190" y2="115" stroke="#8faec8" stroke-width="2" marker-end="url(#arr3)"/>
+          <!-- ALB -->
+          <rect x="190" y="88" width="130" height="54" rx="10" fill="rgba(255,153,0,0.12)" stroke="#FF9900" stroke-width="2"/>
+          <text x="255" y="111" text-anchor="middle" fill="#FF9900" font-size="11" font-weight="700">⚖️ ALB</text>
+          <text x="255" y="129" text-anchor="middle" fill="#8faec8" font-size="8">Layer 7 HTTP/HTTPS</text>
+          <!-- Routing rules -->
+          <line x1="320" y1="100" x2="370" y2="75" stroke="#8faec8" stroke-width="1.5" marker-end="url(#arr3)" stroke-dasharray="4"/>
+          <text x="355" y="72" fill="#00c7b1" font-size="8">/api/*</text>
+          <line x1="320" y1="115" x2="370" y2="115" stroke="#8faec8" stroke-width="1.5" marker-end="url(#arr3)" stroke-dasharray="4"/>
+          <text x="355" y="112" fill="#00c7b1" font-size="8">/images/*</text>
+          <line x1="320" y1="130" x2="370" y2="155" stroke="#8faec8" stroke-width="1.5" marker-end="url(#arr3)" stroke-dasharray="4"/>
+          <text x="355" y="163" fill="#00c7b1" font-size="8">/admin/*</text>
+          <!-- Target Groups -->
+          <rect x="370" y="55" width="130" height="35" rx="8" fill="rgba(0,214,143,0.1)" stroke="#00d68f" stroke-width="1.5"/>
+          <text x="435" y="78" text-anchor="middle" fill="#00d68f" font-size="9">🎯 API Target Group</text>
+          <rect x="370" y="97" width="130" height="35" rx="8" fill="rgba(0,168,225,0.1)" stroke="#00a8e1" stroke-width="1.5"/>
+          <text x="435" y="120" text-anchor="middle" fill="#00a8e1" font-size="9">🎯 Images Target Group</text>
+          <rect x="370" y="139" width="130" height="35" rx="8" fill="rgba(255,153,0,0.1)" stroke="#FF9900" stroke-width="1.5"/>
+          <text x="435" y="162" text-anchor="middle" fill="#FF9900" font-size="9">🎯 Admin Target Group</text>
+          <!-- EC2 instances -->
+          <line x1="500" y1="73" x2="540" y2="73" stroke="#8faec8" stroke-width="1.5" marker-end="url(#arr3)"/>
+          <rect x="540" y="58" width="90" height="30" rx="6" fill="rgba(0,214,143,0.1)"/>
+          <text x="585" y="78" text-anchor="middle" fill="#00d68f" font-size="8">EC2 × 3</text>
+          <line x1="500" y1="115" x2="540" y2="115" stroke="#8faec8" stroke-width="1.5" marker-end="url(#arr3)"/>
+          <rect x="540" y="100" width="90" height="30" rx="6" fill="rgba(0,168,225,0.1)"/>
+          <text x="585" y="120" text-anchor="middle" fill="#00a8e1" font-size="8">Lambda / S3</text>
+          <line x1="500" y1="157" x2="540" y2="157" stroke="#8faec8" stroke-width="1.5" marker-end="url(#arr3)"/>
+          <rect x="540" y="142" width="90" height="30" rx="6" fill="rgba(255,153,0,0.1)"/>
+          <text x="585" y="162" text-anchor="middle" fill="#FF9900" font-size="8">EC2 × 2</text>
+          <!-- Notes -->
+          <rect x="15" y="195" width="670" height="28" rx="8" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)"/>
+          <text x="350" y="213" text-anchor="middle" fill="#8faec8" font-size="9">ALB supports: EC2, Lambda, IP addresses as targets | Host-based + path-based routing | WebSocket support</text>
+        </svg></div>
+
+        <table class="tbl">
+          <tr><th>LB Type</th><th>Layer</th><th>Protocol</th><th>Use Case</th></tr>
+          <tr><td><span class="eng">ALB</span> (Application)</td><td>Layer 7</td><td>HTTP, HTTPS, WebSocket, gRPC</td><td>Microservices, path/host routing</td></tr>
+          <tr><td><span class="eng">NLB</span> (Network)</td><td>Layer 4</td><td>TCP, UDP, TLS</td><td>Ultra-low latency, static IP, gaming</td></tr>
+          <tr><td><span class="eng">GWLB</span> (Gateway)</td><td>Layer 3</td><td>IP packets</td><td>3rd party firewalls, IDS/IPS</td></tr>
+          <tr><td><span class="eng">CLB</span> (Classic)</td><td>L4+L7</td><td>HTTP, HTTPS, TCP</td><td>Legacy only (avoid for new apps)</td></tr>
+        </table>
+
+        <div class="concept"><div class="ct">🎯 ELB Key Features <span class="new-badge">EXAM</span></div>
+        <div class="cb">
+        <b>SSL/TLS Termination</b> — ALB/NLB SSL certificates manage করে। ACM (free) বা IAM certificates। Backend HTTP এ pass করে।<br><br>
+        <b>Sticky Sessions</b> — Same user সবসময় same target এ যায়। Cookie-based। ALB এ "AWSALB" cookie।<br><br>
+        <b>Cross-Zone Load Balancing</b> — ALB তে default on। NLB তে default off। সব AZ এর instances এ evenly distribute।<br><br>
+        <b>Connection Draining</b> (Deregistration Delay) — Instance unhealthy হলে existing connections finish করতে দেয়। Default 300s।<br><br>
+        <b>Health Checks</b> — Unhealthy instances কে automatically routing থেকে remove করে।
+        </div></div>
+
+        <div class="kp"><h4>✅ NLB এ Static IP কেন দরকার?</h4><ul>
+          <li>NLB এ <b>Elastic IP</b> assign করা যায় — firewall rules এ whitelist করা যায়।</li>
+          <li>ALB এর IP dynamic (DNS দিয়ে access করতে হয়)।</li>
+          <li>Exam: "Static IP দরকার for load balancer" → <b>NLB</b>।</li>
+          <li>Exam: "Layer 7, microservices, path routing" → <b>ALB</b>।</li>
+        </ul></div>
+
+        <div class="tip"><span class="ico">💡</span><p><strong>Exam Tip:</strong> ALB = microservices, path-based routing, HTTP/HTTPS। NLB = TCP, UDP, ultra-low latency, static IP needed। GWLB = third-party security appliances (Palo Alto, Fortinet)।</p></div>
+
+      </div>
+    </div>
+    <div class="col" id="exercise-s4">
+      <div class="ex-wrap">
+        <div class="ex-hdr"><h3>🎯 Practice — Load Balancers</h3></div>
+        <div class="ex-tabs">
+          <button class="ex-tab active" onclick="switchTab('s4','mcq',this)">📝 MCQ</button>
+          <button class="ex-tab" onclick="switchTab('s4','tf',this)">✅ True/False</button>
+          <button class="ex-tab" onclick="switchTab('s4','match',this)">🔗 Matching</button>
+          <button class="ex-tab" onclick="switchTab('s4','fib',this)">✏️ Fill Blank</button>
+          <button class="ex-tab" onclick="switchTab('s4','case',this)">📌 Scenarios</button>
+        </div>
+        <div class="ex-panel open" id="panel-s4-mcq"><div id="ex-s4-mcq"></div></div>
+        <div class="ex-panel" id="panel-s4-tf"><div id="ex-s4-tf"></div></div>
+        <div class="ex-panel" id="panel-s4-match"><div id="ex-s4-match"></div></div>
+        <div class="ex-panel" id="panel-s4-fib"><div id="ex-s4-fib"></div></div>
+        <div class="ex-panel" id="panel-s4-case"><div id="ex-s4-case"></div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// QUESTION DATA
+// ══════════════════════════════════════════════════════════════
+const Q = {
+s1:[
+  {q:"Well-Architected Framework এ কতটি Pillar আছে?",o:["4","5","6","7"],a:2,e:"<b>6 Pillars</b>: Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization, Sustainability (2022 সালে যোগ)।"},
+  {q:"High Availability (HA) এবং Fault Tolerance (FT) এর পার্থক্য?",o:["Same thing","HA=some downtime ok; FT=zero downtime","FT is cheaper","HA uses multiple regions"],a:1,e:"<b>HA</b> = failover এ সংক্ষিপ্ত interruption। <b>FT</b> = শূন্য downtime, redundant active components। FT বেশি expensive।"},
+  {q:"RPO মানে কী?",o:["Recovery time objective","Maximum data loss acceptable after failure","Recovery process outline","Redundancy plan objective"],a:1,e:"<b>RPO</b> = Recovery Point Objective। Failure এর পর কতটুকু data হারানো acceptable। Shorter RPO = more frequent backups।"},
+  {q:"সবচেয়ে কম cost এর DR strategy কোনটি?",o:["Multi-Site Active/Active","Warm Standby","Pilot Light","Backup and Restore"],a:3,e:"<b>Backup and Restore</b> = সবচেয়ে সস্তা। শুধু backups রাখো। RTO/RPO বেশি (ঘণ্টা)।"},
+  {q:"📌 Mission critical financial app। Near-zero RTO এবং RPO চাই। কোন DR strategy?",o:["Backup and Restore","Pilot Light","Warm Standby","Multi-Site Active/Active"],a:3,e:"<b>Multi-Site Active/Active</b> = দুই region এ live। Near-zero RTO/RPO। সবচেয়ে expensive।",sc:true},
+  {q:"'Least operational overhead' মানে কী বেছে নেবে?",o:["EC2 always","Most managed/serverless option","Manual processes","Custom scripts"],a:1,e:"Exam এ 'least operational overhead' = managed services যেমন Lambda, RDS, DynamoDB prefer করো। নিজে manage করতে হয় না।"},
+  {q:"Design Principle: 'Stop guessing capacity' কীভাবে implement করবে?",o:["Buy extra servers","Auto Scaling + CloudWatch","Manually monitor","Reserved Instances only"],a:1,e:"<b>Auto Scaling + CloudWatch</b> = demand অনুযায়ী automatic scale। Over/under-provisioning এড়ায়।"},
+  {q:"Pilot Light DR strategy তে কী সবসময় চালু থাকে?",o:["Full application stack","Core database and minimal infrastructure","Nothing","Everything in standby"],a:1,e:"<b>Pilot Light</b> = শুধু core systems (database) চালু। Failover এ rest scale up করতে হয়।"},
+],
+s2:[
+  {q:"CPU-intensive batch processing job এর জন্য কোন EC2 family?",o:["M (General Purpose)","C (Compute Optimized)","R (Memory Optimized)","I (Storage Optimized)"],a:1,e:"<b>C family</b> = Compute Optimized। High CPU। Batch, HPC, gaming, scientific modeling।"},
+  {q:"📌 Company Oracle database AWS এ migrate করতে চায়। Per-socket licensing আছে। কোন EC2 option?",o:["On-Demand","Reserved","Spot","Dedicated Host"],a:3,e:"<b>Dedicated Host</b> = physical server তোমার। Per-socket/per-core licensing (BYOL) support। Oracle compliance।",sc:true},
+  {q:"EC2 Hibernate কীভাবে কাজ করে?",o:["Permanently deletes data","Saves RAM contents to EBS, fast restart","Moves to cold storage","Creates a snapshot"],a:1,e:"<b>Hibernate</b> = RAM EBS এ save। Power off এর মতো কিন্তু restart এ RAM reload হয়। Fast startup। EBS encryption required।"},
+  {q:"Spot Instance কখন terminated হয়?",o:["Never","When AWS needs capacity back","After 1 hour always","When you stop it"],a:1,e:"<b>Spot</b> = AWS এর unused capacity। AWS capacity দরকার হলে 2-minute notice দিয়ে terminate করে। Fault-tolerant workloads only।"},
+  {q:"Placement Group: Cluster কী করে?",o:["Spreads across AZs","Places instances in same AZ/rack for low latency","Partitions into groups","Random placement"],a:1,e:"<b>Cluster PG</b> = same rack। Ultra-low latency, high bandwidth। HPC, ML training। Risk: rack fail → all fail।"},
+  {q:"EC2 Instance Metadata কোন URL থেকে পাওয়া যায়?",o:["https://metadata.aws.com","http://169.254.169.254/latest/meta-data/","https://ec2.amazonaws.com/metadata","http://localhost/metadata"],a:1,e:"<b>http://169.254.169.254/latest/meta-data/</b> — link-local address। Instance এর ভেতর থেকে accessible। IAM role name, public IP পাওয়া যায়।"},
+  {q:"📌 Memory-intensive in-memory database দরকার। কোন instance family?",o:["C (Compute)","T (Burstable)","R (Memory Optimized)","G (GPU)"],a:2,e:"<b>R family</b> = Memory Optimized। Large RAM। Redis, SAP HANA, in-memory databases।",sc:true},
+  {q:"Reserved Instances এ maximum discount কত?",o:["40%","55%","72%","90%"],a:2,e:"<b>Reserved Instances</b> = up to 72% discount (3-year, All Upfront, Standard)।"},
+  {q:"Launch Template vs Launch Configuration — পার্থক্য?",o:["Same thing","LT supports versioning & multiple instance types; LC is legacy","LC is newer","LC supports spot fleet"],a:1,e:"<b>Launch Template</b> = modern। Versioning, multiple instance types, Spot Fleet support। AWS recommends LT over LC।"},
+  {q:"EC2 User Data কখন execute হয়?",o:["Every time instance starts","Only on first launch (boot)","When you SSH in","Randomly"],a:1,e:"<b>User Data</b> = first boot এ একবার। Install packages, configure software। Admin privilege এ run হয়।"},
+],
+s3:[
+  {q:"Auto Scaling এ Target Tracking Policy কী করে?",o:["Manually sets instance count","Maintains a specific metric target (e.g. CPU 50%)","Schedules scaling events","Steps up gradually only"],a:1,e:"<b>Target Tracking</b> = metric (CPU 50%, ALB requests) এ target রাখে। AWS automatically scale in/out করে।"},
+  {q:"ASG তে Cooldown Period এর purpose?",o:["Warm up new instances","Prevent rapid repeated scaling actions","Terminate instances","Health check interval"],a:1,e:"<b>Cooldown</b> = scale action এর পর wait period। New instances impact দেখার আগে পরের action নেওয়া থেকে prevent করে। Default 300s।"},
+  {q:"📌 Flash sale আসছে, traffic pattern জানা। সকাল ১০টায় ২০ instances চাই। কোন policy?",o:["Target Tracking","Step Scaling","Scheduled Scaling","Predictive Scaling"],a:2,e:"<b>Scheduled Scaling</b> = known time এ pre-scale। Flash sales, business hours patterns।",sc:true},
+  {q:"ASG Lifecycle Hooks কীসের জন্য?",o:["Health checks","Custom actions during launch/terminate (e.g. install software, drain connections)","Billing management","DNS updates"],a:1,e:"<b>Lifecycle Hooks</b> = launch এ (Pending:Wait) বা terminate এ (Terminating:Wait) custom actions। Software install, log drain।"},
+  {q:"ASG termination policy default এ কোন instance আগে terminate করে?",o:["Newest instance","Instance with most traffic","Instance from oldest launch configuration/template","Random instance"],a:2,e:"Default: <b>oldest launch configuration</b> থেকে instance terminate। তারপর AZ balance করার জন্য।"},
+  {q:"Predictive Scaling কী?",o:["Manual prediction","Uses ML to forecast traffic and scale proactively","Only works with CloudWatch","Requires minimum 10 instances"],a:1,e:"<b>Predictive Scaling</b> = ML দিয়ে future traffic analyze। Proactively scale করে। Repeating patterns এর জন্য ideal।"},
+  {q:"📌 Instance terminate হওয়ার আগে DB connections drain করতে হবে। কোন feature?",o:["Connection Draining (ELB)","ASG Lifecycle Hook (Terminating state)","CloudWatch","Auto Scaling Cooldown"],a:1,e:"<b>Lifecycle Hook</b> = Terminating:Wait state এ custom action। SQS/SNS trigger → Lambda drain connections।",sc:true},
+],
+s4:[
+  {q:"ALB কোন OSI layer এ কাজ করে?",o:["Layer 3","Layer 4","Layer 7","Layer 2"],a:2,e:"<b>ALB</b> = Layer 7 (Application Layer)। HTTP/HTTPS headers, paths, host names দেখতে পারে।"},
+  {q:"📌 Gaming application UDP protocol, ultra-low latency। কোন LB?",o:["ALB","CLB","NLB","GWLB"],a:2,e:"<b>NLB</b> = Layer 4। UDP support। Ultra-low latency (milliseconds)। Static IP সহ।",sc:true},
+  {q:"ALB তে path-based routing কীভাবে কাজ করে?",o:["Random assignment","Routes based on URL path (/api/ → API servers, /images/ → image servers)","IP-based routing","Port-only routing"],a:1,e:"<b>Path-based routing</b> = URL path দেখে different target groups এ route। Microservices ideal।"},
+  {q:"Sticky Sessions কী করে?",o:["Encrypts sessions","Sends same user to same backend instance every time","Increases performance","Load balances evenly always"],a:1,e:"<b>Sticky Sessions</b> = cookie-based। Same user same target। Stateful applications। 'AWSALB' cookie।"},
+  {q:"NLB এর unique advantage কী?",o:["Path-based routing","Static IP / Elastic IP support","WebSocket support","gRPC support"],a:1,e:"<b>NLB</b> = Static Elastic IP support। Firewall whitelisting needed applications।"},
+  {q:"📌 Firewall appliance (Palo Alto) সব traffic এর মধ্য দিয়ে যাবে। কোন LB?",o:["ALB","NLB","CLB","Gateway Load Balancer (GWLB)"],a:3,e:"<b>GWLB</b> = 3rd party virtual appliances। Traffic inspect করে (IDS/IPS, firewalls)। Layer 3।",sc:true},
+  {q:"Connection Draining / Deregistration Delay কী করে?",o:["Speeds up termination","Allows existing requests to complete before removing an instance","Increases timeout","Logs connections"],a:1,e:"<b>Connection Draining</b> = unhealthy/terminating instance এ existing connections শেষ করতে দেয়। Default 300 seconds।"},
+  {q:"Cross-Zone Load Balancing ALB তে default কী?",o:["Disabled","Enabled","Depends on region","Must be manually configured"],a:1,e:"<b>ALB</b> তে Cross-Zone Load Balancing default <b>enabled</b>। NLB তে default disabled (charges apply if enabled)।"},
+],
+};
+
+const TF = {
+s1:[
+  {s:"Multi-Site Active/Active DR strategy সবচেয়ে কম খরচের।",a:false,e:"Multi-Site Active/Active সবচেয়ে বেশি expensive। সবচেয়ে কম = Backup & Restore।"},
+  {s:"RTO মানে failure এর পর কতটুকু data হারানো acceptable।",a:false,e:"RTO = Recovery Time Objective (কত দ্রুত recover)। RPO = data loss।"},
+  {s:"Well-Architected Framework এ 6টি Pillars আছে (Sustainability সহ)।",a:true,e:"২০২১ সালে <b>Sustainability Pillar</b> যোগ হয়েছে। মোট 6টি।"},
+  {s:"Fault Tolerance এর মানে হলো zero downtime।",a:true,e:"<b>FT</b> = continuous operation, no interruption। HA = brief interruption acceptable।"},
+  {s:"Warm Standby তে কোনো infrastructure চালু থাকে না।",a:false,e:"Warm Standby = scaled-down version সবসময় চালু। Pilot Light = শুধু core (DB) চালু।"},
+],
+s2:[
+  {s:"Spot Instances database এর জন্য সবচেয়ে ভালো বিকল্প।",a:false,e:"Spot = interrupt হতে পারে। Database এর জন্য unsuitable। Reserved বা On-Demand।"},
+  {s:"EC2 Hibernate এর জন্য EBS volume encrypt করা থাকতে হবে।",a:true,e:"<b>Hibernate requirement</b>: EBS encrypted, RAM ≤150GB, instance store নয়।"},
+  {s:"Cluster Placement Group instances কে multiple AZs এ spread করে।",a:false,e:"<b>Cluster PG</b> = same AZ, same rack। Low latency। Spread PG = multiple hardware।"},
+  {s:"Reserved Instances এ up to 90% discount পাওয়া যায়।",a:false,e:"Reserved = up to 72%। <b>Spot Instances</b> = up to 90% discount।"},
+  {s:"Launch Template, Launch Configuration এর চেয়ে আধুনিক।",a:true,e:"AWS Launch Template prefer করে। Versioning, mixed instance types, Spot Fleet support।"},
+],
+s3:[
+  {s:"Target Tracking Policy সবচেয়ে সহজ scaling policy।",a:true,e:"Target Tracking = metric target set করো, AWS বাকি সব handle। Recommended।"},
+  {s:"Scheduled Scaling unpredictable traffic এর জন্য best।",a:false,e:"Scheduled = <b>known patterns</b> এর জন্য। Unpredictable = Target Tracking or Step Scaling।"},
+  {s:"ASG Lifecycle Hooks instance launch ও terminate উভয়তেই কাজ করে।",a:true,e:"Pending:Wait (launch) ও Terminating:Wait (terminate)। উভয়েই custom actions।"},
+  {s:"Cooldown Period এর default value 300 seconds।",a:true,e:"Default cooldown = <b>300 seconds</b> (5 minutes)। Adjust করা যায়।"},
+],
+s4:[
+  {s:"ALB Layer 4 তে কাজ করে।",a:false,e:"<b>ALB</b> = Layer 7 (HTTP/HTTPS)। Layer 4 = NLB (TCP/UDP)।"},
+  {s:"NLB Elastic IP support করে।",a:true,e:"<b>NLB</b> = static Elastic IP। Firewall whitelisting এর জন্য।"},
+  {s:"Sticky Sessions সবসময় performance বাড়ায়।",a:false,e:"Sticky Sessions কিছু instances এ overload দিতে পারে। Stateful apps এর জন্য needed।"},
+  {s:"ALB তে Cross-Zone Load Balancing default enabled।",a:true,e:"ALB = Cross-Zone default on। NLB = default off।"},
+  {s:"GWLB third-party firewalls integrate করতে ব্যবহার হয়।",a:true,e:"<b>GWLB</b> = Palo Alto, Fortinet, Check Point virtual appliances। Layer 3 inspection।"},
+],
+};
+
+const MATCH = {
+s2:{
+  title:"EC2 Purchasing Options",
+  pairs:[
+    {l:"Spot",r:"আচমকা terminate, 90% সস্তা"},
+    {l:"Dedicated Host",r:"BYOL licensing, physical server"},
+    {l:"Reserved",r:"1/3 year commit, 72% discount"},
+    {l:"On-Demand",r:"No commitment, hourly billing"},
+    {l:"Savings Plans",r:"Commit $/hr, flexible instances"},
+  ]
+},
+s4:{
+  title:"Load Balancer Types",
+  pairs:[
+    {l:"ALB",r:"Layer 7, path-based routing"},
+    {l:"NLB",r:"Layer 4, static IP, UDP"},
+    {l:"GWLB",r:"Third-party firewalls"},
+    {l:"CLB",r:"Legacy, avoid for new apps"},
+  ]
+},
+};
+
+const FIB = {
+s2:[
+  {q:"EC2 Hibernate এর জন্য EBS volume অবশ্যই ___ থাকতে হবে।",a:"encrypted",alt:["encrypt","encryption"],e:"Hibernate: RAM save এ encrypted EBS required। Security।"},
+  {q:"EC2 instance এর metadata পেতে IP address: ___",a:"169.254.169.254",alt:[],e:"Instance metadata URL: http://169.254.169.254/latest/meta-data/"},
+  {q:"Spot Instances এ maximum discount: ___% পর্যন্ত।",a:"90",alt:[],e:"Spot = up to 90% discount। Cheapest EC2 option।"},
+  {q:"Cluster Placement Group instances কে same ___ এ রাখে।",a:"rack",alt:["AZ"],e:"Cluster PG = same rack → ultra-low latency। Risk: rack fail।"},
+],
+s4:[
+  {q:"ALB Layer ___ এ কাজ করে।",a:"7",alt:[],e:"ALB = OSI Layer 7 (Application). HTTP headers দেখতে পারে।"},
+  {q:"NLB Layer ___ এ কাজ করে।",a:"4",alt:[],e:"NLB = OSI Layer 4 (Transport). TCP/UDP."},
+  {q:"ELB এ existing connections শেষ করার feature: ___",a:"Connection Draining",alt:["Deregistration Delay"],e:"Connection Draining = instance remove এর আগে existing requests complete করতে দেয়।"},
+],
+};
+
+const FLASH = {
+s1:[
+  {f:"RTO",b:"Recovery Time Objective — failure এর পর কত দ্রুত recover হবে।"},
+  {f:"RPO",b:"Recovery Point Objective — কতটুকু data loss acceptable।"},
+  {f:"Pilot Light",b:"শুধু core systems (DB) চালু। Failover এ বাকি infrastructure scale করো।"},
+  {f:"Well-Architected Tool",b:"Free AWS tool। Framework অনুযায়ী architecture review ও recommendations।"},
+  {f:"Fault Tolerance",b:"Zero downtime। Redundant active components। HA এর চেয়ে expensive।"},
+],
+s2:[
+  {f:"C Instance Family",b:"Compute Optimized। CPU-intensive: Batch, HPC, gaming।"},
+  {f:"R Instance Family",b:"Memory Optimized। Large RAM। In-memory DB, SAP HANA।"},
+  {f:"Spot Instance",b:"Unused AWS capacity। Up to 90% off। AWS terminate করতে পারে।"},
+  {f:"Dedicated Host",b:"Physical server তোমার। BYOL Oracle/Windows licensing।"},
+  {f:"Cluster Placement Group",b:"Same rack। Ultra-low latency। HPC/ML। Risk: single point of failure।"},
+  {f:"Instance Store",b:"Physically attached storage। Ephemeral। Stop/terminate = data lost।"},
+],
+s3:[
+  {f:"Target Tracking",b:"Metric target রাখো (CPU 50%)। AWS auto scale। Simplest policy।"},
+  {f:"Lifecycle Hook",b:"Launch/terminate এ pause করে custom action। Software install, drain connections।"},
+  {f:"Cooldown Period",b:"Scale action এর পর wait time। Default 300s। Rapid scaling prevent।"},
+  {f:"Launch Template",b:"Modern EC2 config। AMI, type, SG, User Data। Versioning support।"},
+],
+s4:[
+  {f:"ALB",b:"Application Load Balancer। Layer 7। Path/host based routing। Microservices।"},
+  {f:"NLB",b:"Network Load Balancer। Layer 4। TCP/UDP। Static IP। Ultra-low latency।"},
+  {f:"GWLB",b:"Gateway LB। Layer 3। 3rd party firewalls (Palo Alto, Fortinet)।"},
+  {f:"Sticky Sessions",b:"Cookie-based। Same user → same instance। AWSALB cookie।"},
+],
+};
+
+const CASES = {
+s1:[
+  {sc:"<strong>একটি hospital</strong> এর patient records system এ শূন্য downtime tolerated। কোনো data loss acceptable নয়। Budget কোনো issue নয়।",q:"কোন DR strategy recommend করবে?",o:["Backup and Restore","Pilot Light","Warm Standby","Multi-Site Active/Active"],a:3,e:"<b>Multi-Site Active/Active</b> = near-zero RTO ও RPO। Zero data loss requirement = real-time replication। Most expensive কিন্তু mission-critical।"},
+  {sc:"<strong>E-commerce startup</strong> production অনেক months ধরে চলছে। কিন্তু রাতে traffic খুব কম। Cost কমাতে চায়।",q:"কোন Well-Architected principle apply করবে?",o:["Over-provision for peak","Stop spending on data centers","Stop guessing capacity (Auto Scaling)","Trade fixed for variable"],a:2,e:"<b>Stop guessing capacity</b> = Auto Scaling দিয়ে demand অনুযায়ী scale। Rात traffic কমলে scale in করবে।"},
+],
+s2:[
+  {sc:"<strong>Finance company</strong> এর বিদ্যমান Oracle database আছে per-processor licensing সহ। AWS তে migrate করতে চায়।",q:"কোন EC2 purchasing option?",o:["On-Demand","Spot Instances","Dedicated Hosts","Reserved Instances"],a:2,e:"<b>Dedicated Hosts</b> = per-socket/per-core licensing support। Physical server visibility। Oracle BYOL compliance।"},
+  {sc:"<strong>Startup</strong> তাদের machine learning model train করবে। Job interrupt হলে checkpoint থেকে restart করতে পারে। Budget কম।",q:"সবচেয়ে cost-effective option?",o:["On-Demand EC2","Reserved Instances","Spot Instances","Dedicated Instances"],a:2,e:"<b>Spot Instances</b> = up to 90% discount। ML training interrupt ও resume করতে পারে। Ideal use case।"},
+  {sc:"<strong>HPC research cluster</strong> এ nodes এর মধ্যে ultra-low latency network চাই। Nodes একই সময়ে সব communicate করে।",q:"কোন Placement Group?",o:["Spread","Partition","Cluster","No placement group"],a:2,e:"<b>Cluster Placement Group</b> = same rack। 10Gbps+ network। HPC। Trade-off: single rack failure risk।"},
+],
+s3:[
+  {sc:"<strong>Retail company</strong> জানে প্রতি শুক্রবার রাত ৮টায় traffic 3x বাড়ে। বাকি সময় normal।",q:"কোন Auto Scaling policy best?",o:["Target Tracking","Step Scaling","Scheduled Scaling","Simple Scaling"],a:2,e:"<b>Scheduled Scaling</b> = known patterns। শুক্রবার ৭:৪৫ তে pre-scale। Traffic আসার আগেই ready।"},
+  {sc:"<strong>Application</strong> এ নতুন EC2 launch হওয়ার সময় custom software install করতে হবে। Installation complete না হওয়া পর্যন্ত traffic পাঠানো উচিত নয়।",q:"কোন feature use করবে?",o:["CloudWatch Alarm","ASG Lifecycle Hook (Pending:Wait)","EC2 User Data only","ELB health check"],a:1,e:"<b>Lifecycle Hook (Pending:Wait)</b> = instance launch pause করে। Software install complete → complete-lifecycle-action → InService।"},
+],
+s4:[
+  {sc:"<strong>Banking application</strong> এ external partners IP-based firewall rules দিয়ে তোমার LB access করবে। Static IP দরকার।",q:"কোন Load Balancer?",o:["Application Load Balancer","Network Load Balancer","Classic Load Balancer","Gateway Load Balancer"],a:1,e:"<b>NLB</b> = Elastic IP assign করা যায়। Firewall whitelist এর জন্য static IP।"},
+  {sc:"<strong>Microservices architecture</strong> এ /users/ → User service, /products/ → Product service, /orders/ → Order service route করতে হবে।",q:"কোন Load Balancer এবং feature?",o:["NLB with path routing","ALB with path-based routing rules","CLB","GWLB"],a:1,e:"<b>ALB + Path-based routing</b> = URL path দেখে different target groups এ route। Microservices এর ideal solution।"},
+],
+};
+
+const ORDER = {
+s3:[
+  {q:"Auto Scaling scale-out process সঠিক ক্রমে সাজাও:",
+   items:["CloudWatch Alarm triggers (CPU > 70%)","ASG scaling policy evaluates","New EC2 instance launches from Launch Template","Instance passes health check","ELB adds instance to Target Group","Traffic routes to new instance"],
+   correct:[0,1,2,3,4,5],
+   e:"CloudWatch → Policy → Launch → Health Check → ELB Register → Traffic।"},
+],
+s4:[
+  {q:"ALB request processing flow সঠিক ক্রমে সাজাও:",
+   items:["Client sends HTTP request","ALB receives request","Listener rules evaluate path/host","Route to matching Target Group","Health check passed instance selected","Response returns to client"],
+   correct:[0,1,2,3,4,5],
+   e:"Client → ALB Listener → Rules → Target Group → Healthy Instance → Response।"},
+],
+};
+
+// ══════════════════════════════════════════════════════════════
+// STATE & CORE FUNCTIONS
+// ══════════════════════════════════════════════════════════════
+let S;
+try{S=JSON.parse(localStorage.getItem('awssaa-m1')||'{}');}catch(e){S={};}
+['sc','due','ch','iv'].forEach(k=>{if(!S[k])S[k]={};});
+function save(){try{localStorage.setItem('awssaa-m1',JSON.stringify(S));}catch(e){}}
+
+let toastT;
+function toast(msg,ok){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show '+(ok?'ok-t':'er-t');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+function updateHeader(){
+  let tot=0,cor=0;
+  Object.keys(Q).forEach(sid=>{
+    if(!S.sc[sid])return;
+    Object.values(S.sc[sid]).forEach(v=>{tot++;if(v===true)cor++;});
+  });
+  const wr=tot-cor,pct=tot?Math.round(cor/tot*100):0;
+  document.getElementById('hOk').textContent='✅ '+cor;
+  document.getElementById('hEr').textContent='❌ '+wr;
+  document.getElementById('hPct').textContent='📊 '+pct+'%';
+}
+
+function updateProg(sid){
+  const qs=Q[sid]||[];
+  if(!S.sc[sid])S.sc[sid]={};
+  let cor=0;qs.forEach((_,i)=>{if(S.sc[sid][i]===true)cor++;});
+  const pct=qs.length?Math.round(cor/qs.length*100):0;
+  const fill=document.getElementById('pf-'+sid);
+  const txt=document.getElementById('pt-'+sid);
+  const np=document.getElementById('np-'+sid);
+  if(fill)fill.style.width=pct+'%';
+  if(txt)txt.textContent=cor+'/'+qs.length;
+  if(np)np.textContent=pct+'%';
+  updateHeader();
+}
+
+function updateAllProg(){Object.keys(Q).forEach(sid=>updateProg(sid));}
+
+function resetProgress(){
+  if(!confirm('সব progress reset করবে?'))return;
+  S={sc:{},due:{},ch:{},iv:{}};save();
+  document.querySelectorAll('[data-rendered]').forEach(el=>delete el.dataset.rendered);
+  Object.keys(Q).forEach(sid=>{
+    ['mcq','tf','match','order','fib','flash','case'].forEach(t=>{
+      const el=document.getElementById('ex-'+sid+'-'+t);
+      if(el){el.innerHTML='';delete el.dataset.rendered;}
+    });
+  });
+  updateAllProg();toast('🔄 Reset সম্পন্ন!',true);
+}
+
+function goSection(sid,el){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('act'));
+  el.classList.add('act');
+  document.getElementById(sid).scrollIntoView({behavior:'smooth',block:'start'});
+  const L=document.getElementById('lesson-'+sid);
+  const E=document.getElementById('exercise-'+sid);
+  if(!L.classList.contains('open')&&!E.classList.contains('open'))showLesson(sid);
+}
+
+function toggleLesson(sid){
+  const L=document.getElementById('lesson-'+sid);
+  if(L.classList.contains('open')){L.classList.remove('open');setBtn(sid,null);}
+  else showLesson(sid);
+}
+function showLesson(sid){
+  document.getElementById('lesson-'+sid).classList.add('open');
+  document.getElementById('exercise-'+sid).classList.remove('open');
+  setBtn(sid,'lesson');
+  document.getElementById(sid).classList.remove('active-exercise');
+  document.getElementById(sid).classList.add('active-lesson');
+}
+function showExercise(sid){
+  document.getElementById('lesson-'+sid).classList.remove('open');
+  document.getElementById('exercise-'+sid).classList.add('open');
+  setBtn(sid,'exercise');
+  document.getElementById(sid).classList.remove('active-lesson');
+  document.getElementById(sid).classList.add('active-exercise');
+  renderQ(sid);
+  setTimeout(()=>document.getElementById('exercise-'+sid).scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+function setBtn(sid,m){
+  const lb=document.getElementById('lb-'+sid);
+  const eb=document.getElementById('eb-'+sid);
+  if(lb)lb.classList.toggle('active',m==='lesson');
+  if(eb)eb.classList.toggle('active',m==='exercise');
+}
+
+function switchTab(sid,type,el){
+  const wrap=el.closest('.ex-wrap');
+  wrap.querySelectorAll('.ex-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  wrap.querySelectorAll('.ex-panel').forEach(p=>p.classList.remove('open'));
+  const panel=document.getElementById('panel-'+sid+'-'+type);
+  if(panel)panel.classList.add('open');
+  const container=document.getElementById('ex-'+sid+'-'+type);
+  if(!container||container.dataset.rendered)return;
+  if(type==='mcq')renderQ(sid);
+  else if(type==='tf')renderTF(sid);
+  else if(type==='match')renderMatch(sid);
+  else if(type==='order')renderOrder(sid);
+  else if(type==='fib')renderFIB(sid);
+  else if(type==='flash')renderFlash(sid);
+  else if(type==='case')renderCase(sid);
+}
+
+// MCQ
+function renderQ(sid){
+  const container=document.getElementById('ex-'+sid+'-mcq');
+  if(!container||container.dataset.rendered)return;
+  container.dataset.rendered='1';
+  if(!S.sc[sid])S.sc[sid]={};
+  const qs=Q[sid];let cor=0;qs.forEach((_,i)=>{if(S.sc[sid][i]===true)cor++;});
+  const pct=qs.length?Math.round(cor/qs.length*100):0;
+  let h=`<div class="ex-score"><div class="ex-score-top"><span style="font-family:'Hind Siliguri',sans-serif;color:var(--t2);font-size:.88rem">MCQ স্কোর</span><span style="font-weight:700;color:var(--gr)">${cor}/${qs.length} (${pct}%)</span></div><div class="score-bar"><div class="score-fill" style="width:${pct}%"></div></div></div>`;
+  qs.forEach((q,i)=>{
+    h+=`<div class="qcard" id="qc-${sid}-${i}">
+<div class="qmeta"><span class="qnum">প্রশ্ন ${i+1}</span><span class="qtype">MCQ</span>${q.sc?'<span class="qscen">📌 Scenario</span>':''}</div>
+<div class="qtxt">${q.q}</div>
+<div class="opts" id="opts-${sid}-${i}">${q.o.map((opt,oi)=>`<button class="opt" onclick="answer('${sid}',${i},${oi})" id="opt-${sid}-${i}-${oi}"><span class="olet">${String.fromCharCode(65+oi)}</span><span>${opt}</span></button>`).join('')}</div>
+<div class="fb" id="fb-${sid}-${i}"></div><div class="nxt-rev" id="nr-${sid}-${i}"></div>
+</div>`;
+  });
+  container.innerHTML=h;
+  qs.forEach((q,i)=>{if(S.sc[sid][i]!==undefined&&S.ch[sid+'_'+i]!==undefined)reveal(sid,i,S.ch[sid+'_'+i],q.a,q.e,false);});
+  updateProg(sid);
+}
+
+function answer(sid,qi,chosen){
+  if(S.sc[sid]&&S.sc[sid][qi]!==undefined)return;
+  const q=Q[sid][qi];const ok=chosen===q.a;
+  if(!S.sc[sid])S.sc[sid]={};
+  S.sc[sid][qi]=ok;S.ch[sid+'_'+qi]=chosen;
+  const prev=S.iv[sid+'_'+qi]||1;
+  S.iv[sid+'_'+qi]=ok?Math.min(prev*2,90):1;
+  S.due[sid+'_'+qi]=Date.now()+(ok?S.iv[sid+'_'+qi]*86400000:600000);
+  save();reveal(sid,qi,chosen,q.a,q.e,true);updateProg(sid);
+}
+
+function reveal(sid,qi,chosen,correct,exp,animate){
+  const btns=document.querySelectorAll(`#opts-${sid}-${qi} .opt`);
+  btns.forEach((b,oi)=>{
+    b.disabled=true;
+    if(oi===correct)b.classList.add('cor');
+    else if(oi===chosen&&chosen!==correct)b.classList.add('wr');
+    b.querySelector('.olet').textContent=oi===correct?'✓':(oi===chosen&&chosen!==correct?'✗':String.fromCharCode(65+oi));
+  });
+  const isOk=chosen===correct;
+  const fb=document.getElementById(`fb-${sid}-${qi}`);
+  if(fb){fb.className=`fb show ${isOk?'ok-fb':'er-fb'}`;fb.innerHTML=`<div class="fb-title">${isOk?'🎉 সঠিক উত্তর!':'❌ ভুল হয়েছে'}</div><div class="fb-exp">${exp}</div>`;}
+  if(animate){const card=document.getElementById(`qc-${sid}-${qi}`);if(card)card.classList.add(isOk?'ok':'er');toast(isOk?'🎉 সঠিক! চমৎকার!':'💡 Explanation পড়ো!',isOk);}
+}
+
+// TF
+function renderTF(sid){
+  const c=document.getElementById('ex-'+sid+'-tf');
+  if(!c||c.dataset.rendered)return;c.dataset.rendered='1';
+  const data=TF[sid];
+  if(!data||!data.length){c.innerHTML='<p style="color:var(--t2);font-family:Hind Siliguri">শীঘ্রই আসছে।</p>';return;}
+  c.innerHTML=data.map((item,i)=>`<div class="tf-card" id="tfc-${sid}-${i}">
+<div class="qmeta"><span class="qnum">TF ${i+1}</span><span class="qtype">True / False</span></div>
+<div class="tf-stmt">${item.s}</div>
+<div class="tf-btns">
+<button class="tf-btn true-btn" onclick="answerTF('${sid}',${i},true,this)">✅ সত্য</button>
+<button class="tf-btn false-btn" onclick="answerTF('${sid}',${i},false,this)">❌ মিথ্যা</button>
+</div>
+<div class="tf-fb" id="tffb-${sid}-${i}"></div>
+</div>`).join('');
+}
+function answerTF(sid,i,chosen,btn){
+  const card=document.getElementById(`tfc-${sid}-${i}`);
+  if(card.dataset.done)return;card.dataset.done='1';
+  const item=TF[sid][i];const ok=chosen===item.a;
+  const tb=card.querySelector('.true-btn');const fb=card.querySelector('.false-btn');
+  tb.disabled=true;fb.disabled=true;
+  (item.a===true?tb:fb).classList.add('cor-tf');
+  if(!ok)btn.classList.add('wr-tf');
+  const fbEl=document.getElementById(`tffb-${sid}-${i}`);
+  fbEl.className=`tf-fb show ${ok?'ok-tf':'er-tf'}`;
+  fbEl.innerHTML=`<b>${ok?'🎉 সঠিক!':'❌ ভুল।'}</b> ${item.e}`;
+  card.classList.add(ok?'ok':'er');
+  toast(ok?'🎉 সঠিক!':'💡 Explanation পড়ো!',ok);
+}
+
+// MATCH
+const matchSt={};
+function renderMatch(sid){
+  const c=document.getElementById('ex-'+sid+'-match');
+  if(!c||c.dataset.rendered)return;c.dataset.rendered='1';
+  const data=MATCH[sid];
+  if(!data){c.innerHTML='<p style="color:var(--t2)">শীঘ্রই আসছে।</p>';return;}
+  matchSt[sid]={sel:null,matched:[],score:0,total:data.pairs.length};
+  const shuffled=[...data.pairs].sort(()=>Math.random()-.5);
+  c.innerHTML=`<p style="font-family:'Hind Siliguri',sans-serif;color:var(--t2);font-size:.88rem;margin-bottom:12px">📌 ${data.title} — বাম থেকে select করো, তারপর ডান থেকে match করো।</p>
+<div class="match-grid">
+<div class="match-left">${data.pairs.map((p,i)=>`<div class="match-item" id="ml-${sid}-${i}" onclick="selL('${sid}',${i})"><span class="match-svc">${p.l}</span></div>`).join('')}</div>
+<div class="match-right">${shuffled.map((p,i)=>{const orig=data.pairs.findIndex(x=>x.r===p.r);return`<div class="match-item" id="mr-${sid}-${i}" data-orig="${orig}" onclick="selR('${sid}',${i},${orig})">${p.r}</div>`;}).join('')}</div>
+</div>
+<div class="match-score" id="ms-${sid}">0 / ${data.pairs.length} matched</div>`;
+}
+function selL(sid,i){
+  const ms=matchSt[sid];if(ms.matched.includes('L'+i))return;
+  document.querySelectorAll(`#ex-${sid}-match .match-left .match-item`).forEach(el=>el.classList.remove('selected'));
+  document.getElementById(`ml-${sid}-${i}`).classList.add('selected');ms.sel=i;
+}
+function selR(sid,ri,orig){
+  const ms=matchSt[sid];if(ms.matched.includes('R'+ri))return;
+  if(ms.sel===null){toast('বাম থেকে আগে select করো!',false);return;}
+  const li=ms.sel;const ok=li===orig;
+  const lEl=document.getElementById(`ml-${sid}-${li}`);const rEl=document.getElementById(`mr-${sid}-${ri}`);
+  if(ok){lEl.classList.remove('selected');lEl.classList.add('matched-ok');rEl.classList.add('matched-ok');ms.matched.push('L'+li,'R'+ri);ms.score++;document.getElementById(`ms-${sid}`).innerHTML=`<b>${ms.score}</b> / ${ms.total} matched ${ms.score===ms.total?'🎉 সব সঠিক!':''}`;toast('✅ সঠিক match!',true);}
+  else{rEl.classList.add('matched-er');setTimeout(()=>rEl.classList.remove('matched-er'),500);toast('❌ ভুল match!',false);}
+  ms.sel=null;document.querySelectorAll(`#ex-${sid}-match .match-left .match-item`).forEach(el=>el.classList.remove('selected'));
+}
+
+// ORDER
+function renderOrder(sid){
+  const c=document.getElementById('ex-'+sid+'-order');
+  if(!c||c.dataset.rendered)return;c.dataset.rendered='1';
+  const data=ORDER[sid];
+  if(!data||!data.length){c.innerHTML='<p style="color:var(--t2)">শীঘ্রই আসছে।</p>';return;}
+  c.innerHTML=data.map((ex,ei)=>{
+    const shuffled=[...ex.items].map((item,i)=>({item,orig:i})).sort(()=>Math.random()-.5);
+    return`<div class="order-wrap">
+<div class="qmeta"><span class="qnum">Ordering ${ei+1}</span><span class="qtype">Drag &amp; Drop</span></div>
+<div class="order-question">${ex.q}</div>
+<div class="order-list" id="ol-${sid}-${ei}">${shuffled.map((s,pos)=>`<div class="order-item" draggable="true" data-orig="${s.orig}" id="oi-${sid}-${ei}-${pos}" ondragstart="dStart(event,'${sid}',${ei},${pos})" ondragover="dOver(event,'${sid}',${ei},${pos})" ondrop="dDrop(event,'${sid}',${ei},${pos})" ondragleave="event.target.classList.remove('drag-over')">
+<span class="order-num">${pos+1}</span><span>${s.item}</span></div>`).join('')}</div>
+<button class="order-check-btn" onclick="checkOrder('${sid}',${ei})">✅ Check Order</button>
+<div class="tf-fb" id="ofb-${sid}-${ei}" style="margin-top:12px"></div>
+</div>`;
+  }).join('');
+}
+let dragSrc=null;
+function dStart(e,sid,ei,pos){dragSrc={sid,ei,pos};e.target.classList.add('dragging');}
+function dOver(e,sid,ei,pos){e.preventDefault();document.getElementById(`oi-${sid}-${ei}-${pos}`).classList.add('drag-over');}
+function dDrop(e,sid,ei,pos){
+  e.preventDefault();
+  if(!dragSrc||dragSrc.sid!==sid||dragSrc.ei!==ei)return;
+  const src=document.getElementById(`oi-${dragSrc.sid}-${dragSrc.ei}-${dragSrc.pos}`);
+  const tgt=document.getElementById(`oi-${sid}-${ei}-${pos}`);
+  tgt.classList.remove('drag-over');src.classList.remove('dragging');
+  if(dragSrc.pos===pos)return;
+  const list=document.getElementById(`ol-${sid}-${ei}`);
+  const items=[...list.children];
+  const si=items.indexOf(src),ti=items.indexOf(tgt);
+  if(si<ti)list.insertBefore(src,tgt.nextSibling);else list.insertBefore(src,tgt);
+  [...list.children].forEach((el,i)=>{el.querySelector('.order-num').textContent=i+1;});
+  dragSrc=null;
+}
+function checkOrder(sid,ei){
+  const ex=ORDER[sid][ei];
+  const list=document.getElementById(`ol-${sid}-${ei}`);
+  const items=[...list.children];
+  let allOk=true;
+  items.forEach((el,pos)=>{
+    const origVal=parseInt(el.dataset.orig);
+    const ok=origVal===ex.correct[pos];
+    el.classList.remove('cor-order','wr-order');el.classList.add(ok?'cor-order':'wr-order');
+    if(!ok)allOk=false;
+  });
+  const fb=document.getElementById(`ofb-${sid}-${ei}`);
+  fb.className=`tf-fb show ${allOk?'ok-tf':'er-tf'}`;
+  fb.innerHTML=`<b>${allOk?'🎉 সঠিক order!':'❌ ভুল order।'}</b> ${ex.e}`;
+  toast(allOk?'🎉 সঠিক!':'💡 সঠিক order দেখো।',allOk);
+}
+
+// FIB
+function renderFIB(sid){
+  const c=document.getElementById('ex-'+sid+'-fib');
+  if(!c||c.dataset.rendered)return;c.dataset.rendered='1';
+  const data=FIB[sid];
+  if(!data||!data.length){c.innerHTML='<p style="color:var(--t2)">শীঘ্রই আসছে।</p>';return;}
+  c.innerHTML=data.map((item,i)=>`<div class="fib-card" id="fibc-${sid}-${i}">
+<div class="qmeta"><span class="qnum">Fill ${i+1}</span><span class="qtype">Fill in the Blank</span></div>
+<div class="fib-q">${item.q}</div>
+<div class="fib-input-wrap">
+<input class="fib-input" id="fibi-${sid}-${i}" placeholder="উত্তর লেখো..." onkeydown="if(event.key==='Enter')checkFIB('${sid}',${i})">
+<button class="fib-check" onclick="checkFIB('${sid}',${i})">✅ Check</button>
+</div>
+<div class="fib-fb" id="fibfb-${sid}-${i}"></div>
+</div>`).join('');
+}
+function checkFIB(sid,i){
+  const card=document.getElementById(`fibc-${sid}-${i}`);
+  if(card.dataset.done)return;
+  const item=FIB[sid][i];
+  const inp=document.getElementById(`fibi-${sid}-${i}`);
+  const val=inp.value.trim().toLowerCase();
+  const ok=val===item.a.toLowerCase()||(item.alt||[]).some(a=>val===a.toLowerCase());
+  card.dataset.done='1';inp.disabled=true;inp.classList.add(ok?'ok-inp':'er-inp');
+  const fb=document.getElementById(`fibfb-${sid}-${i}`);
+  fb.className=`fib-fb show ${ok?'ok-f':'er-f'}`;
+  fb.innerHTML=`<b>${ok?'🎉 সঠিক!':'❌ ভুল। সঠিক: '+item.a}</b> ${item.e}`;
+  card.classList.add(ok?'ok':'er');toast(ok?'🎉 সঠিক!':'💡 সঠিক উত্তর দেখো।',ok);
+}
+
+// FLASHCARDS
+const flashSt={};
+function renderFlash(sid){
+  const c=document.getElementById('ex-'+sid+'-flash');
+  if(!c||c.dataset.rendered)return;c.dataset.rendered='1';
+  const data=FLASH[sid];
+  if(!data||!data.length){c.innerHTML='<p style="color:var(--t2)">শীঘ্রই আসছে।</p>';return;}
+  flashSt[sid]={idx:0,known:0,unknown:0,total:data.length};
+  renderFlashCard(sid);
+}
+function renderFlashCard(sid){
+  const c=document.getElementById('ex-'+sid+'-flash');if(!c)return;
+  const st=flashSt[sid];const data=FLASH[sid];
+  if(st.idx>=data.length){
+    c.innerHTML=`<div style="text-align:center;padding:40px"><div style="font-size:2rem;margin-bottom:12px">🎉</div><div style="font-size:1.1rem;font-weight:700;color:var(--gr);margin-bottom:8px">সব cards শেষ!</div><div style="color:var(--t2);font-family:'Hind Siliguri',sans-serif;margin-bottom:20px">জানো: ${st.known} | জানো না: ${st.unknown}</div><button onclick="flashSt['${sid}']={idx:0,known:0,unknown:0,total:FLASH['${sid}'].length};renderFlashCard('${sid}')" class="order-check-btn">🔄 আবার শুরু</button></div>`;
+    return;
+  }
+  const card=data[st.idx];
+  c.innerHTML=`<div style="text-align:center;margin-bottom:10px;color:var(--t2);font-size:.82rem;font-family:'JetBrains Mono',monospace">${st.idx+1} / ${data.length} • জানো: ${st.known} ✅ জানো না: ${st.unknown} ❌</div>
+<div class="fc-wrap"><div class="fc-card-outer" id="fc-outer-${sid}" onclick="flipCard('${sid}')">
+<div class="fc-front"><div class="fc-label">CONCEPT / SERVICE</div><div class="fc-content">${card.f}</div><div class="fc-hint">👆 click করে দেখো</div></div>
+<div class="fc-back"><div class="fc-label">ANSWER (বাংলায়)</div><div class="fc-content">${card.b}</div></div>
+</div></div>
+<div class="fc-known-wrap">
+<button class="fc-known fc-known-no" onclick="flashNext('${sid}',false)">❌ জানি না</button>
+<button class="fc-known fc-known-yes" onclick="flashNext('${sid}',true)">✅ জানি</button>
+</div>`;
+}
+function flipCard(sid){document.getElementById(`fc-outer-${sid}`).classList.toggle('flipped');}
+function flashNext(sid,knew){
+  const st=flashSt[sid];
+  if(knew)st.known++;else st.unknown++;st.idx++;renderFlashCard(sid);
+}
+
+// SCENARIOS/CASES
+function renderCase(sid){
+  const c=document.getElementById('ex-'+sid+'-case');
+  if(!c||c.dataset.rendered)return;c.dataset.rendered='1';
+  const data=CASES[sid];
+  if(!data||!data.length){c.innerHTML='<p style="color:var(--t2)">শীঘ্রই আসছে।</p>';return;}
+  c.innerHTML=data.map((item,i)=>`<div class="case-card" id="cc-${sid}-${i}">
+<div class="qmeta"><span class="qnum">Scenario ${i+1}</span><span class="qscen">📌 Real Exam Style</span></div>
+<div class="case-scenario">${item.sc}</div>
+<div class="case-q">${item.q}</div>
+<div class="opts" id="copts-${sid}-${i}">${item.o.map((opt,oi)=>`<button class="opt" onclick="answerCase('${sid}',${i},${oi})" id="co-${sid}-${i}-${oi}"><span class="olet">${String.fromCharCode(65+oi)}</span><span>${opt}</span></button>`).join('')}</div>
+<div class="fb" id="cfb-${sid}-${i}"></div>
+</div>`).join('');
+}
+function answerCase(sid,i,chosen){
+  const card=document.getElementById(`cc-${sid}-${i}`);
+  if(card.dataset.done)return;card.dataset.done='1';
+  const item=CASES[sid][i];const ok=chosen===item.a;
+  const btns=document.querySelectorAll(`#copts-${sid}-${i} .opt`);
+  btns.forEach((b,oi)=>{b.disabled=true;if(oi===item.a)b.classList.add('cor');else if(oi===chosen&&!ok)b.classList.add('wr');b.querySelector('.olet').textContent=oi===item.a?'✓':(oi===chosen&&!ok?'✗':String.fromCharCode(65+oi));});
+  const fb=document.getElementById(`cfb-${sid}-${i}`);
+  fb.className=`fb show ${ok?'ok-fb':'er-fb'}`;
+  fb.innerHTML=`<div class="fb-title">${ok?'🎉 সঠিক! Real exam এ pass করবে!':'❌ ভুল হয়েছে'}</div><div class="fb-exp">${item.e}</div>`;
+  toast(ok?'🎉 Scenario solved!':'💡 Explanation পড়ো!',ok);
+}
+
+// INIT
+window.addEventListener('DOMContentLoaded',()=>{
+  updateAllProg();
+  setTimeout(()=>renderQ('s1'),100);
+});
+</script>
+</body>
+</html>

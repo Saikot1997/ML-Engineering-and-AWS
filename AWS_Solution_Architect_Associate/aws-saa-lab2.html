@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 2: Build VPC Infrastructure — SAA বাংলা</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--dk:#080d1a;--bl:#0f1929;--cb:#162236;--bd:#1e3058;--or:#FF9900;--lb:#00a8e1;--gr:#00d68f;--re:#ff4757;--yw:#ffd32a;--tl:#00c7b1;--t1:#e8f4fd;--t2:#8faec8;--t3:#c5dff0;--ac:#00d68f}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit','Hind Siliguri',sans-serif;background:var(--dk);color:var(--t1);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(0,214,143,.07) 0,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(255,153,0,.05) 0,transparent 50%);pointer-events:none;z-index:0}
+.hdr{background:linear-gradient(135deg,#0b1320,#162236,#0b1320);border-bottom:2px solid var(--gr);padding:14px 24px;position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 30px rgba(0,214,143,.15);flex-wrap:wrap;gap:12px}
+.badge{background:linear-gradient(135deg,var(--gr),#00a06a);color:#000;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;padding:5px 10px;border-radius:6px;letter-spacing:1px}
+.hdr-title{font-size:1rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--gr));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-sub{font-family:'Hind Siliguri',sans-serif;font-size:.75rem;color:var(--t2)}
+.nav-btns{display:flex;gap:8px}
+.nav-btn{background:rgba(255,255,255,.05);border:1px solid var(--bd);color:var(--t2);padding:5px 12px;border-radius:8px;font-size:.75rem;font-weight:700;text-decoration:none;transition:all .2s}
+.nav-btn:hover{border-color:var(--gr);color:var(--gr)}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px;position:relative;z-index:1}
+.lab-hero{background:linear-gradient(135deg,rgba(0,214,143,.07),rgba(0,214,143,.02));border:1.5px solid rgba(0,214,143,.25);border-radius:20px;padding:28px;margin-bottom:28px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start}
+.lab-hero-left h1{font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:8px}
+.lab-hero-left p{font-family:'Hind Siliguri',sans-serif;color:var(--t2);font-size:.9rem;line-height:1.75;margin-bottom:14px}
+.meta-chips{display:flex;gap:8px;flex-wrap:wrap}
+.meta-chip{padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+.mc-time{background:rgba(255,215,42,.1);border:1px solid rgba(255,215,42,.3);color:var(--yw)}
+.mc-diff{background:rgba(255,153,0,.1);border:1px solid rgba(255,153,0,.3);color:var(--or)}
+.mc-svc{background:rgba(0,214,143,.1);border:1px solid rgba(0,214,143,.3);color:var(--gr)}
+.obj-box{background:rgba(0,0,0,.2);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;min-width:180px}
+.obj-box h4{font-size:.72rem;font-weight:700;color:var(--gr);letter-spacing:1px;margin-bottom:10px;font-family:'JetBrains Mono',monospace}
+.obj-item{font-family:'Hind Siliguri',sans-serif;font-size:.79rem;color:var(--t3);padding:4px 0 4px 16px;position:relative;line-height:1.5}
+.obj-item::before{content:'✓';position:absolute;left:0;color:var(--gr);font-size:.75rem;font-weight:700}
+.tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--cb);border:1px solid var(--bd);border-radius:14px;padding:5px;flex-wrap:wrap}
+.tab{flex:1;padding:9px 12px;border-radius:10px;border:none;cursor:pointer;font-size:.78rem;font-weight:700;color:var(--t2);background:transparent;transition:all .25s;white-space:nowrap;font-family:'Outfit',sans-serif;min-width:70px;text-align:center}
+.tab:hover{color:var(--gr)}
+.tab.active{background:rgba(0,214,143,.12);color:var(--gr);border:1.5px solid rgba(0,214,143,.35)}
+.panel{display:none}
+.panel.open{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:22px}
+.scard{background:var(--cb);border:1.5px solid var(--bd);border-radius:14px;padding:15px;transition:all .25s}
+.scard:hover{border-color:var(--gr);transform:translateY(-2px)}
+.scard-icon{font-size:1.5rem;margin-bottom:8px}
+.scard-title{font-size:.8rem;font-weight:700;color:var(--gr);margin-bottom:5px;font-family:'JetBrains Mono',monospace}
+.scard-body{font-family:'Hind Siliguri',sans-serif;font-size:.8rem;color:var(--t3);line-height:1.65}
+.scard-body b{color:var(--or)}
+.diagram-wrap{background:var(--cb);border:1.5px solid var(--bd);border-radius:16px;overflow:hidden;margin-bottom:22px}
+.diagram-wrap svg{display:block;width:100%;height:auto}
+.task-block{margin-bottom:26px}
+.task-hdr{background:linear-gradient(135deg,rgba(0,214,143,.07),transparent);border-left:3px solid var(--gr);border-radius:0 12px 12px 0;padding:13px 18px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.task-num{background:var(--gr);color:#000;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.task-title{font-size:.96rem;font-weight:700;color:#fff}
+.task-sub{font-family:'Hind Siliguri',sans-serif;font-size:.78rem;color:var(--t2);margin-top:2px}
+.step{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:8px;border:1.5px solid var(--bd);border-radius:11px;overflow:hidden;transition:border-color .2s}
+.step:hover{border-color:rgba(0,214,143,.25)}
+.step-en{background:rgba(255,255,255,.02);padding:13px 15px;border-right:1px solid var(--bd)}
+.step-bn{background:rgba(0,214,143,.03);padding:13px 15px}
+.step-num{font-family:'JetBrains Mono',monospace;font-size:.63rem;font-weight:700;color:var(--gr);margin-bottom:5px;letter-spacing:1px}
+.step-en-txt{font-size:.84rem;color:var(--t1);line-height:1.65}
+.step-bn-txt{font-family:'Hind Siliguri',sans-serif;font-size:.84rem;color:var(--t3);line-height:1.7}
+.step-en-txt code{font-family:'JetBrains Mono',monospace;background:rgba(0,214,143,.1);color:var(--gr);padding:1px 5px;border-radius:3px;font-size:.83em}
+.step-bn-txt b{color:var(--or)}
+.note-box{background:rgba(255,215,42,.05);border:1px solid rgba(255,215,42,.22);border-radius:9px;padding:10px 14px;margin:8px 0;display:flex;gap:9px;font-family:'Hind Siliguri',sans-serif;font-size:.81rem;color:var(--t3);line-height:1.65}
+.note-box.sec{background:rgba(0,214,143,.05);border-color:rgba(0,214,143,.22)}
+.note-box.warn{background:rgba(255,71,87,.05);border-color:rgba(255,71,87,.22)}
+.route-table{width:100%;border-collapse:separate;border-spacing:0 4px;margin:10px 0 16px}
+.route-table th{background:rgba(0,214,143,.1);color:var(--gr);padding:8px 12px;font-size:.75rem;font-weight:700;text-align:left;font-family:'JetBrains Mono',monospace}
+.route-table td{background:rgba(255,255,255,.02);padding:8px 12px;font-family:'Hind Siliguri',sans-serif;font-size:.82rem;color:var(--t3)}
+.qcard{background:linear-gradient(135deg,rgba(22,34,54,.9),rgba(15,25,41,.95));border:1.5px solid var(--bd);border-radius:14px;padding:18px;margin-bottom:15px;transition:border-color .3s}
+.qcard.ok{border-color:rgba(0,214,143,.5);background:rgba(0,214,143,.04)}
+.qcard.er{border-color:rgba(255,71,87,.5);background:rgba(255,71,87,.04)}
+.qmeta{display:flex;gap:8px;align-items:center;margin-bottom:11px;flex-wrap:wrap}
+.qnum{background:rgba(0,214,143,.15);color:var(--gr);font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:20px}
+.qtag{background:rgba(255,255,255,.06);color:var(--t2);font-size:.68rem;padding:3px 10px;border-radius:20px}
+.qscen{background:rgba(255,153,0,.12);color:var(--or);font-size:.68rem;padding:3px 10px;border-radius:20px;font-weight:700}
+.qtxt{font-family:'Hind Siliguri',sans-serif;font-size:.94rem;color:var(--t1);line-height:1.8;margin-bottom:13px;font-weight:500}
+.opts{display:grid;gap:7px}
+.opt{background:rgba(255,255,255,.03);border:1.5px solid var(--bd);border-radius:10px;padding:11px 14px;cursor:pointer;text-align:left;transition:all .2s;display:flex;align-items:flex-start;gap:10px;font-family:'Hind Siliguri',sans-serif;font-size:.87rem;color:var(--t1);line-height:1.6;width:100%}
+.opt:hover:not(:disabled){border-color:var(--gr);background:rgba(0,214,143,.05);transform:translateX(3px)}
+.opt:disabled{cursor:default;transform:none}
+.opt.cor{border-color:var(--gr);background:rgba(0,214,143,.08);color:var(--gr)}
+.opt.wr{border-color:var(--re);background:rgba(255,71,87,.08);color:var(--re)}
+.olet{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.73rem;flex-shrink:0;background:rgba(255,255,255,.07);color:var(--t2);font-family:'JetBrains Mono',monospace}
+.opt.cor .olet{background:var(--gr);color:#000}
+.opt.wr .olet{background:var(--re);color:#fff}
+.fb{display:none;margin-top:11px;border-radius:9px;padding:11px 14px}
+.fb.show{display:block}
+.fb.ok-fb{background:rgba(0,214,143,.07);border:1px solid rgba(0,214,143,.3)}
+.fb.er-fb{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3)}
+.fb-title{font-weight:700;font-size:.86rem;margin-bottom:4px}
+.ok-fb .fb-title{color:var(--gr)}
+.er-fb .fb-title{color:var(--re)}
+.fb-exp{font-family:'Hind Siliguri',sans-serif;font-size:.83rem;color:var(--t3);line-height:1.7}
+.fb-exp b{color:var(--or)}
+.tf-card{background:linear-gradient(135deg,rgba(22,34,54,.9),rgba(15,25,41,.95));border:1.5px solid var(--bd);border-radius:13px;padding:17px;margin-bottom:12px;transition:border-color .3s}
+.tf-card.ok{border-color:rgba(0,214,143,.5)}
+.tf-card.er{border-color:rgba(255,71,87,.5)}
+.tf-stmt{font-family:'Hind Siliguri',sans-serif;font-size:.92rem;color:var(--t1);margin-bottom:12px;line-height:1.75;font-weight:500}
+.tf-btns{display:flex;gap:9px}
+.tf-btn{flex:1;padding:8px;border-radius:8px;border:2px solid var(--bd);cursor:pointer;font-size:.87rem;font-weight:700;background:transparent;transition:all .2s}
+.tf-btn.t-btn{color:var(--gr)}
+.tf-btn.f-btn{color:var(--re)}
+.tf-btn:hover:not(:disabled){transform:translateY(-2px)}
+.tf-btn.cor-tf{background:rgba(0,214,143,.15);border-color:var(--gr);color:var(--gr)}
+.tf-btn.wr-tf{background:rgba(255,71,87,.15);border-color:var(--re);color:var(--re)}
+.tf-btn:disabled{cursor:default;transform:none}
+.tf-fb{display:none;margin-top:9px;padding:10px 13px;border-radius:8px;font-family:'Hind Siliguri',sans-serif;font-size:.81rem;line-height:1.7}
+.tf-fb.show{display:block}
+.tf-fb.ok-tf{background:rgba(0,214,143,.07);border:1px solid rgba(0,214,143,.3);color:var(--t3)}
+.tf-fb.er-tf{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3);color:var(--t3)}
+.case-card{background:linear-gradient(135deg,rgba(0,214,143,.04),rgba(0,168,225,.02));border:1.5px solid rgba(0,214,143,.2);border-radius:13px;padding:17px;margin-bottom:15px}
+.case-sc{background:rgba(0,0,0,.2);border-left:3px solid var(--gr);border-radius:0 9px 9px 0;padding:11px 15px;margin-bottom:13px;font-family:'Hind Siliguri',sans-serif;font-size:.87rem;color:var(--t3);line-height:1.75}
+.case-sc strong{color:var(--gr)}
+.case-q{font-family:'Hind Siliguri',sans-serif;font-size:.91rem;color:var(--t1);margin-bottom:12px;font-weight:600}
+.score-bar-wrap{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:10px;padding:11px 15px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.score-bar-track{flex:1;height:6px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.score-bar-fill{height:100%;background:linear-gradient(90deg,var(--gr),var(--lb));border-radius:4px;transition:width .6s ease}
+.score-txt{font-size:.78rem;color:var(--t2);font-weight:700;white-space:nowrap;font-family:'JetBrains Mono',monospace}
+.fc-wrap{perspective:1000px;max-width:560px;margin:0 auto 14px}
+.fc-outer{width:100%;height:185px;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.fc-outer.flipped{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;inset:0;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.fc-front{background:linear-gradient(135deg,var(--cb),var(--bl));border:1.5px solid var(--gr)}
+.fc-back{background:linear-gradient(135deg,rgba(0,214,143,.08),rgba(0,168,225,.04));border:1.5px solid var(--lb);transform:rotateY(180deg)}
+.fc-lbl{font-size:.67rem;font-weight:700;letter-spacing:1px;margin-bottom:7px;opacity:.7;font-family:'JetBrains Mono',monospace}
+.fc-front .fc-lbl{color:var(--gr)}
+.fc-back .fc-lbl{color:var(--lb)}
+.fc-txt{font-family:'Hind Siliguri',sans-serif;font-size:.9rem;color:var(--t1);text-align:center;line-height:1.65}
+.fc-front .fc-txt{font-family:'JetBrains Mono',monospace;font-size:.98rem;font-weight:700;color:var(--gr)}
+.fc-hint{font-size:.68rem;color:var(--t2);margin-top:7px;font-family:'Hind Siliguri',sans-serif}
+.fc-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:12px;font-family:'Hind Siliguri',sans-serif;font-size:.8rem;color:var(--t2)}
+.fc-nav-btn{background:var(--cb);border:1px solid var(--bd);color:var(--t1);width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:.88rem;transition:all .2s}
+.fc-nav-btn:hover{border-color:var(--gr)}
+.fc-known-wrap{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.fc-known{padding:7px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:.78rem;transition:all .2s;border:1.5px solid transparent}
+.fc-kno{background:rgba(0,214,143,.12);border-color:var(--gr);color:var(--gr)}
+.fc-unk{background:rgba(255,71,87,.12);border-color:var(--re);color:var(--re)}
+.fc-known:hover{transform:translateY(-2px)}
+.checklist{display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
+.check-item{display:flex;align-items:flex-start;gap:11px;background:var(--cb);border:1.5px solid var(--bd);border-radius:10px;padding:11px 14px;cursor:pointer;transition:all .2s;user-select:none}
+.check-item:hover{border-color:rgba(0,214,143,.3)}
+.check-item.done{border-color:rgba(0,214,143,.4);background:rgba(0,214,143,.04)}
+.check-box{width:21px;height:21px;border-radius:5px;border:2px solid var(--bd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.77rem;transition:all .2s;margin-top:1px}
+.check-item.done .check-box{background:var(--gr);border-color:var(--gr);color:#000}
+.check-item-txt{font-family:'Hind Siliguri',sans-serif;font-size:.86rem;color:var(--t3);line-height:1.6}
+.check-item.done .check-item-txt{color:var(--t2);text-decoration:line-through}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--cb);border:1px solid var(--bd);border-radius:12px;padding:10px 17px;font-size:.8rem;font-weight:700;opacity:0;transform:translateY(18px);transition:all .3s;z-index:999;pointer-events:none;font-family:'Hind Siliguri',sans-serif}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok-t{border-color:rgba(0,214,143,.5);color:var(--gr)}
+.toast.er-t{border-color:rgba(255,71,87,.5);color:var(--re)}
+@media(max-width:650px){.step{grid-template-columns:1fr}.step-en{border-right:none;border-bottom:1px solid var(--bd)}.lab-hero{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="badge">LAB 02</span>
+    <div><div class="hdr-title">🌐 Build Amazon VPC Infrastructure</div><div class="hdr-sub">VPC, Subnets, IGW, NAT Gateway, Route Tables, Security Groups, EC2</div></div>
+  </div>
+  <div class="nav-btns">
+    <a href="aws-saa-lab1.html" class="nav-btn">← Lab 1</a>
+    <a href="aws-saa-labs.html" class="nav-btn">🧪 All Labs</a>
+    <a href="aws-saa-main.html" class="nav-btn">🏠 Home</a>
+  </div>
+</div>
+
+<div class="wrap">
+<div class="lab-hero">
+  <div class="lab-hero-left">
+    <h1>Lab 2: Amazon VPC Infrastructure তৈরি করো</h1>
+    <p>Public ও Private subnet সহ একটি সম্পূর্ণ VPC তৈরি করো। Internet Gateway, NAT Gateway, Route Tables, Security Groups configure করো এবং EC2 instances launch করো।</p>
+    <div class="meta-chips">
+      <span class="meta-chip mc-time">⏱ 90 min</span>
+      <span class="meta-chip mc-diff">🟡 Intermediate</span>
+      <span class="meta-chip mc-svc">VPC</span><span class="meta-chip mc-svc">EC2</span><span class="meta-chip mc-svc">IGW</span><span class="meta-chip mc-svc">NAT</span><span class="meta-chip mc-svc">SG</span>
+    </div>
+  </div>
+  <div class="obj-box">
+    <h4>OBJECTIVES</h4>
+    <div class="obj-item">Amazon VPC তৈরি</div>
+    <div class="obj-item">Public + Private Subnet</div>
+    <div class="obj-item">Internet Gateway attach</div>
+    <div class="obj-item">Route Tables configure</div>
+    <div class="obj-item">EC2 public subnet এ launch</div>
+    <div class="obj-item">EC2 private subnet এ isolate</div>
+    <div class="obj-item">Security Groups assign</div>
+    <div class="obj-item">Session Manager দিয়ে connect</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('summary',this)">📋 Summary</button>
+  <button class="tab" onclick="switchTab('diagram',this)">🗺️ Architecture</button>
+  <button class="tab" onclick="switchTab('steps',this)">📖 Steps</button>
+  <button class="tab" onclick="switchTab('checklist',this)">✅ Checklist</button>
+  <button class="tab" onclick="switchTab('practice',this)">🎯 Practice</button>
+  <button class="tab" onclick="switchTab('flash',this)">🃏 Flashcards</button>
+</div>
+
+<!-- SUMMARY -->
+<div class="panel open" id="panel-summary">
+  <div class="summary-grid">
+    <div class="scard"><div class="scard-icon">🌐</div><div class="scard-title">Amazon VPC</div><div class="scard-body">Logically isolated network। তোমার নিজের private cloud। IP range, subnets, routes — সব তুমি define করো। CIDR: <b>10.0.0.0/16</b></div></div>
+    <div class="scard"><div class="scard-icon">📦</div><div class="scard-title">Public Subnet</div><div class="scard-body">Internet-facing resources। CIDR: <b>10.0.0.0/24</b>। Internet Gateway route আছে। Public IP auto-assign।</div></div>
+    <div class="scard"><div class="scard-icon">🔒</div><div class="scard-title">Private Subnet</div><div class="scard-body">Internet থেকে isolated। CIDR: <b>10.0.2.0/23</b>। NAT Gateway দিয়ে outbound internet। No direct inbound।</div></div>
+    <div class="scard"><div class="scard-icon">🚪</div><div class="scard-title">Internet Gateway</div><div class="scard-body">VPC ↔ Internet সংযোগ। Public subnet route এ attach। NAT করে public ↔ private IP।</div></div>
+    <div class="scard"><div class="scard-icon">🔀</div><div class="scard-title">NAT Gateway</div><div class="scard-body">Private instances → internet outbound। Public subnet এ থাকে। Internet থেকে direct access নেই।</div></div>
+    <div class="scard"><div class="scard-icon">🛡️</div><div class="scard-title">Security Groups</div><div class="scard-body">Instance-level firewall। <b>Public SG</b>: HTTP (80) allow। <b>Private SG</b>: Public SG থেকে HTTP।</div></div>
+  </div>
+
+  <div style="background:var(--cb);border:1.5px solid var(--bd);border-radius:14px;padding:18px;margin-bottom:18px">
+    <h4 style="color:var(--gr);font-size:.85rem;margin-bottom:14px;font-family:'JetBrains Mono',monospace">📊 ROUTE TABLES — Lab Architecture</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+        <div style="color:var(--lb);font-size:.75rem;font-weight:700;margin-bottom:8px;font-family:'JetBrains Mono',monospace">PUBLIC ROUTE TABLE</div>
+        <table class="route-table">
+          <tr><th>Destination</th><th>Target</th></tr>
+          <tr><td>10.0.0.0/16</td><td>local</td></tr>
+          <tr><td>0.0.0.0/0</td><td>igw-xxxxx (IGW)</td></tr>
+        </table>
+        <div style="font-family:'Hind Siliguri',sans-serif;font-size:.78rem;color:var(--t2)">→ Public subnet এ associate। Internet access আছে।</div>
+      </div>
+      <div>
+        <div style="color:var(--or);font-size:.75rem;font-weight:700;margin-bottom:8px;font-family:'JetBrains Mono',monospace">PRIVATE ROUTE TABLE</div>
+        <table class="route-table">
+          <tr><th>Destination</th><th>Target</th></tr>
+          <tr><td>10.0.0.0/16</td><td>local</td></tr>
+          <tr><td>0.0.0.0/0</td><td>nat-xxxxx (NAT GW)</td></tr>
+        </table>
+        <div style="font-family:'Hind Siliguri',sans-serif;font-size:.78rem;color:var(--t2)">→ Private subnet এ associate। Outbound NAT।</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:rgba(0,214,143,.05);border:1px solid rgba(0,214,143,.2);border-radius:12px;padding:16px 20px">
+    <h4 style="color:var(--gr);font-size:.85rem;margin-bottom:10px;font-family:'Hind Siliguri',sans-serif">💡 Lab থেকে মূল শিক্ষা</h4>
+    <p style="font-family:'Hind Siliguri',sans-serif;font-size:.88rem;color:var(--t3);line-height:1.8">Public subnet = Internet Gateway route আছে। Private subnet = Internet থেকে directly accessible নয়, কিন্তু NAT Gateway দিয়ে outbound access আছে। Security Group = stateful, allow only। NACL = stateless, subnet level।</p>
+  </div>
+</div>
+
+<!-- DIAGRAM -->
+<div class="panel" id="panel-diagram">
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="ar" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#8faec8"/></marker>
+        <marker id="ar-gr" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#00d68f"/></marker>
+        <marker id="ar-or" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#FF9900"/></marker>
+      </defs>
+      <rect width="720" height="400" fill="#0f1929"/>
+      <text x="360" y="24" text-anchor="middle" fill="#FF9900" font-family="JetBrains Mono,monospace" font-size="13" font-weight="700">Lab 2: Amazon VPC Infrastructure — Final Architecture</text>
+
+      <!-- AWS Cloud border -->
+      <rect x="10" y="36" width="700" height="350" rx="12" fill="none" stroke="#1e3058" stroke-width="1.5" stroke-dasharray="8"/>
+      <text x="28" y="54" fill="#8faec8" font-size="8" font-weight="700">AWS Cloud</text>
+
+      <!-- VPC border -->
+      <rect x="100" y="62" width="560" height="310" rx="10" fill="rgba(0,168,225,0.04)" stroke="#00a8e1" stroke-width="1.5" stroke-dasharray="6"/>
+      <text x="118" y="80" fill="#00a8e1" font-size="9" font-weight="700">Lab VPC (10.0.0.0/16)</text>
+
+      <!-- AZ border -->
+      <rect x="120" y="88" width="520" height="270" rx="8" fill="none" stroke="#1e3058" stroke-width="1" stroke-dasharray="5"/>
+      <text x="138" y="104" fill="#8faec8" font-size="8">Availability Zone</text>
+
+      <!-- Public Subnet -->
+      <rect x="138" y="112" width="240" height="110" rx="8" fill="rgba(0,214,143,0.06)" stroke="#00d68f" stroke-width="1.5"/>
+      <text x="148" y="128" fill="#00d68f" font-size="8" font-weight="700">🔓 Public Subnet (10.0.0.0/24)</text>
+      <!-- NAT GW icon -->
+      <rect x="150" y="138" width="76" height="38" rx="7" fill="rgba(255,215,42,0.1)" stroke="#ffd32a" stroke-width="1.5"/>
+      <text x="188" y="155" text-anchor="middle" fill="#ffd32a" font-size="8" font-weight="700">🔀 NAT</text>
+      <text x="188" y="168" text-anchor="middle" fill="#ffd32a" font-size="7">Gateway</text>
+      <!-- Public EC2 -->
+      <rect x="244" y="138" width="76" height="38" rx="7" fill="rgba(0,168,225,0.1)" stroke="#00a8e1" stroke-width="1.5"/>
+      <text x="282" y="155" text-anchor="middle" fill="#00a8e1" font-size="8" font-weight="700">🖥️ EC2</text>
+      <text x="282" y="168" text-anchor="middle" fill="#8faec8" font-size="7">Public Instance</text>
+      <!-- Public SG label -->
+      <text x="188" y="200" text-anchor="middle" fill="#00d68f" font-size="7">Public SG: HTTP(80) ✅</text>
+      <text x="282" y="200" text-anchor="middle" fill="#00d68f" font-size="7">Port 80 open</text>
+
+      <!-- Private Subnet -->
+      <rect x="138" y="240" width="240" height="100" rx="8" fill="rgba(255,153,0,0.05)" stroke="#FF9900" stroke-width="1.5"/>
+      <text x="148" y="256" fill="#FF9900" font-size="8" font-weight="700">🔒 Private Subnet (10.0.2.0/23)</text>
+      <!-- Private EC2 -->
+      <rect x="194" y="268" width="76" height="38" rx="7" fill="rgba(255,153,0,0.1)" stroke="#FF9900" stroke-width="1.5"/>
+      <text x="232" y="285" text-anchor="middle" fill="#FF9900" font-size="8" font-weight="700">🖥️ EC2</text>
+      <text x="232" y="298" text-anchor="middle" fill="#8faec8" font-size="7">Private Instance</text>
+      <text x="232" y="325" text-anchor="middle" fill="#FF9900" font-size="7">Private SG: HTTP from Public SG</text>
+
+      <!-- Internet Gateway -->
+      <rect x="28" y="175" width="62" height="46" rx="8" fill="rgba(0,199,177,0.1)" stroke="#00c7b1" stroke-width="1.5"/>
+      <text x="59" y="196" text-anchor="middle" font-size="14">🚪</text>
+      <text x="59" y="210" text-anchor="middle" fill="#00c7b1" font-size="7" font-weight="700">Internet</text>
+      <text x="59" y="220" text-anchor="middle" fill="#00c7b1" font-size="7">Gateway</text>
+
+      <!-- Internet cloud -->
+      <ellipse cx="50" cy="100" rx="36" ry="28" fill="rgba(0,168,225,0.07)" stroke="#00a8e1" stroke-width="1.5"/>
+      <text x="50" y="96" text-anchor="middle" font-size="14">🌐</text>
+      <text x="50" y="115" text-anchor="middle" fill="#00a8e1" font-size="7">Internet</text>
+      <!-- Internet → IGW -->
+      <line x1="50" y1="128" x2="50" y2="175" stroke="#00c7b1" stroke-width="1.5" marker-end="url(#ar)"/>
+      <!-- IGW ↔ Public Subnet -->
+      <line x1="90" y1="198" x2="138" y2="175" stroke="#00d68f" stroke-width="1.5" marker-end="url(#ar-gr)"/>
+      <line x1="138" y1="162" x2="90" y2="175" stroke="#8faec8" stroke-width="1" stroke-dasharray="4" marker-end="url(#ar)"/>
+
+      <!-- Public EC2 → Private EC2 via NAT -->
+      <line x1="232" y1="222" x2="232" y2="268" stroke="#8faec8" stroke-width="1" stroke-dasharray="4" marker-end="url(#ar)"/>
+      <text x="242" y="248" fill="#8faec8" font-size="7">HTTP via</text>
+      <text x="242" y="259" fill="#8faec8" font-size="7">Private SG</text>
+
+      <!-- Private instance → NAT GW outbound -->
+      <line x1="188" y1="287" x2="188" y2="222" stroke="#FF9900" stroke-width="1" stroke-dasharray="4" marker-end="url(#ar-or)"/>
+      <text x="126" y="255" fill="#FF9900" font-size="7" transform="rotate(-90,128,255)">NAT outbound</text>
+
+      <!-- Route Tables on right -->
+      <rect x="410" y="100" width="210" height="80" rx="8" fill="rgba(0,214,143,0.06)" stroke="#00d68f" stroke-width="1"/>
+      <text x="420" y="116" fill="#00d68f" font-size="8" font-weight="700">Public Route Table</text>
+      <text x="420" y="130" fill="#8faec8" font-size="7">10.0.0.0/16  →  local</text>
+      <text x="420" y="143" fill="#8faec8" font-size="7">0.0.0.0/0    →  igw-xxxxx</text>
+      <text x="420" y="160" fill="#00d68f" font-size="7">Subnet: Public Subnet ✅</text>
+      <text x="420" y="173" fill="#8faec8" font-size="7">→ Internet access enabled</text>
+
+      <rect x="410" y="200" width="210" height="80" rx="8" fill="rgba(255,153,0,0.06)" stroke="#FF9900" stroke-width="1"/>
+      <text x="420" y="216" fill="#FF9900" font-size="8" font-weight="700">Private Route Table</text>
+      <text x="420" y="230" fill="#8faec8" font-size="7">10.0.0.0/16  →  local</text>
+      <text x="420" y="243" fill="#8faec8" font-size="7">0.0.0.0/0    →  nat-xxxxx</text>
+      <text x="420" y="260" fill="#FF9900" font-size="7">Subnet: Private Subnet ✅</text>
+      <text x="420" y="273" fill="#8faec8" font-size="7">→ NAT outbound only</text>
+
+      <!-- connecting lines to route tables -->
+      <line x1="378" y1="157" x2="410" y2="140" stroke="#8faec8" stroke-width="1" stroke-dasharray="3"/>
+      <line x1="378" y1="290" x2="410" y2="240" stroke="#8faec8" stroke-width="1" stroke-dasharray="3"/>
+
+      <text x="360" y="392" text-anchor="middle" fill="#8faec8" font-size="8">Public subnet = IGW route (internet accessible)। Private subnet = NAT route (outbound only, no direct inbound)।</text>
+    </svg>
+  </div>
+
+  <div style="background:var(--cb);border:1.5px solid var(--bd);border-radius:14px;padding:18px">
+    <h4 style="color:var(--or);font-size:.85rem;margin-bottom:12px;font-family:'Hind Siliguri',sans-serif">📋 Lab এ তৈরি সব Resources</h4>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:8px;padding:10px"><div style="color:var(--gr);font-size:.72rem;font-weight:700;margin-bottom:4px">VPC</div><div style="font-family:'Hind Siliguri',sans-serif;font-size:.78rem;color:var(--t3)">Lab VPC — 10.0.0.0/16। DNS hostnames enabled।</div></div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:8px;padding:10px"><div style="color:var(--gr);font-size:.72rem;font-weight:700;margin-bottom:4px">Public Subnet</div><div style="font-family:'Hind Siliguri',sans-serif;font-size:.78rem;color:var(--t3)">10.0.0.0/24। Auto-assign public IP enabled।</div></div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:8px;padding:10px"><div style="color:var(--or);font-size:.72rem;font-weight:700;margin-bottom:4px">Private Subnet</div><div style="font-family:'Hind Siliguri',sans-serif;font-size:.78rem;color:var(--t3)">10.0.2.0/23। Larger — most resources here।</div></div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:8px;padding:10px"><div style="color:var(--tl);font-size:.72rem;font-weight:700;margin-bottom:4px">Internet Gateway</div><div style="font-family:'Hind Siliguri',sans-serif;font-size:.78rem;color:var(--t3)">Lab IGW — Lab VPC তে attached।</div></div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:8px;padding:10px"><div style="color:var(--yw);font-size:.72rem;font-weight:700;margin-bottom:4px">NAT Gateway</div><div style="font-family:'Hind Siliguri',sans-serif;font-size:.78rem;color:var(--t3)">Lab NGW — Public subnet। Elastic IP।</div></div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:8px;padding:10px"><div style="color:var(--re);font-size:.72rem;font-weight:700;margin-bottom:4px">Security Groups</div><div style="font-family:'Hind Siliguri',sans-serif;font-size:.78rem;color:var(--t3)">Public SG (HTTP 80) + Private SG (from Public SG)।</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- STEPS -->
+<div class="panel" id="panel-steps">
+  <div class="task-block">
+    <div class="task-hdr"><div class="task-num">T1</div><div><div class="task-title">Task 1: Create Amazon VPC</div><div class="task-sub">Lab VPC with CIDR 10.0.0.0/16</div></div></div>
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 3-6</div><div class="step-en-txt">Search → VPC → Your VPCs → Create VPC → Resources: VPC only → Name: <code>Lab VPC</code> → CIDR: <code>10.0.0.0/16</code> → Create VPC.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">Console এ <b>VPC search</b> করো → <b>Your VPCs → Create VPC</b>। Name: <b>Lab VPC</b>। IPv4 CIDR: <b>10.0.0.0/16</b>। এই range এ 65,000+ IP addresses আছে।</div></div>
+    </div>
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 8-10</div><div class="step-en-txt">Actions → Edit VPC settings → DNS settings → Enable DNS hostnames → Save.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt"><b>DNS hostnames enable</b> করলে EC2 instances automatically DNS name পাবে (e.g., ec2-52-42-133-255.compute.amazonaws.com)। Route 53 এ readable name ও দেওয়া যাবে।</div></div>
+    </div>
+  </div>
+
+  <div class="task-block">
+    <div class="task-hdr"><div class="task-num">T2</div><div><div class="task-title">Task 2: Create Public & Private Subnets</div><div class="task-sub">Two subnets in same Availability Zone</div></div></div>
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 11-18</div><div class="step-en-txt">Subnets → Create subnet → VPC: Lab VPC → Name: <code>Public Subnet</code> → First AZ → CIDR: <code>10.0.0.0/24</code> → Create → Actions → Edit subnet settings → Enable auto-assign public IPv4.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">Public Subnet: CIDR <b>10.0.0.0/24</b> = 256 IPs। <b>Auto-assign public IP enable</b> করো — এই subnet এ launch হওয়া EC2 automatically public IP পাবে। এখনো "public" না — IGW route দরকার।</div></div>
+    </div>
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 19-21</div><div class="step-en-txt">Create subnet → VPC: Lab VPC → Name: <code>Private Subnet</code> → First AZ → CIDR: <code>10.0.2.0/23</code> → Create subnet.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">Private Subnet: CIDR <b>10.0.2.0/23</b> = 512 IPs। Public এর চেয়ে <b>double size</b> — কারণ বেশিরভাগ resources private থাকা উচিত। Internet থেকে directly accessible নয়।</div></div>
+    </div>
+  </div>
+
+  <div class="task-block">
+    <div class="task-hdr"><div class="task-num">T3</div><div><div class="task-title">Task 3: Create Internet Gateway</div><div class="task-sub">VPC কে internet এর সাথে connect করো</div></div></div>
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 22-27</div><div class="step-en-txt">Internet gateways → Create internet gateway → Name: <code>Lab IGW</code> → Create → Actions → Attach to VPC → Select Lab VPC → Attach.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">IGW তৈরি করে <b>Lab VPC তে attach</b> করো। IGW state: <b>Attached</b> দেখাবে। IGW attach হলেও public access হয়নি — Route Table update দরকার।</div></div>
+    </div>
+  </div>
+
+  <div class="task-block">
+    <div class="task-hdr"><div class="task-num">T4</div><div><div class="task-title">Task 4: Configure Public Route Table</div><div class="task-sub">Internet traffic → IGW route যোগ করো</div></div></div>
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 29-35</div><div class="step-en-txt">Route tables → Create route table → Name: <code>Public Route Table</code> → Lab VPC → Create → Routes tab → Edit routes → Add route → Destination: <code>0.0.0.0/0</code> → Target: Internet Gateway → Save.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt"><b>0.0.0.0/0</b> মানে সব internet traffic। Target = IGW। এই route যোগ করলে subnet টি public হয়ে যায়। <b>10.0.0.0/16 → local</b> (VPC internal) route already আছে।</div></div>
+    </div>
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 36-39</div><div class="step-en-txt">Subnet associations tab → Edit subnet associations → Select <code>Public Subnet</code> → Save associations.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">Route table কে <b>Public Subnet এ associate</b> করো। এখন Public Subnet সত্যিকারের public — Internet Gateway route আছে।</div></div>
+    </div>
+  </div>
+
+  <div class="task-block">
+    <div class="task-hdr"><div class="task-num">T5-6</div><div><div class="task-title">Task 5-6: Security Group & Launch Public EC2</div><div class="task-sub">Public SG তৈরি এবং EC2 launch</div></div></div>
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 40-44</div><div class="step-en-txt">Security groups → Create security group → Name: <code>Public SG</code> → VPC: Lab VPC → Inbound rules: HTTP (80), Source: Anywhere-IPv4 → Create.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt"><b>Public SG</b>: Port 80 (HTTP) যেকোনো IP থেকে allow। Web server access এর জন্য দরকার। Security best practice: HTTPS ব্যবহার করা উচিত — এই lab এ HTTP শুধু simplicity এর জন্য।</div></div>
+    </div>
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 45-68</div><div class="step-en-txt">EC2 → Launch instances → Name: <code>Public Instance</code> → Amazon Linux 2023 → t3.micro → No key pair → VPC: Lab VPC → Subnet: Public Subnet → Auto-assign IP: Enable → Security: Public SG → IAM: EC2InstProfile → User data: Apache script → Launch.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">EC2 launch করো। Key pair লাগবে না — <b>Session Manager</b> দিয়ে connect করবো। <b>User data script</b> automatically Apache web server install করবে। Public subnet + Public SG + Public IP = internet accessible।</div></div>
+    </div>
+  </div>
+
+  <div class="task-block">
+    <div class="task-hdr"><div class="task-num">T9</div><div><div class="task-title">Task 9: NAT Gateway & Private Route Table</div><div class="task-sub">Private instances এর outbound internet access</div></div></div>
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 84-86</div><div class="step-en-txt">NAT gateways → Create NAT gateway → Name: <code>Lab NGW</code> → Subnet: Public Subnet → Allocate Elastic IP → Create.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">NAT Gateway = <b>Public subnet এ</b> থাকে। Elastic IP নেয়। Private instances এর outbound traffic এখান দিয়ে যাবে। Internet থেকে direct connection initiate করা যাবে না।</div></div>
+    </div>
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 87-97</div><div class="step-en-txt">Route tables → Create route table → Name: <code>Private Route Table</code> → Lab VPC → Routes → Add: <code>0.0.0.0/0</code> → NAT Gateway → Subnet associations → Private Subnet → Save.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">Private route table এ <b>0.0.0.0/0 → NAT Gateway</b> route। Private subnet associate করো। এখন private instances internet access পাবে কিন্তু internet থেকে directly reach করা যাবে না।</div></div>
+    </div>
+  </div>
+
+  <div class="task-block">
+    <div class="task-hdr"><div class="task-num">T10-11</div><div><div class="task-title">Task 10-11: Private SG & Launch Private EC2</div><div class="task-sub">Private instance isolate করো</div></div></div>
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 98-102</div><div class="step-en-txt">Security groups → Create → Name: <code>Private SG</code> → Inbound: HTTP, Source: Custom → type <code>sg</code> → choose <code>Public SG</code> → Create.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt"><b>Private SG</b>: Source = <b>Public SG</b> (specific IP নয়, Security Group)। মানে শুধু Public SG তে assigned resources HTTP access পাবে। Multi-tier architecture এর best practice।</div></div>
+    </div>
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 103-126</div><div class="step-en-txt">EC2 → Launch → Name: <code>Private Instance</code> → Linux 2023 → t3.micro → No key pair → VPC: Lab VPC → Subnet: Private Subnet → Auto-assign IP: Disable → Security: Private SG → Launch.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">Private Instance: <b>Auto-assign public IP: Disable</b>। Private subnet। Private SG। Internet থেকে directly access করা যাবে না। Public Instance → Private Instance এ HTTP access হবে (same security group rule)।</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="panel" id="panel-checklist">
+  <div style="background:rgba(0,168,225,.08);border:1px solid rgba(0,168,225,.2);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px">
+    <div style="flex:1"><div style="font-size:.78rem;color:var(--t2);margin-bottom:6px;font-family:'Hind Siliguri',sans-serif">Lab সম্পন্নের অগ্রগতি</div><div style="background:rgba(255,255,255,.06);border-radius:6px;height:6px;overflow:hidden"><div id="cl-fill" style="height:100%;background:linear-gradient(90deg,var(--gr),var(--lb));border-radius:6px;width:0%;transition:width .5s ease"></div></div></div>
+    <div id="cl-txt" style="font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--t2);font-weight:700">0/15</div>
+  </div>
+  <div class="checklist" id="checklist">
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">VPC console খুলেছি এবং correct region verify করেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Lab VPC তৈরি করেছি — CIDR: 10.0.0.0/16, State: Available</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Lab VPC তে DNS hostnames enable করেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Public Subnet তৈরি করেছি — 10.0.0.0/24, first AZ</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Public Subnet এ auto-assign public IPv4 enable করেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Private Subnet তৈরি করেছি — 10.0.2.0/23, first AZ</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Internet Gateway (Lab IGW) তৈরি ও Lab VPC তে attach করেছি — State: Attached</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Public Route Table তৈরি করেছি — 0.0.0.0/0 → IGW route যোগ করেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Public Route Table এ Public Subnet associate করেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Public SG তৈরি করেছি — HTTP (80) Anywhere-IPv4 allow</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Public Instance launch করেছি এবং Running + 3/3 checks passed দেখেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Browser এ Public Instance DNS দিয়ে Apache web page দেখেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">NAT Gateway (Lab NGW) তৈরি করেছি — Public Subnet, Elastic IP</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Private Route Table তৈরি করেছি — 0.0.0.0/0 → NAT Gateway, Private Subnet associate</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Private SG ও Private Instance তৈরি করেছি — Session Manager দিয়ে connect করেছি</div></div>
+  </div>
+</div>
+
+<!-- PRACTICE -->
+<div class="panel" id="panel-practice">
+  <div class="score-bar-wrap">
+    <span style="font-family:'Hind Siliguri',sans-serif;font-size:.8rem;color:var(--t2)">স্কোর</span>
+    <div class="score-bar-track"><div class="score-bar-fill" id="score-fill" style="width:0%"></div></div>
+    <span class="score-txt" id="score-txt">0/0</span>
+  </div>
+  <div id="mcq-section"></div>
+  <hr style="border:none;border-top:1px solid var(--bd);margin:22px 0">
+  <h4 style="color:var(--gr);font-size:.83rem;font-weight:700;margin-bottom:14px;font-family:'JetBrains Mono',monospace">TRUE / FALSE</h4>
+  <div id="tf-section"></div>
+  <hr style="border:none;border-top:1px solid var(--bd);margin:22px 0">
+  <h4 style="color:var(--or);font-size:.83rem;font-weight:700;margin-bottom:14px;font-family:'JetBrains Mono',monospace">📌 SCENARIO QUESTIONS</h4>
+  <div id="case-section"></div>
+</div>
+
+<!-- FLASHCARDS -->
+<div class="panel" id="panel-flash">
+  <div id="flash-container"></div>
+</div>
+</div>
+
+<script>
+const SK='lab2-v1';
+let state={};
+function loadState(){try{state=JSON.parse(localStorage.getItem(SK)||'{}')}catch(e){state={}}}
+function saveState(){try{localStorage.setItem(SK,JSON.stringify(state))}catch(e){}}
+loadState();
+
+function switchTab(id,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('open'));
+  el.classList.add('active');document.getElementById('panel-'+id).classList.add('open');
+}
+function showToast(msg,type){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast '+(type==='ok'?'ok-t':'er-t')+' show';
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+function toggleCheck(el){
+  el.classList.toggle('done');el.querySelector('.check-box').textContent=el.classList.contains('done')?'✓':'';
+  const all=document.querySelectorAll('.check-item'),done=document.querySelectorAll('.check-item.done').length;
+  document.getElementById('cl-fill').style.width=Math.round(done/all.length*100)+'%';
+  document.getElementById('cl-txt').textContent=done+'/'+all.length;
+}
+
+const MCQ=[
+  {q:"একটি subnet কে 'public' subnet বলা হয় কখন?",o:["এটি public IP assign করে","এর route table এ Internet Gateway এর route আছে","এটি বড় CIDR range এ","এটি first AZ তে আছে"],a:1,e:"<b>Public subnet</b> = route table এ <b>0.0.0.0/0 → IGW</b> route আছে। শুধু public IP থাকলেই public হয় না।"},
+  {q:"NAT Gateway কোথায় রাখতে হয়?",o:["Private subnet এ","Any subnet এ","Public subnet এ","Separate VPC তে"],a:2,e:"<b>NAT Gateway = public subnet এ</b>। Elastic IP পায়। Private instances এর outbound traffic এখান দিয়ে যায়।"},
+  {q:"📌 Private subnet এ EC2 instance internet থেকে software update নিতে পারছে না। কীভাবে fix করবে?",o:["Public IP assign করো","Private subnet এ IGW route যোগ করো","NAT Gateway তৈরি করে private route table এ যোগ করো","Security Group খুলে দাও"],a:2,e:"<b>NAT Gateway</b> = private instances এর outbound internet। Private route table এ 0.0.0.0/0 → NAT GW।",sc:true},
+  {q:"Security Group এ specific IP block করা যায়?",o:["Yes, with deny rules","No — SG has allow rules only","Yes, with DENY rules","Only at VPC level"],a:1,e:"<b>SG = allow rules only</b>। Specific IP block করতে হলে <b>NACL</b> ব্যবহার করো (subnet level, allow + deny)।"},
+  {q:"Lab 2 এ Public Subnet এর CIDR কোনটি?",o:["10.0.0.0/16","10.0.2.0/23","10.0.0.0/24","192.168.0.0/24"],a:2,e:"Public Subnet = <b>10.0.0.0/24</b> (256 IPs)। Private Subnet = 10.0.2.0/23 (512 IPs)। VPC = 10.0.0.0/16।"},
+  {q:"📌 Multi-tier app: Web server public, DB server private। Web → DB HTTP চাই কিন্তু internet → DB নয়। Security Group কীভাবে?",o:["DB SG: HTTP from anywhere","DB SG: HTTP source = Web Server SG","DB SG: No inbound","DB SG: HTTP from VPC CIDR"],a:1,e:"<b>Source = Web Server SG</b> = শুধু web SG assigned resources DB access পাবে। Most secure approach।",sc:true},
+  {q:"VPC এ DNS hostnames enable করলে কী হয়?",o:["Faster DNS","EC2 instances automatically DNS hostname পায়","Public IP changes","Route 53 mandatory হয়"],a:1,e:"<b>DNS hostnames enable</b> → EC2 = ec2-52-42-133-255.us-west-2.compute.amazonaws.com। Route 53 দিয়ে custom name দেওয়া যায়।"},
+  {q:"Internet Gateway এর দুটি কাজ কী?",o:["Firewall + routing","VPC route table target + NAT for public IPs","Encryption + compression","Load balancing + routing"],a:1,e:"IGW: (1) Route table এ internet traffic এর <b>target</b>। (2) Public IPv4 address এর জন্য <b>NAT</b> করে।"},
+];
+const TF=[
+  {s:"Private subnet এ launch হওয়া EC2 instances internet থেকে directly access করা যায় না।",a:true,e:"Private subnet = no IGW route। Internet initiated connection সম্ভব নয়। NAT Gateway দিয়ে শুধু outbound।"},
+  {s:"একটি subnet একাধিক Route Table এর সাথে associate করা যায়।",a:false,e:"Subnet = only <b>one route table</b> at a time। কিন্তু একটি route table multiple subnets এ associate করা যায়।"},
+  {s:"NAT Gateway public subnet এ থাকে এবং private instances এর outbound internet traffic handle করে।",a:true,e:"NAT GW = public subnet, Elastic IP। Private → internet outbound। Internet → private = blocked।"},
+  {s:"Security Group stateless — inbound allow করলে outbound আলাদাভাবে allow করতে হবে।",a:false,e:"SG = <b>stateful</b>। Inbound allow = outbound response auto-allowed। NACL = stateless।"},
+  {s:"Internet Gateway তৈরি করলেই VPC internet accessible হয়ে যায়।",a:false,e:"IGW attach করার পরেও Route Table এ route যোগ না করলে internet access হবে না।"},
+];
+const CASES=[
+  {sc:"<strong>Architect</strong> একটি web app design করছেন। Web server = internet থেকে accessible। Database = শুধু web server থেকে accessible। কোন architecture?",q:"সবচেয়ে secure design কোনটি?",o:["সব resources public subnet এ","Web = public subnet + Public SG। DB = private subnet + Private SG (source=Web SG)","সব private subnet এ","DB = public subnet, Web = private"],a:1,e:"<b>Best practice</b>: Web = public। DB = private। Private SG source = Web SG। Internet → DB directly blocked।"},
+  {sc:"<strong>Company</strong> private subnet এর EC2 instances থেকে internet এ software updates নিতে চায় কিন্তু internet থেকে instances কে protect রাখতে চায়।",q:"কোন solution?",o:["Public IP assign করো","Internet Gateway directly private subnet এ","NAT Gateway public subnet এ, private route table এ 0.0.0.0/0 → NAT","Bastion Host"],a:2,e:"<b>NAT Gateway</b> = outbound internet for private instances। Internet → private blocked। Most AWS recommended approach।"},
+];
+
+function renderMCQ(){
+  const el=document.getElementById('mcq-section');
+  el.innerHTML='<h4 style="color:var(--lb);font-size:.83rem;font-weight:700;margin-bottom:14px;font-family:\'JetBrains Mono\',monospace">MULTIPLE CHOICE</h4>';
+  MCQ.forEach((q,i)=>{
+    const key='mcq-'+i,ans=state[key],done=ans!==undefined;
+    const div=document.createElement('div');div.className='qcard'+(done?(ans===q.a?' ok':' er'):'');div.id='qc-'+i;
+    div.innerHTML=`<div class="qmeta"><span class="qnum">Q${i+1}</span><span class="qtag">MCQ</span>${q.sc?'<span class="qscen">📌 Scenario</span>':''}</div>
+    <div class="qtxt">${q.q}</div>
+    <div class="opts">${q.o.map((o,j)=>`<button class="opt${done?(j===q.a?' cor':(j===ans?' wr':'')):''}${done?' ':''}" onclick="answerMCQ(${i},${j})" ${done?'disabled':''}><span class="olet">${'ABCD'[j]}</span>${o}</button>`).join('')}</div>
+    <div class="fb${done?' show '+(ans===q.a?'ok-fb':'er-fb'):''}">
+      <div class="fb-title">${done?(ans===q.a?'✅ সঠিক!':'❌ ভুল!')+' সঠিক: <b>'+q.o[q.a]+'</b>':''}</div>
+      <div class="fb-exp">${q.e}</div>
+    </div>`;
+    el.appendChild(div);
+  });updateScore();
+}
+function answerMCQ(i,j){
+  const q=MCQ[i];if(state['mcq-'+i]!==undefined)return;
+  const cor=j===q.a;state['mcq-'+i]=j;
+  if(cor)state.ok=(state.ok||0)+1;else state.er=(state.er||0)+1;
+  saveState();renderMCQ();renderTF();renderCases();showToast(cor?'✅ সঠিক!':'❌ ভুল!',cor?'ok':'er');
+}
+function updateScore(){
+  const ok=state.ok||0,tot=MCQ.length+TF.length+CASES.length,pct=tot?Math.round(ok/tot*100):0;
+  document.getElementById('score-fill').style.width=pct+'%';
+  document.getElementById('score-txt').textContent=ok+'/'+tot;
+}
+function renderTF(){
+  const el=document.getElementById('tf-section');el.innerHTML='';
+  TF.forEach((q,i)=>{
+    const key='tf-'+i,ans=state[key],done=ans!==undefined,cor=done&&ans===q.a;
+    const div=document.createElement('div');div.className='tf-card'+(done?(cor?' ok':' er'):'');
+    div.innerHTML=`<div class="qmeta"><span class="qnum">T/F ${i+1}</span></div>
+    <div class="tf-stmt">${q.s}</div>
+    <div class="tf-btns">
+      <button class="tf-btn t-btn${done?(q.a===true?' cor-tf':(ans===true?' wr-tf':'')):''}${done?' ':''}" onclick="answerTF(${i},true)" ${done?'disabled':''}>✅ সত্য</button>
+      <button class="tf-btn f-btn${done?(q.a===false?' cor-tf':(ans===false?' wr-tf':'')):''}${done?' ':''}" onclick="answerTF(${i},false)" ${done?'disabled':''}>❌ মিথ্যা</button>
+    </div>
+    <div class="tf-fb${done?' show '+(cor?'ok-tf':'er-tf'):''}">
+      ${done?`<b>${cor?'✅ সঠিক!':'❌ ভুল!'}</b> সঠিক: ${q.a?'সত্য':'মিথ্যা'} — ${q.e}`:''}
+    </div>`;
+    el.appendChild(div);
+  });
+}
+function answerTF(i,val){
+  const q=TF[i];if(state['tf-'+i]!==undefined)return;
+  const cor=val===q.a;state['tf-'+i]=val;
+  if(cor)state.ok=(state.ok||0)+1;else state.er=(state.er||0)+1;
+  saveState();renderTF();updateScore();showToast(cor?'✅ সঠিক!':'❌ ভুল!',cor?'ok':'er');
+}
+function renderCases(){
+  const el=document.getElementById('case-section');el.innerHTML='';
+  CASES.forEach((q,i)=>{
+    const key='case-'+i,ans=state[key],done=ans!==undefined;
+    const div=document.createElement('div');div.className='case-card';
+    div.innerHTML=`<div class="case-sc">${q.sc}</div><div class="case-q">❓ ${q.q}</div>
+    <div class="opts">${q.o.map((o,j)=>`<button class="opt${done?(j===q.a?' cor':(j===ans?' wr':'')):''}${done?' ':''}" onclick="answerCase(${i},${j})" ${done?'disabled':''}><span class="olet">${'ABCD'[j]}</span>${o}</button>`).join('')}</div>
+    <div class="fb${done?' show '+(ans===q.a?'ok-fb':'er-fb'):''}">
+      <div class="fb-title">${done?(ans===q.a?'✅ সঠিক!':'❌ ভুল!')+' সঠিক: <b>'+q.o[q.a]+'</b>':''}</div>
+      <div class="fb-exp">${q.e}</div>
+    </div>`;
+    el.appendChild(div);
+  });
+}
+function answerCase(i,j){
+  const q=CASES[i];if(state['case-'+i]!==undefined)return;
+  const cor=j===q.a;state['case-'+i]=j;
+  if(cor)state.ok=(state.ok||0)+1;else state.er=(state.er||0)+1;
+  saveState();renderCases();updateScore();showToast(cor?'✅ সঠিক!':'❌ ভুল!',cor?'ok':'er');
+}
+
+const CARDS=[
+  {f:"VPC",b:"Virtual Private Cloud। Logically isolated network। IP range, subnets, routes তুমি define করো। 10.0.0.0/16 = 65,000+ IPs।"},
+  {f:"Public Subnet",b:"Route table এ 0.0.0.0/0 → IGW route আছে। Internet accessible। Auto-assign public IP।"},
+  {f:"Private Subnet",b:"IGW route নেই। Internet থেকে isolated। NAT Gateway দিয়ে outbound only।"},
+  {f:"Internet Gateway (IGW)",b:"VPC ↔ Internet। Route table target। Public IP NAT করে। VPC এ attach করতে হয়।"},
+  {f:"NAT Gateway",b:"Public subnet এ থাকে। Private instances → Internet outbound। Internet → private blocked। Elastic IP।"},
+  {f:"Security Group",b:"Instance-level firewall। Stateful। Allow rules only। Response auto-allowed।"},
+  {f:"Route Table",b:"Traffic routing rules। 0.0.0.0/0 = all internet। local = VPC internal। Subnet এ associate।"},
+  {f:"0.0.0.0/0",b:"All internet traffic। Wildcard। Route table এ এই destination মানে 'বাকি সব traffic এখানে যাবে'।"},
+  {f:"DNS Hostnames",b:"VPC setting। Enable করলে EC2 = automatic DNS name। ec2-IP.region.compute.amazonaws.com।"},
+  {f:"CIDR /23 vs /24",b:"/24 = 256 IPs। /23 = 512 IPs (double)। Private subnet বড় কারণ বেশি resources private রাখতে হয়।"},
+];
+let fcState={idx:0,flipped:false,known:[],unknown:[]};
+function renderFlash(){
+  const el=document.getElementById('flash-container'),c=CARDS[fcState.idx];
+  el.innerHTML=`<div style="text-align:center;margin-bottom:10px;color:var(--t2);font-size:.8rem;font-family:'Hind Siliguri',sans-serif">কার্ড ${fcState.idx+1}/${CARDS.length} | ✅ ${fcState.known.length} জানি | 📚 ${fcState.unknown.length} শিখছি</div>
+  <div class="fc-nav"><button class="fc-nav-btn" onclick="prevCard()">‹</button><span>${fcState.idx+1} of ${CARDS.length}</span><button class="fc-nav-btn" onclick="nextCard()">›</button></div>
+  <div class="fc-wrap"><div class="fc-outer${fcState.flipped?' flipped':''}" onclick="flipCard()">
+    <div class="fc-front"><span class="fc-lbl">TERM / CONCEPT</span><div class="fc-txt">${c.f}</div><div class="fc-hint">👆 click to flip</div></div>
+    <div class="fc-back"><span class="fc-lbl">বাংলায় মনে রাখো</span><div class="fc-txt" style="font-family:'Hind Siliguri',sans-serif;font-size:.86rem">${c.b}</div></div>
+  </div></div>
+  <div class="fc-known-wrap">
+    <button class="fc-known fc-unk" onclick="markCard(false)">📚 আবার দেখব</button>
+    <button class="fc-known fc-kno" onclick="markCard(true)">✅ জানি!</button>
+  </div>`;
+}
+function flipCard(){fcState.flipped=!fcState.flipped;renderFlash();}
+function nextCard(){fcState.flipped=false;fcState.idx=(fcState.idx+1)%CARDS.length;renderFlash();}
+function prevCard(){fcState.flipped=false;fcState.idx=(fcState.idx-1+CARDS.length)%CARDS.length;renderFlash();}
+function markCard(known){
+  if(known)fcState.known.push(fcState.idx);else fcState.unknown.push(fcState.idx);
+  fcState.flipped=false;fcState.idx=(fcState.idx+1)%CARDS.length;renderFlash();
+}
+
+renderMCQ();renderTF();renderCases();renderFlash();
+</script>
+</body>
+</html>

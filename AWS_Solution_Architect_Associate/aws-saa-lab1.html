@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 1: AWS Console & CLI — SAA বাংলা</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--dk:#080d1a;--bl:#0f1929;--cb:#162236;--bd:#1e3058;--or:#FF9900;--lb:#00a8e1;--gr:#00d68f;--re:#ff4757;--yw:#ffd32a;--tl:#00c7b1;--t1:#e8f4fd;--t2:#8faec8;--t3:#c5dff0;--ac:#00a8e1}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit','Hind Siliguri',sans-serif;background:var(--dk);color:var(--t1);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(0,168,225,.07) 0,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(255,153,0,.05) 0,transparent 50%);pointer-events:none;z-index:0}
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#0b1320,#162236,#0b1320);border-bottom:2px solid var(--lb);padding:14px 24px;position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 30px rgba(0,168,225,.18);flex-wrap:wrap;gap:12px}
+.badge{background:linear-gradient(135deg,var(--lb),#006b9e);color:#fff;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;padding:5px 10px;border-radius:6px;letter-spacing:1px}
+.hdr-title{font-size:1rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--lb));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-sub{font-family:'Hind Siliguri',sans-serif;font-size:.75rem;color:var(--t2)}
+.nav-btns{display:flex;gap:8px}
+.nav-btn{background:rgba(255,255,255,.05);border:1px solid var(--bd);color:var(--t2);padding:5px 12px;border-radius:8px;font-size:.75rem;font-weight:700;text-decoration:none;transition:all .2s}
+.nav-btn:hover{border-color:var(--lb);color:var(--lb)}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px;position:relative;z-index:1}
+/* HERO */
+.lab-hero{background:linear-gradient(135deg,rgba(0,168,225,.08),rgba(0,168,225,.02));border:1.5px solid rgba(0,168,225,.25);border-radius:20px;padding:28px;margin-bottom:28px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
+.lab-hero-left h1{font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:8px}
+.lab-hero-left p{font-family:'Hind Siliguri',sans-serif;color:var(--t2);font-size:.9rem;line-height:1.75;margin-bottom:14px}
+.meta-chips{display:flex;gap:8px;flex-wrap:wrap}
+.meta-chip{padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+.mc-time{background:rgba(255,215,42,.1);border:1px solid rgba(255,215,42,.3);color:var(--yw)}
+.mc-diff{background:rgba(0,214,143,.1);border:1px solid rgba(0,214,143,.3);color:var(--gr)}
+.mc-svc{background:rgba(0,168,225,.1);border:1px solid rgba(0,168,225,.3);color:var(--lb)}
+.lab-hero-right{display:flex;flex-direction:column;gap:8px;min-width:160px}
+.obj-box{background:rgba(0,0,0,.2);border:1px solid var(--bd);border-radius:12px;padding:14px 16px}
+.obj-box h4{font-size:.72rem;font-weight:700;color:var(--lb);letter-spacing:1px;margin-bottom:10px;font-family:'JetBrains Mono',monospace}
+.obj-item{font-family:'Hind Siliguri',sans-serif;font-size:.8rem;color:var(--t3);padding:4px 0 4px 16px;position:relative;line-height:1.5}
+.obj-item::before{content:'✓';position:absolute;left:0;color:var(--gr);font-size:.75rem;font-weight:700}
+/* TABS */
+.tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--cb);border:1px solid var(--bd);border-radius:14px;padding:5px;flex-wrap:wrap}
+.tab{flex:1;padding:9px 14px;border-radius:10px;border:none;cursor:pointer;font-size:.8rem;font-weight:700;color:var(--t2);background:transparent;transition:all .25s;white-space:nowrap;font-family:'Outfit',sans-serif;min-width:80px;text-align:center}
+.tab:hover{color:var(--lb)}
+.tab.active{background:rgba(0,168,225,.15);color:var(--lb);border:1.5px solid rgba(0,168,225,.4)}
+.panel{display:none}
+.panel.open{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+/* SUMMARY CARDS */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.scard{background:var(--cb);border:1.5px solid var(--bd);border-radius:14px;padding:16px;transition:all .25s}
+.scard:hover{border-color:var(--lb);transform:translateY(-2px)}
+.scard-icon{font-size:1.6rem;margin-bottom:10px}
+.scard-title{font-size:.82rem;font-weight:700;color:var(--lb);margin-bottom:6px;font-family:'JetBrains Mono',monospace}
+.scard-body{font-family:'Hind Siliguri',sans-serif;font-size:.82rem;color:var(--t3);line-height:1.65}
+/* DIAGRAM */
+.diagram-wrap{background:var(--cb);border:1.5px solid var(--bd);border-radius:16px;overflow:hidden;margin-bottom:24px}
+.diagram-wrap svg{display:block;width:100%;height:auto}
+/* STEPS */
+.task-block{margin-bottom:28px}
+.task-hdr{background:linear-gradient(135deg,rgba(0,168,225,.08),transparent);border-left:3px solid var(--lb);border-radius:0 12px 12px 0;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.task-num{background:var(--lb);color:#fff;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.82rem;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.task-title{font-size:.98rem;font-weight:700;color:#fff}
+.task-sub{font-family:'Hind Siliguri',sans-serif;font-size:.8rem;color:var(--t2);margin-top:2px}
+.step{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:10px;border:1.5px solid var(--bd);border-radius:12px;overflow:hidden;transition:border-color .2s}
+.step:hover{border-color:rgba(0,168,225,.3)}
+.step-en{background:rgba(255,255,255,.02);padding:14px 16px;border-right:1px solid var(--bd)}
+.step-bn{background:rgba(0,168,225,.03);padding:14px 16px}
+.step-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;color:var(--lb);margin-bottom:6px;letter-spacing:1px}
+.step-en-txt{font-size:.85rem;color:var(--t1);line-height:1.65}
+.step-bn-txt{font-family:'Hind Siliguri',sans-serif;font-size:.85rem;color:var(--t3);line-height:1.7}
+.step-en-txt code,.cmd{font-family:'JetBrains Mono',monospace;background:rgba(0,168,225,.12);color:var(--lb);padding:1px 6px;border-radius:4px;font-size:.83em}
+.step-bn-txt b{color:var(--or)}
+.note-box{background:rgba(255,215,42,.05);border:1px solid rgba(255,215,42,.25);border-radius:10px;padding:11px 15px;margin:8px 0;display:flex;gap:10px;font-family:'Hind Siliguri',sans-serif;font-size:.82rem;color:var(--t3);line-height:1.65}
+.note-box.warn{background:rgba(255,71,87,.05);border-color:rgba(255,71,87,.25)}
+.note-box.tip{background:rgba(0,214,143,.05);border-color:rgba(0,214,143,.25)}
+.code-block{background:#0a0f1a;border:1px solid var(--bd);border-radius:10px;padding:14px 16px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#a8d8a8;line-height:1.8;overflow-x:auto}
+.code-block .comment{color:#5a7a5a}
+/* PRACTICE */
+.qcard{background:linear-gradient(135deg,rgba(22,34,54,.9),rgba(15,25,41,.95));border:1.5px solid var(--bd);border-radius:15px;padding:20px;margin-bottom:16px;transition:border-color .3s}
+.qcard.ok{border-color:rgba(0,214,143,.5);background:rgba(0,214,143,.04)}
+.qcard.er{border-color:rgba(255,71,87,.5);background:rgba(255,71,87,.04)}
+.qmeta{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.qnum{background:rgba(0,168,225,.15);color:var(--lb);font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:20px}
+.qtag{background:rgba(255,255,255,.06);color:var(--t2);font-size:.68rem;padding:3px 10px;border-radius:20px}
+.qscen{background:rgba(255,153,0,.12);color:var(--or);font-size:.68rem;padding:3px 10px;border-radius:20px;font-weight:700}
+.qtxt{font-family:'Hind Siliguri',sans-serif;font-size:.96rem;color:var(--t1);line-height:1.8;margin-bottom:14px;font-weight:500}
+.opts{display:grid;gap:8px}
+.opt{background:rgba(255,255,255,.03);border:1.5px solid var(--bd);border-radius:10px;padding:11px 15px;cursor:pointer;text-align:left;transition:all .2s;display:flex;align-items:flex-start;gap:10px;font-family:'Hind Siliguri',sans-serif;font-size:.88rem;color:var(--t1);line-height:1.6;width:100%}
+.opt:hover:not(:disabled){border-color:var(--lb);background:rgba(0,168,225,.06);transform:translateX(3px)}
+.opt:disabled{cursor:default;transform:none}
+.opt.cor{border-color:var(--gr);background:rgba(0,214,143,.08);color:var(--gr)}
+.opt.wr{border-color:var(--re);background:rgba(255,71,87,.08);color:var(--re)}
+.olet{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;flex-shrink:0;background:rgba(255,255,255,.07);color:var(--t2);font-family:'JetBrains Mono',monospace}
+.opt.cor .olet{background:var(--gr);color:#000}
+.opt.wr .olet{background:var(--re);color:#fff}
+.fb{display:none;margin-top:12px;border-radius:10px;padding:12px 15px}
+.fb.show{display:block}
+.fb.ok-fb{background:rgba(0,214,143,.07);border:1px solid rgba(0,214,143,.3)}
+.fb.er-fb{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3)}
+.fb-title{font-weight:700;font-size:.88rem;margin-bottom:5px}
+.ok-fb .fb-title{color:var(--gr)}
+.er-fb .fb-title{color:var(--re)}
+.fb-exp{font-family:'Hind Siliguri',sans-serif;font-size:.84rem;color:var(--t3);line-height:1.7}
+.fb-exp b{color:var(--or)}
+.tf-card{background:linear-gradient(135deg,rgba(22,34,54,.9),rgba(15,25,41,.95));border:1.5px solid var(--bd);border-radius:14px;padding:18px;margin-bottom:14px;transition:border-color .3s}
+.tf-card.ok{border-color:rgba(0,214,143,.5)}
+.tf-card.er{border-color:rgba(255,71,87,.5)}
+.tf-stmt{font-family:'Hind Siliguri',sans-serif;font-size:.93rem;color:var(--t1);margin-bottom:13px;line-height:1.75;font-weight:500}
+.tf-btns{display:flex;gap:10px}
+.tf-btn{flex:1;padding:9px;border-radius:9px;border:2px solid var(--bd);cursor:pointer;font-size:.88rem;font-weight:700;background:transparent;transition:all .2s}
+.tf-btn.t-btn{color:var(--gr)}
+.tf-btn.f-btn{color:var(--re)}
+.tf-btn:hover:not(:disabled){transform:translateY(-2px)}
+.tf-btn.cor-tf{background:rgba(0,214,143,.15);border-color:var(--gr);color:var(--gr)}
+.tf-btn.wr-tf{background:rgba(255,71,87,.15);border-color:var(--re);color:var(--re)}
+.tf-btn:disabled{cursor:default;transform:none}
+.tf-fb{display:none;margin-top:10px;padding:11px 14px;border-radius:9px;font-family:'Hind Siliguri',sans-serif;font-size:.82rem;line-height:1.7}
+.tf-fb.show{display:block}
+.tf-fb.ok-tf{background:rgba(0,214,143,.07);border:1px solid rgba(0,214,143,.3);color:var(--t3)}
+.tf-fb.er-tf{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3);color:var(--t3)}
+.case-card{background:linear-gradient(135deg,rgba(255,153,0,.04),rgba(0,168,225,.02));border:1.5px solid rgba(255,153,0,.2);border-radius:14px;padding:18px;margin-bottom:16px}
+.case-sc{background:rgba(0,0,0,.2);border-left:3px solid var(--or);border-radius:0 9px 9px 0;padding:12px 16px;margin-bottom:14px;font-family:'Hind Siliguri',sans-serif;font-size:.88rem;color:var(--t3);line-height:1.75}
+.case-sc strong{color:var(--or)}
+.case-q{font-family:'Hind Siliguri',sans-serif;font-size:.92rem;color:var(--t1);margin-bottom:12px;font-weight:600}
+/* FLASHCARDS */
+.fc-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:14px;font-family:'Hind Siliguri',sans-serif;font-size:.82rem;color:var(--t2)}
+.fc-nav-btn{background:var(--cb);border:1px solid var(--bd);color:var(--t1);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:.9rem;transition:all .2s}
+.fc-nav-btn:hover{border-color:var(--lb);color:var(--lb)}
+.fc-wrap{perspective:1000px;max-width:580px;margin:0 auto 16px}
+.fc-outer{width:100%;height:190px;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.fc-outer.flipped{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;inset:0;border-radius:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.fc-front{background:linear-gradient(135deg,var(--cb),var(--bl));border:1.5px solid var(--lb)}
+.fc-back{background:linear-gradient(135deg,rgba(0,168,225,.08),rgba(0,214,143,.04));border:1.5px solid var(--gr);transform:rotateY(180deg)}
+.fc-lbl{font-size:.68rem;font-weight:700;letter-spacing:1px;margin-bottom:8px;opacity:.7;font-family:'JetBrains Mono',monospace}
+.fc-front .fc-lbl{color:var(--lb)}
+.fc-back .fc-lbl{color:var(--gr)}
+.fc-txt{font-family:'Hind Siliguri',sans-serif;font-size:.92rem;color:var(--t1);text-align:center;line-height:1.65}
+.fc-front .fc-txt{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--lb)}
+.fc-hint{font-size:.7rem;color:var(--t2);margin-top:8px;font-family:'Hind Siliguri',sans-serif}
+.fc-known-wrap{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.fc-known{padding:7px 18px;border-radius:9px;cursor:pointer;font-weight:700;font-size:.8rem;transition:all .2s;border:1.5px solid transparent}
+.fc-kno{background:rgba(0,214,143,.12);border-color:var(--gr);color:var(--gr)}
+.fc-unk{background:rgba(255,71,87,.12);border-color:var(--re);color:var(--re)}
+.fc-known:hover{transform:translateY(-2px)}
+/* SCORE */
+.score-bar-wrap{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:11px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.score-bar-track{flex:1;height:6px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.score-bar-fill{height:100%;background:linear-gradient(90deg,var(--lb),var(--gr));border-radius:4px;transition:width .6s ease}
+.score-txt{font-size:.8rem;color:var(--t2);font-weight:700;white-space:nowrap;font-family:'JetBrains Mono',monospace}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--cb);border:1px solid var(--bd);border-radius:12px;padding:11px 18px;font-size:.82rem;font-weight:700;opacity:0;transform:translateY(18px);transition:all .3s;z-index:999;pointer-events:none;font-family:'Hind Siliguri',sans-serif}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok-t{border-color:rgba(0,214,143,.5);color:var(--gr)}
+.toast.er-t{border-color:rgba(255,71,87,.5);color:var(--re)}
+/* CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.check-item{display:flex;align-items:flex-start;gap:12px;background:var(--cb);border:1.5px solid var(--bd);border-radius:11px;padding:12px 15px;cursor:pointer;transition:all .2s;user-select:none}
+.check-item:hover{border-color:rgba(0,168,225,.3)}
+.check-item.done{border-color:rgba(0,214,143,.4);background:rgba(0,214,143,.04)}
+.check-box{width:22px;height:22px;border-radius:6px;border:2px solid var(--bd);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.8rem;transition:all .2s;margin-top:1px}
+.check-item.done .check-box{background:var(--gr);border-color:var(--gr);color:#000}
+.check-item-txt{font-family:'Hind Siliguri',sans-serif;font-size:.88rem;color:var(--t3);line-height:1.6}
+.check-item.done .check-item-txt{color:var(--t2);text-decoration:line-through}
+.check-progress{background:rgba(0,168,225,.08);border:1px solid rgba(0,168,225,.2);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px}
+@media(max-width:650px){.step{grid-template-columns:1fr}.step-en{border-right:none;border-bottom:1px solid var(--bd)}.lab-hero{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="badge">LAB 01</span>
+    <div><div class="hdr-title">🖥️ AWS Console & CLI</div><div class="hdr-sub">Explore, Interact, Create S3 with CLI</div></div>
+  </div>
+  <div class="nav-btns">
+    <a href="aws-saa-labs.html" class="nav-btn">🧪 All Labs</a>
+    <a href="aws-saa-lab2.html" class="nav-btn">Lab 2 →</a>
+    <a href="aws-saa-main.html" class="nav-btn">🏠 Home</a>
+  </div>
+</div>
+
+<div class="wrap">
+<!-- HERO -->
+<div class="lab-hero">
+  <div class="lab-hero-left">
+    <h1>Lab 1: AWS Management Console & AWS CLI</h1>
+    <p>AWS Management Console navigate করো, S3 bucket তৈরি করো, এবং AWS CLI দিয়ে S3 তে files upload করো। Session Manager ব্যবহার করে EC2 তে connect করো।</p>
+    <div class="meta-chips">
+      <span class="meta-chip mc-time">⏱ 90 min</span>
+      <span class="meta-chip mc-diff">🟢 Beginner</span>
+      <span class="meta-chip mc-svc">S3</span>
+      <span class="meta-chip mc-svc">EC2</span>
+      <span class="meta-chip mc-svc">CLI</span>
+      <span class="meta-chip mc-svc">SSM</span>
+    </div>
+  </div>
+  <div class="lab-hero-right">
+    <div class="obj-box">
+      <h4>OBJECTIVES</h4>
+      <div class="obj-item">AWS Console explore করো</div>
+      <div class="obj-item">Console দিয়ে S3 bucket তৈরি</div>
+      <div class="obj-item">S3 তে object upload করো</div>
+      <div class="obj-item">AWS CLI explore করো</div>
+      <div class="obj-item">CLI দিয়ে S3 bucket তৈরি</div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('summary',this)">📋 Summary</button>
+  <button class="tab" onclick="switchTab('diagram',this)">🗺️ Architecture</button>
+  <button class="tab" onclick="switchTab('steps',this)">📖 Step-by-Step</button>
+  <button class="tab" onclick="switchTab('checklist',this)">✅ Checklist</button>
+  <button class="tab" onclick="switchTab('practice',this)">🎯 Practice</button>
+  <button class="tab" onclick="switchTab('flash',this)">🃏 Flashcards</button>
+</div>
+
+<!-- SUMMARY -->
+<div class="panel open" id="panel-summary">
+  <div class="summary-grid">
+    <div class="scard">
+      <div class="scard-icon">🌐</div>
+      <div class="scard-title">AWS Management Console</div>
+      <div class="scard-body">Web-based GUI। সব AWS services access করার সহজ উপায়। Search bar, Favorites, Widgets সব customize করা যায়।</div>
+    </div>
+    <div class="scard">
+      <div class="scard-icon">💻</div>
+      <div class="scard-title">AWS CLI</div>
+      <div class="scard-body">Command Line Interface। Terminal থেকে AWS services control করো। Console এর বিকল্প — automation এর জন্য ideal।</div>
+    </div>
+    <div class="scard">
+      <div class="scard-icon">🪣</div>
+      <div class="scard-title">Amazon S3</div>
+      <div class="scard-body">Object storage service। Unlimited storage। Globally unique bucket names। HTTP দিয়ে access।</div>
+    </div>
+    <div class="scard">
+      <div class="scard-icon">🔐</div>
+      <div class="scard-title">Session Manager</div>
+      <div class="scard-body">SSM capability। SSH port open না করেই EC2 তে browser-based shell। IAM দিয়ে access control। Audit trail।</div>
+    </div>
+    <div class="scard">
+      <div class="scard-icon">⚡</div>
+      <div class="scard-title">AWS API</div>
+      <div class="scard-body">Console এবং CLI উভয়ই AWS API call করে। সব interaction → API → AWS service। একই কাজ, দুটো interface।</div>
+    </div>
+    <div class="scard">
+      <div class="scard-icon">🏷️</div>
+      <div class="scard-title">Regions</div>
+      <div class="scard-body">AWS resources geographical area তে থাকে। Region selector দিয়ে correct region বেছে নাও। Lab এ eu-west-2।</div>
+    </div>
+  </div>
+
+  <div style="background:var(--cb);border:1.5px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:20px">
+    <h3 style="color:var(--lb);font-size:.9rem;margin-bottom:14px;font-family:'JetBrains Mono',monospace">🔑 KEY COMMANDS — Lab এ ব্যবহৃত CLI Commands</h3>
+    <div class="code-block">
+<span class="comment"># S3 buckets list করো</span>
+aws s3 ls
+
+<span class="comment"># নতুন S3 bucket তৈরি করো</span>
+aws s3 mb s3://labclibucket-NUMBER
+
+<span class="comment"># File S3 তে copy করো</span>
+aws s3 cp /home/ssm-user/HappyFace.jpg s3://labclibucket-NUMBER
+
+<span class="comment"># Bucket contents list করো</span>
+aws s3 ls s3://labclibucket-NUMBER</div>
+  </div>
+
+  <div style="background:rgba(0,214,143,.05);border:1px solid rgba(0,214,143,.2);border-radius:12px;padding:16px 20px">
+    <h4 style="color:var(--gr);font-size:.85rem;margin-bottom:10px;font-family:'Hind Siliguri',sans-serif">💡 Lab থেকে মূল শিক্ষা</h4>
+    <p style="font-family:'Hind Siliguri',sans-serif;font-size:.88rem;color:var(--t3);line-height:1.8">Console ও CLI উভয়ই একই AWS API call করে। Console = human-friendly GUI। CLI = automation-friendly। যেকোনো একটি দিয়ে same resource তৈরি করা যায়। Session Manager = SSH ছাড়া secure EC2 access।</p>
+  </div>
+</div>
+
+<!-- DIAGRAM -->
+<div class="panel" id="panel-diagram">
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 720 320" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M0,0 L6,3 L0,6 z" fill="#8faec8"/>
+        </marker>
+        <marker id="arr-or" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M0,0 L6,3 L0,6 z" fill="#FF9900"/>
+        </marker>
+      </defs>
+      <rect width="720" height="320" fill="#0f1929"/>
+      <text x="360" y="26" text-anchor="middle" fill="#FF9900" font-family="JetBrains Mono,monospace" font-size="13" font-weight="700">Lab 1: AWS Console & CLI — Architecture Flow</text>
+
+      <!-- User -->
+      <rect x="20" y="100" width="90" height="120" rx="10" fill="rgba(0,168,225,0.07)" stroke="#00a8e1" stroke-width="1.5"/>
+      <text x="65" y="140" text-anchor="middle" font-size="24">👤</text>
+      <text x="65" y="162" text-anchor="middle" fill="#00a8e1" font-size="9" font-weight="700">User</text>
+      <text x="65" y="177" text-anchor="middle" fill="#8faec8" font-size="7">(Saikot Das Joy)</text>
+      <!-- Two paths from user -->
+      <line x1="110" y1="130" x2="170" y2="100" stroke="#8faec8" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="110" y1="170" x2="170" y2="200" stroke="#8faec8" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- Console path -->
+      <rect x="170" y="68" width="130" height="55" rx="9" fill="rgba(255,153,0,0.08)" stroke="#FF9900" stroke-width="1.5"/>
+      <text x="235" y="90" text-anchor="middle" fill="#FF9900" font-size="9" font-weight="700">🌐 AWS Management</text>
+      <text x="235" y="103" text-anchor="middle" fill="#FF9900" font-size="9" font-weight="700">Console</text>
+      <text x="235" y="116" text-anchor="middle" fill="#8faec8" font-size="7">Web GUI — HTTP</text>
+      <text x="150" y="93" fill="#00d68f" font-size="8">Path 1</text>
+
+      <!-- CLI path -->
+      <rect x="170" y="172" width="130" height="55" rx="9" fill="rgba(0,168,225,0.08)" stroke="#00a8e1" stroke-width="1.5"/>
+      <text x="235" y="194" text-anchor="middle" fill="#00a8e1" font-size="9" font-weight="700">💻 AWS CLI</text>
+      <text x="235" y="207" text-anchor="middle" fill="#00a8e1" font-size="9" font-weight="700">Command Line</text>
+      <text x="235" y="220" text-anchor="middle" fill="#8faec8" font-size="7">Terminal — Commands</text>
+      <text x="150" y="200" fill="#00d68f" font-size="8">Path 2</text>
+
+      <!-- Both → API -->
+      <line x1="300" y1="95" x2="360" y2="150" stroke="#FF9900" stroke-width="1.5" stroke-dasharray="5" marker-end="url(#arr-or)"/>
+      <line x1="300" y1="200" x2="360" y2="155" stroke="#00a8e1" stroke-width="1.5" stroke-dasharray="5" marker-end="url(#arr)"/>
+
+      <!-- API -->
+      <rect x="358" y="120" width="110" height="55" rx="9" fill="rgba(255,215,42,0.07)" stroke="#ffd32a" stroke-width="1.5"/>
+      <text x="413" y="143" text-anchor="middle" fill="#ffd32a" font-size="9" font-weight="700">⚡ AWS API</text>
+      <text x="413" y="158" text-anchor="middle" fill="#8faec8" font-size="7">Same API — Both paths</text>
+      <text x="413" y="170" text-anchor="middle" fill="#8faec8" font-size="7">call the same endpoint</text>
+      <line x1="468" y1="148" x2="530" y2="148" stroke="#8faec8" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- S3 -->
+      <rect x="530" y="110" width="120" height="75" rx="9" fill="rgba(0,214,143,0.08)" stroke="#00d68f" stroke-width="1.5"/>
+      <text x="590" y="137" text-anchor="middle" font-size="20">🪣</text>
+      <text x="590" y="158" text-anchor="middle" fill="#00d68f" font-size="9" font-weight="700">Amazon S3</text>
+      <text x="590" y="172" text-anchor="middle" fill="#8faec8" font-size="7">labbucket + labclibucket</text>
+      <text x="590" y="183" text-anchor="middle" fill="#8faec8" font-size="7">HappyFace.jpg stored</text>
+
+      <!-- Session Manager box -->
+      <rect x="170" y="262" width="360" height="42" rx="9" fill="rgba(0,199,177,0.06)" stroke="#00c7b1" stroke-width="1.5"/>
+      <text x="350" y="281" text-anchor="middle" fill="#00c7b1" font-size="9" font-weight="700">🔐 Session Manager — EC2 Command Host (CLI Access)</text>
+      <text x="350" y="296" text-anchor="middle" fill="#8faec8" font-size="7">SSH Port 22 বন্ধ থাকলেও browser দিয়ে EC2 shell access → CLI commands run করো</text>
+
+      <!-- Labels -->
+      <text x="360" y="310" text-anchor="middle" fill="#8faec8" font-size="8">Console ও CLI দুটোই AWS API তে request পাঠায় — একই result, আলাদা interface</text>
+    </svg>
+  </div>
+
+  <div style="background:var(--cb);border:1.5px solid var(--bd);border-radius:14px;padding:18px">
+    <h4 style="color:var(--or);margin-bottom:12px;font-size:.88rem;font-family:'Hind Siliguri',sans-serif">📊 Lab এ কী কী তৈরি হয়েছে</h4>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:9px;padding:12px">
+        <div style="color:var(--or);font-size:.75rem;font-weight:700;margin-bottom:6px">TASK 2 — Console</div>
+        <div style="font-family:'Hind Siliguri',sans-serif;font-size:.82rem;color:var(--t3)">S3 bucket তৈরি: <code style="background:rgba(0,168,225,.1);color:var(--lb);padding:1px 5px;border-radius:3px;font-size:.78rem">labbucket-XXXXX</code></div>
+        <div style="font-family:'Hind Siliguri',sans-serif;font-size:.82rem;color:var(--t3);margin-top:4px">HappyFace.jpg upload করো</div>
+      </div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:9px;padding:12px">
+        <div style="color:var(--lb);font-size:.75rem;font-weight:700;margin-bottom:6px">TASK 4 — CLI</div>
+        <div style="font-family:'Hind Siliguri',sans-serif;font-size:.82rem;color:var(--t3)">S3 bucket তৈরি: <code style="background:rgba(0,168,225,.1);color:var(--lb);padding:1px 5px;border-radius:3px;font-size:.78rem">labclibucket-XXXXX</code></div>
+        <div style="font-family:'Hind Siliguri',sans-serif;font-size:.82rem;color:var(--t3);margin-top:4px">CLI দিয়ে HappyFace.jpg copy</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEPS -->
+<div class="panel" id="panel-steps">
+
+  <div class="task-block">
+    <div class="task-hdr">
+      <div class="task-num">T1</div>
+      <div>
+        <div class="task-title">Task 1: Explore the AWS Management Console</div>
+        <div class="task-sub">Region, widgets, search, favorites সব explore করো</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 3</div><div class="step-en-txt">On the navigation bar, choose the <strong>Region selector</strong> at the top-right corner.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">Console এর উপরে ডানদিকে <b>Region selector</b> আছে। এখানে click করলে সব AWS Regions দেখাবে। তোমার Lab এর জন্য <b>eu-west-2 (London)</b> select করো।</div></div>
+    </div>
+
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 4-8</div><div class="step-en-txt">Open General Settings → See all user settings → Edit Localization → Choose Default Region → Save settings.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">Gear icon → <b>See all user settings</b> → <b>Localization and default Region</b> section → Edit → Default Region বেছে নাও → Save। এটা তোমার browser এ default region set করে।</div></div>
+    </div>
+
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 12-15</div><div class="step-en-txt">Search box → type <code>cloud</code> → choose AWS Cloud Map service from Services section → return home.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">Search box এ <b>"cloud"</b> লিখলে ফলাফল আসে। Services, Features, Documentation — সব দেখায়। <b>AWS Cloud Map</b> select করো। AWS logo click করে home এ ফিরো।</div></div>
+    </div>
+
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 16-21</div><div class="step-en-txt">Add favorites: Services → All services → click ★ star. Remove: Favorites list → deselect star.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt"><b>Favorites</b> = top navigation এ pin করা services। Services menu → তোমার দরকারী service এর পাশে <b>★ star</b> click করো। Remove করতে Favorites এ গিয়ে star deselect করো।</div></div>
+    </div>
+
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 25-29</div><div class="step-en-txt">Add widgets: + Add widgets button. Drag title bar to rearrange. Drag bottom-right to resize. Ellipsis icon → Remove widget.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">Console home এর <b>Widgets</b> = quick access shortcuts। <b>+ Add widgets</b> দিয়ে নতুন widget যোগ করো। Title bar drag করে সরাও। Corner drag করে resize করো। <b>⋮ (ellipsis)</b> → Remove widget।</div></div>
+    </div>
+  </div>
+
+  <div class="task-block">
+    <div class="task-hdr">
+      <div class="task-num">T2</div>
+      <div>
+        <div class="task-title">Task 2: Create S3 Bucket via Console</div>
+        <div class="task-sub">AWS Management Console দিয়ে S3 bucket তৈরি করো</div>
+      </div>
+    </div>
+
+    <div class="note-box"><span>📍</span><div>Caution: Correct region এ আছো কিনা নিশ্চিত করো (Lab এর বাম পাশে LabRegion দেখো)।</div></div>
+
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 30-32</div><div class="step-en-txt">Services menu → All Services → Storage → S3. Or search <code>S3</code> in search bar.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt"><b>Services → Storage → S3</b> অথবা search bar এ <b>"S3"</b> type করো। S3 console খুলবে যেখানে তোমার সব buckets দেখাবে।</div></div>
+    </div>
+
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 33-38</div><div class="step-en-txt">Buckets → Create bucket → Name: <code>labbucket-NUMBER</code> → AWS Region matches LabRegion → Leave all defaults → Create bucket.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt"><b>Create bucket</b> click করো। Bucket name: <b>labbucket-987987</b> (NUMBER = random)। <b>Globally unique</b> নাম দিতে হবে। Region = LabRegion। বাকি সব default রাখো → <b>Create bucket</b>।</div></div>
+    </div>
+  </div>
+
+  <div class="task-block">
+    <div class="task-hdr">
+      <div class="task-num">T3</div>
+      <div>
+        <div class="task-title">Task 3: Upload Object to S3 via Console</div>
+        <div class="task-sub">S3 console দিয়ে image upload করো</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 39-45</div><div class="step-en-txt">Right-click the image link → Save as HappyFace.jpg → S3 → choose labbucket-xxxxx → Upload → Add files → Browse → HappyFace.jpg → Upload → Close.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">Lab এ image link এ right-click → <b>Save as</b> → HappyFace.jpg save করো। তারপর S3 bucket এ → <b>Upload → Add files → Browse → HappyFace.jpg select → Upload</b>। <b>"Upload succeeded"</b> দেখবে।</div></div>
+    </div>
+  </div>
+
+  <div class="task-block">
+    <div class="task-hdr">
+      <div class="task-num">T4</div>
+      <div>
+        <div class="task-title">Task 4: Create S3 Bucket & Upload using AWS CLI</div>
+        <div class="task-sub">Session Manager → EC2 → CLI commands</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 46-51</div><div class="step-en-txt">Search → EC2 → Instances → Select Command Host → Connect → Session Manager tab → Connect.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt">EC2 console → <b>Instances → Command Host select → Connect → Session Manager → Connect</b>। Browser এ terminal window খুলবে। এটাই তোমার CLI environment। SSH port open নেই কিন্তু SSM দিয়ে connect হলো।</div></div>
+    </div>
+
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 52-55</div><div class="step-en-txt">List buckets: <code>aws s3 ls</code>. Create bucket: <code>aws s3 mb s3://labclibucket-NUMBER</code>. List again to see new bucket.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt"><code>aws s3 ls</code> = সব buckets দেখো। <b>mb = make bucket</b>। <code>aws s3 mb s3://labclibucket-123</code> চালাও। Expected output: <b>make_bucket: labclibucket-xxxxx</b>। আবার <code>aws s3 ls</code> চালিয়ে নতুন bucket দেখো।</div></div>
+    </div>
+
+    <div class="step">
+      <div class="step-en"><div class="step-num">STEP 56-58</div><div class="step-en-txt">Copy file: <code>aws s3 cp /home/ssm-user/HappyFace.jpg s3://labclibucket-NUMBER</code>. List bucket to confirm.</div></div>
+      <div class="step-bn"><div class="step-num">বাংলা</div><div class="step-bn-txt"><b>cp = copy</b>। Local file → S3 তে copy করো। Expected output: <b>upload: ../../home/ssm-user/HappyFace.jpg to s3://labclibucket-xxxxx/HappyFace.jpg</b>। তারপর <code>aws s3 ls s3://labclibucket-NUMBER</code> দিয়ে confirm করো।</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="panel" id="panel-checklist">
+  <div class="check-progress">
+    <div style="flex:1">
+      <div style="font-size:.78rem;color:var(--t2);margin-bottom:6px;font-family:'Hind Siliguri',sans-serif">Lab সম্পন্নের অগ্রগতি</div>
+      <div style="background:rgba(255,255,255,.06);border-radius:6px;height:6px;overflow:hidden"><div id="cl-fill" style="height:100%;background:linear-gradient(90deg,var(--lb),var(--gr));border-radius:6px;width:0%;transition:width .5s ease"></div></div>
+    </div>
+    <div id="cl-txt" style="font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--t2);font-weight:700">0/12</div>
+  </div>
+  <div class="checklist" id="checklist">
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Lab start করেছি এবং Open Console দিয়ে AWS Management Console খুলেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Region selector থেকে correct region (LabRegion = eu-west-2) select করেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">General Settings থেকে Default Region set করেছি এবং Save করেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Search box এ "cloud" type করে AWS Cloud Map console খুলেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">কমপক্ষে একটি Service Favorites এ যোগ করেছি এবং remove করেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Console home এ widget add, move, resize এবং remove করেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Services → Storage → S3 navigate করেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">Console দিয়ে "labbucket-NUMBER" নামে S3 bucket তৈরি করেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">HappyFace.jpg ছবি download করে S3 bucket এ upload করেছি — "Upload succeeded" দেখেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">EC2 → Command Host → Session Manager দিয়ে CLI terminal এ connect করেছি</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">CLI দিয়ে "labclibucket-NUMBER" নামে S3 bucket তৈরি করেছি (aws s3 mb)</div></div>
+    <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-item-txt">CLI দিয়ে HappyFace.jpg S3 bucket এ copy করেছি (aws s3 cp) এবং confirm করেছি (aws s3 ls)</div></div>
+  </div>
+</div>
+
+<!-- PRACTICE -->
+<div class="panel" id="panel-practice">
+  <div class="score-bar-wrap">
+    <span style="font-family:'Hind Siliguri',sans-serif;font-size:.8rem;color:var(--t2)">স্কোর</span>
+    <div class="score-bar-track"><div class="score-bar-fill" id="score-fill" style="width:0%"></div></div>
+    <span class="score-txt" id="score-txt">0/0</span>
+  </div>
+
+  <div id="mcq-section"></div>
+  <hr style="border:none;border-top:1px solid var(--bd);margin:24px 0">
+  <h4 style="color:var(--gr);font-size:.85rem;font-weight:700;margin-bottom:16px;font-family:'JetBrains Mono',monospace">TRUE / FALSE</h4>
+  <div id="tf-section"></div>
+  <hr style="border:none;border-top:1px solid var(--bd);margin:24px 0">
+  <h4 style="color:var(--or);font-size:.85rem;font-weight:700;margin-bottom:16px;font-family:'JetBrains Mono',monospace">📌 SCENARIO QUESTIONS</h4>
+  <div id="case-section"></div>
+</div>
+
+<!-- FLASHCARDS -->
+<div class="panel" id="panel-flash">
+  <div id="flash-container"></div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+const SK='lab1-v1';
+let state={};
+function loadState(){try{state=JSON.parse(localStorage.getItem(SK)||'{}')}catch(e){state={}}}
+function saveState(){try{localStorage.setItem(SK,JSON.stringify(state))}catch(e){}}
+loadState();
+
+function switchTab(id,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('open'));
+  el.classList.add('active');
+  document.getElementById('panel-'+id).classList.add('open');
+}
+
+function showToast(msg,type){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast '+(type==='ok'?'ok-t':'er-t')+' show';
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+// CHECKLIST
+function toggleCheck(el){
+  el.classList.toggle('done');
+  el.querySelector('.check-box').textContent=el.classList.contains('done')?'✓':'';
+  updateCheckProgress();
+}
+function updateCheckProgress(){
+  const items=document.querySelectorAll('.check-item');
+  const done=document.querySelectorAll('.check-item.done').length;
+  const pct=Math.round(done/items.length*100);
+  document.getElementById('cl-fill').style.width=pct+'%';
+  document.getElementById('cl-txt').textContent=done+'/'+items.length;
+}
+
+// MCQ DATA
+const MCQ=[
+  {q:"AWS Management Console এবং AWS CLI উভয়ই কীভাবে AWS services access করে?",o:["Different backends","Same AWS API","Console is faster","CLI is more secure"],a:1,e:"উভয়ই একই <b>AWS API</b> ব্যবহার করে। Console = GUI। CLI = terminal। Same result।"},
+  {q:"S3 bucket name কোন requirement fulfill করতে হবে?",o:["Region-unique","Account-unique","Globally unique and DNS-compliant","Case-sensitive only"],a:2,e:"S3 bucket names = <b>globally unique</b>। সারা পৃথিবীতে একটিই নাম থাকতে পারবে।"},
+  {q:"📌 EC2 instance এ access করতে হবে কিন্তু Security Group এ port 22 (SSH) বন্ধ। কীভাবে connect করবে?",o:["Open port 22","Use RDP","AWS Systems Manager Session Manager","Direct IP access"],a:2,e:"<b>Session Manager</b> = SSH port ছাড়াই EC2 access। IAM দিয়ে control। Browser-based terminal।",sc:true},
+  {q:"AWS CLI তে নতুন S3 bucket তৈরির command কোনটি?",o:["aws s3 create","aws s3 mb","aws s3 new","aws s3 mkdir"],a:1,e:"<b>aws s3 mb</b> = make bucket। mb = make bucket (Unix mkdir এর মতো)।"},
+  {q:"📌 Developer একই S3 bucket action Console ও CLI দুটো দিয়ে perform করেছে। কোনটি faster হবে?",o:["Console always faster","CLI always faster","Same — both call AWS API","Depends on internet speed only"],a:2,e:"উভয়ই same <b>AWS API</b> call করে। Speed same। Difference হলো usability — Console = GUI, CLI = automation।",sc:true},
+  {q:"S3 তে file copy করার AWS CLI command?",o:["aws s3 mv","aws s3 cp","aws s3 put","aws s3 upload"],a:1,e:"<b>aws s3 cp</b> = copy। Source থেকে destination এ copy। Local → S3, S3 → Local, S3 → S3।"},
+  {q:"Session Manager ব্যবহার করলে কোন port open করতে হয় না?",o:["Port 443","Port 80","Port 22 (SSH)","Port 3389 (RDP)"],a:2,e:"<b>Session Manager</b> = <b>Port 22 (SSH)</b> ছাড়া। SSM Agent ব্যবহার করে। Security best practice।"},
+  {q:"AWS Management Console এ Default Region set করার জন্য কোথায় যেতে হয়?",o:["S3 settings","IAM → Regions","General Settings (gear icon) → Unified Settings","EC2 → Preferences"],a:2,e:"Gear icon → <b>See all user settings → Localization and default Region → Edit</b>।"},
+];
+const TF=[
+  {s:"AWS CLI এবং AWS Management Console আলাদা backend use করে, তাই same resource এ different state দেখাতে পারে।",a:false,e:"উভয়ই same AWS API। Backend same। Same resource same state।"},
+  {s:"S3 bucket name globally unique হতে হবে — সারা বিশ্বে কোনো duplicate থাকতে পারবে না।",a:true,e:"S3 bucket names = globally unique এবং DNS-compliant। আন্তর্জাতিকভাবে unique।"},
+  {s:"Session Manager ব্যবহার করতে EC2 instance এ SSH port (22) খোলা থাকতে হবে।",a:false,e:"Session Manager = port 22 ছাড়া। SSM Agent দিয়ে connect। Security best practice।"},
+  {s:"AWS CLI তে 'aws s3 ls' command সব S3 buckets list করে।",a:true,e:"ls = list। <b>aws s3 ls</b> = সব buckets। <b>aws s3 ls s3://bucket-name</b> = bucket contents।"},
+  {s:"Console এ Favorites হলো frequently used services যেগুলো navigation bar এ pin করা থাকে।",a:true,e:"Favorites = ★ star দিয়ে mark করা services। Navigation bar এ সবসময় visible।"},
+];
+const CASES=[
+  {sc:"<strong>Company</strong> তাদের developers কে EC2 instances access দিতে চায় কিন্তু Security team SSH port open করতে রাজি নয়। Audit trail ও দরকার।",q:"কোন solution best?",o:["Open port 22 temporarily","Use AWS Systems Manager Session Manager","Create special SSH keys","Use direct IP access"],a:1,e:"<b>Session Manager</b> = no SSH port, IAM-controlled, CloudTrail audit trail। Security team happy।"},
+  {sc:"<strong>DevOps engineer</strong> প্রতিদিন 50টি S3 bucket তৈরি করে। Console দিয়ে manually করা time-consuming।",q:"কোন approach best?",o:["Console only — reliable","AWS CLI script — automate","Ask AWS Support","Use third-party tool"],a:1,e:"<b>CLI scripting</b> = repetitive tasks automate। Console = one-time/exploratory কাজের জন্য।"},
+];
+
+// MCQ RENDER
+function renderMCQ(){
+  const el=document.getElementById('mcq-section');
+  el.innerHTML='<h4 style="color:var(--lb);font-size:.85rem;font-weight:700;margin-bottom:16px;font-family:\'JetBrains Mono\',monospace">MULTIPLE CHOICE</h4>';
+  MCQ.forEach((q,i)=>{
+    const key='mcq-'+i;const ans=state[key];const done=ans!==undefined;
+    const div=document.createElement('div');
+    div.className='qcard'+(done?(ans===q.a?' ok':' er'):'');
+    div.id='qc-'+i;
+    div.innerHTML=`<div class="qmeta"><span class="qnum">Q${i+1}</span><span class="qtag">MCQ</span>${q.sc?'<span class="qscen">📌 Scenario</span>':''}</div>
+    <div class="qtxt">${q.q}</div>
+    <div class="opts">${q.o.map((o,j)=>`<button class="opt${done?(j===q.a?' cor':(j===ans?' wr':'')):''}${done?' ':''}" onclick="answerMCQ(${i},${j})" ${done?'disabled':''}><span class="olet">${'ABCD'[j]}</span>${o}</button>`).join('')}</div>
+    <div class="fb${done?' show '+(ans===q.a?'ok-fb':'er-fb'):''}">
+      <div class="fb-title">${done?(ans===q.a?'✅ সঠিক!':'❌ ভুল!')+' সঠিক: <b>'+q.o[q.a]+'</b>':''}</div>
+      <div class="fb-exp">${q.e}</div>
+    </div>`;
+    el.appendChild(div);
+  });
+  updateScore();
+}
+function answerMCQ(i,j){
+  const q=MCQ[i];if(state['mcq-'+i]!==undefined)return;
+  const cor=j===q.a;state['mcq-'+i]=j;
+  if(cor)state.ok=(state.ok||0)+1;else state.er=(state.er||0)+1;
+  saveState();renderMCQ();renderTF();renderCases();
+  showToast(cor?'✅ সঠিক!':'❌ ভুল!',cor?'ok':'er');
+}
+function updateScore(){
+  const ok=state.ok||0;const er=state.er||0;const tot=ok+er;
+  const pct=tot?Math.round(ok/tot*100):0;
+  document.getElementById('score-fill').style.width=pct+'%';
+  document.getElementById('score-txt').textContent=ok+'/'+(MCQ.length+TF.length+CASES.length);
+}
+function renderTF(){
+  const el=document.getElementById('tf-section');el.innerHTML='';
+  TF.forEach((q,i)=>{
+    const key='tf-'+i;const ans=state[key];const done=ans!==undefined;const cor=done&&ans===q.a;
+    const div=document.createElement('div');div.className='tf-card'+(done?(cor?' ok':' er'):'');
+    div.innerHTML=`<div class="qmeta"><span class="qnum">T/F ${i+1}</span></div>
+    <div class="tf-stmt">${q.s}</div>
+    <div class="tf-btns">
+      <button class="tf-btn t-btn${done?(q.a===true?' cor-tf':(ans===true?' wr-tf':'')):''}${done?' ':''}" onclick="answerTF(${i},true)" ${done?'disabled':''}>✅ সত্য</button>
+      <button class="tf-btn f-btn${done?(q.a===false?' cor-tf':(ans===false?' wr-tf':'')):''}${done?' ':''}" onclick="answerTF(${i},false)" ${done?'disabled':''}>❌ মিথ্যা</button>
+    </div>
+    <div class="tf-fb${done?' show '+(cor?'ok-tf':'er-tf'):''}">
+      ${done?`<b>${cor?'✅ সঠিক!':'❌ ভুল!'}</b> সঠিক: ${q.a?'সত্য':'মিথ্যা'} — ${q.e}`:''}
+    </div>`;
+    el.appendChild(div);
+  });
+}
+function answerTF(i,val){
+  const q=TF[i];if(state['tf-'+i]!==undefined)return;
+  const cor=val===q.a;state['tf-'+i]=val;
+  if(cor)state.ok=(state.ok||0)+1;else state.er=(state.er||0)+1;
+  saveState();renderTF();updateScore();
+  showToast(cor?'✅ সঠিক!':'❌ ভুল!',cor?'ok':'er');
+}
+function renderCases(){
+  const el=document.getElementById('case-section');el.innerHTML='';
+  CASES.forEach((q,i)=>{
+    const key='case-'+i;const ans=state[key];const done=ans!==undefined;
+    const div=document.createElement('div');div.className='case-card';
+    div.innerHTML=`<div class="case-sc">${q.sc}</div>
+    <div class="case-q">❓ ${q.q}</div>
+    <div class="opts">${q.o.map((o,j)=>`<button class="opt${done?(j===q.a?' cor':(j===ans?' wr':'')):''}${done?' ':''}" onclick="answerCase(${i},${j})" ${done?'disabled':''}><span class="olet">${'ABCD'[j]}</span>${o}</button>`).join('')}</div>
+    <div class="fb${done?' show '+(ans===q.a?'ok-fb':'er-fb'):''}">
+      <div class="fb-title">${done?(ans===q.a?'✅ সঠিক!':'❌ ভুল!')+' সঠিক: <b>'+q.o[q.a]+'</b>':''}</div>
+      <div class="fb-exp">${q.e}</div>
+    </div>`;
+    el.appendChild(div);
+  });
+}
+function answerCase(i,j){
+  const q=CASES[i];if(state['case-'+i]!==undefined)return;
+  const cor=j===q.a;state['case-'+i]=j;
+  if(cor)state.ok=(state.ok||0)+1;else state.er=(state.er||0)+1;
+  saveState();renderCases();updateScore();
+  showToast(cor?'✅ সঠিক!':'❌ ভুল!',cor?'ok':'er');
+}
+
+// FLASHCARDS
+const CARDS=[
+  {f:"AWS CLI",b:"Command Line Interface। Terminal দিয়ে AWS services control। Automation এর জন্য ideal। Console এর বিকল্প।"},
+  {f:"aws s3 mb",b:"make bucket। নতুন S3 bucket তৈরি করে। mb = make bucket।"},
+  {f:"aws s3 cp",b:"copy। Local → S3, S3 → Local, S3 → S3 file copy করে।"},
+  {f:"aws s3 ls",b:"list। সব buckets দেখায়। 'aws s3 ls s3://name' = bucket contents।"},
+  {f:"Session Manager",b:"SSH Port 22 ছাড়া EC2 access। SSM capability। Browser-based shell। IAM-controlled। Audit trail।"},
+  {f:"S3 Bucket Name",b:"Globally unique। DNS-compliant। Lowercase। 3-63 chars। পৃথিবীতে একটিই থাকতে পারে।"},
+  {f:"AWS API",b:"Console ও CLI উভয়ই AWS API call করে। Same backend, different interface।"},
+  {f:"Region",b:"AWS resources geographical area তে থাকে। Resources region-specific। Lab = eu-west-2 (London)।"},
+];
+let fcState={idx:0,flipped:false,known:[],unknown:[]};
+function renderFlash(){
+  const el=document.getElementById('flash-container');
+  const c=CARDS[fcState.idx];
+  el.innerHTML=`<div style="text-align:center;margin-bottom:10px;color:var(--t2);font-size:.8rem;font-family:'Hind Siliguri',sans-serif">
+    কার্ড ${fcState.idx+1}/${CARDS.length} | ✅ ${fcState.known.length} জানি | 📚 ${fcState.unknown.length} শিখছি
+  </div>
+  <div class="fc-nav">
+    <button class="fc-nav-btn" onclick="prevCard()">‹</button>
+    <span>${fcState.idx+1} of ${CARDS.length}</span>
+    <button class="fc-nav-btn" onclick="nextCard()">›</button>
+  </div>
+  <div class="fc-wrap"><div class="fc-outer${fcState.flipped?' flipped':''}" onclick="flipCard()">
+    <div class="fc-front"><span class="fc-lbl">TERM / COMMAND</span><div class="fc-txt">${c.f}</div><div class="fc-hint">👆 click to flip</div></div>
+    <div class="fc-back"><span class="fc-lbl">বাংলায় মনে রাখো</span><div class="fc-txt" style="font-family:'Hind Siliguri',sans-serif;font-size:.88rem">${c.b}</div></div>
+  </div></div>
+  <div class="fc-known-wrap">
+    <button class="fc-known fc-unk" onclick="markCard(false)">📚 আবার দেখব</button>
+    <button class="fc-known fc-kno" onclick="markCard(true)">✅ জানি!</button>
+  </div>`;
+}
+function flipCard(){fcState.flipped=!fcState.flipped;renderFlash();}
+function nextCard(){fcState.flipped=false;fcState.idx=(fcState.idx+1)%CARDS.length;renderFlash();}
+function prevCard(){fcState.flipped=false;fcState.idx=(fcState.idx-1+CARDS.length)%CARDS.length;renderFlash();}
+function markCard(known){
+  if(known)fcState.known.push(fcState.idx);else fcState.unknown.push(fcState.idx);
+  fcState.flipped=false;fcState.idx=(fcState.idx+1)%CARDS.length;renderFlash();
+}
+
+renderMCQ();renderTF();renderCases();renderFlash();updateCheckProgress();
+</script>
+</body>
+</html>

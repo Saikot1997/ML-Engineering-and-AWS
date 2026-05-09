@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 4: Cost-Optimized Architectures — AWS SAA বাংলা</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--or:#FF9900;--dk:#080d1a;--bl:#0f1929;--cb:#162236;--bd:#1e3058;--lb:#00a8e1;--tl:#00c7b1;--gr:#00d68f;--re:#ff4757;--yw:#ffd32a;--t1:#e8f4fd;--t2:#8faec8;--t3:#c5dff0;--ok:#00d68f;--er:#ff4757}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit','Hind Siliguri',sans-serif;background:var(--dk);color:var(--t1);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 30%,rgba(255,215,42,.06) 0,transparent 50%),radial-gradient(ellipse at 80% 70%,rgba(255,153,0,.05) 0,transparent 50%);pointer-events:none;z-index:0}
+.hdr{background:linear-gradient(135deg,#0b1320,#162236,#0b1320);border-bottom:2px solid var(--yw);padding:14px 24px;position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 30px rgba(255,215,42,.12);gap:12px;flex-wrap:wrap}
+.badge{background:linear-gradient(135deg,var(--yw),#e6b800);color:#000;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;padding:5px 10px;border-radius:6px;letter-spacing:1px}
+.hdr-title{font-size:1.05rem;font-weight:800;background:linear-gradient(135deg,#fff,var(--yw));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-sub{font-family:'Hind Siliguri',sans-serif;font-size:.78rem;color:var(--t2);margin-top:1px}
+.stats{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.stat{padding:5px 12px;border-radius:20px;font-size:.8rem;font-weight:700}
+.stat-ok{background:rgba(0,214,143,.12);border:1px solid rgba(0,214,143,.35);color:var(--gr)}
+.stat-er{background:rgba(255,71,87,.12);border:1px solid rgba(255,71,87,.35);color:var(--re)}
+.stat-pct{background:rgba(255,215,42,.12);border:1px solid rgba(255,215,42,.35);color:var(--yw)}
+.reset-btn{background:rgba(255,255,255,.05);border:1px solid var(--bd);color:var(--t2);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:.78rem;transition:all .2s}
+.reset-btn:hover{border-color:var(--re);color:var(--re)}
+.home-btn{background:rgba(255,215,42,.1);border:1px solid rgba(255,215,42,.3);color:var(--yw);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:.78rem;font-weight:700;text-decoration:none;transition:all .2s}
+.home-btn:hover{background:rgba(255,215,42,.2)}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 16px;position:relative;z-index:1}
+.nav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-bottom:28px}
+.chip{background:var(--cb);border:1.5px solid var(--bd);border-radius:12px;padding:10px 12px;cursor:pointer;text-align:center;transition:all .25s;position:relative}
+.chip:hover,.chip.act{border-color:var(--yw);background:rgba(255,215,42,.08);transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,215,42,.1)}
+.chip .ico{font-size:1.3rem;display:block;margin-bottom:4px}
+.chip .lbl{font-size:.72rem;font-weight:600;color:var(--t2)}
+.chip.act .lbl{color:var(--yw)}
+.chip .pct{position:absolute;top:5px;right:7px;font-size:.65rem;color:var(--gr);font-weight:700}
+.sc{background:var(--cb);border:1.5px solid var(--bd);border-radius:18px;margin-bottom:20px;overflow:hidden;transition:border-color .3s}
+.sc.active-lesson{border-color:rgba(255,215,42,.4)}
+.sc.active-exercise{border-color:rgba(0,214,143,.5)}
+.sh{padding:18px 22px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;gap:12px;background:linear-gradient(135deg,#162236,#0f1929)}
+.sh:hover{background:linear-gradient(135deg,#1a2a40,#131e2e)}
+.sh-left{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+.sh-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0}
+.sh-title{font-size:1rem;font-weight:700;color:#fff}
+.sh-sub{font-family:'Hind Siliguri',sans-serif;font-size:.8rem;color:var(--t2);margin-top:2px}
+.sh-btns{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.btn{padding:8px 16px;border-radius:9px;border:2px solid transparent;cursor:pointer;font-weight:700;font-size:.78rem;transition:all .25s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-l{background:rgba(255,215,42,.12);border-color:rgba(255,215,42,.3);color:var(--yw)}
+.btn-l:hover,.btn-l.active{background:var(--yw);color:#000;border-color:var(--yw)}
+.btn-e{background:rgba(0,214,143,.12);border-color:rgba(0,214,143,.3);color:var(--gr)}
+.btn-e:hover,.btn-e.active{background:var(--gr);color:#000;border-color:var(--gr)}
+.prog-bar{padding:10px 22px;background:rgba(0,0,0,.15);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px}
+.mini-track{flex:1;height:4px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.mini-fill{height:100%;background:linear-gradient(90deg,var(--yw),var(--or));border-radius:3px;transition:width .6s ease}
+.prog-txt{font-size:.72rem;color:var(--t2);font-weight:600;white-space:nowrap}
+.col{display:none}
+.col.open{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.lesson{padding:22px}
+.concept{background:linear-gradient(135deg,rgba(255,215,42,.05),rgba(255,215,42,.01));border-left:3px solid var(--yw);border-radius:0 12px 12px 0;padding:16px 20px;margin-bottom:18px}
+.ct{font-size:.95rem;font-weight:700;color:var(--yw);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cb{font-family:'Hind Siliguri',sans-serif;font-size:.95rem;color:var(--t3);line-height:1.85}
+.cb b,.cb strong{color:var(--or)}
+.eng{font-family:'JetBrains Mono',monospace;background:rgba(255,215,42,.12);color:var(--yw);padding:1px 6px;border-radius:4px;font-size:.88em;font-weight:600}
+.kp{background:rgba(0,168,225,.05);border:1px solid rgba(0,168,225,.2);border-radius:13px;padding:16px 20px;margin-bottom:18px}
+.kp h4{color:var(--lb);font-size:.85rem;font-weight:700;margin-bottom:10px;font-family:'Hind Siliguri',sans-serif}
+.kp li{font-family:'Hind Siliguri',sans-serif;font-size:.9rem;color:var(--t3);padding:6px 0 6px 20px;position:relative;line-height:1.7;list-style:none;border-bottom:1px solid rgba(255,255,255,.04)}
+.kp li:last-child{border-bottom:none}
+.kp li::before{content:'▸';color:var(--lb);position:absolute;left:0;font-size:.8rem;top:8px}
+.tip{background:linear-gradient(135deg,rgba(0,214,143,.06),rgba(0,214,143,.02));border:1px solid rgba(0,214,143,.3);border-radius:13px;padding:14px 18px;margin-bottom:18px;display:flex;gap:12px}
+.tip .ico{font-size:1.2rem;flex-shrink:0;margin-top:2px}
+.tip p{font-family:'Hind Siliguri',sans-serif;font-size:.88rem;color:var(--t3);line-height:1.75}
+.tip strong{color:var(--gr)}
+.tbl{width:100%;border-collapse:separate;border-spacing:0 5px;margin-bottom:18px}
+.tbl th{background:rgba(255,215,42,.1);color:var(--yw);padding:10px 14px;font-size:.8rem;font-weight:700;text-align:left}
+.tbl td{background:rgba(255,255,255,.02);padding:10px 14px;font-family:'Hind Siliguri',sans-serif;font-size:.85rem;color:var(--t3);border-bottom:1px solid rgba(255,255,255,.04)}
+.tbl tr:hover td{background:rgba(255,255,255,.04)}
+.diagram{margin:0 0 18px;border-radius:13px;overflow:hidden;border:1px solid var(--bd)}
+.diagram svg{display:block;width:100%;height:auto}
+/* EXERCISE */
+.ex-wrap{padding:22px}
+.ex-hdr h3{font-size:1rem;font-weight:700;color:var(--yw);margin-bottom:16px}
+.ex-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.ex-tab{padding:7px 14px;border-radius:8px;border:1.5px solid var(--bd);cursor:pointer;font-size:.78rem;font-weight:700;color:var(--t2);background:transparent;transition:all .2s}
+.ex-tab:hover{border-color:var(--yw);color:var(--yw)}
+.ex-tab.active{background:rgba(255,215,42,.1);border-color:var(--yw);color:var(--yw)}
+.ex-panel{display:none}
+.ex-panel.open{display:block;animation:fadeIn .2s ease}
+.qcard{background:linear-gradient(135deg,rgba(22,34,54,.9),rgba(15,25,41,.95));border:1.5px solid var(--bd);border-radius:15px;padding:20px;margin-bottom:18px;transition:border-color .3s}
+.qcard.ok{border-color:rgba(0,214,143,.5);background:rgba(0,214,143,.04)}
+.qcard.er{border-color:rgba(255,71,87,.5);background:rgba(255,71,87,.04)}
+.qmeta{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.qnum{background:rgba(255,215,42,.15);color:var(--yw);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px}
+.qtype{background:rgba(255,255,255,.06);color:var(--t2);font-size:.7rem;padding:3px 10px;border-radius:20px}
+.qscen{background:rgba(255,153,0,.12);color:var(--or);font-size:.7rem;padding:3px 10px;border-radius:20px;font-weight:600}
+.qtxt{font-family:'Hind Siliguri',sans-serif;font-size:.98rem;color:var(--t1);line-height:1.8;margin-bottom:16px;font-weight:500}
+.opts{display:grid;gap:8px}
+.opt{background:rgba(255,255,255,.03);border:1.5px solid var(--bd);border-radius:11px;padding:12px 16px;cursor:pointer;text-align:left;transition:all .2s;display:flex;align-items:flex-start;gap:12px;font-family:'Hind Siliguri',sans-serif;font-size:.9rem;color:var(--t1);line-height:1.6;width:100%}
+.opt:hover:not(:disabled){border-color:var(--yw);background:rgba(255,215,42,.05);transform:translateX(3px)}
+.opt:disabled{cursor:default;transform:none}
+.opt.cor{border-color:var(--ok);background:rgba(0,214,143,.1);color:var(--ok)}
+.opt.wr{border-color:var(--er);background:rgba(255,71,87,.1);color:var(--er)}
+.olet{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0;background:rgba(255,255,255,.07);color:var(--t2);font-family:'JetBrains Mono',monospace}
+.opt.cor .olet{background:var(--ok);color:#000}
+.opt.wr .olet{background:var(--er);color:#fff}
+.fb{display:none;margin-top:14px;border-radius:11px;padding:14px 16px}
+.fb.show{display:block}
+.fb.ok-fb{background:rgba(0,214,143,.07);border:1px solid rgba(0,214,143,.3)}
+.fb.er-fb{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3)}
+.fb-title{font-weight:700;font-size:.9rem;margin-bottom:6px}
+.ok-fb .fb-title{color:var(--ok)}
+.er-fb .fb-title{color:var(--er)}
+.fb-exp{font-family:'Hind Siliguri',sans-serif;font-size:.88rem;color:var(--t3);line-height:1.75}
+.fb-exp b{color:var(--or)}
+.tf-card{background:linear-gradient(135deg,rgba(22,34,54,.9),rgba(15,25,41,.95));border:1.5px solid var(--bd);border-radius:15px;padding:20px;margin-bottom:14px;transition:border-color .3s}
+.tf-card.ok{border-color:rgba(0,214,143,.5)}
+.tf-card.er{border-color:rgba(255,71,87,.5)}
+.tf-stmt{font-family:'Hind Siliguri',sans-serif;font-size:.96rem;color:var(--t1);line-height:1.8;margin-bottom:14px;font-weight:500}
+.tf-btns{display:flex;gap:10px}
+.tf-btn{flex:1;padding:10px;border-radius:10px;border:2px solid var(--bd);cursor:pointer;font-size:.9rem;font-weight:700;background:transparent;transition:all .2s}
+.tf-btn.true-btn{color:var(--gr)}
+.tf-btn.false-btn{color:var(--re)}
+.tf-btn:hover:not(:disabled){transform:translateY(-2px)}
+.tf-btn.cor-tf{background:rgba(0,214,143,.15);border-color:var(--gr);color:var(--gr)}
+.tf-btn.wr-tf{background:rgba(255,71,87,.15);border-color:var(--re);color:var(--re)}
+.tf-btn:disabled{cursor:default;transform:none}
+.tf-fb{display:none;margin-top:12px;padding:12px 14px;border-radius:10px;font-family:'Hind Siliguri',sans-serif;font-size:.85rem;line-height:1.7}
+.tf-fb.show{display:block}
+.tf-fb.ok-tf{background:rgba(0,214,143,.07);border:1px solid rgba(0,214,143,.3);color:var(--t3)}
+.tf-fb.er-tf{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3);color:var(--t3)}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.match-left,.match-right{display:flex;flex-direction:column;gap:8px}
+.match-item{background:rgba(255,255,255,.03);border:1.5px solid var(--bd);border-radius:10px;padding:11px 15px;font-family:'Hind Siliguri',sans-serif;font-size:.85rem;color:var(--t1);cursor:pointer;transition:all .2s;user-select:none;min-height:44px;display:flex;align-items:center}
+.match-item.selected{border-color:var(--yw);background:rgba(255,215,42,.08);color:var(--yw)}
+.match-item.matched-ok{border-color:var(--ok);background:rgba(0,214,143,.1);color:var(--ok);cursor:default}
+.match-item.matched-er{border-color:var(--er);background:rgba(255,71,87,.1);color:var(--er);cursor:default;animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.fc-wrap{perspective:1000px;max-width:600px;margin:0 auto 20px}
+.fc-card-outer{width:100%;height:200px;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.fc-card-outer.flipped{transform:rotateY(180deg)}
+.fc-front,.fc-back{position:absolute;inset:0;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.fc-front{background:linear-gradient(135deg,var(--cb),var(--bl));border:1.5px solid var(--yw)}
+.fc-back{background:linear-gradient(135deg,rgba(255,215,42,.07),rgba(255,153,0,.04));border:1.5px solid var(--or);transform:rotateY(180deg)}
+.fc-label{font-size:.7rem;font-weight:700;letter-spacing:1px;margin-bottom:10px;opacity:.7;font-family:'JetBrains Mono',monospace}
+.fc-front .fc-label{color:var(--yw)}
+.fc-back .fc-label{color:var(--or)}
+.fc-content{font-family:'Hind Siliguri',sans-serif;font-size:1rem;color:var(--t1);text-align:center;line-height:1.7}
+.fc-front .fc-content{font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:700;color:var(--yw)}
+.fc-hint{font-size:.72rem;color:var(--t2);margin-top:10px;font-family:'Hind Siliguri',sans-serif;text-align:center}
+.fc-known-wrap{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.fc-known{padding:8px 20px;border-radius:10px;cursor:pointer;font-weight:700;font-size:.82rem;transition:all .2s;border:1.5px solid transparent}
+.fc-known-yes{background:rgba(0,214,143,.15);border-color:var(--ok);color:var(--ok)}
+.fc-known-no{background:rgba(255,71,87,.15);border-color:var(--er);color:var(--er)}
+.fc-known:hover{transform:translateY(-2px)}
+.case-card{background:linear-gradient(135deg,rgba(255,215,42,.04),rgba(255,153,0,.02));border:1.5px solid rgba(255,215,42,.25);border-radius:15px;padding:20px;margin-bottom:18px}
+.case-scenario{background:rgba(0,0,0,.2);border-left:3px solid var(--or);border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:16px;font-family:'Hind Siliguri',sans-serif;font-size:.92rem;color:var(--t3);line-height:1.8}
+.case-scenario strong{color:var(--or)}
+.case-q{font-family:'Hind Siliguri',sans-serif;font-size:.95rem;color:var(--t1);margin-bottom:14px;font-weight:600}
+.fib-card{background:linear-gradient(135deg,rgba(22,34,54,.9),rgba(15,25,41,.95));border:1.5px solid var(--bd);border-radius:15px;padding:20px;margin-bottom:14px}
+.fib-q{font-family:'Hind Siliguri',sans-serif;font-size:.96rem;color:var(--t1);line-height:1.85;margin-bottom:14px}
+.fib-input-wrap{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.fib-input{background:rgba(255,255,255,.05);border:1.5px solid var(--bd);border-radius:9px;padding:9px 14px;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.9rem;width:220px;transition:all .2s;outline:none}
+.fib-input:focus{border-color:var(--yw)}
+.fib-input.ok-inp{border-color:var(--ok);background:rgba(0,214,143,.07)}
+.fib-input.er-inp{border-color:var(--er);background:rgba(255,71,87,.07)}
+.fib-check{background:rgba(255,215,42,.1);border:1px solid rgba(255,215,42,.3);color:var(--yw);padding:9px 18px;border-radius:9px;cursor:pointer;font-weight:700;font-size:.82rem;transition:all .2s}
+.fib-check:hover{background:rgba(255,215,42,.2)}
+.fib-fb{display:none;margin-top:12px;font-family:'Hind Siliguri',sans-serif;font-size:.85rem;line-height:1.7;padding:10px 14px;border-radius:8px}
+.fib-fb.show{display:block}
+.fib-fb.ok-f{background:rgba(0,214,143,.07);border:1px solid rgba(0,214,143,.3);color:var(--gr)}
+.fib-fb.er-f{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.3);color:var(--re)}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--cb);border:1px solid var(--bd);border-radius:13px;padding:12px 20px;font-size:.85rem;font-weight:600;opacity:0;transform:translateY(20px);transition:all .3s;z-index:999;max-width:280px;pointer-events:none;font-family:'Hind Siliguri',sans-serif}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok-t{border-color:rgba(0,214,143,.5);color:var(--ok)}
+.toast.er-t{border-color:rgba(255,71,87,.5);color:var(--er)}
+@media(max-width:600px){.sh-btns{flex-direction:column}.match-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="badge">MODULE 4</span>
+    <div><div class="hdr-title">💰 Cost-Optimized Architectures</div><div class="hdr-sub">Networking • Migration • Monitoring • Cost Tools</div></div>
+  </div>
+  <div class="stats">
+    <span class="stat stat-ok" id="hOk">✅ 0</span>
+    <span class="stat stat-er" id="hEr">❌ 0</span>
+    <span class="stat stat-pct" id="hPct">📊 0%</span>
+    <a href="aws-saa-main.html" class="home-btn">🏠 Home</a>
+    <button class="reset-btn" onclick="resetProgress()">🔄 Reset</button>
+  </div>
+</div>
+
+<div class="wrap">
+<div class="nav-grid">
+  <div class="chip act" onclick="goSection('s1',this)"><span class="ico">🌐</span><span class="lbl">Networking</span><span class="pct" id="np-s1">0%</span></div>
+  <div class="chip" onclick="goSection('s2',this)"><span class="ico">🚚</span><span class="lbl">Migration</span><span class="pct" id="np-s2">0%</span></div>
+  <div class="chip" onclick="goSection('s3',this)"><span class="ico">📊</span><span class="lbl">Monitoring</span><span class="pct" id="np-s3">0%</span></div>
+  <div class="chip" onclick="goSection('s4',this)"><span class="ico">💲</span><span class="lbl">Cost Tools</span><span class="pct" id="np-s4">0%</span></div>
+</div>
+
+<!-- S1: NETWORKING -->
+<div class="sc active-lesson" id="s1">
+  <div class="sh" onclick="toggleLesson('s1')">
+    <div class="sh-left">
+      <div class="sh-icon" style="background:linear-gradient(135deg,rgba(0,168,225,.2),rgba(0,168,225,.05))">🌐</div>
+      <div><div class="sh-title">Advanced Networking</div><div class="sh-sub">Route 53, VPN, Direct Connect, Transit Gateway, VPC Advanced</div></div>
+    </div>
+    <div class="sh-btns" onclick="event.stopPropagation()">
+      <button class="btn btn-l active" id="lb-s1" onclick="showLesson('s1')">📖 Lesson</button>
+      <button class="btn btn-e" id="eb-s1" onclick="showExercise('s1')">🎯 Practice</button>
+    </div>
+  </div>
+  <div class="prog-bar"><span class="prog-txt">অগ্রগতি</span><div class="mini-track"><div class="mini-fill" id="pf-s1" style="width:0%"></div></div><span class="prog-txt" id="pt-s1">0/0</span></div>
+  <div class="col open" id="lesson-s1"><div class="lesson">
+
+<div class="diagram"><svg viewBox="0 0 700 175" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="a4" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#8faec8"/></marker></defs>
+<rect width="700" height="175" fill="#0f1929"/>
+<text x="350" y="20" text-anchor="middle" fill="#FF9900" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700">AWS Connectivity Options — On-Premises to AWS</text>
+<!-- On-premises -->
+<rect x="15" y="65" width="110" height="50" rx="9" fill="rgba(255,215,42,0.1)" stroke="#ffd32a" stroke-width="1.5"/>
+<text x="70" y="88" text-anchor="middle" fill="#ffd32a" font-size="9" font-weight="700">🏢 On-Premises</text>
+<text x="70" y="105" text-anchor="middle" fill="#8faec8" font-size="8">Data Center</text>
+<!-- VPN -->
+<rect x="168" y="35" width="130" height="45" rx="8" fill="rgba(0,199,177,0.08)" stroke="#00c7b1" stroke-width="1.5"/>
+<text x="233" y="56" text-anchor="middle" fill="#00c7b1" font-size="9" font-weight="700">🔒 Site-to-Site VPN</text>
+<text x="233" y="72" text-anchor="middle" fill="#8faec8" font-size="8">Internet (encrypted)</text>
+<text x="233" y="84" text-anchor="middle" fill="#8faec8" font-size="7">Quick setup, cheaper</text>
+<line x1="125" y1="90" x2="168" y2="57" stroke="#00c7b1" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#a4)"/>
+<!-- Direct Connect -->
+<rect x="168" y="95" width="130" height="45" rx="8" fill="rgba(255,153,0,0.08)" stroke="#FF9900" stroke-width="1.5"/>
+<text x="233" y="116" text-anchor="middle" fill="#FF9900" font-size="9" font-weight="700">⚡ Direct Connect</text>
+<text x="233" y="131" text-anchor="middle" fill="#8faec8" font-size="8">Dedicated fiber (private)</text>
+<text x="233" y="143" text-anchor="middle" fill="#8faec8" font-size="7">Consistent, fast, expensive</text>
+<line x1="125" y1="90" x2="168" y2="117" stroke="#FF9900" stroke-width="1.5" marker-end="url(#a4)"/>
+<!-- Transit Gateway -->
+<rect x="365" y="65" width="140" height="50" rx="8" fill="rgba(0,214,143,0.08)" stroke="#00d68f" stroke-width="1.5"/>
+<text x="435" y="88" text-anchor="middle" fill="#00d68f" font-size="9" font-weight="700">🔀 Transit Gateway</text>
+<text x="435" y="103" text-anchor="middle" fill="#8faec8" font-size="8">Hub-and-spoke — 1000s VPCs</text>
+<line x1="298" y1="57" x2="365" y2="90" stroke="#8faec8" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#a4)"/>
+<line x1="298" y1="117" x2="365" y2="90" stroke="#8faec8" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#a4)"/>
+<!-- AWS VPC -->
+<rect x="558" y="65" width="120" height="50" rx="8" fill="rgba(0,168,225,0.08)" stroke="#00a8e1" stroke-width="1.5"/>
+<text x="618" y="88" text-anchor="middle" fill="#00a8e1" font-size="9" font-weight="700">☁️ AWS VPC</text>
+<text x="618" y="103" text-anchor="middle" fill="#8faec8" font-size="8">Private cloud network</text>
+<line x1="505" y1="90" x2="558" y2="90" stroke="#8faec8" stroke-width="1.5" marker-end="url(#a4)"/>
+<text x="350" y="165" text-anchor="middle" fill="#8faec8" font-size="8">Transit Gateway = hub-and-spoke। Multiple VPCs + on-premises connect করো একটি TGW দিয়ে।</text>
+</svg></div>
+
+<table class="tbl">
+<tr><th>Service</th><th>Use Case</th><th>Key Difference</th></tr>
+<tr><td><span class="eng">Route 53</span></td><td>DNS + routing policies</td><td>Simple, Weighted, Latency, Failover, Geolocation, Geo-proximity, Multi-Value</td></tr>
+<tr><td><span class="eng">Site-to-Site VPN</span></td><td>On-premises ↔ AWS (encrypted)</td><td>Internet over IPSec। Quick (hrs)। Backup for DX।</td></tr>
+<tr><td><span class="eng">Direct Connect (DX)</span></td><td>Dedicated fiber connection</td><td>Private, consistent, 1-100 Gbps। Not internet।</td></tr>
+<tr><td><span class="eng">Transit Gateway</span></td><td>Hub for thousands of VPCs</td><td>Transitive routing। Replaces complex peering mesh।</td></tr>
+<tr><td><span class="eng">VPC Peering</span></td><td>Connect 2 VPCs</td><td>Non-transitive। No overlapping CIDRs।</td></tr>
+</table>
+
+<div class="concept"><div class="ct">🌍 Route 53 Routing Policies — SAA এ সবচেয়ে বেশি আসে</div>
+<div class="cb">
+<b>Simple</b> — একটি resource। Random multiple IPs।<br>
+<b>Weighted</b> — Traffic distribution (70% A, 30% B)। A/B testing।<br>
+<b>Latency</b> — Lowest latency region তে route। Global users।<br>
+<b>Failover</b> — Primary healthy? Route to primary। Unhealthy? Route to secondary। Health Check।<br>
+<b>Geolocation</b> — User এর location based। Country/continent।<br>
+<b>Geo-proximity</b> — Location + bias। Traffic flow adjust।<br>
+<b>Multi-Value</b> — Multiple IPs + health checks। Random selection।<br>
+📌 Exam: "DR failover" → Failover। "A/B test" → Weighted। "Nearest server" → Latency
+</div></div>
+
+<div class="tip"><span class="ico">💡</span><p><strong>Exam Tip:</strong> DX = private dedicated, consistent, expensive। VPN = internet, encrypted, quick। TGW = hub-and-spoke, thousands VPCs। VPC Peering = non-transitive, just 2 VPCs।</p></div>
+
+  </div></div>
+  <div class="col" id="exercise-s1"><div class="ex-wrap">
+    <div class="ex-hdr"><h3>🎯 Practice — Advanced Networking</h3></div>
+    <div class="ex-tabs">
+      <button class="ex-tab active" onclick="switchTab('s1','mcq',this)">📝 MCQ</button>
+      <button class="ex-tab" onclick="switchTab('s1','tf',this)">✅ True/False</button>
+      <button class="ex-tab" onclick="switchTab('s1','match',this)">🔗 Matching</button>
+      <button class="ex-tab" onclick="switchTab('s1','case',this)">📌 Scenarios</button>
+    </div>
+    <div class="ex-panel open" id="panel-s1-mcq"><div id="ex-s1-mcq"></div></div>
+    <div class="ex-panel" id="panel-s1-tf"><div id="ex-s1-tf"></div></div>
+    <div class="ex-panel" id="panel-s1-match"><div id="ex-s1-match"></div></div>
+    <div class="ex-panel" id="panel-s1-case"><div id="ex-s1-case"></div></div>
+  </div></div>
+</div>
+
+<!-- S2: MIGRATION -->
+<div class="sc" id="s2">
+  <div class="sh" onclick="toggleLesson('s2')">
+    <div class="sh-left">
+      <div class="sh-icon" style="background:linear-gradient(135deg,rgba(0,199,177,.2),rgba(0,199,177,.05))">🚚</div>
+      <div><div class="sh-title">Migration Services</div><div class="sh-sub">DMS, MGN, DataSync, Snow Family, Storage Gateway, AWS Backup</div></div>
+    </div>
+    <div class="sh-btns" onclick="event.stopPropagation()">
+      <button class="btn btn-l active" id="lb-s2" onclick="showLesson('s2')">📖 Lesson</button>
+      <button class="btn btn-e" id="eb-s2" onclick="showExercise('s2')">🎯 Practice</button>
+    </div>
+  </div>
+  <div class="prog-bar"><span class="prog-txt">অগ্রগতি</span><div class="mini-track"><div class="mini-fill" id="pf-s2" style="width:0%"></div></div><span class="prog-txt" id="pt-s2">0/0</span></div>
+  <div class="col open" id="lesson-s2"><div class="lesson">
+
+<table class="tbl">
+<tr><th>Service</th><th>কী করে</th><th>Exam Keyword</th></tr>
+<tr><td><span class="eng">AWS DMS</span></td><td>Database Migration Service</td><td>Homogeneous/Heterogeneous DB migration। Continuous replication।</td></tr>
+<tr><td><span class="eng">AWS MGN</span></td><td>Application Migration (lift &amp; shift)</td><td>Servers AWS এ migrate। Minimal downtime।</td></tr>
+<tr><td><span class="eng">AWS DataSync</span></td><td>File/object transfer (online)</td><td>NFS/SMB → S3/EFS। Scheduled, automated। Encryption।</td></tr>
+<tr><td><span class="eng">Snowcone</span></td><td>Smallest Snow device (8TB)</td><td>Edge computing, offline। DataSync agent included।</td></tr>
+<tr><td><span class="eng">Snowball Edge</span></td><td>Petabyte offline transfer</td><td>80TB. Compute optimized বা Storage optimized।</td></tr>
+<tr><td><span class="eng">Snowmobile</span></td><td>Exabyte scale (100PB)</td><td>Truck-sized। Entire data center migration।</td></tr>
+<tr><td><span class="eng">Storage Gateway</span></td><td>Hybrid cloud storage bridge</td><td>S3 File GW, Volume GW, Tape GW।</td></tr>
+</table>
+
+<div class="concept"><div class="ct">🔄 DMS — Database Migration হোমোজিনিয়াস vs হেটেরোজিনিয়াস</div>
+<div class="cb">
+<b>Homogeneous</b> — Same engine (MySQL → MySQL)। DMS directly।<br>
+<b>Heterogeneous</b> — Different engine (Oracle → Aurora)। <b>SCT (Schema Conversion Tool)</b> আগে run করো, তারপর DMS।<br>
+<b>CDC (Change Data Capture)</b> — Continuous replication। Source থেকে target এ real-time sync।<br>
+📌 Exam: "Oracle → PostgreSQL migration" → <b>SCT + DMS</b>
+</div></div>
+
+<div class="kp"><h4>❄️ Snow Family — কতটুকু data, কোনটা বেছে নেবে?</h4><ul>
+  <li><span class="eng">Snowcone</span> — 8TB (HDD) বা 14TB (SSD)। Smallest। IoT, edge computing।</li>
+  <li><span class="eng">Snowball Edge Storage</span> — 80TB। Bulk data transfer। 10-100TB range।</li>
+  <li><span class="eng">Snowball Edge Compute</span> — 42TB + EC2 compute। Edge processing।</li>
+  <li><span class="eng">Snowmobile</span> — 100PB। 10PB এর বেশি হলে Snowmobile।</li>
+  <li><span class="eng">Rule of thumb</span> — 1Gbps connection এ 10TB upload করতে ~1 day, 1PB ~3 years → Snow family use করো।</li>
+</ul></div>
+
+<div class="tip"><span class="ico">💡</span><p><strong>Exam Tip:</strong> DataSync = online file transfer (scheduled)। Snow family = offline bulk। Storage Gateway = hybrid (on-prem apps use S3)। DMS = DB migration। Snowmobile = &gt;10PB।</p></div>
+
+  </div></div>
+  <div class="col" id="exercise-s2"><div class="ex-wrap">
+    <div class="ex-hdr"><h3>🎯 Practice — Migration</h3></div>
+    <div class="ex-tabs">
+      <button class="ex-tab active" onclick="switchTab('s2','mcq',this)">📝 MCQ</button>
+      <button class="ex-tab" onclick="switchTab('s2','tf',this)">✅ True/False</button>
+      <button class="ex-tab" onclick="switchTab('s2','match',this)">🔗 Matching</button>
+      <button class="ex-tab" onclick="switchTab('s2','case',this)">📌 Scenarios</button>
+    </div>
+    <div class="ex-panel open" id="panel-s2-mcq"><div id="ex-s2-mcq"></div></div>
+    <div class="ex-panel" id="panel-s2-tf"><div id="ex-s2-tf"></div></div>
+    <div class="ex-panel" id="panel-s2-match"><div id="ex-s2-match"></div></div>
+    <div class="ex-panel" id="panel-s2-case"><div id="ex-s2-case"></div></div>
+  </div></div>
+</div>
+
+<!-- S3: MONITORING -->
+<div class="sc" id="s3">
+  <div class="sh" onclick="toggleLesson('s3')">
+    <div class="sh-left">
+      <div class="sh-icon" style="background:linear-gradient(135deg,rgba(255,153,0,.2),rgba(255,153,0,.05))">📊</div>
+      <div><div class="sh-title">Monitoring & Operations</div><div class="sh-sub">CloudWatch, CloudTrail, Config, X-Ray, Systems Manager</div></div>
+    </div>
+    <div class="sh-btns" onclick="event.stopPropagation()">
+      <button class="btn btn-l active" id="lb-s3" onclick="showLesson('s3')">📖 Lesson</button>
+      <button class="btn btn-e" id="eb-s3" onclick="showExercise('s3')">🎯 Practice</button>
+    </div>
+  </div>
+  <div class="prog-bar"><span class="prog-txt">অগ্রগতি</span><div class="mini-track"><div class="mini-fill" id="pf-s3" style="width:0%"></div></div><span class="prog-txt" id="pt-s3">0/0</span></div>
+  <div class="col open" id="lesson-s3"><div class="lesson">
+
+<table class="tbl">
+<tr><th>Service</th><th>কী monitor করে</th><th>Key Feature</th></tr>
+<tr><td><span class="eng">CloudWatch</span></td><td>Metrics, Logs, Alarms, Dashboards</td><td>Custom metrics। Alarms → SNS/Auto Scaling। Log Insights।</td></tr>
+<tr><td><span class="eng">CloudTrail</span></td><td>API calls (who did what)</td><td>Audit। 90 days default। S3 এ permanently store।</td></tr>
+<tr><td><span class="eng">AWS Config</span></td><td>Resource configuration compliance</td><td>Drift detection। Config rules। Remediation।</td></tr>
+<tr><td><span class="eng">AWS X-Ray</span></td><td>Distributed tracing</td><td>Microservices latency। Request path। Lambda/ECS।</td></tr>
+<tr><td><span class="eng">Systems Manager</span></td><td>EC2 fleet management</td><td>Patch Manager, Session Manager, Parameter Store।</td></tr>
+<tr><td><span class="eng">AWS Health Dashboard</span></td><td>AWS service health events</td><td>Personal Health Dashboard = your resources only।</td></tr>
+</table>
+
+<div class="concept"><div class="ct">📊 CloudWatch — Metrics vs Logs vs Alarms</div>
+<div class="cb">
+<b>Metrics</b> — Numeric data। EC2 CPU%, network, disk। Custom metrics (memory RAM — default নেই!)।<br>
+<b>Logs</b> — Text data। Application logs, Lambda logs। Log Groups → Log Streams।<br>
+<b>Alarms</b> — Metric threshold পার হলে action। SNS notification, EC2 action, Auto Scaling।<br>
+<b>Log Insights</b> — Query language for logs। Pattern, filter, aggregate।<br>
+<b>CloudWatch Agent</b> — EC2 এ install। Memory, disk utilization, custom metrics।<br>
+📌 Exam: "EC2 memory metrics" → CloudWatch Agent চাই (default নেই)
+</div></div>
+
+<div class="concept"><div class="ct">🔍 CloudTrail vs CloudWatch vs Config — পার্থক্য</div>
+<div class="cb">
+<b>CloudWatch</b> — "কী হচ্ছে?" Performance monitoring। Metrics, logs, alarms।<br>
+<b>CloudTrail</b> — "কে করেছে?" API audit trail। Security, compliance। Who called DeleteBucket?<br>
+<b>AWS Config</b> — "কীভাবে আছে?" Configuration state। Compliance rules। "S3 bucket কি public?"<br>
+📌 Exam: "Who changed Security Group?" → CloudTrail। "Is S3 compliant?" → Config। "CPU high" → CloudWatch
+</div></div>
+
+<div class="tip"><span class="ico">💡</span><p><strong>Exam Tip:</strong> EC2 default metrics = CPU, Network, Disk I/O। Memory = CloudWatch Agent। CloudTrail = API audit (default 90d, store S3 permanently)। Config = compliance drift। X-Ray = distributed tracing।</p></div>
+
+  </div></div>
+  <div class="col" id="exercise-s3"><div class="ex-wrap">
+    <div class="ex-hdr"><h3>🎯 Practice — Monitoring</h3></div>
+    <div class="ex-tabs">
+      <button class="ex-tab active" onclick="switchTab('s3','mcq',this)">📝 MCQ</button>
+      <button class="ex-tab" onclick="switchTab('s3','tf',this)">✅ True/False</button>
+      <button class="ex-tab" onclick="switchTab('s3','match',this)">🔗 Matching</button>
+      <button class="ex-tab" onclick="switchTab('s3','case',this)">📌 Scenarios</button>
+    </div>
+    <div class="ex-panel open" id="panel-s3-mcq"><div id="ex-s3-mcq"></div></div>
+    <div class="ex-panel" id="panel-s3-tf"><div id="ex-s3-tf"></div></div>
+    <div class="ex-panel" id="panel-s3-match"><div id="ex-s3-match"></div></div>
+    <div class="ex-panel" id="panel-s3-case"><div id="ex-s3-case"></div></div>
+  </div></div>
+</div>
+
+<!-- S4: COST TOOLS -->
+<div class="sc" id="s4">
+  <div class="sh" onclick="toggleLesson('s4')">
+    <div class="sh-left">
+      <div class="sh-icon" style="background:linear-gradient(135deg,rgba(0,214,143,.2),rgba(0,214,143,.05))">💲</div>
+      <div><div class="sh-title">Cost Optimization & Billing</div><div class="sh-sub">Reserved Instances, Savings Plans, Spot, Cost Explorer, Trusted Advisor</div></div>
+    </div>
+    <div class="sh-btns" onclick="event.stopPropagation()">
+      <button class="btn btn-l active" id="lb-s4" onclick="showLesson('s4')">📖 Lesson</button>
+      <button class="btn btn-e" id="eb-s4" onclick="showExercise('s4')">🎯 Practice</button>
+    </div>
+  </div>
+  <div class="prog-bar"><span class="prog-txt">অগ্রগতি</span><div class="mini-track"><div class="mini-fill" id="pf-s4" style="width:0%"></div></div><span class="prog-txt" id="pt-s4">0/0</span></div>
+  <div class="col open" id="lesson-s4"><div class="lesson">
+
+<div class="diagram"><svg viewBox="0 0 700 155" xmlns="http://www.w3.org/2000/svg">
+<rect width="700" height="155" fill="#0f1929"/>
+<text x="350" y="20" text-anchor="middle" fill="#FF9900" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700">EC2 Purchasing Options — Cost vs Flexibility</text>
+<rect x="10" y="32" width="100" height="105" rx="8" fill="rgba(255,71,87,0.08)" stroke="#ff4757" stroke-width="1.5"/>
+<text x="60" y="52" text-anchor="middle" fill="#ff4757" font-size="9" font-weight="700">On-Demand</text>
+<text x="60" y="70" text-anchor="middle" fill="#ffd32a" font-size="11" font-weight="700">$$$$</text>
+<text x="60" y="88" text-anchor="middle" fill="#8faec8" font-size="7">No commitment</text>
+<text x="60" y="102" text-anchor="middle" fill="#8faec8" font-size="7">Flexible</text>
+<text x="60" y="118" text-anchor="middle" fill="#00d68f" font-size="7">Any time</text>
+<rect x="122" y="32" width="108" height="105" rx="8" fill="rgba(0,168,225,0.08)" stroke="#00a8e1" stroke-width="1.5"/>
+<text x="176" y="52" text-anchor="middle" fill="#00a8e1" font-size="9" font-weight="700">Reserved</text>
+<text x="176" y="64" text-anchor="middle" fill="#00a8e1" font-size="8">(1 or 3 years)</text>
+<text x="176" y="82" text-anchor="middle" fill="#00d68f" font-size="11" font-weight="700">$$$</text>
+<text x="176" y="100" text-anchor="middle" fill="#8faec8" font-size="7">Up to 72% off</text>
+<text x="176" y="115" text-anchor="middle" fill="#8faec8" font-size="7">Steady workloads</text>
+<rect x="242" y="32" width="115" height="105" rx="8" fill="rgba(0,199,177,0.08)" stroke="#00c7b1" stroke-width="1.5"/>
+<text x="299" y="50" text-anchor="middle" fill="#00c7b1" font-size="9" font-weight="700">Savings Plans</text>
+<text x="299" y="62" text-anchor="middle" fill="#8faec8" font-size="7">(Compute/EC2/SageMaker)</text>
+<text x="299" y="80" text-anchor="middle" fill="#00d68f" font-size="11" font-weight="700">$$$</text>
+<text x="299" y="98" text-anchor="middle" fill="#8faec8" font-size="7">Up to 66% off</text>
+<text x="299" y="113" text-anchor="middle" fill="#8faec8" font-size="7">Flexible family/region</text>
+<rect x="369" y="32" width="108" height="105" rx="8" fill="rgba(0,214,143,0.08)" stroke="#00d68f" stroke-width="1.5"/>
+<text x="423" y="52" text-anchor="middle" fill="#00d68f" font-size="9" font-weight="700">Spot</text>
+<text x="423" y="68" text-anchor="middle" fill="#00d68f" font-size="11" font-weight="700">$</text>
+<text x="423" y="86" text-anchor="middle" fill="#8faec8" font-size="7">Up to 90% off!</text>
+<text x="423" y="100" text-anchor="middle" fill="#ff4757" font-size="7">Can be terminated</text>
+<text x="423" y="115" text-anchor="middle" fill="#8faec8" font-size="7">Batch, fault-tolerant</text>
+<rect x="489" y="32" width="110" height="105" rx="8" fill="rgba(255,215,42,0.08)" stroke="#ffd32a" stroke-width="1.5"/>
+<text x="544" y="52" text-anchor="middle" fill="#ffd32a" font-size="9" font-weight="700">Dedicated Host</text>
+<text x="544" y="68" text-anchor="middle" fill="#ffd32a" font-size="11" font-weight="700">$$$$$</text>
+<text x="544" y="86" text-anchor="middle" fill="#8faec8" font-size="7">Physical server</text>
+<text x="544" y="100" text-anchor="middle" fill="#8faec8" font-size="7">Compliance/License</text>
+<rect x="611" y="32" width="80" height="105" rx="8" fill="rgba(0,214,143,0.06)" stroke="#00d68f" stroke-width="1"/>
+<text x="651" y="52" text-anchor="middle" fill="#00d68f" font-size="8" font-weight="700">Dedicated</text>
+<text x="651" y="64" text-anchor="middle" fill="#00d68f" font-size="8" font-weight="700">Instance</text>
+<text x="651" y="80" text-anchor="middle" fill="#ffd32a" font-size="10" font-weight="700">$$$$</text>
+<text x="651" y="100" text-anchor="middle" fill="#8faec8" font-size="7">Isolated HW</text>
+<text x="651" y="115" text-anchor="middle" fill="#8faec8" font-size="7">Not dedicated host</text>
+<text x="350" y="148" text-anchor="middle" fill="#8faec8" font-size="8">Spot = cheapest (90% off) কিন্তু interrupt হতে পারে। Production critical workloads = On-Demand বা Reserved।</text>
+</svg></div>
+
+<table class="tbl">
+<tr><th>Tool</th><th>কী করে</th><th>When to Use</th></tr>
+<tr><td><span class="eng">AWS Cost Explorer</span></td><td>Cost visualization, forecasting</td><td>Past cost analysis, 12-month forecast, RI recommendations</td></tr>
+<tr><td><span class="eng">AWS Budgets</span></td><td>Cost/usage alerts</td><td>Alert when spending exceeds budget threshold</td></tr>
+<tr><td><span class="eng">Trusted Advisor</span></td><td>Best practice checks</td><td>Cost, Security, Performance, Fault Tolerance, Limits</td></tr>
+<tr><td><span class="eng">Compute Optimizer</span></td><td>Right-sizing recommendations</td><td>EC2, Lambda, ECS optimal instance size</td></tr>
+<tr><td><span class="eng">S3 Storage Lens</span></td><td>S3 usage analytics</td><td>Identify unused/over-provisioned S3 buckets</td></tr>
+</table>
+
+<div class="concept"><div class="ct">💰 Savings Plans — Reserved Instances এর চেয়ে ভালো কেন?</div>
+<div class="cb">
+<b>Reserved Instances</b> — Specific instance type + region + OS। Up to 72% off।<br>
+<b>Compute Savings Plans</b> — Any instance family, region, OS, tenancy। Up to 66% off। Most flexible।<br>
+<b>EC2 Instance Savings Plans</b> — Specific family + region। Up to 72% off। OS flexible।<br>
+<b>SageMaker Savings Plans</b> — ML workloads।<br>
+📌 Exam: "Maximum discount, flexible instance type" → Compute Savings Plans
+</div></div>
+
+<div class="tip"><span class="ico">💡</span><p><strong>Exam Tip:</strong> Spot = cheapest (90% off) কিন্তু interruption। Batch jobs, stateless apps। Reserved = steady 1-3 year। Savings Plans = RI এর flexible version। Trusted Advisor = best practice check (5 pillars)।</p></div>
+
+  </div></div>
+  <div class="col" id="exercise-s4"><div class="ex-wrap">
+    <div class="ex-hdr"><h3>🎯 Practice — Cost Optimization</h3></div>
+    <div class="ex-tabs">
+      <button class="ex-tab active" onclick="switchTab('s4','mcq',this)">📝 MCQ</button>
+      <button class="ex-tab" onclick="switchTab('s4','tf',this)">✅ True/False</button>
+      <button class="ex-tab" onclick="switchTab('s4','match',this)">🔗 Matching</button>
+      <button class="ex-tab" onclick="switchTab('s4','flash',this)">🃏 Flashcards</button>
+      <button class="ex-tab" onclick="switchTab('s4','case',this)">📌 Scenarios</button>
+    </div>
+    <div class="ex-panel open" id="panel-s4-mcq"><div id="ex-s4-mcq"></div></div>
+    <div class="ex-panel" id="panel-s4-tf"><div id="ex-s4-tf"></div></div>
+    <div class="ex-panel" id="panel-s4-match"><div id="ex-s4-match"></div></div>
+    <div class="ex-panel" id="panel-s4-flash"><div id="ex-s4-flash"></div></div>
+    <div class="ex-panel" id="panel-s4-case"><div id="ex-s4-case"></div></div>
+  </div></div>
+</div>
+</div>
+
+<script>
+const SK='awssaa-m4';
+const Q={
+s1:[
+  {q:"Route 53 Failover routing policy কীসের জন্য?",o:["Load balancing","A/B testing","Active-passive DR with health checks","Geographic routing"],a:2,e:"<b>Failover</b> = Primary healthy → route। Unhealthy → Secondary। DR pattern।"},
+  {q:"Direct Connect এবং Site-to-Site VPN এর মূল পার্থক্য?",o:["Same","DX=private dedicated fiber; VPN=internet encrypted","VPN is faster","DX is cheaper"],a:1,e:"<b>DX</b> = private, consistent, expensive। <b>VPN</b> = internet, IPSec encrypted, quick, cheaper।"},
+  {q:"📌 Company 50টি VPC এবং on-premises network hub-and-spoke topology তে connect করতে চায়।",o:["VPC Peering for all","AWS Transit Gateway","Direct Connect only","VPN for each VPC"],a:1,e:"<b>Transit Gateway</b> = hub-and-spoke। হাজার VPC + on-premises। Transitive routing।",sc:true},
+  {q:"VPC Peering transitive হয় কি?",o:["Yes always","No, non-transitive","Only for same region","Only with DX"],a:1,e:"<b>VPC Peering = non-transitive</b>। A↔B, B↔C মানে A↔C নয়। Transit Gateway transitive।"},
+  {q:"Route 53 Weighted routing কীসের জন্য?",o:["Failover only","Distribute traffic by percentage — A/B testing","Nearest server","Block regions"],a:1,e:"<b>Weighted</b> = traffic percent distribute। 70% v1, 30% v2। A/B testing।"},
+  {q:"📌 Multi-national company চায় users closest region এ route হোক। কোন Route 53 policy?",o:["Simple","Failover","Latency","Geolocation"],a:2,e:"<b>Latency policy</b> = lowest latency region তে route। Geolocation = geographic location based।",sc:true},
+],
+s2:[
+  {q:"Oracle DB → Aurora PostgreSQL migration এ কোন AWS tools?",o:["DMS only","Just backup/restore","SCT (Schema Conversion Tool) + DMS","MGN"],a:2,e:"<b>Heterogeneous migration</b>: SCT = schema convert। DMS = data migrate। Both needed।"},
+  {q:"📌 Company 500TB data AWS তে move করতে চায়। Internet connection slow। কোন service?",o:["AWS DataSync","Direct Connect","AWS Snowball Edge","S3 Transfer Acceleration"],a:2,e:"<b>Snowball Edge</b> = offline। 80TB per device। Slow internet → physical device।",sc:true},
+  {q:"AWS DataSync কোন use case এর জন্য?",o:["Offline petabyte transfer","Online automated file transfer (NFS/SMB → S3/EFS)","DB migration","Server migration"],a:1,e:"<b>DataSync</b> = online। Scheduled। NFS, SMB, S3, EFS, FSx। Encryption। Agent based।"},
+  {q:"Snowmobile কখন ব্যবহার করবে?",o:["<1TB data","<100GB",">10PB data (entire datacenter)","Any time for speed"],a:2,e:"<b>Snowmobile</b> = 100PB truck। 10PB এর বেশি → Snowmobile। Entire data center।"},
+  {q:"📌 On-premises app S3 তে data write করে কিন্তু local storage এর মতো ব্যবহার করে।",o:["AWS DataSync","S3 Transfer Acceleration","AWS Storage Gateway (File Gateway)","Direct Connect"],a:2,e:"<b>Storage Gateway File Gateway</b> = NFS/SMB interface। Transparently S3 তে store।",sc:true},
+],
+s3:[
+  {q:"CloudTrail এবং CloudWatch এর পার্থক্য?",o:["Same","CW=metrics/logs; CT=API audit trail","CT=metrics; CW=audit","Both are the same"],a:1,e:"<b>CloudWatch</b> = performance monitoring। <b>CloudTrail</b> = API calls audit (who did what)।"},
+  {q:"EC2 memory (RAM) utilization CloudWatch এ default দেখা যায়?",o:["Yes, always","No, need CloudWatch Agent","Yes with enhanced monitoring","Yes with CloudTrail"],a:1,e:"<b>Default EC2 metrics</b>: CPU, Network, Disk I/O। Memory = <b>CloudWatch Agent</b> install করতে হবে।"},
+  {q:"📌 Security team জানতে চায় কে S3 bucket এর public access settings পরিবর্তন করেছে।",o:["CloudWatch Alarms","AWS Config","AWS CloudTrail","Amazon Inspector"],a:2,e:"<b>CloudTrail</b> = API audit trail। Who called PutBucketPublicAccessBlock? কখন?",sc:true},
+  {q:"AWS X-Ray কীসের জন্য?",o:["Infrastructure monitoring","Distributed tracing — microservice request path and latency","API audit","Cost analysis"],a:1,e:"<b>X-Ray</b> = distributed tracing। Lambda, ECS, EC2। Request কোথায় কতক্ষণ লেগেছে।"},
+  {q:"📌 Company চায় S3 buckets সবসময় encryption enabled থাকুক। Automatic compliance check।",o:["CloudTrail","CloudWatch Alarm","AWS Config Rules","GuardDuty"],a:2,e:"<b>AWS Config Rules</b> = compliance check। s3-bucket-server-side-encryption-enabled rule। Auto-remediation।",sc:true},
+],
+s4:[
+  {q:"EC2 Spot Instances কী guarantee দেয় না?",o:["Low price","AWS-managed","Continuous availability (can be interrupted)","Pay per second"],a:2,e:"<b>Spot</b> = up to 90% off কিন্তু 2-min notice এ terminate হতে পারে। Fault-tolerant workloads।"},
+  {q:"📌 Company 24/7 production MySQL DB চালাচ্ছে। 3 বছরের জন্য। Maximum discount চাই।",o:["On-Demand","Spot Instance","Reserved Instance (3-year All Upfront)","Savings Plans"],a:2,e:"<b>3-year All Upfront Reserved</b> = maximum discount (~72%)। Steady, predictable workload।",sc:true},
+  {q:"AWS Trusted Advisor কোন categories তে recommendations দেয়?",o:["Only cost","Only security","Cost, Security, Performance, Fault Tolerance, Service Limits","Only performance"],a:2,e:"<b>Trusted Advisor</b> = 5 pillars: Cost, Security, Performance, Fault Tolerance, Service Limits।"},
+  {q:"Compute Savings Plans Reserved Instances এর চেয়ে বেশি flexible কেন?",o:["Cheaper always","Applies across any instance family, region, OS","No commitment needed","Only for Lambda"],a:1,e:"<b>Compute Savings Plans</b> = any family, region, OS, tenancy। RI = specific type/region।"},
+  {q:"📌 Company CloudWatch দেখছে EC2 instances 20% CPU utilization এ চলছে। Cost কমাতে কী করবে?",o:["Add more instances","AWS Compute Optimizer for right-sizing","Enable Enhanced Monitoring","Switch to Spot"],a:1,e:"<b>Compute Optimizer</b> = ML দিয়ে right-sizing। Over-provisioned instances identify। Cost save।",sc:true},
+  {q:"AWS Budgets কীসের জন্য?",o:["View past costs","Set spending alerts and forecasts","Right-size recommendations","API audit"],a:1,e:"<b>AWS Budgets</b> = threshold alert। Cost, usage, RI/SP coverage। Email/SNS notification।"},
+],
+};
+const TF={
+s1:[
+  {s:"Direct Connect VPN এর চেয়ে বেশি consistent এবং reliable, কিন্তু setup বেশি সময় নেয়।",a:true,e:"DX = dedicated fiber, weeks to months setup। VPN = hours, internet-based।"},
+  {s:"Transit Gateway transitive routing support করে।",a:true,e:"TGW = transitive। A → TGW → B works। VPC Peering = non-transitive।"},
+  {s:"Route 53 Latency policy user এর geographic location দেখে route করে।",a:false,e:"Latency = lowest latency। Geolocation = geographic location। আলাদা।"},
+],
+s2:[
+  {s:"DMS Heterogeneous migration এর জন্য Schema Conversion Tool (SCT) আলাদাভাবে ব্যবহার করতে হয়।",a:true,e:"Heterogeneous (Oracle→Aurora): SCT = schema convert, DMS = data migrate।"},
+  {s:"AWS Snowmobile 1PB data এর জন্য ideal।",a:false,e:"Snowmobile = 100PB। 10PB এর নিচে → Snowball। 10PB+ → Snowmobile।"},
+  {s:"DataSync offline data transfer এর জন্য।",a:false,e:"DataSync = <b>online</b> (internet/DX/VPN)। Snow family = offline।"},
+],
+s3:[
+  {s:"CloudTrail by default API calls 90 দিন retain করে।",a:true,e:"CloudTrail = 90 days default। Permanent → Trail create করে S3 এ store।"},
+  {s:"EC2 RAM/Memory utilization CloudWatch এ automatically পাওয়া যায়।",a:false,e:"Memory = CloudWatch Agent লাগবে। Default: CPU, Network, Disk I/O।"},
+  {s:"AWS Config resource compliance check করে, কিন্তু audit trail দেয় না।",a:true,e:"Config = compliance/drift। Audit trail (who did what) = CloudTrail।"},
+],
+s4:[
+  {s:"Spot Instances 90% পর্যন্ত discount দেয় কিন্তু interrupt হতে পারে।",a:true,e:"Spot = cheapest, 2-min notice এ terminate। Stateless, batch workloads।"},
+  {s:"Savings Plans শুধু EC2 এর জন্য।",a:false,e:"Compute Savings Plans = EC2, Lambda, Fargate। SageMaker SP = ML। Broader than EC2।"},
+  {s:"AWS Trusted Advisor শুধু cost recommendations দেয়।",a:false,e:"5 pillars: Cost, Security, Performance, Fault Tolerance, Service Limits।"},
+],
+};
+const MATCH={
+s1:{title:"Networking Services",pairs:[
+  {l:"Route 53 Failover",r:"Active-passive DR"},
+  {l:"Transit Gateway",r:"Hub-and-spoke, thousands VPCs"},
+  {l:"Direct Connect",r:"Private dedicated fiber"},
+  {l:"Route 53 Weighted",r:"A/B testing traffic split"},
+]},
+s2:{title:"Migration Services",pairs:[
+  {l:"AWS DMS",r:"Database migration"},
+  {l:"Snowball Edge",r:"Offline bulk transfer (80TB)"},
+  {l:"DataSync",r:"Online scheduled file transfer"},
+  {l:"Storage Gateway",r:"Hybrid on-prem to S3"},
+  {l:"Snowmobile",r:"Exabyte scale (>10PB)"},
+]},
+s3:{title:"Monitoring Tools",pairs:[
+  {l:"CloudWatch",r:"Metrics, logs, alarms"},
+  {l:"CloudTrail",r:"API audit trail"},
+  {l:"AWS Config",r:"Compliance & drift detection"},
+  {l:"AWS X-Ray",r:"Distributed tracing"},
+]},
+s4:{title:"Cost Optimization",pairs:[
+  {l:"Spot Instance",r:"90% off, can be interrupted"},
+  {l:"Reserved Instance",r:"1-3yr commitment, up to 72% off"},
+  {l:"Compute Savings Plans",r:"Flexible family/region, 66% off"},
+  {l:"Trusted Advisor",r:"Best practice 5-pillar checks"},
+  {l:"Compute Optimizer",r:"Right-sizing ML recommendations"},
+]},
+};
+const FLASH={
+s4:[
+  {f:"Spot Instances",b:"Up to 90% off। Batch, stateless। 2-min interrupt notice। Cannot use for critical 24/7।"},
+  {f:"Reserved Instances",b:"1 or 3 year commitment। Up to 72% off। Steady workloads (DB, web servers)।"},
+  {f:"Compute Savings Plans",b:"Any instance family/region/OS। Up to 66% off। Most flexible।"},
+  {f:"AWS Trusted Advisor",b:"5 pillars: Cost + Security + Performance + Fault Tolerance + Service Limits।"},
+  {f:"Compute Optimizer",b:"ML right-sizing। EC2, Lambda, ECS। Under-utilized resources find করো।"},
+],
+};
+const CASES={
+s1:[
+  {sc:"<strong>E-commerce</strong> site এর primary region us-east-1 down হয়েছে। Automatically eu-west-1 তে traffic route করতে হবে।",q:"কোন Route 53 policy?",o:["Weighted","Simple","Failover","Latency"],a:2,e:"<b>Failover policy</b> = health check failure → secondary region। Active-passive DR।"},
+  {sc:"<strong>Financial company</strong> consistent 1Gbps private connection চায় AWS এ। Security দলের requirement: internet ব্যবহার করা যাবে না।",q:"কোন connectivity?",o:["Site-to-Site VPN","Internet Gateway","AWS Direct Connect","Transit Gateway"],a:2,e:"<b>Direct Connect</b> = private, dedicated, consistent। Internet bypass। Compliance-friendly।"},
+],
+s2:[
+  {sc:"<strong>Healthcare company</strong> 2PB patient records AWS S3 এ migrate করতে চায়। 1Gbps internet আছে কিন্তু migration 5 মাসেরও কম সময়ে করতে হবে।",q:"কোন service?",o:["S3 Transfer Acceleration","AWS DataSync","AWS Snowball Edge (multiple)","Direct Connect"],a:2,e:"<b>Snowball Edge</b> multiple devices। 1Gbps এ 2PB = ~185 days। Snow = much faster physically।"},
+],
+s3:[
+  {sc:"<strong>Audit team</strong> দেখতে চায় গত মাসে কে production RDS instance delete করেছিল এবং কখন।",q:"কোন service?",o:["CloudWatch Logs","AWS Config","AWS CloudTrail","Amazon Inspector"],a:2,e:"<b>CloudTrail</b> = API audit। DeleteDBInstance event। Who, when, from where।"},
+],
+s4:[
+  {sc:"<strong>Startup</strong> CI/CD pipeline এ nightly batch jobs চালায়। Jobs fault-tolerant। Maximum cost savings চাই।",q:"কোন EC2 purchasing option?",o:["On-Demand","Reserved 3-year","Spot Instances","Dedicated Host"],a:2,e:"<b>Spot</b> = 90% off। Batch/nightly jobs = fault-tolerant, can handle interruption।"},
+  {sc:"<strong>Company</strong> গত মাসে AWS cost $50K বেশি হয়েছে। Root cause খুঁজতে হবে এবং ভবিষ্যৎ forecast চাই।",q:"কোন tool?",o:["AWS Budgets","AWS Trusted Advisor","AWS Cost Explorer","Compute Optimizer"],a:2,e:"<b>Cost Explorer</b> = historical cost analysis, breakdown by service/account, 12-month forecast।"},
+],
+};
+
+// ===== STATE =====
+let state={};
+function loadState(){try{state=JSON.parse(localStorage.getItem(SK)||'{}')}catch(e){state={}}}
+function saveState(){try{localStorage.setItem(SK,JSON.stringify(state))}catch(e){}}
+function getS(id){if(!state[id])state[id]={ok:0,er:0,ans:{}};return state[id]}
+
+function updateUI(s){
+  const st=getS(s);const tot=st.ok+st.er;
+  const pct=tot?Math.round(st.ok/tot*100):0;
+  document.getElementById('pf-'+s).style.width=pct+'%';
+  document.getElementById('pt-'+s).textContent=st.ok+'/'+tot;
+  document.getElementById('np-'+s).textContent=pct+'%';
+  let ok=0,er=0;
+  ['s1','s2','s3','s4'].forEach(x=>{const sx=getS(x);ok+=sx.ok;er+=sx.er});
+  const total=ok+er;const tpct=total?Math.round(ok/total*100):0;
+  document.getElementById('hOk').textContent='✅ '+ok;
+  document.getElementById('hEr').textContent='❌ '+er;
+  document.getElementById('hPct').textContent='📊 '+tpct+'%';
+}
+function showToast(msg,type){
+  const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type==='ok'?'ok-t':'er-t')+' show';
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+function resetProgress(){if(!confirm('সব progress reset করবেন?'))return;state={};saveState();location.reload();}
+function goSection(s,el){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('act'));el.classList.add('act');
+  document.getElementById(s).scrollIntoView({behavior:'smooth',block:'start'});
+}
+function toggleLesson(s){document.getElementById(s).classList.toggle('active-lesson');}
+function showLesson(s){
+  document.getElementById('lesson-'+s).classList.add('open');
+  document.getElementById('exercise-'+s).classList.remove('open');
+  document.getElementById('lb-'+s).classList.add('active');
+  document.getElementById('eb-'+s).classList.remove('active');
+}
+function showExercise(s){
+  document.getElementById('exercise-'+s).classList.add('open');
+  document.getElementById('lesson-'+s).classList.remove('open');
+  document.getElementById('eb-'+s).classList.add('active');
+  document.getElementById('lb-'+s).classList.remove('active');
+}
+function switchTab(s,type,el){
+  document.querySelectorAll('#exercise-'+s+' .ex-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('#exercise-'+s+' .ex-panel').forEach(p=>p.classList.remove('open'));
+  el.classList.add('active');document.getElementById('panel-'+s+'-'+type).classList.add('open');
+}
+function renderMCQ(s){
+  const el=document.getElementById('ex-'+s+'-mcq');if(!el)return;
+  const qs=Q[s]||[];const st=getS(s);let html='';
+  qs.forEach((q,i)=>{
+    const key='mcq-'+i;const ans=st.ans[key];const done=ans!==undefined;
+    html+=`<div class="qcard${done?(ans===q.a?' ok':' er'):''}" id="qc-${s}-${i}">
+    <div class="qmeta"><span class="qnum">Q${i+1}</span><span class="qtype">MCQ</span>${q.sc?'<span class="qscen">📌 Scenario</span>':''}</div>
+    <div class="qtxt">${q.q}</div>
+    <div class="opts">${q.o.map((o,j)=>`<button class="opt${done?(j===q.a?' cor':(j===ans?' wr':'')):''}${done?' ':''}" onclick="answerMCQ('${s}',${i},${j})" ${done?'disabled':''}><span class="olet">${'ABCD'[j]}</span>${o}</button>`).join('')}</div>
+    <div class="fb${done?' show '+(ans===q.a?'ok-fb':'er-fb'):''}">
+      <div class="fb-title">${done?(ans===q.a?'✅ সঠিক!':'❌ ভুল!')+' সঠিক: <b>'+q.o[q.a]+'</b>':''}</div>
+      <div class="fb-exp">${q.e}</div>
+    </div></div>`;
+  });
+  el.innerHTML=html;
+}
+function answerMCQ(s,i,j){
+  const q=Q[s][i];const correct=j===q.a;const st=getS(s);
+  const key='mcq-'+i;if(st.ans[key]!==undefined)return;
+  st.ans[key]=j;if(correct)st.ok++;else st.er++;saveState();updateUI(s);
+  const card=document.getElementById('qc-'+s+'-'+i);
+  card.classList.add(correct?'ok':'er');
+  card.querySelectorAll('.opt').forEach((o,oi)=>{o.disabled=true;if(oi===q.a)o.classList.add('cor');else if(oi===j)o.classList.add('wr');});
+  const fb=card.querySelector('.fb');
+  fb.innerHTML=`<div class="fb-title">${correct?'✅ সঠিক!':'❌ ভুল!'} সঠিক: <b>${q.o[q.a]}</b></div><div class="fb-exp">${q.e}</div>`;
+  fb.className='fb show '+(correct?'ok-fb':'er-fb');
+  showToast(correct?'✅ সঠিক!':'❌ ভুল!',correct?'ok':'er');
+}
+function renderTF(s){
+  const el=document.getElementById('ex-'+s+'-tf');if(!el)return;
+  const qs=TF[s]||[];const st=getS(s);let html='';
+  qs.forEach((q,i)=>{
+    const key='tf-'+i;const ans=st.ans[key];const done=ans!==undefined;const correct=done&&(ans===q.a);
+    html+=`<div class="tf-card${done?(correct?' ok':' er'):''}">
+    <div class="qmeta"><span class="qnum">T/F ${i+1}</span></div>
+    <div class="tf-stmt">${q.s}</div>
+    <div class="tf-btns">
+      <button class="tf-btn true-btn${done?(q.a===true?' cor-tf':(ans===true?' wr-tf':'')):''}${done?' ':''}" onclick="answerTF('${s}',${i},true)" ${done?'disabled':''}>✅ সত্য</button>
+      <button class="tf-btn false-btn${done?(q.a===false?' cor-tf':(ans===false?' wr-tf':'')):''}${done?' ':''}" onclick="answerTF('${s}',${i},false)" ${done?'disabled':''}>❌ মিথ্যা</button>
+    </div>
+    <div class="tf-fb${done?' show '+(correct?'ok-tf':'er-tf'):''}">
+      ${done?`<b>${correct?'✅ সঠিক!':'❌ ভুল!'}</b> সঠিক: ${q.a?'সত্য ✅':'মিথ্যা ❌'} — ${q.e}`:''}
+    </div></div>`;
+  });
+  el.innerHTML=html;
+}
+function answerTF(s,i,val){
+  const q=TF[s][i];const correct=val===q.a;const st=getS(s);
+  const key='tf-'+i;if(st.ans[key]!==undefined)return;
+  st.ans[key]=val;if(correct)st.ok++;else st.er++;saveState();updateUI(s);renderTF(s);
+  showToast(correct?'✅ সঠিক!':'❌ ভুল!',correct?'ok':'er');
+}
+function renderMatch(s){
+  const el=document.getElementById('ex-'+s+'-match');if(!el||!MATCH[s])return;
+  const data=MATCH[s];const rights=[...data.pairs].sort(()=>Math.random()-.5);
+  let lHtml='',rHtml='';
+  data.pairs.forEach((p,i)=>{lHtml+=`<div class="match-item" id="ml-${s}-${i}" onclick="selectLeft('${s}',${i})">${p.l}</div>`;});
+  rights.forEach((p)=>{const oi=data.pairs.findIndex(x=>x.r===p.r);rHtml+=`<div class="match-item" id="mr-${s}-${oi}" onclick="selectRight('${s}',${oi})">${p.r}</div>`;});
+  el.innerHTML=`<div class="kp" style="margin-bottom:12px"><h4>🔗 ${data.title} — সঠিকভাবে match করো</h4></div>
+  <div class="match-grid"><div class="match-left">${lHtml}</div><div class="match-right">${rHtml}</div></div>
+  <div id="match-score-${s}" class="match-score" style="background:rgba(255,255,255,.04);border:1px solid var(--bd);border-radius:12px;padding:12px;text-align:center;font-size:.9rem;color:var(--t2);font-family:'Hind Siliguri',sans-serif"></div>`;
+  window['matchState_'+s]={sel:null,done:{}};
+}
+function selectLeft(s,i){
+  const ms=window['matchState_'+s];if(ms.done[i])return;
+  document.querySelectorAll(`[id^="ml-${s}-"]`).forEach(x=>x.classList.remove('selected'));
+  ms.sel=i;document.getElementById(`ml-${s}-${i}`).classList.add('selected');
+}
+function selectRight(s,i){
+  const ms=window['matchState_'+s];if(ms.sel===null||ms.done[i])return;
+  const li=ms.sel;ms.sel=null;
+  document.querySelectorAll(`[id^="ml-${s}-"]`).forEach(x=>x.classList.remove('selected'));
+  const correct=li===i;ms.done[li]=true;ms.done[i]=true;
+  document.getElementById(`ml-${s}-${li}`).classList.add(correct?'matched-ok':'matched-er');
+  document.getElementById(`mr-${s}-${i}`).classList.add(correct?'matched-ok':'matched-er');
+  const st=getS(s);if(correct)st.ok++;else st.er++;saveState();updateUI(s);
+  showToast(correct?'✅ সঠিক!':'❌ ভুল!',correct?'ok':'er');
+  const total=MATCH[s].pairs.length;const matched=Object.keys(ms.done).length/2;
+  if(matched>=total){document.getElementById('match-score-'+s).textContent=`🎯 Complete! ${matched}/${total} সঠিক`;}
+}
+let fcState={};
+function renderFlash(s){
+  const el=document.getElementById('ex-'+s+'-flash');if(!el||!FLASH[s])return;
+  if(!fcState[s])fcState[s]={idx:0,flipped:false,known:[],unknown:[]};
+  const cards=FLASH[s];const fs=fcState[s];const c=cards[fs.idx];if(!c)return;
+  el.innerHTML=`<div style="text-align:center;margin-bottom:10px;color:var(--t2);font-size:.8rem;font-family:'Hind Siliguri',sans-serif">
+    কার্ড ${fs.idx+1}/${cards.length} | ✅ ${fs.known.length} জানি | 📚 ${fs.unknown.length} শিখছি</div>
+  <div class="fc-wrap"><div class="fc-card-outer${fs.flipped?' flipped':''}" id="fc-${s}" onclick="flipCard('${s}')">
+    <div class="fc-front"><span class="fc-label">AWS SERVICE</span><div class="fc-content">${c.f}</div><div class="fc-hint">👆 ক্লিক করো উল্টাতে</div></div>
+    <div class="fc-back"><span class="fc-label">মনে রাখো</span><div class="fc-content" style="font-family:'Hind Siliguri',sans-serif;font-size:.9rem">${c.b}</div></div>
+  </div></div>
+  <div class="fc-known-wrap">
+    <button class="fc-known fc-known-no" onclick="markCard('${s}',false)">📚 আবার দেখব</button>
+    <button class="fc-known fc-known-yes" onclick="markCard('${s}',true)">✅ জানি!</button>
+  </div>`;
+}
+function flipCard(s){fcState[s].flipped=!fcState[s].flipped;renderFlash(s);}
+function markCard(s,known){
+  const fs=fcState[s];const cards=FLASH[s];
+  if(known)fs.known.push(fs.idx);else fs.unknown.push(fs.idx);
+  const st=getS(s);if(known)st.ok++;else st.er++;saveState();updateUI(s);
+  fs.flipped=false;fs.idx=(fs.idx+1)%cards.length;renderFlash(s);
+}
+function renderCases(s){
+  const el=document.getElementById('ex-'+s+'-case');if(!el||!CASES[s])return;
+  const qs=CASES[s];const st=getS(s);let html='';
+  qs.forEach((q,i)=>{
+    const key='case-'+i;const ans=st.ans[key];const done=ans!==undefined;
+    html+=`<div class="case-card">
+    <div class="case-scenario">${q.sc}</div>
+    <div class="case-q">❓ ${q.q}</div>
+    <div class="opts">${q.o.map((o,j)=>`<button class="opt${done?(j===q.a?' cor':(j===ans?' wr':'')):''}${done?' ':''}" onclick="answerCase('${s}',${i},${j})" ${done?'disabled':''}><span class="olet">${'ABCD'[j]}</span>${o}</button>`).join('')}</div>
+    <div class="fb${done?' show '+(ans===q.a?'ok-fb':'er-fb'):''}">
+      <div class="fb-title">${done?(ans===q.a?'✅ সঠিক!':'❌ ভুল!')+' সঠিক: <b>'+q.o[q.a]+'</b>':''}</div>
+      <div class="fb-exp">${q.e}</div>
+    </div></div>`;
+  });
+  el.innerHTML=html;
+}
+function answerCase(s,i,j){
+  const q=CASES[s][i];const correct=j===q.a;const st=getS(s);
+  const key='case-'+i;if(st.ans[key]!==undefined)return;
+  st.ans[key]=j;if(correct)st.ok++;else st.er++;saveState();updateUI(s);renderCases(s);
+  showToast(correct?'✅ সঠিক!':'❌ ভুল!',correct?'ok':'er');
+}
+function renderFIB(s){const el=document.getElementById('ex-'+s+'-fib');if(!el)return;}
+function renderOrder(s){}
+function init(){
+  loadState();
+  ['s1','s2','s3','s4'].forEach(s=>{
+    renderMCQ(s);renderTF(s);renderMatch(s);
+    renderFlash(s);renderCases(s);renderFIB(s);
+    updateUI(s);
+  });
+  ['s2','s3','s4'].forEach(s=>{
+    document.getElementById('lesson-'+s).classList.add('open');
+  });
+}
+init();
+</script>
+</body>
+</html>
