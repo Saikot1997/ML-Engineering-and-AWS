@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ML Monitoring — সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2330;--border:#30363d;--accent:#f0883e;--a2:#58a6ff;--a3:#3fb950;--a4:#ff7b72;--a5:#d2a8ff;--tx:#e6edf3;--tx2:#8b949e;--tx3:#c9d1d9}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx3);font-family:'Hind Siliguri',sans-serif;font-size:17px;line-height:1.8;overflow-x:hidden}
+p{margin-bottom:14px}ul,ol{padding-left:24px;margin-bottom:14px}li{margin-bottom:8px}
+h3{color:var(--tx);font-size:1.15rem;margin:20px 0 10px}h4{color:var(--a2);font-size:1rem;margin:16px 0 8px}strong{color:var(--tx)}
+.hero{background:linear-gradient(135deg,#0d1117,#1a1060 50%,#0d1117);padding:80px 40px;text-align:center;border-bottom:2px solid var(--accent)}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:700;color:#fff;line-height:1.2;margin-bottom:20px}
+.hero h1 span{color:var(--accent)}.hero p{font-size:1.1rem;color:var(--tx2);max-width:700px;margin:0 auto 32px}
+.badge{display:inline-block;background:rgba(240,136,62,.2);border:1px solid var(--accent);color:var(--accent);padding:6px 18px;border-radius:20px;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
+.stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.stat-n{font-size:2.5rem;font-weight:700;color:var(--a2)}.stat-l{color:var(--tx2);font-size:.9rem}
+.topnav{background:rgba(13,17,23,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:12px 30px;position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-weight:700;color:var(--accent);font-size:1rem;font-family:'Fira Code',monospace}
+.nav-links a{color:var(--tx2);text-decoration:none;font-size:.85rem;margin-left:14px;transition:color .2s}.nav-links a:hover{color:var(--accent)}
+.wrap{max-width:1000px;margin:0 auto;padding:40px 24px}
+.sec{margin-bottom:80px}
+.sec-hdr{display:flex;align-items:center;gap:16px;margin-bottom:32px;padding-bottom:16px;border-bottom:2px solid var(--border)}
+.sec-num{background:var(--accent);color:#000;font-weight:700;font-family:'Fira Code',monospace;padding:6px 14px;border-radius:6px;font-size:1rem;min-width:48px;text-align:center;flex-shrink:0}
+.sec h2{font-size:1.8rem;font-weight:700;color:var(--tx)}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:20px;transition:border-color .2s,transform .2s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card-t{font-size:1.1rem;font-weight:600;color:var(--accent);margin-bottom:12px}
+.box{border-radius:10px;padding:20px 24px;margin:20px 0;border-left:4px solid}
+.bi{background:rgba(88,166,255,.08);border-color:var(--a2)}.bi .bt{color:var(--a2)}
+.bw{background:rgba(240,136,62,.08);border-color:var(--accent)}.bw .bt{color:var(--accent)}
+.bo{background:rgba(63,185,80,.08);border-color:var(--a3)}.bo .bt{color:var(--a3)}
+.be{background:rgba(255,123,114,.08);border-color:var(--a4)}.be .bt{color:var(--a4)}
+.bp{background:rgba(210,168,255,.08);border-color:var(--a5)}.bp .bt{color:var(--a5)}
+.bt{font-weight:700;margin-bottom:8px;font-size:1rem}
+.cb{background:#0d1117;border:1px solid var(--border);border-radius:10px;margin:18px 0;overflow:hidden}
+.ch{background:var(--bg3);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.cl{color:var(--accent);font-family:'Fira Code',monospace;font-size:.8rem;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.dots{display:flex;gap:6px}.dots span{width:11px;height:11px;border-radius:50%;display:block}
+.dots span:nth-child(1){background:#ff5f57}.dots span:nth-child(2){background:#ffbd2e}.dots span:nth-child(3){background:#28ca41}
+pre{padding:20px;overflow-x:auto;font-family:'Fira Code',monospace;font-size:.85rem;line-height:1.7;color:var(--tx3);tab-size:4}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.st{color:#a5d6ff}.cm{color:#8b949e;font-style:italic}.nm{color:#79c0ff}.cl2{color:#ffa657}
+.tbl-w{overflow-x:auto;margin:18px 0}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th{background:var(--bg3);color:var(--accent);padding:11px 15px;text-align:left;border:1px solid var(--border);font-weight:600}
+td{padding:10px 15px;border:1px solid var(--border);color:var(--tx3);vertical-align:top}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}tr:hover td{background:rgba(240,136,62,.03)}
+.diag{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;margin:24px 0;overflow-x:auto;text-align:center}
+.diag-t{color:var(--a2);font-size:.85rem;margin-bottom:16px;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.steps{display:flex;flex-direction:column;gap:0;margin:24px 0;position:relative}
+.steps::before{content:'';position:absolute;left:20px;top:40px;bottom:40px;width:2px;background:linear-gradient(to bottom,var(--accent),var(--a2))}
+.st-item{display:flex;gap:18px;padding:18px 0}
+.st-circ{background:var(--accent);color:#000;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0;z-index:1;font-family:'Fira Code',monospace}
+.st-body h3{color:var(--tx);font-size:1rem;font-weight:600;margin-bottom:6px}
+.tabs{margin:24px 0}
+.tbtns{display:flex;gap:4px;border-bottom:2px solid var(--border);flex-wrap:wrap}
+.tbtn{background:none;border:2px solid transparent;border-bottom:none;color:var(--tx2);padding:9px 18px;cursor:pointer;font-family:'Hind Siliguri',sans-serif;font-size:.92rem;border-radius:8px 8px 0 0;transition:all .2s;position:relative;bottom:-2px}
+.tbtn:hover{color:var(--tx);background:var(--bg3)}.tbtn.active{color:var(--accent);background:var(--bg2);border-color:var(--border);border-bottom-color:var(--bg2)}
+.tpan{display:none;background:var(--bg2);border:2px solid var(--border);border-top:none;border-radius:0 12px 12px 12px;padding:24px}
+.tpan.active{display:block}
+code{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-family:'Fira Code',monospace;font-size:.82rem;color:var(--a5)}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin:20px 0}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:18px 0}
+.btop{position:fixed;bottom:24px;right:24px;background:var(--accent);color:#000;border:none;width:44px;height:44px;border-radius:50%;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 18px rgba(240,136,62,.4);z-index:100;transition:transform .2s}
+.btop:hover{transform:translateY(-3px)}
+.fi{opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s}.fi.vis{opacity:1;transform:none}
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;margin:36px auto;max-width:900px}
+.toc h2{color:var(--accent);font-size:1.1rem;margin-bottom:14px}
+.toc-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px}
+.toc a{color:var(--a2);text-decoration:none;font-size:.88rem;padding:5px 9px;border-radius:6px;display:flex;align-items:center;gap:8px;transition:background .2s}
+.toc a:hover{background:rgba(88,166,255,.1)}
+.tn{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:.75rem;color:var(--accent);font-family:'Fira Code',monospace;min-width:26px;text-align:center}
+.dc{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:18px 0}
+.dc-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;flex:1;min-width:130px}
+.dc-item .ic{font-size:1.8rem;margin-bottom:6px}.dc-item .nm2{font-weight:600;font-size:.88rem;color:var(--tx);margin-bottom:4px}.dc-item .ds{font-size:.78rem;color:var(--tx2)}
+.qsec{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;margin:24px 0}
+.qq{font-weight:600;color:var(--tx);margin-bottom:12px}
+.qopt{display:block;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 14px;margin-bottom:7px;cursor:pointer;color:var(--tx3);font-family:'Hind Siliguri',sans-serif;font-size:.92rem;text-align:left;width:100%;transition:all .2s}
+.qopt:hover{border-color:var(--a2)}.qopt.ok{background:rgba(63,185,80,.15);border-color:var(--a3);color:var(--a3)}.qopt.bad{background:rgba(255,123,114,.15);border-color:var(--a4);color:var(--a4)}
+.qr{margin-top:10px;font-weight:600;font-size:.9rem;min-height:22px}
+@media(max-width:600px){.hero{padding:50px 20px}.wrap{padding:20px 14px}.steps::before{left:18px}pre{font-size:.77rem}.nav-links{display:none}.stats{gap:20px}}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-logo">🤖 ML Monitoring বাংলায়</div>
+  <div class="nav-links">
+    <a href="#s1">ML কী</a><a href="#s2">কেন দরকার</a><a href="#s3">Workflow</a>
+    <a href="#s4">Drift</a><a href="#s5">Detection</a><a href="#s6">Solution</a>
+    <a href="#s7">Evidently</a><a href="#s8">Install</a><a href="#s9">Reports</a>
+    <a href="#s10">TestSuites</a><a href="#s11">Integration</a><a href="#s12">Exam</a><a href="#sbp">Best Practices</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="badge">📚 সম্পূর্ণ বাংলা গাইড</div>
+  <h1>Machine Learning <span>Monitoring</span><br>সম্পূর্ণ গাইড</h1>
+  <p>Evidently AI দিয়ে ML মডেল পর্যবেক্ষণ — শুরু থেকে শেষ পর্যন্ত। একদম সহজ বাংলায়, নতুনরাও পুরোটা বুঝতে পারবে।</p>
+  <div class="stats">
+    <div><div class="stat-n">৫</div><div class="stat-l">PDF থেকে তথ্য</div></div>
+    <div><div class="stat-n">১০০%</div><div class="stat-l">বাংলায়</div></div>
+    <div><div class="stat-n">০</div><div class="stat-l">পূর্ব জ্ঞান দরকার</div></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<div class="toc">
+  <h2>📋 বিষয়সূচি — এখানে ক্লিক করে সরাসরি যাও</h2>
+  <div class="toc-g">
+    <a href="#s1"><span class="tn">01</span>ML ও Deployment কী?</a>
+    <a href="#s2"><span class="tn">02</span>Monitoring কেন দরকার?</a>
+    <a href="#s3"><span class="tn">03</span>৩-ধাপের Workflow</a>
+    <a href="#s4"><span class="tn">04</span>Drift — প্রকার ও পার্থক্য</a>
+    <a href="#s5"><span class="tn">05</span>Drift ধরার পদ্ধতি</a>
+    <a href="#s6"><span class="tn">06</span>সমস্যার সমাধান</a>
+    <a href="#s7"><span class="tn">07</span>Monitoring vs Observability</a>
+    <a href="#s8"><span class="tn">08</span>Evidently পরিচয় ও Install</a>
+    <a href="#s9"><span class="tn">09</span>Regression ও Classification Reports</a>
+    <a href="#s10"><span class="tn">10</span>Test Suites</a>
+    <a href="#s11"><span class="tn">11</span>Grafana + PostgreSQL + Prefect</a>
+    <a href="#s12"><span class="tn">12</span>Exam: Bike Sharing Solution</a>
+    <a href="#sbp"><span class="tn">BP</span>Best Practices Guide</a>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 1 -->
+<!-- ============================================================ -->
+<section class="sec fi" id="s1">
+<div class="sec-hdr"><span class="sec-num">01</span><h2>ML ও Deployment কী?</h2></div>
+
+<div class="box bi"><div class="bt">💡 একদম শুরু থেকে</div>
+<p>এই পুরো গাইড পড়তে তোমার কোনো পূর্ব জ্ঞানের দরকার নেই। প্রতিটা concept সহজ ভাষায় ব্যাখ্যা করা হয়েছে।</p></div>
+
+<div class="card"><div class="card-t">🤖 Machine Learning (ML) কী?</div>
+<p><strong>Machine Learning</strong> হলো কম্পিউটারকে শেখানোর একটা পদ্ধতি, যেখানে কম্পিউটার ডেটা দেখে নিজেই নিয়ম বের করে নেয়। মানুষকে আলাদাভাবে নিয়ম লিখে দিতে হয় না।</p>
+<p><strong>উদাহরণ:</strong> ১০,০০০টা বাড়ির তথ্য (আয়তন, এলাকা, বয়স) এবং তাদের দাম দিয়ে একটা ML মডেল তৈরি করলে, সেই মডেল নতুন যেকোনো বাড়ির দাম আন্দাজ করতে পারবে।</p>
+</div>
+
+<div class="diag">
+<div class="diag-t">📊 ML Development Process — ডান দিকের Monitor-ই আজকের বিষয়</div>
+<svg viewBox="0 0 780 105" xmlns="http://www.w3.org/2000/svg" style="max-width:760px;width:100%">
+<defs><marker id="a1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#8b949e"/></marker></defs>
+<rect x="10" y="28" width="125" height="48" rx="9" fill="#1c2330" stroke="#30363d" stroke-width="1.5"/>
+<text x="72" y="50" text-anchor="middle" fill="#f0883e" font-size="11" font-family="sans-serif" font-weight="bold">Define</text>
+<text x="72" y="66" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Project সংজ্ঞা</text>
+<line x1="135" y1="52" x2="158" y2="52" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a1)"/>
+<rect x="160" y="28" width="125" height="48" rx="9" fill="#1c2330" stroke="#30363d" stroke-width="1.5"/>
+<text x="222" y="50" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif" font-weight="bold">Prepare</text>
+<text x="222" y="66" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Data প্রস্তুত</text>
+<line x1="285" y1="52" x2="308" y2="52" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a1)"/>
+<rect x="310" y="28" width="125" height="48" rx="9" fill="#1c2330" stroke="#30363d" stroke-width="1.5"/>
+<text x="372" y="50" text-anchor="middle" fill="#3fb950" font-size="11" font-family="sans-serif" font-weight="bold">Train</text>
+<text x="372" y="66" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Model প্রশিক্ষণ</text>
+<line x1="435" y1="52" x2="458" y2="52" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a1)"/>
+<rect x="460" y="28" width="125" height="48" rx="9" fill="#1c2330" stroke="#30363d" stroke-width="1.5"/>
+<text x="522" y="50" text-anchor="middle" fill="#d2a8ff" font-size="11" font-family="sans-serif" font-weight="bold">Deploy</text>
+<text x="522" y="66" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">মডেল ছাড়া</text>
+<line x1="585" y1="52" x2="608" y2="52" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a1)"/>
+<rect x="610" y="22" width="155" height="60" rx="9" fill="#1c2330" stroke="#f0883e" stroke-width="2.5"/>
+<text x="687" y="46" text-anchor="middle" fill="#f0883e" font-size="11" font-family="sans-serif" font-weight="bold">⚡ Monitor</text>
+<text x="687" y="61" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">পর্যবেক্ষণ</text>
+<text x="687" y="74" text-anchor="middle" fill="#f0883e" font-size="9" font-family="sans-serif">← আজকের বিষয়!</text>
+<path d="M687 82 Q687 98 372 98 Q72 98 72 76" fill="none" stroke="#30363d" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a1)"/>
+<text x="380" y="97" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">সমস্যা পেলে আবার ফিরে যাও</text>
+</svg>
+</div>
+
+<div class="card"><div class="card-t">🚀 Deployment মানে কী?</div>
+<p><strong>Deployment</strong> হলো মডেলকে lab থেকে বের করে বাস্তব জীবনে ব্যবহারের জন্য ছেড়ে দেওয়া।</p>
+<ul>
+<li>Spam detection মডেল deploy করলে সেটা তোমার email-এ প্রতিদিন কাজ করে</li>
+<li>Fraud detection মডেল deploy করলে সেটা ব্যাংকে প্রতিটা transaction চেক করে</li>
+<li>House price prediction মডেল deploy করলে সেটা website-এ দাম দেখায়</li>
+</ul>
+<p>Deployment-এর পরেই আসল চ্যালেঞ্জ শুরু — কারণ বাস্তব জগৎ ক্রমাগত বদলায়!</p>
+</div>
+
+<div class="box be"><div class="bt">⚠️ বাস্তব উদাহরণ: Zillow-র ব্যর্থতা ($৫০০ মিলিয়ন লোকসান!)</div>
+<p><strong>Zillow</strong> আমেরিকার একটা বড় real estate কোম্পানি। তারা ML মডেল বানিয়েছিল যেটা বাড়ির দাম আন্দাজ করবে এবং সেই দামে নিজেরাই বাড়ি কিনত।</p>
+<p><strong>কী হলো?</strong> Real estate বাজার দ্রুত বদলাচ্ছিল, কিন্তু মডেল monitor করা হচ্ছিল না। Drift ধরা পড়েনি। ফলে মডেল হাজার হাজার বাড়ি বেশি দামে কিনে ফেলল! CEO Rich Barton স্বীকার করলেন, "algorithms were not reliable in deploying capital or properly assessing risk।"</p>
+<p><strong>তিনটা কারণ ছিল:</strong> Software issues · Data drift · Feature-Target সম্পর্ক বদলে যাওয়া</p>
+<p><strong>শিক্ষা:</strong> Monitor না করলে যেকোনো মডেলই একদিন এভাবে ব্যর্থ হতে পারে।</p>
+</div>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 2 -->
+<!-- ============================================================ -->
+<section class="sec fi" id="s2">
+<div class="sec-hdr"><span class="sec-num">02</span><h2>Monitoring কেন দরকার?</h2></div>
+
+<p>Monitoring মানে হলো deployed মডেলের উপর সার্বক্ষণিক নজর রাখা — ঠিক যেভাবে একজন ডাক্তার রোগীর vital signs মনিটর করেন।</p>
+
+<div class="g3">
+<div class="card"><div style="font-size:2rem;margin-bottom:8px">🎯</div><div class="card-t">Performance Monitor</div><p>মডেল কতটা ভালো কাজ করছে সেটা ক্রমাগত দেখা। দক্ষতা কমলে সাথে সাথে alert পাওয়া।</p></div>
+<div class="card"><div style="font-size:2rem;margin-bottom:8px">🛡️</div><div class="card-t">AI Safety</div><p>মডেল কি কোনো দলের প্রতি বৈষম্য করছে? কেউ কি মডেলকে ধোঁকা দেওয়ার চেষ্টা করছে?</p></div>
+<div class="card"><div style="font-size:2rem;margin-bottom:8px">💰</div><div class="card-t">Business Value</div><p>মডেল business-এ আসলে কতটা মূল্য যোগ করছে? KPI track করা।</p></div>
+</div>
+
+<div class="diag">
+<div class="diag-t">🔺 ML Monitoring-এর দুটো স্তর — Evidently-র Pyramid</div>
+<svg viewBox="0 0 600 270" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;width:100%">
+<polygon points="300,18 575,252 25,252" fill="none" stroke="#f0883e" stroke-width="2"/>
+<polygon points="300,82 495,232 105,232" fill="rgba(88,166,255,0.05)" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="5,3"/>
+<text x="300" y="44" text-anchor="middle" fill="#f0883e" font-size="13" font-weight="bold" font-family="sans-serif">Service Health (উপরের স্তর)</text>
+<text x="300" y="61" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Uptime · Memory · Latency · Response Time</text>
+<text x="300" y="162" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold" font-family="sans-serif">Data &amp; Model Health (নিচের স্তর)</text>
+<text x="300" y="178" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Data Drift · Concept Drift · Model Accuracy · Model Bias</text>
+<text x="300" y="193" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Broken Pipelines · Schema Change · Data Outage</text>
+<text x="300" y="208" text-anchor="middle" fill="#ff7b72" font-size="10" font-family="sans-serif">Underperforming Segments</text>
+<rect x="228" y="236" width="144" height="24" rx="12" fill="#f0883e"/>
+<text x="300" y="253" text-anchor="middle" fill="#000" font-size="11" font-weight="bold" font-family="sans-serif">EVIDENTLY AI</text>
+</svg>
+</div>
+
+<div class="box bo"><div class="bt">✅ AI Safety-র তিনটি মূল উদ্বেগ</div>
+<ul>
+<li><strong>Bias Detection (বৈষম্য শনাক্ত):</strong> মডেল কি কোনো জাতি, লিঙ্গ বা গোষ্ঠীর প্রতি অন্যায় করছে? Continuous fairness metrics দেখলে ধরা যায়।</li>
+<li><strong>Adversarial Attack রক্ষা:</strong> কেউ কি ইচ্ছাকৃতভাবে মডেলকে বোকা বানাতে অদ্ভুত ডেটা পাঠাচ্ছে? Unusual patterns monitor করলে ধরা পড়ে।</li>
+<li><strong>Transparency (স্বচ্ছতা):</strong> মডেল কেন এই সিদ্ধান্ত নিচ্ছে সেটা বোঝা — মানুষের বিশ্বাস অর্জনের জন্য দরকার।</li>
+</ul>
+</div>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 3 -->
+<!-- ============================================================ -->
+<section class="sec fi" id="s3">
+<div class="sec-hdr"><span class="sec-num">03</span><h2>৩-ধাপের Monitoring Workflow</h2></div>
+
+<div class="diag">
+<div class="diag-t">🔄 Monitoring-এর মূল চক্র</div>
+<svg viewBox="0 0 730 90" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;width:100%">
+<defs>
+<marker id="a2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#58a6ff"/></marker>
+<marker id="a3" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#3fb950"/></marker>
+<marker id="a2b" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto"><polygon points="10 0,0 3.5,10 7" fill="#30363d"/></marker>
+</defs>
+<rect x="10" y="18" width="165" height="54" rx="9" fill="#1c2330" stroke="#f0883e" stroke-width="2"/>
+<text x="92" y="42" text-anchor="middle" fill="#f0883e" font-size="11" font-family="sans-serif" font-weight="bold">ধাপ ১: Performance</text>
+<text x="92" y="58" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">পারফরম্যান্স পর্যবেক্ষণ</text>
+<line x1="175" y1="45" x2="200" y2="45" stroke="#8b949e" stroke-width="1.5"/>
+<polygon points="210,38 222,45 210,52 198,45" fill="#f0883e"/>
+<text x="210" y="48" text-anchor="middle" fill="#000" font-size="8" font-family="sans-serif" font-weight="bold">Alert?</text>
+<path d="M210 52 Q210 76 92 76 Q10 76 10 72" fill="none" stroke="#30363d" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#a2b)"/>
+<text x="140" y="75" fill="#8b949e" font-size="8" font-family="sans-serif">No — ঠিক আছে</text>
+<line x1="222" y1="45" x2="244" y2="45" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a2)"/>
+<rect x="246" y="18" width="185" height="54" rx="9" fill="#1c2330" stroke="#58a6ff" stroke-width="2"/>
+<text x="338" y="42" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif" font-weight="bold">ধাপ ২: Root Cause</text>
+<text x="338" y="58" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">কারণ বিশ্লেষণ</text>
+<line x1="431" y1="45" x2="455" y2="45" stroke="#3fb950" stroke-width="1.5" marker-end="url(#a3)"/>
+<rect x="457" y="18" width="185" height="54" rx="9" fill="#1c2330" stroke="#3fb950" stroke-width="2"/>
+<text x="549" y="42" text-anchor="middle" fill="#3fb950" font-size="11" font-family="sans-serif" font-weight="bold">ধাপ ৩: Resolution</text>
+<text x="549" y="58" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">সমস্যা সমাধান</text>
+</svg>
+</div>
+
+<div class="steps">
+<div class="st-item">
+  <div class="st-circ">১</div>
+  <div class="st-body">
+    <h3>Performance Monitoring — পারফরম্যান্স পর্যবেক্ষণ</h3>
+    <p>মডেল কতটা ভালো কাজ করছে সেটা সংখ্যা দিয়ে মাপা।</p>
+    <ul>
+      <li><strong>Regression model-এর জন্য:</strong> MSE (Mean Square Error), RMSE (Root MSE), MAE, R²</li>
+      <li><strong>Classification model-এর জন্য:</strong> AUC-ROC, Precision, Recall, F1 Score</li>
+    </ul>
+    <div class="box bi" style="margin-top:10px"><div class="bt">💡 Reference Data না থাকলে কী করব?</div>
+    <p>বাস্তবে অনেক সময় সাথে সাথে সঠিক উত্তর (ground truth) পাওয়া যায় না। তখন দুটো উপায়:</p>
+    <ul>
+      <li><strong>Substitution Patterns:</strong> মূল মডেলের পাশে একটা সরল মডেল রেখে তুলনা করো</li>
+      <li><strong>Trust Score Analysis:</strong> মডেলের confidence score দেখো — কম confident মানে সমস্যা আছে</li>
+    </ul></div>
+  </div>
+</div>
+<div class="st-item">
+  <div class="st-circ">২</div>
+  <div class="st-body">
+    <h3>Root Cause Analysis — কারণ বিশ্লেষণ</h3>
+    <p>পারফরম্যান্স কমলে কারণ খুঁজে বের করতে হবে। দুটো মূল scenario:</p>
+    <ul>
+      <li><strong>Scenario 1 — মডেল থামলে:</strong> Software সমস্যা — Python-Java compatibility, dependency update, load বেড়ে যাওয়া। Operational problem, drift নয়।</li>
+      <li><strong>Scenario 2 — মডেল চলছে কিন্তু ভুল করছে:</strong> Data Drift বা Concept Drift। এটাই বেশি বিপজ্জনক — কারণ নিজে থেকে ধরা পড়ে না!</li>
+    </ul>
+  </div>
+</div>
+<div class="st-item">
+  <div class="st-circ">৩</div>
+  <div class="st-body">
+    <h3>Troubleshooting — সমস্যা সমাধান</h3>
+    <p>কারণ জানার পর সমাধান করতে হবে। Retraining, dataset enrichment, pipeline review — কোনটা ব্যবহার করবে সেটা situation-এর উপর নির্ভর করে। (বিস্তারিত Section 6-এ।)</p>
+  </div>
+</div>
+</div>
+
+<div class="box bw"><div class="bt">🏥 Practical Advice: প্রথম Dashboard</div>
+<p>শুরুতেই একটা ছোট dashboard বানাও যেখানে দুটো জিনিস থাকবে: (১) মডেলের main performance metric (যেমন MAE বা Accuracy), (২) একটা relevant business KPI (যেমন revenue বা customer satisfaction)। এই দুটো মিলে technical ও business উভয় দিক থেকে স্বাস্থ্য বোঝা যাবে।</p>
+</div>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 4 -->
+<!-- ============================================================ -->
+<section class="sec fi" id="s4">
+<div class="sec-hdr"><span class="sec-num">04</span><h2>Drift কী? কত প্রকার?</h2></div>
+
+<div class="box bw"><div class="bt">🌊 Drift সহজ ভাষায়</div>
+<p><strong>Drift</strong> হলো পরিবর্তন। তোমার মডেল যখন train হয়েছিল, সেই সময়ের ডেটা এখন আর আগের মতো নেই — বাস্তব জগৎ বদলে গেছে। এই পরিবর্তনের কারণে মডেলের accuracy কমে যায়।</p>
+<p><strong>পরিভাষা বোঝো:</strong> X = input features (বৈশিষ্ট্য), Y = target/output (যা predict করা হচ্ছে), P() = probability distribution (সম্ভাবনার বণ্টন)</p>
+</div>
+
+<div class="tabs">
+<div class="tbtns">
+<button class="tbtn active" onclick="swT(this,'dt1')">Concept Drift — P(Y|X) বদলায়</button>
+<button class="tbtn" onclick="swT(this,'dt2')">Data Drift — P(X) বদলায়</button>
+</div>
+<div id="dt1" class="tpan active">
+<h4>Concept Drift — সম্পর্ক বদলে যাওয়া</h4>
+<p>Input থেকে Output বের করার <strong>সম্পর্ক বা নিয়মটাই</strong> বদলে যায়। একই ইনপুট দিলে আগে যা আউটপুট আসত এখন সেটা আসে না।</p>
+<div class="box bp"><div class="bt">🎬 উদাহরণ</div>
+<p>২০১০ সালে movie recommendation model বানিয়েছিলে। তখন মানুষ action movie পছন্দ করত। কিন্তু ২০২৪ সালে মানুষ documentary বেশি দেখে। একই ব্যক্তির feature দেখে আগে "action" recommend করলে ঠিক হত, এখন সেটা ভুল। নিয়মটাই (P(Y|X)) বদলে গেছে।</p></div>
+<p><strong>আর একটা উদাহরণ:</strong> COVID-এর আগে ও পরে মানুষের ক্রয়আচরণ সম্পূর্ণ বদলে গেছে। Sudden Concept Drift-এর বড় উদাহরণ।</p>
+</div>
+<div id="dt2" class="tpan">
+<h4>Data Drift (Covariate Shift) — বণ্টন বদলে যাওয়া</h4>
+<p>Input data-র <strong>বণ্টন (distribution)</strong> বদলে যায়। কিন্তু ইনপুট-আউটপুটের নিয়মটা একই থাকে।</p>
+<div class="box bp"><div class="bt">📱 উদাহরণ</div>
+<p>Sentiment analysis model computer-এ লেখা text দেখে train হয়েছিল। এখন মানুষ mobile-এ লিখছে — ছোট বাক্য, ইমোজি, শর্টকাট। Text-এর style (X-এর বণ্টন) বদলেছে, কিন্তু positive/negative অর্থ একই। এটা Data Drift।</p></div>
+<p><strong>আর একটা উদাহরণ:</strong> Credit scoring model-এ train data-তে বেশিরভাগ উচ্চ আয়ের মানুষ ছিল, কিন্তু এখন production-এ নিম্ন আয়ের মানুষ বেশি আসছে। এটা Covariate Shift।</p>
+</div>
+</div>
+
+<div class="diag">
+<div class="diag-t">চিত্রে পার্থক্য — Concept Drift vs Data Drift vs Original</div>
+<svg viewBox="0 0 700 175" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%">
+<!-- Original -->
+<rect x="10" y="10" width="200" height="155" rx="10" fill="#1c2330" stroke="#30363d" stroke-width="1.5"/>
+<text x="110" y="30" text-anchor="middle" fill="#c9d1d9" font-size="11" font-family="sans-serif" font-weight="bold">Original Data</text>
+<circle cx="60" cy="80" r="5" fill="#58a6ff" opacity="0.9"/><circle cx="78" cy="97" r="5" fill="#58a6ff" opacity="0.9"/>
+<circle cx="68" cy="112" r="5" fill="#58a6ff" opacity="0.9"/><circle cx="88" cy="88" r="5" fill="#58a6ff" opacity="0.9"/>
+<circle cx="130" cy="63" r="5" fill="#f0883e" opacity="0.9"/><circle cx="150" cy="82" r="5" fill="#f0883e" opacity="0.9"/>
+<circle cx="143" cy="100" r="5" fill="#f0883e" opacity="0.9"/><circle cx="163" cy="72" r="5" fill="#f0883e" opacity="0.9"/>
+<line x1="48" y1="138" x2="178" y2="58" stroke="#3fb950" stroke-width="2"/>
+<text x="110" y="150" text-anchor="middle" fill="#3fb950" font-size="9" font-family="sans-serif">সিদ্ধান্তরেখা ঠিক আছে ✓</text>
+<!-- Concept Drift -->
+<rect x="247" y="10" width="200" height="155" rx="10" fill="#1c2330" stroke="#ff7b72" stroke-width="2"/>
+<text x="347" y="30" text-anchor="middle" fill="#ff7b72" font-size="11" font-family="sans-serif" font-weight="bold">Concept Drift</text>
+<circle cx="297" cy="80" r="5" fill="#58a6ff" opacity="0.6"/><circle cx="315" cy="97" r="5" fill="#58a6ff" opacity="0.6"/>
+<circle cx="305" cy="112" r="5" fill="#58a6ff" opacity="0.6"/><circle cx="325" cy="88" r="5" fill="#58a6ff" opacity="0.6"/>
+<!-- orange intruding into blue zone -->
+<circle cx="308" cy="108" r="5" fill="#f0883e" opacity="0.9"/><circle cx="322" cy="122" r="5" fill="#f0883e" opacity="0.9"/>
+<circle cx="358" cy="100" r="5" fill="#f0883e" opacity="0.9"/><circle cx="372" cy="116" r="5" fill="#f0883e" opacity="0.9"/>
+<line x1="285" y1="138" x2="415" y2="58" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.45"/>
+<text x="347" y="148" text-anchor="middle" fill="#ff7b72" font-size="9" font-family="sans-serif">পুরনো রেখা ভুল হয়ে গেছে ✗</text>
+<text x="347" y="161" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">সম্পর্ক বদলেছে (P(Y|X))</text>
+<!-- Data Drift -->
+<rect x="484" y="10" width="206" height="155" rx="10" fill="#1c2330" stroke="#d2a8ff" stroke-width="2"/>
+<text x="587" y="30" text-anchor="middle" fill="#d2a8ff" font-size="11" font-family="sans-serif" font-weight="bold">Data Drift</text>
+<!-- clusters shifted right together -->
+<circle cx="524" cy="82" r="5" fill="#58a6ff" opacity="0.9"/><circle cx="539" cy="96" r="5" fill="#58a6ff" opacity="0.9"/>
+<circle cx="530" cy="110" r="5" fill="#58a6ff" opacity="0.9"/><circle cx="548" cy="88" r="5" fill="#58a6ff" opacity="0.9"/>
+<circle cx="634" cy="62" r="5" fill="#f0883e" opacity="0.9"/><circle cx="650" cy="78" r="5" fill="#f0883e" opacity="0.9"/>
+<circle cx="644" cy="95" r="5" fill="#f0883e" opacity="0.9"/><circle cx="660" cy="70" r="5" fill="#f0883e" opacity="0.9"/>
+<line x1="510" y1="138" x2="672" y2="56" stroke="#3fb950" stroke-width="2"/>
+<text x="587" y="148" text-anchor="middle" fill="#3fb950" font-size="9" font-family="sans-serif">রেখার নিয়ম একই ✓</text>
+<text x="587" y="161" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">কিন্তু পয়েন্ট সরে গেছে (P(X))</text>
+</svg>
+</div>
+
+<h3 style="margin-top:28px">Drift কীভাবে আসে — ৪ প্রকার:</h3>
+<div class="dc">
+<div class="dc-item"><div class="ic">⚡</div><div class="nm2">Sudden Drift</div><div class="ds">হঠাৎ বড় পরিবর্তন। প্রতিদ্বন্দ্বী product launch বা COVID লকডাউন।</div></div>
+<div class="dc-item"><div class="ic">🐢</div><div class="nm2">Gradual Drift</div><div class="ds">ধীরে ধীরে পরিবর্তন। Streaming platform-এ রুচি বদলানো।</div></div>
+<div class="dc-item"><div class="ic">📈</div><div class="nm2">Incremental Drift</div><div class="ds">ছোট পরিবর্তন জমতে থাকে। মেশিনের sensor ডেটা ক্ষয়ের সাথে।</div></div>
+<div class="dc-item"><div class="ic">🔄</div><div class="nm2">Recurring Drift</div><div class="ds">চক্রাকার পরিবর্তন। Christmas-এ বিক্রি বাড়া।</div></div>
+</div>
+
+<div class="diag">
+<div class="diag-t">৪ ধরনের Drift — সময়ের সাথে বণ্টনের পরিবর্তন</div>
+<svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;width:100%">
+<!-- Sudden -->
+<rect x="10" y="10" width="160" height="110" rx="8" fill="#1c2330" stroke="#30363d"/>
+<text x="90" y="28" text-anchor="middle" fill="#ff7b72" font-size="10" font-family="sans-serif" font-weight="bold">Sudden Drift ⚡</text>
+<rect x="22" y="78" width="11" height="25" fill="#58a6ff" opacity="0.8"/><rect x="37" y="76" width="11" height="27" fill="#58a6ff" opacity="0.8"/>
+<rect x="52" y="77" width="11" height="26" fill="#58a6ff" opacity="0.8"/><rect x="67" y="75" width="11" height="28" fill="#58a6ff" opacity="0.8"/>
+<rect x="82" y="43" width="11" height="60" fill="#f0883e" opacity="0.9"/><rect x="97" y="41" width="11" height="62" fill="#f0883e" opacity="0.9"/>
+<rect x="112" y="42" width="11" height="61" fill="#f0883e" opacity="0.9"/><rect x="127" y="40" width="11" height="63" fill="#f0883e" opacity="0.9"/>
+<line x1="79" y1="38" x2="79" y2="108" stroke="#ff7b72" stroke-width="1.5" stroke-dasharray="3,3"/>
+<text x="90" y="107" text-anchor="middle" fill="#8b949e" font-size="8" font-family="sans-serif">সময় →</text>
+<!-- Gradual -->
+<rect x="185" y="10" width="160" height="110" rx="8" fill="#1c2330" stroke="#30363d"/>
+<text x="265" y="28" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif" font-weight="bold">Gradual Drift 🐢</text>
+<rect x="198" y="88" width="10" height="15" fill="#58a6ff" opacity="0.8"/><rect x="212" y="83" width="10" height="20" fill="#58a6ff" opacity="0.8"/>
+<rect x="226" y="76" width="10" height="27" fill="#58a6ff" opacity="0.78"/><rect x="240" y="67" width="10" height="36" fill="#3fb950" opacity="0.8"/>
+<rect x="254" y="58" width="10" height="45" fill="#3fb950" opacity="0.82"/><rect x="268" y="49" width="10" height="54" fill="#f0883e" opacity="0.84"/>
+<rect x="282" y="40" width="10" height="63" fill="#f0883e" opacity="0.87"/><rect x="296" y="31" width="10" height="72" fill="#f0883e" opacity="0.9"/>
+<text x="265" y="107" text-anchor="middle" fill="#8b949e" font-size="8" font-family="sans-serif">সময় →</text>
+<!-- Incremental -->
+<rect x="360" y="10" width="160" height="110" rx="8" fill="#1c2330" stroke="#30363d"/>
+<text x="440" y="28" text-anchor="middle" fill="#d2a8ff" font-size="10" font-family="sans-serif" font-weight="bold">Incremental Drift 📈</text>
+<rect x="373" y="95" width="10" height="8" fill="#58a6ff" opacity="0.8"/><rect x="387" y="91" width="10" height="12" fill="#58a6ff" opacity="0.8"/>
+<rect x="401" y="85" width="10" height="18" fill="#58a6ff" opacity="0.8"/><rect x="415" y="77" width="10" height="26" fill="#58a6ff" opacity="0.8"/>
+<rect x="429" y="66" width="10" height="37" fill="#3fb950" opacity="0.82"/><rect x="443" y="54" width="10" height="49" fill="#f0883e" opacity="0.84"/>
+<rect x="457" y="40" width="10" height="63" fill="#f0883e" opacity="0.87"/><rect x="471" y="26" width="10" height="77" fill="#f0883e" opacity="0.9"/>
+<text x="440" y="107" text-anchor="middle" fill="#8b949e" font-size="8" font-family="sans-serif">সময় →</text>
+<!-- Recurring -->
+<rect x="535" y="10" width="175" height="110" rx="8" fill="#1c2330" stroke="#30363d"/>
+<text x="622" y="28" text-anchor="middle" fill="#ffa657" font-size="10" font-family="sans-serif" font-weight="bold">Recurring Drift 🔄</text>
+<rect x="548" y="75" width="10" height="28" fill="#58a6ff" opacity="0.8"/>
+<rect x="562" y="52" width="10" height="51" fill="#f0883e" opacity="0.85"/>
+<rect x="576" y="75" width="10" height="28" fill="#58a6ff" opacity="0.8"/>
+<rect x="590" y="75" width="10" height="28" fill="#58a6ff" opacity="0.8"/>
+<rect x="604" y="52" width="10" height="51" fill="#f0883e" opacity="0.85"/>
+<rect x="618" y="75" width="10" height="28" fill="#58a6ff" opacity="0.8"/>
+<rect x="632" y="75" width="10" height="28" fill="#58a6ff" opacity="0.8"/>
+<rect x="646" y="52" width="10" height="51" fill="#f0883e" opacity="0.85"/>
+<rect x="660" y="75" width="10" height="28" fill="#58a6ff" opacity="0.8"/>
+<text x="622" y="107" text-anchor="middle" fill="#8b949e" font-size="8" font-family="sans-serif">সময় →</text>
+<!-- Legend -->
+<rect x="230" y="140" width="13" height="13" fill="#58a6ff" rx="3"/><text x="247" y="152" fill="#8b949e" font-size="10" font-family="sans-serif">আগের বণ্টন</text>
+<rect x="340" y="140" width="13" height="13" fill="#f0883e" rx="3"/><text x="357" y="152" fill="#8b949e" font-size="10" font-family="sans-serif">নতুন বণ্টন</text>
+<rect x="450" y="140" width="13" height="13" fill="#3fb950" rx="3"/><text x="467" y="152" fill="#8b949e" font-size="10" font-family="sans-serif">মাঝামাঝি</text>
+</svg>
+</div>
+
+<div class="box bw"><div class="bt">💡 Practical Tips: Drift Monitor করতে</div>
+<ul>
+<li><strong>Regular monitoring:</strong> Continuous monitoring implement করো যাতে weak signal ধরা যায়</li>
+<li><strong>Visualizing Distributions:</strong> Histograms, box plots, density curves দিয়ে বণ্টনের পরিবর্তন দেখো</li>
+<li><strong>Alert thresholds:</strong> Drift metrics-এ threshold সেট করো — threshold পার হলেই investigation শুরু</li>
+<li><strong>Performance correlation:</strong> Detected drift-কে model performance-এর সাথে link করো</li>
+</ul>
+</div>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 5 -->
+<!-- ============================================================ -->
+<section class="sec fi" id="s5">
+<div class="sec-hdr"><span class="sec-num">05</span><h2>Drift ধরার Statistical পদ্ধতি</h2></div>
+
+<p>Drift ধরার জন্য mathematical methods ব্যবহার করা হয়। নিচে প্রধান পদ্ধতিগুলো সহজ ভাষায়:</p>
+
+<div class="tbl-w">
+<table>
+<tr><th>পদ্ধতি</th><th>কীভাবে কাজ করে</th><th>কখন ব্যবহার করবে</th></tr>
+<tr><td><strong>Kolmogorov-Smirnov (K-S) Test</strong></td><td>দুটো distribution-এর CDF (Cumulative Distribution Function) তুলনা করে বড় পার্থক্য ধরে।</td><td>Recommender system-এ পুরনো ও নতুন আচরণ তুলনা।</td></tr>
+<tr><td><strong>Population Stability Index (PSI)</strong></td><td>Categorical feature-এর বণ্টন কতটা বদলেছে সেটা মাপে। পরিবর্তনের মাত্রা বলে।</td><td>Credit scoring model-এ socio-economic categories track করতে।</td></tr>
+<tr><td><strong>Wasserstein Distance</strong></td><td>দুটো distribution-এর মধ্যে "দূরত্ব" মাপে। Earth Mover's Distance নামেও পরিচিত।</td><td>Numerical features-এর drift মাপতে। Evidently-তে default।</td></tr>
+<tr><td><strong>Jensen-Shannon Distance</strong></td><td>দুটো probability distribution তুলনা করে। Symmetric — উভয় দিকে একই ফলাফল।</td><td>Text data বা categorical features-এ drift মাপতে।</td></tr>
+<tr><td><strong>Page-Hinkley Method</strong></td><td>Time series ডেটায় কোথায় পরিবর্তন হয়েছে সেটা chronologically খোঁজে।</td><td>API response time বা click-through rate monitor করতে।</td></tr>
+</table>
+</div>
+
+<div class="box bi"><div class="bt">📊 Evidently-তে কোন পদ্ধতি ব্যবহার হয়?</div>
+<ul>
+<li>Numerical features → <strong>Wasserstein distance (normalized)</strong></li>
+<li>Categorical features → <strong>Jensen-Shannon distance</strong></li>
+<li>Text/NLP data → <strong>Domain Classifier ROC AUC</strong></li>
+<li>Custom করতে চাইলে: <code>stattest='psi'</code> বা অন্য option specify করো</li>
+</ul>
+</div>
+
+<div class="diag">
+<div class="diag-t">Proactive Monitoring — ইনপুট বৈশিষ্ট্য পর্যবেক্ষণের ধাপ</div>
+<svg viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%">
+<defs><marker id="a4" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#58a6ff"/></marker></defs>
+<rect x="10" y="30" width="140" height="60" rx="8" fill="#1c2330" stroke="#f0883e" stroke-width="1.5"/>
+<text x="80" y="55" text-anchor="middle" fill="#f0883e" font-size="10" font-family="sans-serif" font-weight="bold">Descriptive Stats</text>
+<text x="80" y="70" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Mean, Median, Min</text>
+<text x="80" y="83" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Max, Mode দেখো</text>
+<line x1="150" y1="60" x2="178" y2="60" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a4)"/>
+<rect x="180" y="30" width="150" height="60" rx="8" fill="#1c2330" stroke="#58a6ff" stroke-width="1.5"/>
+<text x="255" y="55" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="sans-serif" font-weight="bold">Statistical Test</text>
+<text x="255" y="70" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">K-S, PSI,</text>
+<text x="255" y="83" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Wasserstein চালাও</text>
+<line x1="330" y1="60" x2="358" y2="60" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a4)"/>
+<rect x="360" y="30" width="150" height="60" rx="8" fill="#1c2330" stroke="#3fb950" stroke-width="1.5"/>
+<text x="435" y="55" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif" font-weight="bold">Threshold Check</text>
+<text x="435" y="70" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Drift score &gt; threshold?</text>
+<text x="435" y="83" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">হ্যাঁ → Alert!</text>
+<line x1="510" y1="60" x2="538" y2="60" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a4)"/>
+<rect x="540" y="30" width="130" height="60" rx="8" fill="#1c2330" stroke="#d2a8ff" stroke-width="1.5"/>
+<text x="605" y="55" text-anchor="middle" fill="#d2a8ff" font-size="10" font-family="sans-serif" font-weight="bold">Investigate</text>
+<text x="605" y="70" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">কারণ খোঁজো</text>
+<text x="605" y="83" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Solution নাও</text>
+<text x="340" y="130" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Distribution বণ্টন: Histogram, Box plot, Density curve দিয়ে visualize করো</text>
+</svg>
+</div>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 6 -->
+<!-- ============================================================ -->
+<section class="sec fi" id="s6">
+<div class="sec-hdr"><span class="sec-num">06</span><h2>সমস্যার সমাধান ও Monitoring Culture</h2></div>
+
+<div class="tbl-w">
+<table>
+<tr><th>পদ্ধতি</th><th>বিস্তারিত</th><th>কখন ব্যবহার করবে</th></tr>
+<tr><td><strong>Retraining</strong></td><td>নতুন ডেটা দিয়ে মডেল আবার train করা। সবচেয়ে কার্যকর কিন্তু labeled data ও computing power দরকার।</td><td>Significant drift ধরা পড়লে, বিশেষত concept drift।</td></tr>
+<tr><td><strong>Dataset Enrichment</strong></td><td>নতুন ধরনের উদাহরণ যোগ করা। পুরো dataset rebuild না করে selective active learning।</td><td>কিছু নির্দিষ্ট scenario কভার করা হয়নি।</td></tr>
+<tr><td><strong>Use Case Review</strong></td><td>মূল সমস্যার সংজ্ঞা বদলে গেছে কিনা দেখো। হয়তো নতুন target metrics দরকার।</td><td>Business context সম্পূর্ণ বদলে গেলে।</td></tr>
+<tr><td><strong>Data Pipeline Review</strong></td><td>ডেটা কীভাবে আসছে সেটার সমস্যা চেক করো। Preprocessing-এ bug থাকতে পারে।</td><td>Data drift data quality issue থেকে আসলে।</td></tr>
+<tr><td><strong>Adaptive Models</strong></td><td>Online learning বা incremental learning — মডেল নিজেই নতুন ডেটায় আপডেট হতে পারে।</td><td>ঘন ঘন পরিবর্তন হয় এমন context-এ।</td></tr>
+<tr><td><strong>A/B Testing</strong></td><td>দুটো মডেল একসাথে চালিয়ে দেখো কোনটা ভালো। তারপর ভালো মডেলকে পুরো traffic দাও।</td><td>নিশ্চিত না হলে পরীক্ষামূলকভাবে।</td></tr>
+</table>
+</div>
+
+<div class="box bo"><div class="bt">✅ শুরুতে কী করবে?</div>
+<ul>
+<li><strong>ছোট থেকে শুরু করো:</strong> নতুন ডেটার একটা ছোট sample দিয়ে retrain করে দেখো কাজ করে কিনা</li>
+<li><strong>পুরনো version রাখো (Versioning):</strong> সমস্যা হলে rollback করতে পারবে</li>
+<li><strong>Hypothesis test করো:</strong> পুরো system পরিবর্তন না করে ছোট পরিবর্তনের প্রভাব দেখো</li>
+</ul>
+</div>
+
+<div class="box bw"><div class="bt">🏛️ Sustainable Monitoring Culture — দীর্ঘমেয়াদী approach</div>
+<p>একবার সমস্যা সমাধান করা যথেষ্ট নয়। দলের মধ্যে continuous monitoring-এর সংস্কৃতি গড়ে তুলতে হবে:</p>
+<ul>
+<li>Dynamic dashboard দিয়ে <strong>model health observatory</strong> setup করো</li>
+<li>Robustness tests, consistency tests, drift detection <strong>automate</strong> করো</li>
+<li>Incidents এবং lessons learned <strong>document</strong> করো — পুরো দলের জন্য knowledge base তৈরি হবে</li>
+<li>Business team-এর সাথে partnership করো — তারা জানে কী পরিবর্তন হচ্ছে বাস্তবে</li>
+</ul>
+</div>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 7 -->
+<!-- ============================================================ -->
+<section class="sec fi" id="s7">
+<div class="sec-hdr"><span class="sec-num">07</span><h2>Monitoring বনাম Observability</h2></div>
+
+<div class="g2">
+<div class="card"><div class="card-t">📊 Monitoring — "কী হচ্ছে?"</div>
+<p>সংখ্যা দিয়ে সিস্টেমের অবস্থা <strong>ক্রমাগত পরিমাপ</strong> করা।</p>
+<ul>
+<li>Performance metrics track করা</li>
+<li>Alert পাঠানো যখন কিছু ভুল হয়</li>
+<li>Deployment-এর আগে ও পরে metrics</li>
+<li>Real-time dashboards</li>
+<li>Early warning system</li>
+</ul>
+</div>
+<div class="card"><div class="card-t">🔍 Observability — "কেন হচ্ছে?"</div>
+<p>Monitoring-এ alert আসার পরে <strong>মূল কারণ খোঁজার</strong> ক্ষমতা।</p>
+<ul>
+<li>Root cause analysis</li>
+<li>Incident documentation</li>
+<li>Causal relationship বোঝা</li>
+<li>Degradation-এর root identify করা</li>
+<li>দীর্ঘমেয়াদী সমাধান</li>
+</ul>
+</div>
+</div>
+
+<div class="diag">
+<div class="diag-t">Observability-র ৫টা ধাপ</div>
+<svg viewBox="0 0 680 80" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%">
+<defs><marker id="a5" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#f0883e"/></marker></defs>
+<rect x="10" y="20" width="110" height="42" rx="8" fill="#1c2330" stroke="#f0883e" stroke-width="1.5"/>
+<text x="65" y="38" text-anchor="middle" fill="#f0883e" font-size="10" font-family="sans-serif" font-weight="bold">⚠️ Detect</text>
+<text x="65" y="52" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Issues ধরো</text>
+<line x1="120" y1="41" x2="140" y2="41" stroke="#f0883e" stroke-width="1.5" marker-end="url(#a5)"/>
+<rect x="142" y="20" width="110" height="42" rx="8" fill="#1c2330" stroke="#58a6ff" stroke-width="1.5"/>
+<text x="197" y="38" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="sans-serif" font-weight="bold">🔍 Root Cause</text>
+<text x="197" y="52" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">কারণ খোঁজো</text>
+<line x1="252" y1="41" x2="272" y2="41" stroke="#f0883e" stroke-width="1.5" marker-end="url(#a5)"/>
+<rect x="274" y="20" width="110" height="42" rx="8" fill="#1c2330" stroke="#3fb950" stroke-width="1.5"/>
+<text x="329" y="38" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif" font-weight="bold">📊 Analyze</text>
+<text x="329" y="52" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">বিশ্লেষণ করো</text>
+<line x1="384" y1="41" x2="404" y2="41" stroke="#f0883e" stroke-width="1.5" marker-end="url(#a5)"/>
+<rect x="406" y="20" width="110" height="42" rx="8" fill="#1c2330" stroke="#d2a8ff" stroke-width="1.5"/>
+<text x="461" y="38" text-anchor="middle" fill="#d2a8ff" font-size="10" font-family="sans-serif" font-weight="bold">🔄 Retrain</text>
+<text x="461" y="52" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">সমাধান করো</text>
+<line x1="516" y1="41" x2="536" y2="41" stroke="#f0883e" stroke-width="1.5" marker-end="url(#a5)"/>
+<rect x="538" y="20" width="130" height="42" rx="8" fill="#1c2330" stroke="#ffa657" stroke-width="1.5"/>
+<text x="603" y="38" text-anchor="middle" fill="#ffa657" font-size="10" font-family="sans-serif" font-weight="bold">📝 Document</text>
+<text x="603" y="52" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">শিক্ষা সংরক্ষণ</text>
+</svg>
+</div>
+
+<div class="box bw"><div class="bt">🎯 এক কথায় মনে রাখো</div>
+<p><strong>Monitoring</strong> বলে — "কী" হচ্ছে (মডেল accuracy কমে গেছে)।<br>
+<strong>Observability</strong> বলে — "কেন" হচ্ছে (training data-র সাথে production data মেলে না)।<br>
+দুটো একসাথে ব্যবহার করলে সবচেয়ে ভালো ফলাফল।</p>
+</div>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 8 -->
+<!-- ============================================================ -->
+<section class="sec fi" id="s8">
+<div class="sec-hdr"><span class="sec-num">08</span><h2>Evidently AI — পরিচয়, Install ও Quick Start</h2></div>
+
+
+<div class="box bp"><div class="bt">😄 Silly কিন্তু গুরুত্বপূর্ণ: Python-এর মূল keyword-গুলো</div>
+<p>Code-এ দেখা সব keyword এর মানে (যদি না জানো তো শর্ম নেই, সবাই কোথাও না কোথাও শুরু করেছে!):</p>
+<div class="tbl-w"><table>
+<tr><th>Keyword/Symbol</th><th>মানে</th><th>উদাহরণ</th></tr>
+<tr><td><code>import</code></td><td>অন্য file বা library থেকে tool ধার নাও</td><td><code>import pandas as pd</code> → pandas library-কে 'pd' নামে ডাকব</td></tr>
+<tr><td><code>def</code></td><td>নতুন function সংজ্ঞায়িত করো (function = কাজের একটা প্যাকেট)</td><td><code>def get_data():</code> → get_data নামের একটা function তৈরি করছি</td></tr>
+<tr><td><code>return</code></td><td>function-এর কাজ শেষ, এই মান ফিরিয়ে দাও</td><td><code>return df</code> → df DataFrame ফিরিয়ে দাও</td></tr>
+<tr><td><code>if / else</code></td><td>শর্ত পরীক্ষা করো</td><td><code>if correct: ... else: ...</code></td></tr>
+<tr><td><code>for ... in</code></td><td>list বা collection-এর প্রতিটা item-এ loop</td><td><code>for i in range(27):</code> → 0 থেকে 26 পর্যন্ত loop</td></tr>
+<tr><td><code>try / except</code></td><td>ভুল হলে crash না করে সামলাও</td><td><code>try: download() except: use_local()</code></td></tr>
+<tr><td><code>with ... as</code></td><td>resource ব্যবহার করে শেষে auto-close করো</td><td><code>with open('file') as f:</code> → file খুলে কাজ, শেষে বন্ধ</td></tr>
+<tr><td><code>@decorator</code></td><td>function-এ extra behavior যোগ করে</td><td><code>@task</code> → Prefect-কে বলছি এটা একটা task</td></tr>
+<tr><td><code>f"..."</code></td><td>f-string — variable-এর মান string-এ বসাও</td><td><code>f"Row count: {len(df)}"</code></td></tr>
+<tr><td><code>lambda</code></td><td>ছোট্ট একলাইনের anonymous function</td><td><code>lambda x: x*2</code> → x নিয়ে x*2 দাও</td></tr>
+</table></div>
+</div>
+
+<div class="card"><div class="card-t">🔍 Evidently কী?</div>
+<p><strong>Evidently AI</strong> একটা open-source Python library যেটা ML model monitoring সহজ করে দেয়। ২০২১ সালে Berlin-এ data scientist ও engineer-দের একটা দল এটা বানিয়েছে।</p>
+<p>এটা automatically detect করতে পারে: Data drift হয়েছে কিনা, Model-এর behavior বদলেছে কিনা, কোনো potential bias আছে কিনা।</p>
+<p>Features: Interactive reports · Notebook integration · Pipeline integration · Development phase থেকে production পর্যন্ত ব্যবহারযোগ্য।</p>
+</div>
+
+<div class="diag">
+<div class="diag-t">Evidently-র দুটো Architecture</div>
+<svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;width:100%">
+<defs><marker id="a6" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#58a6ff"/></marker></defs>
+<!-- Arch 1 -->
+<rect x="10" y="8" width="338" height="280" rx="12" fill="#1c2330" stroke="#f0883e" stroke-width="1.5"/>
+<text x="179" y="30" text-anchor="middle" fill="#f0883e" font-size="12" font-family="sans-serif" font-weight="bold">১. Real-time Monitoring</text>
+<rect x="22" y="45" width="110" height="38" rx="7" fill="#0d1117" stroke="#3fb950" stroke-width="1"/>
+<text x="77" y="62" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif" font-weight="bold">ML Service</text>
+<text x="77" y="76" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Inputs + Predictions</text>
+<line x1="132" y1="64" x2="152" y2="64" stroke="#8b949e" stroke-width="1" marker-end="url(#a6)"/>
+<rect x="154" y="45" width="110" height="55" rx="7" fill="#0d1117" stroke="#f0883e" stroke-width="1.5"/>
+<text x="209" y="63" text-anchor="middle" fill="#f0883e" font-size="10" font-family="sans-serif" font-weight="bold">Collector Service</text>
+<text x="209" y="77" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Data checks</text>
+<text x="209" y="90" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Metrics → Log</text>
+<line x1="264" y1="72" x2="284" y2="72" stroke="#8b949e" stroke-width="1" marker-end="url(#a6)"/>
+<rect x="286" y="48" width="50" height="48" rx="7" fill="#0d1117" stroke="#a3f" stroke-width="1"/>
+<text x="311" y="68" text-anchor="middle" fill="#a3f" font-size="9" font-family="sans-serif" font-weight="bold">Data</text>
+<text x="311" y="81" text-anchor="middle" fill="#a3f" font-size="9" font-family="sans-serif">Source</text>
+<line x1="311" y1="96" x2="311" y2="114" stroke="#8b949e" stroke-width="1" marker-end="url(#a6)"/>
+<rect x="154" y="118" width="200" height="44" rx="7" fill="#0d1117" stroke="#d2a8ff" stroke-width="1.5"/>
+<text x="254" y="136" text-anchor="middle" fill="#d2a8ff" font-size="10" font-family="sans-serif" font-weight="bold">Evidently Dashboard</text>
+<text x="254" y="152" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Visual charts + Snapshots</text>
+<rect x="22" y="185" width="310" height="85" rx="8" fill="#0d1117" stroke="#30363d"/>
+<text x="177" y="202" text-anchor="middle" fill="#c9d1d9" font-size="10" font-family="sans-serif" font-weight="bold">Monitoring Outputs</text>
+<rect x="35" y="210" width="130" height="28" rx="6" fill="#1c2330" stroke="#f0883e"/>
+<text x="100" y="229" text-anchor="middle" fill="#f0883e" font-size="10" font-family="sans-serif">🚨 Alerts (threshold)</text>
+<rect x="185" y="210" width="130" height="28" rx="6" fill="#1c2330" stroke="#58a6ff"/>
+<text x="250" y="229" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="sans-serif">📄 Reports (ad-hoc)</text>
+<text x="177" y="261" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Threshold পার হলে → Alert; কারণ খুঁজতে → Report</text>
+<!-- Arch 2 -->
+<rect x="368" y="8" width="344" height="280" rx="12" fill="#1c2330" stroke="#58a6ff" stroke-width="1.5"/>
+<text x="540" y="30" text-anchor="middle" fill="#58a6ff" font-size="12" font-family="sans-serif" font-weight="bold">২. Batch Monitoring</text>
+<rect x="380" y="48" width="130" height="32" rx="7" fill="#0d1117" stroke="#30363d"/>
+<text x="445" y="60" text-anchor="middle" fill="#c9d1d9" font-size="9" font-family="sans-serif" font-weight="bold">ML Pipeline:</text>
+<text x="445" y="73" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Data validation</text>
+<line x1="510" y1="64" x2="530" y2="64" stroke="#8b949e" stroke-width="1" marker-end="url(#a6)"/>
+<rect x="532" y="48" width="168" height="32" rx="7" fill="#0d1117" stroke="#3fb950"/>
+<text x="616" y="60" text-anchor="middle" fill="#3fb950" font-size="9" font-family="sans-serif">Input checks → Log</text>
+<text x="616" y="73" text-anchor="middle" fill="#8b949e" font-size="8" font-family="sans-serif">(Data quality)</text>
+<rect x="380" y="100" width="130" height="32" rx="7" fill="#0d1117" stroke="#30363d"/>
+<text x="445" y="112" text-anchor="middle" fill="#c9d1d9" font-size="9" font-family="sans-serif" font-weight="bold">ML Pipeline:</text>
+<text x="445" y="125" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Scoring / Prediction</text>
+<line x1="510" y1="116" x2="530" y2="116" stroke="#8b949e" stroke-width="1" marker-end="url(#a6)"/>
+<rect x="532" y="100" width="168" height="32" rx="7" fill="#0d1117" stroke="#3fb950"/>
+<text x="616" y="112" text-anchor="middle" fill="#3fb950" font-size="9" font-family="sans-serif">Prediction checks → Log</text>
+<text x="616" y="125" text-anchor="middle" fill="#8b949e" font-size="8" font-family="sans-serif">(Model output)</text>
+<rect x="380" y="152" width="130" height="32" rx="7" fill="#0d1117" stroke="#30363d"/>
+<text x="445" y="164" text-anchor="middle" fill="#c9d1d9" font-size="9" font-family="sans-serif" font-weight="bold">ML Pipeline:</text>
+<text x="445" y="177" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Label join</text>
+<line x1="510" y1="168" x2="530" y2="168" stroke="#8b949e" stroke-width="1" marker-end="url(#a6)"/>
+<rect x="532" y="152" width="168" height="32" rx="7" fill="#0d1117" stroke="#3fb950"/>
+<text x="616" y="164" text-anchor="middle" fill="#3fb950" font-size="9" font-family="sans-serif">Quality checks → Log</text>
+<text x="616" y="177" text-anchor="middle" fill="#8b949e" font-size="8" font-family="sans-serif">(Model quality)</text>
+<rect x="388" y="205" width="316" height="44" rx="8" fill="#0d1117" stroke="#d2a8ff" stroke-width="1.5"/>
+<text x="546" y="222" text-anchor="middle" fill="#d2a8ff" font-size="10" font-family="sans-serif" font-weight="bold">Evidently Snapshots → Dashboard</text>
+<text x="546" y="238" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Delayed ground truth-এর জন্য উপযুক্ত</text>
+<text x="546" y="270" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Evidently Library: Reports + Test Suites</text>
+</svg>
+</div>
+
+<h3>Install ও Quick Start</h3>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">TERMINAL — ধাপ ১: ফোল্ডার ও Environment</div></div>
+<pre><span class="cm"># নতুন ফোল্ডার তৈরি করো</span>
+mkdir drift_monitoring
+cd drift_monitoring
+
+<span class="cm"># Virtual environment — তিনটা পদ্ধতির যেকোনো একটা:</span>
+
+<span class="cm"># পদ্ধতি ১: uv দিয়ে (সবচেয়ে দ্রুত)</span>
+uv venv
+source .venv/bin/activate      <span class="cm"># Linux/macOS</span>
+.venv\Scripts\activate          <span class="cm"># Windows</span>
+
+<span class="cm"># পদ্ধতি ২: virtualenv দিয়ে</span>
+virtualenv .venv
+source .venv/bin/activate
+
+<span class="cm"># পদ্ধতি ৩: conda দিয়ে</span>
+conda create -n drift_env python=3.10 -y
+conda activate drift_env</pre></div>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">TERMINAL — ধাপ ২: Install ও Demo</div></div>
+<pre><span class="cm"># Evidently install (সব পদ্ধতিতে একই)</span>
+pip install evidently==0.6.7
+
+<span class="cm"># Demo project সহ UI চালাও</span>
+evidently ui --demo-projects all
+
+<span class="cm"># Terminal-এ দেখবে:</span>
+INFO: Started server process [14828]
+INFO: Waiting for application startup.
+INFO: Application startup complete.
+INFO: Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+
+<span class="cm"># Browser-এ যাও: http://localhost:8000
+# তিনটা demo project দেখবে: Reviews, Bikes, Adult</span></pre></div>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">PYTHON — প্রথম Data Drift Report (1_first_steps.py)</div></div>
+<pre><span class="cm"># ===== প্রয়োজনীয় library import =====</span>
+<span class="kw">import</span> json
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn <span class="kw">import</span> datasets
+<span class="kw">from</span> evidently.report <span class="kw">import</span> <span class="cl2">Report</span>
+<span class="kw">from</span> evidently.metrics <span class="kw">import</span> <span class="cl2">DataDriftTable</span>     <span class="cm"># প্রতিটা column-এর drift</span>
+<span class="kw">from</span> evidently.metrics <span class="kw">import</span> <span class="cl2">DatasetDriftMetric</span>  <span class="cm"># পুরো dataset-এর drift</span>
+
+
+<div class="box bi"><div class="bt">🐼 DataFrame কী? (মনে না থাকলেও সমস্যা নেই!)</div>
+<p><strong>DataFrame</strong> হলো Pandas library-র একটা data structure। সহজভাবে বলো — Excel-এর spreadsheet-এর মতো! Rows (সারি) এবং Columns (কলাম) আছে, কিন্তু Python-এ থাকায় code দিয়ে সহজে কাজ করা যায়।</p>
+<ul>
+<li><code>adult_data.frame</code> → dataset-কে DataFrame-এ রূপান্তর</li>
+<li><code>df.sample(n=50)</code> → random ৫০টা row নাও</li>
+<li><code>df[df.age &gt; 30]</code> → শুধু age&gt;30 এমন rows filter করো</li>
+<li><code>df['column_name']</code> → একটা নির্দিষ্ট column-এর সব মান</li>
+<li><code>df.shape</code> → (কতটা row, কতটা column) দেখাবে</li>
+</ul>
+</div>
+<span class="cm"># ===== Adult Income Dataset ডাউনলোড =====</span>
+<span class="cm"># এই dataset-এ মানুষের তথ্য আছে (বয়স, শিক্ষা, পেশা ইত্যাদি)
+# Target: income $50K-এর বেশি কিনা</span>
+adult_data = datasets.fetch_openml(name=<span class="st">'adult'</span>, version=<span class="nm">2</span>, as_frame=<span class="st">'auto'</span>)
+adult = adult_data.frame
+
+<span class="cm"># ===== ডেটা দুভাগ করো =====</span>
+<span class="cm"># Reference: বিশ্ববিদ্যালয় ডিগ্রি নেই — training data-র প্রতিনিধিত্ব করে</span>
+adult_ref = adult[~adult.education.isin([<span class="st">'Some-college'</span>, <span class="st">'HS-grad'</span>, <span class="st">'Bachelors'</span>])]
+
+<span class="cm"># Current: কিছুটা পড়াশোনা আছে — production-এ নতুন ডেটার প্রতিনিধিত্ব করে</span>
+adult_cur = adult[adult.education.isin([<span class="st">'Some-college'</span>, <span class="st">'HS-grad'</span>, <span class="st">'Bachelors'</span>])]
+
+<span class="cm"># Realistic simulation-এর জন্য কিছু missing value যোগ করো</span>
+adult_cur.iloc[:<span class="nm">2000</span>, <span class="nm">3</span>:<span class="nm">5</span>] = np.nan
+
+<span class="cm"># ===== Evidently Report তৈরি =====</span>
+data_drift_report = <span class="cl2">Report</span>(metrics=[
+    <span class="cl2">DatasetDriftMetric</span>(),  <span class="cm"># পুরো dataset-এ কতটা drift</span>
+    <span class="cl2">DataDriftTable</span>(),      <span class="cm"># প্রতিটা column কি drift হয়েছে</span>
+])
+
+<div class="box bw"><div class="bt">🔑 Reference Data বনাম Current Data — এই দুটো সবচেয়ে গুরুত্বপূর্ণ concept</div><p>Evidently সবসময় দুটো dataset তুলনা করে:</p><ul><li><strong>Reference Data (রেফারেন্স ডেটা):</strong> এটা "আগের" বা "সঠিক" ডেটা। সাধারণত training data। এটা হলো baseline — যার সাথে তুলনা করা হবে।</li><li><strong>Current Data (বর্তমান ডেটা):</strong> এটা "এখনকার" বা "নতুন" ডেটা। Production-এ মডেলে আসা নতুন data।</li></ul><p><strong>Evidently বলে:</strong> "Reference-এর তুলনায় Current-এ কতটা পরিবর্তন হয়েছে?"</p><p>💡 <strong>মনে রাখো:</strong> Reference = পুরনো training data, Current = production-এর নতুন data।</p></div>
+<span class="cm"># reference = পুরনো/training ডেটা, current = নতুন/production ডেটা</span>
+data_drift_report.run(
+    reference_data=adult_ref,
+    current_data=adult_cur
+)
+
+<span class="cm"># ===== সংরক্ষণ করো =====</span>
+report_data = json.loads(data_drift_report.json())
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">'data_drift_report.json'</span>, <span class="st">'w'</span>) <span class="kw">as</span> f:
+    json.dump(report_data, f, indent=<span class="nm">4</span>)
+
+data_drift_report.save_html(<span class="st">"Data_drift_report.html"</span>)
+<span class="cm"># Jupyter Notebook-এ দেখতে: data_drift_report.show()</span>
+
+<span class="fn">print</span>(<span class="st">"Report তৈরি হয়ে গেছে!"</span>)</pre></div>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">TERMINAL — চালাও</div></div>
+<pre>python 1_first_steps.py</pre></div>
+
+<div class="box bo"><div class="bt">🎉 Result-এ কী দেখবে?</div>
+<p>Report-এ দেখবে: মোট ১৫টা column-এর মধ্যে ৫টায় drift detected। Share of Drifted Columns = 0.333 (33%)। Dataset-level drift threshold হলো 0.5 — তার নিচে তাই overall drift "NOT detected"। Drifted columns-এ Wasserstein distance বা Jensen-Shannon distance দিয়ে কতটা বদলেছে সেটাও দেখাবে।</p>
+</div>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 9 -->
+<!-- ============================================================ -->
+<section class="sec fi" id="s9">
+<div class="sec-hdr"><span class="sec-num">09</span><h2>Regression ও Classification Reports</h2></div>
+
+<div class="tabs">
+<div class="tbtns">
+<button class="tbtn active" onclick="swT(this,'r1')">📈 Regression Report</button>
+<button class="tbtn" onclick="swT(this,'r2')">🎯 Classification Report</button>
+</div>
+
+<div id="r1" class="tpan active">
+<h4>Regression Model Monitor — Diabetes Dataset</h4>
+<p>Regression মানে continuous সংখ্যা predict করা (যেমন: বাড়ির দাম, রোগের progression score)। <strong>RegressionPreset</strong> দিয়ে এক লাইনে সব মেট্রিক পাওয়া যায়।</p>
+
+<div class="g3">
+<div class="card"><div class="card-t">MAE</div><p>Mean Absolute Error। গড় ভুলের পরিমাণ। কম হলে ভালো।</p></div>
+<div class="card"><div class="card-t">MSE / RMSE</div><p>Mean Squared Error / Root MSE। বড় ভুলকে বেশি শাস্তি দেয়।</p></div>
+<div class="card"><div class="card-t">R² Score</div><p>0 থেকে 1। মডেল কতটা variance explain করে। বেশি ভালো।</p></div>
+<div class="card"><div class="card-t">MAPE</div><p>Mean Absolute Percentage Error। শতাংশে ভুল।</p></div>
+<div class="card"><div class="card-t">Residual Plot</div><p>ভুলের বণ্টন — কোন দিকে বেশি ভুল হচ্ছে চোখে দেখো।</p></div>
+<div class="card"><div class="card-t">Predicted vs Actual</div><p>মডেলের আন্দাজ ও আসল মানের তুলনা চার্টে।</p></div>
+</div>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">PYTHON — 2_regression_monitoring.py</div></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn <span class="kw">import</span> datasets
+<span class="kw">from</span> evidently.report <span class="kw">import</span> <span class="cl2">Report</span>
+<span class="kw">from</span> evidently.metric_preset <span class="kw">import</span> <span class="cl2">RegressionPreset</span>  <span class="cm"># সব regression metrics একসাথে</span>
+<span class="kw">from</span> evidently.ui.workspace <span class="kw">import</span> <span class="cl2">Workspace</span>           <span class="cm"># UI-তে দেখানোর জন্য</span>
+
+<span class="kw">def</span> <span class="fn">get_data</span>():
+    <span class="st">"""Diabetes dataset লোড ও DataFrame বানাও"""</span>
+    diabetes_data = datasets.load_diabetes()
+    df = pd.DataFrame(diabetes_data.data, columns=diabetes_data.feature_names)
+    df[<span class="st">'target'</span>] = diabetes_data.target
+    <span class="cm"># Simulated prediction: actual মানের সাথে সামান্য noise যোগ</span>
+    df[<span class="st">'prediction'</span>] = df[<span class="st">'target'</span>].values + np.random.normal(<span class="nm">0</span>, <span class="nm">3</span>, df.shape[<span class="nm">0</span>])
+    <span class="kw">return</span> df
+
+<span class="kw">def</span> <span class="fn">prepare_data</span>(df, ref_n, cur_n):
+    <span class="st">"""Random sampling দিয়ে reference ও current বানাও"""</span>
+    <span class="kw">return</span> df.sample(n=ref_n, replace=<span class="kw">False</span>), df.sample(n=cur_n, replace=<span class="kw">False</span>)
+
+<span class="kw">def</span> <span class="fn">generate_regression_report</span>(ref, cur):
+    <span class="st">"""Regression performance report তৈরি করো"""</span>
+    report = <span class="cl2">Report</span>(metrics=[<span class="cl2">RegressionPreset</span>()])
+    report.run(
+        reference_data=ref.sort_index(),
+        current_data=cur.sort_index()
+    )
+    <span class="kw">return</span> report
+
+<span class="kw">def</span> <span class="fn">add_to_workspace</span>(ws, proj_name, proj_desc, report):
+    <span class="st">"""Report-কে Evidently workspace-এ যোগ করো"""</span>
+    project = <span class="kw">None</span>
+    <span class="kw">for</span> p <span class="kw">in</span> ws.list_projects():
+        <span class="kw">if</span> p.name == proj_name:
+            project = p; <span class="kw">break</span>
+    <span class="kw">if</span> project <span class="kw">is</span> <span class="kw">None</span>:
+        project = ws.create_project(proj_name)
+        project.description = proj_desc
+    ws.add_report(project.id, report)
+    <span class="fn">print</span>(<span class="st">f"✅ Report যোগ হয়েছে: {proj_name}"</span>)
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    df = <span class="fn">get_data</span>()
+    ref, cur = <span class="fn">prepare_data</span>(df, <span class="nm">50</span>, <span class="nm">50</span>)
+    rep = <span class="fn">generate_regression_report</span>(ref, cur)
+    ws = <span class="cl2">Workspace</span>.create(<span class="st">"datascientest-workspace"</span>)
+    <span class="fn">add_to_workspace</span>(ws, <span class="st">"regression_monitoring"</span>, <span class="st">"Evidently Dashboards"</span>, rep)</pre></div>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">TERMINAL</div></div>
+<pre>python 2_regression_monitoring.py
+evidently ui --workspace ./datascientest-workspace/
+<span class="cm"># Browser: http://localhost:8000
+# Click: regression_monitoring → Reports → View</span></pre></div>
+</div>
+
+<div id="r2" class="tpan">
+<h4>Classification Model Monitor — Iris Dataset</h4>
+<p>Classification মানে category predict করা (spam/not spam, fraud/not fraud)। <strong>ClassificationPreset</strong> দিয়ে সব classification metrics পাওয়া যায়।</p>
+
+<div class="g3">
+<div class="card"><div class="card-t">Accuracy</div><p>সব prediction-এর মধ্যে কতটা ঠিক।</p></div>
+<div class="card"><div class="card-t">Precision</div><p>"spam" বললে কতবার সত্যিই spam।</p></div>
+<div class="card"><div class="card-t">Recall</div><p>সব spam-এর মধ্যে কতটা ধরতে পেরেছ।</p></div>
+<div class="card"><div class="card-t">F1 Score</div><p>Precision ও Recall-এর harmonic mean।</p></div>
+<div class="card"><div class="card-t">ROC AUC</div><p>Threshold নির্বিশেষে মডেলের সামগ্রিক ক্ষমতা।</p></div>
+<div class="card"><div class="card-t">Confusion Matrix</div><p>TP, FP, TN, FN — চোখে দেখো।</p></div>
+</div>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">PYTHON — 3_classification_monitoring.py</div></div>
+<pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn <span class="kw">import</span> datasets
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="cl2">RandomForestClassifier</span>
+<span class="kw">from</span> evidently.report <span class="kw">import</span> <span class="cl2">Report</span>
+<span class="kw">from</span> evidently.metric_preset <span class="kw">import</span> <span class="cl2">ClassificationPreset</span>
+<span class="kw">from</span> evidently.ui.workspace <span class="kw">import</span> <span class="cl2">Workspace</span>
+
+<span class="kw">def</span> <span class="fn">get_data</span>():
+    iris = datasets.load_iris()
+    df = pd.DataFrame(iris.data, columns=iris.feature_names)
+    <span class="cm"># Binary classification: class 1 vs সবার বিরুদ্ধে</span>
+    df[<span class="st">'target'</span>] = (iris.target == <span class="nm">1</span>).astype(<span class="fn">int</span>)
+    <span class="kw">return</span> df
+
+<span class="kw">def</span> <span class="fn">get_prediction</span>(ref, cur):
+    ref, cur = ref.copy(), cur.copy()
+    model = <span class="cl2">RandomForestClassifier</span>(random_state=<span class="nm">42</span>)
+    model.fit(ref.drop(columns=[<span class="st">'target'</span>]), ref[<span class="st">'target'</span>])
+    <span class="cm"># probability score দাও (0-1), class 1-এর জন্য</span>
+    ref[<span class="st">'prediction'</span>] = model.predict_proba(ref.drop(columns=[<span class="st">'target'</span>]))[:, <span class="nm">1</span>]
+    cur[<span class="st">'prediction'</span>] = model.predict_proba(cur.drop(columns=[<span class="st">'target'</span>]))[:, <span class="nm">1</span>]
+    <span class="kw">return</span> ref, cur
+
+<span class="kw">def</span> <span class="fn">gen_classification_report</span>(ref, cur):
+    rep = <span class="cl2">Report</span>(metrics=[
+        <span class="cm"># probas_threshold=0.5 মানে 0.5-এর উপরে হলে positive class</span>
+        <span class="cl2">ClassificationPreset</span>(probas_threshold=<span class="nm">0.5</span>)
+    ])
+    rep.run(reference_data=ref, current_data=cur)
+    <span class="kw">return</span> rep
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    df = <span class="fn">get_data</span>()
+    ref, cur = df.sample(<span class="nm">50</span>), df.sample(<span class="nm">50</span>)
+    ref_p, cur_p = <span class="fn">get_prediction</span>(ref, cur)
+    rep = <span class="fn">gen_classification_report</span>(ref_p, cur_p)
+    ws = <span class="cl2">Workspace</span>(<span class="st">"datascientest-workspace"</span>)
+    <span class="cm"># add_to_workspace(ws, "classification_monitoring", ..., rep)</span></pre></div>
+</div>
+</div>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 10 -->
+<!-- ============================================================ -->
+<section class="sec fi" id="s10">
+<div class="sec-hdr"><span class="sec-num">10</span><h2>Test Suites — স্বয়ংক্রিয় Quality Check</h2></div>
+
+<div class="box bp"><div class="bt">🧪 Test Suite কী?</div>
+<p><strong>Test Suite</strong> হলো automated checks-এর একটা সংগ্রহ। Report-এ তুমি দেখো "কী হয়েছে", কিন্তু Test Suite বলে "এটা <strong>pass</strong> হয়েছে না <strong>fail</strong> হয়েছে"।</p>
+<p>উদাহরণ: "Missing values ০-এর বেশি হলে fail", "Accuracy ৭৫%-এর কম হলে fail" — এই ধরনের নিয়ম। CI/CD pipeline-এ integrate করতে পারো।</p>
+</div>
+
+<div class="tbl-w"><table>
+<tr><th>Test Preset</th><th>কী করে</th></tr>
+<tr><td><code>DataQualityTestPreset()</code></td><td>Missing values, duplicates, constant columns, statistics সব check করে</td></tr>
+<tr><td><code>DataDriftTestPreset()</code></td><td>প্রতিটা column drift হয়েছে কিনা test করে (pass/fail verdict)</td></tr>
+<tr><td><code>NoTargetPerformanceTestPreset()</code></td><td>Target variable ছাড়াই model quality estimate করে</td></tr>
+<tr><td><code>RegressionTestPreset()</code></td><td>Regression model-এর performance pass/fail</td></tr>
+<tr><td><code>ClassificationTestPreset()</code></td><td>Classification model-এর performance pass/fail</td></tr>
+</table></div>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">PYTHON — 4_test_suites.py</div></div>
+<pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> zipfile
+<span class="kw">from</span> evidently.test_suite <span class="kw">import</span> <span class="cl2">TestSuite</span>
+<span class="kw">from</span> evidently.test_preset <span class="kw">import</span> <span class="cl2">DataQualityTestPreset</span>
+<span class="kw">from</span> evidently.tests <span class="kw">import</span> <span class="cl2">TestColumnValueMean</span>
+
+<span class="kw">def</span> <span class="fn">load_data_from_zip</span>(zip_path, sample_size):
+    np.random.seed(<span class="nm">42</span>)
+    <span class="kw">with</span> zipfile.<span class="cl2">ZipFile</span>(zip_path, <span class="st">'r'</span>) <span class="kw">as</span> z:
+        file_name = z.namelist()[<span class="nm">0</span>]
+        df = pd.read_csv(z.open(file_name), index_col=<span class="nm">0</span>).sample(n=sample_size, random_state=<span class="nm">42</span>)
+    <span class="kw">return</span> df
+
+<span class="kw">def</span> <span class="fn">split_data_by_month</span>(df, month=<span class="nm">6</span>):
+    <span class="st">"""Month >= 6 হলে current, বাকি reference"""</span>
+    mask = df[<span class="st">'Month'</span>] >= month
+    <span class="kw">return</span> df[~mask], df[mask]  <span class="cm"># ref, cur</span>
+
+<span class="kw">def</span> <span class="fn">create_and_run_test_suite</span>(ref, cur, save=<span class="kw">True</span>):
+    test_suite = <span class="cl2">TestSuite</span>(tests=[
+        <span class="cl2">DataQualityTestPreset</span>(),            <span class="cm"># সব data quality check</span>
+        <span class="cl2">TestColumnValueMean</span>(column_name=<span class="st">'ArrDelay'</span>)  <span class="cm"># specific column mean test</span>
+    ])
+    test_suite.run(reference_data=ref, current_data=cur)
+    <span class="kw">if</span> save:
+        test_suite.save_html(<span class="st">"data_drift_suite.html"</span>)
+    <span class="kw">return</span> test_suite
+
+<span class="cm"># ===== Custom metrics দিয়ে Test Suite =====</span>
+<span class="cm"># from evidently.tests import (TestShareOfMissingValues,
+#     TestPrecisionScore, TestRecallScore, TestAccuracyScore)
+# custom_suite = TestSuite(tests=[
+#     TestShareOfMissingValues(eq=0),    # missing values শূন্য হতে হবে
+#     TestPrecisionScore(gt=0.5),        # precision > 0.5 হতে হবে
+#     TestRecallScore(gt=0.3),           # recall > 0.3 হতে হবে
+#     TestAccuracyScore(gte=0.75),       # accuracy >= 0.75 হতে হবে
+# ])</span>
+
+<span class="cm"># ===== Specific column-এর drift দেখো =====</span>
+<span class="cm"># from evidently.metrics import ColumnDriftMetric
+# col_report = Report(metrics=[
+#     ColumnDriftMetric(column_name='ArrDelay'),
+#     ColumnDriftMetric(column_name='ArrDelay', stattest='psi')
+# ])</span></pre></div>
+
+<div class="box bo"><div class="bt">✅ Key Considerations — Drift দেখলে কী করবে?</div>
+<ul>
+<li><strong>সব drift-এ সাথে সাথে retrain করা দরকার নেই।</strong> প্রথমে data quality ও external factors দেখো।</li>
+<li><strong>Prediction drift বনাম Feature drift:</strong> Production-এ prediction drift বেশি গুরুত্বপূর্ণ।</li>
+<li><strong>Data drift কিন্তু prediction drift নেই?</strong> Model resilient আছে — সমস্যা নেই।</li>
+<li><strong>Prediction drift আছে?</strong> Retraining দরকার হতে পারে।</li>
+<li><strong>Drift report-এ target variable exclude করো।</strong></li>
+</ul>
+</div>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 11 -->
+<!-- ============================================================ -->
+<section class="sec fi" id="s11">
+<div class="sec-hdr"><span class="sec-num">11</span><h2>Grafana + PostgreSQL + Prefect Integration</h2></div>
+
+<p>শুধু Evidently-র নিজস্ব UI ছাড়াও আমরা metrics-কে একটা database-এ রেখে Grafana-র মতো professional dashboard দিয়ে visualize করতে পারি।</p>
+
+<div class="diag">
+<div class="diag-t">সম্পূর্ণ Production-Grade Monitoring Architecture</div>
+<svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;width:100%">
+<defs><marker id="a7" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#58a6ff"/></marker></defs>
+<rect x="10" y="55" width="120" height="60" rx="9" fill="#1c2330" stroke="#3fb950" stroke-width="2"/>
+<text x="70" y="80" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif" font-weight="bold">ML Model</text>
+<text x="70" y="94" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">NYC Taxi Data</text>
+<text x="70" y="108" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Predictions</text>
+<line x1="130" y1="85" x2="158" y2="85" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a7)"/>
+<rect x="160" y="45" width="140" height="80" rx="9" fill="#1c2330" stroke="#f0883e" stroke-width="2"/>
+<text x="230" y="68" text-anchor="middle" fill="#f0883e" font-size="10" font-family="sans-serif" font-weight="bold">Evidently</text>
+<text x="230" y="83" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">ColumnDriftMetric</text>
+<text x="230" y="96" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">DatasetDriftMetric</text>
+<text x="230" y="109" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">MissingValuesMetric</text>
+<line x1="300" y1="85" x2="328" y2="85" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a7)"/>
+<rect x="330" y="45" width="140" height="80" rx="9" fill="#1c2330" stroke="#58a6ff" stroke-width="2"/>
+<text x="400" y="68" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="sans-serif" font-weight="bold">PostgreSQL DB</text>
+<text x="400" y="85" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">dummy_metrics table</text>
+<text x="400" y="99" text-anchor="middle" fill="#58a6ff" font-size="8" font-family="sans-serif">timestamp | drift_score</text>
+<text x="400" y="113" text-anchor="middle" fill="#58a6ff" font-size="8" font-family="sans-serif">num_drifted | missing</text>
+<line x1="470" y1="85" x2="498" y2="85" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a7)"/>
+<rect x="500" y="45" width="130" height="80" rx="9" fill="#1c2330" stroke="#d2a8ff" stroke-width="2"/>
+<text x="565" y="68" text-anchor="middle" fill="#d2a8ff" font-size="10" font-family="sans-serif" font-weight="bold">Grafana</text>
+<text x="565" y="83" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Port: 3000</text>
+<text x="565" y="97" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Real-time Charts</text>
+<text x="565" y="111" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Drift Alerts</text>
+<rect x="60" y="155" width="590" height="36" rx="8" fill="#0d1117" stroke="#3fb950" stroke-width="1"/>
+<text x="355" y="170" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif" font-weight="bold">Prefect Workflow Orchestration</text>
+<text x="355" y="183" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">@flow এবং @task decorator দিয়ে সব কিছু automatically চলে | Port: 4200</text>
+</svg>
+</div>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">YAML — docker-compose.yml</div></div>
+<pre><span class="cm"># তিনটা service একসাথে চালাও</span>
+version: <span class="st">'3.7'</span>
+
+volumes:
+  grafana_data: {}
+
+networks:
+  front-tier: {}   <span class="cm"># সামনের services</span>
+  back-tier: {}    <span class="cm"># পেছনের services</span>
+
+services:
+  <span class="cm"># ১. PostgreSQL Database (Port 5432)</span>
+  database:
+    image: postgres:13.18-alpine3.19
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: test
+    ports: [<span class="st">"5432:5432"</span>]
+    networks: [back-tier]
+
+  <span class="cm"># ২. Adminer — Database GUI (Port 8080)</span>
+  admin:
+    image: adminer:5.3.0
+    restart: always
+    ports: [<span class="st">"8080:8080"</span>]
+    networks: [back-tier, front-tier]
+
+  <span class="cm"># ৩. Grafana — Dashboard (Port 3000)</span>
+  grafana:
+    image: grafana/grafana:11.4.0
+    ports: [<span class="st">"3000:3000"</span>]
+    networks: [back-tier, front-tier]
+    restart: always
+    volumes: [grafana_data:/var/lib/grafana]</pre></div>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">PYTHON — evidently_metrics_calculation.py (মূল অংশ)</div></div>
+<pre><span class="kw">from</span> prefect <span class="kw">import</span> task, flow
+<span class="kw">from</span> evidently.report <span class="kw">import</span> <span class="cl2">Report</span>
+<span class="kw">from</span> evidently <span class="kw">import</span> <span class="cl2">ColumnMapping</span>
+<span class="kw">from</span> evidently.metrics <span class="kw">import</span> (
+    <span class="cl2">ColumnDriftMetric</span>,          <span class="cm"># prediction column-এর drift score</span>
+    <span class="cl2">DatasetDriftMetric</span>,         <span class="cm"># পুরো dataset-এ drifted columns সংখ্যা</span>
+    <span class="cl2">DatasetMissingValuesMetric</span>  <span class="cm"># missing values-এর ভাগ</span>
+)
+<span class="kw">import</span> psycopg, datetime, time, logging
+
+<span class="cm"># DB table তৈরির SQL</span>
+create_table = <span class="st">"""
+drop table if exists dummy_metrics;
+create table dummy_metrics(
+    timestamp timestamp,
+    prediction_drift float,
+    num_drifted_columns integer,
+    share_missing_values float
+)
+"""</span>
+
+<span class="cm"># @task: Prefect-এর সবচেয়ে ছোট কাজের unit</span>
+@task
+<span class="kw">def</span> <span class="fn">calculate_metrics</span>(i):
+    <span class="st">"""i-তম দিনের data-তে drift metrics calculate করো"""</span>
+    <span class="cm"># সেই দিনের ডেটা slice করো</span>
+    slice_ = raw_data[
+        (raw_data.lpep_pickup_datetime >= (begin_date + datetime.timedelta(i))) &
+        (raw_data.lpep_pickup_datetime < (begin_date + datetime.timedelta(i+<span class="nm">1</span>)))
+    ]
+    <span class="cm"># Model দিয়ে predict করো</span>
+    slice_[<span class="st">'prediction'</span>] = model.predict(slice_[num_features + cat_features].fillna(<span class="nm">0</span>))
+    <span class="cm"># Evidently report চালাও</span>
+    report.run(reference_data=reference_data, current_data=slice_, column_mapping=column_mapping)
+    result = report.as_dict()
+    <span class="cm"># Metrics extract করো</span>
+    drift  = result[<span class="st">'metrics'</span>][<span class="nm">0</span>][<span class="st">'result'</span>][<span class="st">'drift_score'</span>]
+    n_drft = result[<span class="st">'metrics'</span>][<span class="nm">1</span>][<span class="st">'result'</span>][<span class="st">'number_of_drifted_columns'</span>]
+    miss   = result[<span class="st">'metrics'</span>][<span class="nm">2</span>][<span class="st">'result'</span>][<span class="st">'current'</span>][<span class="st">'share_of_missing_values'</span>]
+    <span class="kw">return</span> i, drift, n_drft, miss
+
+<span class="cm"># @flow: সব @task-কে একসাথে orchestrate করে</span>
+@flow
+<span class="kw">def</span> <span class="fn">batch_monitoring_backfill</span>():
+    prepare_db()
+    conn = psycopg.connect(<span class="st">"host=localhost port=5432 dbname=test user=postgres password=example"</span>, autocommit=<span class="kw">True</span>)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">0</span>, <span class="nm">27</span>):  <span class="cm"># February-র প্রতিটা দিন</span>
+        result = <span class="fn">calculate_metrics</span>(i)
+        <span class="kw">with</span> conn.cursor() <span class="kw">as</span> c:
+            c.execute(
+                <span class="st">"insert into dummy_metrics values (%s, %s, %s, %s)"</span>,
+                (begin_date + datetime.timedelta(i), result[<span class="nm">1</span>], result[<span class="nm">2</span>], result[<span class="nm">3</span>])
+            )
+        logging.info(<span class="st">f"Day {i+1}: drift={result[1]:.3f}, drifted={result[2]}, missing={result[3]:.3f}"</span>)
+    conn.close()</pre></div>
+
+
+<div class="box bi"><div class="bt">❓ prepare_db() কী করে? — বিস্তারিত</div>
+<p><code>prepare_db()</code> function টা PostgreSQL database-কে monitoring শুরুর আগে তৈরি করে। এটা একটা table তৈরি করে যেখানে drift metrics store হবে।</p>
+</div>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">PYTHON — prepare_db() function বিস্তারিত</div></div>
+<pre><span class="kw">import</span> psycopg  <span class="cm"># PostgreSQL-এর সাথে Python connect করার library</span>
+
+<span class="cm"># এই SQL দিয়ে table তৈরি হবে</span>
+create_table_sql = <span class="st">"""
+drop table if exists dummy_metrics;   -- আগের table মুছে দাও
+create table dummy_metrics(
+    timestamp         timestamp,       -- কোন দিন/সময়ের metrics
+    prediction_drift  float,           -- drift score (0-1 এর মধ্যে)
+    num_drifted_columns integer,       -- কতটা column drift হয়েছে
+    share_missing_values float         -- missing data কতটা (0-1)
+)
+"""</span>
+
+<span class="kw">def</span> <span class="fn">prepare_db</span>():
+    <span class="st">"""
+    PostgreSQL-এ 'test' database এবং 'dummy_metrics' table তৈরি করো।
+    Docker-এ database service চলতে হবে আগে।
+    """</span>
+    <span class="cm"># Step 1: প্রথমে default 'postgres' database-এ connect করো</span>
+    <span class="cm"># কারণ 'test' database এখনও exist নাও করতে পারে</span>
+    <span class="kw">with</span> psycopg.connect(
+        <span class="st">"host=localhost port=5432 user=postgres password=example"</span>,
+        autocommit=<span class="kw">True</span>  <span class="cm"># প্রতিটা query আলাদাভাবে commit হবে</span>
+    ) <span class="kw">as</span> conn:
+        <span class="cm"># 'test' database আছে কিনা চেক করো</span>
+        res = conn.execute(<span class="st">"SELECT 1 FROM pg_database WHERE datname='test'"</span>)
+        <span class="kw">if</span> <span class="fn">len</span>(res.fetchall()) == <span class="nm">0</span>:
+            conn.execute(<span class="st">"create database test;"</span>)  <span class="cm"># না থাকলে তৈরি করো</span>
+            <span class="fn">print</span>(<span class="st">"✅ 'test' database তৈরি হয়েছে"</span>)
+    
+    <span class="cm"># Step 2: এখন 'test' database-এ connect করে table তৈরি করো</span>
+    <span class="kw">with</span> psycopg.connect(
+        <span class="st">"host=localhost port=5432 dbname=test user=postgres password=example"</span>
+    ) <span class="kw">as</span> conn:
+        conn.execute(create_table_sql)
+        conn.commit()
+        <span class="fn">print</span>(<span class="st">"✅ dummy_metrics table তৈরি হয়েছে"</span>)</pre></div>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">TERMINAL — সম্পূর্ণ চালানোর sequence</div></div>
+<pre><span class="cm"># ১. Docker চালু করো</span>
+docker-compose up --build
+
+<span class="cm"># ২. Prefect server চালু করো (নতুন terminal-এ)</span>
+prefect server start
+
+<span class="cm"># ৩. Pipeline চালাও (নতুন terminal-এ)</span>
+python src/evidently_metrics_calculation.py
+
+<span class="cm"># এরপর browser-এ দেখো:
+# Grafana:  http://localhost:3000 (admin/admin)
+# Adminer:  http://localhost:8080 (postgres/example)
+# Prefect:  http://localhost:4200
+# Evidently: evidently ui --workspace ./datascientest-workspace/</span></pre></div>
+
+<div class="box bo"><div class="bt">📊 Grafana Dashboard-এ কী দেখবে?</div>
+<ul>
+<li><strong>Prediction Drift graph:</strong> প্রতিদিন drift score কতটা। Feb 2-তে হঠাৎ বেড়ে 0.194 হয়েছে!</li>
+<li><strong>Num Drifted Columns:</strong> কতটা column drift হয়েছে (সাধারণত ৫-৬টা)</li>
+<li><strong>Share Missing Values:</strong> missing data কতটা (৭-৯% এর মধ্যে)</li>
+<li>Threshold 0.175 set করলে Feb 2-এ alert trigger হবে → investigate করো!</li>
+</ul>
+</div>
+</section>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 12 -->
+<!-- ============================================================ -->
+<section class="sec fi" id="s12">
+<div class="sec-hdr"><span class="sec-num">12</span><h2>Exam: Bike Sharing Dataset — সম্পূর্ণ Solution</h2></div>
+
+<div class="box be"><div class="bt">📝 Exam সম্পর্কে</div>
+<p>UCI Bike Sharing dataset ব্যবহার করে পুরো monitoring pipeline বানাতে হবে। নিচে dataset পরিচয়, সম্পূর্ণ code, এবং প্রশ্নের উত্তর দেওয়া হলো।</p>
+</div>
+
+
+<div class="box bo"><div class="bt">🛡️ Dataset Download ব্যর্থ হলে কী করবে?</div>
+<p>Bike Sharing dataset UCI server থেকে download হয়। কিন্তু যদি internet না থাকে বা server busy থাকে? নিচে একটা <strong>synthetic (কৃত্রিম) dataset</strong> generator দেওয়া হলো যেটা একই structure-এ ডেটা বানাবে। Real data ও synthetic data-র behavior কিছুটা আলাদা হবে, কিন্তু code test করার জন্য যথেষ্ট।</p>
+</div>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">PYTHON — dummy_dataset_generator.py (Download ব্যর্থ হলে ব্যবহার করো)</div></div>
+<pre><span class="cm"># ================================================================
+# SYNTHETIC BIKE SHARING DATASET GENERATOR
+# যদি UCI download কাজ না করে, এই code চালাও
+# এটা real data-র মতোই structure তৈরি করবে
+# ================================================================</span>
+
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> datetime
+
+<span class="kw">def</span> <span class="fn">generate_synthetic_bike_data</span>(start_year=<span class="nm">2011</span>, n_months=<span class="nm">12</span>, seed=<span class="nm">42</span>):
+    <span class="st">"""
+    UCI Bike Sharing dataset-এর মতো synthetic data তৈরি করো।
+    
+    Real dataset-এর বৈশিষ্ট্য অনুসরণ করে:
+    - গরমে বেশি rental (temp বেশি → cnt বেশি)
+    - সকাল ও সন্ধ্যায় rush hour (hr=8, hr=17-18)
+    - ছুটির দিনে কম rental
+    - শীতে (season=4) কম rental
+    
+    Returns: pd.DataFrame with same columns as original hour.csv
+    """</span>
+    np.random.seed(seed)
+    rows = []
+    
+    <span class="cm"># Start from Jan 1, 2011</span>
+    current_date = datetime.date(start_year, <span class="nm">1</span>, <span class="nm">1</span>)
+    instant = <span class="nm">1</span>
+    
+    <span class="cm"># Generate hourly data for n_months</span>
+    total_days = n_months * <span class="nm">30</span>  <span class="cm"># approximate</span>
+    
+    <span class="kw">for</span> day_offset <span class="kw">in</span> <span class="fn">range</span>(total_days):
+        d = current_date + datetime.timedelta(days=day_offset)
+        month = d.month
+        weekday = d.weekday()  <span class="cm"># 0=Monday, 6=Sunday</span>
+        
+        <span class="cm"># Season: 1=Spring(3-5), 2=Summer(6-8), 3=Fall(9-11), 4=Winter(12-2)</span>
+        season = {<span class="nm">12</span>:<span class="nm">4</span>,<span class="nm">1</span>:<span class="nm">4</span>,<span class="nm">2</span>:<span class="nm">4</span>,<span class="nm">3</span>:<span class="nm">1</span>,<span class="nm">4</span>:<span class="nm">1</span>,<span class="nm">5</span>:<span class="nm">1</span>,<span class="nm">6</span>:<span class="nm">2</span>,<span class="nm">7</span>:<span class="nm">2</span>,<span class="nm">8</span>:<span class="nm">2</span>,<span class="nm">9</span>:<span class="nm">3</span>,<span class="nm">10</span>:<span class="nm">3</span>,<span class="nm">11</span>:<span class="nm">3</span>}[month]
+        holiday = <span class="nm">1</span> <span class="kw">if</span> np.random.random() < <span class="nm">0.03</span> <span class="kw">else</span> <span class="nm">0</span>  <span class="cm"># 3% holiday chance</span>
+        workingday = <span class="nm">0</span> <span class="kw">if</span> weekday >= <span class="nm">5</span> <span class="kw">or</span> holiday <span class="kw">else</span> <span class="nm">1</span>
+        
+        <span class="kw">for</span> hr <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">24</span>):
+            <span class="cm"># Normalized temperature based on season (0-1 scale)</span>
+            base_temp = {<span class="nm">1</span>:<span class="nm">0.35</span>, <span class="nm">2</span>:<span class="nm">0.65</span>, <span class="nm">3</span>:<span class="nm">0.50</span>, <span class="nm">4</span>:<span class="nm">0.20</span>}[season]
+            temp = np.clip(base_temp + np.random.normal(<span class="nm">0</span>, <span class="nm">0.08</span>), <span class="nm">0</span>, <span class="nm">1</span>)
+            atemp = np.clip(temp + np.random.normal(<span class="nm">0</span>, <span class="nm">0.05</span>), <span class="nm">0</span>, <span class="nm">1</span>)
+            hum = np.clip(<span class="nm">0.55</span> + np.random.normal(<span class="nm">0</span>, <span class="nm">0.15</span>), <span class="nm">0</span>, <span class="nm">1</span>)
+            windspeed = np.clip(np.random.exponential(<span class="nm">0.18</span>), <span class="nm">0</span>, <span class="nm">0.85</span>)
+            
+            <span class="cm"># Rush hour pattern (morning 7-9, evening 16-19)</span>
+            hour_factor = <span class="nm">1.0</span>
+            <span class="kw">if</span> hr <span class="kw">in</span> [<span class="nm">7</span>, <span class="nm">8</span>, <span class="nm">9</span>]: hour_factor = <span class="nm">2.2</span>
+            <span class="kw">elif</span> hr <span class="kw">in</span> [<span class="nm">16</span>, <span class="nm">17</span>, <span class="nm">18</span>, <span class="nm">19</span>]: hour_factor = <span class="nm">2.5</span>
+            <span class="kw">elif</span> hr <span class="kw">in</span> [<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]: hour_factor = <span class="nm">0.1</span>
+            <span class="kw">elif</span> hr <span class="kw">in</span> [<span class="nm">4</span>, <span class="nm">5</span>]: hour_factor = <span class="nm">0.3</span>
+            
+            <span class="cm"># Weekend vs workday</span>
+            day_factor = <span class="nm">0.7</span> <span class="kw">if</span> workingday == <span class="nm">0</span> <span class="kw">else</span> <span class="nm">1.0</span>
+            
+            <span class="cm"># Base count: weather + hour + day factors</span>
+            base_cnt = (
+                <span class="nm">100</span> * temp +        <span class="cm"># গরম হলে বেশি rental</span>
+                <span class="nm">50</span> * hour_factor +  <span class="cm"># rush hour-এ বেশি</span>
+                <span class="nm">20</span> * day_factor -   <span class="cm"># workday-এ বেশি</span>
+                <span class="nm">30</span> * hum -          <span class="cm"># বৃষ্টিতে কম rental</span>
+                <span class="nm">20</span> * windspeed      <span class="cm"># ঝড়ে কম rental</span>
+            )
+            cnt = <span class="fn">max</span>(<span class="nm">0</span>, <span class="fn">int</span>(base_cnt + np.random.normal(<span class="nm">0</span>, <span class="nm">15</span>)))
+            casual = <span class="fn">int</span>(cnt * np.random.uniform(<span class="nm">0.2</span>, <span class="nm">0.4</span>))
+            registered = cnt - casual
+            
+            rows.append({
+                <span class="st">'instant'</span>: instant,
+                <span class="st">'dteday'</span>: d.strftime(<span class="st">'%Y-%m-%d'</span>),
+                <span class="st">'season'</span>: season,
+                <span class="st">'yr'</span>: <span class="nm">0</span> <span class="kw">if</span> start_year == <span class="nm">2011</span> <span class="kw">else</span> <span class="nm">1</span>,
+                <span class="st">'mnth'</span>: month,
+                <span class="st">'hr'</span>: hr,
+                <span class="st">'holiday'</span>: holiday,
+                <span class="st">'weekday'</span>: weekday,
+                <span class="st">'workingday'</span>: workingday,
+                <span class="st">'weathersit'</span>: np.random.choice([<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>], p=[<span class="nm">0.6</span>,<span class="nm">0.3</span>,<span class="nm">0.1</span>]),
+                <span class="st">'temp'</span>: <span class="fn">round</span>(temp, <span class="nm">4</span>),
+                <span class="st">'atemp'</span>: <span class="fn">round</span>(atemp, <span class="nm">4</span>),
+                <span class="st">'hum'</span>: <span class="fn">round</span>(hum, <span class="nm">4</span>),
+                <span class="st">'windspeed'</span>: <span class="fn">round</span>(windspeed, <span class="nm">4</span>),
+                <span class="st">'casual'</span>: casual,
+                <span class="st">'registered'</span>: registered,
+                <span class="st">'cnt'</span>: cnt,
+            })
+            instant += <span class="nm">1</span>
+    
+    df = pd.DataFrame(rows)
+    df[<span class="st">'dteday'</span>] = pd.to_datetime(df[<span class="st">'dteday'</span>])
+    <span class="cm"># Original code-এর মতো DateTime index সেট করো</span>
+    df.index = df.apply(
+        <span class="kw">lambda</span> r: datetime.datetime.combine(r.dteday.date(), datetime.time(r.hr)), axis=<span class="nm">1</span>
+    )
+    <span class="kw">return</span> df
+
+<span class="kw">def</span> <span class="fn">load_bike_data_safe</span>():
+    <span class="st">"""
+    প্রথমে UCI থেকে real data নামানোর চেষ্টা করো।
+    ব্যর্থ হলে synthetic data ব্যবহার করো।
+    এটা bike_monitoring.py-তে _fetch_data() এবং _process() replace করে।
+    """</span>
+    <span class="kw">import</span> requests, zipfile, io, warnings
+    warnings.filterwarnings(<span class="st">'ignore'</span>)
+    
+    <span class="fn">print</span>(<span class="st">"📥 UCI থেকে data download চেষ্টা করছে..."</span>)
+    <span class="kw">try</span>:
+        resp = requests.get(
+            <span class="st">"https://archive.ics.uci.edu/static/public/275/bike+sharing+dataset.zip"</span>,
+            timeout=<span class="nm">15</span>, verify=<span class="kw">False</span>
+        )
+        resp.raise_for_status()
+        <span class="kw">with</span> zipfile.<span class="cl2">ZipFile</span>(io.<span class="cl2">BytesIO</span>(resp.content)) <span class="kw">as</span> arc:
+            raw = pd.read_csv(arc.open(<span class="st">"hour.csv"</span>), header=<span class="nm">0</span>, sep=<span class="st">","</span>, parse_dates=[<span class="st">"dteday"</span>])
+        raw.index = raw.apply(
+            <span class="kw">lambda</span> r: __import__(<span class="st">'datetime'</span>).datetime.combine(
+                r.dteday.date(), __import__(<span class="st">'datetime'</span>).time(r.hr)
+            ), axis=<span class="nm">1</span>
+        )
+        <span class="fn">print</span>(<span class="st">f"✅ Real data downloaded: {len(raw)} rows"</span>)
+        <span class="kw">return</span> raw
+    <span class="kw">except</span> <span class="kw">Exception</span> <span class="kw">as</span> e:
+        <span class="fn">print</span>(<span class="st">f"⚠️ Download ব্যর্থ: {e}"</span>)
+        <span class="fn">print</span>(<span class="st">"🔄 Synthetic dataset তৈরি করা হচ্ছে..."</span>)
+        df = <span class="fn">generate_synthetic_bike_data</span>(n_months=<span class="nm">3</span>)  <span class="cm"># Jan-Mar 2011</span>
+        <span class="fn">print</span>(<span class="st">f"✅ Synthetic data তৈরি: {len(df)} rows"</span>)
+        <span class="kw">return</span> df
+
+<span class="cm"># ===== ব্যবহার =====</span>
+<span class="cm"># bike_monitoring.py-তে এই line replace করো:
+#   raw_data = _process(_fetch_data())
+# এই দিয়ে:
+#   raw_data = load_bike_data_safe()
+
+# Test করো:
+if __name__ == "__main__":
+    df = generate_synthetic_bike_data(n_months=2)
+    print(f"Synthetic data shape: {df.shape}")
+    print(f"Columns: {list(df.columns)}")
+    print(f"Date range: {df.index.min()} to {df.index.max()}")
+    print(f"\nSample:")
+    print(df[['season','mnth','hr','temp','hum','cnt']].head(5))</span></pre></div>
+<div class="card"><div class="card-t">🚲 Bike Sharing Dataset পরিচয়</div>
+<p>২০১১-২০১২ সালের hourly bike rental data। প্রতি ঘণ্টায় কতটা bike ভাড়া হয়েছে সেটা predict করতে হবে।</p>
+<div class="tbl-w"><table>
+<tr><th>Variable</th><th>Type</th><th>বিবরণ</th></tr>
+<tr><td><code>cnt</code></td><td>🎯 Target</td><td>মোট bike rental সংখ্যা (প্রতি ঘণ্টায়) — এটাই predict করব</td></tr>
+<tr><td><code>temp</code></td><td>📊 Numerical</td><td>Normalized temperature (তাপমাত্রা)</td></tr>
+<tr><td><code>atemp</code></td><td>📊 Numerical</td><td>Normalized feeling temperature (অনুভূতির তাপমাত্রা)</td></tr>
+<tr><td><code>hum</code></td><td>📊 Numerical</td><td>Normalized humidity (আর্দ্রতা)</td></tr>
+<tr><td><code>windspeed</code></td><td>📊 Numerical</td><td>Normalized wind speed (বাতাসের গতি)</td></tr>
+<tr><td><code>mnth</code></td><td>📊 Numerical</td><td>মাস (1-12)</td></tr>
+<tr><td><code>hr</code></td><td>📊 Numerical</td><td>ঘণ্টা (0-23)</td></tr>
+<tr><td><code>weekday</code></td><td>📊 Numerical</td><td>সপ্তাহের দিন (0=Sunday)</td></tr>
+<tr><td><code>season</code></td><td>🏷️ Categorical</td><td>ঋতু (1=Spring, 2=Summer, 3=Fall, 4=Winter)</td></tr>
+<tr><td><code>holiday</code></td><td>🏷️ Categorical</td><td>ছুটির দিন কিনা (0/1)</td></tr>
+<tr><td><code>workingday</code></td><td>🏷️ Categorical</td><td>কর্মদিবস কিনা (0/1)</td></tr>
+</table></div>
+</div>
+
+<h3>সম্পূর্ণ Solution Script</h3>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">PYTHON — bike_monitoring.py (সম্পূর্ণ single-run script)</div></div>
+<pre><span class="cm"># ================================================================
+# BIKE SHARING ML MONITORING — সম্পূর্ণ Script
+# একবার চালালেই সব reports তৈরি হবে
+# ================================================================</span>
+
+<span class="kw">import</span> datetime, warnings
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> requests, zipfile, io
+<span class="kw">from</span> sklearn <span class="kw">import</span> ensemble, model_selection
+<span class="kw">from</span> evidently.metric_preset <span class="kw">import</span> <span class="cl2">DataDriftPreset</span>, <span class="cl2">RegressionPreset</span>, <span class="cl2">TargetDriftPreset</span>
+<span class="kw">from</span> evidently.pipeline.column_mapping <span class="kw">import</span> <span class="cl2">ColumnMapping</span>
+<span class="kw">from</span> evidently.report <span class="kw">import</span> <span class="cl2">Report</span>
+<span class="kw">from</span> evidently.ui.workspace <span class="kw">import</span> <span class="cl2">Workspace</span>
+warnings.filterwarnings(<span class="st">'ignore'</span>)
+
+<span class="cm"># ===== STEP 1: Data Ingestion =====</span>
+<span class="kw">def</span> <span class="fn">_fetch_data</span>():
+    <span class="st">"""UCI থেকে Bike Sharing dataset download করো"""</span>
+    content = requests.get(
+        <span class="st">"https://archive.ics.uci.edu/static/public/275/bike+sharing+dataset.zip"</span>,
+        verify=<span class="kw">False</span>
+    ).content
+    <span class="kw">with</span> zipfile.<span class="cl2">ZipFile</span>(io.<span class="cl2">BytesIO</span>(content)) <span class="kw">as</span> arc:
+        raw = pd.read_csv(arc.open(<span class="st">"hour.csv"</span>), header=<span class="nm">0</span>, sep=<span class="st">','</span>, parse_dates=[<span class="st">'dteday'</span>])
+    <span class="kw">return</span> raw
+
+<span class="kw">def</span> <span class="fn">_process</span>(raw):
+    <span class="st">"""Date + Hour combine করে DateTime index বানাও"""</span>
+    raw.index = raw.apply(
+        <span class="kw">lambda</span> r: datetime.datetime.combine(r.dteday.date(), datetime.time(r.hr)), axis=<span class="nm">1</span>
+    )
+    <span class="kw">return</span> raw
+
+<span class="fn">print</span>(<span class="st">"📥 ডেটা লোড হচ্ছে..."</span>)
+<span class="cm"># প্রথমে real download চেষ্টা, ব্যর্থ হলে synthetic data
+# load_bike_data_safe() ফাংশন dummy_dataset_generator.py-তে আছে</span>
+<span class="kw">try</span>:
+    raw_data = <span class="fn">_process</span>(<span class="fn">_fetch_data</span>())
+    <span class="fn">print</span>(<span class="st">f"✅ {len(raw_data)} rows লোড হয়েছে (real data)"</span>)
+<span class="kw">except</span> <span class="kw">Exception</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="st">f"⚠️ Download ব্যর্থ ({e}), synthetic data ব্যবহার করছে..."</span>)
+    <span class="kw">from</span> dummy_dataset_generator <span class="kw">import</span> <span class="fn">generate_synthetic_bike_data</span>
+    raw_data = <span class="fn">generate_synthetic_bike_data</span>(n_months=<span class="nm">3</span>)
+    <span class="fn">print</span>(<span class="st">f"✅ {len(raw_data)} rows তৈরি হয়েছে (synthetic data)"</span>)
+
+<span class="cm"># ===== Features সংজ্ঞায়িত =====</span>
+target = <span class="st">'cnt'</span>
+prediction = <span class="st">'prediction'</span>
+num_features = [<span class="st">'temp'</span>, <span class="st">'atemp'</span>, <span class="st">'hum'</span>, <span class="st">'windspeed'</span>, <span class="st">'mnth'</span>, <span class="st">'hr'</span>, <span class="st">'weekday'</span>]
+cat_features = [<span class="st">'season'</span>, <span class="st">'holiday'</span>, <span class="st">'workingday'</span>]
+
+<span class="cm"># ===== Reference ও Current ডেটা =====</span>
+reference_jan11 = raw_data.loc[<span class="st">'2011-01-01 00:00:00'</span>:<span class="st">'2011-01-28 23:00:00'</span>]  <span class="cm"># training</span>
+current_feb11   = raw_data.loc[<span class="st">'2011-01-29 00:00:00'</span>:<span class="st">'2011-02-28 23:00:00'</span>]  <span class="cm"># production</span>
+
+<span class="cm"># ===== STEP 2: Validation Model (train/test split) =====</span>
+X_tr, X_te, y_tr, y_te = model_selection.train_test_split(
+    reference_jan11[num_features + cat_features],
+    reference_jan11[target], test_size=<span class="nm">0.3</span>
+)
+reg = ensemble.<span class="cl2">RandomForestRegressor</span>(random_state=<span class="nm">0</span>, n_estimators=<span class="nm">50</span>)
+reg.fit(X_tr, y_tr)
+X_tr[<span class="st">'target'</span>] = y_tr
+X_tr[<span class="st">'prediction'</span>] = reg.predict(X_tr.drop(columns=[<span class="st">'target'</span>]))
+X_te[<span class="st">'target'</span>] = y_te
+X_te[<span class="st">'prediction'</span>] = reg.predict(X_te.drop(columns=[<span class="st">'target'</span>]))
+
+<span class="cm"># ===== ColumnMapping — এটা কী? =====
+# Evidently-কে বলতে হয় তোমার DataFrame-এর কোন column কোন ভূমিকা পালন করছে।
+# কারণ Evidently জানে না 'target' মানে আসল মান, 'prediction' মানে মডেলের আন্দাজ।
+# আমরা সেটা explicitly বলে দিচ্ছি।</span>
+cm = <span class="cl2">ColumnMapping</span>()
+cm.target = <span class="st">'target'</span>; cm.prediction = <span class="st">'prediction'</span>
+cm.numerical_features = num_features; cm.categorical_features = cat_features
+
+<span class="cm"># ===== Workspace ও Project setup =====</span>
+WORKSPACE = <span class="st">"bike-monitoring-workspace"</span>
+PROJECT = <span class="st">"bike_sharing_monitoring"</span>
+ws = <span class="cl2">Workspace</span>.create(WORKSPACE)
+proj = ws.create_project(PROJECT)
+proj.description = <span class="st">"Bike Sharing Monitoring — সম্পূর্ণ Pipeline"</span>
+
+<span class="kw">def</span> <span class="fn">add_report</span>(metrics_list, ref, cur, col_map=cm):
+    <span class="st">"""Report তৈরি করে workspace-এ যোগ করো"""</span>
+    r = <span class="cl2">Report</span>(metrics=metrics_list)
+    r.run(reference_data=ref, current_data=cur, column_mapping=col_map)
+    ws.add_report(proj.id, r)
+    <span class="fn">print</span>(<span class="st">"  ✅ Report যোগ হয়েছে"</span>)
+    <span class="kw">return</span> r
+
+<span class="cm"># ===== Report 1: Model Validation =====</span>
+<span class="fn">print</span>(<span class="st">"📊 Model Validation Report..."</span>)
+<span class="fn">add_report</span>([<span class="cl2">RegressionPreset</span>()], X_tr.sort_index(), X_te.sort_index())
+
+<span class="cm"># ===== STEP 3: Production Model (পুরো January দিয়ে train) =====</span>
+<span class="fn">print</span>(<span class="st">"🏭 Production Model training..."</span>)
+reg.fit(reference_jan11[num_features + cat_features], reference_jan11[target])
+reference_jan11 = reference_jan11.copy()
+reference_jan11[<span class="st">'prediction'</span>] = reg.predict(reference_jan11[num_features + cat_features])
+reference_jan11[<span class="st">'target'</span>] = reference_jan11[<span class="st">'cnt'</span>]
+
+<span class="cm"># Report 2: Production model self-check</span>
+<span class="fn">add_report</span>([<span class="cl2">RegressionPreset</span>()], <span class="kw">None</span>, reference_jan11)
+
+<span class="cm"># ===== STEP 4: February Weekly Drift Reports =====</span>
+weeks = [
+    (<span class="st">'Week 1'</span>, <span class="st">'2011-01-29 00:00:00'</span>, <span class="st">'2011-02-07 23:00:00'</span>),
+    (<span class="st">'Week 2'</span>, <span class="st">'2011-02-07 00:00:00'</span>, <span class="st">'2011-02-14 23:00:00'</span>),
+    (<span class="st">'Week 3'</span>, <span class="st">'2011-02-15 00:00:00'</span>, <span class="st">'2011-02-21 23:00:00'</span>),
+]
+<span class="kw">for</span> name, start, end <span class="kw">in</span> weeks:
+    <span class="fn">print</span>(<span class="st">f"📅 {name} Report..."</span>)
+    wd = current_feb11.loc[start:end].copy()
+    wd[<span class="st">'prediction'</span>] = reg.predict(wd[num_features + cat_features].fillna(<span class="nm">0</span>))
+    wd[<span class="st">'target'</span>] = wd[<span class="st">'cnt'</span>]
+    <span class="fn">add_report</span>([<span class="cl2">RegressionPreset</span>()], reference_jan11, wd)
+
+<span class="cm"># ===== STEP 5: Target Drift (Week 3 — worst week) =====</span>
+<span class="fn">print</span>(<span class="st">"🎯 Target Drift Analysis..."</span>)
+cm_drift = <span class="cl2">ColumnMapping</span>()
+cm_drift.target = target; cm_drift.prediction = prediction
+cm_drift.numerical_features = num_features; cm_drift.categorical_features = []
+
+w3 = current_feb11.loc[<span class="st">'2011-02-14 00:00:00'</span>:<span class="st">'2011-02-21 23:00:00'</span>].copy()
+w3[<span class="st">'prediction'</span>] = reg.predict(w3[num_features + cat_features].fillna(<span class="nm">0</span>))
+w3[<span class="st">'target'</span>] = w3[<span class="st">'cnt'</span>]
+<span class="fn">add_report</span>([<span class="cl2">TargetDriftPreset</span>()], reference_jan11, w3, cm_drift)
+
+<span class="cm"># ===== STEP 6: Data Drift (Week 3, numerical features only) =====</span>
+<span class="fn">print</span>(<span class="st">"📉 Data Drift Analysis..."</span>)
+<span class="fn">add_report</span>([<span class="cl2">DataDriftPreset</span>()], reference_jan11, w3, cm_drift)
+
+<span class="fn">print</span>(<span class="st">"""
+🎉 সব শেষ! এখন Evidently UI চালাও:
+   evidently ui --workspace ./bike-monitoring-workspace
+   Browser: http://localhost:8000
+"""</span>)</pre></div>
+
+<div class="cb"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">requirements.txt</div></div>
+<pre>evidently==0.6.7
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.2.0
+requests>=2.28.0</pre></div>
+
+<h3>Exam-এর প্রশ্নের উত্তর</h3>
+
+<div class="tabs">
+<div class="tbtns">
+<button class="tbtn active" onclick="swT(this,'eq1')">প্রশ্ন ১: Weekly পরিবর্তন</button>
+<button class="tbtn" onclick="swT(this,'eq2')">প্রশ্ন ২: Root Cause</button>
+<button class="tbtn" onclick="swT(this,'eq3')">প্রশ্ন ৩: Strategy</button>
+</div>
+<div id="eq1" class="tpan active">
+<h4>Week 1, 2, 3-এ কী পরিবর্তন হয়েছে?</h4>
+<ul>
+<li><strong>Week 1 (Jan 29 – Feb 7):</strong> সামান্য drift শুরু হয়। MAE সামান্য বাড়ে কিন্তু সহনীয়। Model এখনও মোটামুটি ভালো কাজ করছে।</li>
+<li><strong>Week 2 (Feb 7 – Feb 14):</strong> Drift স্পষ্ট হয়। Model-এর error বাড়ে। Temperature এবং weather-related features-এ পরিবর্তন দেখা যায়।</li>
+<li><strong>Week 3 (Feb 15 – Feb 21):</strong> সবচেয়ে বেশি drift। MAE ও RMSE উল্লেখযোগ্যভাবে বেড়ে গেছে। Predictions ও actual values-এর ব্যবধান সবচেয়ে বড়।</li>
+</ul>
+<p>ট্রেন্ড: ধীরে ধীরে বাড়ছে — এটা <strong>Gradual Drift</strong>-এর উদাহরণ।</p>
+</div>
+<div id="eq2" class="tpan">
+<h4>Drift-এর মূল কারণ কী (Data দিয়ে)?</h4>
+<p><strong>Target Drift Analysis</strong> ও <strong>Data Drift Analysis</strong> দেখায়:</p>
+<ul>
+<li>Target variable (<code>cnt</code>) নিজেই drift হয়েছে — bike rental pattern বদলেছে।</li>
+<li><code>temp</code> (তাপমাত্রা) ও <code>hum</code> (আর্দ্রতা)-তে significant drift — ঋতু পরিবর্তনের কারণে।</li>
+<li>January ছিল শীতের মাঝামাঝি। February-র শেষে আবহাওয়া বদলাতে থাকে।</li>
+<li>আবহাওয়া পরিবর্তনের কারণে মানুষের bike ব্যবহারের pattern বদলায়।</li>
+<li>এটা <strong>Concept Drift + Data Drift</strong>-এর মিশ্রণ — আবহাওয়া (X) বদলেছে এবং সেই সাথে bike rental (Y)-এর pattern-ও বদলেছে।</li>
+</ul>
+</div>
+<div id="eq3" class="tpan">
+<h4>কোন Strategy প্রয়োগ করবে?</h4>
+<ul>
+<li><strong>Short-term (এখনই করো):</strong> February data দিয়ে model retrain করো। Sliding window — সবসময় শেষ ৩ মাসের ডেটায় train করো।</li>
+<li><strong>Medium-term:</strong> Seasonal features যোগ করো। <code>season</code> variable আরও detail-এ encode করো। Monthly retraining schedule রাখো।</li>
+<li><strong>Long-term:</strong> আলাদা seasonal model রাখো — শীতের model, গ্রীষ্মের model ইত্যাদি। অথবা ensemble approach।</li>
+<li><strong>Monitoring:</strong> Weekly drift check করো। Drift score > 0.2 হলে automatic alert এবং retraining trigger করো।</li>
+</ul>
+</div>
+</div>
+
+<div class="cb" style="margin-top:20px"><div class="ch"><div class="dots"><span></span><span></span><span></span></div><div class="cl">README.md — যা submit করতে হবে</div></div>
+<pre><span class="cm"># Bike Sharing ML Monitoring</span>
+
+<span class="cm">## চালানোর command</span>
+pip install -r requirements.txt
+python bike_monitoring.py
+evidently ui --workspace ./bike-monitoring-workspace/
+
+<span class="cm">## প্রশ্নের উত্তর</span>
+<span class="cm">### Week 1-3 এ কী পরিবর্তন হয়েছে?</span>
+Week 1 থেকে Week 3-এ ধীরে ধীরে drift বেড়েছে। 
+Week 3-এ MAE সবচেয়ে বেশি।
+
+<span class="cm">### Root Cause</span>
+Temperature ও humidity drift-এর কারণে seasonal pattern shift হয়েছে।
+Concept Drift এবং Data Drift একসাথে।
+
+<span class="cm">### Strategy</span>
+Monthly retraining + seasonal models.</pre></div>
+</section>
+
+
+<!-- ============================================================ -->
+
+<!-- BEST PRACTICES SECTION (from PDF) -->
+<section class="sec fi" id="sbp">
+<div class="sec-hdr"><span class="sec-num">BP</span><h2>Best Practices — কার্যকর Monitoring-এর নির্দেশিকা</h2></div>
+
+<div class="box bw"><div class="bt">📋 PDF থেকে সরাসরি — এই নির্দেশিকাগুলো মেনে চলো</div>
+<p>Evidently-র নির্মাতারা এবং industry experts যে best practices recommend করেন:</p>
+</div>
+
+<div class="g2">
+<div class="card"><div class="card-t">🎯 Business Needs অনুযায়ী Configure করো</div>
+<p>প্রতিটা use case আলাদা। সব model-এ একই metrics ব্যবহার করা ঠিক নয়। তোমার business objective বুঝে সঠিক metrics বেছে নাও।</p>
+<p><strong>উদাহরণ:</strong> Fraud detection-এ Recall বেশি গুরুত্বপূর্ণ (কোনো fraud miss করা যাবে না), কিন্তু Recommendation system-এ Precision বেশি গুরুত্বপূর্ণ।</p>
+</div>
+<div class="card"><div class="card-t">🔄 Retraining Automate করো</div>
+<p>Context বুঝে automatic retraining trigger করো। কিন্তু মাথায় রাখো:</p>
+<ul>
+<li>Retraining-এর cost কত?</li>
+<li>Regulatory requirement আছে কিনা?</li>
+<li>Data dynamics কতটা দ্রুত বদলায়?</li>
+</ul>
+<p>এই তিনটা factor মিলিয়ে retraining frequency ঠিক করো।</p>
+</div>
+<div class="card"><div class="card-t">📊 Benchmark ব্যবহার করো</div>
+<p>Historical comparison data রাখো — এটা দিয়ে performance trend বোঝা যায়। <strong>Rolling window</strong> approach সবচেয়ে কার্যকর: সবসময় শেষ N দিনের data-ই reference হিসেবে ব্যবহার করো।</p>
+<p><strong>উদাহরণ:</strong> "শেষ ৩০ দিনের data" সবসময় reference। পুরনো data আপনাআপনি বাদ পড়ে।</p>
+</div>
+<div class="card"><div class="card-t">🔧 Custom Metrics যোগ করো</div>
+<p>Standard metrics-এর পাশাপাশি domain-specific metrics define করো। এটা early detection-এ সাহায্য করে।</p>
+<p><strong>উদাহরণ:</strong> E-commerce-এ "cart abandonment rate", healthcare-এ "prescription error rate" — এগুলো business-specific signal।</p>
+</div>
+</div>
+
+<div class="diag">
+<div class="diag-t">📈 Rolling Window Approach — কীভাবে Reference Data আপডেট হয়</div>
+<svg viewBox="0 0 700 130" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%">
+<!-- Timeline -->
+<line x1="20" y1="65" x2="680" y2="65" stroke="#30363d" stroke-width="2"/>
+<!-- Month labels -->
+<text x="70" y="20" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Jan</text>
+<text x="190" y="20" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Feb</text>
+<text x="310" y="20" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Mar</text>
+<text x="430" y="20" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Apr</text>
+<text x="550" y="20" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">May</text>
+<text x="650" y="20" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Jun</text>
+<!-- Tick marks -->
+<line x1="70" y1="60" x2="70" y2="70" stroke="#30363d" stroke-width="1.5"/>
+<line x1="190" y1="60" x2="190" y2="70" stroke="#30363d" stroke-width="1.5"/>
+<line x1="310" y1="60" x2="310" y2="70" stroke="#30363d" stroke-width="1.5"/>
+<line x1="430" y1="60" x2="430" y2="70" stroke="#30363d" stroke-width="1.5"/>
+<line x1="550" y1="60" x2="550" y2="70" stroke="#30363d" stroke-width="1.5"/>
+<line x1="650" y1="60" x2="650" y2="70" stroke="#30363d" stroke-width="1.5"/>
+<!-- Rolling window 1: Jan-Feb as reference, Mar as current -->
+<rect x="20" y="78" width="240" height="18" rx="4" fill="rgba(63,185,80,0.3)" stroke="#3fb950" stroke-width="1"/>
+<text x="140" y="92" text-anchor="middle" fill="#3fb950" font-size="9" font-family="sans-serif">Window 1: Reference (Jan-Feb)</text>
+<rect x="265" y="78" width="85" height="18" rx="4" fill="rgba(240,136,62,0.3)" stroke="#f0883e" stroke-width="1"/>
+<text x="307" y="92" text-anchor="middle" fill="#f0883e" font-size="9" font-family="sans-serif">Current (Mar)</text>
+<!-- Rolling window 2 -->
+<rect x="140" y="100" width="240" height="18" rx="4" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1" stroke-dasharray="4,2"/>
+<text x="260" y="114" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Window 2: Reference (Feb-Mar) →</text>
+<rect x="385" y="100" width="85" height="18" rx="4" fill="rgba(240,136,62,0.2)" stroke="#f0883e" stroke-width="1" stroke-dasharray="4,2"/>
+<text x="427" y="114" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Current (Apr)</text>
+<!-- Arrow showing sliding -->
+<text x="350" y="55" text-anchor="middle" fill="#d2a8ff" font-size="9" font-family="sans-serif">Window ডানদিকে সরতে থাকে →</text>
+</svg>
+</div>
+
+<div class="box bo"><div class="bt">✅ সংক্ষেপে: কোনটা কখন করবে</div>
+<div class="tbl-w"><table>
+<tr><th>পরিস্থিতি</th><th>করণীয়</th></tr>
+<tr><td>Drift detected কিন্তু performance ঠিক আছে</td><td>শুধু monitor করো, এখনই retrain নয়</td></tr>
+<tr><td>Drift detected এবং performance কমেছে</td><td>Root cause বিশ্লেষণ করো, তারপর retrain</td></tr>
+<tr><td>Software bug-এর কারণে মডেল থেমে গেছে</td><td>DevOps team-কে জানাও, model দোষ নয়</td></tr>
+<tr><td>Seasonal drift (বারবার হয়)</td><td>Seasonal model বা scheduled retraining</td></tr>
+<tr><td>Sudden drift (হঠাৎ বড় পরিবর্তন)</td><td>External factor investigate করো আগে</td></tr>
+</table></div>
+</div>
+
+</section>
+
+<!-- SUMMARY & QUIZ -->
+<!-- ============================================================ -->
+<section class="sec fi" id="summary">
+<div class="sec-hdr"><span class="sec-num">✓</span><h2>সারসংক্ষেপ, Cheatsheet ও Quiz</h2></div>
+
+<div class="diag">
+<div class="diag-t">🗺️ সম্পূর্ণ ML Monitoring — এক নজরে</div>
+<svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;width:100%">
+<circle cx="360" cy="200" r="58" fill="#1c2330" stroke="#f0883e" stroke-width="2.5"/>
+<text x="360" y="196" text-anchor="middle" fill="#f0883e" font-size="11" font-family="sans-serif" font-weight="bold">ML</text>
+<text x="360" y="212" text-anchor="middle" fill="#f0883e" font-size="11" font-family="sans-serif" font-weight="bold">Monitor</text>
+<!-- Top -->
+<rect x="272" y="18" width="176" height="52" rx="9" fill="#1c2330" stroke="#3fb950" stroke-width="1.5"/>
+<text x="360" y="40" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif" font-weight="bold">Drift Detection</text>
+<text x="360" y="54" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">K-S · PSI · Wasserstein</text>
+<text x="360" y="65" text-anchor="middle" fill="#8b949e" font-size="8" font-family="sans-serif">Jensen-Shannon · Page-Hinkley</text>
+<line x1="360" y1="70" x2="360" y2="142" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="4,3"/>
+<!-- Bottom -->
+<rect x="272" y="330" width="176" height="52" rx="9" fill="#1c2330" stroke="#58a6ff" stroke-width="1.5"/>
+<text x="360" y="353" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="sans-serif" font-weight="bold">Evidently Reports</text>
+<text x="360" y="367" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">RegressionPreset</text>
+<text x="360" y="380" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">ClassificationPreset · TestSuite</text>
+<line x1="360" y1="258" x2="360" y2="330" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,3"/>
+<!-- Left -->
+<rect x="18" y="168" width="175" height="64" rx="9" fill="#1c2330" stroke="#d2a8ff" stroke-width="1.5"/>
+<text x="105" y="188" text-anchor="middle" fill="#d2a8ff" font-size="10" font-family="sans-serif" font-weight="bold">3-Step Workflow</text>
+<text x="105" y="203" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">① Performance Monitor</text>
+<text x="105" y="216" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">② Root Cause Analysis</text>
+<text x="105" y="229" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">③ Troubleshooting</text>
+<line x1="193" y1="200" x2="302" y2="200" stroke="#d2a8ff" stroke-width="1.5" stroke-dasharray="4,3"/>
+<!-- Right -->
+<rect x="527" y="168" width="175" height="64" rx="9" fill="#1c2330" stroke="#ffa657" stroke-width="1.5"/>
+<text x="614" y="188" text-anchor="middle" fill="#ffa657" font-size="10" font-family="sans-serif" font-weight="bold">Integration Stack</text>
+<text x="614" y="203" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">PostgreSQL (store)</text>
+<text x="614" y="216" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Grafana (visualize)</text>
+<text x="614" y="229" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Prefect (automate)</text>
+<line x1="418" y1="200" x2="527" y2="200" stroke="#ffa657" stroke-width="1.5" stroke-dasharray="4,3"/>
+<!-- Corners -->
+<rect x="18" y="42" width="168" height="55" rx="9" fill="#1c2330" stroke="#ff7b72" stroke-width="1.5"/>
+<text x="102" y="62" text-anchor="middle" fill="#ff7b72" font-size="10" font-family="sans-serif" font-weight="bold">Concept Drift</text>
+<text x="102" y="76" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">P(Y|X) বদলায়</text>
+<text x="102" y="89" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">সম্পর্ক বদলে যায়</text>
+<line x1="186" y1="69" x2="308" y2="158" stroke="#ff7b72" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+<rect x="534" y="42" width="168" height="55" rx="9" fill="#1c2330" stroke="#ff7b72" stroke-width="1.5"/>
+<text x="618" y="62" text-anchor="middle" fill="#ff7b72" font-size="10" font-family="sans-serif" font-weight="bold">Data Drift</text>
+<text x="618" y="76" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">P(X) বদলায়</text>
+<text x="618" y="89" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">বণ্টন বদলে যায়</text>
+<line x1="534" y1="69" x2="410" y2="158" stroke="#ff7b72" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+<rect x="18" y="305" width="168" height="55" rx="9" fill="#1c2330" stroke="#3fb950" stroke-width="1.5"/>
+<text x="102" y="325" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif" font-weight="bold">Solutions</text>
+<text x="102" y="339" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Retraining</text>
+<text x="102" y="352" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">A/B Testing · Adaptive</text>
+<line x1="186" y1="330" x2="308" y2="242" stroke="#3fb950" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+<rect x="534" y="305" width="168" height="55" rx="9" fill="#1c2330" stroke="#3fb950" stroke-width="1.5"/>
+<text x="618" y="325" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif" font-weight="bold">Best Practices</text>
+<text x="618" y="339" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Rolling window</text>
+<text x="618" y="352" text-anchor="middle" fill="#8b949e" font-size="9" font-family="sans-serif">Versioning · Document</text>
+<line x1="534" y1="330" x2="410" y2="242" stroke="#3fb950" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+</svg>
+</div>
+
+<h3>⚡ Quick Reference Cheatsheet</h3>
+<div class="tbl-w"><table>
+<tr><th>কাজ</th><th>Code</th></tr>
+<tr><td>Evidently install</td><td><code>pip install evidently==0.6.7</code></td></tr>
+<tr><td>Demo দেখো</td><td><code>evidently ui --demo-projects all</code></td></tr>
+<tr><td>Data Drift report</td><td><code>Report(metrics=[DatasetDriftMetric(), DataDriftTable()])</code></td></tr>
+<tr><td>Regression report</td><td><code>Report(metrics=[RegressionPreset()])</code></td></tr>
+<tr><td>Classification report</td><td><code>Report(metrics=[ClassificationPreset(probas_threshold=0.5)])</code></td></tr>
+<tr><td>Target drift</td><td><code>Report(metrics=[TargetDriftPreset()])</code></td></tr>
+<tr><td>Data quality test</td><td><code>TestSuite(tests=[DataQualityTestPreset()])</code></td></tr>
+<tr><td>Custom test</td><td><code>TestSuite(tests=[TestAccuracyScore(gte=0.75)])</code></td></tr>
+<tr><td>Report চালানো</td><td><code>report.run(reference_data=ref, current_data=cur)</code></td></tr>
+<tr><td>HTML সংরক্ষণ</td><td><code>report.save_html("report.html")</code></td></tr>
+<tr><td>Workspace তৈরি</td><td><code>workspace = Workspace.create("my-workspace")</code></td></tr>
+<tr><td>UI চালানো</td><td><code>evidently ui --workspace ./my-workspace/</code></td></tr>
+<tr><td>Specific column drift</td><td><code>ColumnDriftMetric(column_name='price', stattest='psi')</code></td></tr>
+</table></div>
+
+<!-- QUIZ -->
+<div class="qsec">
+<h3 style="color:var(--accent);margin-bottom:20px">🧠 Quick Quiz — কতটুকু শিখেছ পরীক্ষা করো!</h3>
+
+<div style="margin-bottom:24px">
+<div class="qq">১. Concept Drift মানে কী?</div>
+<button class="qopt" onclick="ans(this,false)">Input data-র বণ্টন বদলে যাওয়া [P(X) changes]</button>
+<button class="qopt" onclick="ans(this,true)">Input-Output সম্পর্ক বদলে যাওয়া [P(Y|X) changes]</button>
+<button class="qopt" onclick="ans(this,false)">Model-এর accuracy ভালো হওয়া</button>
+<div class="qr" id="qr1"></div>
+</div>
+
+<div style="margin-bottom:24px">
+<div class="qq">২. Evidently-তে Regression model monitor করতে কোন Preset?</div>
+<button class="qopt" onclick="ans(this,false)">DataDriftPreset()</button>
+<button class="qopt" onclick="ans(this,true)">RegressionPreset()</button>
+<button class="qopt" onclick="ans(this,false)">ClassificationPreset()</button>
+<div class="qr" id="qr2"></div>
+</div>
+
+<div style="margin-bottom:24px">
+<div class="qq">৩. Test Suite Report থেকে আলাদা কারণ...</div>
+<button class="qopt" onclick="ans(this,false)">Test Suite শুধু visualization দেয়</button>
+<button class="qopt" onclick="ans(this,false)">Test Suite শুধু regression-এর জন্য</button>
+<button class="qopt" onclick="ans(this,true)">Test Suite pass/fail verdict দেয়, Report শুধু দেখায়</button>
+<div class="qr" id="qr3"></div>
+</div>
+
+<div style="margin-bottom:24px">
+<div class="qq">৪. Zillow-র iBuying failure-এর মূল কারণ কী ছিল?</div>
+<button class="qopt" onclick="ans(this,false)">Model খুব ভালো ছিল তাই বেশি দামে কিনল</button>
+<button class="qopt" onclick="ans(this,true)">Model monitor করা হয়নি, drift ধরা পড়েনি</button>
+<button class="qopt" onclick="ans(this,false)">Engineer-রা ভুল code লিখেছিল</button>
+<div class="qr" id="qr4"></div>
+</div>
+
+<div>
+<div class="qq">৫. Numerical features-এ drift মাপতে Evidently default কোন পদ্ধতি ব্যবহার করে?</div>
+<button class="qopt" onclick="ans(this,false)">Kolmogorov-Smirnov Test</button>
+<button class="qopt" onclick="ans(this,false)">Population Stability Index</button>
+<button class="qopt" onclick="ans(this,true)">Wasserstein Distance (normalized)</button>
+<div class="qr" id="qr5"></div>
+</div>
+</div>
+
+<div class="box bo" style="margin-top:36px;text-align:center">
+<div class="bt" style="justify-content:center;text-align:center">🎉 অভিনন্দন! গাইড শেষ!</div>
+<p>তুমি ML Monitoring-এর সম্পূর্ণ বিষয় পড়ে শেষ করেছ! এখন তুমি জানো:</p>
+<ul style="text-align:left;max-width:600px;margin:14px auto">
+<li>ML Monitoring কেন দরকার এবং কীভাবে কাজ করে (Zillow example সহ)</li>
+<li>Concept Drift ও Data Drift-এর পার্থক্য এবং ৪ ধরনের drift</li>
+<li>K-S Test, PSI, Wasserstein Distance — drift ধরার পদ্ধতি</li>
+<li>Evidently দিয়ে Regression ও Classification monitoring</li>
+<li>Test Suite দিয়ে automated quality check (pass/fail)</li>
+<li>PostgreSQL + Grafana + Prefect দিয়ে production-grade monitoring</li>
+<li>Bike Sharing exam-এর সম্পূর্ণ solution ও analysis</li>
+</ul>
+<p style="color:var(--accent);font-weight:700;font-size:1.05rem;margin-top:14px">তোমার ML journey-তে শুভকামনা! 🚀</p>
+</div>
+
+</section>
+
+</div><!-- /wrap -->
+
+<button class="btop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+function swT(btn, panelId) {
+  const tb = btn.closest('.tabs');
+  tb.querySelectorAll('.tbtn').forEach(b => b.classList.remove('active'));
+  tb.querySelectorAll('.tpan').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+function ans(btn, correct) {
+  const g = btn.parentElement;
+  if (g.querySelector('.ok,.bad')) return; // ইতিমধ্যে উত্তর দেওয়া হয়েছে
+  // সব button disable করো
+  g.querySelectorAll('.qopt').forEach(b => b.disabled = true);
+  const r = g.querySelector('.qr');
+  if (correct) {
+    btn.classList.add('ok');
+    if(r){r.style.color='var(--a3)';r.textContent='✅ সঠিক! দারুণ!';}
+  } else {
+    btn.classList.add('bad');
+    // সঠিক উত্তর highlight করো - data attribute দিয়ে
+    g.querySelectorAll('.qopt').forEach(b => {
+      const oc = b.getAttribute('onclick') || '';
+      if(oc.indexOf('true') !== -1) b.classList.add('ok');
+    });
+    if(r){r.style.color='var(--a4)';r.textContent='❌ ভুল। সবুজ রঙের বোতামটা সঠিক উত্তর।';}
+  }
+}
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('vis'); });
+}, {threshold: 0.07});
+document.querySelectorAll('.fi').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

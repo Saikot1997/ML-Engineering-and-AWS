@@ -1,0 +1,3370 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apache Airflow — সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2128;
+    --bg4: #22272e;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #6e7681;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #ffa657;
+    --accent5: #bc8cff;
+    --accent6: #39d353;
+    --yellow: #e3b341;
+    --pink: #ff7b72;
+    --teal: #79c0ff;
+    --code-bg: #1c2128;
+    --radius: 10px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  /* SIDEBAR NAV */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0;
+    width: 260px;
+    height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    padding: 20px 0;
+  }
+  .sidebar-logo {
+    padding: 16px 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .sidebar-logo h2 {
+    font-size: 15px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .sidebar-logo p { font-size: 12px; color: var(--text3); margin-top: 3px; }
+  .nav-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 8px 20px 4px;
+    margin-top: 8px;
+  }
+  .sidebar a {
+    display: block;
+    padding: 7px 20px;
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 13.5px;
+    transition: all 0.15s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar a:hover {
+    color: var(--text);
+    background: var(--bg3);
+    border-left-color: var(--accent);
+  }
+  .sidebar a.active {
+    color: var(--accent);
+    background: rgba(88,166,255,0.08);
+    border-left-color: var(--accent);
+  }
+
+  /* MAIN CONTENT */
+  .main {
+    margin-left: 260px;
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0d1117 0%, #1a2332 50%, #0d1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 60px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(88,166,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(88,166,255,0.1);
+    border: 1px solid rgba(88,166,255,0.3);
+    color: var(--accent);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    font-size: 18px;
+    color: var(--text2);
+    max-width: 600px;
+    line-height: 1.7;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 32px;
+    margin-top: 40px;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stat-label { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+  /* CONTENT SECTIONS */
+  .content {
+    padding: 60px;
+    max-width: 960px;
+  }
+  .section {
+    margin-bottom: 80px;
+    scroll-margin-top: 20px;
+  }
+  .chapter-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .chapter-num {
+    width: 44px; height: 44px;
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .chapter-header h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .chapter-header p {
+    font-size: 14px;
+    color: var(--text3);
+    margin-top: 3px;
+  }
+
+  /* SUBSECTIONS */
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--accent4);
+    margin: 36px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h3::before {
+    content: '';
+    width: 4px; height: 20px;
+    background: var(--accent4);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent2);
+    margin: 24px 0 10px;
+  }
+  p { margin-bottom: 14px; color: var(--text); line-height: 1.85; }
+
+  /* INFO BOXES */
+  .info-box {
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin: 20px 0;
+    border-left: 4px solid;
+    position: relative;
+  }
+  .info-box.note {
+    background: rgba(88,166,255,0.07);
+    border-color: var(--accent);
+  }
+  .info-box.tip {
+    background: rgba(63,185,80,0.07);
+    border-color: var(--accent2);
+  }
+  .info-box.warn {
+    background: rgba(255,166,87,0.07);
+    border-color: var(--accent4);
+  }
+  .info-box.important {
+    background: rgba(247,129,102,0.07);
+    border-color: var(--accent3);
+  }
+  .info-box-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .info-box.note .info-box-label { color: var(--accent); }
+  .info-box.tip .info-box-label { color: var(--accent2); }
+  .info-box.warn .info-box-label { color: var(--accent4); }
+  .info-box.important .info-box-label { color: var(--accent3); }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: 20px 0;
+    overflow: hidden;
+  }
+  .code-header {
+    background: var(--bg3);
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .code-dots { display: flex; gap: 6px; }
+  .code-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .code-dot:nth-child(1) { background: #ff5f57; }
+  .code-dot:nth-child(2) { background: #febc2e; }
+  .code-dot:nth-child(3) { background: #28c840; }
+  pre {
+    padding: 20px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #e6edf3;
+  }
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .cm { color: #8b949e; font-style: italic; }
+  .num { color: #79c0ff; }
+  .cls { color: #ffa657; }
+  .var2 { color: #7ee787; }
+
+  /* CONCEPT CARDS */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .card-icon { font-size: 28px; margin-bottom: 12px; }
+  .card h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 8px;
+  }
+  .card p { font-size: 13.5px; color: var(--text2); margin: 0; }
+
+  /* TABLES */
+  .table-wrap { overflow-x: auto; margin: 20px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th {
+    background: var(--bg3);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  tr:hover td { background: var(--bg3); }
+
+  /* STEPS */
+  .steps { margin: 20px 0; }
+  .step {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .step::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: -24px;
+    width: 2px;
+    background: var(--border);
+  }
+  .step:last-child::before { display: none; }
+  .step-num {
+    width: 40px; height: 40px;
+    background: var(--bg3);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+    font-size: 14px;
+    position: relative;
+    z-index: 1;
+  }
+  .step-content h4 {
+    margin: 8px 0 6px;
+    font-size: 15px;
+    color: var(--text);
+  }
+  .step-content p { font-size: 14px; color: var(--text2); }
+
+  /* INLINE CODE */
+  code {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent4);
+  }
+
+  /* DEFINITION LIST */
+  .def-list { margin: 16px 0; }
+  .def-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .def-term {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    background: rgba(88,166,255,0.1);
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .def-desc { font-size: 14px; color: var(--text2); }
+
+  /* COMPARISON */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .compare-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .compare-card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-card ul { padding-left: 16px; }
+  .compare-card li { font-size: 13.5px; color: var(--text2); margin-bottom: 6px; }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    margin: 40px 0;
+  }
+
+  /* SCROLL TO TOP */
+  .back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+    text-decoration: none;
+  }
+  .back-to-top:hover { transform: translateY(-3px); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .content { padding: 30px 20px; }
+    .hero { padding: 40px 20px 30px; }
+    .hero h1 { font-size: 28px; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .card-grid { grid-template-columns: 1fr; }
+  }
+
+  /* SVG DIAGRAMS */
+  .diagram-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin: 24px 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .diagram-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text3);
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* HIGHLIGHT SPANS */
+  .hl-blue { color: var(--accent); font-weight: 600; }
+  .hl-green { color: var(--accent2); font-weight: 600; }
+  .hl-orange { color: var(--accent4); font-weight: 600; }
+  .hl-red { color: var(--pink); font-weight: 600; }
+  .hl-purple { color: var(--accent5); font-weight: 600; }
+
+  /* TASK STATUS BADGES */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-success { background: rgba(63,185,80,0.15); color: var(--accent2); border: 1px solid rgba(63,185,80,0.3); }
+  .badge-failed { background: rgba(255,127,114,0.15); color: var(--accent3); border: 1px solid rgba(255,127,114,0.3); }
+  .badge-running { background: rgba(88,166,255,0.15); color: var(--accent); border: 1px solid rgba(88,166,255,0.3); }
+  .badge-skipped { background: rgba(188,140,255,0.15); color: var(--accent5); border: 1px solid rgba(188,140,255,0.3); }
+  .badge-queued { background: rgba(139,148,158,0.15); color: var(--text2); border: 1px solid var(--border); }
+
+  ul, ol { padding-left: 24px; margin: 12px 0; }
+  li { margin-bottom: 8px; color: var(--text); }
+  li strong { color: var(--accent4); }
+
+  .toc-progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: var(--accent);
+    z-index: 200;
+    transition: width 0.1s;
+    width: 0%;
+  }
+</style>
+</head>
+<body>
+
+<div class="toc-progress" id="progress"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h2>🌬️ Apache Airflow</h2>
+    <p>সম্পূর্ণ বাংলা গাইড</p>
+  </div>
+
+  <div class="nav-section-title">শুরু করি</div>
+  <a href="#intro">১. পরিচয় ও ইতিহাস</a>
+  <a href="#why">কেন Airflow ব্যবহার করব?</a>
+  <a href="#arch">Airflow Architecture</a>
+  <a href="#install">ইনস্টলেশন</a>
+  <a href="#ui">UI পরিচয়</a>
+
+  <div class="nav-section-title">মূল ধারণা</div>
+  <a href="#dag">২. DAG কী?</a>
+  <a href="#task">Task ও Operator</a>
+  <a href="#firstdag">প্রথম DAG তৈরি</a>
+  <a href="#dependencies">Dependencies</a>
+
+  <div class="nav-section-title">Error Handling</div>
+  <a href="#recurring">৩. Recurring DAGs</a>
+  <a href="#trigger-rule">Trigger Rules</a>
+  <a href="#retries">Retries</a>
+  <a href="#setup-teardown">Setup & Teardown</a>
+
+  <div class="nav-section-title">Advanced</div>
+  <a href="#subdag">৪. SubDAGs</a>
+  <a href="#taskgroup">TaskGroups</a>
+  <a href="#branching">Branching</a>
+  <a href="#xcoms">XComs</a>
+  <a href="#variables">Variables</a>
+  <a href="#decorators">DAG Decorators</a>
+
+  <div class="nav-section-title">বিশেষ ধারণা</div>
+  <a href="#sensors">৫. Sensors</a>
+  <a href="#connections">Connections</a>
+  <a href="#usermgmt">User Management</a>
+  <a href="#pools">Pools</a>
+
+  <div class="nav-section-title">Operators</div>
+  <a href="#docker-op">৬. DockerOperator</a>
+  <a href="#postgres-op">PostgresOperator</a>
+  <a href="#exercise">Exercise</a>
+
+  <div class="nav-section-title">শেষ কথা</div>
+  <a href="#bestpractice">৭. Best Practice</a>
+  <a href="#assessment">Assessment Overview</a>
+
+  <div class="nav-section-title">বোনাস</div>
+  <a href="#cluster">Cluster Monitoring</a>
+  <a href="#cli">Terminal / CLI</a>
+  <a href="#dummy-dataset">🗂️ Dummy Dataset</a>
+  <a href="#assessment-code">Assessment Code</a>
+  <a href="#cheatsheet">📋 Cheatsheet</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">বাংলায় সম্পূর্ণ গাইড</div>
+    <h1>Apache <span>Airflow</span> শিখুন<br>বাংলায়</h1>
+    <p>Data Engineering-এর সবচেয়ে জনপ্রিয় workflow orchestration tool — একদম শুরু থেকে, প্রতিটি ছোট বিষয় সহ, বাংলায় ব্যাখ্যা করা হয়েছে।</p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">7</div>
+        <div class="stat-label">অধ্যায়</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">30+</div>
+        <div class="stat-label">উদাহরণ</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">বাংলা</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- =========================================
+         CHAPTER 1: INTRODUCTION
+    ========================================= -->
+    <section class="section" id="intro">
+      <div class="chapter-header">
+        <div class="chapter-num">১</div>
+        <div>
+          <h2>পরিচয় ও ইনস্টলেশন</h2>
+          <p>Apache Airflow কী, কেন দরকার, কীভাবে কাজ করে</p>
+        </div>
+      </div>
+
+      <h3>Apache Airflow কী?</h3>
+      <p>
+        ধরো তুমি প্রতিদিন সকালে কিছু কাজ করো — প্রথমে ডেটা download করো, তারপর সেটা clean করো, তারপর একটা report বানাও, আর শেষে সেটা email করো। এই কাজগুলো যদি manually করতে হয় প্রতিদিন, তাহলে ক্লান্তিকর। এখন যদি কেউ তোমার হয়ে এই পুরো sequence স্বয়ংক্রিয়ভাবে করে দিতে পারে — তাকেই বলে <span class="hl-blue">workflow orchestration tool</span>।
+      </p>
+      <p>
+        <span class="hl-blue">Apache Airflow</span> হলো এরকমই একটা open-source platform যেটা তোমার data workflows কে automate করে, schedule করে, আর monitor করে।
+      </p>
+
+      <div class="info-box note">
+        <div class="info-box-label">📌 সহজ ভাষায়</div>
+        Airflow হলো একজন smart manager যে তোমার হয়ে সব কাজ ঠিক সময়ে, ঠিক ক্রমে করে দেয়। কোনো কাজ fail করলে সে নিজেই আবার চেষ্টা করে, তোমাকে email করে জানায়।
+      </div>
+
+      <h3>Airflow-এর ইতিহাস</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">১</div>
+          <div class="step-content">
+            <h4>২০১৪ — Airbnb-তে জন্ম</h4>
+            <p>Airbnb কোম্পানির data ব্যাপক বাড়তে থাকে। তাদের data engineer <strong>Maxime Beauchemin</strong> একটা tool বানান — নাম দেন Airflow। লক্ষ্য ছিল Python দিয়ে data pipelines তৈরি, monitor ও automate করা।</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">২</div>
+          <div class="step-content">
+            <h4>২০১৬ — Apache Foundation-এ যোগ</h4>
+            <p>Airflow Apache Software Foundation-এর incubator program-এ যোগ দেয়। এর মানে এটা এখন অনেক বড় community-র part।</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">৩</div>
+          <div class="step-content">
+            <h4>২০১৯ — Top-level project</h4>
+            <p>Apache Foundation এটাকে "top-level" project মর্যাদা দেয় — এটা একটা বড় স্বীকৃতি।</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">৪</div>
+          <div class="step-content">
+            <h4>২০২০ — Airflow 2.0 release</h4>
+            <p>December 17, 2020-এ Airflow 2.0 বের হয়, অনেক নতুন feature ও improvement নিয়ে। এটাই আমরা শিখব।</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box tip">
+        <div class="info-box-label">🌟 জনপ্রিয়তা</div>
+        Airflow এখন GitHub-এ ২২,০০০+ stars পেয়েছে। Slack, Walmart সহ হাজার হাজার কোম্পানি এটা ব্যবহার করে।
+      </div>
+    </section>
+
+    <!-- WHY AIRFLOW -->
+    <section class="section" id="why">
+      <h3>কেন Airflow ব্যবহার করব?</h3>
+      <p>ডেটা engineering-এ অনেক ধরনের কাজ থাকে। যেমন:</p>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">🔄</div>
+          <h4>ETL Pipelines</h4>
+          <p>Extract (নিয়ে আসো), Transform (রূপান্তর করো), Load (রাখো) — এই তিনটা কাজ বারবার করতে হয়।</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🤖</div>
+          <h4>ML Model Training</h4>
+          <p>Machine learning model নিয়মিত নতুন data দিয়ে train করতে হয়।</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h4>Report Generation</h4>
+          <p>প্রতিদিন বা সপ্তাহে একবার automatically report তৈরি হবে।</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">💾</div>
+          <h4>Backup & DevOps</h4>
+          <p>Database backup, server health check ইত্যাদি কাজ schedule করা যায়।</p>
+        </div>
+      </div>
+
+      <h3>Airflow vs CI/CD — পার্থক্য কী?</h3>
+      <p>অনেকে Airflow-কে Jenkins বা GitHub Actions-এর সাথে গুলিয়ে ফেলেন। এরা আসলে আলাদা কাজের জিনিস:</p>
+
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h4>🌬️ Airflow (Orchestration)</h4>
+          <ul>
+            <li><strong>কখন চলে:</strong> data বদলালে</li>
+            <li><strong>কাজ:</strong> ETL, ML pipelines</li>
+            <li><strong>উদাহরণ:</strong> "প্রতিদিন রাত ১২টায় sales data process করো"</li>
+            <li><strong>trigger:</strong> schedule বা data event</li>
+          </ul>
+        </div>
+        <div class="compare-card">
+          <h4>⚙️ Jenkins/GitHub Actions (CI/CD)</h4>
+          <ul>
+            <li><strong>কখন চলে:</strong> code বদলালে</li>
+            <li><strong>কাজ:</strong> build, test, deploy</li>
+            <li><strong>উদাহরণ:</strong> "নতুন code push করলে automatically deploy করো"</li>
+            <li><strong>trigger:</strong> code commit/push</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Workflow vs Dataflow — আরেকটা গুরুত্বপূর্ণ পার্থক্য</h3>
+      <div class="def-list">
+        <div class="def-item">
+          <span class="def-term">Workflow</span>
+          <span class="def-desc">কাজের <strong>ক্রম</strong> নিয়ে কথা বলে। যেমন: "প্রথমে ডেটা নামাও, তারপর clean করো, তারপর save করো।" Airflow এটা করে।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Dataflow</span>
+          <span class="def-desc">কাজের ভেতরে <strong>data কীভাবে flow করে</strong> সেটা নিয়ে। Apache Spark বা Flink এটা করে।</span>
+        </div>
+      </div>
+
+      <div class="info-box warn">
+        <div class="info-box-label">⚠️ সতর্কতা</div>
+        Airflow-এ এক task থেকে অন্য task-এ বিশাল পরিমাণ data পাঠানো উচিত না। এটা data transport-এর জায়গা না — এটা শুধু task coordination করে।
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE -->
+    <section class="section" id="arch">
+      <h3>Airflow Architecture — ভেতরের কলকব্জা</h3>
+      <p>Airflow অনেকগুলো component মিলে তৈরি। এদের বোঝা দরকার কারণ এরা একসাথে কাজ করে:</p>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Airflow Architecture Diagram</div>
+        <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:700px;">
+          <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#58a6ff"/>
+            </marker>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <!-- Background -->
+          <rect width="700" height="420" fill="#161b22" rx="10"/>
+
+          <!-- Metadata DB (top center) -->
+          <rect x="265" y="20" width="170" height="70" rx="10" fill="#1c2128" stroke="#ffa657" stroke-width="2"/>
+          <text x="350" y="48" text-anchor="middle" fill="#ffa657" font-size="13" font-weight="bold" font-family="monospace">🗄️ Metadata</text>
+          <text x="350" y="68" text-anchor="middle" fill="#ffa657" font-size="13" font-weight="bold" font-family="monospace">Database</text>
+          <text x="350" y="84" text-anchor="middle" fill="#8b949e" font-size="10">(PostgreSQL)</text>
+
+          <!-- Scheduler (center) -->
+          <rect x="245" y="160" width="210" height="80" rx="10" fill="#1c2128" stroke="#58a6ff" stroke-width="2" filter="url(#glow)"/>
+          <text x="350" y="192" text-anchor="middle" fill="#58a6ff" font-size="14" font-weight="bold" font-family="monospace">🧠 Scheduler</text>
+          <text x="350" y="212" text-anchor="middle" fill="#8b949e" font-size="11">কখন কোন task চলবে</text>
+          <rect x="275" y="222" width="150" height="22" rx="6" fill="#22272e" stroke="#30363d"/>
+          <text x="350" y="237" text-anchor="middle" fill="#79c0ff" font-size="10" font-family="monospace">Executor</text>
+
+          <!-- Workers (left) -->
+          <rect x="30" y="160" width="160" height="80" rx="10" fill="#1c2128" stroke="#3fb950" stroke-width="2"/>
+          <text x="110" y="192" text-anchor="middle" fill="#3fb950" font-size="14" font-weight="bold" font-family="monospace">👷 Workers</text>
+          <text x="110" y="212" text-anchor="middle" fill="#8b949e" font-size="11">আসল কাজ করে</text>
+          <text x="110" y="228" text-anchor="middle" fill="#8b949e" font-size="10">(Celery / K8s)</text>
+
+          <!-- Webserver (right) -->
+          <rect x="470" y="140" width="180" height="80" rx="10" fill="#1c2128" stroke="#bc8cff" stroke-width="2"/>
+          <text x="560" y="172" text-anchor="middle" fill="#bc8cff" font-size="14" font-weight="bold" font-family="monospace">🌐 Webserver</text>
+          <text x="560" y="192" text-anchor="middle" fill="#8b949e" font-size="11">UI দেখায়</text>
+          <text x="560" y="208" text-anchor="middle" fill="#8b949e" font-size="10">(port 8080)</text>
+
+          <!-- User Interface (far right) -->
+          <rect x="510" y="290" width="160" height="60" rx="10" fill="#1c2128" stroke="#f78166" stroke-width="1.5"/>
+          <text x="590" y="316" text-anchor="middle" fill="#f78166" font-size="13" font-weight="bold" font-family="monospace">👤 Browser</text>
+          <text x="590" y="335" text-anchor="middle" fill="#8b949e" font-size="10">তুমি এখানে কাজ করো</text>
+
+          <!-- DAG Directory (bottom center) -->
+          <rect x="245" y="320" width="210" height="60" rx="10" fill="#1c2128" stroke="#e3b341" stroke-width="1.5"/>
+          <text x="350" y="346" text-anchor="middle" fill="#e3b341" font-size="13" font-weight="bold" font-family="monospace">📁 DAG Directory</text>
+          <text x="350" y="364" text-anchor="middle" fill="#8b949e" font-size="10">./dags ফোল্ডারে .py files</text>
+
+          <!-- ARROWS -->
+          <!-- Scheduler ↔ DB -->
+          <line x1="350" y1="160" x2="350" y2="92" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+          <!-- Scheduler → Workers -->
+          <line x1="244" y1="200" x2="192" y2="200" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <line x1="192" y1="195" x2="244" y2="195" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <!-- Webserver ↔ DB: from top-center of Webserver up to DB right side -->
+          <path d="M 560 140 Q 560 90 437 75" stroke="#bc8cff" stroke-width="1.5" fill="none" marker-end="url(#arrow)" stroke-dasharray="4,3"/>
+          <!-- Browser → Webserver: from top of Browser to bottom of Webserver -->
+          <line x1="575" y1="290" x2="560" y2="222" stroke="#f78166" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <!-- Scheduler → DAG Dir -->
+          <line x1="350" y1="242" x2="350" y2="318" stroke="#e3b341" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+          <!-- Labels on arrows -->
+          <rect x="356" y="118" width="70" height="18" rx="4" fill="#161b22"/>
+          <text x="391" y="130" text-anchor="middle" fill="#8b949e" font-size="9">read/write</text>
+
+          <rect x="148" y="185" width="46" height="18" rx="4" fill="#161b22"/>
+          <text x="171" y="198" text-anchor="middle" fill="#8b949e" font-size="9">dispatch</text>
+        </svg>
+      </div>
+
+      <div class="def-list">
+        <div class="def-item">
+          <span class="def-term">Webserver</span>
+          <span class="def-desc">এটা তোমার সাথে কথা বলে। Browser-এ port 8080-এ গেলে যে dashboard দেখো সেটা এই Webserver serve করছে। এখানে DAG দেখো, task status দেখো, logs পড়ো।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Scheduler</span>
+          <span class="def-desc">এটা Airflow-এর মস্তিষ্ক। সে ঠিক করে কোন task কখন চলবে। DAG file পড়ে, dependencies বোঝে, আর সঠিক সময়ে task queue-তে পাঠায়।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Executor</span>
+          <span class="def-desc">Scheduler-এর মধ্যে থাকে। Scheduler বলে "এই task চালাও" আর Executor সেটা কীভাবে চালাবে তা ঠিক করে। Local, Celery, Kubernetes — বিভিন্ন ধরনের Executor আছে।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Workers</span>
+          <span class="def-desc">আসল কাজ এরা করে। Executor যখন বলে "task চালাও", Workers সেই task execute করে। Multiple workers থাকলে parallel-এ কাজ করতে পারে।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Metadata DB</span>
+          <span class="def-desc">এটা Airflow-এর স্মৃতি। সব DAG-এর history, task-এর status, connections, variables — সব এখানে store থাকে। সাধারণত PostgreSQL ব্যবহার করা হয়।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">DAG Directory</span>
+          <span class="def-desc">তুমি যে Python file-এ DAG লেখো সেগুলো এই folder-এ রাখো। Scheduler নিয়মিত এই folder স্ক্যান করে নতুন DAG খোঁজে।</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSTALLATION -->
+    <section class="section" id="install">
+      <h3>ইনস্টলেশন — Docker দিয়ে</h3>
+      <p>Airflow অনেক resource ব্যবহার করে, তাই এটার জন্য আলাদা Virtual Machine (VM) ব্যবহার করা হয়। আমরা Docker-এর মাধ্যমে install করব — এটা সবচেয়ে সহজ পদ্ধতি।</p>
+
+      <div class="info-box note">
+        <div class="info-box-label">📌 Docker কী?</div>
+        Docker হলো এমন একটা technology যেটা দিয়ে software-কে "container"-এ রাখা যায়। মনে করো একটা বাক্সের মধ্যে সব কিছু — software, dependencies, configuration — সব। এই বাক্স যেকোনো জায়গায় একইভাবে চলে।
+      </div>
+
+      <h4>ধাপ ১: ফোল্ডার তৈরি ও docker-compose.yaml ডাউনলোড</h4>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">bash — Terminal এ চালাও</span>
+        </div>
+        <pre><span class="cm"># airflow-এর জন্য একটা আলাদা ফোল্ডার বানাও</span>
+mkdir airflow_dst
+<span class="cm"># সেই ফোল্ডারে ঢোকো</span>
+cd airflow_dst
+<span class="cm"># Docker Compose configuration file ডাউনলোড করো</span>
+wget https://dst-de.s3.eu-west-3.amazonaws.com/airflow_fr/docker-compose/docker-compose.yaml</pre>
+      </div>
+
+      <div class="info-box note">
+        <div class="info-box-label">📌 docker-compose.yaml কী?</div>
+        এই file-এ লেখা থাকে Airflow চালাতে কতগুলো container দরকার, তাদের settings কী হবে, কোন port use করবে ইত্যাদি। এটা Docker-এর "recipe" বলতে পারো।
+      </div>
+
+      <h4>ধাপ ২: প্রয়োজনীয় ফোল্ডার তৈরি</h4>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">bash</span>
+        </div>
+        <pre><span class="cm"># তিনটা গুরুত্বপূর্ণ ফোল্ডার তৈরি করো</span>
+mkdir ./dags ./logs ./plugins
+
+<span class="cm"># এই ফোল্ডারগুলোতে সবাই লিখতে পারবে (permission দাও)</span>
+sudo chmod -R 777 logs/
+sudo chmod -R 777 dags/
+sudo chmod -R 777 plugins/</pre>
+      </div>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">📂</div>
+          <h4>./dags</h4>
+          <p>তোমার DAG Python file গুলো এখানে রাখবে। Airflow এই ফোল্ডার scan করে।</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📋</div>
+          <h4>./logs</h4>
+          <p>প্রতিটি task চলার পর log এখানে save হয়। কোনো error হলে এখানে দেখবে।</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔌</div>
+          <h4>./plugins</h4>
+          <p>Custom plugins রাখার জায়গা। আপাতত খালি থাকলেও চলে।</p>
+        </div>
+      </div>
+
+      <h4>ধাপ ৩: Environment Variables File তৈরি</h4>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">bash</span>
+        </div>
+        <pre><span class="cm"># .env file তৈরি করো — এতে user ID থাকে</span>
+echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
+
+<span class="cm"># দেখো ঠিকমতো তৈরি হয়েছে কিনা</span>
+cat .env</pre>
+      </div>
+
+      <h4>ধাপ ৪: Database Initialize ও Containers চালু</h4>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">bash</span>
+        </div>
+        <pre><span class="cm"># প্রথমে database initialize করো (একবার করলেই হয়)</span>
+docker-compose up airflow-init
+
+<span class="cm"># এই message দেখলে initialize সফল হয়েছে:</span>
+<span class="str">airflow-init_1    | 2.8.1</span>
+<span class="str">start_airflow-init_1 exited with code 0</span>
+
+<span class="cm"># এখন সব containers background-এ চালু করো</span>
+docker-compose up -d
+
+<span class="cm"># Container গুলো ঠিকমতো চলছে কিনা দেখো</span>
+docker container ls</pre>
+      </div>
+
+      <div class="info-box tip">
+        <div class="info-box-label">💡 সময় লাগে</div>
+        Containers চালু হতে ৫ মিনিট পর্যন্ত সময় লাগতে পারে। তাড়াহুড়ো করো না। <code>docker container ls</code> দিয়ে সব containers-এর status "healthy" দেখালে বুঝবে ঠিক হয়ে গেছে।
+      </div>
+
+      <h4>ধাপ ৫: Browser-এ Airflow UI খোলো</h4>
+      <p>Browser-এ যাও এবং লেখো: <code>YOUR_IP_ADDRESS:8080</code></p>
+      <p>Login screen দেখবে। Default credentials:</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">Login Info</span>
+        </div>
+        <pre><span class="kw">Username:</span> airflow
+<span class="kw">Password:</span> airflow</pre>
+      </div>
+    </section>
+
+    <!-- UI EXPLORATION -->
+    <section class="section" id="ui">
+      <h3>Airflow UI পরিচয়</h3>
+      <p>Login করার পরে Dashboard দেখবে। এটা বোঝা দরকার। চলো প্রতিটা অংশ দেখি:</p>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Airflow DAG List Dashboard</div>
+        <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:700px;">
+          <rect width="700" height="300" fill="#161b22" rx="10"/>
+          <!-- Top bar -->
+          <rect width="700" height="44" fill="#1c2128" rx="0"/>
+          <rect y="0" width="700" height="44" rx="10"/>
+          <rect y="22" width="700" height="22" fill="#1c2128"/>
+          <text x="16" y="28" fill="#58a6ff" font-size="15" font-weight="bold" font-family="monospace">✈ Airflow</text>
+          <text x="120" y="28" fill="#8b949e" font-size="12" font-family="sans-serif">DAGs</text>
+          <text x="170" y="28" fill="#8b949e" font-size="12" font-family="sans-serif">Datasets</text>
+          <text x="240" y="28" fill="#8b949e" font-size="12" font-family="sans-serif">Security</text>
+          <text x="310" y="28" fill="#8b949e" font-size="12" font-family="sans-serif">Browse</text>
+          <text x="370" y="28" fill="#8b949e" font-size="12" font-family="sans-serif">Admin</text>
+          <text x="620" y="28" fill="#8b949e" font-size="12" font-family="sans-serif">UTC</text>
+
+          <!-- Filter bar -->
+          <rect x="10" y="54" width="680" height="34" fill="#22272e" rx="6"/>
+          <rect x="16" y="62" width="56" height="18" rx="4" fill="#58a6ff"/>
+          <text x="44" y="75" text-anchor="middle" fill="#0d1117" font-size="11" font-weight="bold">All 12</text>
+          <rect x="80" y="62" width="62" height="18" rx="4" fill="#22272e" stroke="#3fb950"/>
+          <text x="111" y="75" text-anchor="middle" fill="#3fb950" font-size="11">Active 8</text>
+          <rect x="150" y="62" width="64" height="18" rx="4" fill="#22272e" stroke="#8b949e"/>
+          <text x="182" y="75" text-anchor="middle" fill="#8b949e" font-size="11">Paused 4</text>
+          <rect x="440" y="62" width="120" height="18" rx="4" fill="#22272e" stroke="#30363d"/>
+          <text x="500" y="75" text-anchor="middle" fill="#8b949e" font-size="10">Filter by tag...</text>
+          <rect x="570" y="62" width="110" height="18" rx="4" fill="#22272e" stroke="#30363d"/>
+          <text x="625" y="75" text-anchor="middle" fill="#8b949e" font-size="10">Search DAGs</text>
+
+          <!-- Table header -->
+          <rect x="10" y="96" width="680" height="24" fill="#22272e"/>
+          <text x="40" y="112" fill="#6e7681" font-size="10" font-weight="600">DAG</text>
+          <text x="180" y="112" fill="#6e7681" font-size="10" font-weight="600">Owner</text>
+          <text x="240" y="112" fill="#6e7681" font-size="10" font-weight="600">Schedule</text>
+          <text x="320" y="112" fill="#6e7681" font-size="10" font-weight="600">Last Run</text>
+          <text x="420" y="112" fill="#6e7681" font-size="10" font-weight="600">Recent Tasks</text>
+          <text x="590" y="112" fill="#6e7681" font-size="10" font-weight="600">Actions</text>
+
+          <!-- Row 1 -->
+          <rect x="10" y="122" width="680" height="32" fill="#1c2128"/>
+          <circle cx="26" cy="138" r="8" fill="#3fb950"/>
+          <text x="44" y="142" fill="#58a6ff" font-size="11">my_very_first_dag</text>
+          <text x="180" y="142" fill="#8b949e" font-size="10">airflow</text>
+          <text x="240" y="142" fill="#8b949e" font-size="10">None</text>
+          <text x="320" y="142" fill="#8b949e" font-size="10">2024-03-17</text>
+          <rect x="422" y="129" width="14" height="14" rx="3" fill="#3fb950"/>
+          <rect x="440" y="129" width="14" height="14" rx="3" fill="#3fb950"/>
+          <text x="596" y="142" fill="#58a6ff" font-size="16">▶</text>
+          <text x="618" y="142" fill="#f78166" font-size="14">🗑</text>
+
+          <!-- Row 2 -->
+          <rect x="10" y="156" width="680" height="32" fill="#161b22"/>
+          <circle cx="26" cy="172" r="8" fill="#6e7681"/>
+          <text x="44" y="176" fill="#58a6ff" font-size="11">dataset_produces_1</text>
+          <text x="180" y="176" fill="#8b949e" font-size="10">airflow</text>
+          <text x="240" y="176" fill="#8b949e" font-size="10">@daily</text>
+          <text x="320" y="176" fill="#8b949e" font-size="10">2024-03-16</text>
+          <rect x="422" y="163" width="14" height="14" rx="3" fill="#f78166"/>
+          <text x="596" y="176" fill="#58a6ff" font-size="16">▶</text>
+
+          <!-- Row 3 -->
+          <rect x="10" y="190" width="680" height="32" fill="#1c2128"/>
+          <circle cx="26" cy="206" r="8" fill="#3fb950"/>
+          <text x="44" y="210" fill="#58a6ff" font-size="11">example_branch_datetime_operator</text>
+          <text x="180" y="210" fill="#8b949e" font-size="10">airflow</text>
+          <text x="240" y="210" fill="#8b949e" font-size="10">@daily</text>
+          <text x="596" y="210" fill="#58a6ff" font-size="16">▶</text>
+
+          <!-- Annotations -->
+          <rect x="16" y="240" width="130" height="50" rx="6" fill="#22272e" stroke="#ffa657" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="81" y="258" text-anchor="middle" fill="#ffa657" font-size="10" font-weight="bold">Green = Active</text>
+          <text x="81" y="274" text-anchor="middle" fill="#6e7681" font-size="9">Grey = Paused</text>
+          <text x="81" y="286" text-anchor="middle" fill="#6e7681" font-size="9">(pause/unpause button)</text>
+
+          <rect x="540" y="240" width="148" height="50" rx="6" fill="#22272e" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,2"/>
+          <text x="614" y="258" text-anchor="middle" fill="#58a6ff" font-size="10" font-weight="bold">▶ = Manual trigger</text>
+          <text x="614" y="274" text-anchor="middle" fill="#6e7681" font-size="9">🗑 = Delete DAG</text>
+          <text x="614" y="286" text-anchor="middle" fill="#6e7681" font-size="9">(script মুছবে না)</text>
+        </svg>
+      </div>
+
+      <h4>Dashboard-এর গুরুত্বপূর্ণ অংশ:</h4>
+      <div class="def-list">
+        <div class="def-item">
+          <span class="def-term">All/Active/Paused</span>
+          <span class="def-desc">উপরে বাটন আছে — সব DAG দেখো, শুধু চলছে এমন দেখো, বা pause করা দেখো।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">DAG নাম (নীল)</span>
+          <span class="def-desc">DAG-এর নাম click করলে সেই DAG-এর বিস্তারিত দেখবে। নাম অবশ্যই unique হতে হবে।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Schedule</span>
+          <span class="def-desc">এই DAG কখন কখন automatically চলবে। "None" মানে manually trigger করতে হবে। "@daily" মানে প্রতিদিন।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Recent Tasks (রঙিন বক্স)</span>
+          <span class="def-desc">শেষ কয়েকটা run-এর task status। সবুজ = success, লাল = failed। Mouse hover করলে details দেখবে।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Actions (▶ বাটন)</span>
+          <span class="def-desc">▶ বাটন দিয়ে manually DAG চালু করো। 🗑 বাটন দিয়ে DAG-এর metadata মুছো (কিন্তু .py file মুছবে না)।</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- =========================================
+         CHAPTER 2: FIRST DAGs
+    ========================================= -->
+    <section class="section" id="dag">
+      <div class="chapter-header">
+        <div class="chapter-num">২</div>
+        <div>
+          <h2>প্রথম DAG তৈরি</h2>
+          <p>DAG, Task, Operator, Run — মূল ধারণাগুলো</p>
+        </div>
+      </div>
+
+      <h3>DAG কী? — গ্রাফ তত্ত্ব থেকে শুরু</h3>
+      <p>DAG মানে <span class="hl-blue">Directed Acyclic Graph</span> — এটা একটু mathematical শোনাচ্ছে, কিন্তু ভয় নেই, ব্যাখ্যা করছি।</p>
+
+      <p><strong>Graph কী?</strong> — কিছু বিন্দু (nodes) আর তাদের মধ্যে সংযোগ (edges) নিয়ে তৈরি। ঢাকার metro map-এ স্টেশন হলো nodes, আর স্টেশনের মধ্যে রেললাইন হলো edges।</p>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">DAG বোঝার উদাহরণ — সকালে জুতো পরার ক্রম</div>
+        <svg viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:680px;">
+          <rect width="680" height="280" fill="#161b22" rx="10"/>
+          <defs>
+            <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#58a6ff"/>
+            </marker>
+            <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#3fb950"/>
+            </marker>
+          </defs>
+
+          <!-- Title labels -->
+          <text x="340" y="25" text-anchor="middle" fill="#8b949e" font-size="11">এই DAG দেখাচ্ছে: task 1 শেষ হলে task 2 ও 4 parallel-এ চলে, তারপর 3 ও 5, তারপর 6</text>
+
+          <!-- Nodes -->
+          <!-- Start -->
+          <circle cx="50" cy="140" r="22" fill="#22272e" stroke="#6e7681" stroke-width="2"/>
+          <text x="50" y="145" text-anchor="middle" fill="#6e7681" font-size="10">Start</text>
+
+          <!-- Task 1: Trouser -->
+          <rect x="110" y="117" width="100" height="46" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="2"/>
+          <text x="160" y="136" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="bold">Task 1</text>
+          <text x="160" y="151" text-anchor="middle" fill="#8b949e" font-size="9">প্যান্ট পরো</text>
+
+          <!-- Task 2: Right Sock -->
+          <rect x="265" y="70" width="100" height="46" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="2"/>
+          <text x="315" y="89" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">Task 2</text>
+          <text x="315" y="104" text-anchor="middle" fill="#8b949e" font-size="9">ডান মোজা</text>
+
+          <!-- Task 4: Left Sock -->
+          <rect x="265" y="164" width="100" height="46" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="2"/>
+          <text x="315" y="183" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">Task 4</text>
+          <text x="315" y="198" text-anchor="middle" fill="#8b949e" font-size="9">বাম মোজা</text>
+
+          <!-- Task 3: Right Shoe -->
+          <rect x="420" y="70" width="100" height="46" rx="8" fill="#1c2128" stroke="#ffa657" stroke-width="2"/>
+          <text x="470" y="89" text-anchor="middle" fill="#ffa657" font-size="11" font-weight="bold">Task 3</text>
+          <text x="470" y="104" text-anchor="middle" fill="#8b949e" font-size="9">ডান জুতো</text>
+
+          <!-- Task 5: Left Shoe -->
+          <rect x="420" y="164" width="100" height="46" rx="8" fill="#1c2128" stroke="#ffa657" stroke-width="2"/>
+          <text x="470" y="183" text-anchor="middle" fill="#ffa657" font-size="11" font-weight="bold">Task 5</text>
+          <text x="470" y="198" text-anchor="middle" fill="#8b949e" font-size="9">বাম জুতো</text>
+
+          <!-- Task 6: Done -->
+          <rect x="570" y="117" width="90" height="46" rx="8" fill="#1c2128" stroke="#bc8cff" stroke-width="2"/>
+          <text x="615" y="136" text-anchor="middle" fill="#bc8cff" font-size="11" font-weight="bold">Task 6</text>
+          <text x="615" y="151" text-anchor="middle" fill="#8b949e" font-size="9">বেরিয়ে যাও</text>
+
+          <!-- EDGES -->
+          <line x1="72" y1="140" x2="108" y2="140" stroke="#6e7681" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+          <line x1="210" y1="128" x2="263" y2="100" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+          <line x1="210" y1="152" x2="263" y2="180" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+          <line x1="365" y1="93" x2="418" y2="93" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+          <line x1="365" y1="187" x2="418" y2="187" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+          <line x1="520" y1="106" x2="568" y2="130" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+          <line x1="520" y1="174" x2="568" y2="152" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+          <!-- Explanation text -->
+          <text x="340" y="258" text-anchor="middle" fill="#3fb950" font-size="11">Task 2 আর Task 4 parallel-এ চলতে পারে — একে অপরের উপর নির্ভর করে না!</text>
+        </svg>
+      </div>
+
+      <p>
+        <span class="hl-blue">Directed</span> = arrows একটা দিকে যায় (task 1 → task 2, কিন্তু task 2 → task 1 না)।<br>
+        <span class="hl-orange">Acyclic</span> = কোনো loop নেই। একবার task 6-এ গেলে আবার task 1-এ ফিরে আসা যায় না।
+      </p>
+
+      <div class="info-box important">
+        <div class="info-box-label">🔴 গুরুত্বপূর্ণ</div>
+        DAG-এর topology (আকৃতি) অনেক গুরুত্বপূর্ণ! যদি Task 2 fail করে, তাহলে Task 2-এর উপর যারা নির্ভর করে তারাও fail হবে। কিন্তু Task 4-এর উপর নির্ভরশীল tasks চলতে পারবে।
+      </div>
+    </section>
+
+    <!-- TASK -->
+    <section class="section" id="task">
+      <h3>Task, Operator, Run — তিনটা আলাদা জিনিস</h3>
+      <div class="def-list">
+        <div class="def-item">
+          <span class="def-term">Task</span>
+          <span class="def-desc">একটা কাজের সংজ্ঞা। যেমন "এই Python function চালাও"। একটা Python function-এর মতো — define করা আছে কিন্তু এখনো চলেনি।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Operator</span>
+          <span class="def-desc">Task define করার tool। Airflow-এ অনেক built-in Operator আছে — PythonOperator (Python চালায়), BashOperator (Bash command চালায়), PostgresOperator (SQL চালায়) ইত্যাদি।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">DAG Run</span>
+          <span class="def-desc">একটা DAG যখন actually execute হয়, সেটা একটা "DAG Run"। একটা DAG অনেকবার run হতে পারে।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Task Instance</span>
+          <span class="def-desc">একটা DAG Run-এর মধ্যে একটা Task যখন চলে, সেটা একটা "Task Instance"। Log, status সব Task Instance-এর জন্য আলাদা।</span>
+        </div>
+      </div>
+
+      <h4>কোন Operator কী কাজ করে:</h4>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Operator</th><th>কী করে</th><th>উদাহরণ</th></tr>
+          <tr><td><code>PythonOperator</code></td><td>Python function চালায়</td><td>data clean করা</td></tr>
+          <tr><td><code>BashOperator</code></td><td>Bash/shell command চালায়</td><td>file copy করা</td></tr>
+          <tr><td><code>PostgresOperator</code></td><td>PostgreSQL query চালায়</td><td>table create করা</td></tr>
+          <tr><td><code>DockerOperator</code></td><td>Docker container চালায়</td><td>isolated code চালানো</td></tr>
+          <tr><td><code>EmailOperator</code></td><td>Email পাঠায়</td><td>report পাঠানো</td></tr>
+          <tr><td><code>FileSensor</code></td><td>File আসার জন্য অপেক্ষা করে</td><td>data file check করা</td></tr>
+          <tr><td><code>DummyOperator</code></td><td>কিছুই করে না (placeholder)</td><td>DAG structure-এ start/end point</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- FIRST DAG -->
+    <section class="section" id="firstdag">
+      <h3>প্রথম DAG লেখা — হাতে-কলমে</h3>
+      <p><code>my_first_dag.py</code> নামে একটা file তৈরি করো <code>./dags/</code> ফোল্ডারে:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — my_first_dag.py</span>
+        </div>
+        <pre><span class="cm"># Step 1: দরকারি libraries import করো</span>
+<span class="kw">from</span> <span class="cls">airflow</span> <span class="kw">import</span> <span class="cls">DAG</span>
+<span class="kw">from</span> <span class="cls">airflow.utils.dates</span> <span class="kw">import</span> <span class="fn">days_ago</span>
+<span class="kw">from</span> <span class="cls">airflow.operators.python</span> <span class="kw">import</span> <span class="cls">PythonOperator</span>
+<span class="kw">import</span> <span class="cls">datetime</span>
+
+<span class="cm"># Step 2: DAG define করো</span>
+<span class="cm"># "with" ব্যবহার করলে প্রতিটা task-এ আলাদা dag=my_dag লিখতে হয় না</span>
+<span class="kw">with</span> <span class="cls">DAG</span>(
+    dag_id=<span class="str">'my_very_first_dag'</span>,        <span class="cm"># DAG-এর unique নাম</span>
+    description=<span class="str">'আমার প্রথম DAG'</span>,        <span class="cm"># বর্ণনা (optional)</span>
+    tags=[<span class="str">'tutorial'</span>, <span class="str">'datascientest'</span>],  <span class="cm"># tag দিয়ে filter করা যায়</span>
+    schedule_interval=<span class="kw">None</span>,              <span class="cm"># None মানে manually চালাতে হবে</span>
+    default_args={
+        <span class="str">'owner'</span>: <span class="str">'airflow'</span>,              <span class="cm"># কে এই DAG-এর মালিক</span>
+        <span class="str">'start_date'</span>: <span class="fn">days_ago</span>(<span class="num">2</span>),       <span class="cm"># কবে থেকে শুরু হবে</span>
+    }
+) <span class="kw">as</span> my_dag:
+
+    <span class="cm"># Step 3: Function define করো — এটাই আসল কাজ</span>
+    <span class="kw">def</span> <span class="fn">print_date_and_hello</span>():
+        <span class="fn">print</span>(<span class="cls">datetime</span>.<span class="cls">datetime</span>.<span class="fn">now</span>())   <span class="cm"># এখনকার সময় print করো</span>
+        <span class="fn">print</span>(<span class="str">'Hello from Airflow!'</span>)       <span class="cm"># একটা message print করো</span>
+
+    <span class="cm"># Step 4: Task তৈরি করো — PythonOperator দিয়ে</span>
+    my_task = <span class="cls">PythonOperator</span>(
+        task_id=<span class="str">'my_very_first_task'</span>,       <span class="cm"># Task-এর unique নাম</span>
+        python_callable=print_date_and_hello, <span class="cm"># কোন function চালাবে</span>
+    )</pre>
+      </div>
+
+      <div class="info-box note">
+        <div class="info-box-label">📌 গুরুত্বপূর্ণ বিষয়</div>
+        <ul>
+          <li><strong>dag_id</strong> — এটা পুরো Airflow-এ unique হতে হবে। দুটো DAG একই নাম রাখলে error হবে।</li>
+          <li><strong>schedule_interval=None</strong> — মানে এই DAG নিজে নিজে চলবে না, manually trigger করতে হবে।</li>
+          <li><strong>start_date</strong> — এটা দিতেই হবে। <code>days_ago(2)</code> মানে দুইদিন আগের date।</li>
+          <li><strong>python_callable</strong> — function-এর নাম দাও, brackets () ছাড়া।</li>
+        </ul>
+      </div>
+
+      <div class="info-box note">
+        <div class="info-box-label">📌 days_ago(2) কী?</div>
+        <p style="margin:0"><code>days_ago(2)</code> মানে "আজ থেকে ২ দিন আগের date"। যদি আজ ১০ জানুয়ারি হয়, তাহলে <code>days_ago(2)</code> = ৮ জানুয়ারি। Airflow-এ start_date অবশ্যই অতীতের হতে হয়, তাহলেই DAG run করা যায়। ভবিষ্যতের date দিলে DAG trigger করা যাবে না।</p>
+      </div>
+
+      <div class="info-box note">
+        <div class="info-box-label">📌 **kwargs কী? (silly মনে হলেও গুরুত্বপূর্ণ!)</div>
+        <p style="margin:0 0 8px"><code>**kwargs</code> মানে "keyword arguments" — Python-এ যেকোনো সংখ্যক named arguments নেওয়ার shorthand। যেমন <code>def fn(**kwargs)</code> মানে function-টা যেকোনো নামের argument নিতে পারবে।</p>
+        <p style="margin:0">Airflow-এ PythonOperator যখন function call করে, সে নিজে থেকে কিছু extra information পাঠায় — যেমন execution date, DAG run id ইত্যাদি। <code>**kwargs</code> দিয়ে এগুলো catch করা যায়। যদি না চাও তাহলে না লিখলেও চলে।</p>
+      </div>
+
+      <h4>DAG Register করো</h4>
+      <p>এই file টা <code>./dags/</code> ফোল্ডারে রাখো। Airflow কিছুক্ষণ পরে automatically detect করবে।</p>
+    </section>
+
+    <!-- DAG DASHBOARD EXPLORATION -->
+    <section class="section" id="dependencies">
+      <h3>DAG-এর ভেতরের Views</h3>
+      <p>DAG-এর নামে click করলে অনেক tab দেখবে। চলো প্রতিটা দেখি:</p>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>Tab</th><th>কী দেখায়</th><th>কখন কাজে লাগে</th></tr>
+          <tr><td><strong>Grid</strong></td><td>DAG-এর সব runs-এর table view। কোন run কোন সময় হলো, কতক্ষণ লাগলো।</td><td>overall status দেখতে</td></tr>
+          <tr><td><strong>Graph</strong></td><td>DAG-এর tasks আর dependencies visual রূপে দেখায়।</td><td>task failure diagnose করতে</td></tr>
+          <tr><td><strong>Gantt</strong></td><td>কোন task কখন চলল, কতক্ষণ — timeline view।</td><td>performance bottleneck খুঁজতে</td></tr>
+          <tr><td><strong>Calendar</strong></td><td>কোন দিন কোন run হলো, status কী।</td><td>regular schedule দেখতে</td></tr>
+          <tr><td><strong>Task Duration</strong></td><td>সময়ের সাথে task কতক্ষণ লাগছে তার graph।</td><td>performance trend দেখতে</td></tr>
+          <tr><td><strong>Task Tries</strong></td><td>কতবার retry হয়েছে।</td><td>flaky tasks ধরতে</td></tr>
+          <tr><td><strong>Logs</strong></td><td>প্রতিটা task-এর detailed output।</td><td>debugging করতে</td></tr>
+          <tr><td><strong>Code</strong></td><td>DAG-এর Python source code।</td><td>কোড review করতে</td></tr>
+          <tr><td><strong>XCom</strong></td><td>Tasks-এর মধ্যে যে data exchange হয়েছে।</td><td>data passing debug করতে</td></tr>
+        </table>
+      </div>
+
+      <h3>দুটো Task — Dependencies তৈরি</h3>
+      <p>এখন দুটো Task আছে, কিন্তু এরা independent। আমরা বলতে চাই: <strong>Task 1 শেষ হলে Task 2 চলবে</strong>।</p>
+      <p>এর জন্য <code>>></code> operator ব্যবহার করো:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — dependencies উদাহরণ</span>
+        </div>
+        <pre><span class="kw">with</span> <span class="cls">DAG</span>(...) <span class="kw">as</span> my_dag:
+
+    <span class="kw">def</span> <span class="fn">say_hello</span>():
+        <span class="fn">print</span>(<span class="str">'Hello!'</span>)
+
+    <span class="kw">def</span> <span class="fn">say_bye</span>():
+        <span class="fn">print</span>(<span class="str">'Goodbye!'</span>)
+
+    task1 = <span class="cls">PythonOperator</span>(task_id=<span class="str">'hello_task'</span>, python_callable=say_hello)
+    task2 = <span class="cls">PythonOperator</span>(task_id=<span class="str">'bye_task'</span>, python_callable=say_bye)
+
+<span class="cm"># >> মানে "task1 শেষ হলে task2 চলবে"</span>
+task1 >> task2
+
+<span class="cm"># একাধিক dependency:</span>
+<span class="cm"># task1 >> [task2, task4]  → task1 শেষে task2 আর task4 parallel-এ</span>
+<span class="cm"># task2 >> task3</span>
+<span class="cm"># task4 >> task5</span>
+<span class="cm"># [task3, task5] >> task6  → task3 আর task5 শেষে task6</span></pre>
+      </div>
+
+      <h4>op_kwargs — function-এ arguments পাঠানো</h4>
+      <p>কখনো function-এ parameters দিতে হয়। <code>op_kwargs</code> dictionary দিয়ে এটা করো:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — op_kwargs উদাহরণ</span>
+        </div>
+        <pre><span class="kw">def</span> <span class="fn">print_message</span>(message):
+    <span class="fn">print</span>(message)
+
+task1 = <span class="cls">PythonOperator</span>(
+    task_id=<span class="str">'first_task'</span>,
+    python_callable=print_message,
+    op_kwargs={                         <span class="cm"># function-এ কোন argument দেব</span>
+        <span class="str">'message'</span>: <span class="str">'প্যান্ট পরো'</span>
+    }
+)</pre>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- =========================================
+         CHAPTER 3: ERRORS & RECURRING
+    ========================================= -->
+    <section class="section" id="recurring">
+      <div class="chapter-header">
+        <div class="chapter-num">৩</div>
+        <div>
+          <h2>DAGs এবং Errors</h2>
+          <p>Recurring DAGs, Trigger Rules, Retries, Setup/Teardown</p>
+        </div>
+      </div>
+
+      <h3>Recurring DAGs — নিয়মিত চালানো</h3>
+      <p><code>schedule_interval</code> parameter দিয়ে DAG কখন চলবে তা বলো। এটা <strong>CRON format</strong> ব্যবহার করে।</p>
+
+      <div class="info-box note">
+        <div class="info-box-label">📌 CRON Format কী?</div>
+        CRON হলো Linux-এ scheduled tasks চালানোর পদ্ধতি। একটা string দিয়ে বলো "কখন চালাবে"।
+      </div>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">CRON Expression Format</div>
+        <svg viewBox="0 0 650 160" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:650px;">
+          <rect width="650" height="160" fill="#161b22" rx="10"/>
+          <!-- Fields -->
+          <rect x="20" y="30" width="110" height="50" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="1.5"/>
+          <text x="75" y="52" text-anchor="middle" fill="#58a6ff" font-size="18" font-weight="bold" font-family="monospace">*</text>
+          <text x="75" y="72" text-anchor="middle" fill="#8b949e" font-size="10">minute</text>
+          <text x="75" y="84" text-anchor="middle" fill="#6e7681" font-size="9">0-59</text>
+
+          <rect x="145" y="30" width="110" height="50" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="200" y="52" text-anchor="middle" fill="#3fb950" font-size="18" font-weight="bold" font-family="monospace">*</text>
+          <text x="200" y="72" text-anchor="middle" fill="#8b949e" font-size="10">hour</text>
+          <text x="200" y="84" text-anchor="middle" fill="#6e7681" font-size="9">0-23</text>
+
+          <rect x="270" y="30" width="110" height="50" rx="8" fill="#1c2128" stroke="#ffa657" stroke-width="1.5"/>
+          <text x="325" y="52" text-anchor="middle" fill="#ffa657" font-size="18" font-weight="bold" font-family="monospace">*</text>
+          <text x="325" y="72" text-anchor="middle" fill="#8b949e" font-size="10">day of month</text>
+          <text x="325" y="84" text-anchor="middle" fill="#6e7681" font-size="9">1-31</text>
+
+          <rect x="395" y="30" width="110" height="50" rx="8" fill="#1c2128" stroke="#f78166" stroke-width="1.5"/>
+          <text x="450" y="52" text-anchor="middle" fill="#f78166" font-size="18" font-weight="bold" font-family="monospace">*</text>
+          <text x="450" y="72" text-anchor="middle" fill="#8b949e" font-size="10">month</text>
+          <text x="450" y="84" text-anchor="middle" fill="#6e7681" font-size="9">1-12</text>
+
+          <rect x="520" y="30" width="110" height="50" rx="8" fill="#1c2128" stroke="#bc8cff" stroke-width="1.5"/>
+          <text x="575" y="52" text-anchor="middle" fill="#bc8cff" font-size="18" font-weight="bold" font-family="monospace">*</text>
+          <text x="575" y="72" text-anchor="middle" fill="#8b949e" font-size="10">day of week</text>
+          <text x="575" y="84" text-anchor="middle" fill="#6e7681" font-size="9">0-7 (0,7=Sun)</text>
+
+          <!-- Example -->
+          <text x="325" y="125" text-anchor="middle" fill="#e3b341" font-size="13" font-family="monospace">0 9 * * 1-5</text>
+          <text x="325" y="148" text-anchor="middle" fill="#8b949e" font-size="11">= প্রতি সোম-শুক্রবার সকাল ৯টায়</text>
+        </svg>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>Expression</th><th>মানে</th></tr>
+          <tr><td><code>* * * * *</code></td><td>প্রতি মিনিটে</td></tr>
+          <tr><td><code>0 * * * *</code></td><td>প্রতি ঘণ্টার শুরুতে (XX:00)</td></tr>
+          <tr><td><code>0 9 * * *</code></td><td>প্রতিদিন সকাল ৯টায়</td></tr>
+          <tr><td><code>0 9 * * 1</code></td><td>প্রতি সোমবার সকাল ৯টায়</td></tr>
+          <tr><td><code>@daily</code></td><td>প্রতিদিন midnight-এ (shortcut)</td></tr>
+          <tr><td><code>@weekly</code></td><td>প্রতি সোমবার midnight-এ</td></tr>
+          <tr><td><code>@hourly</code></td><td>প্রতি ঘণ্টায়</td></tr>
+          <tr><td><code>None</code></td><td>manually trigger করতে হবে</td></tr>
+        </table>
+      </div>
+
+      <h4>catchup=False — গুরুত্বপূর্ণ</h4>
+      <p>Airflow-এর একটা আচরণ আছে: যদি DAG pause থাকে বা নতুন হয়, এবং start_date অনেক আগের হয়, তাহলে সে সব missed runs করার চেষ্টা করে। এটা আটকাতে <code>catchup=False</code> দাও:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python</span>
+        </div>
+        <pre><span class="kw">with</span> <span class="cls">DAG</span>(
+    dag_id=<span class="str">'my_recurring_dag'</span>,
+    schedule_interval=<span class="str">'*/1 * * * *'</span>,   <span class="cm"># প্রতি মিনিটে</span>
+    default_args={
+        <span class="str">'owner'</span>: <span class="str">'airflow'</span>,
+        <span class="str">'start_date'</span>: <span class="fn">days_ago</span>(<span class="num">2</span>),
+    },
+    catchup=<span class="kw">False</span>   <span class="cm"># পুরানো missed runs চালাবে না</span>
+) <span class="kw">as</span> dag:
+    ...</pre>
+      </div>
+    </section>
+
+    <!-- TRIGGER RULES -->
+    <section class="section" id="trigger-rule">
+      <h3>Trigger Rules — কখন task চলবে?</h3>
+      <p>Default হলো: upstream সব tasks success হলে তবে task চলবে। কিন্তু এটা বদলানো যায়।</p>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>Trigger Rule</th><th>কখন task চলবে</th></tr>
+          <tr><td><code>all_success</code></td><td>✅ Default। সব parent task success হলে। (সবচেয়ে সাধারণ)</td></tr>
+          <tr><td><code>all_done</code></td><td>সব parent task শেষ হলে (success বা fail — যেকোনো)</td></tr>
+          <tr><td><code>one_success</code></td><td>যেকোনো একটা parent task success হলেই চলবে</td></tr>
+          <tr><td><code>one_failed</code></td><td>যেকোনো একটা parent task fail হলেই চলবে</td></tr>
+          <tr><td><code>none_failed</code></td><td>কোনো parent fail হয়নি (success বা skip হয়েছে)</td></tr>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — trigger_rule উদাহরণ</span>
+        </div>
+        <pre><span class="cm"># task1 সবসময় success, task2 সবসময় fail</span>
+<span class="cm"># task3 = "দুটো শেষ হলেই চলো, success/fail যাই হোক"</span>
+task3 = <span class="cls">PythonOperator</span>(
+    task_id=<span class="str">'task3'</span>,
+    python_callable=successful_task,
+    trigger_rule=<span class="str">'all_done'</span>    <span class="cm"># এটা না থাকলে task3 চলতই না!</span>
+)
+[task1, task2] >> task3</pre>
+      </div>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Task Status রঙের মানে</div>
+        <svg viewBox="0 0 600 120" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:600px;">
+          <rect width="600" height="120" fill="#161b22" rx="10"/>
+          <!-- Status boxes -->
+          <rect x="20" y="20" width="100" height="40" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="2"/>
+          <text x="70" y="35" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">success</text>
+          <text x="70" y="52" text-anchor="middle" fill="#3fb950" font-size="10">✅ সফল</text>
+
+          <rect x="135" y="20" width="100" height="40" rx="8" fill="#1c2128" stroke="#f78166" stroke-width="2"/>
+          <text x="185" y="35" text-anchor="middle" fill="#f78166" font-size="11" font-weight="bold">failed</text>
+          <text x="185" y="52" text-anchor="middle" fill="#f78166" font-size="10">❌ ব্যর্থ</text>
+
+          <rect x="250" y="20" width="100" height="40" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="2"/>
+          <text x="300" y="35" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="bold">running</text>
+          <text x="300" y="52" text-anchor="middle" fill="#58a6ff" font-size="10">⏳ চলছে</text>
+
+          <rect x="365" y="20" width="100" height="40" rx="8" fill="#1c2128" stroke="#bc8cff" stroke-width="2"/>
+          <text x="415" y="35" text-anchor="middle" fill="#bc8cff" font-size="11" font-weight="bold">skipped</text>
+          <text x="415" y="52" text-anchor="middle" fill="#bc8cff" font-size="10">⏭️ বাদ গেছে</text>
+
+          <rect x="480" y="20" width="100" height="40" rx="8" fill="#1c2128" stroke="#ffa657" stroke-width="2"/>
+          <text x="530" y="35" text-anchor="middle" fill="#ffa657" font-size="11" font-weight="bold">upstream_failed</text>
+          <text x="530" y="52" text-anchor="middle" fill="#ffa657" font-size="9">উপরের task fail</text>
+
+          <text x="300" y="100" text-anchor="middle" fill="#8b949e" font-size="10">queued (লাইনে আছে), up_for_retry (retry-র অপেক্ষায়) — আরো status আছে</text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- RETRIES -->
+    <section class="section" id="retries">
+      <h3>Retries — ব্যর্থ হলে আবার চেষ্টা</h3>
+      <p>কিছু কাজ গুরুত্বপূর্ণ — একবার fail করলেই ছেড়ে দেওয়া যাবে না। <code>retries</code> আর <code>retry_delay</code> দিয়ে Airflow-কে বলো কতবার চেষ্টা করবে।</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — retry উদাহরণ</span>
+        </div>
+        <pre><span class="kw">import</span> <span class="cls">datetime</span>
+
+<span class="kw">def</span> <span class="fn">always_fails</span>():
+    <span class="kw">raise</span> <span class="cls">Exception</span>(<span class="str">'এই task সবসময় fail করে!'</span>)
+
+task1 = <span class="cls">PythonOperator</span>(
+    task_id=<span class="str">'my_failed_task'</span>,
+    python_callable=always_fails,
+    retries=<span class="num">5</span>,                              <span class="cm"># ৫ বার retry করবে</span>
+    retry_delay=<span class="cls">datetime</span>.<span class="cls">timedelta</span>(seconds=<span class="num">30</span>)  <span class="cm"># প্রতি retry-এর আগে ৩০ সেকেন্ড অপেক্ষা</span>
+)</pre>
+      </div>
+
+      <div class="info-box note">
+        <div class="info-box-label">📌 timedelta কী? (silly মনে হলেও জানা দরকার!)</div>
+        <p style="margin:0 0 8px"><code>timedelta</code> হলো Python-এর "সময়ের পার্থক্য" বোঝানোর object। যেমন "৩০ সেকেন্ড" বা "৫ মিনিট" বা "২ ঘণ্টা" — এগুলো <code>timedelta</code> দিয়ে লেখা হয়।</p>
+        <p style="margin:0 0 8px"><code>datetime.timedelta(seconds=30)</code> = ৩০ সেকেন্ডের একটা duration object।</p>
+        <p style="margin:0">Airflow-এ <code>retry_delay=timedelta(seconds=30)</code> মানে "retry করার আগে ৩০ সেকেন্ড অপেক্ষা করো।" শুধু <code>30</code> লিখলে কাজ করবে না — Airflow-এর timedelta object দরকার।</p>
+      </div>
+
+      <div class="info-box note">
+        <div class="info-box-label">📌 f-string কী? (Python 3.6+)</div>
+        <p style="margin:0 0 8px">Code-এ <code>f"Data saved to {filepath}"</code> এরকম দেখবে — এটাকে f-string বলে। f দিয়ে শুরু হলে string-এর ভেতরে <code>{}</code> দিয়ে variable-এর value সরাসরি বসানো যায়।</p>
+        <p style="margin:0">যেমন: <code>city = "Paris"</code> হলে <code>f"Hello {city}"</code> = <code>"Hello Paris"</code>। পুরানো পদ্ধতিতে <code>"Hello " + city</code> লিখতে হতো।</p>
+      </div>
+
+      <p>Fail হলে email পাঠানোর option আছে:</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — email notification</span>
+        </div>
+        <pre>task1 = <span class="cls">PythonOperator</span>(
+    task_id=<span class="str">'my_failed_task'</span>,
+    python_callable=always_fails,
+    retries=<span class="num">5</span>,
+    retry_delay=<span class="cls">datetime</span>.<span class="cls">timedelta</span>(seconds=<span class="num">30</span>),
+    email_on_retry=<span class="kw">True</span>,          <span class="cm"># retry হলে email পাঠাও</span>
+    email_on_failure=<span class="kw">True</span>,        <span class="cm"># fail হলেও email পাঠাও</span>
+    email=[<span class="str">'tumi@example.com'</span>]    <span class="cm"># কোথায় পাঠাবে</span>
+)</pre>
+      </div>
+    </section>
+
+    <!-- SETUP TEARDOWN -->
+    <section class="section" id="setup-teardown">
+      <h3>Setup ও Teardown — শুরু ও শেষের কাজ</h3>
+      <p>Production-এ কিছু কাজ সবসময় করতে হয়: শুরুতে resources তৈরি (Spark session, database connection) এবং শেষে সেগুলো বন্ধ করা। এজন্য <code>as_setup()</code> ও <code>as_teardown()</code> ব্যবহার করো।</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — setup/teardown</span>
+        </div>
+        <pre><span class="cm"># যেকোনো ফলাফলেই teardown চলবে</span>
+task1.as_setup() >> [task2, task3]
+[task2, task3] >> task4.as_teardown()
+task1 >> task4  <span class="cm"># setup থেকে teardown-এ সরাসরি link</span></pre>
+      </div>
+
+      <div class="info-box tip">
+        <div class="info-box-label">💡 কেন দরকার?</div>
+        ধরো task2 fail করল। Normally task4 চলত না। কিন্তু task4 যদি teardown হয়, তাহলে failure হলেও সে চলবে — কারণ cleanup করাটা জরুরি!
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- =========================================
+         CHAPTER 4: ADVANCED DAGS
+    ========================================= -->
+    <section class="section" id="subdag">
+      <div class="chapter-header">
+        <div class="chapter-num">৪</div>
+        <div>
+          <h2>Advanced DAGs</h2>
+          <p>SubDAGs, TaskGroups, Branching, XComs, Variables, Decorators</p>
+        </div>
+      </div>
+
+      <h3>SubDAGs — DAG-এর মধ্যে DAG</h3>
+      <p>যদি একটা set of tasks বারবার বিভিন্ন DAG-এ দরকার হয়, তাহলে সেগুলোকে SubDAG হিসেবে আলাদা করা যায়।</p>
+
+      <div class="info-box warn">
+        <div class="info-box-label">⚠️ পুরানো পদ্ধতি</div>
+        SubDAGs Airflow 2.0-এ deprecated। নতুন project-এ TaskGroups ব্যবহার করো। কিন্তু পুরনো code বোঝার জন্য জানা দরকার।
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — my_subdag.py (SubDAG সংজ্ঞা)</span>
+        </div>
+        <pre><span class="kw">from</span> <span class="cls">airflow</span> <span class="kw">import</span> <span class="cls">DAG</span>
+<span class="kw">from</span> <span class="cls">airflow.operators.bash</span> <span class="kw">import</span> <span class="cls">BashOperator</span>
+
+<span class="cm"># একটা function যেটা DAG return করে</span>
+<span class="kw">def</span> <span class="fn">create_sub_dag</span>(dag_id, schedule_interval, start_date):
+    sub_dag = <span class="cls">DAG</span>(dag_id=dag_id, ...)
+
+    task1 = <span class="cls">BashOperator</span>(bash_command=<span class="str">"echo subdag task 1"</span>, dag=sub_dag, ...)
+    task2 = <span class="cls">BashOperator</span>(bash_command=<span class="str">"echo subdag task 2"</span>, dag=sub_dag, ...)
+    task1 >> task2
+
+    <span class="kw">return</span> sub_dag</pre>
+      </div>
+    </section>
+
+    <!-- TASKGROUPS -->
+    <section class="section" id="taskgroup">
+      <h3>TaskGroups — আধুনিক পদ্ধতি</h3>
+      <p>TaskGroups হলো SubDAG-এর আধুনিক বিকল্প। Airflow 2.0-এ যোগ হয়েছে। এটা হালকা, দ্রুত, এবং graph view-এ সুন্দরভাবে দেখায়।</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — TaskGroup উদাহরণ</span>
+        </div>
+        <pre><span class="kw">from</span> <span class="cls">airflow.utils.task_group</span> <span class="kw">import</span> <span class="cls">TaskGroup</span>
+<span class="kw">from</span> <span class="cls">airflow.operators.dummy</span> <span class="kw">import</span> <span class="cls">DummyOperator</span>
+
+<span class="kw">with</span> <span class="cls">DAG</span>(...) <span class="kw">as</span> my_dag:
+
+    <span class="cm"># Group A-তে ৩টা task</span>
+    <span class="kw">with</span> <span class="cls">TaskGroup</span>(<span class="str">"group_A"</span>) <span class="kw">as</span> group_A:
+        task_A1 = <span class="cls">DummyOperator</span>(task_id=<span class="str">"task_A1"</span>)
+        task_A2 = <span class="cls">DummyOperator</span>(task_id=<span class="str">"task_A2"</span>)
+        task_A3 = <span class="cls">DummyOperator</span>(task_id=<span class="str">"task_A3"</span>)
+
+    <span class="cm"># Group B-তে ২টা task</span>
+    <span class="kw">with</span> <span class="cls">TaskGroup</span>(<span class="str">"group_B"</span>) <span class="kw">as</span> group_B:
+        task_B1 = <span class="cls">DummyOperator</span>(task_id=<span class="str">"task_B1"</span>)
+        task_B2 = <span class="cls">DummyOperator</span>(task_id=<span class="str">"task_B2"</span>)
+
+    start = <span class="cls">DummyOperator</span>(task_id=<span class="str">'start'</span>)
+    end = <span class="cls">DummyOperator</span>(task_id=<span class="str">'end'</span>)
+
+    <span class="cm"># Dependencies — group কেও task-এর মতো >> দিয়ে link করা যায়</span>
+    start >> [group_A, group_B] >> end</pre>
+      </div>
+    </section>
+
+    <!-- BRANCHING -->
+    <section class="section" id="branching">
+      <h3>Branching — শর্ত অনুযায়ী আলাদা path</h3>
+      <p>কখনো কখনো কোনো condition-এর উপর নির্ভর করে আলাদা task চালাতে হয়। যেমন: "যদি sales বেশি হয় → Report A বানাও, নয়তো Report B বানাও।"</p>
+      <p>এর জন্য <code>BranchPythonOperator</code> ব্যবহার করো। এটা একটা function call করে যেটা পরের task-এর <strong>id</strong> return করে।</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — Branching উদাহরণ</span>
+        </div>
+        <pre><span class="kw">from</span> <span class="cls">airflow.operators.python</span> <span class="kw">import</span> <span class="cls">BranchPythonOperator</span>
+<span class="kw">import</span> <span class="cls">random</span>
+
+<span class="cm"># এই function decide করে কোন branch-এ যাবে</span>
+<span class="kw">def</span> <span class="fn">decide_branch</span>(condition):
+    <span class="kw">if</span> condition:
+        <span class="kw">return</span> <span class="str">'task_A'</span>   <span class="cm"># task_A-র task_id return করো</span>
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="str">'task_B'</span>   <span class="cm"># task_B-র task_id return করো</span>
+
+branch_task = <span class="cls">BranchPythonOperator</span>(
+    task_id=<span class="str">'decide'</span>,
+    python_callable=decide_branch,
+    op_args={<span class="str">'condition'</span>: <span class="fn">bool</span>(<span class="cls">random</span>.<span class="fn">getrandbits</span>(<span class="num">1</span>))}
+)
+
+<span class="cm"># যে branch select হবে না, সে "skipped" হয়ে যাবে</span>
+start >> branch_task
+branch_task >> [task_A, task_B]
+[task_A, task_B] >> end</pre>
+      </div>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Branching-এর Visual</div>
+        <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:600px;">
+          <rect width="600" height="200" fill="#161b22" rx="10"/>
+          <defs>
+            <marker id="a2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#58a6ff"/>
+            </marker>
+          </defs>
+          <!-- start -->
+          <rect x="20" y="82" width="80" height="36" rx="8" fill="#1c2128" stroke="#6e7681" stroke-width="1.5"/>
+          <text x="60" y="105" text-anchor="middle" fill="#8b949e" font-size="12">start</text>
+          <!-- branch -->
+          <rect x="150" y="72" width="110" height="54" rx="8" fill="#1c2128" stroke="#ffa657" stroke-width="2"/>
+          <text x="205" y="93" text-anchor="middle" fill="#ffa657" font-size="11" font-weight="bold">decide</text>
+          <text x="205" y="111" text-anchor="middle" fill="#8b949e" font-size="9">BranchPythonOperator</text>
+          <!-- task A -->
+          <rect x="320" y="40" width="90" height="36" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="2"/>
+          <text x="365" y="63" text-anchor="middle" fill="#3fb950" font-size="12">task_A</text>
+          <!-- task B (skipped) -->
+          <rect x="320" y="124" width="90" height="36" rx="8" fill="#1c2128" stroke="#bc8cff" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="365" y="142" text-anchor="middle" fill="#bc8cff" font-size="12">task_B</text>
+          <text x="365" y="155" text-anchor="middle" fill="#6e7681" font-size="9">(skipped)</text>
+          <!-- end -->
+          <rect x="480" y="82" width="80" height="36" rx="8" fill="#1c2128" stroke="#6e7681" stroke-width="1.5"/>
+          <text x="520" y="105" text-anchor="middle" fill="#8b949e" font-size="12">end</text>
+
+          <!-- arrows -->
+          <line x1="100" y1="100" x2="148" y2="100" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a2)"/>
+          <line x1="260" y1="90" x2="318" y2="60" stroke="#3fb950" stroke-width="2" marker-end="url(#a2)"/>
+          <line x1="260" y1="110" x2="318" y2="140" stroke="#bc8cff" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a2)"/>
+          <line x1="410" y1="58" x2="478" y2="90" stroke="#3fb950" stroke-width="2" marker-end="url(#a2)"/>
+          <line x1="410" y1="142" x2="478" y2="110" stroke="#bc8cff" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#a2)"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- XCOMS -->
+    <section class="section" id="xcoms">
+      <h3>XComs — Task-এর মধ্যে Data পাঠানো</h3>
+      <p>মনে করো Task 1 একটা number calculate করল এবং Task 2-কে সেটা জানাতে হবে। এই কাজের জন্য <span class="hl-blue">XCom (Cross-Communication)</span> ব্যবহার করো।</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — XCom Push (পাঠানো)</span>
+        </div>
+        <pre><span class="cm"># পদ্ধতি ১: simple return (Airflow নিজে XCom store করে)</span>
+<span class="kw">def</span> <span class="fn">calculate_value</span>():
+    result = <span class="num">42</span>
+    <span class="kw">return</span> result  <span class="cm"># এটা automatically XCom-এ 'return_value' নামে save হয়</span>
+
+<span class="cm"># পদ্ধতি ২: নিজে নাম দিয়ে push করো</span>
+<span class="kw">def</span> <span class="fn">calculate_value_named</span>(task_instance):
+    result = <span class="num">42.5</span>
+    task_instance.xcom_push(
+        key=<span class="str">"my_result"</span>,   <span class="cm"># নাম দাও</span>
+        value=result        <span class="cm"># যা পাঠাবে</span>
+    )</pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — XCom Pull (পাওয়া)</span>
+        </div>
+        <pre><span class="kw">def</span> <span class="fn">use_the_value</span>(task_instance):
+    <span class="cm"># আগের task-এর value নিয়ে আসো</span>
+    value = task_instance.xcom_pull(
+        key=<span class="str">"my_result"</span>,
+        task_ids=[<span class="str">'calculate_task'</span>]   <span class="cm"># কোন task-এর XCom চাই</span>
+    )
+    <span class="fn">print</span>(<span class="str">f"মান পেলাম: {value}"</span>)</pre>
+      </div>
+
+      <div class="info-box warn">
+        <div class="info-box-label">⚠️ সীমাবদ্ধতা</div>
+        XCom-এর data Airflow-এর database-এ store হয়। তাই <strong>maximum 48KB</strong> data পাঠানো যাবে। বড় data পাঠাতে S3 বা অন্য storage ব্যবহার করো।
+      </div>
+
+      <p>XComs দেখতে: Admin > XCom tab-এ যাও।</p>
+    </section>
+
+    <!-- VARIABLES -->
+    <section class="section" id="variables">
+      <h3>Airflow Variables — Global Settings</h3>
+      <p>XCom একটা run-এর মধ্যে data পাঠায়। কিন্তু যদি সব DAG-এ একটা value share করতে হয় — যেমন API key, database URL — তাহলে Variables ব্যবহার করো।</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — Variables</span>
+        </div>
+        <pre><span class="kw">from</span> <span class="cls">airflow.models</span> <span class="kw">import</span> <span class="cls">Variable</span>
+
+<span class="cm"># Variable set করো (code দিয়ে বা UI-তে)</span>
+<span class="cls">Variable</span>.<span class="fn">set</span>(key=<span class="str">"my_api_key"</span>, value=<span class="str">"abc123xyz"</span>)
+
+<span class="cm"># Variable পড়ো</span>
+api_key = <span class="cls">Variable</span>.<span class="fn">get</span>(key=<span class="str">"my_api_key"</span>)
+<span class="fn">print</span>(api_key)  <span class="cm"># "abc123xyz"</span>
+
+<span class="cm"># JSON Value পড়ো</span>
+cities = <span class="cls">Variable</span>.<span class="fn">get</span>(key=<span class="str">"cities"</span>, deserialize_json=<span class="kw">True</span>)
+<span class="cm"># এটা ['paris', 'london', 'washington'] return করবে</span></pre>
+      </div>
+
+      <div class="info-box tip">
+        <div class="info-box-label">💡 UI-তেও করা যায়</div>
+        Admin → Variables tab-এ গিয়ে GUI-তে Variables add/edit করতে পারো। Code change না করেই settings বদলাতে পারবে।
+      </div>
+    </section>
+
+    <!-- DECORATORS -->
+    <section class="section" id="decorators">
+      <h3>DAG Decorators — আধুনিক, সুন্দর লেখার পদ্ধতি</h3>
+      <p>Airflow-এর TaskFlow API-এ Python decorators দিয়ে DAG লেখা যায়। এটা পুরনো পদ্ধতির চেয়ে অনেক সংক্ষিপ্ত।</p>
+
+      <div class="compare-grid">
+        <div class="compare-card">
+          <h4>📜 পুরনো পদ্ধতি</h4>
+          <ul>
+            <li>DAG object manually তৈরি</li>
+            <li>প্রতিটা task-এ <code>dag=my_dag</code></li>
+            <li>XCom manually push/pull</li>
+            <li>Dependencies <code>>></code> দিয়ে</li>
+          </ul>
+        </div>
+        <div class="compare-card">
+          <h4>✨ Decorator পদ্ধতি</h4>
+          <ul>
+            <li><code>@dag</code> দিয়ে DAG define</li>
+            <li><code>@task</code> দিয়ে task define</li>
+            <li>Return value automatically XCom হয়</li>
+            <li>Function call করেই dependency তৈরি</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — Decorator পদ্ধতি (আধুনিক)</span>
+        </div>
+        <pre><span class="kw">from</span> <span class="cls">airflow.decorators</span> <span class="kw">import</span> dag, task
+<span class="kw">from</span> <span class="cls">airflow.utils.dates</span> <span class="kw">import</span> <span class="fn">days_ago</span>
+<span class="kw">import</span> <span class="cls">random</span>
+
+<span class="cm"># @task decorator দিয়ে task define করো</span>
+<span class="kw">@task</span>
+<span class="kw">def</span> <span class="fn">generate_number</span>():
+    value = <span class="cls">random</span>.<span class="fn">uniform</span>(<span class="num">0</span>, <span class="num">1</span>)
+    <span class="kw">return</span> value  <span class="cm"># return করলে automatic XCom</span>
+
+<span class="kw">@task</span>
+<span class="kw">def</span> <span class="fn">print_number</span>(num):
+    <span class="fn">print</span>(<span class="str">f"সংখ্যাটা হলো: {num}"</span>)
+
+<span class="cm"># @dag decorator দিয়ে DAG define করো</span>
+<span class="kw">@dag</span>(
+    dag_id=<span class="str">'decorator_dag'</span>,
+    schedule_interval=<span class="kw">None</span>,
+    start_date=<span class="fn">days_ago</span>(<span class="num">0</span>)
+)
+<span class="kw">def</span> <span class="fn">my_pipeline</span>():
+    <span class="cm"># Function call করেই dependency তৈরি হয়</span>
+    num = <span class="fn">generate_number</span>()     <span class="cm"># task 1</span>
+    <span class="fn">print_number</span>(num)            <span class="cm"># task 2, num-এর উপর depend করে</span>
+
+<span class="cm"># DAG instantiate করো</span>
+my_dag = <span class="fn">my_pipeline</span>()</pre>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- =========================================
+         CHAPTER 5: ADVANCED CONCEPTS
+    ========================================= -->
+    <section class="section" id="sensors">
+      <div class="chapter-header">
+        <div class="chapter-num">৫</div>
+        <div>
+          <h2>Advanced Concepts</h2>
+          <p>Sensors, Connections, User Management, Pools, Documentation</p>
+        </div>
+      </div>
+
+      <h3>Sensors — অপেক্ষা করার টুল</h3>
+      <p>কখনো কখনো একটা task চালানোর আগে কিছু শর্ত পূরণ হওয়া দরকার — যেমন একটা file আসা, বা database ready হওয়া। Sensors এই কাজ করে।</p>
+
+      <div class="def-list">
+        <div class="def-item">
+          <span class="def-term">FileSensor</span>
+          <span class="def-desc">নির্দিষ্ট path-এ file আছে কিনা দেখে।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">HttpSensor</span>
+          <span class="def-desc">HTTP endpoint পাওয়া যাচ্ছে কিনা দেখে।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">SqlSensor</span>
+          <span class="def-desc">Database-এ কোনো condition পূরণ হয়েছে কিনা দেখে।</span>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — FileSensor উদাহরণ</span>
+        </div>
+        <pre><span class="kw">from</span> <span class="cls">airflow.sensors.filesystem</span> <span class="kw">import</span> <span class="cls">FileSensor</span>
+
+my_sensor = <span class="cls">FileSensor</span>(
+    task_id=<span class="str">"check_file"</span>,
+    fs_conn_id=<span class="str">"my_filesystem_connection"</span>,  <span class="cm"># Connection ID</span>
+    filepath=<span class="str">"/tmp/my_file.txt"</span>,             <span class="cm"># কোন file খুঁজবে</span>
+    poke_interval=<span class="num">30</span>,                          <span class="cm"># ৩০ সেকেন্ড পরপর চেক করবে</span>
+    timeout=<span class="num">5</span> * <span class="num">30</span>,                           <span class="cm"># ১৫০ সেকেন্ড পরেও না পেলে fail</span>
+    mode=<span class="str">'reschedule'</span>  <span class="cm"># file না পেলে task free করে দেয় (efficient)</span>
+)
+
+<span class="cm"># Sensor successful হলে তারপর এই task</span>
+my_sensor >> print_file_task</pre>
+      </div>
+
+      <div class="info-box note">
+        <div class="info-box-label">📌 mode='reschedule' vs mode='poke'</div>
+        <ul>
+          <li><strong>poke:</strong> task চলমান থাকে, প্রতি <code>poke_interval</code>-এ check করে। Resource খরচ বেশি।</li>
+          <li><strong>reschedule:</strong> check করে, না পেলে task free হয়ে যায়, পরে আবার check করে। Efficient।</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CONNECTIONS -->
+    <section class="section" id="connections">
+      <h3>Connections — বাইরের সিস্টেমের সাথে সংযোগ</h3>
+      <p>Airflow-কে database, file system, API ইত্যাদির সাথে connect করতে Connection object ব্যবহার করো।</p>
+      <p>Connection তৈরি করো: <strong>Admin → Connections → +</strong></p>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>Field</th><th>মানে</th><th>উদাহরণ</th></tr>
+          <tr><td><code>Conn Id</code></td><td>এই connection-এর unique নাম</td><td>my_filesystem_connection</td></tr>
+          <tr><td><code>Conn Type</code></td><td>কোন ধরনের connection</td><td>File (path), postgres, http</td></tr>
+          <tr><td><code>Host</code></td><td>সার্ভারের address</td><td>localhost, postgres</td></tr>
+          <tr><td><code>Login</code></td><td>username</td><td>airflow</td></tr>
+          <tr><td><code>Password</code></td><td>password</td><td>airflow</td></tr>
+          <tr><td><code>Extra</code></td><td>অতিরিক্ত settings (JSON)</td><td>{"path": "/tmp/"}</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- USER MANAGEMENT -->
+    <section class="section" id="usermgmt">
+      <h3>User Management — কে কী করতে পারবে</h3>
+      <p>Airflow-এ Role-Based Access Control (RBAC) আছে। বিভিন্ন role-এর আলাদা permission।</p>
+      <p>User তৈরি করো: <strong>Security → List Users → +</strong></p>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>Role</th><th>Permission</th></tr>
+          <tr><td>Admin</td><td>সব কিছু করতে পারে</td></tr>
+          <tr><td>User</td><td>DAG দেখতে ও চালাতে পারে</td></tr>
+          <tr><td>Viewer</td><td>শুধু দেখতে পারে, চালাতে পারে না</td></tr>
+          <tr><td>Op</td><td>DAG চালাতে পারে কিন্তু settings change করতে পারে না</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- POOLS -->
+    <section class="section" id="pools">
+      <h3>Pools — Parallel Tasks সীমিত করা</h3>
+      <p>কিছু সময় tasks parallel-এ চললে server overload হয়। Pool দিয়ে বলো "একসাথে সর্বোচ্চ কতটা task চলতে পারবে।"</p>
+      <p>Pool তৈরি করো: <strong>Admin → Pools → +</strong></p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — Pool ব্যবহার</span>
+        </div>
+        <pre><span class="cm"># micro_pool নামে pool তৈরি করো UI-তে (1 slot)</span>
+<span class="cm"># তারপর DAG-এ specify করো:</span>
+<span class="kw">with</span> <span class="cls">DAG</span>(
+    dag_id=<span class="str">"pool_dag"</span>,
+    default_args={
+        <span class="str">'pool'</span>: <span class="str">'micro_pool'</span>   <span class="cm"># সব task এই pool-এ যাবে</span>
+    }
+) <span class="kw">as</span> dag:
+    task1 = <span class="cls">PythonOperator</span>(...)   <span class="cm"># এই তিনটা একসাথে চলতে পারবে না</span>
+    task2 = <span class="cls">PythonOperator</span>(...)   <span class="cm"># micro_pool-এ মাত্র ১টা slot</span>
+    task3 = <span class="cls">PythonOperator</span>(...)   <span class="cm"># তাই একটার পর একটা চলবে</span></pre>
+      </div>
+
+      <h3>DAG Documentation</h3>
+      <p>DAG আর Task-এ markdown documentation যোগ করা যায় — অনেক users থাকলে এটা খুব useful:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — Documentation</span>
+        </div>
+        <pre><span class="kw">with</span> <span class="cls">DAG</span>(
+    dag_id=<span class="str">"documented_dag"</span>,
+    doc_md=<span class="str">"""
+# আমার DAG
+এই DAG প্রতিদিন sales data process করে।
+## Tasks
+- Task 1: Data download করে
+- Task 2: Data clean করে
+"""</span>,
+    ...
+) <span class="kw">as</span> dag:
+    task1 = <span class="cls">PythonOperator</span>(
+        task_id=<span class="str">"download"</span>,
+        python_callable=download_fn,
+        doc_md=<span class="str">"# Download Task\nS3 থেকে data নামায়"</span>
+    )</pre>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- =========================================
+         CHAPTER 6: NEW OPERATORS
+    ========================================= -->
+    <section class="section" id="docker-op">
+      <div class="chapter-header">
+        <div class="chapter-num">৬</div>
+        <div>
+          <h2>দুটো নতুন Operator</h2>
+          <p>DockerOperator এবং PostgresOperator</p>
+        </div>
+      </div>
+
+      <h3>DockerOperator — Docker Container-এ Task চালানো</h3>
+      <p>PythonOperator আর BashOperator একই environment-এ চলে। কিন্তু কখনো আলাদা environment দরকার — যেমন ভিন্ন Python version বা dependencies। DockerOperator এই সমস্যা সমাধান করে।</p>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">DockerOperator কীভাবে কাজ করে</div>
+        <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:640px;">
+          <rect width="640" height="200" fill="#161b22" rx="10"/>
+          <defs>
+            <marker id="a3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#58a6ff"/>
+            </marker>
+          </defs>
+          <!-- Airflow worker -->
+          <rect x="20" y="60" width="160" height="80" rx="10" fill="#1c2128" stroke="#58a6ff" stroke-width="2"/>
+          <text x="100" y="92" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">Airflow Worker</text>
+          <text x="100" y="112" text-anchor="middle" fill="#8b949e" font-size="10">DockerOperator</text>
+          <text x="100" y="128" text-anchor="middle" fill="#8b949e" font-size="10">চলছে এখানে</text>
+
+          <!-- Arrow -->
+          <line x1="182" y1="100" x2="258" y2="100" stroke="#58a6ff" stroke-width="2" marker-end="url(#a3)"/>
+          <text x="220" y="90" text-anchor="middle" fill="#6e7681" font-size="9">docker run</text>
+
+          <!-- Docker Host -->
+          <rect x="260" y="30" width="360" height="140" rx="10" fill="#22272e" stroke="#ffa657" stroke-width="1.5"/>
+          <text x="440" y="52" text-anchor="middle" fill="#ffa657" font-size="11" font-weight="bold">Docker Host (VM)</text>
+
+          <!-- Container 1 -->
+          <rect x="278" y="65" width="150" height="85" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="353" y="88" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">Container</text>
+          <text x="353" y="104" text-anchor="middle" fill="#8b949e" font-size="9">hello-world image</text>
+          <text x="353" y="120" text-anchor="middle" fill="#8b949e" font-size="9">python_transform</text>
+          <text x="353" y="136" text-anchor="middle" fill="#6e7681" font-size="8">isolated environment</text>
+
+          <!-- Volume arrow -->
+          <line x1="428" y1="107" x2="470" y2="107" stroke="#e3b341" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#a3)"/>
+          <text x="450" y="98" text-anchor="middle" fill="#6e7681" font-size="8">volume mount</text>
+
+          <!-- Local files -->
+          <rect x="472" y="75" width="128" height="65" rx="8" fill="#1c2128" stroke="#e3b341" stroke-width="1.5"/>
+          <text x="536" y="96" text-anchor="middle" fill="#e3b341" font-size="10" font-weight="bold">📁 Data Files</text>
+          <text x="536" y="113" text-anchor="middle" fill="#8b949e" font-size="9">/opt/airflow/data</text>
+          <text x="536" y="128" text-anchor="middle" fill="#6e7681" font-size="8">shared with container</text>
+        </svg>
+      </div>
+
+      <h4>Setup করো</h4>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">bash — Docker socket permission</span>
+        </div>
+        <pre><span class="cm"># Docker socket-এ permission দাও (VM restart হলে আবার দিতে হবে)</span>
+sudo chmod a+rw /var/run/docker.sock</pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — DockerOperator উদাহরণ</span>
+        </div>
+        <pre><span class="kw">from</span> <span class="cls">airflow.operators.docker_operator</span> <span class="kw">import</span> <span class="cls">DockerOperator</span>
+<span class="kw">from</span> <span class="cls">docker.types</span> <span class="kw">import</span> <span class="cls">Mount</span>
+
+<span class="cm"># সহজ উদাহরণ — hello-world image চালানো</span>
+hello = <span class="cls">DockerOperator</span>(
+    task_id=<span class="str">'hello_world'</span>,
+    image=<span class="str">'hello-world'</span>   <span class="cm"># Docker image-এর নাম</span>
+)
+
+<span class="cm"># উন্নত উদাহরণ — volume আর command সহ</span>
+python_transform = <span class="cls">DockerOperator</span>(
+    task_id=<span class="str">'transform_data'</span>,
+    image=<span class="str">'python_transform:latest'</span>,
+    auto_remove=<span class="kw">True</span>,                        <span class="cm"># শেষে container মুছে দাও</span>
+    command=<span class="str">'python3 main.py'</span>,              <span class="cm"># container-এ কোন command চালাবে</span>
+    mounts=[
+        <span class="cls">Mount</span>(
+            source=<span class="str">'/home/ubuntu/airflow/data'</span>,  <span class="cm"># host-এর path</span>
+            target=<span class="str">'/app/data'</span>,                   <span class="cm"># container-এর path</span>
+            type=<span class="str">'bind'</span>
+        )
+    ]
+)</pre>
+      </div>
+    </section>
+
+    <!-- POSTGRES -->
+    <section class="section" id="postgres-op">
+      <h3>PostgresOperator — Database Query চালানো</h3>
+      <p>Airflow নিজেই PostgreSQL ব্যবহার করে metadata store করতে। এই same database-এ আমাদের নিজেদের tables তৈরি করা যায়।</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — PostgresOperator উদাহরণ</span>
+        </div>
+        <pre><span class="kw">from</span> <span class="cls">airflow.operators.postgres_operator</span> <span class="kw">import</span> <span class="cls">PostgresOperator</span>
+
+<span class="cm"># SQL query দিয়ে table তৈরি করো</span>
+create_table = <span class="cls">PostgresOperator</span>(
+    task_id=<span class="str">'create_customer_table'</span>,
+    postgres_conn_id=<span class="str">'postgres'</span>,           <span class="cm"># Connection ID (আগে তৈরি করতে হবে)</span>
+    sql=<span class="str">"""
+    CREATE TABLE IF NOT EXISTS customer (
+        id UUID PRIMARY KEY,
+        firstname VARCHAR NOT NULL,
+        lastname VARCHAR NOT NULL,
+        city VARCHAR NOT NULL
+    );
+    """</span>
+)
+
+<span class="cm"># বা .sql file থেকে query নাও</span>
+create_table2 = <span class="cls">PostgresOperator</span>(
+    task_id=<span class="str">'create_table2'</span>,
+    postgres_conn_id=<span class="str">'postgres'</span>,
+    sql=<span class="str">'sql/create_table.sql'</span>    <span class="cm"># dags ফোল্ডারের relative path</span>
+)</pre>
+      </div>
+    </section>
+
+    <!-- EXERCISE -->
+    <section class="section" id="exercise">
+      <h3>Exercise — Order Management System</h3>
+      <p>দুটো DAG তৈরি করা হয়েছে মিলিয়ে একটা complete e-commerce order processing system:</p>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Complete Exercise Architecture</div>
+        <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:700px;">
+          <rect width="700" height="320" fill="#161b22" rx="10"/>
+          <defs>
+            <marker id="a4" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#58a6ff"/>
+            </marker>
+          </defs>
+
+          <!-- DAG 1: init_order -->
+          <rect x="20" y="20" width="300" height="260" rx="10" fill="#22272e" stroke="#ffa657" stroke-width="1.5"/>
+          <text x="170" y="45" text-anchor="middle" fill="#ffa657" font-size="13" font-weight="bold">DAG 1: init_order</text>
+          <text x="170" y="60" text-anchor="middle" fill="#6e7681" font-size="9">(একবার চালালেই হয়)</text>
+
+          <rect x="40" y="72" width="120" height="36" rx="6" fill="#1c2128" stroke="#58a6ff" stroke-width="1.5"/>
+          <text x="100" y="90" text-anchor="middle" fill="#58a6ff" font-size="10">create_postgres_conn</text>
+          <text x="100" y="103" text-anchor="middle" fill="#6e7681" font-size="8">PythonOperator</text>
+
+          <rect x="40" y="128" width="120" height="36" rx="6" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="100" y="147" text-anchor="middle" fill="#3fb950" font-size="10">create_table_customer</text>
+          <text x="100" y="160" text-anchor="middle" fill="#6e7681" font-size="8">PostgresOperator</text>
+
+          <rect x="40" y="184" width="120" height="36" rx="6" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="100" y="203" text-anchor="middle" fill="#3fb950" font-size="10">create_table_product</text>
+          <text x="100" y="216" text-anchor="middle" fill="#6e7681" font-size="8">PostgresOperator</text>
+
+          <rect x="60" y="240" width="120" height="30" rx="6" fill="#1c2128" stroke="#bc8cff" stroke-width="1.5"/>
+          <text x="120" y="259" text-anchor="middle" fill="#bc8cff" font-size="10">create_table_order</text>
+
+          <!-- Arrows in DAG 1 -->
+          <line x1="100" y1="108" x2="100" y2="126" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a4)"/>
+          <line x1="100" y1="164" x2="100" y2="182" stroke="#3fb950" stroke-width="1.5" marker-end="url(#a4)"/>
+          <line x1="100" y1="220" x2="120" y2="238" stroke="#3fb950" stroke-width="1.5" marker-end="url(#a4)"/>
+
+          <!-- DAG 2: load_order -->
+          <rect x="370" y="20" width="310" height="260" rx="10" fill="#22272e" stroke="#58a6ff" stroke-width="1.5"/>
+          <text x="525" y="45" text-anchor="middle" fill="#58a6ff" font-size="13" font-weight="bold">DAG 2: load_order</text>
+          <text x="525" y="60" text-anchor="middle" fill="#6e7681" font-size="9">(প্রতিদিন চলে)</text>
+
+          <rect x="390" y="72" width="120" height="36" rx="6" fill="#1c2128" stroke="#ffa657" stroke-width="1.5"/>
+          <text x="450" y="87" text-anchor="middle" fill="#ffa657" font-size="10">orders_sensor</text>
+          <text x="450" y="100" text-anchor="middle" fill="#6e7681" font-size="8">FileSensor</text>
+          <text x="450" y="112" text-anchor="middle" fill="#6e7681" font-size="8">(orders.json খোঁজে)</text>
+
+          <rect x="390" y="132" width="120" height="36" rx="6" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="450" y="147" text-anchor="middle" fill="#3fb950" font-size="10">python_transform</text>
+          <text x="450" y="160" text-anchor="middle" fill="#6e7681" font-size="8">DockerOperator</text>
+          <text x="450" y="172" text-anchor="middle" fill="#6e7681" font-size="8">(data transform করে)</text>
+
+          <rect x="390" y="196" width="120" height="36" rx="6" fill="#1c2128" stroke="#bc8cff" stroke-width="1.5"/>
+          <text x="450" y="211" text-anchor="middle" fill="#bc8cff" font-size="10">python_load</text>
+          <text x="450" y="224" text-anchor="middle" fill="#6e7681" font-size="8">DockerOperator</text>
+          <text x="450" y="236" text-anchor="middle" fill="#6e7681" font-size="8">(PostgreSQL-এ load করে)</text>
+
+          <!-- Arrows in DAG 2 -->
+          <line x1="450" y1="108" x2="450" y2="130" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a4)"/>
+          <line x1="450" y1="168" x2="450" y2="194" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a4)"/>
+
+          <!-- PostgreSQL -->
+          <rect x="530" y="190" width="130" height="50" rx="8" fill="#1c2128" stroke="#e3b341" stroke-width="1.5"/>
+          <text x="595" y="212" text-anchor="middle" fill="#e3b341" font-size="11" font-weight="bold">🗄️ PostgreSQL</text>
+          <text x="595" y="228" text-anchor="middle" fill="#8b949e" font-size="9">order, customer, product</text>
+
+          <line x1="510" y1="213" x2="528" y2="213" stroke="#e3b341" stroke-width="1.5" marker-end="url(#a4)"/>
+        </svg>
+      </div>
+
+      <div class="info-box note">
+        <div class="info-box-label">📌 দুটো DAG কীভাবে কাজ করে</div>
+        <ul>
+          <li><strong>init_order:</strong> একবার চালাও। PostgreSQL connections তৈরি করে, tables বানায়।</li>
+          <li><strong>load_order:</strong> প্রতিদিন বিকাল ৫টায় চলে। orders.json file আসার অপেক্ষা করে, তারপর transform করে database-এ load করে।</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- =========================================
+         CHAPTER 7: CONCLUSION
+    ========================================= -->
+    <section class="section" id="bestpractice">
+      <div class="chapter-header">
+        <div class="chapter-num">৭</div>
+        <div>
+          <h2>উপসংহার ও Best Practices</h2>
+          <p>ভালো DAG লেখার নিয়মকানুন</p>
+        </div>
+      </div>
+
+      <h3>Best Practices — ভালো Airflow Developer হতে হলে</h3>
+
+      <div class="def-list">
+        <div class="def-item">
+          <span class="def-term">✅ ছোট Tasks</span>
+          <span class="def-desc">প্রতিটা task একটাই কাজ করুক। বড় task ভেঙে ছোট ছোট করো। ছোট task সহজে retry করা যায়, debug করা যায়।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">✅ Static start_date</span>
+          <span class="def-desc">Production-এ <code>days_ago()</code> না, বরং fixed date দাও: <code>datetime(2024, 1, 1)</code>। এটা predictable behavior দেয়।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">✅ default_args</span>
+          <span class="def-desc">যে settings সব task-এ একই হবে (owner, retries, email) সেগুলো DAG-এর <code>default_args</code>-এ রাখো।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">✅ DAG ফাইলে শুধু DAG code</span>
+          <span class="def-desc">DAG file-এ task/function-এর বাইরে code লিখো না। বাইরের code প্রতিবার Airflow scan করার সময় চলে — এটা inefficient।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">✅ Task পুরানোটা রাখো</span>
+          <span class="def-desc">কোনো task delete করো না। ইতিহাস নষ্ট হয়। পুরানো task রেখে দাও, নতুন task যোগ করো।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">✅ Sensors দিয়ে verify করো</span>
+          <span class="def-desc">Database-এ insert করার পরে Sensor দিয়ে verify করো যে data আসলেই এসেছে।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">✅ Document করো</span>
+          <span class="def-desc">DAG আর Task-এ <code>doc_md</code> দিয়ে documentation লিখো। অন্যরা বুঝতে পারবে।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">❌ বড় Data পাঠিও না</span>
+          <span class="def-desc">Tasks-এর মধ্যে বড় data পাঠাতে XCom ব্যবহার করো না। S3, database ইত্যাদি ব্যবহার করো।</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ASSESSMENT -->
+    <section class="section" id="assessment">
+      <h3>Assessment — Weather Data Pipeline</h3>
+      <p>কোর্সের শেষ প্রকল্প হলো একটা weather data pipeline তৈরি করা যেটা:</p>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Assessment DAG Architecture</div>
+        <svg viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:700px;">
+          <rect width="700" height="360" fill="#161b22" rx="10"/>
+          <defs>
+            <marker id="a5" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#58a6ff"/>
+            </marker>
+          </defs>
+
+          <!-- Start -->
+          <circle cx="350" cy="35" r="22" fill="#22272e" stroke="#6e7681" stroke-width="2"/>
+          <text x="350" y="40" text-anchor="middle" fill="#6e7681" font-size="11">start</text>
+
+          <!-- Task 1 -->
+          <rect x="265" y="76" width="170" height="50" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="2"/>
+          <text x="350" y="97" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">Task (1)</text>
+          <text x="350" y="112" text-anchor="middle" fill="#8b949e" font-size="9">OpenWeatherMap API call করে</text>
+          <text x="350" y="123" text-anchor="middle" fill="#6e7681" font-size="8">paris, london, washington → raw JSON</text>
+
+          <!-- Task 2 -->
+          <rect x="80" y="160" width="160" height="50" rx="8" fill="#1c2128" stroke="#ffa657" stroke-width="2"/>
+          <text x="160" y="181" text-anchor="middle" fill="#ffa657" font-size="12" font-weight="bold">Task (2)</text>
+          <text x="160" y="196" text-anchor="middle" fill="#8b949e" font-size="9">শেষ ২০ file → data.csv</text>
+          <text x="160" y="207" text-anchor="middle" fill="#6e7681" font-size="8">(dashboard-এর জন্য)</text>
+
+          <!-- Task 3 -->
+          <rect x="460" y="160" width="160" height="50" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="2"/>
+          <text x="540" y="181" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="bold">Task (3)</text>
+          <text x="540" y="196" text-anchor="middle" fill="#8b949e" font-size="9">সব file → fulldata.csv</text>
+          <text x="540" y="207" text-anchor="middle" fill="#6e7681" font-size="8">(ML-এর জন্য)</text>
+
+          <!-- Task 4', 4'', 4''' -->
+          <rect x="330" y="250" width="130" height="45" rx="8" fill="#1c2128" stroke="#bc8cff" stroke-width="2"/>
+          <text x="395" y="269" text-anchor="middle" fill="#bc8cff" font-size="11" font-weight="bold">Task (4')</text>
+          <text x="395" y="284" text-anchor="middle" fill="#8b949e" font-size="9">LinearRegression</text>
+
+          <rect x="180" y="250" width="130" height="45" rx="8" fill="#1c2128" stroke="#bc8cff" stroke-width="2"/>
+          <text x="245" y="269" text-anchor="middle" fill="#bc8cff" font-size="11" font-weight="bold">Task (4'')</text>
+          <text x="245" y="284" text-anchor="middle" fill="#8b949e" font-size="9">DecisionTree</text>
+
+          <rect x="480" y="250" width="130" height="45" rx="8" fill="#1c2128" stroke="#bc8cff" stroke-width="2"/>
+          <text x="545" y="269" text-anchor="middle" fill="#bc8cff" font-size="11" font-weight="bold">Task (4''')</text>
+          <text x="545" y="284" text-anchor="middle" fill="#8b949e" font-size="9">RandomForest</text>
+
+          <!-- Task 5 -->
+          <rect x="265" y="318" width="170" height="35" rx="8" fill="#1c2128" stroke="#e3b341" stroke-width="2"/>
+          <text x="350" y="336" text-anchor="middle" fill="#e3b341" font-size="11" font-weight="bold">Task (5): Best Model</text>
+          <text x="350" y="348" text-anchor="middle" fill="#6e7681" font-size="8">XCom দিয়ে score তুলনা, best model save</text>
+
+          <!-- Arrows -->
+          <line x1="350" y1="57" x2="350" y2="74" stroke="#6e7681" stroke-width="1.5" marker-end="url(#a5)"/>
+          <line x1="295" y1="126" x2="210" y2="158" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a5)"/>
+          <line x1="405" y1="126" x2="490" y2="158" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a5)"/>
+          <line x1="540" y1="210" x2="395" y2="248" stroke="#3fb950" stroke-width="1.5" marker-end="url(#a5)"/>
+          <line x1="540" y1="210" x2="245" y2="248" stroke="#3fb950" stroke-width="1.5" marker-end="url(#a5)"/>
+          <line x1="540" y1="210" x2="545" y2="248" stroke="#3fb950" stroke-width="1.5" marker-end="url(#a5)"/>
+          <line x1="395" y1="295" x2="365" y2="316" stroke="#bc8cff" stroke-width="1.5" marker-end="url(#a5)"/>
+          <line x1="245" y1="295" x2="320" y2="326" stroke="#bc8cff" stroke-width="1.5" marker-end="url(#a5)"/>
+          <line x1="545" y1="295" x2="430" y2="326" stroke="#bc8cff" stroke-width="1.5" marker-end="url(#a5)"/>
+        </svg>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>Task</th><th>কী করে</th><th>পদ্ধতি</th></tr>
+          <tr><td><strong>(1)</strong></td><td>OpenWeatherMap API থেকে data নামায়, JSON file save করে</td><td>PythonOperator + requests</td></tr>
+          <tr><td><strong>(2)</strong></td><td>শেষ ২০টা JSON file পড়ে data.csv তৈরি করে</td><td>PythonOperator + pandas</td></tr>
+          <tr><td><strong>(3)</strong></td><td>সব JSON file পড়ে fulldata.csv তৈরি করে</td><td>PythonOperator + pandas</td></tr>
+          <tr><td><strong>(4', 4'', 4''')</strong></td><td>তিনটা ML model train করে, cross-validation score XCom-এ পাঠায়</td><td>PythonOperator + sklearn</td></tr>
+          <tr><td><strong>(5)</strong></td><td>XCom থেকে scores নেয়, best model-এ full train করে save করে</td><td>PythonOperator + joblib</td></tr>
+        </table>
+      </div>
+
+      <div class="info-box tip">
+        <div class="info-box-label">💡 Tips</div>
+        <ul>
+          <li>প্রথমে Airflow ছাড়া functions test করো — অনেক সময় বাঁচবে।</li>
+          <li>Task (4) চালানোর আগে অন্তত ১৫টা observation দরকার — Task (1) কিছুক্ষণ চলতে দাও।</li>
+          <li>OpenWeatherMap free plan-এ প্রতি মিনিটে ৬০টা request করা যায়।</li>
+          <li>Variable নামটা exactly মিলিয়ে দাও: <code>cities</code></li>
+        </ul>
+      </div>
+
+      <!-- FINAL RECAP -->
+      <div class="divider"></div>
+      <h3>সম্পূর্ণ কোর্সের সারসংক্ষেপ</h3>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">🏗️</div>
+          <h4>Architecture</h4>
+          <p>Webserver, Scheduler, Executor, Workers, Metadata DB — সবাই মিলে কাজ করে।</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h4>DAG</h4>
+          <p>Directed Acyclic Graph — Tasks-এর ordered sequence, কোন task কখন চলবে তা define করে।</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚙️</div>
+          <h4>Operators</h4>
+          <p>Python, Bash, Postgres, Docker, Email — বিভিন্ন ধরনের কাজের জন্য আলাদা operator।</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔀</div>
+          <h4>Advanced Features</h4>
+          <p>TaskGroups, Branching, XComs, Variables, Sensors, Pools — complex workflows-এর জন্য।</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🐳</div>
+          <h4>Docker Integration</h4>
+          <p>DockerOperator দিয়ে isolated environments-এ tasks চালানো।</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🗄️</div>
+          <h4>Database</h4>
+          <p>PostgresOperator দিয়ে directly SQL চালানো, tables create করা, data insert করা।</p>
+        </div>
+      </div>
+
+      <div class="info-box important">
+        <div class="info-box-label">🎉 অভিনন্দন!</div>
+        তুমি Apache Airflow-এর সম্পূর্ণ কোর্স শেষ করেছো। Data Engineering-এর এই জনপ্রিয় tool এখন তোমার হাতের মুঠোয়। এখন নিজে হাতে-কলমে চর্চা করো — সেটাই সেরা শিক্ষা।
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- =========================================
+         BONUS: CLUSTER MONITORING
+    ========================================= -->
+    <section class="section" id="cluster">
+      <div class="chapter-header">
+        <div class="chapter-num">+</div>
+        <div>
+          <h2>Cluster Monitoring ও CLI</h2>
+          <p>Airflow-এর health দেখা এবং terminal থেকে কাজ করা</p>
+        </div>
+      </div>
+
+      <h3>Cluster Activity — Real-time Monitoring</h3>
+      <p>Airflow 2.x-এ একটা সুন্দর Cluster Activity dashboard আছে। Header-এ <strong>Cluster Activity</strong> tab-এ click করো।</p>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Cluster Activity Dashboard — কী কী দেখায়</div>
+        <svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:680px;">
+          <rect width="680" height="300" fill="#161b22" rx="10"/>
+
+          <!-- Header bar -->
+          <rect x="0" y="0" width="680" height="40" fill="#1c2128" rx="10"/>
+          <rect y="20" width="680" height="20" fill="#1c2128"/>
+          <text x="24" y="26" fill="#58a6ff" font-size="14" font-weight="bold" font-family="monospace">✈ Airflow</text>
+          <rect x="140" y="8" width="120" height="24" rx="6" fill="rgba(88,166,255,0.15)" stroke="#58a6ff" stroke-width="1"/>
+          <text x="200" y="25" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="bold">Cluster Activity</text>
+
+          <!-- Live Metrics section -->
+          <text x="24" y="62" fill="#8b949e" font-size="10" font-weight="600" letter-spacing="1">LIVE METRICS ●</text>
+
+          <!-- Unpaused DAGs card -->
+          <rect x="20" y="70" width="140" height="70" rx="8" fill="#22272e" stroke="#30363d"/>
+          <text x="90" y="92" text-anchor="middle" fill="#6e7681" font-size="9" font-weight="600">UNPAUSED DAGs</text>
+          <text x="90" y="120" text-anchor="middle" fill="#3fb950" font-size="28" font-weight="700" font-family="monospace">5</text>
+          <text x="90" y="135" text-anchor="middle" fill="#6e7681" font-size="8">out of 12 total</text>
+
+          <!-- Pool slots card -->
+          <rect x="175" y="70" width="140" height="70" rx="8" fill="#22272e" stroke="#30363d"/>
+          <text x="245" y="92" text-anchor="middle" fill="#6e7681" font-size="9" font-weight="600">POOL SLOTS USED</text>
+          <rect x="195" y="100" width="100" height="12" rx="4" fill="#30363d"/>
+          <rect x="195" y="100" width="35" height="12" rx="4" fill="#58a6ff"/>
+          <text x="245" y="128" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="monospace">35 / 128</text>
+
+          <!-- Scheduler health card -->
+          <rect x="330" y="70" width="140" height="70" rx="8" fill="#22272e" stroke="#30363d"/>
+          <text x="400" y="92" text-anchor="middle" fill="#6e7681" font-size="9" font-weight="600">SCHEDULER</text>
+          <circle cx="400" cy="118" r="14" fill="none" stroke="#3fb950" stroke-width="3"/>
+          <text x="400" y="123" text-anchor="middle" fill="#3fb950" font-size="10">✓</text>
+          <text x="400" y="138" text-anchor="middle" fill="#3fb950" font-size="9">healthy</text>
+
+          <!-- Executor health -->
+          <rect x="485" y="70" width="175" height="70" rx="8" fill="#22272e" stroke="#30363d"/>
+          <text x="572" y="92" text-anchor="middle" fill="#6e7681" font-size="9" font-weight="600">METADATABASE</text>
+          <circle cx="572" cy="118" r="14" fill="none" stroke="#3fb950" stroke-width="3"/>
+          <text x="572" y="123" text-anchor="middle" fill="#3fb950" font-size="10">✓</text>
+          <text x="572" y="138" text-anchor="middle" fill="#3fb950" font-size="9">connected</text>
+
+          <!-- Historical metrics section -->
+          <text x="24" y="162" fill="#8b949e" font-size="10" font-weight="600" letter-spacing="1">HISTORICAL METRICS</text>
+
+          <!-- DAG Run States donut -->
+          <circle cx="100" cy="230" r="40" fill="none" stroke="#30363d" stroke-width="16"/>
+          <circle cx="100" cy="230" r="40" fill="none" stroke="#3fb950" stroke-width="16"
+            stroke-dasharray="160 92" stroke-dashoffset="0" transform="rotate(-90 100 230)"/>
+          <circle cx="100" cy="230" r="40" fill="none" stroke="#f78166" stroke-width="16"
+            stroke-dasharray="30 222" stroke-dashoffset="-160" transform="rotate(-90 100 230)"/>
+          <text x="100" y="225" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="bold">DAG</text>
+          <text x="100" y="240" text-anchor="middle" fill="#8b949e" font-size="9">Runs</text>
+
+          <!-- Legend -->
+          <rect x="160" y="198" width="10" height="10" rx="2" fill="#3fb950"/>
+          <text x="176" y="208" fill="#8b949e" font-size="10">Success (80%)</text>
+          <rect x="160" y="216" width="10" height="10" rx="2" fill="#f78166"/>
+          <text x="176" y="226" fill="#8b949e" font-size="10">Failed (15%)</text>
+          <rect x="160" y="234" width="10" height="10" rx="2" fill="#58a6ff"/>
+          <text x="176" y="244" fill="#8b949e" font-size="10">Running (5%)</text>
+
+          <!-- Task instance states -->
+          <rect x="380" y="175" width="280" height="100" rx="8" fill="#22272e" stroke="#30363d"/>
+          <text x="520" y="196" text-anchor="middle" fill="#6e7681" font-size="9" font-weight="600">TASK INSTANCE STATES (last 7 days)</text>
+          <rect x="400" y="210" width="220" height="14" rx="4" fill="#30363d"/>
+          <rect x="400" y="210" width="140" height="14" rx="4" fill="#3fb950"/>
+          <text x="520" y="221" text-anchor="middle" fill="#0d1117" font-size="8" font-weight="bold">success: 140</text>
+          <rect x="400" y="232" width="220" height="14" rx="4" fill="#30363d"/>
+          <rect x="400" y="232" width="22" height="14" rx="4" fill="#f78166"/>
+          <text x="520" y="243" text-anchor="middle" fill="#6e7681" font-size="8">failed: 22</text>
+          <rect x="400" y="254" width="220" height="14" rx="4" fill="#30363d"/>
+          <rect x="400" y="254" width="8" height="14" rx="4" fill="#58a6ff"/>
+          <text x="520" y="265" text-anchor="middle" fill="#6e7681" font-size="8">running: 8</text>
+        </svg>
+      </div>
+
+      <div class="def-list">
+        <div class="def-item">
+          <span class="def-term">Unpaused DAGs</span>
+          <span class="def-desc">কতটা DAG currently active (paused না)। এগুলোই schedule অনুযায়ী চলার জন্য eligible।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Pool Slots</span>
+          <span class="def-desc">Default pool-এ কতটা slot ব্যবহার হচ্ছে। এটা দেখলে বুঝবে system কতটা busy।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Scheduler Health</span>
+          <span class="def-desc">Scheduler চলছে কিনা। "healthy" দেখালে সব ঠিক আছে। না চললে DAG execute হবে না।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Historical Metrics</span>
+          <span class="def-desc">নির্দিষ্ট সময়ের মধ্যে DAG Runs আর Task Instances-এর breakdown। কতটা success, fail, running।</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================
+         BONUS: AIRFLOW TERMINAL / CLI
+    ========================================= -->
+    <section class="section" id="cli">
+      <h3>Airflow Terminal (CLI) — Command Line থেকে কাজ</h3>
+      <p>Airflow-এর একটা powerful command line interface আছে। Docker-এ চলানোর জন্য <code>airflow.sh</code> script download করো:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">bash — airflow.sh script download</span>
+        </div>
+        <pre><span class="cm"># script download করো</span>
+wget https://dst-de.s3.eu-west-3.amazonaws.com/airflow_avance_fr/docker-compose/airflow.sh
+
+<span class="cm"># executable করো</span>
+chmod +x airflow.sh</pre>
+      </div>
+
+      <p>এই script তিনভাবে ব্যবহার করা যায়:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">bash — CLI ব্যবহার</span>
+        </div>
+        <pre><span class="cm"># ১. Airflow CLI commands চালাও</span>
+./airflow.sh --help                  <span class="cm"># সব commands দেখো</span>
+./airflow.sh dags list               <span class="cm"># সব DAG-এর list দেখো</span>
+./airflow.sh dags trigger my_dag     <span class="cm"># manually DAG trigger করো</span>
+./airflow.sh tasks list my_dag       <span class="cm"># DAG-এর tasks দেখো</span>
+./airflow.sh tasks test my_dag task1 2024-01-01  <span class="cm"># একটা task test করো</span>
+
+<span class="cm"># ২. Python shell খোলো (debugging-এর জন্য দারুণ)</span>
+./airflow.sh python
+<span class="cm"># এরপর Python prompt-এ Airflow models import করতে পারবে</span>
+
+<span class="cm"># ৩. Bash shell খোলো (container-এর ভেতরে)</span>
+./airflow.sh bash
+<span class="cm"># এরপর container-এর filesystem দেখতে পারবে</span>
+<span class="cm"># exit দিয়ে বেরিয়ে আসো</span></pre>
+      </div>
+
+      <div class="info-box note">
+        <div class="info-box-label">📌 কেন CLI দরকার?</div>
+        <ul>
+          <li>UI ছাড়া DAG test করতে: <code>tasks test</code> command দিয়ে একটা task আলাদা করে চালানো যায়।</li>
+          <li>Debugging-এ: Python shell খুলে <code>from airflow.models import DAG</code> করে inspect করা যায়।</li>
+          <li>Automation-এ: Script থেকে Airflow control করতে।</li>
+        </ul>
+      </div>
+
+      <h4>গুরুত্বপূর্ণ CLI Commands:</h4>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Command</th><th>কাজ</th></tr>
+          <tr><td><code>dags list</code></td><td>সব DAGs দেখো</td></tr>
+          <tr><td><code>dags trigger &lt;dag_id&gt;</code></td><td>DAG manually চালু করো</td></tr>
+          <tr><td><code>dags pause &lt;dag_id&gt;</code></td><td>DAG pause করো</td></tr>
+          <tr><td><code>dags unpause &lt;dag_id&gt;</code></td><td>DAG unpause করো</td></tr>
+          <tr><td><code>tasks list &lt;dag_id&gt;</code></td><td>DAG-এর সব tasks দেখো</td></tr>
+          <tr><td><code>tasks test &lt;dag_id&gt; &lt;task_id&gt; &lt;date&gt;</code></td><td>একটা task test করো (metadata save হয় না)</td></tr>
+          <tr><td><code>db init</code></td><td>Database initialize করো</td></tr>
+          <tr><td><code>users create</code></td><td>নতুন user তৈরি করো</td></tr>
+          <tr><td><code>connections list</code></td><td>সব Connections দেখো</td></tr>
+          <tr><td><code>variables list</code></td><td>সব Variables দেখো</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- =========================================
+         DUMMY DATASET GENERATOR
+    ========================================= -->
+    <section class="section" id="dummy-dataset">
+      <div class="chapter-header">
+        <div class="chapter-num">🗂️</div>
+        <div>
+          <h2>Dummy Dataset Generator</h2>
+          <p>Download fail করলে নিজেই data তৈরি করো — Python দিয়ে</p>
+        </div>
+      </div>
+
+      <p>Assessment-এ দুটো জায়গায় বাইরে থেকে data download করতে হয়:</p>
+      <ol>
+        <li><code>clean_data/data.csv</code> — initial processed weather data</li>
+        <li>OpenWeatherMap API থেকে real-time weather JSON</li>
+      </ol>
+      <p>Internet না থাকলে বা server down হলে কী করবে? নিচের scripts দিয়ে নিজেই compatible dummy data তৈরি করো।</p>
+
+      <h3>Dummy ১: clean_data/data.csv তৈরি করো</h3>
+      <p>এই CSV-তে temperature, city, pression, date কলাম থাকে। নিচের script দিয়ে ৩০ দিনের ৩টা শহরের fake weather data বানাও:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — create_dummy_data.py (terminal-এ চালাও)</span>
+        </div>
+        <pre><span class="cm">"""
+এই script চালালে clean_data/data.csv তৈরি হবে।
+Terminal-এ: python3 create_dummy_data.py
+"""</span>
+<span class="kw">import</span> <span class="cls">pandas</span> <span class="kw">as</span> pd
+<span class="kw">import</span> <span class="cls">random</span>
+<span class="kw">import</span> <span class="cls">os</span>
+<span class="kw">from</span> <span class="cls">datetime</span> <span class="kw">import</span> <span class="cls">datetime</span>, <span class="cls">timedelta</span>
+
+<span class="cm"># ৩টা শহর, ৩০ দিন × ২৪ ঘণ্টা = ৭২০ rows per city</span>
+cities = [<span class="str">'Paris'</span>, <span class="str">'London'</span>, <span class="str">'Washington'</span>]
+
+<span class="cm"># শহরের base temperature (Kelvin-এ — OpenWeatherMap Kelvin ব্যবহার করে)</span>
+<span class="cm"># কেন Kelvin? কারণ OpenWeatherMap API default-এ Kelvin দেয়।</span>
+<span class="cm"># 300 Kelvin = 27°C (300 - 273 = 27)</span>
+base_temps = {<span class="str">'Paris'</span>: <span class="num">285</span>, <span class="str">'London'</span>: <span class="num">283</span>, <span class="str">'Washington'</span>: <span class="num">295</span>}
+base_pressure = {<span class="str">'Paris'</span>: <span class="num">1013</span>, <span class="str">'London'</span>: <span class="num">1010</span>, <span class="str">'Washington'</span>: <span class="num">1015</span>}
+
+rows = []
+start_date = <span class="cls">datetime</span>(<span class="num">2024</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>)
+
+<span class="kw">for</span> city <span class="kw">in</span> cities:
+    current_temp = base_temps[city]
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">720</span>):   <span class="cm"># ৩০ দিন × ২৪ ঘণ্টা</span>
+        dt = start_date + <span class="cls">timedelta</span>(hours=i)
+        <span class="cm"># temperature একটু একটু করে বদলায় (realistic করতে)</span>
+        current_temp += <span class="cls">random</span>.<span class="fn">uniform</span>(-<span class="num">0.5</span>, <span class="num">0.5</span>)
+        rows.<span class="fn">append</span>({
+            <span class="str">'temperature'</span>: <span class="fn">round</span>(current_temp, <span class="num">2</span>),
+            <span class="str">'city'</span>: city,
+            <span class="str">'pression'</span>: base_pressure[city] + <span class="cls">random</span>.<span class="fn">randint</span>(-<span class="num">5</span>, <span class="num">5</span>),
+            <span class="str">'date'</span>: dt.<span class="fn">strftime</span>(<span class="str">"%Y-%m-%d %H:%M"</span>)
+        })
+
+df = <span class="cls">pd</span>.<span class="cls">DataFrame</span>(rows)
+
+<span class="cm"># folder তৈরি করো যদি না থাকে</span>
+<span class="cls">os</span>.<span class="fn">makedirs</span>(<span class="str">'clean_data'</span>, exist_ok=<span class="kw">True</span>)
+df.<span class="fn">to_csv</span>(<span class="str">'clean_data/data.csv'</span>, index=<span class="kw">False</span>)
+
+<span class="fn">print</span>(<span class="str">f"✅ তৈরি হয়েছে! {len(df)} rows, columns: {list(df.columns)}"</span>)
+<span class="fn">print</span>(df.<span class="fn">head</span>(<span class="num">3</span>))</pre>
+      </div>
+
+      <div class="info-box note">
+        <div class="info-box-label">📌 Script-এর প্রতিটা অপরিচিত জিনিস</div>
+        <ul style="margin:0; padding-left:20px;">
+          <li><code>random.uniform(-0.5, 0.5)</code> — -0.5 থেকে 0.5-এর মধ্যে একটা random decimal number দেয়। Temperature একটু একটু করে বাড়ে/কমে বলে realistic।</li>
+          <li><code>random.randint(-5, 5)</code> — -5 থেকে 5-এর মধ্যে একটা random integer দেয়।</li>
+          <li><code>timedelta(hours=i)</code> — i ঘণ্টা পরের datetime বের করে। loop-এ i=0,1,2... হলে প্রতি ঘণ্টার timestamp পাওয়া যায়।</li>
+          <li><code>os.makedirs('clean_data', exist_ok=True)</code> — folder তৈরি করো; যদি আগেই থাকে error দিও না (<code>exist_ok=True</code> এটা করে)।</li>
+          <li><code>df.to_csv('path', index=False)</code> — DataFrame-কে CSV file-এ save করো। <code>index=False</code> না দিলে row number (0,1,2...) extra column হিসেবে আসবে।</li>
+          <li><code>json.dump(data, f, indent=2)</code> — Python object-কে JSON format-এ file-এ লেখো। <code>indent=2</code> মানে human-readable formatting।</li>
+          <li><code>int(timestamp.timestamp())</code> — datetime object-কে Unix timestamp-এ convert করো (1970 সাল থেকে seconds count)। OpenWeatherMap এই format ব্যবহার করে।</li>
+        </ul>
+      </div>
+
+      <h3>Dummy ২: raw_files-এর JSON file তৈরি করো</h3>
+      <p>OpenWeatherMap API না চললে নিচের script দিয়ে fake API response তৈরি করো। Format হুবহু আসল API-এর মতো:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — create_dummy_raw_files.py</span>
+        </div>
+        <pre><span class="cm">"""
+এই script raw_files/ ফোল্ডারে ২০টা JSON file তৈরি করবে।
+প্রতিটা file = একটা weather API call-এর মতো।
+"""</span>
+<span class="kw">import</span> <span class="cls">json</span>, <span class="cls">os</span>, <span class="cls">random</span>
+<span class="kw">from</span> <span class="cls">datetime</span> <span class="kw">import</span> <span class="cls">datetime</span>, <span class="cls">timedelta</span>
+
+<span class="cls">os</span>.<span class="fn">makedirs</span>(<span class="str">'raw_files'</span>, exist_ok=<span class="kw">True</span>)
+
+cities_config = [
+    {<span class="str">'name'</span>: <span class="str">'Paris'</span>,      <span class="str">'base_temp'</span>: <span class="num">285</span>, <span class="str">'pressure'</span>: <span class="num">1013</span>},
+    {<span class="str">'name'</span>: <span class="str">'London'</span>,     <span class="str">'base_temp'</span>: <span class="num">283</span>, <span class="str">'pressure'</span>: <span class="num">1010</span>},
+    {<span class="str">'name'</span>: <span class="str">'Washington'</span>, <span class="str">'base_temp'</span>: <span class="num">295</span>, <span class="str">'pressure'</span>: <span class="num">1015</span>},
+]
+
+start_time = <span class="cls">datetime</span>(<span class="num">2024</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>)
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">20</span>):   <span class="cm"># ২০টা fake API call</span>
+    timestamp = start_time + <span class="cls">timedelta</span>(minutes=i)
+    filename = timestamp.<span class="fn">strftime</span>(<span class="str">"%Y-%m-%d %H:%M"</span>) + <span class="str">".json"</span>
+    filepath = <span class="cls">os</span>.<span class="cls">path</span>.<span class="fn">join</span>(<span class="str">'raw_files'</span>, filename)
+
+    <span class="cm"># OpenWeatherMap API response-এর মতো structure</span>
+    weather_data = []
+    <span class="kw">for</span> city <span class="kw">in</span> cities_config:
+        weather_data.<span class="fn">append</span>({
+            <span class="str">"name"</span>: city[<span class="str">'name'</span>],
+            <span class="str">"main"</span>: {
+                <span class="str">"temp"</span>: city[<span class="str">'base_temp'</span>] + <span class="cls">random</span>.<span class="fn">uniform</span>(-<span class="num">3</span>, <span class="num">3</span>),
+                <span class="str">"pressure"</span>: city[<span class="str">'pressure'</span>] + <span class="cls">random</span>.<span class="fn">randint</span>(-<span class="num">5</span>, <span class="num">5</span>),
+                <span class="str">"humidity"</span>: <span class="cls">random</span>.<span class="fn">randint</span>(<span class="num">50</span>, <span class="num">90</span>),
+                <span class="str">"temp_min"</span>: city[<span class="str">'base_temp'</span>] - <span class="num">2</span>,
+                <span class="str">"temp_max"</span>: city[<span class="str">'base_temp'</span>] + <span class="num">2</span>,
+            },
+            <span class="str">"weather"</span>: [{<span class="str">"description"</span>: <span class="str">"clear sky"</span>, <span class="str">"icon"</span>: <span class="str">"01d"</span>}],
+            <span class="str">"wind"</span>: {<span class="str">"speed"</span>: <span class="cls">random</span>.<span class="fn">uniform</span>(<span class="num">1</span>, <span class="num">10</span>)},
+            <span class="str">"dt"</span>: <span class="fn">int</span>(timestamp.<span class="fn">timestamp</span>()),
+            <span class="str">"sys"</span>: {<span class="str">"country"</span>: <span class="str">"FR"</span> <span class="kw">if</span> city[<span class="str">'name'</span>]==<span class="str">'Paris'</span> <span class="kw">else</span> <span class="str">"GB"</span>},
+            <span class="str">"coord"</span>: {<span class="str">"lon"</span>: <span class="num">2.35</span>, <span class="str">"lat"</span>: <span class="num">48.85</span>},
+        })
+
+    <span class="kw">with</span> <span class="fn">open</span>(filepath, <span class="str">'w'</span>) <span class="kw">as</span> f:
+        <span class="cls">json</span>.<span class="fn">dump</span>(weather_data, f, indent=<span class="num">2</span>)
+
+<span class="fn">print</span>(<span class="str">f"✅ ২০টা JSON file তৈরি হয়েছে raw_files/ ফোল্ডারে"</span>)
+<span class="fn">print</span>(<span class="str">f"   প্রতিটা file = ৩টা শহরের weather data (Paris, London, Washington)"</span>)
+<span class="fn">print</span>(<span class="str">f"   Format = OpenWeatherMap API-এর মতোই — DAG সরাসরি ব্যবহার করতে পারবে"</span>)</pre>
+      </div>
+
+      <div class="info-box tip">
+        <div class="info-box-label">💡 কীভাবে ব্যবহার করবে</div>
+        <ol style="margin:0; padding-left:20px;">
+          <li>উপরের দুটো script আলাদা <code>.py</code> file হিসেবে save করো</li>
+          <li><code>python3 create_dummy_data.py</code> চালাও → <code>clean_data/data.csv</code> তৈরি হবে</li>
+          <li><code>python3 create_dummy_raw_files.py</code> চালাও → <code>raw_files/</code>-এ ২০টা JSON তৈরি হবে</li>
+          <li>এরপর Airflow DAG চালালে সে এই dummy data দিয়ে কাজ করবে — real API ছাড়াই!</li>
+        </ol>
+      </div>
+
+      <div class="info-box warn">
+        <div class="info-box-label">⚠️ Kelvin vs Celsius</div>
+        OpenWeatherMap default-এ temperature Kelvin-এ দেয়। Celsius-এ convert করতে: <code>celsius = kelvin - 273.15</code>। তাই 285 K = 11.85°C (প্যারিসের শীতকাল ঠিকঠাক!)। API URL-এ <code>&units=metric</code> যোগ করলে সরাসরি Celsius পাবে।
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- =========================================
+         BONUS: COMPLETE ASSESSMENT WALKTHROUGH
+    ========================================= -->
+    <section class="section" id="assessment-code">
+      <h3>Assessment — সম্পূর্ণ Code Walkthrough</h3>
+      <p>Assessment DAG-এর প্রতিটা task-এর code কীভাবে লিখবে সেটা step-by-step দেখানো হলো।</p>
+
+      <h4>প্রথমে Setup করো</h4>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">bash — নতুন docker-compose ও folders</span>
+        </div>
+        <pre><span class="cm"># পুরানো containers বন্ধ করো</span>
+docker-compose down
+
+<span class="cm"># নতুন docker-compose.yaml নামাও</span>
+wget https://dst-de.s3.eu-west-3.amazonaws.com/airflow_fr/eval/docker-compose.yaml
+
+<span class="cm"># দরকারি folders তৈরি করো</span>
+mkdir ./dags ./logs ./plugins
+mkdir clean_data          <span class="cm"># processed CSV files এখানে যাবে</span>
+mkdir raw_files           <span class="cm"># raw JSON files এখানে যাবে</span>
+
+<span class="cm"># permissions</span>
+sudo chmod -R 777 logs/ dags/ plugins/
+echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
+
+<span class="cm"># initial data আর null file</span>
+wget https://dst-de.s3.eu-west-3.amazonaws.com/airflow_fr/eval/data.csv -O clean_data/data.csv
+echo '[]' >> raw_files/null_file.json
+
+<span class="cm"># airflow init করো</span>
+docker-compose up airflow-init
+
+<span class="cm"># সব containers চালু করো</span>
+docker-compose up -d</pre>
+      </div>
+
+      <h4>Task (1) — OpenWeatherMap API থেকে Data নামানো</h4>
+      <p>OpenWeatherMap-এ account খুলে API key নাও। তারপর Airflow UI-তে Variable set করো: Admin → Variables → + বাটন। <strong>Key:</strong> <code>cities</code>, <strong>Value:</strong> <code>["paris", "london", "washington"]</code>। আর <strong>Key:</strong> <code>openweathermap_api_key</code>, <strong>Value:</strong> তোমার API key।</p>
+      <div class="info-box warn">
+        <div class="info-box-label">⚠️ API না পেলে বা rate limit হলে</div>
+        API fail করলে task fail হবে। সে ক্ষেত্রে উপরের Dummy Dataset Generator দিয়ে <code>raw_files/</code>-এ manually JSON রাখো। তাহলে Task 1 skip করে Task 2/3 চালাতে পারবে।
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — Task 1: API Call</span>
+        </div>
+        <pre><span class="kw">import</span> <span class="cls">requests</span>
+<span class="kw">import</span> <span class="cls">json</span>
+<span class="kw">import</span> <span class="cls">os</span>
+<span class="kw">from</span> <span class="cls">datetime</span> <span class="kw">import</span> <span class="cls">datetime</span>
+<span class="kw">from</span> <span class="cls">airflow.models</span> <span class="kw">import</span> <span class="cls">Variable</span>
+
+<span class="kw">def</span> <span class="fn">fetch_weather_data</span>():
+    <span class="cm"># Airflow Variable থেকে cities list নাও</span>
+    cities = <span class="cls">Variable</span>.<span class="fn">get</span>(<span class="str">"cities"</span>, deserialize_json=<span class="kw">True</span>)
+    <span class="cm"># cities = ['paris', 'london', 'washington']</span>
+
+    api_key = <span class="cls">Variable</span>.<span class="fn">get</span>(<span class="str">"openweathermap_api_key"</span>)
+
+    all_data = []
+    <span class="kw">for</span> city <span class="kw">in</span> cities:
+        <span class="cm"># API-তে GET request পাঠাও</span>
+        url = <span class="str">f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}"</span>
+        response = <span class="cls">requests</span>.<span class="fn">get</span>(url)
+        data = response.<span class="fn">json</span>()
+        all_data.<span class="fn">append</span>(data)
+
+    <span class="cm"># এখনকার সময় দিয়ে file নাম বানাও: "2024-03-17 10:30.json"</span>
+    now = <span class="cls">datetime</span>.<span class="fn">now</span>()
+    filename = now.<span class="fn">strftime</span>(<span class="str">"%Y-%m-%d %H:%M"</span>) + <span class="str">".json"</span>
+    filepath = <span class="cls">os</span>.<span class="cls">path</span>.<span class="fn">join</span>(<span class="str">"/app/raw_files"</span>, filename)
+
+    <span class="cm"># JSON file-এ save করো</span>
+    <span class="kw">with</span> <span class="fn">open</span>(filepath, <span class="str">'w'</span>) <span class="kw">as</span> f:
+        <span class="cls">json</span>.<span class="fn">dump</span>(all_data, f)
+
+    <span class="fn">print</span>(<span class="str">f"Data saved to {filepath}"</span>)</pre>
+      </div>
+
+      <h4>Task (2) ও (3) — Data Transformation</h4>
+      <p>এই function JSON files পড়ে CSV বানায়। <code>n_files</code> বললে শেষ N টা file নেয়, না বললে সব নেয়:</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — Task 2 & 3: Transformation</span>
+        </div>
+        <pre><span class="kw">import</span> <span class="cls">pandas</span> <span class="kw">as</span> pd
+<span class="kw">import</span> <span class="cls">json</span>, <span class="cls">os</span>
+
+<span class="kw">def</span> <span class="fn">transform_data_into_csv</span>(n_files=<span class="kw">None</span>, filename=<span class="str">'data.csv'</span>):
+    parent_folder = <span class="str">'/app/raw_files'</span>
+
+    <span class="cm"># files গুলো নতুন থেকে পুরানো order-এ sort করো</span>
+    files = <span class="fn">sorted</span>(<span class="cls">os</span>.<span class="fn">listdir</span>(parent_folder), reverse=<span class="kw">True</span>)
+
+    <span class="cm"># n_files দেওয়া থাকলে শুধু সেটুকু নাও</span>
+    <span class="kw">if</span> n_files:
+        files = files[:n_files]
+
+    dfs = []
+    <span class="kw">for</span> f <span class="kw">in</span> files:
+        <span class="kw">with</span> <span class="fn">open</span>(<span class="cls">os</span>.<span class="cls">path</span>.<span class="fn">join</span>(parent_folder, f), <span class="str">'r'</span>) <span class="kw">as</span> file:
+            data_temp = <span class="cls">json</span>.<span class="fn">load</span>(file)
+        <span class="kw">for</span> data_city <span class="kw">in</span> data_temp:
+            dfs.<span class="fn">append</span>({
+                <span class="str">'temperature'</span>: data_city[<span class="str">'main'</span>][<span class="str">'temp'</span>],
+                <span class="str">'city'</span>:        data_city[<span class="str">'name'</span>],
+                <span class="str">'pression'</span>:   data_city[<span class="str">'main'</span>][<span class="str">'pressure'</span>],
+                <span class="str">'date'</span>:        f.<span class="fn">split</span>(<span class="str">'.'</span>)[<span class="num">0</span>]   <span class="cm"># filename থেকে date নাও</span>
+            })
+
+    df = <span class="cls">pd</span>.<span class="cls">DataFrame</span>(dfs)
+    df.<span class="fn">to_csv</span>(<span class="cls">os</span>.<span class="cls">path</span>.<span class="fn">join</span>(<span class="str">'/app/clean_data'</span>, filename), index=<span class="kw">False</span>)
+    <span class="fn">print</span>(<span class="str">f"Saved {len(df)} rows to {filename}"</span>)
+
+
+<span class="cm"># Task 2: শেষ ২০টা file → data.csv (dashboard-এর জন্য)</span>
+<span class="kw">def</span> <span class="fn">task2_recent_data</span>():
+    <span class="fn">transform_data_into_csv</span>(n_files=<span class="num">20</span>, filename=<span class="str">'data.csv'</span>)
+
+<span class="cm"># Task 3: সব file → fulldata.csv (ML-এর জন্য)</span>
+<span class="kw">def</span> <span class="fn">task3_full_data</span>():
+    <span class="fn">transform_data_into_csv</span>(n_files=<span class="kw">None</span>, filename=<span class="str">'fulldata.csv'</span>)</pre>
+      </div>
+
+      <h4>Task (4) — ML Model Training</h4>
+      <p>তিনটা আলাদা function, প্রতিটা একটা model train করে এবং score XCom-এ পাঠায়:</p>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — Task 4: Model Training</span>
+        </div>
+        <pre><span class="kw">import</span> <span class="cls">pandas</span> <span class="kw">as</span> pd
+<span class="kw">from</span> <span class="cls">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">cross_val_score</span>
+<span class="kw">from</span> <span class="cls">sklearn.linear_model</span> <span class="kw">import</span> <span class="cls">LinearRegression</span>
+<span class="kw">from</span> <span class="cls">sklearn.tree</span> <span class="kw">import</span> <span class="cls">DecisionTreeRegressor</span>
+<span class="kw">from</span> <span class="cls">sklearn.ensemble</span> <span class="kw">import</span> <span class="cls">RandomForestRegressor</span>
+
+<span class="kw">def</span> <span class="fn">prepare_data</span>(path=<span class="str">'/app/clean_data/fulldata.csv'</span>):
+    df = <span class="cls">pd</span>.<span class="fn">read_csv</span>(path)
+    df = df.<span class="fn">sort_values</span>([<span class="str">'city'</span>, <span class="str">'date'</span>], ascending=<span class="kw">True</span>)
+    dfs = []
+    <span class="kw">for</span> c <span class="kw">in</span> df[<span class="str">'city'</span>].<span class="fn">unique</span>():
+        df_temp = df[df[<span class="str">'city'</span>] == c].<span class="fn">copy</span>()
+        df_temp[<span class="str">'target'</span>] = df_temp[<span class="str">'temperature'</span>].<span class="fn">shift</span>(<span class="num">1</span>)
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">10</span>):
+            df_temp[<span class="str">f'temp_m-{i}'</span>] = df_temp[<span class="str">'temperature'</span>].<span class="fn">shift</span>(-i)
+        df_temp = df_temp.<span class="fn">dropna</span>()
+        dfs.<span class="fn">append</span>(df_temp)
+    df_final = <span class="cls">pd</span>.<span class="fn">concat</span>(dfs, ignore_index=<span class="kw">False</span>)
+    df_final = df_final.<span class="fn">drop</span>([<span class="str">'date'</span>], axis=<span class="num">1</span>)
+    df_final = <span class="cls">pd</span>.<span class="fn">get_dummies</span>(df_final)
+    X = df_final.<span class="fn">drop</span>([<span class="str">'target'</span>], axis=<span class="num">1</span>)
+    y = df_final[<span class="str">'target'</span>]
+    <span class="kw">return</span> X, y
+
+<span class="kw">def</span> <span class="fn">compute_score</span>(model, X, y):
+    scores = <span class="fn">cross_val_score</span>(model, X, y, cv=<span class="num">3</span>, scoring=<span class="str">'neg_mean_squared_error'</span>)
+    <span class="kw">return</span> scores.<span class="fn">mean</span>()
+
+<span class="cm"># Task 4' — Linear Regression</span>
+<span class="kw">def</span> <span class="fn">train_linear_regression</span>(task_instance):
+    X, y = <span class="fn">prepare_data</span>()
+    model = <span class="cls">LinearRegression</span>()
+    score = <span class="fn">compute_score</span>(model, X, y)
+    <span class="fn">print</span>(<span class="str">f"Linear Regression score: {score}"</span>)
+    task_instance.<span class="fn">xcom_push</span>(key=<span class="str">"score_lr"</span>, value=score)
+
+<span class="cm"># Task 4'' — Decision Tree</span>
+<span class="kw">def</span> <span class="fn">train_decision_tree</span>(task_instance):
+    X, y = <span class="fn">prepare_data</span>()
+    model = <span class="cls">DecisionTreeRegressor</span>()
+    score = <span class="fn">compute_score</span>(model, X, y)
+    <span class="fn">print</span>(<span class="str">f"Decision Tree score: {score}"</span>)
+    task_instance.<span class="fn">xcom_push</span>(key=<span class="str">"score_dt"</span>, value=score)
+
+<span class="cm"># Task 4''' — Random Forest</span>
+<span class="kw">def</span> <span class="fn">train_random_forest</span>(task_instance):
+    X, y = <span class="fn">prepare_data</span>()
+    model = <span class="cls">RandomForestRegressor</span>()
+    score = <span class="fn">compute_score</span>(model, X, y)
+    <span class="fn">print</span>(<span class="str">f"Random Forest score: {score}"</span>)
+    task_instance.<span class="fn">xcom_push</span>(key=<span class="str">"score_rf"</span>, value=score)</pre>
+      </div>
+
+      <h4>Task (5) — Best Model Select ও Save</h4>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — Task 5: Best Model</span>
+        </div>
+        <pre><span class="kw">from</span> <span class="cls">joblib</span> <span class="kw">import</span> <span class="fn">dump</span>
+
+<span class="kw">def</span> <span class="fn">select_best_model</span>(task_instance):
+    <span class="cm"># XCom থেকে সব scores নিয়ে আসো</span>
+    <span class="cm"># xcom_pull একটা list return করে (একাধিক task থেকে নিতে পারে)</span>
+    <span class="cm"># তাই [0] দিয়ে প্রথম (একমাত্র) element নাও</span>
+    score_lr = task_instance.<span class="fn">xcom_pull</span>(key=<span class="str">"score_lr"</span>, task_ids=[<span class="str">'train_lr'</span>])[<span class="num">0</span>]
+    score_dt = task_instance.<span class="fn">xcom_pull</span>(key=<span class="str">"score_dt"</span>, task_ids=[<span class="str">'train_dt'</span>])[<span class="num">0</span>]
+    score_rf = task_instance.<span class="fn">xcom_pull</span>(key=<span class="str">"score_rf"</span>, task_ids=[<span class="str">'train_rf'</span>])[<span class="num">0</span>]
+
+    <span class="cm"># neg_mean_squared_error কেন? এটা একটু confusing! 😅</span>
+    <span class="cm"># MSE (Mean Squared Error) = error-এর মাপ। কম হলে ভালো।</span>
+    <span class="cm"># sklearn cross_val_score সবসময় "বড় = ভালো" করে রাখে।</span>
+    <span class="cm"># তাই MSE-কে negative করে: -5 > -10, মানে error 5 < error 10 → ভালো।</span>
+    scores = {
+        <span class="str">'LinearRegression'</span>: (<span class="cls">LinearRegression</span>(), score_lr),
+        <span class="str">'DecisionTree'</span>:     (<span class="cls">DecisionTreeRegressor</span>(), score_dt),
+        <span class="str">'RandomForest'</span>:     (<span class="cls">RandomForestRegressor</span>(), score_rf),
+    }
+
+    <span class="cm"># সবচেয়ে বড় score = সবচেয়ে কম error = সেরা model</span>
+    best_name = <span class="fn">max</span>(scores, key=<span class="kw">lambda</span> k: scores[k][<span class="num">1</span>])
+    best_model, best_score = scores[best_name]
+    <span class="fn">print</span>(<span class="str">f"Best model: {best_name} with score {best_score}"</span>)
+
+    <span class="cm"># সেরা model পুরো data দিয়ে train করো এবং save করো</span>
+    X, y = <span class="fn">prepare_data</span>()
+    best_model.<span class="fn">fit</span>(X, y)
+    <span class="fn">dump</span>(best_model, <span class="str">'/app/clean_data/best_model.pickle'</span>)
+    <span class="fn">print</span>(<span class="str">f"Model saved!"</span>)</pre>
+      </div>
+
+      <h4>সম্পূর্ণ DAG একসাথে</h4>
+      <div class="info-box note">
+        <div class="info-box-label">📌 Dependency Logic বোঝো</div>
+        <ul style="margin:0; padding-left:20px;">
+          <li><code>fetch</code> → <code>transform_recent</code> আর <code>transform_full</code> দুটোতেই যায়</li>
+          <li><code>transform_recent</code> (Task 2) → শুধু dashboard CSV, এরপর আর কিছু না</li>
+          <li><code>transform_full</code> (Task 3) → ML tasks চালায়</li>
+          <li><code>train_lr, train_dt, train_rf</code> → <code>best</code> (সব train শেষে best select)</li>
+        </ul>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — weather_dag.py (complete)</span>
+        </div>
+        <pre><span class="kw">from</span> <span class="cls">airflow</span> <span class="kw">import</span> <span class="cls">DAG</span>
+<span class="kw">from</span> <span class="cls">airflow.operators.python</span> <span class="kw">import</span> <span class="cls">PythonOperator</span>
+<span class="kw">from</span> <span class="cls">airflow.operators.dummy</span> <span class="kw">import</span> <span class="cls">DummyOperator</span>
+<span class="kw">from</span> <span class="cls">datetime</span> <span class="kw">import</span> <span class="cls">datetime</span>
+
+<span class="cm"># ... (উপরের সব functions এখানে)</span>
+
+<span class="kw">with</span> <span class="cls">DAG</span>(
+    dag_id=<span class="str">'weather_pipeline'</span>,
+    tags=[<span class="str">'weather'</span>, <span class="str">'ml'</span>],
+    schedule_interval=<span class="str">'*/1 * * * *'</span>,   <span class="cm"># প্রতি মিনিটে</span>
+    default_args={
+        <span class="str">'owner'</span>: <span class="str">'airflow'</span>,
+        <span class="str">'start_date'</span>: <span class="cls">datetime</span>(<span class="num">2024</span>, <span class="num">1</span>, <span class="num">1</span>),  <span class="cm"># static date</span>
+    },
+    catchup=<span class="kw">False</span>
+) <span class="kw">as</span> dag:
+
+    start = <span class="cls">DummyOperator</span>(task_id=<span class="str">'start'</span>)
+
+    fetch = <span class="cls">PythonOperator</span>(task_id=<span class="str">'fetch_weather'</span>, python_callable=fetch_weather_data)
+
+    transform_recent = <span class="cls">PythonOperator</span>(task_id=<span class="str">'transform_recent'</span>, python_callable=task2_recent_data)
+    transform_full   = <span class="cls">PythonOperator</span>(task_id=<span class="str">'transform_full'</span>,   python_callable=task3_full_data)
+
+    train_lr = <span class="cls">PythonOperator</span>(task_id=<span class="str">'train_lr'</span>, python_callable=train_linear_regression)
+    train_dt = <span class="cls">PythonOperator</span>(task_id=<span class="str">'train_dt'</span>, python_callable=train_decision_tree)
+    train_rf = <span class="cls">PythonOperator</span>(task_id=<span class="str">'train_rf'</span>, python_callable=train_random_forest)
+
+    best = <span class="cls">PythonOperator</span>(task_id=<span class="str">'select_best'</span>, python_callable=select_best_model)
+
+    <span class="cm"># Dependencies — কোনটা কোনটার পরে চলবে</span>
+    start >> fetch
+
+    <span class="cm"># fetch শেষে দুটো কাজ parallel-এ:</span>
+    <span class="cm"># transform_recent → dashboard CSV (এখানেই শেষ, ML-এ যায় না)</span>
+    <span class="cm"># transform_full   → fulldata CSV → তারপর ML training</span>
+    fetch >> transform_recent   <span class="cm"># dashboard-এর জন্য (Task 2 — dead end)</span>
+    fetch >> transform_full     <span class="cm"># ML-এর জন্য (Task 3)</span>
+
+    <span class="cm"># transform_full শেষে তিনটা model parallel-এ train হয়</span>
+    transform_full >> [train_lr, train_dt, train_rf]
+
+    <span class="cm"># তিনটা training শেষে best model select করা হয়</span>
+    [train_lr, train_dt, train_rf] >> best</pre>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- =========================================
+         QUICK REFERENCE CHEATSHEET
+    ========================================= -->
+    <section class="section" id="cheatsheet">
+      <div class="chapter-header">
+        <div class="chapter-num">📋</div>
+        <div>
+          <h2>Quick Reference Cheatsheet</h2>
+          <p>সব গুরুত্বপূর্ণ জিনিস এক জায়গায়</p>
+        </div>
+      </div>
+
+      <h3>DAG Skeleton — প্রতিটা DAG-এ এটা লাগবে</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — DAG Template</span>
+        </div>
+        <pre><span class="kw">from</span> <span class="cls">airflow</span> <span class="kw">import</span> <span class="cls">DAG</span>
+<span class="kw">from</span> <span class="cls">airflow.operators.python</span> <span class="kw">import</span> <span class="cls">PythonOperator</span>
+<span class="kw">from</span> <span class="cls">datetime</span> <span class="kw">import</span> <span class="cls">datetime</span>, <span class="cls">timedelta</span>
+
+<span class="kw">with</span> <span class="cls">DAG</span>(
+    dag_id=<span class="str">'my_dag'</span>,               <span class="cm"># ★ unique নাম</span>
+    description=<span class="str">'বর্ণনা'</span>,
+    tags=[<span class="str">'tag1'</span>],
+    schedule_interval=<span class="str">'0 9 * * *'</span>, <span class="cm"># ★ CRON / None / timedelta</span>
+    start_date=<span class="cls">datetime</span>(<span class="num">2024</span>, <span class="num">1</span>, <span class="num">1</span>), <span class="cm"># ★ static date ব্যবহার করো</span>
+    catchup=<span class="kw">False</span>,                  <span class="cm"># ★ প্রায় সবসময় False</span>
+    default_args={
+        <span class="str">'owner'</span>: <span class="str">'airflow'</span>,
+        <span class="str">'retries'</span>: <span class="num">3</span>,
+        <span class="str">'retry_delay'</span>: <span class="cls">timedelta</span>(minutes=<span class="num">5</span>),
+        <span class="str">'email_on_failure'</span>: <span class="kw">False</span>,
+    }
+) <span class="kw">as</span> dag:
+
+    <span class="kw">def</span> <span class="fn">my_function</span>(**kwargs):
+        <span class="fn">print</span>(<span class="str">"কাজ করছি!"</span>)
+
+    task1 = <span class="cls">PythonOperator</span>(
+        task_id=<span class="str">'task1'</span>,
+        python_callable=my_function,
+    )
+
+task1  <span class="cm"># শুধু একটা task থাকলে dependency লাগে না</span></pre>
+      </div>
+
+      <h3>সব ধরনের Dependency Syntax</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — Dependencies cheatsheet</span>
+        </div>
+        <pre><span class="cm"># ক্রমানুসারে: t1 শেষে t2, t2 শেষে t3</span>
+t1 >> t2 >> t3
+
+<span class="cm"># উল্টোও করা যায়</span>
+t3 << t2 << t1   <span class="cm"># একই মানে</span>
+
+<span class="cm"># Parallel: t1 শেষে t2 আর t3 একসাথে</span>
+t1 >> [t2, t3]
+
+<span class="cm"># Merge: t2 আর t3 শেষে t4</span>
+[t2, t3] >> t4
+
+<span class="cm"># Complex pipeline:</span>
+t1 >> [t2, t3]        <span class="cm"># t1 → t2, t3</span>
+t2 >> t4              <span class="cm"># t2 → t4</span>
+t3 >> t5              <span class="cm"># t3 → t5</span>
+[t4, t5] >> t6        <span class="cm"># t4, t5 → t6</span>
+
+<span class="cm"># List দিয়ে সুন্দরভাবে:</span>
+tasks = [t1, t2, t3, t4, t5, t6]
+tasks[<span class="num">0</span>] >> [tasks[<span class="num">1</span>], tasks[<span class="num">3</span>]]
+tasks[<span class="num">1</span>] >> tasks[<span class="num">2</span>]
+tasks[<span class="num">3</span>] >> tasks[<span class="num">4</span>]
+[tasks[<span class="num">2</span>], tasks[<span class="num">4</span>]] >> tasks[<span class="num">5</span>]</pre>
+      </div>
+
+      <h3>সব Trigger Rules একনজরে</h3>
+      <div class="diagram-wrap">
+        <div class="diagram-title">Trigger Rules Visual Guide</div>
+        <svg viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:680px;">
+          <rect width="680" height="280" fill="#161b22" rx="10"/>
+          <defs>
+            <marker id="ag" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+              <polygon points="0 0, 7 2.5, 0 5" fill="#58a6ff"/>
+            </marker>
+            <marker id="ar" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+              <polygon points="0 0, 7 2.5, 0 5" fill="#f78166"/>
+            </marker>
+          </defs>
+
+          <!-- all_success (default) -->
+          <text x="24" y="28" fill="#8b949e" font-size="10" font-weight="600">all_success (default)</text>
+          <rect x="24" y="35" width="50" height="24" rx="5" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="49" y="51" text-anchor="middle" fill="#3fb950" font-size="9">✓ t1</text>
+          <rect x="24" y="65" width="50" height="24" rx="5" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="49" y="81" text-anchor="middle" fill="#3fb950" font-size="9">✓ t2</text>
+          <line x1="74" y1="47" x2="95" y2="63" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ag)"/>
+          <line x1="74" y1="77" x2="95" y2="63" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ag)"/>
+          <rect x="97" y="50" width="50" height="24" rx="5" fill="#1c2128" stroke="#3fb950" stroke-width="2"/>
+          <text x="122" y="66" text-anchor="middle" fill="#3fb950" font-size="9">✅ runs</text>
+          <text x="90" y="105" text-anchor="middle" fill="#6e7681" font-size="9">দুই parent ✓ → চলে</text>
+
+          <!-- all_done -->
+          <text x="200" y="28" fill="#8b949e" font-size="10" font-weight="600">all_done</text>
+          <rect x="200" y="35" width="50" height="24" rx="5" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="225" y="51" text-anchor="middle" fill="#3fb950" font-size="9">✓ t1</text>
+          <rect x="200" y="65" width="50" height="24" rx="5" fill="#1c2128" stroke="#f78166" stroke-width="1.5"/>
+          <text x="225" y="81" text-anchor="middle" fill="#f78166" font-size="9">✗ t2</text>
+          <line x1="250" y1="47" x2="271" y2="63" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ag)"/>
+          <line x1="250" y1="77" x2="271" y2="63" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ag)"/>
+          <rect x="273" y="50" width="50" height="24" rx="5" fill="#1c2128" stroke="#3fb950" stroke-width="2"/>
+          <text x="298" y="66" text-anchor="middle" fill="#3fb950" font-size="9">✅ runs</text>
+          <text x="265" y="105" text-anchor="middle" fill="#6e7681" font-size="9">fail হলেও চলে</text>
+
+          <!-- one_success -->
+          <text x="370" y="28" fill="#8b949e" font-size="10" font-weight="600">one_success</text>
+          <rect x="370" y="35" width="50" height="24" rx="5" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="395" y="51" text-anchor="middle" fill="#3fb950" font-size="9">✓ t1</text>
+          <rect x="370" y="65" width="50" height="24" rx="5" fill="#1c2128" stroke="#8b949e" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <text x="395" y="81" text-anchor="middle" fill="#8b949e" font-size="9">⏳ t2</text>
+          <line x1="420" y1="47" x2="441" y2="63" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ag)"/>
+          <line x1="420" y1="77" x2="441" y2="63" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,2"/>
+          <rect x="443" y="50" width="50" height="24" rx="5" fill="#1c2128" stroke="#3fb950" stroke-width="2"/>
+          <text x="468" y="66" text-anchor="middle" fill="#3fb950" font-size="9">✅ runs</text>
+          <text x="430" y="105" text-anchor="middle" fill="#6e7681" font-size="9">একটা ✓ = চলে</text>
+
+          <!-- one_failed -->
+          <text x="540" y="28" fill="#8b949e" font-size="10" font-weight="600">one_failed</text>
+          <rect x="540" y="35" width="50" height="24" rx="5" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="565" y="51" text-anchor="middle" fill="#3fb950" font-size="9">✓ t1</text>
+          <rect x="540" y="65" width="50" height="24" rx="5" fill="#1c2128" stroke="#f78166" stroke-width="1.5"/>
+          <text x="565" y="81" text-anchor="middle" fill="#f78166" font-size="9">✗ t2</text>
+          <line x1="590" y1="47" x2="611" y2="63" stroke="#8b949e" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="590" y1="77" x2="611" y2="63" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ag)"/>
+          <rect x="613" y="50" width="50" height="24" rx="5" fill="#1c2128" stroke="#3fb950" stroke-width="2"/>
+          <text x="638" y="66" text-anchor="middle" fill="#3fb950" font-size="9">✅ runs</text>
+          <text x="600" y="105" text-anchor="middle" fill="#6e7681" font-size="9">একটা ✗ = চলে</text>
+
+          <!-- Usage in code -->
+          <rect x="20" y="122" width="640" height="140" rx="8" fill="#22272e" stroke="#30363d"/>
+          <text x="340" y="143" text-anchor="middle" fill="#6e7681" font-size="10" font-weight="600">CODE-এ কীভাবে ব্যবহার করবে:</text>
+          <text x="40" y="165" fill="#8b949e" font-size="11" font-family="monospace">task3 = PythonOperator(</text>
+          <text x="40" y="183" fill="#8b949e" font-size="11" font-family="monospace">    task_id='my_task',</text>
+          <text x="40" y="201" fill="#8b949e" font-size="11" font-family="monospace">    python_callable=my_fn,</text>
+          <text x="40" y="219" fill="#ffa657" font-size="11" font-family="monospace">    trigger_rule='all_done'   </text>
+          <text x="260" y="219" fill="#6e7681" font-size="11" font-family="monospace"># ← এখানে বদলাও</text>
+          <text x="40" y="237" fill="#8b949e" font-size="11" font-family="monospace">)</text>
+          <text x="360" y="165" fill="#6e7681" font-size="10">বা DAG-এর default_args-এ:</text>
+          <text x="360" y="183" fill="#8b949e" font-size="11" font-family="monospace">default_args={</text>
+          <text x="360" y="201" fill="#ffa657" font-size="11" font-family="monospace">    'trigger_rule': 'all_done'</text>
+          <text x="360" y="219" fill="#8b949e" font-size="11" font-family="monospace">}</text>
+          <text x="360" y="237" fill="#6e7681" font-size="9">(সব task-এ apply হবে)</text>
+        </svg>
+      </div>
+
+      <h3>CRON Quick Reference</h3>
+      <div class="table-wrap">
+        <table>
+          <tr><th>CRON String</th><th>মানে</th><th>Airflow Preset</th></tr>
+          <tr><td><code>* * * * *</code></td><td>প্রতি মিনিটে</td><td>—</td></tr>
+          <tr><td><code>*/5 * * * *</code></td><td>প্রতি ৫ মিনিটে</td><td>—</td></tr>
+          <tr><td><code>0 * * * *</code></td><td>প্রতি ঘণ্টায় (XX:00 মিনিটে)</td><td><code>@hourly</code></td></tr>
+          <tr><td><code>0 0 * * *</code></td><td>প্রতিদিন মধ্যরাতে</td><td><code>@daily</code></td></tr>
+          <tr><td><code>0 9 * * *</code></td><td>প্রতিদিন সকাল ৯টায়</td><td>—</td></tr>
+          <tr><td><code>0 9 * * 1-5</code></td><td>সোম–শুক্রবার সকাল ৯টায়</td><td>—</td></tr>
+          <tr><td><code>0 0 * * 0</code></td><td>প্রতি রবিবার মধ্যরাতে</td><td><code>@weekly</code></td></tr>
+          <tr><td><code>0 0 1 * *</code></td><td>প্রতি মাসের ১ তারিখে</td><td><code>@monthly</code></td></tr>
+          <tr><td><code>None</code></td><td>manually trigger করতে হবে</td><td>—</td></tr>
+        </table>
+      </div>
+
+      <h3>Import করার চিট শিট</h3>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span></div>
+          <span class="code-lang">python — Common Imports</span>
+        </div>
+        <pre><span class="cm"># Core</span>
+<span class="kw">from</span> <span class="cls">airflow</span> <span class="kw">import</span> <span class="cls">DAG</span>
+<span class="kw">from</span> <span class="cls">airflow.utils.dates</span> <span class="kw">import</span> <span class="fn">days_ago</span>
+<span class="kw">from</span> <span class="cls">datetime</span> <span class="kw">import</span> <span class="cls">datetime</span>, <span class="cls">timedelta</span>
+
+<span class="cm"># Operators</span>
+<span class="kw">from</span> <span class="cls">airflow.operators.python</span> <span class="kw">import</span> <span class="cls">PythonOperator</span>
+<span class="kw">from</span> <span class="cls">airflow.operators.python</span> <span class="kw">import</span> <span class="cls">BranchPythonOperator</span>
+<span class="kw">from</span> <span class="cls">airflow.operators.bash</span> <span class="kw">import</span> <span class="cls">BashOperator</span>
+<span class="kw">from</span> <span class="cls">airflow.operators.dummy</span> <span class="kw">import</span> <span class="cls">DummyOperator</span>
+<span class="kw">from</span> <span class="cls">airflow.operators.postgres_operator</span> <span class="kw">import</span> <span class="cls">PostgresOperator</span>
+<span class="kw">from</span> <span class="cls">airflow.operators.docker_operator</span> <span class="kw">import</span> <span class="cls">DockerOperator</span>
+
+<span class="cm"># Sensors</span>
+<span class="kw">from</span> <span class="cls">airflow.sensors.filesystem</span> <span class="kw">import</span> <span class="cls">FileSensor</span>
+
+<span class="cm"># Groups</span>
+<span class="kw">from</span> <span class="cls">airflow.utils.task_group</span> <span class="kw">import</span> <span class="cls">TaskGroup</span>
+
+<span class="cm"># Decorators (আধুনিক পদ্ধতি)</span>
+<span class="kw">from</span> <span class="cls">airflow.decorators</span> <span class="kw">import</span> dag, task
+
+<span class="cm"># Models</span>
+<span class="kw">from</span> <span class="cls">airflow.models</span> <span class="kw">import</span> <span class="cls">Variable</span>
+<span class="kw">from</span> <span class="cls">airflow.models.connection</span> <span class="kw">import</span> <span class="cls">Connection</span>
+<span class="kw">from</span> <span class="cls">airflow</span> <span class="kw">import</span> settings    <span class="cm"># Session-এর জন্য</span>
+
+<span class="cm"># Docker volume mount</span>
+<span class="kw">from</span> <span class="cls">docker.types</span> <span class="kw">import</span> <span class="cls">Mount</span></pre>
+      </div>
+
+      <h3>Common Error আর সমাধান</h3>
+      <div class="def-list">
+        <div class="def-item">
+          <span class="def-term">DAG দেখা যাচ্ছে না</span>
+          <span class="def-desc">ফাইলটা <code>./dags/</code> ফোল্ডারে আছে কিনা দেখো। Python syntax error আছে কিনা check করো। কিছুক্ষণ অপেক্ষা করো — Airflow ৩০ সেকেন্ডে scan করে।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Broken DAG — ImportError</span>
+          <span class="def-desc">কোনো library import করতে পারছে না। Docker-এ library install করতে <code>_PIP_ADDITIONAL_REQUIREMENTS</code> environment variable-এ add করো।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Task upstream_failed</span>
+          <span class="def-desc">upstream task fail করেছে। সেই task-এর log দেখো আর ঠিক করো। অথবা <code>trigger_rule='all_done'</code> দাও যদি failure হলেও চালাতে চাও।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">Scheduler healthy না</span>
+          <span class="def-desc"><code>docker container ls</code> দিয়ে দেখো scheduler container চলছে কিনা। না চললে <code>docker-compose up -d</code> দাও।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">DAG runs অনেক বেড়ে গেছে</span>
+          <span class="def-desc"><code>catchup=False</code> দাও। অথবা DAG pause করে পুরানো runs clear করো।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">XCom value None</span>
+          <span class="def-desc">task_ids সঠিক দিয়েছো? key নাম ঠিক আছে? Admin → XCom-এ গিয়ে manually দেখো কী store হয়েছে।</span>
+        </div>
+        <div class="def-item">
+          <span class="def-term">DockerOperator permission denied</span>
+          <span class="def-desc"><code>sudo chmod a+rw /var/run/docker.sock</code> command দাও। VM restart হলে আবার দিতে হবে।</span>
+        </div>
+      </div>
+
+      <!-- FINAL CONGRATULATIONS -->
+      <div class="divider"></div>
+      <div class="diagram-wrap" style="background: linear-gradient(135deg, #1a2332, #0d1117); border-color: #58a6ff;">
+        <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:640px;">
+          <defs>
+            <radialGradient id="glow1" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#58a6ff" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#58a6ff" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="640" height="200" fill="url(#glow1)" rx="10"/>
+          <text x="320" y="55" text-anchor="middle" font-size="36">🎉</text>
+          <text x="320" y="95" text-anchor="middle" fill="#e6edf3" font-size="22" font-weight="700" font-family="sans-serif">অভিনন্দন!</text>
+          <text x="320" y="125" text-anchor="middle" fill="#8b949e" font-size="14" font-family="sans-serif">তুমি Apache Airflow-এর সম্পূর্ণ কোর্স শেষ করেছো।</text>
+          <text x="320" y="148" text-anchor="middle" fill="#58a6ff" font-size="13" font-family="sans-serif">DAG থেকে শুরু করে ML Pipeline পর্যন্ত — সব তোমার জানা।</text>
+          <text x="320" y="172" text-anchor="middle" fill="#6e7681" font-size="11" font-family="sans-serif">এখন নিজে হাতে-কলমে বানাও — সেটাই সেরা শিক্ষা 🚀</text>
+        </svg>
+      </div>
+
+    </section>
+
+  </div> <!-- .content -->
+</div> <!-- .main -->
+
+<!-- Back to top -->
+<a href="#" class="back-to-top">↑</a>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrolled / maxScroll) * 100;
+    document.getElementById('progress').style.width = progress + '%';
+  });
+
+  // Active nav link
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('.sidebar a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      if (window.scrollY >= section.offsetTop - 80) {
+        current = section.id;
+      }
+    });
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) {
+        link.classList.add('active');
+      }
+    });
+  });
+</script>
+</body>
+</html>

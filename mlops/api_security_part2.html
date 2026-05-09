@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="API নিরাপত্তার মূল ধারণা">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API নিরাপত্তা - পর্ব ২: Authentication পদ্ধতি</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+  :root {
+    --bg: #080c14;
+    --surface: #0f1724;
+    --surface2: #162035;
+    --surface3: #1c2840;
+    --accent: #f59e0b;
+    --accent2: #06b6d4;
+    --accent3: #8b5cf6;
+    --green: #22c55e;
+    --yellow: #f59e0b;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --border: #1e3a5f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    line-height: 1.8;
+    font-size: 16px;
+  }
+
+  .hero {
+    background: linear-gradient(160deg, #080c14 0%, #0f1a2e 60%, #1a0a0a 100%);
+    padding: 60px 20px;
+    text-align: center;
+    border-bottom: 2px solid var(--accent);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '🔐';
+    position: absolute;
+    font-size: 200px;
+    right: -20px; top: -30px;
+    opacity: 0.04;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(245,158,11,0.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: clamp(26px, 4.5vw, 48px);
+    font-weight: 700;
+    background: linear-gradient(135deg, #f59e0b, #06b6d4, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 14px;
+  }
+  .hero p { font-size: 17px; color: var(--text-muted); max-width: 650px; margin: 0 auto; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 20px; }
+
+  /* TABS */
+  .method-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(245,158,11,0.1);
+  }
+
+  /* SECTION */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+  }
+  .section.api-key::before { background: linear-gradient(to bottom, var(--accent), #d97706); }
+  .section.basic-auth::before { background: linear-gradient(to bottom, var(--accent2), #0284c7); }
+  .section.jwt::before { background: linear-gradient(to bottom, var(--accent3), #6d28d9); }
+  .section.https::before { background: linear-gradient(to bottom, var(--green), #15803d); }
+
+  .section-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section.api-key .section-title { color: var(--accent); }
+  .section.basic-auth .section-title { color: var(--accent2); }
+  .section.jwt .section-title { color: var(--accent3); }
+  .section.https .section-title { color: var(--green); }
+
+  .section-title .icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .api-key .icon { background: rgba(245,158,11,0.15); border: 1px solid var(--accent); }
+  .basic-auth .icon { background: rgba(6,182,212,0.15); border: 1px solid var(--accent2); }
+  .jwt .icon { background: rgba(139,92,246,0.15); border: 1px solid var(--accent3); }
+  .https .icon { background: rgba(34,197,94,0.15); border: 1px solid var(--green); }
+
+  h2 { font-size: 19px; color: #e2e8f0; margin: 24px 0 12px; }
+  h3 { font-size: 16px; color: var(--text-muted); margin: 18px 0 10px; border-left: 3px solid var(--accent); padding-left: 10px; }
+  p { margin-bottom: 14px; }
+  ul, ol { padding-left: 24px; margin-bottom: 14px; }
+  li { margin-bottom: 8px; }
+  strong { color: #fff; }
+  em { color: var(--accent); font-style: normal; }
+
+  /* CODE */
+  .code-block {
+    background: #020913;
+    border: 1px solid #1e3a5f;
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    color: #7dd3fc;
+    overflow-x: auto;
+    margin: 16px 0;
+    line-height: 1.7;
+    position: relative;
+  }
+  .code-label {
+    position: absolute;
+    top: 8px; right: 12px;
+    font-size: 10px;
+    color: #4b5563;
+    font-family: 'Fira Code', monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .comment { color: #475569; }
+  .keyword { color: #c084fc; }
+  .string { color: #86efac; }
+  .number { color: #fb923c; }
+  .func { color: #38bdf8; }
+
+  /* HIGHLIGHT */
+  .highlight {
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 16px 0;
+    border: 1px solid;
+  }
+  .highlight.info { border-color: rgba(6,182,212,0.3); background: rgba(6,182,212,0.05); }
+  .highlight.warning { border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.05); }
+  .highlight.danger { border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.05); }
+  .highlight.success { border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.05); }
+
+  /* STEPS */
+  .steps { display: flex; flex-direction: column; gap: 14px; margin: 20px 0; }
+  .step {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--surface2); border-radius: 12px;
+    padding: 14px 18px; border: 1px solid var(--border);
+  }
+  .step-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; color: #000;
+    flex-shrink: 0;
+  }
+  .step-content strong { color: #e2e8f0; display: block; margin-bottom: 4px; }
+
+  /* CARD */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 18px 0; }
+  .card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px;
+  }
+  .card .card-icon { font-size: 26px; margin-bottom: 8px; }
+  .card h4 { margin-bottom: 8px; font-size: 15px; }
+  .card p { font-size: 14px; color: var(--text-muted); }
+
+  /* COMPARISON TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  th { background: rgba(245,158,11,0.1); color: var(--accent); padding: 12px; text-align: left; font-size: 14px; border-bottom: 2px solid rgba(245,158,11,0.4); }
+  td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  tr:hover td { background: var(--surface2); }
+
+  /* DIAGRAM */
+  .diagram-wrap {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .diagram-wrap p.caption { color: var(--text-muted); font-size: 13px; margin-top: 12px; }
+
+  /* JWT PARTS */
+  .jwt-parts {
+    display: flex; gap: 4px; margin: 16px 0;
+    flex-wrap: wrap; align-items: center;
+  }
+  .jwt-part {
+    padding: 6px 12px; border-radius: 6px;
+    font-family: 'Fira Code', monospace; font-size: 11px;
+    word-break: break-all; max-width: 220px;
+  }
+  .jwt-part.header { background: rgba(245,158,11,0.15); border: 1px solid var(--accent); color: var(--accent); }
+  .jwt-part.payload { background: rgba(139,92,246,0.15); border: 1px solid var(--accent3); color: #a78bfa; }
+  .jwt-part.sig { background: rgba(248,113,113,0.15); border: 1px solid var(--red); color: var(--red); }
+  .jwt-dot { color: #6b7280; font-size: 20px; font-weight: bold; }
+
+  /* PROS CONS */
+  .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  .pros, .cons {
+    background: var(--surface2); border-radius: 10px; padding: 16px;
+  }
+  .pros { border: 1px solid rgba(34,197,94,0.3); }
+  .cons { border: 1px solid rgba(248,113,113,0.3); }
+  .pros h4 { color: var(--green); margin-bottom: 10px; }
+  .cons h4 { color: var(--red); margin-bottom: 10px; }
+  .pros li::before { content: "✅ "; }
+  .cons li::before { content: "❌ "; }
+
+  /* FOOTER */
+  .nav-footer {
+    display: flex; justify-content: space-between;
+    align-items: center; padding: 20px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px; flex-wrap: wrap; gap: 12px;
+  }
+  .nav-btn {
+    background: linear-gradient(135deg, var(--accent), #d97706);
+    color: #000; padding: 10px 24px;
+    border-radius: 8px; text-decoration: none;
+    font-weight: 700; font-size: 14px;
+  }
+  .nav-btn-prev {
+    background: var(--surface2); color: var(--text-muted);
+    padding: 10px 24px; border-radius: 8px;
+    text-decoration: none; font-size: 14px;
+    border: 1px solid var(--border);
+  }
+  .progress-bar { display: flex; gap: 8px; }
+  .progress-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+  .progress-dot.active { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+
+  /* BASE64 demo */
+  .b64-demo {
+    background: var(--surface3); border-radius: 10px;
+    padding: 16px; margin: 14px 0; font-family: 'Fira Code', monospace; font-size: 13px;
+  }
+  .b64-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: 8px 0; }
+  .b64-input { color: #fbbf24; }
+  .b64-arrow { color: #6b7280; font-size: 18px; }
+  .b64-output { color: #86efac; }
+
+  /* KEY-VALUE */
+  .kv-list { margin: 14px 0; }
+  .kv-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px; margin-bottom: 8px;
+    background: var(--surface2); border-radius: 8px;
+    border-left: 3px solid var(--accent);
+  }
+  .kv-key { font-family: 'Fira Code', monospace; color: var(--accent); font-size: 13px; min-width: 80px; flex-shrink: 0; }
+  .kv-val { color: var(--text-muted); font-size: 14px; }
+
+  @media (max-width: 600px) {
+    .pros-cons { grid-template-columns: 1fr; }
+    .jwt-parts { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">পর্ব ২ • Authentication পদ্ধতি</div>
+  <h1>🗝️ API Authentication পদ্ধতিসমূহ</h1>
+  <p>API Key, Basic Auth, JWT এবং HTTPS — চারটি পদ্ধতি বিস্তারিত বাংলায়, কোড সহ</p>
+</div>
+
+<div class="container">
+
+  <!-- Overview -->
+  <div class="card-grid" style="margin-bottom: 32px;">
+    <div class="card" style="border-color: rgba(245,158,11,0.4);">
+      <div class="card-icon">🔑</div>
+      <h4 style="color: var(--accent);">API Keys</h4>
+      <p>সবচেয়ে সহজ — একটি গোপন চাবি দিয়ে পরিচয় দেওয়া</p>
+    </div>
+    <div class="card" style="border-color: rgba(6,182,212,0.4);">
+      <div class="card-icon">👤</div>
+      <h4 style="color: var(--accent2);">Basic Auth</h4>
+      <p>Username + Password দিয়ে login করা</p>
+    </div>
+    <div class="card" style="border-color: rgba(139,92,246,0.4);">
+      <div class="card-icon">🎫</div>
+      <h4 style="color: var(--accent3);">JWT Token</h4>
+      <p>একটি টিকেট যা নিজেই সব তথ্য বহন করে</p>
+    </div>
+    <div class="card" style="border-color: rgba(34,197,94,0.4);">
+      <div class="card-icon">🛡️</div>
+      <h4 style="color: var(--green);">HTTPS</h4>
+      <p>সমস্ত ডেটা এনক্রিপ্ট করে পাঠানো</p>
+    </div>
+  </div>
+
+  <!-- ========== METHOD 1: API KEYS ========== -->
+  <div class="section api-key" id="api-keys">
+    <div class="section-title"><span class="icon">🔑</span> পদ্ধতি ১: API Keys</div>
+
+    <p><strong>API Key</strong> হলো একটি লম্বা, এলোমেলো অক্ষরের সংখ্যার সমষ্টি যা API প্রদানকারী আপনাকে দেয়। এটি দিয়ে সার্ভার বুঝতে পারে রিকোয়েস্টটি কার।</p>
+
+    <div class="highlight info">
+      <strong>📌 মনে রাখুন:</strong> API Key একটি <em>অ্যাপ্লিকেশনকে</em> চিহ্নিত করে, কোনো নির্দিষ্ট ব্যবহারকারীকে নয়। একজন ব্যবহারকারীর একাধিক API Key থাকতে পারে।
+    </div>
+
+    <h2>API Key পাঠানোর দুটি উপায়</h2>
+
+    <h3>উপায় ১: Query String (URL-এর মধ্যে)</h3>
+    <div class="code-block">
+<span class="comment"># URL-এর শেষে ? দিয়ে parameter যোগ করা হয়</span>
+<span class="comment"># এখানে api_key= হলো parameter নাম, এর পরে আপনার key</span>
+http://domain.org/path/to/resource?<span class="keyword">api_key</span>=<span class="string">abcd1234xyz</span>
+
+<span class="comment"># OpenWeatherMap উদাহরণ:</span>
+https://api.openweathermap.org/data/2.5/weather?<span class="keyword">q</span>=<span class="string">Dhaka</span>&<span class="keyword">appid</span>=<span class="string">MYKEY123</span></div>
+
+    <div class="highlight warning">
+      <strong>⚠️ Query String-এর সমস্যা:</strong> URL অনেক সিস্টেমে log হয়ে যায়। মানে আপনার API Key log file-এ সেভ হয়ে যাবে — যেটা বিপজ্জনক!
+    </div>
+
+    <h3>উপায় ২: HTTP Header (নিরাপদ পদ্ধতি)</h3>
+    <div class="code-block">
+<span class="comment"># Header-এ পাঠানো — URL-এ দেখা যায় না</span>
+
+<span class="comment"># curl দিয়ে:</span>
+curl -X GET https://api.example.com/data \
+     -H <span class="string">'X-Api-Key: abcd1234xyz'</span>
+
+<span class="comment"># Python দিয়ে:</span>
+<span class="keyword">import</span> requests
+
+response = requests.get(
+    url=<span class="string">"https://api.example.com/data"</span>,
+    headers={
+        <span class="string">"X-Api-Key"</span>: <span class="string">"abcd1234xyz"</span>  <span class="comment"># Header-এ key পাঠানো</span>
+    }
+)
+<span class="keyword">print</span>(response.status_code)</div>
+
+    <h2>FastAPI দিয়ে API Key Implementation</h2>
+    <p>এখন দেখি কীভাবে নিজের API-তে API Key authentication যোগ করতে হয়:</p>
+
+    <div class="code-block">
+<span class="comment"># প্রথমে দরকারি module import করা</span>
+<span class="keyword">from</span> fastapi <span class="keyword">import</span> Security, FastAPI, HTTPException, status
+<span class="keyword">from</span> fastapi.security.api_key <span class="keyword">import</span> APIKeyHeader, APIKey
+
+<span class="comment"># আমাদের secret key (বাস্তবে এটি environment variable-এ থাকবে)</span>
+API_KEY = <span class="string">"hello_datascientest"</span>
+API_KEY_NAME = <span class="string">"access_token"</span>  <span class="comment"># header-এর নাম</span>
+
+<span class="comment"># Header থেকে key নেওয়ার জন্য object তৈরি</span>
+api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=<span class="keyword">False</span>)
+
+api = FastAPI()</div>
+
+    <div class="code-block">
+<span class="comment"># Key যাচাই করার function</span>
+<span class="keyword">async def</span> <span class="func">get_api_key</span>(api_key_header: str = Security(api_key_header)):
+    <span class="keyword">if</span> api_key_header == API_KEY:    <span class="comment"># মিলে গেলে?</span>
+        <span class="keyword">return</span> api_key_header          <span class="comment"># key ফেরত দাও</span>
+    
+    <span class="comment"># না মিললে 403 error throw করো</span>
+    <span class="keyword">raise</span> HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail=<span class="string">"Could not validate credentials"</span>
+    )</div>
+
+    <div class="code-block">
+<span class="comment"># দুটি route: একটি free, একটি secured</span>
+@api.get(<span class="string">"/hello"</span>)
+<span class="keyword">def</span> <span class="func">hello</span>():
+    <span class="keyword">return</span> <span class="string">'Hello World !'</span>  <span class="comment"># যে কেউ দেখতে পারবে</span>
+
+@api.get(<span class="string">"/secure"</span>)
+<span class="keyword">async def</span> <span class="func">secure</span>(api_key_header: APIKey = Depends(get_api_key)):
+    <span class="keyword">return</span> <span class="string">'Hello this is secure!'</span>  <span class="comment"># শুধু valid key দিয়ে</span></div>
+
+    <h3>পরীক্ষা করুন:</h3>
+    <div class="code-block">
+<span class="comment"># Key ছাড়া → 403 Error</span>
+curl -X GET http://localhost:8000/secure
+<span class="comment"># {"detail":"Not authenticated"}</span>
+
+<span class="comment"># Key দিয়ে → সফল!</span>
+curl -X GET http://localhost:8000/secure \
+     -H <span class="string">'access_token: hello_datascientest'</span>
+<span class="comment"># "Hello this is secure!"</span></div>
+
+    <div class="pros-cons">
+      <div class="pros">
+        <h4>সুবিধা</h4>
+        <ul>
+          <li>বাস্তবায়ন করা সহজ</li>
+          <li>ব্যবহার করা সহজ</li>
+          <li>অ্যাপ ট্র্যাক করা যায়</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h4>অসুবিধা</h4>
+        <ul>
+          <li>Key leak হলে বিপদ</li>
+          <li>Code-এ রাখলে বিপজ্জনক</li>
+          <li>নিয়মিত পরিবর্তন করা দরকার</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="highlight success">
+      <strong>✅ Best Practice:</strong> API Key কখনো সরাসরি code-এ লিখবেন না। <em>Secret Manager</em> বা <em>Environment Variable</em> ব্যবহার করুন।
+    </div>
+  </div>
+
+  <!-- ========== METHOD 2: BASIC AUTH ========== -->
+  <div class="section basic-auth" id="basic-auth">
+    <div class="section-title"><span class="icon">👤</span> পদ্ধতি ২: Basic Authentication</div>
+
+    <p><strong>Basic Auth</strong> হলো সবচেয়ে পরিচিত পদ্ধতি — Username ও Password দিয়ে login করা। কিন্তু এখানে password সরাসরি পাঠানো হয় না, <em>Base64</em> encoding করে পাঠানো হয়।</p>
+
+    <h2>Base64 কী? (খুব সহজ ব্যাখ্যা)</h2>
+
+    <div class="highlight info">
+      <strong>Base64</strong> হলো একটি encoding পদ্ধতি যা টেক্সটকে একটি নির্দিষ্ট ফরম্যাটে রূপান্তরিত করে। এটি <em>encryption নয়</em> — যে কেউ decode করতে পারে!
+    </div>
+
+    <div class="b64-demo">
+      <p style="color: var(--text-muted); margin-bottom: 10px; font-family: 'Hind Siliguri';">উদাহরণ: username:password → Base64</p>
+      <div class="b64-row">
+        <span class="b64-input">hello:world</span>
+        <span class="b64-arrow">→ encode →</span>
+        <span class="b64-output">aGVsbG86d29ybGQ=</span>
+      </div>
+      <div class="b64-row">
+        <span class="b64-input">daniel:datascientest</span>
+        <span class="b64-arrow">→ encode →</span>
+        <span class="b64-output">ZGFuaWVsOmRhdGFzY2llbnRlc3Q=</span>
+      </div>
+      <div class="b64-row">
+        <span class="b64-input">john:secret</span>
+        <span class="b64-arrow">→ encode →</span>
+        <span class="b64-output">am9objpzZWNyZXQ=</span>
+      </div>
+    </div>
+
+    <div class="code-block">
+<span class="comment"># Python দিয়ে Base64 encode করুন:</span>
+<span class="keyword">import</span> base64
+result = base64.b64encode(<span class="string">b"daniel:datascientest"</span>)
+<span class="keyword">print</span>(result)  <span class="comment"># b'ZGFuaWVsOmRhdGFzY2llbnRlc3Q='</span>
+
+<span class="comment"># Decode করা (যে কেউ করতে পারে!):</span>
+decoded = base64.b64decode(<span class="string">"ZGFuaWVsOmRhdGFzY2llbnRlc3Q="</span>)
+<span class="keyword">print</span>(decoded)  <span class="comment"># b'daniel:datascientest'</span>
+
+<span class="comment"># Shell দিয়ে:</span>
+echo hello:world | base64   <span class="comment"># → aGVsbG86d29ybGQ=</span></div>
+
+    <h2>Basic Auth-এর ধাপগুলো</h2>
+
+    <div class="diagram-wrap">
+      <svg width="560" height="340" viewBox="0 0 560 340" style="max-width:100%">
+        <!-- Client -->
+        <rect x="10" y="60" width="100" height="220" rx="8" fill="var(--surface3)" stroke="var(--accent2)" stroke-width="1.5"/>
+        <text x="60" y="85" text-anchor="middle" fill="var(--accent2)" font-size="12" font-family="Hind Siliguri" font-weight="bold">Client</text>
+        <text x="60" y="103" text-anchor="middle" font-size="18" font-family="Hind Siliguri, sans-serif">💻</text>
+
+        <!-- Server -->
+        <rect x="450" y="60" width="100" height="220" rx="8" fill="var(--surface3)" stroke="var(--accent2)" stroke-width="1.5"/>
+        <text x="500" y="85" text-anchor="middle" fill="var(--accent2)" font-size="12" font-family="Hind Siliguri" font-weight="bold">Server</text>
+        <text x="500" y="103" text-anchor="middle" font-size="18" font-family="Hind Siliguri, sans-serif">🖥️</text>
+
+        <defs>
+          <marker id="c1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="var(--accent2)" stroke-width="1.5"/></marker>
+          <marker id="c2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#f59e0b" stroke-width="1.5"/></marker>
+          <marker id="c3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="var(--accent2)" stroke-width="1.5"/></marker>
+          <marker id="c4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#22c55e" stroke-width="1.5"/></marker>
+        </defs>
+
+        <!-- Step 1: Request -->
+        <line x1="112" y1="130" x2="448" y2="130" stroke="var(--accent2)" stroke-width="1.5" marker-end="url(#c1)"/>
+        <text x="280" y="120" text-anchor="middle" fill="var(--accent2)" font-size="11" font-family="Hind Siliguri">① GET /secure (key ছাড়া)</text>
+
+        <!-- Step 2: 401 Response -->
+        <line x1="448" y1="165" x2="112" y2="165" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#c2)"/>
+        <text x="280" y="158" text-anchor="middle" fill="#f59e0b" font-size="11" font-family="Hind Siliguri">② 401 | WWW-Authenticate: Basic</text>
+
+        <!-- Step 3: With credentials -->
+        <line x1="112" y1="210" x2="448" y2="210" stroke="var(--accent2)" stroke-width="1.5" marker-end="url(#c3)"/>
+        <text x="280" y="198" text-anchor="middle" fill="var(--accent2)" font-size="11" font-family="Hind Siliguri">③ GET /secure</text>
+        <text x="280" y="213" text-anchor="middle" fill="#86efac" font-size="10" font-family="Hind Siliguri">Authorization: Basic ZGFuaWVs...</text>
+
+        <!-- Step 4: Success -->
+        <line x1="448" y1="250" x2="112" y2="250" stroke="#22c55e" stroke-width="1.5" marker-end="url(#c4)"/>
+        <text x="280" y="243" text-anchor="middle" fill="#22c55e" font-size="11" font-family="Hind Siliguri">④ 200 OK — সফল! ✅ (বা 403 অনুমতি নেই)</text>
+
+        <!-- Step labels on left -->
+        <text x="60" y="138" text-anchor="middle" fill="#6b7280" font-size="10" font-family="Hind Siliguri">পাঠাই</text>
+        <text x="60" y="173" text-anchor="middle" fill="#6b7280" font-size="10" font-family="Hind Siliguri">পাই</text>
+        <text x="60" y="220" text-anchor="middle" fill="#6b7280" font-size="10" font-family="Hind Siliguri">পাঠাই</text>
+        <text x="60" y="258" text-anchor="middle" fill="#6b7280" font-size="10" font-family="Hind Siliguri">পাই</text>
+      </svg>
+      <p class="caption">Basic Auth-এর ৪টি ধাপ</p>
+    </div>
+
+    <h2>Flask দিয়ে Basic Auth Implementation</h2>
+
+    <div class="code-block">
+<span class="comment"># প্রয়োজনীয় package install:</span>
+pip install flask_httpauth
+
+<span class="comment"># কোড:</span>
+<span class="keyword">from</span> flask <span class="keyword">import</span> Flask
+<span class="keyword">from</span> flask_httpauth <span class="keyword">import</span> HTTPBasicAuth
+<span class="keyword">from</span> werkzeug.security <span class="keyword">import</span> generate_password_hash, check_password_hash
+<span class="comment"># generate_password_hash: plaintext → hashed password</span>
+<span class="comment"># check_password_hash: plaintext ও hash তুলনা করে</span>
+
+api = Flask(import_name=<span class="string">'my_api'</span>)
+auth = HTTPBasicAuth()
+
+<span class="comment"># ব্যবহারকারী ডেটাবেস (বাস্তবে এটি real database-এ থাকবে)</span>
+users = {
+    <span class="string">"daniel"</span>: {
+        <span class="string">'password'</span>: generate_password_hash(<span class="string">"datascientest"</span>),  <span class="comment"># hash করা password</span>
+        <span class="string">'private'</span>: <span class="string">'Private Resource Daniel'</span>,
+        <span class="string">'role'</span>: [<span class="string">'admin'</span>, <span class="string">'user'</span>]  <span class="comment"># daniel-এর দুটো role</span>
+    },
+    <span class="string">"john"</span>: {
+        <span class="string">'password'</span>: generate_password_hash(<span class="string">"secret"</span>),
+        <span class="string">'private'</span>: <span class="string">'Private Resource John'</span>,
+        <span class="string">'role'</span>: <span class="string">'user'</span>  <span class="comment"># john শুধু user</span>
+    }
+}</div>
+
+    <div class="code-block">
+<span class="comment"># Password যাচাই করার function (decorator দিয়ে register করা)</span>
+@auth.verify_password
+<span class="keyword">def</span> <span class="func">verify_password</span>(username, password):
+    <span class="comment"># username database-এ আছে? এবং password মিলছে?</span>
+    <span class="keyword">if</span> username <span class="keyword">in</span> users <span class="keyword">and</span> \
+       check_password_hash(users[username][<span class="string">'password'</span>], password):
+        <span class="keyword">return</span> username  <span class="comment"># সফল হলে username ফেরত দাও</span>
+
+<span class="comment"># Role নির্ধারণ করার function</span>
+@auth.get_user_roles
+<span class="keyword">def</span> <span class="func">get_user_roles</span>(user):
+    <span class="keyword">return</span> users[user][<span class="string">'role'</span>]  <span class="comment"># ব্যবহারকারীর role list</span></div>
+
+    <div class="code-block">
+<span class="comment"># Routes তৈরি করা</span>
+@api.route(<span class="string">'/admin'</span>)
+@auth.login_required(role=<span class="string">'admin'</span>)  <span class="comment"># শুধু admin-রা দেখতে পারবে</span>
+<span class="keyword">def</span> <span class="func">admin</span>():
+    <span class="keyword">return</span> <span class="string">"Hello {}, আপনি admin!"</span>.format(auth.current_user())
+
+@api.route(<span class="string">'/'</span>)
+@auth.login_required(role=<span class="string">'user'</span>)  <span class="comment"># সব user দেখতে পারবে</span>
+<span class="keyword">def</span> <span class="func">index</span>():
+    <span class="keyword">return</span> <span class="string">"Hello, {}!"</span>.format(auth.current_user())
+
+@api.route(<span class="string">'/private'</span>)
+@auth.login_required(role=<span class="string">'user'</span>)
+<span class="keyword">def</span> <span class="func">private</span>():
+    <span class="keyword">return</span> <span class="string">"Resource: {}"</span>.format(users[auth.current_user()][<span class="string">'private'</span>])</div>
+
+    <div class="highlight warning">
+      <strong>⚠️ Role-based Access Control:</strong>
+      <ul style="margin-top: 8px;">
+        <li>daniel → role: ['admin', 'user'] → /admin, /, /private সব দেখতে পারবে</li>
+        <li>john → role: 'user' → শুধু /, /private দেখতে পারবে, /admin দেখলে 403!</li>
+      </ul>
+    </div>
+
+    <h2>Basic Auth-এর সিকিউরিটি সমস্যা</h2>
+
+    <div class="highlight danger">
+      <strong>🚨 মারাত্মক সমস্যা:</strong> Base64 এনক্রিপশন নয়! কেউ নেটওয়ার্কে request intercept করলে খুব সহজেই password বের করতে পারবে:
+    </div>
+
+    <div class="code-block">
+<span class="comment"># john:secret → am9objpzZWNyZXQ= (Base64)</span>
+<span class="comment"># এই string decode করা মাত্র সেকেন্ডের ব্যাপার:</span>
+<span class="keyword">import</span> base64
+decoded = base64.b64decode(<span class="string">"am9objpzZWNyZXQ="</span>)
+<span class="keyword">print</span>(decoded.decode())  <span class="comment"># john:secret — খুব সহজে পাওয়া গেল!</span>
+
+<span class="comment"># তাই Basic Auth সবসময় HTTPS-এর সাথে ব্যবহার করা উচিত!</span></div>
+
+    <div class="pros-cons">
+      <div class="pros">
+        <h4>সুবিধা</h4>
+        <ul>
+          <li>বাস্তবায়ন সহজ</li>
+          <li>সব browser সাপোর্ট করে</li>
+          <li>Role-based access সহজ</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h4>অসুবিধা</h4>
+        <ul>
+          <li>Intercept হলে password চুরি</li>
+          <li>প্রতি request-এ password পাঠাতে হয়</li>
+          <li>HTTPS ছাড়া ব্যবহার করা উচিত নয়</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== METHOD 3: JWT ========== -->
+  <div class="section jwt" id="jwt">
+    <div class="section-title"><span class="icon">🎫</span> পদ্ধতি ৩: JWT (JSON Web Token)</div>
+
+    <p><strong>JWT</strong> হলো একটি "টিকেট"-এর মতো যা login করার পরে পাওয়া যায় এবং পরবর্তী request-এ এই টিকেট দেখালেই সার্ভার চিনতে পারে — বারবার password দিতে হয় না।</p>
+
+    <div class="highlight info">
+      <strong>JWT = JSON Web Token</strong> — ডেটা বহনকারী ডিজিটাল টিকেট যা <em>digitally signed</em> (স্বাক্ষরিত)।
+    </div>
+
+    <h2>JWT-এর তিনটি অংশ</h2>
+    <p>একটি JWT তিনটি অংশ নিয়ে তৈরি — প্রতিটি অংশ <strong>.</strong> (dot) দিয়ে আলাদা করা:</p>
+
+    <div class="jwt-parts">
+      <div class="jwt-part header">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</div>
+      <div class="jwt-dot">.</div>
+      <div class="jwt-part payload">eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkRhbmllbCIsImlhdCI6MTUxNjIzOTAyMn0</div>
+      <div class="jwt-dot">.</div>
+      <div class="jwt-part sig">eSaq3mzEMC8zHO49GZkxyHxf-DyKhYXz5Tx_HevmL8Y</div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card" style="border-color: rgba(245,158,11,0.4);">
+        <div class="card-icon">📋</div>
+        <h4 style="color: var(--accent);">Header (শিরোনাম)</h4>
+        <p>Token-এর ধরন (JWT) এবং কোন algorithm ব্যবহার হচ্ছে (HS256)</p>
+        <div class="code-block" style="margin-top: 8px; font-size: 12px;">
+{
+  <span class="string">"alg"</span>: <span class="string">"HS256"</span>,
+  <span class="string">"typ"</span>: <span class="string">"JWT"</span>
+}</div>
+      </div>
+      <div class="card" style="border-color: rgba(139,92,246,0.4);">
+        <div class="card-icon">📦</div>
+        <h4 style="color: var(--accent3);">Payload (তথ্য)</h4>
+        <p>ব্যবহারকারীর তথ্য, token-এর মেয়াদ, ইত্যাদি</p>
+        <div class="code-block" style="margin-top: 8px; font-size: 12px;">
+{
+  <span class="string">"sub"</span>: <span class="string">"1234"</span>,
+  <span class="string">"name"</span>: <span class="string">"Rahul"</span>,
+  <span class="string">"exp"</span>: <span class="number">1716239022</span>
+}</div>
+      </div>
+      <div class="card" style="border-color: rgba(248,113,113,0.4);">
+        <div class="card-icon">✍️</div>
+        <h4 style="color: var(--red);">Signature (স্বাক্ষর)</h4>
+        <p>Header + Payload হ্যাশ করে secret key দিয়ে সাইন করা</p>
+        <p style="color: var(--text-muted); font-size: 13px; margin-top: 6px;">এটি প্রমাণ করে token নকল নয়</p>
+      </div>
+    </div>
+
+    <div class="highlight warning">
+      <strong>⚠️ গুরুত্বপূর্ণ:</strong> JWT-এর Payload <em>encrypted নয়</em>, শুধু Base64 encoded। যে কেউ payload-এর তথ্য পড়তে পারবে! তাই গোপন তথ্য payload-এ রাখবেন না। Signature শুধু প্রমাণ করে যে token পরিবর্তন হয়নি।
+    </div>
+
+    <h2>JWT কীভাবে কাজ করে</h2>
+
+    <div class="diagram-wrap">
+      <svg width="580" height="380" viewBox="0 0 580 380" style="max-width:100%">
+        <!-- Client -->
+        <rect x="10" y="20" width="100" height="340" rx="8" fill="var(--surface3)" stroke="#8b5cf6" stroke-width="1.5"/>
+        <text x="60" y="45" text-anchor="middle" fill="#8b5cf6" font-size="12" font-family="Hind Siliguri" font-weight="bold">Client</text>
+
+        <!-- Server -->
+        <rect x="470" y="20" width="100" height="340" rx="8" fill="var(--surface3)" stroke="#8b5cf6" stroke-width="1.5"/>
+        <text x="520" y="45" text-anchor="middle" fill="#8b5cf6" font-size="12" font-family="Hind Siliguri" font-weight="bold">Server</text>
+
+        <defs>
+          <marker id="j1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#8b5cf6" stroke-width="1.5"/></marker>
+          <marker id="j2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#f59e0b" stroke-width="1.5"/></marker>
+          <marker id="j3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#22c55e" stroke-width="1.5"/></marker>
+        </defs>
+
+        <!-- Step 1: Login -->
+        <line x1="112" y1="100" x2="468" y2="100" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#j1)"/>
+        <text x="290" y="90" text-anchor="middle" fill="#8b5cf6" font-size="11" font-family="Hind Siliguri">① POST /login {username, password}</text>
+
+        <!-- Step 2: Token -->
+        <line x1="468" y1="140" x2="112" y2="140" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#j2)"/>
+        <text x="290" y="132" text-anchor="middle" fill="#f59e0b" font-size="11" font-family="Hind Siliguri">② JWT Token ফেরত দেয় 🎫</text>
+
+        <!-- Token stored -->
+        <rect x="30" y="155" width="60" height="30" rx="4" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1"/>
+        <text x="60" y="175" text-anchor="middle" fill="#f59e0b" font-size="10" font-family="Hind Siliguri">Token Save</text>
+
+        <!-- Step 3: Request with token -->
+        <line x1="112" y1="230" x2="468" y2="230" stroke="#22c55e" stroke-width="1.5" marker-end="url(#j3)"/>
+        <text x="290" y="218" text-anchor="middle" fill="#22c55e" font-size="11" font-family="Hind Siliguri">③ GET /data</text>
+        <text x="290" y="233" text-anchor="middle" fill="#86efac" font-size="10" font-family="Hind Siliguri">Authorization: Bearer {JWT}</text>
+
+        <!-- Verify -->
+        <rect x="380" y="248" width="80" height="30" rx="4" fill="rgba(139,92,246,0.1)" stroke="#8b5cf6" stroke-width="1"/>
+        <text x="420" y="268" text-anchor="middle" fill="#a78bfa" font-size="10" font-family="Hind Siliguri">Token যাচাই</text>
+
+        <!-- Step 4: Response -->
+        <line x1="468" y1="300" x2="112" y2="300" stroke="#22c55e" stroke-width="1.5" marker-end="url(#j3)"/>
+        <text x="290" y="292" text-anchor="middle" fill="#22c55e" font-size="11" font-family="Hind Siliguri">④ 200 OK — ডেটা পাঠানো হলো ✅</text>
+
+        <!-- Expired note -->
+        <text x="290" y="345" text-anchor="middle" fill="#ef4444" font-size="11" font-family="Hind Siliguri">⏰ Token expired হলে → 401, আবার login করতে হবে</text>
+      </svg>
+      <p class="caption">JWT Authentication-এর সম্পূর্ণ flow</p>
+    </div>
+
+    <h2>Flask দিয়ে JWT Implementation</h2>
+
+    <div class="code-block">
+<span class="comment"># Install:</span>
+pip3 install flask_jwt_extended==4.2.1
+
+<span class="keyword">from</span> flask <span class="keyword">import</span> Flask, jsonify, request
+<span class="keyword">from</span> flask_jwt_extended <span class="keyword">import</span> create_access_token, get_jwt_identity, jwt_required, JWTManager
+<span class="keyword">from</span> datetime <span class="keyword">import</span> timedelta
+
+api = Flask(<span class="string">"my_api"</span>)
+
+<span class="comment"># Secret key: এই key দিয়ে token sign করা হবে</span>
+<span class="comment"># openssl rand -hex 32 দিয়ে generate করুন</span>
+api.config[<span class="string">"JWT_SECRET_KEY"</span>] = <span class="string">"760257bc03d0f18b99ba31e6b90f6b95..."</span>
+api.config[<span class="string">"JWT_ACCESS_TOKEN_EXPIRES"</span>] = timedelta(minutes=<span class="number">30</span>)  <span class="comment"># ৩০ মিনিট মেয়াদ</span>
+
+jwt = JWTManager(api)  <span class="comment"># JWT manager সংযুক্ত করা</span></div>
+
+    <div class="code-block">
+<span class="comment"># Login route: username+password দিয়ে token পাওয়া</span>
+@api.route(<span class="string">"/login"</span>, methods=[<span class="string">"POST"</span>])
+<span class="keyword">def</span> <span class="func">login</span>():
+    username = request.json.get(<span class="string">"username"</span>, None)
+    password = request.json.get(<span class="string">"password"</span>, None)
+    
+    user = get_user(users_db, username)
+    
+    <span class="keyword">if not</span> user <span class="keyword">or not</span> check_password(password, user[<span class="string">'hashed_password'</span>]):
+        <span class="keyword">return</span> jsonify({<span class="string">"msg"</span>: <span class="string">"ভুল username বা password"</span>}), <span class="number">401</span>
+    
+    <span class="comment"># সব ঠিক থাকলে token তৈরি করো</span>
+    access_token = create_access_token(identity=username)
+    <span class="keyword">return</span> jsonify(access_token=access_token)
+
+<span class="comment"># Protected route: token ছাড়া দেখা যাবে না</span>
+@api.route(<span class="string">"/user"</span>, methods=[<span class="string">"GET"</span>])
+@jwt_required()  <span class="comment"># এই decorator মানে JWT token আবশ্যক</span>
+<span class="keyword">def</span> <span class="func">get_current_user</span>():
+    current_user = get_jwt_identity()  <span class="comment"># token থেকে user বের করা</span>
+    <span class="keyword">return</span> jsonify(logged_in_as=current_user), <span class="number">200</span></div>
+
+    <h3>পরীক্ষা করুন:</h3>
+    <div class="code-block">
+<span class="comment"># Step 1: Login করো, token নাও</span>
+curl -X POST -H <span class="string">"Content-Type: application/json"</span> \
+     -d <span class="string">'{"username":"daniel", "password":"datascientest"}'</span> \
+     http://127.0.0.1:5000/login
+<span class="comment"># উত্তর: {"access_token": "eyJhbGci..."}</span>
+
+<span class="comment"># Step 2: Token দিয়ে protected route access করো</span>
+curl -X GET \
+     -H <span class="string">'Authorization: Bearer eyJhbGci...'</span> \
+     http://127.0.0.1:5000/user
+<span class="comment"># উত্তর: {"logged_in_as": "daniel"}</span></div>
+
+    <div class="kv-list">
+      <div class="kv-item">
+        <span class="kv-key">iss</span>
+        <span class="kv-val">Issuer — কে token তৈরি করেছে</span>
+      </div>
+      <div class="kv-item">
+        <span class="kv-key">sub</span>
+        <span class="kv-val">Subject — কার জন্য token (সাধারণত user ID)</span>
+      </div>
+      <div class="kv-item">
+        <span class="kv-key">exp</span>
+        <span class="kv-val">Expiration — token কখন মেয়াদ শেষ হবে (Unix timestamp)</span>
+      </div>
+      <div class="kv-item">
+        <span class="kv-key">iat</span>
+        <span class="kv-val">Issued At — token কখন তৈরি হয়েছে</span>
+      </div>
+    </div>
+
+    <div class="pros-cons">
+      <div class="pros">
+        <h4>JWT-এর সুবিধা</h4>
+        <ul>
+          <li>Stateless — সার্ভারে session রাখতে হয় না</li>
+          <li>মেয়াদ সীমিত — leak হলেও সময়মতো expire</li>
+          <li>ডেটা বহন করতে পারে</li>
+          <li>Microservices-এ সহজে ব্যবহার</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h4>JWT-এর অসুবিধা</h4>
+        <ul>
+          <li>Secret key leak হলে সব token compromise</li>
+          <li>Payload encrypted নয় (সংবেদনশীল তথ্য রাখা যাবে না)</li>
+          <li>Token revoke করা কঠিন</li>
+          <li>HTTPS ছাড়া intercept সম্ভব</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== METHOD 4: HTTPS ========== -->
+  <div class="section https" id="https">
+    <div class="section-title"><span class="icon">🛡️</span> পদ্ধতি ৪: HTTPS (এনক্রিপ্টেড যোগাযোগ)</div>
+
+    <p><strong>HTTPS</strong> = HTTP + S (Secure)। এটি client ও server-এর মধ্যে সমস্ত ডেটা এনক্রিপ্ট করে পাঠায়। নেটওয়ার্কে কেউ intercept করলেও কিছু পড়তে পারবে না।</p>
+
+    <h2>Man-in-the-Middle Attack কী?</h2>
+
+    <div class="diagram-wrap">
+      <svg width="560" height="200" viewBox="0 0 560 200" style="max-width:100%">
+        <!-- Without HTTPS -->
+        <text x="280" y="20" text-anchor="middle" fill="#ef4444" font-size="13" font-family="Hind Siliguri" font-weight="bold">❌ HTTP (অনিরাপদ)</text>
+
+        <circle cx="60" cy="100" r="25" fill="rgba(34,197,94,0.1)" stroke="#22c55e" stroke-width="1.5"/>
+        <text x="60" y="93" text-anchor="middle" font-size="16" font-family="Hind Siliguri, sans-serif">👤</text>
+        <text x="60" y="138" text-anchor="middle" fill="#22c55e" font-size="10" font-family="Hind Siliguri">Alice</text>
+
+        <circle cx="280" cy="60" r="22" fill="rgba(239,68,68,0.1)" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="280" y="53" text-anchor="middle" font-size="14" font-family="Hind Siliguri, sans-serif">😈</text>
+        <text x="280" y="95" text-anchor="middle" fill="#ef4444" font-size="10" font-family="Hind Siliguri">হ্যাকার</text>
+        <text x="280" y="110" text-anchor="middle" fill="#ef4444" font-size="9" font-family="Hind Siliguri">(পড়তে পারে!)</text>
+
+        <circle cx="500" cy="100" r="25" fill="rgba(96,165,250,0.1)" stroke="#60a5fa" stroke-width="1.5"/>
+        <text x="500" y="93" text-anchor="middle" font-size="16" font-family="Hind Siliguri, sans-serif">🖥️</text>
+        <text x="500" y="138" text-anchor="middle" fill="#60a5fa" font-size="10" font-family="Hind Siliguri">Server</text>
+
+        <defs>
+          <marker id="h1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#ef4444" stroke-width="1.5"/></marker>
+        </defs>
+
+        <line x1="85" y1="90" x2="256" y2="68" stroke="#ef4444" stroke-width="1.5"/>
+        <line x1="304" y1="68" x2="474" y2="90" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="155" y="65" text-anchor="middle" fill="#f59e0b" font-size="10" font-family="Hind Siliguri">password=abc123</text>
+        <text x="400" y="65" text-anchor="middle" fill="#f59e0b" font-size="10" font-family="Hind Siliguri">password=abc123</text>
+
+        <text x="280" y="170" text-anchor="middle" fill="#ef4444" font-size="11" font-family="Hind Siliguri">হ্যাকার plaintext password দেখতে পাচ্ছে!</text>
+      </svg>
+
+      <svg width="560" height="200" viewBox="0 0 560 200" style="max-width:100%">
+        <!-- With HTTPS -->
+        <text x="280" y="20" text-anchor="middle" fill="#22c55e" font-size="13" font-family="Hind Siliguri" font-weight="bold">✅ HTTPS (নিরাপদ)</text>
+
+        <circle cx="60" cy="100" r="25" fill="rgba(34,197,94,0.1)" stroke="#22c55e" stroke-width="1.5"/>
+        <text x="60" y="93" text-anchor="middle" font-size="16" font-family="Hind Siliguri, sans-serif">👤</text>
+        <text x="60" y="138" text-anchor="middle" fill="#22c55e" font-size="10" font-family="Hind Siliguri">Alice</text>
+
+        <circle cx="280" cy="60" r="22" fill="rgba(100,116,139,0.1)" stroke="#4b5563" stroke-width="1.5"/>
+        <text x="280" y="53" text-anchor="middle" font-size="14" font-family="Hind Siliguri, sans-serif">😈</text>
+        <text x="280" y="95" text-anchor="middle" fill="#4b5563" font-size="10" font-family="Hind Siliguri">হ্যাকার</text>
+        <text x="280" y="110" text-anchor="middle" fill="#4b5563" font-size="9" font-family="Hind Siliguri">(পড়তে পারে না!)</text>
+
+        <circle cx="500" cy="100" r="25" fill="rgba(96,165,250,0.1)" stroke="#60a5fa" stroke-width="1.5"/>
+        <text x="500" y="93" text-anchor="middle" font-size="16" font-family="Hind Siliguri, sans-serif">🖥️</text>
+        <text x="500" y="138" text-anchor="middle" fill="#60a5fa" font-size="10" font-family="Hind Siliguri">Server</text>
+
+        <line x1="85" y1="100" x2="474" y2="100" stroke="#22c55e" stroke-width="2"/>
+        <text x="280" y="120" text-anchor="middle" fill="#86efac" font-size="10" font-family="Hind Siliguri">xK8#mP2...🔐 (encrypted)</text>
+
+        <text x="280" y="170" text-anchor="middle" fill="#22c55e" font-size="11" font-family="Hind Siliguri">ডেটা encrypted — হ্যাকার শুধু বর্ণমালার স্যুপ দেখতে পায়!</text>
+      </svg>
+      <p class="caption">HTTP vs HTTPS: Man-in-the-Middle Attack</p>
+    </div>
+
+    <h2>Symmetric vs Asymmetric Encryption</h2>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🔐</div>
+        <h4 style="color: var(--yellow);">Symmetric (সিমেট্রিক)</h4>
+        <p>একটিই চাবি — দুই পক্ষই একই চাবি দিয়ে lock/unlock করে।</p>
+        <p style="color: var(--red); margin-top: 8px; font-size: 13px;">সমস্যা: চাবি শেয়ার করতে গেলে চুরি হতে পারে!</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔑🔓</div>
+        <h4 style="color: var(--green);">Asymmetric (অ্যাসিমেট্রিক)</h4>
+        <p>দুটি চাবি — Public Key (সবাইকে দেওয়া যায়) + Private Key (গোপন)।</p>
+        <p style="color: var(--green); margin-top: 8px; font-size: 13px;">HTTPS এটি ব্যবহার করে!</p>
+      </div>
+    </div>
+
+    <h3>Asymmetric Encryption কীভাবে কাজ করে?</h3>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num" style="background: linear-gradient(135deg, #22c55e, #15803d);">🔐</div>
+        <div class="step-content">
+          <strong>Message পাঠানো (Encryption)</strong>
+          Alice Bob-কে message পাঠাতে চায়। Alice <em>Bob-এর Public Key</em> দিয়ে message encrypt করে।
+          এখন শুধু <em>Bob-এর Private Key</em> দিয়ে decrypt করা সম্ভব।
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background: linear-gradient(135deg, #60a5fa, #2563eb);">🔓</div>
+        <div class="step-content">
+          <strong>Message পড়া (Decryption)</strong>
+          Bob তার নিজের <em>Private Key</em> দিয়ে decrypt করে message পড়ে।
+          অন্য কেউ, হ্যাকারও, Bob-এর Private Key ছাড়া পড়তে পারবে না।
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num" style="background: linear-gradient(135deg, #a78bfa, #6d28d9);">✍️</div>
+        <div class="step-content">
+          <strong>Signature (Digital Signature)</strong>
+          Alice তার <em>Private Key</em> দিয়ে message sign করে পাঠায়।
+          Bob Alice-এর <em>Public Key</em> দিয়ে verify করতে পারে — এটা সত্যিই Alice পাঠিয়েছে কিনা।
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight success">
+      <strong>💡 মনে রাখুন:</strong>
+      <ul style="margin-top: 8px;">
+        <li>Public Key দিয়ে <em>encrypt</em> → শুধু Private Key দিয়ে decrypt</li>
+        <li>Private Key দিয়ে <em>sign</em> → Public Key দিয়ে verify</li>
+      </ul>
+    </div>
+
+    <h2>TLS Handshake — HTTPS কীভাবে connection শুরু করে</h2>
+
+    <div class="diagram-wrap">
+      <svg width="540" height="460" viewBox="0 0 540 460" style="max-width:100%">
+        <rect x="10" y="10" width="90" height="440" rx="8" fill="var(--surface3)" stroke="#22c55e" stroke-width="1.5"/>
+        <text x="55" y="35" text-anchor="middle" fill="#22c55e" font-size="11" font-family="Hind Siliguri">Client</text>
+        <text x="55" y="52" text-anchor="middle" font-size="14" font-family="Hind Siliguri, sans-serif">💻</text>
+
+        <rect x="440" y="10" width="90" height="440" rx="8" fill="var(--surface3)" stroke="#22c55e" stroke-width="1.5"/>
+        <text x="485" y="35" text-anchor="middle" fill="#22c55e" font-size="11" font-family="Hind Siliguri">Server</text>
+        <text x="485" y="52" text-anchor="middle" font-size="14" font-family="Hind Siliguri, sans-serif">🖥️</text>
+
+        <defs>
+          <marker id="tls1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#22c55e" stroke-width="1.5"/></marker>
+          <marker id="tls2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#f59e0b" stroke-width="1.5"/></marker>
+        </defs>
+
+        <!-- Steps -->
+        <line x1="100" y1="90" x2="438" y2="90" stroke="#22c55e" stroke-width="1" marker-end="url(#tls1)"/>
+        <text x="270" y="82" text-anchor="middle" fill="#22c55e" font-size="10" font-family="Hind Siliguri">① Client Hello — আমি এই algorithm সাপোর্ট করি</text>
+
+        <line x1="438" y1="125" x2="100" y2="125" stroke="#f59e0b" stroke-width="1" marker-end="url(#tls2)"/>
+        <text x="270" y="117" text-anchor="middle" fill="#f59e0b" font-size="10" font-family="Hind Siliguri">② Server Hello — আমি এই algorithm বেছে নিলাম</text>
+
+        <line x1="438" y1="160" x2="100" y2="160" stroke="#f59e0b" stroke-width="1" marker-end="url(#tls2)"/>
+        <text x="270" y="152" text-anchor="middle" fill="#f59e0b" font-size="10" font-family="Hind Siliguri">③ Certificate — Server-এর digital certificate</text>
+
+        <line x1="438" y1="195" x2="100" y2="195" stroke="#f59e0b" stroke-width="1" marker-end="url(#tls2)"/>
+        <text x="270" y="187" text-anchor="middle" fill="#f59e0b" font-size="10" font-family="Hind Siliguri">④ Server-এর Public Key পাঠানো</text>
+
+        <line x1="100" y1="230" x2="438" y2="230" stroke="#22c55e" stroke-width="1" marker-end="url(#tls1)"/>
+        <text x="270" y="222" text-anchor="middle" fill="#22c55e" font-size="10" font-family="Hind Siliguri">⑤ Client-এর Certificate পাঠানো</text>
+
+        <line x1="100" y1="265" x2="438" y2="265" stroke="#22c55e" stroke-width="1" marker-end="url(#tls1)"/>
+        <text x="270" y="257" text-anchor="middle" fill="#22c55e" font-size="10" font-family="Hind Siliguri">⑥ Encrypted Pre-Master Key পাঠানো</text>
+
+        <line x1="100" y1="300" x2="438" y2="300" stroke="#22c55e" stroke-width="1" marker-end="url(#tls1)"/>
+        <text x="270" y="292" text-anchor="middle" fill="#22c55e" font-size="10" font-family="Hind Siliguri">⑦ Client Signature Verify</text>
+
+        <!-- Symmetric starts -->
+        <line x1="150" y1="335" x2="390" y2="335" stroke="#86efac" stroke-width="1" stroke-dasharray="4,2"/>
+        <text x="270" y="330" text-anchor="middle" fill="#86efac" font-size="10" font-family="Hind Siliguri, sans-serif">এখন থেকে Symmetric Encryption শুরু ↓</text>
+
+        <line x1="100" y1="370" x2="438" y2="370" stroke="#60a5fa" stroke-width="2" marker-end="url(#tls1)"/>
+        <line x1="438" y1="400" x2="100" y2="400" stroke="#60a5fa" stroke-width="2" marker-end="url(#tls2)"/>
+        <text x="270" y="385" text-anchor="middle" fill="#60a5fa" font-size="11" font-family="Hind Siliguri">🔐 Encrypted Data আদান-প্রদান</text>
+        <text x="270" y="420" text-anchor="middle" fill="#60a5fa" font-size="11" font-family="Hind Siliguri">🔐 Encrypted Response</text>
+      </svg>
+      <p class="caption">TLS Handshake — HTTPS connection setup করার প্রক্রিয়া</p>
+    </div>
+
+    <div class="highlight info">
+      <strong>💡 কেন Symmetric শেষে?</strong> Asymmetric encryption গণনায় ধীর ও ব্যয়বহুল। Handshake-এ Asymmetric ব্যবহার করে নিরাপদভাবে একটি shared secret তৈরি করা হয়, তারপর দ্রুত Symmetric encryption-এ switch করা হয়।
+    </div>
+
+    <div class="pros-cons">
+      <div class="pros">
+        <h4>HTTPS-এর সুবিধা</h4>
+        <ul>
+          <li>ডেটা চুরি থেকে সুরক্ষা</li>
+          <li>Identity verify হয়</li>
+          <li>SEO-তে Google প্রাধান্য দেয়</li>
+          <li>Browser trust indicator (🔒)</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h4>কিছু বিষয়</h4>
+        <ul>
+          <li>Certificate নবায়ন করতে হয়</li>
+          <li>সামান্য performance overhead</li>
+          <li>Free: Let's Encrypt দিয়ে সম্ভব</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="section" style="border-color: rgba(255,255,255,0.1);">
+    <div class="section-title"><span class="icon">📊</span> চারটি পদ্ধতির তুলনা</div>
+
+    <table>
+      <tr>
+        <th>পদ্ধতি</th>
+        <th>কীভাবে কাজ করে</th>
+        <th>ব্যবহার</th>
+        <th>নিরাপত্তা</th>
+      </tr>
+      <tr>
+        <td><strong style="color: var(--accent);">API Key</strong></td>
+        <td>Header বা Query-তে একটি string</td>
+        <td>Third-party API, Apps</td>
+        <td>⭐⭐</td>
+      </tr>
+      <tr>
+        <td><strong style="color: var(--accent2);">Basic Auth</strong></td>
+        <td>Username:Password (Base64)</td>
+        <td>Simple web apps</td>
+        <td>⭐⭐ (HTTPS ছাড়া ⭐)</td>
+      </tr>
+      <tr>
+        <td><strong style="color: var(--accent3);">JWT</strong></td>
+        <td>Signed token, মেয়াদসহ</td>
+        <td>Modern web/mobile apps</td>
+        <td>⭐⭐⭐⭐</td>
+      </tr>
+      <tr>
+        <td><strong style="color: var(--green);">HTTPS</strong></td>
+        <td>সব ডেটা encrypt করে</td>
+        <td>সব ওয়েবসাইট/API</td>
+        <td>⭐⭐⭐⭐⭐</td>
+      </tr>
+    </table>
+
+    <div class="highlight success">
+      <strong>✅ Best Practice:</strong> সবগুলো একসাথে ব্যবহার করুন! HTTPS + JWT বা HTTPS + API Key — এটাই আধুনিক API নিরাপত্তার মান।
+    </div>
+  </div>
+
+  <div class="nav-footer">
+    <a href="api_security_part1_bengali.html" class="nav-btn-prev">← পর্ব ১</a>
+    <div class="progress-bar">
+      <div class="progress-dot"></div>
+      <div class="progress-dot active"></div>
+      <div class="progress-dot"></div>
+    </div>
+    <a href="unit_testing_gdpr_bengali.html" class="nav-btn">পর্ব ৩ →</a>
+  </div>
+
+</div>
+</body>
+</html>

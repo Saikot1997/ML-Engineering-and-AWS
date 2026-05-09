@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jenkins — সম্পূর্ণ বাংলা গাইড (৫টি অধ্যায়)</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f0e0d;--surf:#1a1917;--surf2:#242220;--bdr:#333230;--red:#e05c4b;--orange:#f0923a;--gold:#f5c842;--blue:#5ab4d6;--green:#7ec87a;--pink:#e07ab0;--purple:#a98be0;--text:#ede9e3;--muted:#8a8580;--code:#0b0a09}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Hind Siliguri',sans-serif;font-size:17px;line-height:1.85}
+.hero{background:linear-gradient(140deg,#0f0e0d,#1c1410,#0e1218);padding:80px 40px 60px;text-align:center;position:relative;overflow:hidden;border-bottom:2px solid var(--bdr)}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(224,92,75,.07),transparent 55%),radial-gradient(ellipse at 70% 40%,rgba(240,146,58,.05),transparent 55%)}
+.hero-badge{display:inline-block;background:rgba(224,92,75,.12);border:1px solid rgba(224,92,75,.35);color:var(--red);padding:6px 20px;border-radius:20px;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;position:relative}
+.hero h1{font-family:'Sora',sans-serif;font-size:clamp(30px,5.5vw,56px);font-weight:800;color:#fff;margin-bottom:14px;position:relative}
+.hero h1 span{color:var(--orange)}
+.hero-sub{font-size:18px;color:var(--muted);max-width:700px;margin:0 auto 32px;position:relative}
+.hero-stats{display:flex;gap:36px;justify-content:center;flex-wrap:wrap;position:relative;margin-bottom:28px}
+.stat-num{font-family:'Sora',sans-serif;font-size:34px;font-weight:800;color:var(--orange)}.stat-label{font-size:13px;color:var(--muted);margin-top:2px}
+.sticky-nav{position:sticky;top:0;z-index:100;background:rgba(15,14,13,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--bdr)}
+.nav-inner{display:flex;overflow-x:auto;scrollbar-width:none}.nav-inner::-webkit-scrollbar{display:none}
+.nav-item{flex-shrink:0;padding:14px 22px;font-size:13px;color:var(--muted);text-decoration:none;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;font-family:'Sora',sans-serif}
+.nav-item:hover{color:var(--text)}.nav-item.active{color:var(--orange);border-color:var(--orange);background:rgba(240,146,58,.05)}
+.container{max-width:1020px;margin:0 auto;padding:0 24px}
+.chapter{padding:64px 0;border-bottom:2px solid var(--bdr)}.chapter:last-child{border-bottom:none}
+.chapter-header{display:flex;align-items:center;gap:16px;margin-bottom:36px}
+.ch-num{font-family:'Sora',sans-serif;font-size:13px;color:var(--muted);font-weight:600;letter-spacing:1px}
+.ch-title{font-family:'Sora',sans-serif;font-size:clamp(22px,3.5vw,34px);font-weight:800;color:#fff}
+.ch-title span{color:var(--orange)}.ch-bar{width:4px;height:46px;border-radius:2px;flex-shrink:0}
+h3{font-family:'Sora',sans-serif;font-size:21px;color:var(--blue);margin:36px 0 14px}
+h4{font-family:'Sora',sans-serif;font-size:16px;color:var(--green);margin:22px 0 10px}
+p{margin-bottom:16px}
+.box{border-radius:10px;padding:18px 22px;margin:22px 0;border-left:4px solid;display:flex;gap:14px}
+.box-icon{font-size:22px;flex-shrink:0;margin-top:2px}.box-body{flex:1}.box-body p{margin-bottom:6px}.box-body p:last-child{margin-bottom:0}
+.box.tip{background:rgba(122,200,122,.07);border-color:var(--green)}.box.warn{background:rgba(224,92,75,.07);border-color:var(--red)}.box.info{background:rgba(90,180,214,.07);border-color:var(--blue)}.box.gold{background:rgba(245,200,66,.07);border-color:var(--gold)}
+.code{background:var(--code);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin:20px 0}
+.code-hdr{background:var(--surf2);padding:9px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bdr)}
+.code-lang{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);font-weight:600}.code-desc{font-size:11px;color:var(--muted);margin-left:auto}
+pre{font-family:'JetBrains Mono',monospace;font-size:13.5px;padding:20px;overflow-x:auto;line-height:1.8;color:#ccc8c0}
+.kw{color:#e05c4b}.fn{color:#c9a0f0}.st{color:#98d4a0}.cm{color:#605c56;font-style:italic}.nm{color:#7ec8e0}.vr{color:#f0a050}
+.hl{background:rgba(240,146,58,.1);display:block;margin:0 -20px;padding:2px 20px;border-left:3px solid var(--orange)}
+code{font-family:'JetBrains Mono',monospace;background:var(--surf2);color:var(--orange);padding:2px 7px;border-radius:4px;font-size:14px}
+.tbl{overflow-x:auto;margin:22px 0}table{width:100%;border-collapse:collapse}
+th{background:var(--surf2);color:var(--blue);padding:12px 16px;text-align:left;font-family:'Sora',sans-serif;font-size:13px;border-bottom:2px solid var(--bdr)}
+td{padding:11px 16px;border-bottom:1px solid var(--bdr);font-size:15px;vertical-align:top}tr:hover td{background:rgba(255,255,255,.02)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:20px 0}.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:20px 0}
+@media(max-width:640px){.g2,.g3{grid-template-columns:1fr}}
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:20px}.card h4{margin-top:0}
+.steps{list-style:none;padding:0;margin:20px 0}
+.steps li{display:flex;gap:16px;margin-bottom:18px;padding:18px 20px;background:var(--surf);border:1px solid var(--bdr);border-radius:10px}
+.sn{background:var(--orange);color:#000;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;margin-top:3px}
+.sb strong{color:var(--gold);display:block;margin-bottom:6px;font-size:15px}
+.ftree{background:var(--code);border:1px solid var(--bdr);border-radius:10px;padding:20px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:2.1}
+.ftd{color:var(--blue)}.ftf{color:var(--green)}.ftc{color:var(--muted)}
+.hbox{background:linear-gradient(135deg,rgba(90,180,214,.05),rgba(240,146,58,.04));border:1px solid rgba(90,180,214,.2);border-radius:12px;padding:24px;margin:22px 0}
+.hbox h4{color:var(--blue);margin-top:0}
+.toc{background:var(--surf);border:1px solid var(--bdr);border-left:4px solid var(--orange);border-radius:12px;padding:28px 32px;margin:40px 0}
+.toc-title{font-family:'Sora',sans-serif;color:var(--orange);font-size:15px;font-weight:700;margin-bottom:16px}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 32px}@media(max-width:600px){.toc-grid{grid-template-columns:1fr}}
+.toc a{color:var(--blue);text-decoration:none;font-size:14px;padding:4px 0;display:block}.toc a:hover{color:var(--orange)}
+.toc-ch{color:var(--muted);font-size:12px;margin-right:6px}
+.dummy-section{background:linear-gradient(135deg,rgba(122,200,122,.06),rgba(90,180,214,.04));border:2px solid rgba(122,200,122,.3);border-radius:14px;padding:28px;margin:28px 0}
+.dummy-section h4{color:var(--green);font-size:18px;margin-top:0;margin-bottom:12px}
+.pipeline-flow{display:flex;align-items:center;gap:8px;margin:28px 0;flex-wrap:wrap}
+.stage-box{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:14px 18px;text-align:center;flex:1;min-width:110px}
+.stage-icon{font-size:26px;display:block;margin-bottom:6px}
+.stage-name{font-family:'Sora',sans-serif;font-size:13px;font-weight:700}
+.arrow-txt{color:var(--muted);font-size:22px;flex-shrink:0}
+.svg-wrap{width:100%;max-width:700px;display:block;margin:28px auto;border-radius:12px;background:var(--surf);border:1px solid var(--bdr)}
+footer{background:var(--surf);border-top:1px solid var(--bdr);padding:48px 40px;text-align:center;color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div style="font-size:72px;margin-bottom:16px;filter:drop-shadow(0 0 20px rgba(224,92,75,.3));position:relative">🤵</div>
+  <div class="hero-badge">সম্পূর্ণ বাংলা গাইড — Fixed Edition</div>
+  <h1>Jenkins <span>CI/CD</span> মাস্টারক্লাস</h1>
+  <p class="hero-sub">Introduction থেকে Multibranch Pipeline, Webhook ও Automation পর্যন্ত — একটি document-এ, dummy source files সহ</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">৫</div><div class="stat-label">অধ্যায়</div></div>
+    <div class="stat"><div class="stat-num">২০+</div><div class="stat-label">SVG Diagrams</div></div>
+    <div class="stat"><div class="stat-num">৪০+</div><div class="stat-label">Code Blocks</div></div>
+    <div class="stat"><div class="stat-num">৩</div><div class="stat-label">Dummy Source Files</div></div>
+  </div>
+</div>
+
+<nav class="sticky-nav">
+  <div class="nav-inner">
+    <a href="#ch1" class="nav-item active">অধ্যায় ১: পরিচিতি</a>
+    <a href="#ch2" class="nav-item">অধ্যায় ২: Installation</a>
+    <a href="#ch3" class="nav-item">অধ্যায় ৩: Pipeline</a>
+    <a href="#ch4" class="nav-item">অধ্যায় ৪: Complements</a>
+    <a href="#ch5" class="nav-item">অধ্যায় ৫: Conclusion</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<div class="toc">
+  <div class="toc-title">📋 সূচিপত্র</div>
+  <div class="toc-grid">
+    <a href="#ch1"><span class="toc-ch">অধ্যায় ১</span>Jenkins কী, CI/CD কী, কেন দরকার, কেন জনপ্রিয়</a>
+    <a href="#ch2"><span class="toc-ch">অধ্যায় ২</span>Docker দিয়ে Install, First Project, Hello World</a>
+    <a href="#ch3"><span class="toc-ch">অধ্যায় ৩</span>Jenkinsfile: Build → Test → Deliver pipeline</a>
+    <a href="#ch4"><span class="toc-ch">অধ্যায় ৪</span>Multibranch Pipeline, Scheduling, Webhooks</a>
+    <a href="#ch5"><span class="toc-ch">অধ্যায় ৫</span>সারসংক্ষেপ ও পুরো Journey review</a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ CHAPTER 1 ═══════════════════════════════ -->
+<div class="chapter" id="ch1">
+  <div class="chapter-header">
+    <div class="ch-bar" style="background:linear-gradient(#e05c4b,#f0923a)"></div>
+    <div><div class="ch-num">CHAPTER 01</div><div class="ch-title">Jenkins <span>পরিচিতি</span></div></div>
+  </div>
+
+  <h3>Jenkins কী?</h3>
+  <p><strong>Jenkins</strong> হলো Java-তে লেখা একটি open-source <strong>automation server</strong>। Software development-এর বিভিন্ন কাজ — code build করা, test চালানো, server-এ deploy করা — এগুলো automatically করে দেয়।</p>
+  <p>সহজ কথায়: তুমি code লেখো → Jenkins বাকি সব করে দেয়।</p>
+
+  <div class="box gold"><span class="box-icon">💡</span><div class="box-body">
+    <p><strong>বাস্তব উদাহরণ:</strong> তুমি একটি web app বানাচ্ছো। প্রতিদিন নতুন code লেখো। প্রতিবার কোড লেখার পরে manually: ① build করো → ② সব tests চালাও → ③ server-এ deploy করো।</p>
+    <p>এটা অনেক সময় নষ্ট করে। ভুলও হয় — হয়তো test চালাতে ভুলে গেলে। Jenkins এই পুরো কাজটা automatically করে। তুমি শুধু <code>git push</code> করো।</p>
+  </div></div>
+
+  <h3>CI/CD কী? — Jenkins বোঝার আগে এটা জানতে হবে</h3>
+
+  <svg class="svg-wrap" viewBox="0 0 700 270" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="j1f" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3z" fill="#f0923a"/></marker>
+      <marker id="j1g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3z" fill="#7ec87a"/></marker>
+    </defs>
+    <text x="350" y="22" text-anchor="middle" fill="#f5c842" font-family="Sora,sans-serif" font-size="13" font-weight="700">CI/CD Pipeline — Software Release-এর সম্পূর্ণ চিত্র</text>
+    <!-- CI zone border -->
+    <rect x="15" y="36" width="325" height="170" rx="10" fill="rgba(90,180,214,.04)" stroke="#5ab4d6" stroke-width="1.5" stroke-dasharray="6,3"/>
+    <text x="177" y="56" text-anchor="middle" fill="#5ab4d6" font-family="Sora,sans-serif" font-size="11" font-weight="700">CI — Continuous Integration</text>
+    <!-- CD zone border -->
+    <rect x="357" y="36" width="328" height="170" rx="10" fill="rgba(122,200,122,.04)" stroke="#7ec87a" stroke-width="1.5" stroke-dasharray="6,3"/>
+    <text x="521" y="56" text-anchor="middle" fill="#7ec87a" font-family="Sora,sans-serif" font-size="11" font-weight="700">CD — Continuous Delivery / Deploy</text>
+    <!-- Stage boxes -->
+    <rect x="28" y="68" width="75" height="48" rx="7" fill="#1a1917" stroke="#333230"/>
+    <text x="65" y="88" text-anchor="middle" fill="#fff" font-size="17">💻</text>
+    <text x="65" y="106" text-anchor="middle" fill="#ede9e3" font-family="Sora,sans-serif" font-size="9" font-weight="600">Code</text>
+    <line x1="105" y1="92" x2="122" y2="92" stroke="#f0923a" stroke-width="2" marker-end="url(#j1f)"/>
+    <rect x="124" y="68" width="75" height="48" rx="7" fill="#1a1917" stroke="#5ab4d6" stroke-width="1.5"/>
+    <text x="161" y="88" text-anchor="middle" fill="#fff" font-size="17">🔨</text>
+    <text x="161" y="106" text-anchor="middle" fill="#5ab4d6" font-family="Sora,sans-serif" font-size="9" font-weight="600">Build</text>
+    <line x1="201" y1="92" x2="218" y2="92" stroke="#f0923a" stroke-width="2" marker-end="url(#j1f)"/>
+    <rect x="220" y="68" width="75" height="48" rx="7" fill="#1a1917" stroke="#7ec87a" stroke-width="1.5"/>
+    <text x="257" y="88" text-anchor="middle" fill="#fff" font-size="17">🧪</text>
+    <text x="257" y="106" text-anchor="middle" fill="#7ec87a" font-family="Sora,sans-serif" font-size="9" font-weight="600">Test</text>
+    <line x1="297" y1="92" x2="328" y2="92" stroke="#7ec87a" stroke-width="2" marker-end="url(#j1g)"/>
+    <text x="342" y="96" text-anchor="middle" fill="#8a8580" font-size="18">→</text>
+    <rect x="369" y="68" width="75" height="48" rx="7" fill="#1a1917" stroke="#f5c842" stroke-width="1.5"/>
+    <text x="406" y="88" text-anchor="middle" fill="#fff" font-size="17">📦</text>
+    <text x="406" y="106" text-anchor="middle" fill="#f5c842" font-family="Sora,sans-serif" font-size="9" font-weight="600">Release</text>
+    <line x1="446" y1="92" x2="463" y2="92" stroke="#7ec87a" stroke-width="2" marker-end="url(#j1g)"/>
+    <rect x="465" y="68" width="75" height="48" rx="7" fill="#1a1917" stroke="#a98be0" stroke-width="1.5"/>
+    <text x="502" y="88" text-anchor="middle" fill="#fff" font-size="17">🚀</text>
+    <text x="502" y="106" text-anchor="middle" fill="#a98be0" font-family="Sora,sans-serif" font-size="9" font-weight="600">Deploy</text>
+    <line x1="542" y1="92" x2="559" y2="92" stroke="#7ec87a" stroke-width="2" marker-end="url(#j1g)"/>
+    <rect x="561" y="68" width="75" height="48" rx="7" fill="#1a1917" stroke="#e07ab0" stroke-width="1.5"/>
+    <text x="598" y="88" text-anchor="middle" fill="#fff" font-size="17">📊</text>
+    <text x="598" y="106" text-anchor="middle" fill="#e07ab0" font-family="Sora,sans-serif" font-size="9" font-weight="600">Monitor</text>
+    <!-- Without Jenkins -->
+    <rect x="20" y="132" width="315" height="58" rx="7" fill="rgba(224,92,75,.05)" stroke="#e05c4b"/>
+    <text x="177" y="153" text-anchor="middle" fill="#e05c4b" font-family="Sora,sans-serif" font-size="11" font-weight="700">❌ Jenkins ছাড়া</text>
+    <text x="177" y="169" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">প্রতিবার manually build+test → ঘণ্টার পর ঘণ্টা নষ্ট</text>
+    <text x="177" y="183" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">ভুল হলে দেরিতে ধরা পড়ে → বড় সমস্যা</text>
+    <!-- With Jenkins -->
+    <rect x="362" y="132" width="318" height="58" rx="7" fill="rgba(122,200,122,.05)" stroke="#7ec87a"/>
+    <text x="521" y="153" text-anchor="middle" fill="#7ec87a" font-family="Sora,sans-serif" font-size="11" font-weight="700">✅ Jenkins দিয়ে</text>
+    <text x="521" y="169" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">git push করলেই auto build+test+deploy</text>
+    <text x="521" y="183" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">ভুল হলে সাথে সাথে alert → দ্রুত fix</text>
+    <text x="350" y="228" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="11">Jenkins এই পুরো pipeline automate করে → Developer শুধু code লেখায় মনোযোগ দিতে পারে</text>
+    <text x="350" y="246" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">CI = code merge হলে auto build+test। CD = test pass হলে auto release+deploy।</text>
+  </svg>
+
+  <div class="tbl"><table>
+    <thead><tr><th>Term</th><th>মানে</th><th>উদাহরণ</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:var(--blue)">CI — Continuous Integration</strong></td><td>Code push হলেই auto build ও test</td><td>GitHub-এ push → Jenkins unit test চালায়</td></tr>
+      <tr><td><strong style="color:var(--green)">CD — Continuous Delivery</strong></td><td>Test pass হলে release-ready artifact তৈরি</td><td>Test pass → Docker image build হয়</td></tr>
+      <tr><td><strong style="color:var(--orange)">CD — Continuous Deployment</strong></td><td>Automatically production server-এ deploy</td><td>Image ready → server-এ auto deploy হয়</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Jenkins কেন এত জনপ্রিয়?</h3>
+  <div class="g3">
+    <div class="card"><h4>🔌 ১৮০০+ Plugins</h4><p style="font-size:14px">Git, Docker, Kubernetes, AWS, Azure — প্রায় সব tool-এর সাথে integrate করা যায়। Plugin মানে browser extension-এর মতো।</p></div>
+    <div class="card"><h4>🆓 Open Source ও Free</h4><p style="font-size:14px">সম্পূর্ণ বিনামূল্যে। Community actively maintain করে। GitHub-এ regularly update হয়।</p></div>
+    <div class="card"><h4>🖥️ Web UI + CLI</h4><p style="font-size:14px">Browser-এ graphical interface দিয়ে সব কাজ। /cli route-এ terminal commands-ও আছে।</p></div>
+  </div>
+
+  <div class="box info"><span class="box-icon">🔗</span><div class="box-body"><p><strong>Jenkins শুধু Data Engineer-দের জন্য নয়!</strong> Web app, mobile app, ML pipeline — সব জায়গায় কাজে আসে। এটা আধুনিক software development-এর একটি মূল হাতিয়ার।</p></div></div>
+</div>
+
+<!-- ═══════════════════════════════ CHAPTER 2 ═══════════════════════════════ -->
+<div class="chapter" id="ch2">
+  <div class="chapter-header">
+    <div class="ch-bar" style="background:linear-gradient(#5ab4d6,#7ec87a)"></div>
+    <div><div class="ch-num">CHAPTER 02</div><div class="ch-title">Installation ও <span>First Use Case</span></div></div>
+  </div>
+
+  <h3>Docker দিয়ে Jenkins Install করা</h3>
+  <div class="box info"><span class="box-icon">🐳</span><div class="box-body">
+    <p><strong>Docker কী?</strong> Application-কে isolated "container"-এ চালানোর platform। Container = mini virtual machine। Jenkins-কে container-এ চালালে তোমার computer-এ কোনো পরিবর্তন হবে না।</p>
+    <p><strong>Docker Volume কী?</strong> Container-এর data computer-এ permanently রাখার ব্যবস্থা। Container বন্ধ করলেও data থাকে। <code>jenkins-data</code> volume-এ Jenkins-এর সব jobs ও config save হয়।</p>
+    <p><strong>Docker Network কী?</strong> একাধিক container একে অপরের সাথে কথা বলার জন্য virtual network। আমরা <code>jenkins</code> নামের একটি network তৈরি করবো।</p>
+  </div></div>
+
+  <!-- SVG: Two containers architecture -->
+  <svg class="svg-wrap" viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="j2f" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3z" fill="#f0923a"/></marker></defs>
+    <text x="350" y="22" text-anchor="middle" fill="#f5c842" font-family="Sora,sans-serif" font-size="13" font-weight="700">Jenkins Docker Architecture — দুটি Container</text>
+    <rect x="15" y="36" width="670" height="180" rx="12" fill="rgba(90,180,214,.03)" stroke="#5ab4d6" stroke-width="1.5" stroke-dasharray="7,4"/>
+    <text x="42" y="56" fill="#5ab4d6" font-family="Sora,sans-serif" font-size="11" font-weight="700">তোমার Computer — "jenkins" network-এ দুটি container একসাথে চলে</text>
+    <!-- Container 1 -->
+    <rect x="32" y="64" width="265" height="138" rx="10" fill="rgba(240,146,58,.06)" stroke="#f0923a" stroke-width="1.5"/>
+    <text x="164" y="86" text-anchor="middle" fill="#f0923a" font-family="Sora,sans-serif" font-size="12" font-weight="700">Container 1: jenkins-docker</text>
+    <text x="164" y="103" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Image: docker:dind (Docker-in-Docker)</text>
+    <text x="164" y="120" text-anchor="middle" fill="#ede9e3" font-family="Sora,sans-serif" font-size="10" font-weight="600">Jenkins Pipeline-কে Docker চালাতে দেয়</text>
+    <text x="164" y="136" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Port 2376 (Docker API)</text>
+    <text x="164" y="152" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Network alias: "docker"</text>
+    <rect x="50" y="165" width="225" height="22" rx="5" fill="#0b0a09" stroke="#333230"/>
+    <text x="162" y="181" text-anchor="middle" fill="#7ec87a" font-family="JetBrains Mono,monospace" font-size="9">--privileged flag দরকার (DinD-এর জন্য)</text>
+    <!-- Arrow -->
+    <line x1="299" y1="130" x2="340" y2="130" stroke="#f0923a" stroke-width="2" marker-end="url(#j2f)"/>
+    <text x="319" y="122" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">tcp:2376</text>
+    <!-- Container 2 -->
+    <rect x="343" y="64" width="328" height="138" rx="10" fill="rgba(122,200,122,.06)" stroke="#7ec87a" stroke-width="1.5"/>
+    <text x="507" y="86" text-anchor="middle" fill="#7ec87a" font-family="Sora,sans-serif" font-size="12" font-weight="700">Container 2: jenkins-blueocean</text>
+    <text x="507" y="103" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Image: myjenkins-blueocean (custom Dockerfile)</text>
+    <text x="507" y="120" text-anchor="middle" fill="#ede9e3" font-family="Sora,sans-serif" font-size="10" font-weight="600">Jenkins Server — মূল application</text>
+    <text x="507" y="136" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Port 8080 → Web UI (browser-এ দেখো)</text>
+    <text x="507" y="152" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Port 50000 → Agent communication</text>
+    <rect x="360" y="165" width="295" height="22" rx="5" fill="#0b0a09" stroke="#333230"/>
+    <text x="507" y="181" text-anchor="middle" fill="#7ec87a" font-family="JetBrains Mono,monospace" font-size="9">Browser: http://localhost:8080</text>
+    <text x="350" y="218" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">দুটি container একই "jenkins" network-এ থাকে। Container 2 "docker" hostname দিয়ে Container 1-এ যায়।</text>
+  </svg>
+
+  <h3>ধাপে ধাপে Installation</h3>
+  <ul class="steps">
+    <li><span class="sn">১</span><div class="sb"><strong>Images ও Network তৈরি করো</strong>
+    <div class="code" style="margin:8px 0"><div class="code-hdr"><span class="code-lang">bash</span></div>
+    <pre>docker pull jenkins/jenkins   <span class="cm"># Jenkins-এর official image download করো</span>
+docker pull docker:dind        <span class="cm"># Docker-in-Docker image — Jenkins যেন Docker চালাতে পারে</span>
+docker network create jenkins  <span class="cm"># দুটি container-এর জন্য shared virtual network তৈরি করো</span></pre></div></div></li>
+
+    <li><span class="sn">২</span><div class="sb"><strong>DinD Container চালাও (jenkins-docker)</strong>
+    <div class="code" style="margin:8px 0"><div class="code-hdr"><span class="code-lang">bash</span><span class="code-desc">প্রতিটি \ মানে পরের line-এ command continue হচ্ছে — একটাই command</span></div>
+    <pre>docker run \
+  --name jenkins-docker \        <span class="cm"># container-এর নাম — পরে stop/start করতে এই নাম লাগবে</span>
+  --rm \                          <span class="cm"># container বন্ধ হলে automatically delete করো</span>
+  --detach \                      <span class="cm"># background-এ চালাও (terminal free থাকবে)</span>
+  --privileged \                  <span class="cm"># DinD চালাতে host kernel-এর special access দরকার</span>
+  --network jenkins \             <span class="cm"># "jenkins" network-এ যোগ করো</span>
+  --network-alias docker \        <span class="cm"># network-এ এই container-কে "docker" নামে ডাকা যাবে</span>
+  --env DOCKER_TLS_CERTDIR=/certs \   <span class="cm"># TLS certificate কোথায় রাখবে</span>
+  --volume jenkins-docker-certs:/certs/client \  <span class="cm"># Certificate volume-এ রাখো</span>
+  --volume jenkins-data:/var/jenkins_home \       <span class="cm"># Jenkins data persistent করো</span>
+  --publish 2376:2376 \           <span class="cm"># host:container port। তোমার 2376 = container-এর 2376</span>
+  docker:dind \                   <span class="cm"># কোন image ব্যবহার করবে</span>
+  --storage-driver overlay2       <span class="cm"># Modern Linux-এর Docker storage driver</span></pre></div></div></li>
+
+    <li><span class="sn">৩</span><div class="sb"><strong>Custom Dockerfile তৈরি করো</strong>
+    <p style="font-size:14px">এই Dockerfile Jenkins-এ Docker CLI এবং Blue Ocean plugin যোগ করে। "Dockerfile" নামে file তৈরি করো (কোনো extension নেই!)।</p>
+    <div class="code" style="margin:8px 0"><div class="code-hdr"><span class="code-lang">dockerfile</span></div>
+    <pre><span class="kw">FROM</span> jenkins/jenkins:2.361.4-jdk11
+<span class="cm"># Java 11 সহ Jenkins 2.361.4 image থেকে শুরু করো</span>
+<span class="kw">USER</span> root
+<span class="cm"># Package install করতে root permission দরকার</span>
+<span class="kw">RUN</span> apt-get update &amp;&amp; apt-get install -y lsb-release
+<span class="cm"># lsb_release = Linux distribution info command (Docker repo যোগ করতে লাগবে)</span>
+<span class="kw">RUN</span> curl -fsSLo /usr/share/keyrings/docker-archive-keyring.asc \
+    https://download.docker.com/linux/debian/gpg
+<span class="cm"># Docker-এর GPG key download (package authenticity verify করতে)</span>
+<span class="kw">RUN</span> echo "deb [arch=$(dpkg --print-architecture) \
+    signed-by=/usr/share/keyrings/docker-archive-keyring.asc] \
+    https://download.docker.com/linux/debian \
+    $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list
+<span class="cm"># Docker-এর package repository যোগ করো apt-এ</span>
+<span class="kw">RUN</span> apt-get update &amp;&amp; apt-get install -y docker-ce-cli
+<span class="cm"># Docker CLI install করো (Jenkins যাতে docker commands চালাতে পারে)
+# docker-ce-cli = শুধু command line tool, full Docker daemon নয়</span>
+<span class="kw">USER</span> jenkins
+<span class="cm"># Security-র জন্য normal jenkins user-এ ফিরে যাও</span>
+<span class="kw">RUN</span> jenkins-plugin-cli --plugins "blueocean:1.25.6 docker-workflow:1.29"
+<span class="cm"># blueocean = সুন্দর modern UI
+# docker-workflow = Jenkins pipeline-এ Docker ব্যবহার করতে</span></pre></div>
+    <div class="code" style="margin:8px 0"><div class="code-hdr"><span class="code-lang">bash</span></div>
+    <pre>docker build -t myjenkins-blueocean:2.361.4-1 .
+<span class="cm"># -t = tag দাও (নাম:version format)
+# . = current folder-এর Dockerfile ব্যবহার করো</span></pre></div></div></li>
+
+    <li><span class="sn">৪</span><div class="sb"><strong>Jenkins Container চালাও</strong>
+    <div class="code" style="margin:8px 0"><div class="code-hdr"><span class="code-lang">bash</span></div>
+    <pre>docker run \
+  --name jenkins-blueocean \
+  --restart=on-failure \          <span class="cm"># crash হলে auto restart (manually বন্ধ করলে করবে না)</span>
+  --detach \
+  --network jenkins \
+  --env DOCKER_HOST=tcp://docker:2376 \
+  <span class="cm"># "docker" = container 1-এর network alias
+  # Jenkins এই address-এ Docker API পাবে</span>
+  --env DOCKER_CERT_PATH=/certs/client \
+  --env DOCKER_TLS_VERIFY=1 \     <span class="cm"># Secure TLS connection ব্যবহার করো</span>
+  --publish 8080:8080 \           <span class="cm"># Web UI — browser-এ localhost:8080 = Jenkins</span>
+  --publish 50000:50000 \         <span class="cm"># Agent port — Jenkins agents connect করতে</span>
+  --volume jenkins-data:/var/jenkins_home \
+  --volume jenkins-docker-certs:/certs/client:ro \
+  <span class="cm"># :ro = read-only। Jenkins certificate পড়বে, লিখবে না।</span>
+  myjenkins-blueocean:2.361.4-1</pre></div></div></li>
+
+    <li><span class="sn">৫</span><div class="sb"><strong>Browser-এ খোলো ও Initial Password দাও</strong>
+    <p>Browser-এ যাও: <code>http://localhost:8080</code> (VM হলে <code>http://VM_IP:8080</code>)</p>
+    <div class="code" style="margin:8px 0"><div class="code-hdr"><span class="code-lang">bash</span><span class="code-desc">Initial password খোঁজো</span></div>
+    <pre>docker logs jenkins-blueocean
+<span class="cm"># Output-এ এরকম দেখাবে:
+# **********************************************************
+# Jenkins initial setup is required.
+# Please use the following password to proceed to installation:
+#
+#   75a0356752944ea4b91911d581ad34ed   ← এই string copy করো
+#
+# This may also be found at:
+# /var/jenkins_home/secrets/initialAdminPassword
+# **********************************************************</span></pre></div>
+    <div class="box tip" style="margin:8px 0"><span class="box-icon">🔑</span><div class="box-body"><p>Browser-এ এই password paste করো → "Install suggested plugins" বেছে নাও → সব plugins install হওয়ার পরে admin user form আসবে → নাম/email/password দাও → Jenkins Dashboard! 🎉</p></div></div></div></li>
+  </ul>
+
+  <h3>Plugins — Jenkins-এর শক্তির উৎস</h3>
+  <p><strong>Manage Jenkins → Manage Plugins</strong>-এ গিয়ে install করা যায়। ৪টি Tab:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Tab</th><th>কী দেখাবে</th></tr></thead>
+    <tbody>
+      <tr><td><code>Updates</code></td><td>Install করা plugins-এর যেগুলো update পাওয়া গেছে</td></tr>
+      <tr><td><code>Available</code></td><td>নতুন plugins search করো ও install করো</td></tr>
+      <tr><td><code>Installed</code></td><td>এখন install আছে এমন সব plugins-এর list</td></tr>
+      <tr><td><code>Advanced</code></td><td>Manually .hpi file দিয়ে install (internet না থাকলে)</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>প্রথম Project — Hello World</h3>
+  <ul class="steps">
+    <li><span class="sn">১</span><div class="sb"><strong>New Item → Freestyle Project</strong>
+    <p>Dashboard Sidebar → "New Item" → নাম দাও (যেমন: "hello-world") → "Freestyle project" select করো → OK।</p>
+    <div class="box info" style="margin:8px 0"><span class="box-icon">💡</span><div class="box-body"><p><strong>Freestyle Project কী?</strong> Jenkins-এর সবচেয়ে simple project type। Web UI দিয়ে configure করা যায়। Real project-এ Pipeline ব্যবহার করা হয়, কিন্তু শুরু করার জন্য এটা সহজ।</p></div></div></div></li>
+    <li><span class="sn">২</span><div class="sb"><strong>Build Section → Execute shell</strong>
+    <p>Configuration page → "Build" tab → "Add build step" → "Execute shell"।</p>
+    <div class="code" style="margin:8px 0"><div class="code-hdr"><span class="code-lang">shell</span><span class="code-desc">Execute shell text box-এ এটা লেখো</span></div>
+    <pre>echo 'Hello World with Jenkins'
+java -version
+<span class="cm"># echo = terminal-এ text print করো
+# java -version = কোন Java version installed সেটা দেখো</span></pre></div>
+    <p style="font-size:14px;color:var(--muted)">Terminal-এ যা লিখতাম হুবহু তাই লিখতে হবে। "Save" চাপো।</p></div></li>
+    <li><span class="sn">৩</span><div class="sb"><strong>Build Now চাপো ও Output দেখো</strong>
+    <p>Sidebar → "Build Now" → "Build History"-তে #1 দেখাবে। Green ✓ = success। Red ✗ = failure।</p>
+    <div class="code" style="margin:8px 0"><div class="code-hdr"><span class="code-lang">console output</span><span class="code-desc">#1 → Console Output-এ এরকম দেখাবে</span></div>
+    <pre>Started by user Admin
+[hello-world] $ /bin/sh -xe /tmp/jenkins12345.sh
+<span class="cm"># Jenkins একটি temp shell script তৈরি করে চালায় — এটা স্বাভাবিক</span>
++ echo 'Hello World with Jenkins'
+Hello World with Jenkins
++ java -version
+openjdk version "11.0.11" 2021-04-20
+Finished: SUCCESS</pre></div></div></li>
+  </ul>
+
+  <div class="box tip"><span class="box-icon">🌍</span><div class="box-body"><p><strong>Environment Variables:</strong> Jenkins-এ <code>http://localhost:8080/env-vars.html</code> route-এ সব built-in variables দেখা যায়। যেমন: <code>$BUILD_ID</code> (build number), <code>$JOB_NAME</code> (project name), <code>$WORKSPACE</code> (working directory)। Shell script-এ <code>echo $BUILD_ID</code> লিখলে সেই build-এর number print হবে।</p></div></div>
+</div>
+
+<!-- ═══════════════════════════════ CHAPTER 3 ═══════════════════════════════ -->
+<div class="chapter" id="ch3">
+  <div class="chapter-header">
+    <div class="ch-bar" style="background:linear-gradient(#7ec87a,#f5c842)"></div>
+    <div><div class="ch-num">CHAPTER 03</div><div class="ch-title">Pipeline তৈরি করা — <span>Build, Test, Deliver</span></div></div>
+  </div>
+
+  <!-- DUMMY SOURCE FILES -->
+  <div class="dummy-section">
+    <h4>🛠️ Dummy Source Files — GitHub repo না পেলে এই ৩টি file তৈরি করো!</h4>
+    <p>এই chapter-এ একটি Python calculator project ব্যবহার হয়েছে। যদি GitHub repo access না হয়, নিচের ৩টি file নিজে তৈরি করো। Jenkins pipeline হুবহু কাজ করবে।</p>
+
+    <div class="code"><div class="code-hdr"><span class="code-lang">python</span><span class="code-desc">sources/calc.py — Calculator library (এই file তৈরি করো)</span></div>
+    <pre><span class="cm"># sources/calc.py
+# এই file-এ calculator functions আছে।
+# Jenkins Build stage-এ এই file compile হবে।</span>
+
+<span class="kw">def</span> <span class="fn">add</span>(a, b):
+    <span class="cm">"""দুটি সংখ্যা যোগ করো"""</span>
+    <span class="kw">return</span> a + b
+
+<span class="kw">def</span> <span class="fn">subtract</span>(a, b):
+    <span class="cm">"""a থেকে b বিয়োগ করো"""</span>
+    <span class="kw">return</span> a - b
+
+<span class="kw">def</span> <span class="fn">multiply</span>(a, b):
+    <span class="cm">"""দুটি সংখ্যা গুণ করো"""</span>
+    <span class="kw">return</span> a * b
+
+<span class="kw">def</span> <span class="fn">divide</span>(a, b):
+    <span class="cm">"""a কে b দিয়ে ভাগ করো — শূন্য হলে error"""</span>
+    <span class="kw">if</span> b == <span class="nm">0</span>:
+        <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="st">"শূন্য দিয়ে ভাগ করা যাবে না!"</span>)
+    <span class="kw">return</span> a / b</pre></div>
+
+    <div class="code"><div class="code-hdr"><span class="code-lang">python</span><span class="code-desc">sources/prog.py — Main program (এই file তৈরি করো)</span></div>
+    <pre><span class="cm"># sources/prog.py
+# এই file user থেকে command-line arguments নেয় এবং calculation করে।
+# Jenkins Deliver stage-এ এই file থেকে executable তৈরি হবে।
+# Executable চালানো: ./prog + 2 3</span>
+
+<span class="kw">import</span> sys
+<span class="kw">from</span> calc <span class="kw">import</span> add, subtract, multiply, divide
+<span class="cm"># sys.argv = command line arguments-এর list
+# sys.argv[0] = script নাম, sys.argv[1] = operation, ইত্যাদি</span>
+
+<span class="kw">def</span> <span class="fn">main</span>():
+    <span class="kw">if</span> len(sys.argv) != <span class="nm">4</span>:
+        <span class="fn">print</span>(<span class="st">"Usage: prog &lt;operation&gt; &lt;num1&gt; &lt;num2&gt;"</span>)
+        <span class="fn">print</span>(<span class="st">"Operations: + - * /"</span>)
+        <span class="kw">return</span>
+
+    op = sys.argv[<span class="nm">1</span>]
+    a  = <span class="fn">float</span>(sys.argv[<span class="nm">2</span>])
+    b  = <span class="fn">float</span>(sys.argv[<span class="nm">3</span>])
+
+    operations = {<span class="st">'+'</span>: add, <span class="st">'-'</span>: subtract, <span class="st">'*'</span>: multiply, <span class="st">'/'</span>: divide}
+    <span class="kw">if</span> op <span class="kw">not in</span> operations:
+        <span class="fn">print</span>(f<span class="st">"Unknown operation: {op}"</span>); <span class="kw">return</span>
+
+    result = operations[op](a, b)
+    <span class="fn">print</span>(f<span class="st">"{a} {op} {b} = {result}"</span>)
+
+<span class="kw">if</span> __name__ == <span class="st">"__main__"</span>:
+    <span class="fn">main</span>()
+<span class="cm"># if __name__ == "__main__" কী?
+# এই file সরাসরি চালালে main() call হবে।
+# কিন্তু অন্য file-এ import করলে main() call হবে না।
+# এটা Python-এর convention — সব main script-এ এভাবে লেখা হয়।</span></pre></div>
+
+    <div class="code"><div class="code-hdr"><span class="code-lang">python</span><span class="code-desc">sources/test_calc.py — Unit tests (এই file তৈরি করো)</span></div>
+    <pre><span class="cm"># sources/test_calc.py
+# এই file-এ unit tests আছে।
+# Jenkins Test stage-এ pytest এই file automatically খুঁজে চালাবে।
+# Convention: test_ দিয়ে শুরু হওয়া functions = pytest automatically detect করে।</span>
+
+<span class="kw">import</span> pytest
+<span class="kw">from</span> calc <span class="kw">import</span> add, subtract, multiply, divide
+
+<span class="kw">def</span> <span class="fn">test_add</span>():
+    <span class="kw">assert</span> <span class="fn">add</span>(<span class="nm">2</span>, <span class="nm">3</span>) == <span class="nm">5</span>
+    <span class="kw">assert</span> <span class="fn">add</span>(-<span class="nm">1</span>, <span class="nm">1</span>) == <span class="nm">0</span>
+    <span class="kw">assert</span> <span class="fn">add</span>(<span class="nm">0</span>, <span class="nm">0</span>) == <span class="nm">0</span>
+<span class="cm"># assert = এই condition সত্য হওয়া উচিত।
+# সত্য না হলে → test FAIL → Jenkins Test stage fail করবে।</span>
+
+<span class="kw">def</span> <span class="fn">test_add_float</span>():
+    <span class="kw">assert</span> <span class="fn">add</span>(<span class="nm">0.1</span>, <span class="nm">0.2</span>) == pytest.<span class="fn">approx</span>(<span class="nm">0.3</span>)
+<span class="cm"># pytest.approx কেন?
+# Computer-এ 0.1 + 0.2 = 0.30000000000000004 (floating point precision issue)
+# pytest.approx(0.3) মানে "মোটামুটি 0.3" — এই পার্থক্য ignore করো।</span>
+
+<span class="kw">def</span> <span class="fn">test_subtract</span>():
+    <span class="kw">assert</span> <span class="fn">subtract</span>(<span class="nm">5</span>, <span class="nm">3</span>) == <span class="nm">2</span>
+    <span class="kw">assert</span> <span class="fn">subtract</span>(<span class="nm">0</span>, <span class="nm">5</span>) == -<span class="nm">5</span>
+
+<span class="kw">def</span> <span class="fn">test_multiply</span>():
+    <span class="kw">assert</span> <span class="fn">multiply</span>(<span class="nm">3</span>, <span class="nm">4</span>) == <span class="nm">12</span>
+    <span class="kw">assert</span> <span class="fn">multiply</span>(<span class="nm">0</span>, <span class="nm">100</span>) == <span class="nm">0</span>
+
+<span class="kw">def</span> <span class="fn">test_divide</span>():
+    <span class="kw">assert</span> <span class="fn">divide</span>(<span class="nm">10</span>, <span class="nm">2</span>) == <span class="nm">5.0</span>
+    <span class="kw">assert</span> <span class="fn">divide</span>(<span class="nm">7</span>, <span class="nm">2</span>) == <span class="nm">3.5</span>
+
+<span class="kw">def</span> <span class="fn">test_divide_by_zero</span>():
+    <span class="kw">with</span> pytest.<span class="fn">raises</span>(ValueError):
+        <span class="fn">divide</span>(<span class="nm">5</span>, <span class="nm">0</span>)
+<span class="cm"># pytest.raises(ValueError) মানে:
+# এই block-এর ভেতরে ValueError exception হওয়া উচিত।
+# হলে → test PASS। না হলে → test FAIL।
+# আমাদের divide(5, 0) ValueError raise করে → সঠিক!</span></pre></div>
+
+    <div class="ftree">
+      <span class="ftd">তোমার Repository/</span><br>
+      &nbsp;&nbsp;├── <span class="ftd">sources/</span><br>
+      &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span class="ftf">calc.py</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ftc">← Calculator functions</span><br>
+      &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── <span class="ftf">prog.py</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ftc">← Main program</span><br>
+      &nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── <span class="ftf">test_calc.py</span> &nbsp;<span class="ftc">← Unit tests</span><br>
+      &nbsp;&nbsp;└── <span class="ftf">Jenkinsfile</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ftc">← Pipeline definition (root-এ রাখো)</span>
+    </div>
+  </div>
+
+  <h3>Pipeline কী এবং কেন?</h3>
+  <p>Freestyle Project-এ সব কিছু web UI-তে configure করা হয়। কিন্তু real project-এ আমরা <strong>Pipeline</strong> ব্যবহার করি — যেখানে pipeline-টা <strong>code হিসেবে</strong> <code>Jenkinsfile</code>-এ লেখা থাকে।</p>
+
+  <div class="g2">
+    <div class="card"><h4 style="color:var(--blue)">Scripted Pipeline (পুরোনো)</h4><p style="font-size:14px">Groovy language-এ লেখা। Browser-এ directly লেখা যায়। Flexible কিন্তু complex। Jenkins 1.x এর সময় থেকে আছে।</p></div>
+    <div class="card"><h4 style="color:var(--orange)">Declarative Pipeline ⭐ (নতুন, recommended)</h4><p style="font-size:14px">Jenkinsfile-এ লেখা হয়। Git-এ থাকে। Simpler syntax, more readable। Jenkins 2.x থেকে। এটাই আমরা ব্যবহার করবো।</p></div>
+  </div>
+
+  <div class="box info"><span class="box-icon">📄</span><div class="box-body">
+    <p><strong>Groovy কী?</strong> Java-based scripting language। Jenkins এটা ব্যবহার করে Jenkinsfile লিখতে। তোমাকে Groovy expert হতে হবে না — basic structure শিখলেই হবে।</p>
+    <p><strong>Pipeline as Code-এর সুবিধা:</strong> Jenkinsfile Git-এ থাকে তাই version control হয়, team-এর সবাই দেখতে পায়, code review করা যায়, এবং project clone করলে pipeline-ও চলে আসে।</p>
+  </div></div>
+
+  <h3>তিনটি Stage-এর Pipeline</h3>
+  <div class="pipeline-flow">
+    <div class="stage-box"><span class="stage-icon">🔨</span><div class="stage-name" style="color:var(--blue)">Build</div><div style="font-size:11px;color:var(--muted);margin-top:5px">Python files<br>compile করো</div></div>
+    <span class="arrow-txt">→</span>
+    <div class="stage-box"><span class="stage-icon">🧪</span><div class="stage-name" style="color:var(--green)">Test</div><div style="font-size:11px;color:var(--muted);margin-top:5px">pytest দিয়ে<br>unit tests চালাও</div></div>
+    <span class="arrow-txt">→</span>
+    <div class="stage-box"><span class="stage-icon">📦</span><div class="stage-name" style="color:var(--orange)">Deliver</div><div style="font-size:11px;color:var(--muted);margin-top:5px">Standalone<br>executable তৈরি করো</div></div>
+  </div>
+
+  <!-- SVG: Declarative Pipeline structure -->
+  <svg class="svg-wrap" viewBox="0 0 700 240" xmlns="http://www.w3.org/2000/svg">
+    <text x="350" y="22" text-anchor="middle" fill="#f5c842" font-family="Sora,sans-serif" font-size="13" font-weight="700">Declarative Pipeline এর Structure — "Russian Doll" এর মতো Nested</text>
+    <rect x="15" y="35" width="670" height="190" rx="10" fill="rgba(240,146,58,.04)" stroke="#f0923a" stroke-width="1.5"/>
+    <text x="40" y="57" fill="#f0923a" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700">pipeline { ... }</text>
+    <text x="40" y="73" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Root block — সব কিছু এর ভেতরে থাকে। এর বাইরে কিছু লিখলে error।</text>
+    <!-- agent block -->
+    <rect x="35" y="83" width="200" height="45" rx="7" fill="rgba(90,180,214,.08)" stroke="#5ab4d6" stroke-width="1"/>
+    <text x="135" y="103" text-anchor="middle" fill="#5ab4d6" font-family="JetBrains Mono,monospace" font-size="11" font-weight="600">agent none</text>
+    <text x="135" y="119" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">প্রতিটি stage নিজের Docker container ব্যবহার করবে</text>
+    <!-- stages block -->
+    <rect x="255" y="83" width="415" height="45" rx="7" fill="rgba(122,200,122,.08)" stroke="#7ec87a" stroke-width="1"/>
+    <text x="462" y="103" text-anchor="middle" fill="#7ec87a" font-family="JetBrains Mono,monospace" font-size="11" font-weight="600">stages { stage('Build'){} stage('Test'){} stage('Deliver'){} }</text>
+    <text x="462" y="119" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">সব stage এর container — একটার পর একটা চলে, একটা fail হলে বাকি skip হয়</text>
+    <!-- Stage boxes -->
+    <rect x="35" y="143" width="188" height="70" rx="8" fill="rgba(90,180,214,.06)" stroke="#5ab4d6" stroke-width="1"/>
+    <text x="129" y="163" text-anchor="middle" fill="#5ab4d6" font-family="Sora,sans-serif" font-size="10" font-weight="700">stage('Build')</text>
+    <text x="129" y="178" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">agent: docker python:3.8</text>
+    <text x="129" y="193" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">steps: py_compile + stash</text>
+    <rect x="259" y="143" width="155" height="70" rx="8" fill="rgba(122,200,122,.06)" stroke="#7ec87a" stroke-width="1"/>
+    <text x="336" y="163" text-anchor="middle" fill="#7ec87a" font-family="Sora,sans-serif" font-size="10" font-weight="700">stage('Test')</text>
+    <text x="336" y="178" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">agent: docker pytest</text>
+    <text x="336" y="193" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">post: save XML results</text>
+    <rect x="449" y="143" width="220" height="70" rx="8" fill="rgba(240,146,58,.06)" stroke="#f0923a" stroke-width="1"/>
+    <text x="559" y="163" text-anchor="middle" fill="#f0923a" font-family="Sora,sans-serif" font-size="10" font-weight="700">stage('Deliver')</text>
+    <text x="559" y="178" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">agent: any</text>
+    <text x="559" y="193" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">unstash + pyinstaller + archive</text>
+  </svg>
+
+  <h3>সম্পূর্ণ Jenkinsfile — প্রতিটি লাইন বাংলায়</h3>
+  <div class="code"><div class="code-hdr"><span class="code-lang">groovy</span><span class="code-desc">Jenkinsfile — repository root-এ রাখো</span></div>
+  <pre>pipeline {
+    agent none
+    <span class="cm">// agent none মানে: এই pipeline-এর জন্য কোনো global agent নেই।
+    // প্রতিটি stage নিজের agent নির্দিষ্ট করবে।
+    // agent any দিলে Jenkins যেকোনো available machine-এ চালাতো।</span>
+
+    stages {
+
+        stage(<span class="st">'Build'</span>) {
+            agent {
+                docker {
+                    image <span class="st">'python:3.8-alpine3.16'</span>
+                    <span class="cm">// Docker hub থেকে এই image pull করো এবং container-এ চালাও।
+                    // alpine = ছোট Linux distro (image size মাত্র ~5MB)
+                    // প্রতিটি stage আলাদা container-এ চলে → isolated environment</span>
+                }
+            }
+            steps {
+                <span class="hl">sh <span class="st">'python3.8 -m py_compile sources/prog.py sources/calc.py'</span></span>
+                <span class="cm">// sh = shell command চালাও।
+                // python -m py_compile = Python files-এর syntax check করো।
+                // Syntax error থাকলে এখানেই ধরা পড়বে।
+                // সফল হলে .pyc (compiled) files তৈরি হয়।</span>
+
+                <span class="hl">stash(name: <span class="st">'compiled-results'</span>, includes: <span class="st">'sources/*.py*'</span>)</span>
+                <span class="cm">// stash = files টেম্পরারিভাবে save করো।
+                // কারণ: প্রতিটি stage আলাদা container-এ চলে।
+                // Build stage-এ compile হওয়া files Deliver stage-এ দরকার।
+                // stash ছাড়া পরের stage সেই files পাবে না।
+                // includes: 'sources/*.py*' = sources/ folder-এর সব .py ও .pyc files।</span>
+            }
+        }
+
+        stage(<span class="st">'Test'</span>) {
+            agent {
+                docker {
+                    image <span class="st">'grihabor/pytest'</span>
+                    <span class="cm">// pytest pre-installed আছে এই image-এ।</span>
+                }
+            }
+            steps {
+                <span class="hl">sh <span class="st">'pytest -v --junit-xml test-reports/results.xml sources/test_calc.py'</span></span>
+                <span class="cm">// pytest = Python unit test runner।
+                // -v = verbose — প্রতিটি test-এর নাম ও status দেখাও।
+                // --junit-xml = XML format-এ results save করো।
+                //   Jenkins এই XML পড়তে পারে → Dashboard-এ test results দেখাবে।
+                // sources/test_calc.py = কোন file-এ tests আছে।</span>
+            }
+            post {
+                always {
+                    <span class="hl">junit <span class="st">"test-reports/results.xml"</span></span>
+                    <span class="cm">// post always = Test pass হোক বা fail — সবসময় এটা চালাও।
+                    // junit = Jenkins-কে XML results পড়তে বলো।
+                    // Dashboard-এ "Test Results" section-এ দেখাবে।
+                    // Fail হলেও results দেখা জরুরি — কোন test fail করেছে জানতে।</span>
+                }
+            }
+        }
+
+        stage(<span class="st">'Deliver'</span>) {
+            agent any
+            <span class="cm">// agent any = যেকোনো available Jenkins agent ব্যবহার করো।
+            // এই stage-এ Docker command চালাতে হবে, তাই host-এ চলা দরকার।</span>
+
+            environment {
+                VOLUME = <span class="st">'$(pwd)/sources:/src'</span>
+                IMAGE  = <span class="st">'cdrx/pyinstaller-linux'</span>
+                <span class="cm">// environment = এই stage-এর জন্য environment variables।
+                // VOLUME = Docker volume mapping: host-এর sources/ = container-এর /src
+                // IMAGE = pyinstaller Docker image (Python → standalone executable বানায়)</span>
+            }
+            steps {
+                dir(path: env.BUILD_ID) {
+                    <span class="cm">// dir() = এই folder-এ কাজ করো।
+                    // env.BUILD_ID = Jenkins-এর built-in variable — এই build-এর number।
+                    // যেমন: build #5 হলে "5" নামের folder-এ কাজ হবে।
+                    // আলাদা folder-এ রাখলে multiple builds conflict করে না।</span>
+                    <span class="hl">unstash(name: <span class="st">'compiled-results'</span>)</span>
+                    <span class="cm">// unstash = Build stage-এ stash করা files ফিরিয়ে আনো।</span>
+
+                    <span class="hl">sh <span class="st">"docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F prog.py'"</span></span>
+                    <span class="cm">// docker run = Docker container চালাও।
+                    // --rm = container শেষ হলে automatically delete করো।
+                    // -v ${VOLUME} = sources/ folder container-এ mount করো।
+                    // pyinstaller -F prog.py = prog.py থেকে single executable তৈরি করো।
+                    // Output: sources/dist/prog (standalone executable — Python লাগবে না!)</span>
+                }
+            }
+            post {
+                success {
+                    <span class="hl">archiveArtifacts <span class="st">"${env.BUILD_ID}/sources/dist/prog"</span></span>
+                    <span class="cm">// archiveArtifacts = Build artifact হিসেবে save করো।
+                    // Dashboard থেকে download করা যাবে।
+                    // এটাই final product — শেষ পর্যন্ত এটাই দেওয়া হবে।</span>
+                    sh <span class="st">"rm -rf ${env.BUILD_ID}/sources/build ${env.BUILD_ID}/sources/dist"</span>
+                    <span class="cm">// Temp build files clean up করো।</span>
+                }
+            }
+        }
+    }
+}</pre></div>
+
+  <h3>Pipeline কীভাবে Configure করতে হয়</h3>
+  <ul class="steps">
+    <li><span class="sn">১</span><div class="sb"><strong>GitHub Repository Fork করো</strong><p>DataScientest-এর pipeline-calculatrice-Jenkins repo fork করো। অথবা উপরের dummy source files দিয়ে নতুন repo বানাও।</p></div></li>
+    <li><span class="sn">২</span><div class="sb"><strong>Jenkins-এ New Item → Pipeline</strong><p>Dashboard → New Item → নাম দাও → "Pipeline" select করো → OK।</p></div></li>
+    <li><span class="sn">৩</span><div class="sb"><strong>Pipeline Tab Configure করো</strong>
+    <div class="code" style="margin:8px 0"><div class="code-hdr"><span class="code-lang">config</span></div>
+    <pre>Definition: Pipeline script from SCM
+SCM: Git
+Repository URL: https://github.com/YOUR_USERNAME/YOUR_REPO.git
+Branch Specifier: */main   <span class="cm">(master নয়, main!)</span>
+Script Path: Jenkinsfile   <span class="cm">(root-এ Jenkinsfile আছে)</span></pre></div>
+    <div class="box warn" style="margin:8px 0"><span class="box-icon">🔒</span><div class="box-body"><p>Private repo হলে Credentials যোগ করতে হবে। "Add" button → Kind: "Username with password" → GitHub username ও personal access token দাও।</p></div></div></div></li>
+    <li><span class="sn">৪</span><div class="sb"><strong>Jenkinsfile Git-এ push করো ও Build Now চাপো</strong>
+    <div class="code" style="margin:8px 0"><div class="code-hdr"><span class="code-lang">bash</span></div>
+    <pre>git add Jenkinsfile sources/
+git commit -m "Add Jenkins pipeline with source files"
+git push</pre></div></div></li>
+  </ul>
+
+  <!-- SVG: Stage View -->
+  <svg class="svg-wrap" viewBox="0 0 700 190" xmlns="http://www.w3.org/2000/svg">
+    <text x="350" y="22" text-anchor="middle" fill="#f5c842" font-family="Sora,sans-serif" font-size="13" font-weight="700">Stage View — Pipeline Results এর Visual Display</text>
+    <rect x="15" y="35" width="670" height="140" rx="10" fill="#0b0a09" stroke="#333230"/>
+    <rect x="15" y="35" width="670" height="30" rx="10" fill="#1a1917"/>
+    <text x="115" y="55" fill="#8a8580" font-family="Sora,sans-serif" font-size="11">Average stage times:</text>
+    <text x="310" y="55" fill="#8a8580" font-family="Sora,sans-serif" font-size="11">Build</text>
+    <text x="455" y="55" fill="#8a8580" font-family="Sora,sans-serif" font-size="11">Test</text>
+    <text x="590" y="55" fill="#8a8580" font-family="Sora,sans-serif" font-size="11">Deliver</text>
+    <!-- Row 1: success -->
+    <rect x="15" y="67" width="670" height="34" fill="rgba(122,200,122,.04)"/>
+    <text x="55" y="89" fill="#ede9e3" font-family="JetBrains Mono,monospace" font-size="11">#5</text>
+    <text x="95" y="89" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Jul 28</text>
+    <rect x="285" y="74" width="90" height="22" rx="5" fill="rgba(122,200,122,.2)" stroke="#7ec87a"/>
+    <text x="330" y="89" text-anchor="middle" fill="#7ec87a" font-family="JetBrains Mono,monospace" font-size="11">7s ✓</text>
+    <rect x="430" y="74" width="90" height="22" rx="5" fill="rgba(122,200,122,.2)" stroke="#7ec87a"/>
+    <text x="475" y="89" text-anchor="middle" fill="#7ec87a" font-family="JetBrains Mono,monospace" font-size="11">22s ✓</text>
+    <rect x="560" y="74" width="90" height="22" rx="5" fill="rgba(122,200,122,.2)" stroke="#7ec87a"/>
+    <text x="605" y="89" text-anchor="middle" fill="#7ec87a" font-family="JetBrains Mono,monospace" font-size="11">14s ✓</text>
+    <!-- Row 2: test fail -->
+    <rect x="15" y="103" width="670" height="34" fill="rgba(79,79,79,.04)"/>
+    <text x="55" y="125" fill="#ede9e3" font-family="JetBrains Mono,monospace" font-size="11">#2</text>
+    <text x="95" y="125" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Jul 28</text>
+    <rect x="285" y="110" width="90" height="22" rx="5" fill="rgba(122,200,122,.15)" stroke="#7ec87a"/>
+    <text x="330" y="125" text-anchor="middle" fill="#7ec87a" font-family="JetBrains Mono,monospace" font-size="11">7s ✓</text>
+    <rect x="430" y="110" width="90" height="22" rx="5" fill="rgba(224,92,75,.2)" stroke="#e05c4b"/>
+    <text x="475" y="125" text-anchor="middle" fill="#e05c4b" font-family="JetBrains Mono,monospace" font-size="11">3s ✗</text>
+    <rect x="560" y="110" width="90" height="22" rx="5" fill="#1a1917" stroke="#333230"/>
+    <text x="605" y="125" text-anchor="middle" fill="#605c56" font-family="JetBrains Mono,monospace" font-size="11">skipped</text>
+    <text x="350" y="162" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Green ✓ = success, Red ✗ = failed, Gray = skipped (আগের stage fail করায় চলেনি)</text>
+    <text x="350" y="178" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Build #2-তে Test fail করায় Deliver stage skip হয়ে গেছে</text>
+  </svg>
+
+  <div class="box warn"><span class="box-icon">🐛</span><div class="box-body"><p><strong>Common Bug:</strong> Test stage-এ যদি "pyvtest: not found" error আসে — <code>pyvtest</code> লেখা হয়ে গেছে, হওয়া উচিত <code>pytest</code>। Jenkinsfile-এ typo ঠিক করে push করো।</p></div></div>
+
+  <h3>Artifact Download করা</h3>
+  <div class="code"><div class="code-hdr"><span class="code-lang">bash</span><span class="code-desc">Dashboard থেকে prog file download করার পরে</span></div>
+  <pre>chmod +x prog     <span class="cm"># execution permission দাও (downloaded files-এ default থাকে না)</span>
+./prog + 2 3      <span class="cm"># Calculator: 2 + 3 = 5.0</span>
+./prog / 10 4     <span class="cm"># Calculator: 10 / 4 = 2.5</span></pre></div>
+
+  <div class="box tip"><span class="box-icon">🌊</span><div class="box-body"><p><strong>Blue Ocean Interface:</strong> Dashboard sidebar → "Open Blue Ocean" → সুন্দর visual pipeline UI। প্রতিটি stage-এ click করলে সেই stage-এর logs দেখা যাবে। Test tab-এ সব unit test results (pass/fail details) দেখা যাবে।</p></div></div>
+</div>
+
+<!-- ═══════════════════════════════ CHAPTER 4 ═══════════════════════════════ -->
+<div class="chapter" id="ch4">
+  <div class="chapter-header">
+    <div class="ch-bar" style="background:linear-gradient(#f5c842,#e07ab0)"></div>
+    <div><div class="ch-num">CHAPTER 04</div><div class="ch-title">Complements — <span>Multibranch, Scheduling, Webhooks</span></div></div>
+  </div>
+
+  <h3>Multibranch Pipeline — একাধিক Branch একসাথে</h3>
+  <p>Real project-এ অনেক branch থাকে (main, develop, feature/xyz)। প্রতিটির জন্য আলাদা Pipeline তৈরি করা কষ্টের। <strong>Multibranch Pipeline</strong> automatically সব branch-এ Jenkinsfile খোঁজে এবং আলাদা pipeline চালায়।</p>
+
+  <!-- SVG: Multibranch -->
+  <svg class="svg-wrap" viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="j4a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3z" fill="#f0923a"/></marker></defs>
+    <text x="350" y="22" text-anchor="middle" fill="#f5c842" font-family="Sora,sans-serif" font-size="13" font-weight="700">Multibranch Pipeline — Auto Branch Detection</text>
+    <!-- GitHub Repo -->
+    <rect x="15" y="38" width="160" height="175" rx="10" fill="#1a1917" stroke="#333230"/>
+    <text x="95" y="62" text-anchor="middle" fill="#ede9e3" font-family="Sora,sans-serif" font-size="12" font-weight="700">📂 GitHub Repo</text>
+    <rect x="28" y="73" width="134" height="30" rx="5" fill="rgba(122,200,122,.12)" stroke="#7ec87a"/>
+    <text x="95" y="93" text-anchor="middle" fill="#7ec87a" font-family="JetBrains Mono,monospace" font-size="11">main branch</text>
+    <text x="95" y="108" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">Jenkinsfile আছে ✓</text>
+    <rect x="28" y="118" width="134" height="30" rx="5" fill="rgba(90,180,214,.12)" stroke="#5ab4d6"/>
+    <text x="95" y="138" text-anchor="middle" fill="#5ab4d6" font-family="JetBrains Mono,monospace" font-size="11">dev branch</text>
+    <text x="95" y="153" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">Jenkinsfile আছে ✓</text>
+    <rect x="28" y="163" width="134" height="30" rx="5" fill="#1a1917" stroke="#333230"/>
+    <text x="95" y="183" text-anchor="middle" fill="#605c56" font-family="JetBrains Mono,monospace" font-size="10">feature/xyz</text>
+    <text x="95" y="198" text-anchor="middle" fill="#605c56" font-family="Sora,sans-serif" font-size="9">Jenkinsfile নেই ✗ → skip</text>
+    <!-- Arrow -->
+    <line x1="177" y1="120" x2="215" y2="120" stroke="#f0923a" stroke-width="2" marker-end="url(#j4a)"/>
+    <text x="196" y="112" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">scan</text>
+    <!-- Multibranch Jenkins -->
+    <rect x="218" y="38" width="205" height="175" rx="10" fill="rgba(240,146,58,.06)" stroke="#f0923a" stroke-width="1.5"/>
+    <text x="320" y="60" text-anchor="middle" fill="#f0923a" font-family="Sora,sans-serif" font-size="11" font-weight="700">Multibranch Pipeline</text>
+    <text x="320" y="76" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">"Scan Multibranch Pipeline Now"</text>
+    <rect x="230" y="85" width="180" height="28" rx="5" fill="rgba(122,200,122,.1)" stroke="#7ec87a"/>
+    <text x="320" y="104" text-anchor="middle" fill="#7ec87a" font-family="Sora,sans-serif" font-size="10">✓ main — Pipeline ready</text>
+    <rect x="230" y="122" width="180" height="28" rx="5" fill="rgba(90,180,214,.1)" stroke="#5ab4d6"/>
+    <text x="320" y="141" text-anchor="middle" fill="#5ab4d6" font-family="Sora,sans-serif" font-size="10">✓ dev — Pipeline ready</text>
+    <rect x="230" y="159" width="180" height="28" rx="5" fill="#1a1917" stroke="#333230"/>
+    <text x="320" y="178" text-anchor="middle" fill="#605c56" font-family="Sora,sans-serif" font-size="10">✗ feature/xyz — skipped</text>
+    <!-- Arrows to pipelines -->
+    <line x1="425" y1="99" x2="462" y2="99" stroke="#7ec87a" stroke-width="1.5" marker-end="url(#j4a)"/>
+    <line x1="425" y1="136" x2="462" y2="136" stroke="#5ab4d6" stroke-width="1.5" marker-end="url(#j4a)"/>
+    <!-- Pipeline results -->
+    <rect x="464" y="78" width="218" height="38" rx="7" fill="#1a1917" stroke="#7ec87a" stroke-width="1"/>
+    <text x="573" y="99" text-anchor="middle" fill="#7ec87a" font-family="Sora,sans-serif" font-size="10" font-weight="600">main: Build → Test → Deliver ✓</text>
+    <rect x="464" y="118" width="218" height="38" rx="7" fill="#1a1917" stroke="#5ab4d6" stroke-width="1"/>
+    <text x="573" y="139" text-anchor="middle" fill="#5ab4d6" font-family="Sora,sans-serif" font-size="10" font-weight="600">dev: Build → Test → Deliver ✓</text>
+    <text x="350" y="220" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">প্রতিটি branch-এর আলাদা Pipeline, আলাদা Stage View, আলাদা Build History</text>
+  </svg>
+
+  <h3>Multibranch Pipeline তৈরির ধাপ</h3>
+  <ul class="steps">
+    <li><span class="sn">১</span><div class="sb"><strong>GitHub-এ নতুন branch তৈরি করো</strong>
+    <p>main থেকে "dev" branch তৈরি করো। সেই branch-এর Jenkinsfile-এ একটি Branch stage যোগ করো:</p>
+    <div class="code" style="margin:8px 0"><div class="code-hdr"><span class="code-lang">groovy</span><span class="code-desc">dev branch-এর Jenkinsfile-এ এই stage যোগ করো</span></div>
+    <pre>stage(<span class="st">'Branch'</span>) {
+    agent any
+    steps {
+        echo <span class="st">'This is the dev branch'</span>
+        <span class="cm">// echo = console-এ text print করো
+        // এটা silly মনে হচ্ছে? হ্যাঁ, কিন্তু এই stage-টা দেখিয়ে দেয়
+        // যে dev branch-এর pipeline আলাদা behavior করতে পারে।</span>
+    }
+}</pre></div></div></li>
+    <li><span class="sn">২</span><div class="sb"><strong>Jenkins-এ New Item → Multibranch Pipeline</strong>
+    <p>New Item → নাম দাও → "Multibranch Pipeline" → OK → Branch Sources → Add Source → Git → Repo URL দাও → Save।</p></div></li>
+    <li><span class="sn">৩</span><div class="sb"><strong>Scan করো</strong>
+    <p>Save করার পর Jenkins automatically scan করবে। "Scan Multibranch Pipeline Log"-এ check করো কোন branches খুঁজে পেয়েছে।</p></div></li>
+  </ul>
+
+  <h3>Pipeline Automation — দুটি উপায়</h3>
+
+  <!-- SVG: Schedule vs Webhook -->
+  <svg class="svg-wrap" viewBox="0 0 700 210" xmlns="http://www.w3.org/2000/svg">
+    <text x="350" y="22" text-anchor="middle" fill="#f5c842" font-family="Sora,sans-serif" font-size="13" font-weight="700">Pipeline Trigger — দুটি উপায়ে Auto চালানো</text>
+    <!-- Schedule box -->
+    <rect x="20" y="35" width="310" height="160" rx="10" fill="rgba(90,180,214,.05)" stroke="#5ab4d6" stroke-width="1.5"/>
+    <text x="175" y="57" text-anchor="middle" fill="#5ab4d6" font-family="Sora,sans-serif" font-size="12" font-weight="700">⏰ Scheduled Build</text>
+    <text x="175" y="74" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">নির্দিষ্ট সময়ে automatically চালাও</text>
+    <rect x="38" y="85" width="274" height="28" rx="6" fill="#0b0a09" stroke="#333230"/>
+    <text x="175" y="104" text-anchor="middle" fill="#7ec87a" font-family="JetBrains Mono,monospace" font-size="13">* * * * *</text>
+    <text x="175" y="128" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">প্রতি মিনিটে চালাও</text>
+    <text x="175" y="144" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">0 2 * * * = প্রতিদিন রাত ২টায়</text>
+    <text x="175" y="160" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">0 9 * * 1 = প্রতি সোমবার সকাল ৯টায়</text>
+    <text x="175" y="184" text-anchor="middle" fill="#605c56" font-family="Sora,sans-serif" font-size="9">Configure → Build Triggers → Build periodically</text>
+    <!-- Webhook box -->
+    <rect x="370" y="35" width="310" height="160" rx="10" fill="rgba(122,200,122,.05)" stroke="#7ec87a" stroke-width="1.5"/>
+    <text x="525" y="57" text-anchor="middle" fill="#7ec87a" font-family="Sora,sans-serif" font-size="12" font-weight="700">🔗 Webhook (Git push-এ trigger)</text>
+    <text x="525" y="74" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Code push করলেই automatically চালাও</text>
+    <rect x="388" y="85" width="274" height="44" rx="6" fill="#0b0a09" stroke="#333230"/>
+    <text x="525" y="104" text-anchor="middle" fill="#f0923a" font-family="Sora,sans-serif" font-size="10" font-weight="600">Flow:</text>
+    <text x="525" y="120" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">git push → GitHub → webhook → Jenkins → Build!</text>
+    <text x="525" y="144" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Jenkins: "GitHub hook trigger for GitScm polling"</text>
+    <text x="525" y="160" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">GitHub: Settings → Webhooks → Add webhook</text>
+    <text x="525" y="184" text-anchor="middle" fill="#605c56" font-family="Sora,sans-serif" font-size="9">Payload URL: https://your-jenkins/github-webhook/</text>
+  </svg>
+
+  <h3>Cron Syntax — Scheduled Build-এর ভাষা</h3>
+  <div class="code"><div class="code-hdr"><span class="code-lang">cron</span><span class="code-desc">Configure → Build Triggers → Build periodically → এখানে লেখো</span></div>
+  <pre><span class="cm"># Format: মিনিট  ঘণ্টা  মাসের_দিন  মাস  সপ্তাহের_দিন
+#         MINUTE  HOUR    DOM       MONTH   DOW
+#
+# * মানে "যেকোনো" (প্রতিটি), সংখ্যা মানে specific value</span>
+
+* * * * *     <span class="cm"># প্রতি মিনিটে (test করার জন্য ভালো)</span>
+0 * * * *     <span class="cm"># প্রতি ঘণ্টার শুরুতে (০ মিনিটে)</span>
+0 2 * * *     <span class="cm"># প্রতিদিন রাত ২টায়</span>
+0 9 * * 1     <span class="cm"># প্রতি সোমবার সকাল ৯টায় (1=Monday)</span>
+0 9 * * 1-5   <span class="cm"># প্রতি সোমবার-শুক্রবার সকাল ৯টায় (weekdays)</span>
+H/5 * * * *   <span class="cm"># প্রতি ৫ মিনিটে (H = hash, Jenkins optimize করে)</span>
+H H(0-8) * * * <span class="cm"># রাত ০টা থেকে ৮টার মধ্যে একবার (Jenkins বেছে নেবে)</span>
+
+<span class="cm"># Jenkins-এ cron লেখার সময় ? চিহ্নে click করলে
+# documentation এবং "preview" দেখাবে।</span></pre></div>
+
+  <h3>Webhook Setup — ngrok দিয়ে Local Jenkins Public করা</h3>
+  <div class="box info"><span class="box-icon">🌐</span><div class="box-body">
+    <p><strong>ngrok কী?</strong> তোমার computer-এর local server-কে internet-এ accessible করার tool। GitHub webhook-এর জন্য Jenkins-এর public URL দরকার। ngrok একটি temporary public URL দেয়।</p>
+    <p><strong>কেন .pem file?</strong> VM (Virtual Machine) তে SSH করতে private key file (.pem) দরকার। যদি local computer-এ Jenkins চালাচ্ছো, scp step skip করো।</p>
+  </div></div>
+
+  <div class="code"><div class="code-hdr"><span class="code-lang">bash</span><span class="code-desc">ngrok setup করো</span></div>
+  <pre><span class="cm"># Local computer-এ Jenkins চালালে সরাসরি ngrok install করো:
+# ngrok.com থেকে download করো → unzip করো → চালাও</span>
+
+<span class="cm"># VM-এ Jenkins চালালে — ngrok VM-এ পাঠাও:</span>
+scp -i "your-key.pem" ~/ngrok-stable-linux-amd64.zip ubuntu@YOUR_VM_IP:~/ngrok.zip
+<span class="cm"># scp = secure copy (SSH দিয়ে file transfer)
+# -i "your-key.pem" = authentication key (AWS/GCP VM-এর জন্য)
+# ~/ngrok-stable-linux-amd64.zip = local-এ ngrok zip file
+# ubuntu@YOUR_VM_IP:~/ngrok.zip = VM-এ কোথায় রাখবে</span>
+
+<span class="cm"># VM-এ unzip করো:</span>
+unzip ngrok.zip
+./ngrok --version     <span class="cm"># ngrok version 2.3.40 দেখালে সফল</span>
+
+<span class="cm"># Jenkins-এর port forward করো:</span>
+./ngrok http 8080
+<span class="cm"># Output এরকম আসবে:
+# Forwarding https://d4b48cd1f88c.ngrok.io -> http://localhost:8080
+#                ↑ এই https URL copy করো</span></pre></div>
+
+  <div class="code"><div class="code-hdr"><span class="code-lang">config</span><span class="code-desc">GitHub Webhook configure করো</span></div>
+  <pre><span class="cm"># GitHub Repo → Settings → Webhooks → Add webhook:</span>
+
+Payload URL: https://d4b48cd1f88c.ngrok.io/github-webhook/
+             <span class="cm"># ↑ ngrok URL + /github-webhook/ (এই path অবশ্যই দিতে হবে!)</span>
+Content type: application/json
+Which events: Just the push event   <span class="cm"># push করলেই trigger হবে</span>
+Active: ✓
+
+<span class="cm"># Jenkins-এ:
+# Pipeline Configure → Build Triggers → ✅ GitHub hook trigger for GitScm polling</span></pre></div>
+
+  <div class="box tip"><span class="box-icon">🧪</span><div class="box-body"><p><strong>Test করো:</strong> Jenkinsfile-এ একটি echo যোগ করো → <code>git add + commit + push</code> করো → কিছুক্ষণ অপেক্ষা করো → Jenkins-এ নিজেই Build শুরু হবে! "Build Now" চাপতে হবে না।</p></div></div>
+</div>
+
+<!-- ═══════════════════════════════ CHAPTER 5 ═══════════════════════════════ -->
+<div class="chapter" id="ch5">
+  <div class="chapter-header">
+    <div class="ch-bar" style="background:linear-gradient(#a98be0,#5ab4d6)"></div>
+    <div><div class="ch-num">CHAPTER 05</div><div class="ch-title">Conclusion — <span>সারসংক্ষেপ</span></div></div>
+  </div>
+
+  <h3>Jenkins Journey — তুমি কী কী শিখলে</h3>
+
+  <!-- SVG: Journey summary -->
+  <svg class="svg-wrap" viewBox="0 0 700 140" xmlns="http://www.w3.org/2000/svg">
+    <defs><marker id="j5a" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3z" fill="#f0923a"/></marker></defs>
+    <text x="350" y="22" text-anchor="middle" fill="#f5c842" font-family="Sora,sans-serif" font-size="13" font-weight="700">Jenkins — অধ্যায়ভিত্তিক সারসংক্ষেপ</text>
+    <rect x="10" y="36" width="118" height="80" rx="9" fill="#1a1917" stroke="#e05c4b" stroke-width="1.5"/>
+    <text x="69" y="58" text-anchor="middle" fill="#e05c4b" font-family="Sora,sans-serif" font-size="11" font-weight="700">অধ্যায় ১</text>
+    <text x="69" y="74" text-anchor="middle" fill="#ede9e3" font-family="Sora,sans-serif" font-size="10">Jenkins কী</text>
+    <text x="69" y="88" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">CI/CD concept</text>
+    <text x="69" y="102" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">কেন দরকার</text>
+    <line x1="130" y1="76" x2="148" y2="76" stroke="#f0923a" stroke-width="2" marker-end="url(#j5a)"/>
+    <rect x="150" y="36" width="118" height="80" rx="9" fill="#1a1917" stroke="#5ab4d6" stroke-width="1.5"/>
+    <text x="209" y="58" text-anchor="middle" fill="#5ab4d6" font-family="Sora,sans-serif" font-size="11" font-weight="700">অধ্যায় ২</text>
+    <text x="209" y="74" text-anchor="middle" fill="#ede9e3" font-family="Sora,sans-serif" font-size="10">Docker Install</text>
+    <text x="209" y="88" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">Freestyle Project</text>
+    <text x="209" y="102" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">Plugins</text>
+    <line x1="270" y1="76" x2="288" y2="76" stroke="#f0923a" stroke-width="2" marker-end="url(#j5a)"/>
+    <rect x="290" y="36" width="118" height="80" rx="9" fill="#1a1917" stroke="#7ec87a" stroke-width="1.5"/>
+    <text x="349" y="58" text-anchor="middle" fill="#7ec87a" font-family="Sora,sans-serif" font-size="11" font-weight="700">অধ্যায় ৩</text>
+    <text x="349" y="74" text-anchor="middle" fill="#ede9e3" font-family="Sora,sans-serif" font-size="10">Pipeline</text>
+    <text x="349" y="88" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">Jenkinsfile</text>
+    <text x="349" y="102" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">Build/Test/Deliver</text>
+    <line x1="410" y1="76" x2="428" y2="76" stroke="#f0923a" stroke-width="2" marker-end="url(#j5a)"/>
+    <rect x="430" y="36" width="118" height="80" rx="9" fill="#1a1917" stroke="#f5c842" stroke-width="1.5"/>
+    <text x="489" y="58" text-anchor="middle" fill="#f5c842" font-family="Sora,sans-serif" font-size="11" font-weight="700">অধ্যায় ৪</text>
+    <text x="489" y="74" text-anchor="middle" fill="#ede9e3" font-family="Sora,sans-serif" font-size="10">Complements</text>
+    <text x="489" y="88" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">Multibranch</text>
+    <text x="489" y="102" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">Schedule, Webhook</text>
+    <line x1="550" y1="76" x2="568" y2="76" stroke="#f0923a" stroke-width="2" marker-end="url(#j5a)"/>
+    <rect x="570" y="36" width="120" height="80" rx="9" fill="rgba(122,200,122,.08)" stroke="#7ec87a" stroke-width="2"/>
+    <text x="630" y="58" text-anchor="middle" fill="#7ec87a" font-family="Sora,sans-serif" font-size="11" font-weight="700">🎉 Done!</text>
+    <text x="630" y="74" text-anchor="middle" fill="#ede9e3" font-family="Sora,sans-serif" font-size="10">CI/CD Expert</text>
+    <text x="630" y="90" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">Automate করতে</text>
+    <text x="630" y="104" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">পারছো এখন!</text>
+  </svg>
+
+  <div class="hbox">
+    <h4>🎯 তুমি এখন জানো:</h4>
+    <ol style="padding-left:20px;margin-top:12px">
+      <li style="margin:8px 0"><strong>CI/CD কী:</strong> Code push → auto build+test+deploy। Manual কাজ কমায়, ভুল কমায়।</li>
+      <li style="margin:8px 0"><strong>Docker দিয়ে Jenkins:</strong> দুটি container (DinD + Jenkins), network, volumes।</li>
+      <li style="margin:8px 0"><strong>Freestyle Project:</strong> Simple tasks-এর জন্য। Web UI দিয়ে configure।</li>
+      <li style="margin:8px 0"><strong>Declarative Pipeline:</strong> Jenkinsfile-এ Build → Test → Deliver stage। stash/unstash দিয়ে file share।</li>
+      <li style="margin:8px 0"><strong>post block:</strong> always/success/failure — stage-এর পরে কী করতে হবে।</li>
+      <li style="margin:8px 0"><strong>archiveArtifacts:</strong> Build output Dashboard থেকে download করা যায়।</li>
+      <li style="margin:8px 0"><strong>Multibranch Pipeline:</strong> সব branches auto detect করে আলাদা pipeline চালায়।</li>
+      <li style="margin:8px 0"><strong>Cron scheduling:</strong> নির্দিষ্ট সময়ে auto build। Cron syntax: মিনিট ঘণ্টা দিন মাস সপ্তাহ।</li>
+      <li style="margin:8px 0"><strong>Webhook:</strong> git push করলেই auto trigger। ngrok দিয়ে local Jenkins public করা।</li>
+    </ol>
+  </div>
+
+  <div class="tbl"><table>
+    <thead><tr><th>Feature</th><th>কীভাবে করতে হয়</th><th>কখন ব্যবহার করবো</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:var(--blue)">Freestyle Project</strong></td><td>New Item → Freestyle → Execute Shell</td><td>Simple, one-off automation tasks</td></tr>
+      <tr><td><strong style="color:var(--green)">Declarative Pipeline</strong></td><td>Jenkinsfile → New Item → Pipeline → SCM</td><td>Real projects, multi-stage CI/CD</td></tr>
+      <tr><td><strong style="color:var(--gold)">Multibranch Pipeline</strong></td><td>New Item → Multibranch Pipeline → Branch Sources</td><td>Team projects with multiple branches</td></tr>
+      <tr><td><strong style="color:var(--orange)">Scheduled Build</strong></td><td>Configure → Build Triggers → Build periodically</td><td>Nightly builds, regular automated tests</td></tr>
+      <tr><td><strong style="color:var(--purple)">Webhook Trigger</strong></td><td>GitHub hook trigger + GitHub webhook URL</td><td>Auto build on every git push</td></tr>
+      <tr><td><strong style="color:var(--pink)">Blue Ocean UI</strong></td><td>Dashboard sidebar → Open Blue Ocean</td><td>Visual pipeline view, better UX</td></tr>
+    </tbody>
+  </table></div>
+
+  <!-- SVG: Jenkins + W&B = MLOps -->
+  <svg class="svg-wrap" viewBox="0 0 700 130" xmlns="http://www.w3.org/2000/svg">
+    <text x="350" y="22" text-anchor="middle" fill="#f5c842" font-family="Sora,sans-serif" font-size="13" font-weight="700">Jenkins + W&amp;B = Complete MLOps Stack</text>
+    <rect x="20" y="35" width="190" height="75" rx="9" fill="#1a1917" stroke="#e05c4b" stroke-width="1.5"/>
+    <text x="115" y="63" text-anchor="middle" fill="#fff" font-size="24">🤵</text>
+    <text x="115" y="83" text-anchor="middle" fill="#e05c4b" font-family="Sora,sans-serif" font-size="12" font-weight="700">Jenkins</text>
+    <text x="115" y="100" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">Code CI/CD Automation</text>
+    <text x="233" y="78" text-anchor="middle" fill="#f0923a" font-family="Sora,sans-serif" font-size="26">+</text>
+    <rect x="258" y="35" width="190" height="75" rx="9" fill="#1a1917" stroke="#f5c842" stroke-width="1.5"/>
+    <text x="353" y="63" text-anchor="middle" fill="#fff" font-size="24">⚖️</text>
+    <text x="353" y="83" text-anchor="middle" fill="#f5c842" font-family="Sora,sans-serif" font-size="12" font-weight="700">W&amp;B</text>
+    <text x="353" y="100" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="9">ML Experiment Tracking</text>
+    <text x="471" y="78" text-anchor="middle" fill="#7ec87a" font-family="Sora,sans-serif" font-size="26">=</text>
+    <rect x="490" y="35" width="192" height="75" rx="9" fill="rgba(122,200,122,.08)" stroke="#7ec87a" stroke-width="2"/>
+    <text x="586" y="63" text-anchor="middle" fill="#7ec87a" font-family="Sora,sans-serif" font-size="15" font-weight="700">🚀 MLOps</text>
+    <text x="586" y="82" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Code + ML — দুটোই</text>
+    <text x="586" y="98" text-anchor="middle" fill="#8a8580" font-family="Sora,sans-serif" font-size="10">Automated &amp; Tracked</text>
+  </svg>
+</div>
+
+</div><!-- /container -->
+
+<footer>
+  <p style="font-size:18px;font-weight:600;color:var(--text);margin-bottom:8px">🤵 Jenkins সম্পূর্ণ বাংলা গাইড — Fixed Edition</p>
+  <p>DataScientest কোর্স অবলম্বনে · সম্পূর্ণ বাংলায় · Dummy source files সহ · SVG fixes সহ</p>
+  <p style="margin-top:8px;font-size:12px;color:var(--muted)">এই document পড়ার পর আর কোনো resource দরকার নেই।</p>
+</footer>
+
+<script>
+const sections = document.querySelectorAll('.chapter');
+const navItems = document.querySelectorAll('.nav-item');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
+  navItems.forEach(n => n.classList.toggle('active', n.getAttribute('href') === '#' + cur));
+});
+</script>
+</body>
+</html>

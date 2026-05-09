@@ -1,0 +1,2163 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MLflow সম্পূর্ণ গাইড — বাংলায়</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Playfair+Display:wght@700;900&amp;display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --surface3: #30363d;
+    --border: #30363d;
+    --accent: #1f6feb;
+    --accent2: #58a6ff;
+    --accent3: #3fb950;
+    --accent4: #f78166;
+    --accent5: #d2a8ff;
+    --accent6: #ffa657;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #b1bac4;
+    --yellow: #f0c040;
+    --red: #ff7b72;
+    --teal: #39d353;
+    --pink: #f778ba;
+    --code-bg: #161b22;
+    --tip-bg: #0d2137;
+    --warn-bg: #2d1a00;
+    --note-bg: #1a2a1a;
+    --info-bg: #1a1a2e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  /* ===== TOP HERO ===== */
+  .hero {
+    background: linear-gradient(135deg, #0d1117 0%, #0d2137 50%, #0d1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 20px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at center, rgba(31,111,235,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .hero-logo svg { filter: drop-shadow(0 0 20px rgba(88,166,255,0.4)); }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    background: linear-gradient(90deg, #58a6ff, #d2a8ff, #58a6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .hero p {
+    color: var(--text2);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto 24px;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(31,111,235,0.15);
+    border: 1px solid rgba(88,166,255,0.3);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    color: var(--accent2);
+  }
+
+  /* ===== NAV ===== */
+  .toc-nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .toc-nav ul {
+    display: flex;
+    gap: 0;
+    list-style: none;
+    overflow-x: auto;
+    scrollbar-width: none;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .toc-nav ul::-webkit-scrollbar { display: none; }
+  .toc-nav li a {
+    display: block;
+    padding: 14px 16px;
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .toc-nav li a:hover {
+    color: var(--accent2);
+    border-bottom-color: var(--accent2);
+  }
+
+  /* ===== MAIN LAYOUT ===== */
+  .main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* ===== CHAPTER ===== */
+  .chapter {
+    margin-bottom: 70px;
+    animation: fadeUp 0.4s ease both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .chapter-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .chapter-num {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    background: linear-gradient(135deg, var(--accent), #388bfd);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 4px 15px rgba(31,111,235,0.3);
+  }
+  .chapter-title-block h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .chapter-title-block p {
+    color: var(--text2);
+    font-size: 0.95rem;
+  }
+
+  /* ===== SECTIONS ===== */
+  .section {
+    margin-bottom: 45px;
+  }
+  h3 {
+    font-size: 1.3rem;
+    color: var(--accent2);
+    margin-bottom: 14px;
+    margin-top: 30px;
+    padding-left: 12px;
+    border-left: 3px solid var(--accent);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-weight: 600;
+  }
+  h4 {
+    font-size: 1.1rem;
+    color: var(--accent6);
+    margin-bottom: 10px;
+    margin-top: 22px;
+    font-weight: 600;
+  }
+  p { margin-bottom: 14px; color: var(--text3); }
+  p strong { color: var(--text); font-weight: 600; }
+
+  /* ===== CALLOUT BOXES ===== */
+  .box {
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 18px 0;
+    border-left: 4px solid;
+    font-size: 0.95rem;
+  }
+  .box-tip { background: var(--tip-bg); border-color: var(--accent2); }
+  .box-warn { background: var(--warn-bg); border-color: var(--accent6); }
+  .box-note { background: var(--note-bg); border-color: var(--accent3); }
+  .box-info { background: var(--info-bg); border-color: var(--accent5); }
+  .box-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .box-tip .box-label { color: var(--accent2); }
+  .box-warn .box-label { color: var(--accent6); }
+  .box-note .box-label { color: var(--accent3); }
+  .box-info .box-label { color: var(--accent5); }
+  .box p { margin: 0; color: var(--text3); }
+  .box p + p { margin-top: 8px; }
+
+  /* ===== CODE ===== */
+  pre {
+    background: #0a0f14;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    overflow-x: auto;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    position: relative;
+  }
+  pre .code-label {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 0.7rem;
+    color: var(--text2);
+    background: var(--surface2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(110,118,129,0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    color: #e6a4a4;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+  }
+  /* Syntax colors */
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .cm { color: #8b949e; font-style: italic; }
+  .num { color: #79c0ff; }
+  .var { color: #ffa657; }
+  .op { color: #ff7b72; }
+
+  /* ===== TABLE ===== */
+  .table-wrap { overflow-x: auto; margin: 18px 0; border-radius: 10px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: var(--surface2);
+    color: var(--accent2);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(48,54,61,0.5);
+    font-size: 0.9rem;
+    color: var(--text3);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(33,38,45,0.5); }
+  td strong { color: var(--text); }
+
+  /* ===== CARDS ===== */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.2s;
+  }
+  .card:hover {
+    border-color: var(--accent2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(88,166,255,0.1);
+  }
+  .card-icon { font-size: 2rem; margin-bottom: 10px; }
+  .card h4 { color: var(--accent2); margin: 0 0 8px; font-size: 1rem; }
+  .card p { color: var(--text2); font-size: 0.88rem; margin: 0; }
+
+  /* ===== STEPS ===== */
+  .steps { margin: 20px 0; }
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .step::before {
+    content: '';
+    position: absolute;
+    left: 18px;
+    top: 40px;
+    bottom: -24px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+  .step:last-child::before { display: none; }
+  .step-num {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: white;
+    margin-top: 2px;
+  }
+  .step-content h4 { color: var(--text); margin: 0 0 6px; font-size: 1rem; }
+  .step-content p { color: var(--text2); font-size: 0.9rem; margin: 0; }
+
+  /* ===== DIVIDER ===== */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    margin: 50px 0;
+  }
+
+  /* ===== HIGHLIGHT ===== */
+  .highlight {
+    background: linear-gradient(135deg, rgba(31,111,235,0.1), rgba(210,168,255,0.08));
+    border: 1px solid rgba(88,166,255,0.2);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .highlight h4 { color: var(--accent2); margin-bottom: 10px; }
+  .highlight p { margin: 0; color: var(--text3); }
+
+  /* ===== ANALOGY BOX ===== */
+  .analogy {
+    background: linear-gradient(135deg, rgba(63,185,80,0.08), rgba(57,211,83,0.04));
+    border: 1px solid rgba(63,185,80,0.25);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 18px 0;
+  }
+  .analogy-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent3);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .analogy p { color: var(--text3); margin: 0; }
+
+  /* ===== BADGE ===== */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin: 2px;
+  }
+  .badge-blue { background: rgba(88,166,255,0.15); color: var(--accent2); border: 1px solid rgba(88,166,255,0.3); }
+  .badge-green { background: rgba(63,185,80,0.15); color: var(--accent3); border: 1px solid rgba(63,185,80,0.3); }
+  .badge-orange { background: rgba(255,166,87,0.15); color: var(--accent6); border: 1px solid rgba(255,166,87,0.3); }
+  .badge-purple { background: rgba(210,168,255,0.15); color: var(--accent5); border: 1px solid rgba(210,168,255,0.3); }
+
+  /* ===== FLOW DIAGRAM ===== */
+  .flow-container { margin: 24px 0; overflow-x: auto; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .chapter-header { flex-direction: column; }
+    .card-grid { grid-template-columns: 1fr; }
+    .toc-nav li a { padding: 12px 10px; font-size: 0.8rem; }
+    h3 { font-size: 1.15rem; }
+  }
+
+  /* ===== SCROLL INDICATOR ===== */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--accent), var(--accent5));
+    z-index: 200;
+    transition: width 0.1s;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text2);
+    font-size: 0.9rem;
+  }
+
+  /* list styles */
+  ul.content-list, ol.content-list {
+    padding-left: 24px;
+    margin: 10px 0 14px;
+  }
+  ul.content-list li, ol.content-list li {
+    color: var(--text3);
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+  }
+  ul.content-list li strong, ol.content-list li strong {
+    color: var(--text);
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SHARED SVG DEFS — arrow marker used by all diagrams -->
+<svg width="0" height="0" style="position:absolute;overflow:hidden;" aria-hidden="true">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#58a6ff"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3fb950"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ffa657"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#d2a8ff"/>
+    </marker>
+    <marker id="arrow-grey" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#8b949e"/>
+    </marker>
+  </defs>
+</svg>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-logo">
+    <svg width="60" height="40" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <text x="0" y="60" font-family="Arial Black" font-size="64" font-weight="900" fill="#e6edf3">ml</text>
+      <text x="82" y="60" font-family="Arial" font-size="64" font-style="italic" fill="#58a6ff">flow</text>
+    </svg>
+  </div>
+  <h1>MLflow সম্পূর্ণ গাইড</h1>
+  <p>মেশিন লার্নিং লাইফসাইকেল ম্যানেজমেন্ট — শূন্য থেকে বিশেষজ্ঞ পর্যন্ত, সম্পূর্ণ বাংলায়</p>
+  <div class="hero-badge">
+    <span>📖</span>
+    <span>সমস্ত ৬টি অধ্যায় · বাংলায় ব্যাখ্যা · কোড উদাহরণ · ডায়াগ্রাম</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="toc-nav">
+  <ul>
+    <li><a href="#ch1">১. ভূমিকা</a></li>
+    <li><a href="#ch2">২. Tracking</a></li>
+    <li><a href="#ch3">৩. Projects</a></li>
+    <li><a href="#ch4">৪. Models</a></li>
+    <li><a href="#ch5">৫. Registry</a></li>
+    <li><a href="#ch6">৬. উপসংহার</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 1: INTRODUCTION
+═══════════════════════════════════════════ -->
+<section class="chapter" id="ch1">
+  <div class="chapter-header">
+    <div class="chapter-num">১</div>
+    <div class="chapter-title-block">
+      <h2>ভূমিকা — MLflow কী এবং কেন দরকার?</h2>
+      <p>Machine Learning প্রজেক্টের জীবনচক্র এবং সমস্যাগুলি বোঝা</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🤔 প্রথমে বোঝো — Machine Learning মানে কী?</h3>
+    <p>কল্পনা করো তুমি একটি কোম্পানিতে Data Scientist। তোমার কাজ হলো ডেটা দেখে এমন একটি "মডেল" তৈরি করা যা ভবিষ্যতের কিছু জিনিস আন্দাজ করতে পারবে। যেমন — আগামীকাল কতটা আপেল বিক্রি হবে, কোন গ্রাহক লোন ফেরত দেবে না, ইত্যাদি।</p>
+    <p>এই পুরো কাজটা করতে গেলে অনেকগুলো ধাপ পার করতে হয়। এই ধাপগুলোকে একসাথে বলা হয় <strong>Machine Learning Lifecycle</strong> (জীবনচক্র)।</p>
+
+    <h3>🔄 ML Lifecycle — চারটি মূল ধাপ</h3>
+
+    <!-- SVG LIFECYCLE DIAGRAM -->
+    <div class="flow-container">
+      <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" style="max-width:700px; width:100%; display:block; margin:0 auto;">
+        <defs>
+          <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#0d2137"/>
+            <stop offset="100%" style="stop-color:#0d1117"/>
+          </linearGradient>
+          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1f6feb"/>
+            <stop offset="100%" style="stop-color:#388bfd"/>
+          </linearGradient>
+          <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#3fb950"/>
+            <stop offset="100%" style="stop-color:#2da44e"/>
+          </linearGradient>
+          <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#d2a8ff"/>
+            <stop offset="100%" style="stop-color:#a371f7"/>
+          </linearGradient>
+          <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffa657"/>
+            <stop offset="100%" style="stop-color:#f78166"/>
+          </linearGradient>
+          <filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+
+        <!-- Background -->
+        <rect width="700" height="420" rx="16" fill="url(#bg1)" stroke="#30363d" stroke-width="1"/>
+
+        <!-- Center circle -->
+        <circle cx="350" cy="210" r="75" fill="none" stroke="#30363d" stroke-width="2" stroke-dasharray="8,4"/>
+        <text x="350" y="200" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="14" font-weight="700">ML</text>
+        <text x="350" y="218" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="14" font-weight="700">Lifecycle</text>
+        <text x="350" y="236" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">জীবনচক্র</text>
+
+        <!-- TOP: Data Preparation -->
+        <g filter="url(#glow)">
+          <rect x="240" y="30" width="220" height="80" rx="12" fill="url(#g1)" opacity="0.15" stroke="#1f6feb" stroke-width="1.5"/>
+          <text x="350" y="58" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="15" font-weight="700">🔍 Data Preparation</text>
+          <text x="350" y="76" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="12">ডেটা প্রস্তুত করা</text>
+          <text x="350" y="96" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">কাঁচা ডেটা → ব্যবহারযোগ্য ডেটা</text>
+        </g>
+
+        <!-- RIGHT: Training -->
+        <g filter="url(#glow)">
+          <rect x="535" y="150" width="145" height="80" rx="12" fill="url(#g2)" opacity="0.15" stroke="#3fb950" stroke-width="1.5"/>
+          <text x="607" y="178" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="15" font-weight="700">🧮 Training</text>
+          <text x="607" y="196" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="12">মডেল ট্রেনিং</text>
+          <text x="607" y="214" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">Algorithm চালানো</text>
+        </g>
+
+        <!-- BOTTOM: Deploy -->
+        <g filter="url(#glow)">
+          <rect x="240" y="310" width="220" height="80" rx="12" fill="url(#g3)" opacity="0.15" stroke="#d2a8ff" stroke-width="1.5"/>
+          <text x="350" y="338" text-anchor="middle" fill="#d2a8ff" font-family="Hind Siliguri,sans-serif" font-size="15" font-weight="700">🚀 Deployment</text>
+          <text x="350" y="356" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="12">মডেল ডিপ্লয়</text>
+          <text x="350" y="376" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">ব্যবহারকারীর কাছে পৌঁছানো</text>
+        </g>
+
+        <!-- LEFT: Data Collection -->
+        <g filter="url(#glow)">
+          <rect x="20" y="150" width="155" height="80" rx="12" fill="url(#g4)" opacity="0.15" stroke="#ffa657" stroke-width="1.5"/>
+          <text x="97" y="178" text-anchor="middle" fill="#ffa657" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="700">📥 Data Collection</text>
+          <text x="97" y="196" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="12">নতুন ডেটা সংগ্রহ</text>
+          <text x="97" y="214" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">মডেল উন্নত করতে</text>
+        </g>
+
+        <!-- Arrows (clockwise) -->
+        <!-- Top → Right -->
+        <path d="M 460 80 Q 560 80 550 150" stroke="#58a6ff" stroke-width="2" fill="none" marker-end="url(#arrow)" opacity="0.7"/>
+        <!-- Right → Bottom -->
+        <path d="M 565 230 Q 565 310 460 330" stroke="#3fb950" stroke-width="2" fill="none" marker-end="url(#arrow-green)" opacity="0.7"/>
+        <!-- Bottom → Left -->
+        <path d="M 240 350 Q 140 350 140 230" stroke="#d2a8ff" stroke-width="2" fill="none" marker-end="url(#arrow-purple)" opacity="0.7"/>
+        <!-- Left → Top -->
+        <path d="M 145 150 Q 145 80 240 80" stroke="#ffa657" stroke-width="2" fill="none" marker-end="url(#arrow-orange)" opacity="0.7"/>
+      </svg>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ধাপ</th>
+            <th>বাংলায় কী হয়</th>
+            <th>কে করে</th>
+            <th>কোন টুল ব্যবহার হয়</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>🔍 Data Preparation</strong></td>
+            <td>কাঁচা ডেটাকে (raw data) মডেল ট্রেনিংয়ের উপযুক্ত করে তোলা। ধরো তোমার কাছে একটা এক্সেল ফাইল আছে — সেটাকে পরিষ্কার করা, গণনাযোগ্য সংখ্যায় রূপান্তর করা।</td>
+            <td>Data Scientist, Data Analyst</td>
+            <td>Python, Pandas, Numpy, Apache Spark, MySQL</td>
+          </tr>
+          <tr>
+            <td><strong>🧮 Modeling &amp; Training</strong></td>
+            <td>কোন Algorithm ব্যবহার করবো, সেটা ঠিক করে মডেল তৈরি এবং ট্রেনিং দেওয়া। যেমন — "Random Forest" দিয়ে আপেল বিক্রির পূর্বাভাস দেওয়া শেখানো।</td>
+            <td>Data Scientist</td>
+            <td>TensorFlow, PyTorch, Scikit-Learn</td>
+          </tr>
+          <tr>
+            <td><strong>🚀 Deployment</strong></td>
+            <td>তৈরি মডেলটাকে আসল ব্যবহারের জন্য বাইরে পাঠানো। একটা API বানানো যাতে অ্যাপ বা ওয়েবসাইট মডেলকে ব্যবহার করতে পারে।</td>
+            <td>ML Engineer, Data Engineer</td>
+            <td>Docker, Cloud platforms</td>
+          </tr>
+          <tr>
+            <td><strong>📥 Data Collection</strong></td>
+            <td>নতুন ডেটা এসেছে — সেটা দিয়ে মডেলকে আরো উন্নত করার জন্য আবার শুরু থেকে।</td>
+            <td>Data Engineer</td>
+            <td>Databases, APIs</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="analogy">
+      <div class="analogy-label">🍳 উপমা দিয়ে বোঝো</div>
+      <p>ধরো তুমি একজন রাঁধুনি। <strong>Data Preparation</strong> মানে রান্নার আগে সবজি কাটা ও ধোয়া। <strong>Training</strong> মানে রান্না করা। <strong>Deployment</strong> মানে রান্না করা খাবার রেস্টুরেন্টে পরিবেশন করা। <strong>Data Collection</strong> মানে গ্রাহকদের মতামত নিয়ে আবার রেসিপি উন্নত করা!</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>😤 সমস্যাগুলো কী কী? (Recurring Challenges)</h3>
+    <p>এত ধাপ পার করতে গিয়ে data scientists-দের অনেক সমস্যায় পড়তে হয়। চলো দেখি:</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🛠️</div>
+        <h4>Tool Spectrum</h4>
+        <p>এত রকম টুল! কোনটা ভালো সেটা বুঝতে সব টুল টেস্ট করতে হয়। ৫০টা টুলের মধ্যে বেস্টটা বেছে নেওয়া কঠিন।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h4>Experiment Tracking</h4>
+        <p>এক মডেলে ১০০ রকম parameter পরীক্ষা করলে — কোনটায় কী ফলাফল হয়েছিল, সেটা মনে রাখা অসম্ভব।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h4>Reproducibility</h4>
+        <p>গতকাল যে মডেল বানিয়েছিলে, আজ ঠিক সেই একই ফলাফল পেতে পারবে? অনেক সময় পারবে না!</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚀</div>
+        <h4>Deployment</h4>
+        <p>মডেল বানানো আর মডেল deploy করা — দুটো সম্পূর্ণ আলাদা বিশ্ব! কীভাবে production-এ নিয়ে যাবো?</p>
+      </div>
+    </div>
+
+    <div class="box box-warn">
+      <div class="box-label">⚠️ বাস্তব সমস্যা</div>
+      <p>কল্পনা করো তুমি ৩ মাস ধরে ৫০০টা experiment চালালে। হঠাৎ boss জিজ্ঞেস করলো — "সেই experiment নম্বর ৩৭৮-এ কী parameter ছিল যেটায় সবচেয়ে ভালো ফলাফল পেয়েছিলে?" তুমি কি মনে রাখতে পারবে? MLflow ছাড়া এটা nightmare!</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>💡 MLflow কী? — সমাধান এসে গেছে!</h3>
+    <p><strong>MLflow</strong> হলো একটি open-source টুল যা ২০১৮ সালে Databricks কোম্পানি বানিয়েছে। এটা Machine Learning প্রজেক্টের সমস্ত সমস্যার সমাধান দেয় — Tracking, Reproducibility, Management এবং Deployment।</p>
+
+    <div class="analogy">
+      <div class="analogy-label">🎭 সহজ উপমা</div>
+      <p>MLflow হলো তোমার ML প্রজেক্টের <strong>ডায়েরি + অফিস ম্যানেজার + শিপিং কোম্পানি</strong> একসাথে! ডায়েরিতে সব experiment লেখা হয়, ম্যানেজার সব কিছু সাজিয়ে রাখে, আর শিপিং কোম্পানি মডেলকে সঠিক জায়গায় পাঠিয়ে দেয়।</p>
+    </div>
+
+    <h3>🏛️ MLflow-এর চারটি মূল অংশ (Architecture)</h3>
+
+    <!-- MLflow Components Diagram -->
+    <div class="flow-container">
+      <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;width:100%;display:block;margin:0 auto;">
+        <defs>
+          <linearGradient id="comp1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#1f6feb;stop-opacity:0.3"/><stop offset="100%" style="stop-color:#388bfd;stop-opacity:0.1"/></linearGradient>
+          <linearGradient id="comp2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#3fb950;stop-opacity:0.3"/><stop offset="100%" style="stop-color:#2da44e;stop-opacity:0.1"/></linearGradient>
+          <linearGradient id="comp3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ffa657;stop-opacity:0.3"/><stop offset="100%" style="stop-color:#f78166;stop-opacity:0.1"/></linearGradient>
+          <linearGradient id="comp4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#d2a8ff;stop-opacity:0.3"/><stop offset="100%" style="stop-color:#a371f7;stop-opacity:0.1"/></linearGradient>
+        </defs>
+        <rect width="700" height="200" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+
+        <!-- Component 1: Tracking -->
+        <rect x="20" y="20" width="155" height="160" rx="10" fill="url(#comp1)" stroke="#1f6feb" stroke-width="1.5"/>
+        <text x="97" y="52" text-anchor="middle" fill="#58a6ff" font-family="Arial" font-size="11" font-weight="900">ml<tspan font-style="italic" font-weight="400">flow</tspan></text>
+        <text x="97" y="72" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="14" font-weight="700">Tracking</text>
+        <text x="97" y="95" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">পরীক্ষা রেকর্ড</text>
+        <text x="97" y="112" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">করা ও খোঁজা</text>
+        <text x="97" y="135" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Parameters,</text>
+        <text x="97" y="150" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Metrics, Code</text>
+
+        <!-- Component 2: Projects -->
+        <rect x="190" y="20" width="155" height="160" rx="10" fill="url(#comp2)" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="267" y="72" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="14" font-weight="700">Projects</text>
+        <text x="267" y="95" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">কোড প্যাকেজিং</text>
+        <text x="267" y="112" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">ফরম্যাট</text>
+        <text x="267" y="135" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">যেকোনো মেশিনে</text>
+        <text x="267" y="150" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">চালানো যায়</text>
+
+        <!-- Component 3: Models -->
+        <rect x="360" y="20" width="155" height="160" rx="10" fill="url(#comp3)" stroke="#ffa657" stroke-width="1.5"/>
+        <text x="437" y="72" text-anchor="middle" fill="#ffa657" font-family="Hind Siliguri,sans-serif" font-size="14" font-weight="700">Models</text>
+        <text x="437" y="95" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">সাধারণ মডেল</text>
+        <text x="437" y="112" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">ফরম্যাট</text>
+        <text x="437" y="135" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">বিভিন্ন deployment</text>
+        <text x="437" y="150" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">টুল সাপোর্ট করে</text>
+
+        <!-- Component 4: Registry -->
+        <rect x="530" y="20" width="155" height="160" rx="10" fill="url(#comp4)" stroke="#d2a8ff" stroke-width="1.5"/>
+        <text x="607" y="63" text-anchor="middle" fill="#d2a8ff" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="700">Model</text>
+        <text x="607" y="80" text-anchor="middle" fill="#d2a8ff" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="700">Registry</text>
+        <text x="607" y="103" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">কেন্দ্রীভূত ও</text>
+        <text x="607" y="118" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">সহযোগিতামূলক</text>
+        <text x="607" y="135" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">মডেল জীবনচক্র</text>
+        <text x="607" y="150" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">ব্যবস্থাপনা</text>
+      </svg>
+    </div>
+
+    <ul class="content-list">
+      <li><strong>🔵 MLflow Tracking:</strong> তোমার সব experiment-এর তথ্য সংরক্ষণ করে। কোন parameter দিয়ে চালিয়েছিলে, কী ফলাফল পেয়েছিলে — সব লিপিবদ্ধ থাকে।</li>
+      <li><strong>🟢 MLflow Projects:</strong> তোমার কোড এমনভাবে প্যাক করে রাখে যাতে যেকোনো মেশিনে একই ফলাফল পাওয়া যায়।</li>
+      <li><strong>🟠 MLflow Models:</strong> তৈরি মডেলকে এমন ফরম্যাটে রাখে যাতে যেকোনো জায়গায় deploy করা যায়।</li>
+      <li><strong>🟣 MLflow Registry:</strong> সব মডেলের একটা কেন্দ্রীয় ডেটাবেস — কোন মডেল কোন stage-এ আছে সব জানা যায়।</li>
+    </ul>
+
+    <h3>🖥️ MLflow-এর তিনটি Interface</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🐍</div>
+        <h4>Python API</h4>
+        <p>Python কোডের মধ্যে সরাসরি ব্যবহার করা যায়। সবচেয়ে বেশি ব্যবহৃত। <code>import mlflow</code> লিখলেই শুরু।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <h4>CLI (Command Line)</h4>
+        <p>Terminal থেকে command দিয়ে ব্যবহার। যেমন <code>mlflow server</code> বা <code>mlflow run</code>।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h4>Web UI</h4>
+        <p>Browser-এ সুন্দর একটা Dashboard! সব experiment গ্রাফে দেখা, তুলনা করা। ভিজ্যুয়ালি সব বোঝা যায়।</p>
+      </div>
+    </div>
+
+    <h3>⚙️ Environment Setup — শুরু করার আগে</h3>
+    <p>MLflow ব্যবহার শুরু করতে কিছু জিনিস setup করতে হয়:</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">১</div>
+        <div class="step-content">
+          <h4>GitHub থেকে প্রজেক্ট clone করো</h4>
+          <p>কোর্সের সাথে একটা ready-made প্রজেক্ট দেওয়া আছে। সেটা download করো।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">২</div>
+        <div class="step-content">
+          <h4>Virtual Environment বানাও</h4>
+          <p>Python-এ আলাদা আলাদা প্রজেক্টের জন্য আলাদা environment দরকার। যাতে একটার library আরেকটার সাথে conflict না করে।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">৩</div>
+        <div class="step-content">
+          <h4>MLflow install করো</h4>
+          <p>Specific version ব্যবহার করো। এই কোর্সে version 2.9.2 ব্যবহার হয়েছে।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">৪</div>
+        <div class="step-content">
+          <h4>Miniconda install করো</h4>
+          <p>Conda হলো Python-এর আরেকটি environment manager। pip-এর বিকল্প।</p>
+        </div>
+      </div>
+    </div>
+
+    <pre><span class="cm"># ধাপ ১: GitHub থেকে প্রজেক্ট নামাও</span>
+<span class="fn">git</span> clone https://github.com/DataScientest/MLflow_Course.git
+<span class="fn">cd</span> MLflow_Course
+
+<span class="cm"># ধাপ ২: Virtual Environment তৈরি করো</span>
+<span class="fn">virtualenv</span> env_mlflow
+<span class="fn">source</span> env_mlflow/bin/activate  <span class="cm"># Linux/Mac-এ</span>
+
+<span class="cm"># ধাপ ৩: MLflow install করো (version 2.9.2)</span>
+<span class="fn">pip3</span> install mlflow==<span class="num">2.9.2</span>
+
+<span class="cm"># ধাপ ৪: Miniconda ডাউনলোড ও ইনস্টল</span>
+<span class="fn">wget</span> https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+<span class="fn">bash</span> Miniconda3-latest-Linux-x86_64.sh<div class="code-label">bash</div></pre>
+
+    <div class="box box-tip">
+      <div class="box-label">💡 Virtual Environment কী?</div>
+      <p>ধরো তোমার কম্পিউটারে দুটো রান্নাঘর আছে। একটায় শুধু বাংলা রান্নার মশলা, আরেকটায় চাইনিজ। দুটো মিক্স হলে সমস্যা। Virtual Environment ঠিক এইরকম — প্রতিটা প্রজেক্টের নিজস্ব আলাদা "রান্নাঘর"!</p>
+    </div>
+
+    <h3>🖥️ Tracking Server চালু করা</h3>
+    <p>MLflow-এর সব তথ্য একটা "Tracking Server"-এ জমা হয়। এটাকে MLflow-এর "হেডকোয়ার্টার" বলতে পারো। এটা চালু না করলে কোনো experiment রেকর্ড হবে না।</p>
+
+    <pre><span class="kw">mlflow</span> server \
+  --host <span class="num">0.0.0.0</span> \
+  --port <span class="num">8080</span> \
+  --backend-store-uri file:///home/ubuntu/MLflow_Course/mlruns \
+  --default-artifact-root file:///home/ubuntu/MLflow_Course/mlruns \
+  --serve-artifacts<div class="code-label">bash</div></pre>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Parameter</th><th>বাংলায় মানে</th></tr></thead>
+        <tbody>
+          <tr><td><code>--host 0.0.0.0</code></td><td>যেকোনো IP থেকে access করা যাবে (শুধু নিজের কম্পিউটার নয়)</td></tr>
+          <tr><td><code>--port 8080</code></td><td>Server চলবে port 8080-এ। Browser-এ <code>localhost:8080</code> দিলে দেখা যাবে</td></tr>
+          <tr><td><code>--backend-store-uri</code></td><td>Experiment-এর metadata কোথায় সংরক্ষণ করবে</td></tr>
+          <tr><td><code>--default-artifact-root</code></td><td>Model file, graph ইত্যাদি কোথায় রাখবে</td></tr>
+          <tr><td><code>--serve-artifacts</code></td><td>Server নিজেই artifact serve করবে</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box box-note">
+      <div class="box-label">✅ Server চালু হলে কী দেখবে</div>
+      <p>Terminal-এ দেখবে: <code>Listening at: http://0.0.0.0:8080</code> — এর মানে server চলছে। Browser খুলে <code>http://localhost:8080</code> গেলে MLflow Dashboard দেখতে পাবে!</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 2: TRACKING
+═══════════════════════════════════════════ -->
+<section class="chapter" id="ch2">
+  <div class="chapter-header">
+    <div class="chapter-num" style="background: linear-gradient(135deg, #3fb950, #2da44e);">২</div>
+    <div class="chapter-title-block">
+      <h2>MLflow Tracking — পরীক্ষার খাতা!</h2>
+      <p>সব experiment রেকর্ড করো, তুলনা করো, সেরাটা খুঁজে বের করো</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>📔 Tracking মানে কী?</h3>
+    <p>Tracking মানে হলো প্রতিটা experiment-এর সব তথ্য লিখে রাখা। ধরো তুমি একটা মডেল ১০ বার train করলে — প্রতিবার আলাদা আলাদা setting দিয়ে। কোন setting-এ সবচেয়ে ভালো ফলাফল পেলে সেটা MLflow Track করে রাখে।</p>
+
+    <div class="analogy">
+      <div class="analogy-label">🔬 বিজ্ঞান গবেষণার উপমা</div>
+      <p>মনে করো তুমি একজন রসায়নবিদ। তুমি বিভিন্ন তাপমাত্রায় একটা reaction করছো। প্রতিবার কী তাপমাত্রায় করলে, কতক্ষণ করলে, ফলাফল কী হলো — সব তুমি lab notebook-এ লিখে রাখো। MLflow Tracking হলো Data Scientist-দের সেই <strong>lab notebook</strong>!</p>
+    </div>
+
+    <h3>🏗️ Tracking-এর গঠন — Experiment এবং Run</h3>
+
+    <!-- Tracking Structure Diagram -->
+    <div class="flow-container">
+      <svg viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;display:block;margin:0 auto;">
+        <defs>
+          <linearGradient id="expbg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#1f6feb;stop-opacity:0.2"/><stop offset="100%" style="stop-color:#1f6feb;stop-opacity:0.05"/></linearGradient>
+        </defs>
+        <rect width="680" height="280" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+
+        <!-- Tracking Server -->
+        <rect x="20" y="15" width="640" height="250" rx="10" fill="none" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.5"/>
+        <text x="340" y="36" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="700">🖥️ Tracking Server (mlruns ফোল্ডার)</text>
+
+        <!-- Experiment Box -->
+        <rect x="40" y="50" width="290" height="195" rx="8" fill="url(#expbg)" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="185" y="73" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="700">📁 Experiment: Apple_Models</text>
+
+        <!-- Run 1 -->
+        <rect x="55" y="85" width="120" height="145" rx="6" fill="rgba(88,166,255,0.08)" stroke="#58a6ff" stroke-width="1"/>
+        <text x="115" y="103" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="11" font-weight="700">Run: first_run</text>
+        <text x="115" y="120" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">⚙️ Params:</text>
+        <text x="115" y="134" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="9">max_depth=5</text>
+        <text x="115" y="147" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="9">n_estimators=100</text>
+        <text x="115" y="163" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">📊 Metrics:</text>
+        <text x="115" y="177" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="9">r2: 0.865</text>
+        <text x="115" y="191" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="9">mae: 51.9</text>
+        <text x="115" y="208" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">📦 Artifacts</text>
+        <text x="115" y="221" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="9">model.pkl</text>
+
+        <!-- Run 2 -->
+        <rect x="195" y="85" width="120" height="145" rx="6" fill="rgba(255,166,87,0.08)" stroke="#ffa657" stroke-width="1"/>
+        <text x="255" y="103" text-anchor="middle" fill="#ffa657" font-family="Hind Siliguri,sans-serif" font-size="11" font-weight="700">Run: second_run</text>
+        <text x="255" y="120" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">⚙️ Params:</text>
+        <text x="255" y="134" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="9">max_depth=10</text>
+        <text x="255" y="147" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="9">n_estimators=150</text>
+        <text x="255" y="163" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">📊 Metrics:</text>
+        <text x="255" y="177" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="9">r2: 0.881</text>
+        <text x="255" y="191" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="9">mae: 48.2</text>
+        <text x="255" y="208" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">📦 Artifacts</text>
+        <text x="255" y="221" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="9">model.pkl</text>
+
+        <!-- Another Experiment -->
+        <rect x="350" y="50" width="290" height="115" rx="8" fill="rgba(210,168,255,0.08)" stroke="#d2a8ff" stroke-width="1.5"/>
+        <text x="495" y="73" text-anchor="middle" fill="#d2a8ff" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="700">📁 Experiment: Iris_Models</text>
+        <text x="495" y="98" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">Run: autolog_run_1</text>
+        <text x="495" y="116" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">Run: autolog_run_2</text>
+        <text x="495" y="134" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">Run: autolog_run_3</text>
+        <text x="495" y="155" text-anchor="middle" fill="#30363d" font-family="Hind Siliguri,sans-serif" font-size="10">— — —</text>
+
+        <!-- Labels at bottom -->
+        <text x="185" y="255" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">একটি Experiment = একটি প্রজেক্ট বা টপিক</text>
+        <text x="495" y="255" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">প্রতিটি Run = একবার মডেল train করা</text>
+      </svg>
+    </div>
+
+    <p>প্রতিটি <strong>Run</strong>-এ কী কী তথ্য থাকে:</p>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">⚙️</div>
+        <h4>Hyperparameters</h4>
+        <p>মডেলের "সেটিংস"। যেমন গাছ কতটা গভীর হবে (<code>max_depth</code>), কতটা গাছ থাকবে (<code>n_estimators</code>)।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h4>Metrics</h4>
+        <p>মডেল কতটা ভালো তার পরিমাপ। যেমন r² score (১ হলে পারফেক্ট), MAE (গড় ভুলের পরিমাণ)।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📦</div>
+        <h4>Artifacts</h4>
+        <p>Training-এর ফলে তৈরি ফাইল। যেমন trained model ফাইল (.pkl), গ্রাফ, HTML রিপোর্ট।</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🔌 Tracking Server-এ Connect করা</h3>
+    <p>Python কোড থেকে Tracking Server-এর সাথে যুক্ত হতে হয়। এটা না করলে কিছুই রেকর্ড হবে না।</p>
+
+    <pre><span class="kw">from</span> mlflow <span class="kw">import</span> MlflowClient
+<span class="kw">import</span> mlflow
+
+<span class="cm"># Tracking Server-এর address বলো Python-কে</span>
+client = <span class="fn">MlflowClient</span>(tracking_uri=<span class="str">"http://127.0.0.1:8080"</span>)
+mlflow.<span class="fn">set_tracking_uri</span>(<span class="str">"http://127.0.0.1:8080"</span>)
+
+<span class="cm"># 127.0.0.1 মানে "নিজের কম্পিউটার" (localhost)</span>
+<span class="cm"># 8080 হলো port নম্বর — আমরা server start করেছিলাম এই port-এ</span><div class="code-label">python</div></pre>
+
+    <div class="box box-tip">
+      <div class="box-label">💡 127.0.0.1 কী?</div>
+      <p><code>127.0.0.1</code> হলো তোমার নিজের কম্পিউটারের address। এটাকে <code>localhost</code>ও বলে। মানে MLflow server এবং Python code একই কম্পিউটারে চলছে।</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🧪 প্রথম Experiment চালানো — step by step</h3>
+    <p>আমরা এখন একটা Random Forest মডেল train করবো এবং MLflow-এ সব তথ্য রেকর্ড করবো।</p>
+
+    <h4>১. সাধারণ Training (MLflow ছাড়া)</h4>
+    <p>এটা হলো সাধারণ Python ML code — কোনো tracking নেই:</p>
+
+    <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestRegressor
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> mean_absolute_error, r2_score
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># ডেটা লোড করো (আপেল বিক্রির ডেটা)</span>
+data = pd.<span class="fn">read_csv</span>(<span class="str">"data/fake_data.csv"</span>)
+X = data.<span class="fn">drop</span>(columns=[<span class="str">"date"</span>, <span class="str">"demand"</span>])
+y = data[<span class="str">"demand"</span>]
+
+<span class="cm"># Train/Test split — ৮০% দিয়ে শেখানো, ২০% দিয়ে পরীক্ষা</span>
+X_train, X_val, y_train, y_val = train_test_split(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>
+)
+
+<span class="cm"># Model তৈরি ও train</span>
+params = {<span class="str">"n_estimators"</span>: <span class="num">100</span>, <span class="str">"max_depth"</span>: <span class="num">5</span>, <span class="str">"random_state"</span>: <span class="num">42</span>}
+rf = <span class="fn">RandomForestRegressor</span>(**params)
+rf.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="cm"># ফলাফল দেখো</span>
+y_pred = rf.<span class="fn">predict</span>(X_val)
+metrics = {<span class="str">"r2"</span>: <span class="fn">r2_score</span>(y_val, y_pred), <span class="str">"mae"</span>: <span class="fn">mean_absolute_error</span>(y_val, y_pred)}
+<span class="fn">print</span>(metrics)
+<span class="cm"># output: {'r2': 0.865, 'mae': 51.99...}</span>
+<span class="cm"># কিন্তু কোথাও সংরক্ষিত হয়নি!</span><div class="code-label">train_model.py</div></pre>
+
+    <h4>২. MLflow দিয়ে একই Training (Tracking সহ)</h4>
+    <p>এখন MLflow যোগ করলাম — পার্থক্য দেখো:</p>
+
+    <pre><span class="kw">from</span> mlflow <span class="kw">import</span> MlflowClient
+<span class="kw">import</span> mlflow
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestRegressor
+<span class="cm"># ... বাকি import একই</span>
+
+<span class="cm"># MLflow Server connect করো</span>
+client = <span class="fn">MlflowClient</span>(tracking_uri=<span class="str">"http://127.0.0.1:8080"</span>)
+mlflow.<span class="fn">set_tracking_uri</span>(<span class="str">"http://127.0.0.1:8080"</span>)
+
+<span class="cm"># Experiment-এর নাম সেট করো</span>
+apple_experiment = mlflow.<span class="fn">set_experiment</span>(<span class="str">"Apple_Models"</span>)
+run_name = <span class="str">"first_run"</span>
+artifact_path = <span class="str">"rf_apples"</span>
+
+<span class="cm"># ... data loading ও model training একই ...</span>
+
+<span class="cm"># 🌟 এখন MLflow-এ সব তথ্য সংরক্ষণ করো!</span>
+<span class="kw">with</span> mlflow.<span class="fn">start_run</span>(run_name=run_name) <span class="kw">as</span> run:
+    mlflow.<span class="fn">log_params</span>(params)    <span class="cm"># parameter সংরক্ষণ</span>
+    mlflow.<span class="fn">log_metrics</span>(metrics)  <span class="cm"># ফলাফল সংরক্ষণ</span>
+    mlflow.sklearn.<span class="fn">log_model</span>(    <span class="cm"># মডেল ফাইল সংরক্ষণ</span>
+        sk_model=rf,
+        input_example=X_val,
+        artifact_path=artifact_path
+    )<div class="code-label">experiment.py</div></pre>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>MLflow Function</th><th>কী করে</th><th>উদাহরণ</th></tr></thead>
+        <tbody>
+          <tr><td><code>set_experiment()</code></td><td>কোন experiment folder-এ রাখবো</td><td><code>"Apple_Models"</code></td></tr>
+          <tr><td><code>start_run()</code></td><td>একটা নতুন run শুরু করো</td><td><code>run_name="first_run"</code></td></tr>
+          <tr><td><code>log_params()</code></td><td>Model-এর parameter সংরক্ষণ</td><td><code>{"max_depth": 5}</code></td></tr>
+          <tr><td><code>log_metrics()</code></td><td>ফলাফল/score সংরক্ষণ</td><td><code>{"r2": 0.865}</code></td></tr>
+          <tr><td><code>log_model()</code></td><td>trained model ফাইল সংরক্ষণ</td><td><code>sk_model=rf</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>📁 mlruns ফোল্ডার — ভেতরে কী আছে?</h3>
+    <p>Experiment চালানোর পর <code>mlruns</code> ফোল্ডারে সব তথ্য জমা হয়:</p>
+
+    <pre><span class="cm">mlruns/
+│
+├── .trash/                    ← মুছে দেওয়া experiment-গুলো সাময়িক রাখে
+│
+├── 0/                         ← Default experiment (সংরক্ষিত)
+│   └── meta.yaml
+│
+├── EXPERIMENT_ID/             ← তোমার experiment-এর ID (সংখ্যা)
+│   │   
+│   ├── RUN_ID/                ← প্রতিটি run-এর ID (লম্বা সংখ্যা-অক্ষর)
+│   │   ├── artifacts/         ← model.pkl, গ্রাফ, রিপোর্ট
+│   │   ├── metrics/           ← r2, mae, mse ফাইলগুলো
+│   │   ├── params/            ← max_depth, n_estimators ফাইলগুলো
+│   │   ├── tags/              ← run_name, user ইত্যাদি
+│   │   └── meta.yaml          ← run-এর বিবরণ
+│   │
+│   └── meta.yaml              ← experiment-এর বিবরণ
+│
+└── models/                    ← registered model-গুলো</span><div class="code-label">ফোল্ডার গঠন</div></pre>
+
+    <div class="box box-info">
+      <div class="box-label">📌 মনে রাখো</div>
+      <p>প্রতিটি Run-এর একটা unique ID থাকে — দেখতে এরকম: <code>f1b0e1d976a44bfabed5cbcece0473d7</code>। এই ID দিয়েই পরে সেই নির্দিষ্ট run খুঁজে পাওয়া যায়।</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🌐 MLflow Web UI — Dashboard ব্যবহার</h3>
+    <p>Browser-এ <code>http://localhost:8080</code> খুললে MLflow Dashboard দেখতে পাবে। এখানে সব experiment ও run visual করে দেখা যায়।</p>
+
+    <!-- UI Description SVG -->
+    <div class="flow-container">
+      <svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;display:block;margin:0 auto;">
+        <rect width="680" height="300" rx="12" fill="#0a0f14" stroke="#30363d" stroke-width="1"/>
+        <!-- Browser bar -->
+        <rect x="0" y="0" width="680" height="36" rx="12" fill="#21262d"/>
+        <rect x="0" y="18" width="680" height="18" fill="#21262d"/>
+        <circle cx="22" cy="18" r="6" fill="#ff5f57"/>
+        <circle cx="40" cy="18" r="6" fill="#febc2e"/>
+        <circle cx="58" cy="18" r="6" fill="#28c840"/>
+        <rect x="80" y="9" width="520" height="18" rx="4" fill="#161b22"/>
+        <text x="340" y="22" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono,monospace" font-size="11">http://localhost:8080</text>
+        <!-- MLflow nav -->
+        <rect x="0" y="36" width="680" height="40" fill="#161b22" stroke="#30363d" stroke-width="0" stroke-dasharray="0"/>
+        <text x="30" y="62" fill="#58a6ff" font-family="Arial" font-size="14" font-weight="900">ml</text>
+        <text x="50" y="62" fill="#58a6ff" font-family="Arial" font-style="italic" font-size="14">flow</text>
+        <text x="110" y="62" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="12">Experiments</text>
+        <text x="210" y="62" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="12">Models</text>
+        <!-- Sidebar -->
+        <rect x="0" y="76" width="160" height="232" fill="#161b22" stroke="#30363d" stroke-width="1" rx="0"/>
+        <text x="15" y="100" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">Search Experiments</text>
+        <rect x="10" y="108" width="140" height="22" rx="4" fill="rgba(31,111,235,0.2)" stroke="#1f6feb" stroke-width="1"/>
+        <text x="18" y="123" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="11">📊 Apple_Models</text>
+        <rect x="10" y="135" width="140" height="22" rx="4" fill="transparent"/>
+        <text x="18" y="150" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">🔬 Iris_Models</text>
+        <text x="18" y="172" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">Default</text>
+        <!-- Main content -->
+        <rect x="165" y="76" width="515" height="232" fill="#0d1117" rx="0"/>
+        <text x="185" y="100" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="700">Apple_Models</text>
+        <!-- Table header -->
+        <rect x="165" y="110" width="515" height="28" fill="#21262d"/>
+        <text x="185" y="129" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">Run Name</text>
+        <text x="340" y="129" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">Created</text>
+        <text x="460" y="129" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">Duration</text>
+        <text x="560" y="129" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">Models</text>
+        <!-- Rows -->
+        <rect x="165" y="138" width="515" height="26" fill="rgba(88,166,255,0.04)"/>
+        <circle cx="179" cy="151" r="5" fill="#3fb950"/>
+        <text x="193" y="155" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="11">first_run</text>
+        <text x="340" y="155" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">2 hours ago</text>
+        <text x="460" y="155" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">3.1s</text>
+        <text x="560" y="155" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="11">rf_apples</text>
+        <rect x="165" y="164" width="515" height="26" fill="transparent"/>
+        <circle cx="179" cy="177" r="5" fill="#3fb950"/>
+        <text x="193" y="181" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="11">second_run</text>
+        <text x="340" y="181" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">1 hour ago</text>
+        <text x="460" y="181" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">3.5s</text>
+        <text x="560" y="181" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="11">rf_apples</text>
+        <!-- Labels -->
+        <text x="185" y="236" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">← বামে Experiment list</text>
+        <text x="400" y="255" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">↑ সব Run এখানে দেখা যায় — তুলনা করা যায়</text>
+        <text x="185" y="278" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="10">🟢 সবুজ বৃত্ত = সফল Run &nbsp; ⏱ Duration = কতক্ষণ লেগেছে</text>
+      </svg>
+    </div>
+
+    <h3>📊 Multiple Runs তুলনা করা</h3>
+    <p>MLflow-এর সবচেয়ে দারুণ feature হলো — একাধিক run select করে "Compare" button click করলে visual comparison দেখতে পাবে!</p>
+
+    <pre><span class="cm"># দ্বিতীয় run — আলাদা parameter দিয়ে</span>
+params = {
+    <span class="str">"n_estimators"</span>: <span class="num">150</span>,  <span class="cm"># বেশি গাছ</span>
+    <span class="str">"max_depth"</span>: <span class="num">10</span>,      <span class="cm"># বেশি গভীর গাছ</span>
+    <span class="str">"random_state"</span>: <span class="num">42</span>
+}
+run_name = <span class="str">"second_run"</span>  <span class="cm"># নতুন নাম</span>
+
+<span class="cm"># বাকি সব একই — MLflow নিজেই দুটো আলাদা করে রাখবে</span><div class="code-label">python</div></pre>
+
+    <div class="box box-note">
+      <div class="box-label">✅ তুলনায় কী দেখতে পাবে</div>
+      <p>Parallel Coordinates Plot-এ দেখতে পাবে — কোন parameter-এর কোন মান দিলে r² score বেশি হয়। Scatter Plot-এ দেখবে r² বাড়লে MSE কমে (anti-correlation)। এই visualization দিয়ে সেরা setting বেছে নেওয়া সহজ!</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🤖 Autolog — স্বয়ংক্রিয় Tracking</h3>
+    <p>সবসময় manually <code>log_params()</code>, <code>log_metrics()</code> লিখতে চাও না? MLflow-এর <code>autolog()</code> ফিচার সব নিজেই করে নেয়!</p>
+
+    <pre><span class="kw">import</span> mlflow
+<span class="kw">from</span> sklearn <span class="kw">import</span> svm, datasets
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> GridSearchCV
+
+mlflow.<span class="fn">set_tracking_uri</span>(<span class="str">"http://127.0.0.1:8080"</span>)
+mlflow.<span class="fn">set_experiment</span>(<span class="str">"Iris_Models"</span>)
+
+<span class="cm"># 🌟 শুধু এক লাইন! বাকি সব নিজে করে নেবে</span>
+mlflow.<span class="fn">autolog</span>()
+
+<span class="cm"># সাধারণ sklearn কোড লেখো — MLflow নিজেই track করবে</span>
+iris = datasets.<span class="fn">load_iris</span>()
+parameters = {<span class="str">"kernel"</span>: (<span class="str">"linear"</span>, <span class="str">"rbf"</span>), <span class="str">"C"</span>: [<span class="num">1</span>, <span class="num">10</span>]}
+svc = svm.<span class="fn">SVC</span>()
+clf = <span class="fn">GridSearchCV</span>(svc, parameters)
+clf.<span class="fn">fit</span>(iris.data, iris.target)
+<span class="cm"># ব্যস! সব automatically MLflow-এ চলে গেছে!</span><div class="code-label">autolog_example.py</div></pre>
+
+    <p>Autolog support করে: <span class="badge badge-blue">Scikit-learn</span> <span class="badge badge-orange">TensorFlow</span> <span class="badge badge-purple">PyTorch</span> <span class="badge badge-green">XGBoost</span> <span class="badge badge-blue">LightGBM</span> <span class="badge badge-orange">Keras</span></p>
+
+    <div class="box box-warn">
+      <div class="box-label">⚠️ Autolog-এর সীমাবদ্ধতা</div>
+      <p>Autolog ব্যবহার করলে Run-এর নাম দেওয়া যায় না (random নাম হয়)। এছাড়া default-এ কোনো artifact সংরক্ষিত হয় না — তাই deployment-এর জন্য সমস্যা হতে পারে। তোমার প্রজেক্ট অনুযায়ী বেছে নাও।</p>
+    </div>
+
+    <h3>🏆 Advanced Challenge — RandomizedSearchCV + Autolog</h3>
+    <p>এই section-এ একটু বড় কাজ করা হয়েছে। <code>RandomizedSearchCV</code> দিয়ে automatically অনেক combination test করা হয়েছে, এবং সেরাটা MLflow-এ রেকর্ড করা হয়েছে।</p>
+
+    <pre><span class="kw">import</span> mlflow
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestRegressor
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> RandomizedSearchCV
+<span class="kw">from</span> scipy.stats <span class="kw">import</span> randint
+
+<span class="cm"># MLflow setup</span>
+mlflow.<span class="fn">set_tracking_uri</span>(<span class="str">"http://127.0.0.1:8080"</span>)
+mlflow.<span class="fn">set_experiment</span>(<span class="str">"RandomizedSearchCV_Random_Forest"</span>)
+mlflow.sklearn.<span class="fn">autolog</span>(log_models=<span class="kw">True</span>)
+
+<span class="cm"># কতগুলো আলাদা combination test করবে</span>
+N_TRIALS = <span class="num">5</span>
+
+<span class="cm"># Parameter-এর range define করো</span>
+param_distributions = {
+    <span class="str">'n_estimators'</span>: <span class="fn">randint</span>(<span class="num">50</span>, <span class="num">200</span>),   <span class="cm"># ৫০-২০০ এর মধ্যে</span>
+    <span class="str">'max_depth'</span>: <span class="fn">randint</span>(<span class="num">5</span>, <span class="num">20</span>),          <span class="cm"># ৫-২০ এর মধ্যে</span>
+    <span class="str">'min_samples_split'</span>: <span class="fn">randint</span>(<span class="num">2</span>, <span class="num">10</span>),   <span class="cm"># ২-১০ এর মধ্যে</span>
+}
+
+<span class="cm"># Random search চালাও — ৫টা random combination test করবে</span>
+search = <span class="fn">RandomizedSearchCV</span>(
+    <span class="fn">RandomForestRegressor</span>(random_state=<span class="num">42</span>),
+    param_distributions=param_distributions,
+    n_iter=N_TRIALS,   <span class="cm"># ৫বার চেষ্টা</span>
+    cv=<span class="num">5</span>,              <span class="cm"># 5-fold cross validation</span>
+    scoring=<span class="str">'r2'</span>
+)
+search.<span class="fn">fit</span>(X_train, y_train)
+<span class="cm"># MLflow স্বয়ংক্রিয়ভাবে সব ৫টা run track করবে!</span><div class="code-label">autolog_randomsearch.py</div></pre>
+
+    <div class="analogy">
+      <div class="analogy-label">🎲 RandomizedSearchCV-এর উপমা</div>
+      <p>তুমি একটা recipe-র জন্য সেরা মশলার পরিমাণ খুঁজছো। হাতে ৫টা চেষ্টার সুযোগ। <strong>GridSearch</strong> হলো systematically সব combination চেষ্টা করা। <strong>RandomizedSearch</strong> হলো ৫টা random combination চেষ্টা করা — অনেক দ্রুত, এবং প্রায়ই ভালো ফলাফল পাওয়া যায়!</p>
+    </div>
+
+    <div class="box box-tip">
+      <div class="box-label">💡 Parent Run এবং Child Run</div>
+      <p>RandomizedSearchCV করলে MLflow-এ একটা <strong>Parent Run</strong> দেখবে — এর ভেতরে অনেকগুলো <strong>Child Run</strong>। Parent run হলো পুরো search-এর summary, আর প্রতিটি Child run হলো একটা specific combination-এর ফলাফল।</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 3: PROJECTS
+═══════════════════════════════════════════ -->
+<section class="chapter" id="ch3">
+  <div class="chapter-header">
+    <div class="chapter-num" style="background: linear-gradient(135deg, #3fb950, #a371f7);">৩</div>
+    <div class="chapter-title-block">
+      <h2>MLflow Projects — Reproducibility নিশ্চিত করা</h2>
+      <p>যেকোনো মেশিনে একই ফলাফল পাওয়ার নিশ্চয়তা</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🤔 সমস্যাটা কী?</h3>
+    <p>তুমি তোমার কম্পিউটারে দারুণ একটা মডেল বানালে। এখন তোমার সহকর্মী তার কম্পিউটারে সেই একই মডেল চালাতে চায়। কিন্তু তার মেশিনে:</p>
+    <ul class="content-list">
+      <li>অন্য version-এর Python আছে</li>
+      <li>অন্য version-এর scikit-learn আছে</li>
+      <li>ডেটার path আলাদা</li>
+    </ul>
+    <p>ফলে? <strong>সে একই কোড চালাবে, কিন্তু ভিন্ন ফলাফল পাবে — বা error হবে!</strong></p>
+
+    <div class="analogy">
+      <div class="analogy-label">🍰 রান্নার রেসিপির উপমা</div>
+      <p>ধরো তুমি একটা কেকের recipe লিখলে। কিন্তু শুধু উপাদানের নাম লিখলে, পরিমাণ বললে না। তোমার বান্ধবী সেই recipe দিয়ে রান্না করলে ভিন্ন কেক বানাবে! MLflow Projects হলো সেই রেসিপি যেখানে <strong>সঠিক পরিমাণ সহ সব কিছু লেখা আছে</strong> — যাতে যে-ই রান্না করুক, একই কেক হয়।</p>
+    </div>
+
+    <h3>📦 MLflow Projects — সমাধান</h3>
+    <p>MLflow Projects তিনটি জিনিস একসাথে প্যাক করে রাখে:</p>
+
+    <!-- Projects Structure Diagram -->
+    <div class="flow-container">
+      <svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;display:block;margin:0 auto;">
+        <rect width="680" height="220" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+        <text x="340" y="30" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="14" font-weight="700">MLflow Project-এর তিনটি মূল উপাদান</text>
+
+        <!-- MLProject file -->
+        <rect x="30" y="50" width="190" height="150" rx="10" fill="rgba(63,185,80,0.08)" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="125" y="78" text-anchor="middle" fill="#3fb950" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700">MLproject</text>
+        <text x="125" y="95" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">(YAML ফাইল — কোনো</text>
+        <text x="125" y="110" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">extension নেই)</text>
+        <text x="125" y="130" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="11">Orchestrator:</text>
+        <text x="125" y="147" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">• Project নাম</text>
+        <text x="125" y="162" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">• Environment type</text>
+        <text x="125" y="177" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">• Entry points</text>
+        <text x="125" y="192" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">• চালানোর command</text>
+
+        <!-- Environment file -->
+        <rect x="245" y="50" width="190" height="150" rx="10" fill="rgba(88,166,255,0.08)" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="340" y="78" text-anchor="middle" fill="#58a6ff" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700">python_env.yaml</text>
+        <text x="340" y="95" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">(Configuration ফাইল)</text>
+        <text x="340" y="118" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="11">Environment বিবরণ:</text>
+        <text x="340" y="135" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">• Python version</text>
+        <text x="340" y="150" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">• Library তালিকা</text>
+        <text x="340" y="165" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">• Version নম্বর</text>
+        <text x="340" y="182" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Tracking থেকে auto-generate</text>
+
+        <!-- Code files -->
+        <rect x="460" y="50" width="190" height="150" rx="10" fill="rgba(255,166,87,0.08)" stroke="#ffa657" stroke-width="1.5"/>
+        <text x="555" y="78" text-anchor="middle" fill="#ffa657" font-family="JetBrains Mono,monospace" font-size="12" font-weight="700">Code + Data</text>
+        <text x="555" y="95" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">(Python scripts)</text>
+        <text x="555" y="118" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="11">আসল কাজের ফাইল:</text>
+        <text x="555" y="135" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">• train.py</text>
+        <text x="555" y="150" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">• fake_data.csv</text>
+        <text x="555" y="165" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">• requirements.txt</text>
+        <text x="555" y="182" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">সব dependencies সহ</text>
+      </svg>
+    </div>
+
+    <h3>📄 MLproject ফাইল লেখার নিয়ম</h3>
+    <p>MLproject ফাইল YAML format-এ লেখা হয়। এটা বলে MLflow-কে — কীভাবে এই প্রজেক্ট চালাতে হবে:</p>
+
+    <pre><span class="cm"># MLproject ফাইলের উদাহরণ</span>
+<span class="kw">name</span>: apple_project  <span class="cm"># প্রজেক্টের নাম</span>
+
+<span class="cm"># কোন environment-এ চালাবে (optional)</span>
+<span class="kw">conda_env</span>: conda.yaml  <span class="cm"># বা python_env বা docker_env</span>
+
+<span class="kw">entry_points</span>:
+  <span class="kw">main</span>:              <span class="cm"># entry point-এর নাম</span>
+    <span class="kw">parameters</span>:
+      <span class="kw">data_path</span>:     <span class="cm"># parameter নাম</span>
+        type: str
+        default: <span class="str">"../data/fake_data.csv"</span>  <span class="cm"># default মান</span>
+    <span class="kw">command</span>: <span class="str">"python3 05_mlflow_experiment_mlproject.py --data_path {data_path}"</span><div class="code-label">MLproject</div></pre>
+
+    <div class="box box-info">
+      <div class="box-label">📌 YAML কী?</div>
+      <p>YAML হলো একটা সহজ ফরম্যাট যেখানে key: value জোড়ায় তথ্য লেখা হয়। JSON-এর মতোই, কিন্তু মানুষের পড়তে সহজ। Indentation (ফাঁকা জায়গা) দিয়ে hierarchy বোঝানো হয়।</p>
+    </div>
+
+    <h3>🌍 Environment-এর তিনটি ধরন</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🐍</div>
+        <h4>Python Virtual Env</h4>
+        <p><code>python_env: python_env.yaml</code> — সহজ ও দ্রুত। Local machine-এ ভালো কাজ করে।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🐍</div>
+        <h4>Conda Environment</h4>
+        <p><code>conda_env: conda.yaml</code> — বেশি robust। Data science প্রজেক্টে popular।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🐳</div>
+        <h4>Docker Container</h4>
+        <p><code>docker_env: image: name</code> — সবচেয়ে isolated। Production-এ ব্যবহার হয়।</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>▶️ MLproject চালানো — mlflow run</h3>
+    <p>প্রজেক্ট তৈরির পর একটা command দিয়েই পুরো experiment reproduce করা যায়:</p>
+
+    <pre><span class="cm"># Local virtual environment দিয়ে চালাও</span>
+<span class="kw">mlflow</span> run src/ \
+  --experiment-id EXPERIMENT_ID \
+  --run-name first_run_reproduced \
+  --env-manager=local   <span class="cm"># local venv ব্যবহার করো</span>
+
+<span class="cm"># অথবা conda দিয়ে চালাও</span>
+<span class="kw">mlflow</span> run src/ \
+  --experiment-id EXPERIMENT_ID \
+  --run-name first_run_reproduced \
+  --env-manager=conda   <span class="cm"># conda environment তৈরি করে চালাবে</span><div class="code-label">bash</div></pre>
+
+    <div class="box box-note">
+      <div class="box-label">✅ সফল হলে কী দেখবে</div>
+      <p>Terminal-এ দেখবে: <code>Run (ID '...') succeeded</code> — এর মানে ঠিকঠাক চলেছে। MLflow Dashboard-এ নতুন run টা দেখা যাবে।</p>
+    </div>
+
+    <h3>🤝 Team-এ কাজ করা</h3>
+    <p>MLflow Projects-এর সবচেয়ে বড় সুবিধা হলো team collaboration:</p>
+
+    <!-- Collaboration Diagram -->
+    <div class="flow-container">
+      <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;display:block;margin:0 auto;">
+        <rect width="680" height="200" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+
+        <!-- GitHub/Repo box -->
+        <rect x="270" y="75" width="140" height="60" rx="8" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="340" y="101" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">📦 GitHub</text>
+        <text x="340" y="118" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">MLproject folder</text>
+
+        <!-- Person 1 -->
+        <rect x="30" y="75" width="130" height="60" rx="8" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="95" y="98" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">👩‍💻 তুমি</text>
+        <text x="95" y="115" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">প্রজেক্ট তৈরি করলে</text>
+        <text x="95" y="130" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">push করলে</text>
+
+        <!-- Person 2 -->
+        <rect x="520" y="75" width="140" height="60" rx="8" fill="rgba(255,166,87,0.1)" stroke="#ffa657" stroke-width="1.5"/>
+        <text x="590" y="98" text-anchor="middle" fill="#ffa657" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">👨‍💻 সহকর্মী</text>
+        <text x="590" y="115" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">clone করলো</text>
+        <text x="590" y="130" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">mlflow run চালালো</text>
+
+        <!-- Arrows -->
+        <path d="M 160 105 L 268 105" stroke="#3fb950" stroke-width="1.5" fill="none" marker-end="url(#arrow-green)" opacity="0.7"/>
+        <path d="M 412 105 L 518 105" stroke="#ffa657" stroke-width="1.5" fill="none" marker-end="url(#arrow-orange)" opacity="0.7"/>
+
+        <!-- Tracking Server -->
+        <rect x="230" y="160" width="220" height="32" rx="6" fill="rgba(210,168,255,0.1)" stroke="#d2a8ff" stroke-width="1"/>
+        <text x="340" y="181" text-anchor="middle" fill="#d2a8ff" font-family="Hind Siliguri,sans-serif" font-size="11">🖥️ Shared Tracking Server (optional)</text>
+
+        <!-- Labels -->
+        <text x="340" y="25" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="700">MLflow Projects দিয়ে Team Collaboration</text>
+        <text x="340" y="48" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">যেকোনো মেশিনে, একই environment-এ, একই ফলাফল</text>
+      </svg>
+    </div>
+
+    <div class="box box-tip">
+      <div class="box-label">💡 Shared Tracking Server ছাড়া কী হয়?</div>
+      <p>তুমি আর তোমার সহকর্মী আলাদা আলাদা কম্পিউটারে run চালাতে পারবে। কিন্তু একে অপরের run দেখতে পারবে না যদি Tracking Server share না করো। Professional পরিবেশে একটা shared remote server ব্যবহার করা হয়।</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 4: MODELS
+═══════════════════════════════════════════ -->
+<section class="chapter" id="ch4">
+  <div class="chapter-header">
+    <div class="chapter-num" style="background: linear-gradient(135deg, #ffa657, #f78166);">৪</div>
+    <div class="chapter-title-block">
+      <h2>MLflow Models — Deployment-এর চাবিকাঠি</h2>
+      <p>মডেলকে যেকোনো জায়গায় deploy করার standard format</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🧳 MLflow Models কী?</h3>
+    <p>MLflow Models হলো তোমার trained model-কে একটা "smart suitcase"-এ ভরে রাখার ব্যবস্থা। এই suitcase-এ সব কিছু থাকে — model, dependencies, instructions — সব।</p>
+
+    <div class="analogy">
+      <div class="analogy-label">🍳 রান্নার রেসিপির উপমা আবার</div>
+      <p>ধরো তোমার কাছে একটা রেসিপি আছে। তুমি সেটা যেকোনো রান্নাঘরে রান্না করতে পারো — গ্যাস ওভেন, ইন্ডাকশন, মাইক্রোওয়েভ — যেখানেই করো। MLflow Models ঠিক এইরকম — একই মডেল Python কোডে, REST API-তে, Docker-এ, Spark-এ — যেখানেই ব্যবহার করা যায়!</p>
+    </div>
+
+    <h3>🌶️ "Flavors" — মডেলের বহুমুখী ব্যবহার</h3>
+    <p><strong>Flavor</strong> হলো MLflow-এর একটা মূল concept। এটা বলে — আমার মডেলটা কোন কোন উপায়ে ব্যবহার করা যাবে।</p>
+
+    <!-- Flavors Diagram -->
+    <div class="flow-container">
+      <svg viewBox="0 0 680 240" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;display:block;margin:0 auto;">
+        <rect width="680" height="240" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+
+        <!-- Center model -->
+        <rect x="270" y="85" width="140" height="70" rx="10" fill="rgba(255,166,87,0.15)" stroke="#ffa657" stroke-width="2"/>
+        <text x="340" y="115" text-anchor="middle" fill="#ffa657" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="700">🤖 তোমার মডেল</text>
+        <text x="340" y="133" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">(scikit-learn)</text>
+        <text x="340" y="150" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">model.pkl</text>
+
+        <!-- Flavor boxes -->
+        <rect x="20" y="20" width="140" height="55" rx="8" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="90" y="42" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="11" font-weight="700">🐍 Python Function</text>
+        <text x="90" y="58" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">model.predict(data)</text>
+        <text x="90" y="70" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="9">সরাসরি Python-এ</text>
+
+        <rect x="520" y="20" width="140" height="55" rx="8" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="590" y="42" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="11" font-weight="700">🌐 REST API</text>
+        <text x="590" y="58" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">HTTP Request পাঠাও</text>
+        <text x="590" y="70" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="9">যেকোনো ভাষা থেকে</text>
+
+        <rect x="20" y="165" width="140" height="55" rx="8" fill="rgba(210,168,255,0.1)" stroke="#d2a8ff" stroke-width="1.5"/>
+        <text x="90" y="187" text-anchor="middle" fill="#d2a8ff" font-family="Hind Siliguri,sans-serif" font-size="11" font-weight="700">🐳 Docker</text>
+        <text x="90" y="203" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Container-এ চালাও</text>
+        <text x="90" y="215" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="9">isolated environment</text>
+
+        <rect x="520" y="165" width="140" height="55" rx="8" fill="rgba(247,129,102,0.1)" stroke="#f78166" stroke-width="1.5"/>
+        <text x="590" y="187" text-anchor="middle" fill="#f78166" font-family="Hind Siliguri,sans-serif" font-size="11" font-weight="700">⚡ Apache Spark</text>
+        <text x="590" y="203" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Big Data processing</text>
+        <text x="590" y="215" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="9">distributed system</text>
+
+        <!-- Arrows from center -->
+        <line x1="270" y1="110" x2="162" y2="55" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.6"/>
+        <line x1="410" y1="110" x2="518" y2="55" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.6"/>
+        <line x1="270" y1="140" x2="162" y2="185" stroke="#d2a8ff" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.6"/>
+        <line x1="410" y1="140" x2="518" y2="185" stroke="#f78166" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.6"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>📁 MLflow Model Directory — ভেতরে কী থাকে?</h3>
+    <p>MLflow model save করলে একটা folder তৈরি হয়। সেটা দেখতে এরকম:</p>
+
+    <pre><span class="cm">rf_apples/                    ← artifact folder
+├── conda.yaml                ← conda environment বিবরণ
+├── input_example.json        ← model-এর input-এর উদাহরণ
+├── MLmodel                   ← সবচেয়ে গুরুত্বপূর্ণ ফাইল!
+├── model.pkl                 ← আসল trained model (binary)
+├── python_env.yaml           ← python virtual env বিবরণ
+└── requirements.txt          ← প্রয়োজনীয় library তালিকা</span><div class="code-label">directory structure</div></pre>
+
+    <h3>📋 MLmodel ফাইল — সব তথ্যের কেন্দ্র</h3>
+    <p>MLmodel ফাইল হলো YAML format-এর একটা ফাইল যেখানে মডেলের সব তথ্য থাকে:</p>
+
+    <pre><span class="var">artifact_path</span>: rf_apples
+<span class="var">flavors</span>:
+  <span class="var">python_function</span>:            <span class="cm"># Flavor 1: সাধারণ Python ফাংশন হিসেবে</span>
+    <span class="var">env</span>:
+      <span class="var">conda</span>: conda.yaml
+      <span class="var">virtualenv</span>: python_env.yaml
+    <span class="var">loader_module</span>: mlflow.sklearn
+    <span class="var">model_path</span>: model.pkl
+    <span class="var">python_version</span>: <span class="str">3.8.10</span>
+  <span class="var">sklearn</span>:                     <span class="cm"># Flavor 2: scikit-learn মডেল হিসেবে</span>
+    <span class="var">pickled_model</span>: model.pkl
+    <span class="var">sklearn_version</span>: <span class="str">1.3.2</span>
+<span class="var">run_id</span>: 7f48286eeddb47c4bc9afe889ac71c15  <span class="cm"># কোন run-এ বানানো হয়েছে</span>
+<span class="var">signature</span>:
+  <span class="var">inputs</span>: <span class="cm"># model-এর input features</span>
+    - {<span class="var">type</span>: double, <span class="var">name</span>: average_temperature}
+    - {<span class="var">type</span>: double, <span class="var">name</span>: rainfall}
+    - {<span class="var">type</span>: double, <span class="var">name</span>: price_per_kg}
+  <span class="var">outputs</span>: [{<span class="var">type</span>: double}]    <span class="cm"># model-এর output</span><div class="code-label">MLmodel</div></pre>
+
+    <div class="box box-info">
+      <div class="box-label">📌 Signature কী?</div>
+      <p>Signature হলো model-এর "চুক্তিপত্র"। এটা বলে — আমাকে ঠিক এই format-এ input দাও, আমি এই format-এ output দেবো। ভুল format-এর data দিলে automatic error দেবে। এটা production-এ debugging সহজ করে।</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🔄 মডেল Load করে ব্যবহার করা</h3>
+
+    <pre><span class="kw">import</span> mlflow
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># ডেটা লোড করো</span>
+data = pd.<span class="fn">read_csv</span>(<span class="str">"data/fake_data.csv"</span>)
+X = data.<span class="fn">drop</span>(columns=[<span class="str">"date"</span>, <span class="str">"demand"</span>])
+X = X.<span class="fn">astype</span>(<span class="str">'float'</span>)
+
+<span class="cm"># MLflow থেকে মডেল load করো</span>
+model_path = <span class="str">"/home/ubuntu/MLflow/mlruns/EXPERIMENT_ID/RUN_ID/artifacts/rf_apples"</span>
+model = mlflow.sklearn.<span class="fn">load_model</span>(model_path)
+
+<span class="cm"># Prediction করো</span>
+predictions = model.<span class="fn">predict</span>(X)
+mean_prediction = predictions.<span class="fn">mean</span>()
+<span class="fn">print</span>(mean_prediction)
+<span class="cm"># output: 1091.69 (গড় আপেলের চাহিদা)</span><div class="code-label">load_model.py</div></pre>
+
+    <h3>🌐 মডেলকে REST API হিসেবে Deploy করা</h3>
+    <p>সবচেয়ে exciting part! তোমার মডেলকে একটা web service বানিয়ে ফেলো — যাতে যেকোনো app HTTP request পাঠিয়ে prediction পেতে পারে।</p>
+
+    <div class="analogy">
+      <div class="analogy-label">☎️ REST API-র উপমা</div>
+      <p>ধরো তুমি একটা রেস্টুরেন্ট খুললে। <strong>তুমি (model)</strong> হলো রাঁধুনি। <strong>API</strong> হলো waiter। Customer (app) waiter-এর কাছে order দেয়, waiter তোমাকে বলে, তুমি রান্না করো, waiter customer-কে খাবার দেয়। REST API ঠিক এইরকম কাজ করে!</p>
+    </div>
+
+    <pre><span class="cm"># Terminal-এ এই command দিয়ে API চালু করো</span>
+<span class="kw">mlflow</span> models serve \
+  --model-uri <span class="str">'/home/ubuntu/MLflow/mlruns/EXPERIMENT_ID/RUN_ID/artifacts/rf_apples'</span> \
+  --port <span class="num">5002</span> \
+  --host <span class="num">0.0.0.0</span> \
+  --env-manager local
+
+<span class="cm"># API চালু হলে Terminal-এ দেখবে:
+# Listening at: http://127.0.0.1:5002
+# এখন যেকোনো app এই address-এ request পাঠাতে পারবে!</span><div class="code-label">bash</div></pre>
+
+    <h4>API টেস্ট করো — curl দিয়ে</h4>
+
+    <pre><span class="cm"># একটা নতুন Terminal খোলো এবং এই command চালাও</span>
+<span class="fn">curl</span> http://localhost:<span class="num">5002</span>/invocations \
+  -H <span class="str">'Content-Type: application/json'</span> \
+  -d <span class="str">'{
+    "dataframe_records": [{
+      "average_temperature": 30.58,
+      "rainfall": 6.78,
+      "weekend": 0,
+      "holiday": 0,
+      "price_per_kg": 2.50,
+      "promo": 0,
+      "previous_days_demand": 844.99
+    }]
+  }'</span>
+
+<span class="cm"># Response আসবে এইরকম:
+# {"predictions": [1043.5]}</span><div class="code-label">bash</div></pre>
+
+    <h4>Python দিয়ে API টেস্ট করো</h4>
+
+    <pre><span class="kw">import</span> requests
+
+<span class="cm"># API-এর address</span>
+url = <span class="str">"http://localhost:5002/invocations"</span>
+
+<span class="cm"># পাঠাবো এই ডেটা</span>
+data = {
+    <span class="str">"dataframe_records"</span>: [{
+        <span class="str">"average_temperature"</span>: <span class="num">30.58</span>,
+        <span class="str">"rainfall"</span>: <span class="num">6.78</span>,
+        <span class="str">"weekend"</span>: <span class="num">0</span>,
+        <span class="str">"holiday"</span>: <span class="num">0</span>,
+        <span class="str">"price_per_kg"</span>: <span class="num">2.50</span>,
+        <span class="str">"promo"</span>: <span class="num">0</span>,
+        <span class="str">"previous_days_demand"</span>: <span class="num">844.99</span>
+    }]
+}
+
+<span class="cm"># Request পাঠাও এবং response নাও</span>
+response = requests.<span class="fn">post</span>(url, json=data)
+<span class="fn">print</span>(response.json())  <span class="cm"># {'predictions': [1043.5]}</span><div class="code-label">test_api.py</div></pre>
+
+    <!-- Deployment Diagram -->
+    <div class="flow-container">
+      <svg viewBox="0 0 680 180" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;display:block;margin:0 auto;">
+        <rect width="680" height="180" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+        <text x="340" y="28" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="700">REST API-র কার্যপ্রণালী</text>
+
+        <!-- App -->
+        <rect x="20" y="55" width="130" height="80" rx="8" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="85" y="85" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">📱 Client App</text>
+        <text x="85" y="102" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">মোবাইল app</text>
+        <text x="85" y="116" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">ওয়েবসাইট</text>
+        <text x="85" y="130" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">অন্য কোনো app</text>
+
+        <!-- Arrow request -->
+        <path d="M 152 85 L 258 85" stroke="#3fb950" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
+        <text x="205" y="78" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="10">HTTP POST</text>
+        <text x="205" y="95" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="9">JSON data পাঠাও</text>
+
+        <!-- MLflow API Server -->
+        <rect x="260" y="45" width="160" height="100" rx="8" fill="rgba(255,166,87,0.1)" stroke="#ffa657" stroke-width="1.5"/>
+        <text x="340" y="73" text-anchor="middle" fill="#ffa657" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">⚙️ MLflow API</text>
+        <text x="340" y="90" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">localhost:5002</text>
+        <text x="340" y="107" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Data validate করে</text>
+        <text x="340" y="123" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Model-এ দেয়</text>
+
+        <!-- Arrow to model -->
+        <path d="M 422 95 L 498 95" stroke="#d2a8ff" stroke-width="2" fill="none" marker-end="url(#arrow-purple)"/>
+
+        <!-- Model -->
+        <rect x="500" y="55" width="160" height="80" rx="8" fill="rgba(210,168,255,0.1)" stroke="#d2a8ff" stroke-width="1.5"/>
+        <text x="580" y="83" text-anchor="middle" fill="#d2a8ff" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">🤖 ML Model</text>
+        <text x="580" y="100" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Prediction করে</text>
+        <text x="580" y="116" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="10">→ 1043.5 units</text>
+
+        <!-- Return arrow -->
+        <path d="M 500 125 Q 340 160 152 115" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#arrow)" stroke-dasharray="4,2"/>
+        <text x="340" y="158" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="10">Response: {"predictions": [1043.5]}</text>
+      </svg>
+    </div>
+
+    <div class="box box-warn">
+      <div class="box-label">⚠️ গুরুত্বপূর্ণ পার্থক্য</div>
+      <p>Tracking Server (port 8080) এবং Model API Server (port 5002) — এরা দুটো আলাদা server! Tracking server হলো ডেভেলপমেন্টের জন্য (experiment দেখতে), আর Model API server হলো production-এর জন্য (prediction নিতে)। এরা একই মেশিনে না থেকে আলাদা মেশিনেও থাকতে পারে।</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 5: MODEL REGISTRY
+═══════════════════════════════════════════ -->
+<section class="chapter" id="ch5">
+  <div class="chapter-header">
+    <div class="chapter-num" style="background: linear-gradient(135deg, #d2a8ff, #a371f7);">৫</div>
+    <div class="chapter-title-block">
+      <h2>MLflow Model Registry — মডেলের সরকারি নথি!</h2>
+      <p>কোন মডেল কোথায় আছে — সব কিছু একজায়গায়</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🏛️ Model Registry কী?</h3>
+    <p>এতক্ষণ আমরা অনেক experiment করেছি, অনেক মডেল বানিয়েছি। এখন প্রশ্ন হলো — কোন মডেলটা production-এ যাবে? কোনটা test-এ আছে? কোনটা পুরোনো?</p>
+    <p>Model Registry হলো সব মডেলের একটা <strong>কেন্দ্রীয় রেজিস্ট্রি</strong> — ঠিক যেমন সরকারি ভূমি রেজিস্ট্রি অফিসে সব জমির নথি থাকে!</p>
+
+    <div class="analogy">
+      <div class="analogy-label">🏢 অফিস ম্যানেজমেন্টের উপমা</div>
+      <p>কল্পনা করো একটা কোম্পানিতে অনেক কর্মী আছে। প্রতিটা কর্মী একটা নির্দিষ্ট পদে আছে — কেউ trainee, কেউ junior, কেউ senior। HR department সব কর্মীর রেকর্ড রাখে। Model Registry হলো ML মডেলদের সেই HR department!</p>
+    </div>
+
+    <h3>🔄 Model-এর চারটি Stage (জীবনচক্রের পর্যায়)</h3>
+
+    <!-- Lifecycle Stages Diagram -->
+    <div class="flow-container">
+      <svg viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;display:block;margin:0 auto;">
+        <rect width="680" height="160" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+
+        <!-- Stage boxes -->
+        <rect x="20" y="40" width="135" height="80" rx="8" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="87" y="68" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">🔬 Experimental</text>
+        <text x="87" y="85" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Data Scientist</text>
+        <text x="87" y="100" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">তৈরি ও পরীক্ষা</text>
+        <text x="87" y="115" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="9">Stage: None</text>
+
+        <path d="M 157 80 L 183 80" stroke="#8b949e" stroke-width="1.5" fill="none" marker-end="url(#arrow-grey)"/>
+
+        <rect x="185" y="40" width="130" height="80" rx="8" fill="rgba(255,166,87,0.1)" stroke="#ffa657" stroke-width="1.5"/>
+        <text x="250" y="68" text-anchor="middle" fill="#ffa657" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">🧪 Staging</text>
+        <text x="250" y="85" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">DS + Engineer</text>
+        <text x="250" y="100" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Deploy প্রস্তুতি</text>
+        <text x="250" y="115" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="9">Stage: Staging</text>
+
+        <path d="M 317 80 L 343 80" stroke="#8b949e" stroke-width="1.5" fill="none" marker-end="url(#arrow-grey)"/>
+
+        <rect x="345" y="40" width="140" height="80" rx="8" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="415" y="68" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">🚀 Production</text>
+        <text x="415" y="85" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">ML Engineer</text>
+        <text x="415" y="100" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">আসল ব্যবহার</text>
+        <text x="415" y="115" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="9">Stage: Production</text>
+
+        <path d="M 487 80 L 513 80" stroke="#8b949e" stroke-width="1.5" fill="none" marker-end="url(#arrow-grey)"/>
+
+        <rect x="515" y="40" width="140" height="80" rx="8" fill="rgba(139,148,158,0.1)" stroke="#8b949e" stroke-width="1.5"/>
+        <text x="585" y="68" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">📦 Archived</text>
+        <text x="585" y="85" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">পুরোনো মডেল</text>
+        <text x="585" y="100" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">সংরক্ষিত থাকে</text>
+        <text x="585" y="115" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="9">Stage: Archived</text>
+
+        <!-- Labels -->
+        <text x="340" y="148" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">মডেলের জীবনচক্র: None → Staging → Production → Archived</text>
+      </svg>
+    </div>
+
+    <h3>🔑 Model Registry-র চারটি মূল ধারণা</h3>
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">📋</div>
+        <h4>Registered Model</h4>
+        <p>একটা নির্দিষ্ট নামের মডেল। যেমন "Apple_Demand_Predictor"। এর ভেতরে অনেক version থাকতে পারে।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔢</div>
+        <h4>Model Versions</h4>
+        <p>একই মডেলের বিভিন্ন iteration। V1, V2, V3... প্রতিটা version আলাদা run থেকে আসতে পারে।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏷️</div>
+        <h4>Model Stages</h4>
+        <p>প্রতিটা version কোন stage-এ আছে। None → Staging → Production → Archived।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📝</div>
+        <h4>Descriptions &amp; Tags</h4>
+        <p>প্রতিটা model/version-এ notes, tags লাগানো যায়। কোন dataset ব্যবহার হয়েছে, কে বানিয়েছে — সব।</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🖥️ UI দিয়ে মডেল Register করা</h3>
+    <p>সবচেয়ে সহজ উপায় হলো MLflow Web UI ব্যবহার করা:</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">১</div>
+        <div class="step-content">
+          <h4>Run-এ যাও</h4>
+          <p>MLflow Dashboard-এ Apple_Models experiment-এ click করো। তারপর একটা run-এ click করো।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">২</div>
+        <div class="step-content">
+          <h4>Artifacts section খোলো</h4>
+          <p>Page-এর নিচে "Artifacts" section-এ যাও। rf_apples folder দেখবে।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">৩</div>
+        <div class="step-content">
+          <h4>"Register Model" button click করো</h4>
+          <p>ডানদিকে "Register Model" button আছে। Click করো।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">৪</div>
+        <div class="step-content">
+          <h4>নাম দাও</h4>
+          <p>"+ Create New Model" select করো এবং একটা নাম দাও যেমন "My_Apple_Model"।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">৫</div>
+        <div class="step-content">
+          <h4>Models tab-এ দেখো</h4>
+          <p>Page-এর উপরে "Models" tab-এ click করলে তোমার registered model দেখতে পাবে।</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>🐍 Python API দিয়ে মডেল Register করা — Automation</h3>
+    <p>Professional পরিবেশে manually register করা সম্ভব নয়। তখন Python API ব্যবহার করা হয়:</p>
+
+    <pre><span class="kw">import</span> mlflow
+<span class="kw">from</span> mlflow.tracking <span class="kw">import</span> MlflowClient
+
+client = <span class="fn">MlflowClient</span>(<span class="str">"http://127.0.0.1:8080"</span>)
+mlflow.<span class="fn">set_tracking_uri</span>(<span class="str">"http://127.0.0.1:8080"</span>)
+
+<span class="cm"># ---- ধাপ ১: Model URI খোঁজো ----</span>
+experiment = client.<span class="fn">get_experiment_by_name</span>(<span class="str">"Apple_Models"</span>)
+runs = client.<span class="fn">search_runs</span>(
+    experiment_ids=[experiment.experiment_id],
+    filter_string=<span class="str">"attributes.status = 'FINISHED'"</span>,
+    order_by=[<span class="str">"start_time DESC"</span>]
+)
+last_run = runs[<span class="num">0</span>]  <span class="cm"># সবচেয়ে নতুন সফল run</span>
+
+<span class="cm"># Model URI তৈরি করো</span>
+model_uri = <span class="fn">f</span><span class="str">"runs:/{last_run.info.run_id}/rf_apples"</span>
+
+<span class="cm"># ---- ধাপ ২: Model Register করো ----</span>
+result = mlflow.<span class="fn">register_model</span>(
+    model_uri=model_uri,
+    name=<span class="str">"Apple_Demand_Predictor"</span>
+)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">f"Registered: {result.name}, Version: {result.version}"</span>)
+
+<span class="cm"># ---- ধাপ ৩: Stage পরিবর্তন করো ----</span>
+client.<span class="fn">transition_model_version_stage</span>(
+    name=<span class="str">"Apple_Demand_Predictor"</span>,
+    version=result.version,
+    stage=<span class="str">"Staging"</span>  <span class="cm"># বা "Production" বা "Archived"</span>
+)
+<span class="fn">print</span>(<span class="str">"Model moved to Staging!"</span>)<div class="code-label">register_model.py</div></pre>
+
+    <div class="box box-warn">
+      <div class="box-label">⚠️ Stage feature পুরোনো হয়ে যাচ্ছে</div>
+      <p>MLflow-এর নতুন version-এ Stage transition feature deprecate করা হচ্ছে। নতুন version-এ <strong>Tags</strong> ব্যবহার করো — যেমন <code>tag: stage=production</code>। এই কোর্সটা version 2.9.2-এ তাই Stage ব্যবহার করা হয়েছে।</p>
+    </div>
+
+    <h3>🏷️ Description এবং Tags যোগ করা</h3>
+    <p>Model Registry-তে শুধু stage নয়, অনেক তথ্য যোগ করা যায়:</p>
+
+    <pre><span class="cm"># Model-এ description যোগ করো</span>
+client.<span class="fn">update_registered_model</span>(
+    name=<span class="str">"Apple_Demand_Predictor"</span>,
+    description=<span class="str">"""
+    Apple demand prediction model.
+    Dataset: supermarket daily sales 2024
+    Algorithm: Random Forest Regressor
+    Best r2 score: 0.881
+    Training data range: Jan-Dec 2024
+    """</span>
+)
+
+<span class="cm"># Specific version-এ tag যোগ করো</span>
+client.<span class="fn">set_model_version_tag</span>(
+    name=<span class="str">"Apple_Demand_Predictor"</span>,
+    version=<span class="str">"1"</span>,
+    key=<span class="str">"validated_by"</span>,
+    value=<span class="str">"data_science_team"</span>
+)
+
+client.<span class="fn">set_model_version_tag</span>(
+    name=<span class="str">"Apple_Demand_Predictor"</span>,
+    version=<span class="str">"1"</span>,
+    key=<span class="str">"dataset_version"</span>,
+    value=<span class="str">"v2.1"</span>
+)<div class="code-label">python</div></pre>
+
+    <h3>📊 Registry থেকে Production Model Load করা</h3>
+    <p>Registry-তে register থাকা model সরাসরি URI দিয়ে load করা যায়:</p>
+
+    <pre><span class="kw">import</span> mlflow
+
+<span class="cm"># Production stage-এর model load করো</span>
+model = mlflow.sklearn.<span class="fn">load_model</span>(
+    <span class="str">"models:/Apple_Demand_Predictor/Production"</span>
+)
+<span class="cm"># এখন model ব্যবহার করো prediction-এর জন্য</span>
+
+<span class="cm"># অথবা specific version load করো</span>
+model_v2 = mlflow.sklearn.<span class="fn">load_model</span>(
+    <span class="str">"models:/Apple_Demand_Predictor/2"</span>  <span class="cm"># version 2</span>
+)<div class="code-label">python</div></pre>
+
+    <div class="analogy">
+      <div class="analogy-label">📚 Library-র উপমা</div>
+      <p>Model Registry হলো একটা লাইব্রেরির মতো। প্রতিটা মডেল একটা বই। প্রতিটা version সেই বইয়ের নতুন edition। Stage মানে বইটা কোথায় রাখা আছে — নতুন বই বিভাগে, best-seller শেলফে, নাকি পুরোনো বই গুদামে।</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════
+     CHAPTER 6: CONCLUSION
+═══════════════════════════════════════════ -->
+<section class="chapter" id="ch6">
+  <div class="chapter-header">
+    <div class="chapter-num" style="background: linear-gradient(135deg, #f78166, #ff7b72);">৬</div>
+    <div class="chapter-title-block">
+      <h2>উপসংহার — MLflow আরো বড় পরিসরে</h2>
+      <p>Remote servers, alternatives, এবং পরবর্তী পদক্ষেপ</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🌐 Remote Tracking Server — বাস্তব দুনিয়ায় MLflow</h3>
+    <p>এই কোর্সে আমরা <strong>local</strong> tracking server ব্যবহার করেছি। কিন্তু বাস্তব কোম্পানিতে একটা <strong>remote server</strong> (দূরবর্তী সার্ভার) ব্যবহার করা হয় যাতে পুরো team access করতে পারে।</p>
+
+    <!-- Remote vs Local Diagram -->
+    <div class="flow-container">
+      <svg viewBox="0 0 680 240" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;display:block;margin:0 auto;">
+        <rect width="680" height="240" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+
+        <!-- Local setup -->
+        <rect x="20" y="20" width="290" height="200" rx="10" fill="rgba(88,166,255,0.05)" stroke="#58a6ff" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="165" y="44" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">📍 Local Setup (কোর্সে শিখেছি)</text>
+        <rect x="45" y="58" width="110" height="50" rx="6" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
+        <text x="100" y="79" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="11">👩‍💻 তুমি</text>
+        <text x="100" y="97" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">তোমার কম্পিউটার</text>
+        <rect x="175" y="58" width="110" height="50" rx="6" fill="rgba(255,166,87,0.1)" stroke="#ffa657" stroke-width="1"/>
+        <text x="230" y="79" text-anchor="middle" fill="#ffa657" font-family="Hind Siliguri,sans-serif" font-size="11">🖥️ MLflow Server</text>
+        <text x="230" y="97" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">একই কম্পিউটারে</text>
+        <line x1="157" y1="83" x2="173" y2="83" stroke="#8b949e" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="165" y="140" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">শুধু তুমি access করতে পারো</text>
+        <text x="165" y="158" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">team collaboration নেই</text>
+        <text x="165" y="180" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="10">✅ Learning-এর জন্য ভালো</text>
+        <text x="165" y="198" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="10">✅ সহজ setup</text>
+
+        <!-- Remote setup -->
+        <rect x="370" y="20" width="290" height="200" rx="10" fill="rgba(63,185,80,0.05)" stroke="#3fb950" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="515" y="44" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">☁️ Remote Setup (কোম্পানিতে)</text>
+        <!-- Team members -->
+        <rect x="385" y="58" width="75" height="45" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
+        <text x="422" y="77" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="10">👩‍💻 DS 1</text>
+        <text x="422" y="93" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="9">Laptop 1</text>
+        <rect x="385" y="115" width="75" height="45" rx="5" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1"/>
+        <text x="422" y="134" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="10">👨‍💻 DS 2</text>
+        <text x="422" y="150" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="9">Laptop 2</text>
+        <!-- Central server -->
+        <rect x="500" y="75" width="110" height="75" rx="6" fill="rgba(255,166,87,0.15)" stroke="#ffa657" stroke-width="1.5"/>
+        <text x="555" y="103" text-anchor="middle" fill="#ffa657" font-family="Hind Siliguri,sans-serif" font-size="11" font-weight="700">☁️ Remote</text>
+        <text x="555" y="119" text-anchor="middle" fill="#ffa657" font-family="Hind Siliguri,sans-serif" font-size="11" font-weight="700">MLflow Server</text>
+        <text x="555" y="138" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">AWS / Azure / GCP</text>
+        <line x1="462" y1="80" x2="498" y2="105" stroke="#8b949e" stroke-width="1.5"/>
+        <line x1="462" y1="138" x2="498" y2="125" stroke="#8b949e" stroke-width="1.5"/>
+        <text x="515" y="185" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="10">✅ পুরো team একসাথে কাজ করে</text>
+        <text x="515" y="203" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="10">✅ সব run একজায়গায়</text>
+      </svg>
+    </div>
+
+    <h3>✅ Remote Server-এর সুবিধা</h3>
+    <ul class="content-list">
+      <li><strong>Collaboration:</strong> একাধিক Data Scientist একই experiment দেখতে এবং তুলনা করতে পারে</li>
+      <li><strong>Centralization:</strong> সব training run এক জায়গায় — কোনো তথ্য হারিয়ে যায় না</li>
+      <li><strong>Accessibility:</strong> যেকোনো জায়গা থেকে internet-এ access করা যায়</li>
+      <li><strong>Scalability:</strong> প্রয়োজনে server বড় করা যায়</li>
+    </ul>
+
+    <h3>⚠️ Remote Server-এর অসুবিধা</h3>
+    <ul class="content-list">
+      <li><strong>Security:</strong> Server ঠিকমতো secure না হলে মডেল এবং ডেটা চুরি হতে পারে</li>
+      <li><strong>Cost:</strong> Cloud server-এর ভাড়া লাগে — অনেক experiment হলে খরচ বাড়ে</li>
+      <li><strong>Network Dependency:</strong> Internet না থাকলে access করা যাবে না</li>
+      <li><strong>Maintenance:</strong> Server maintain করতে IT team দরকার</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h3>🔄 MLflow-এর বিকল্প — অন্যান্য টুল</h3>
+    <p>MLflow একাই নয়, ML experiment tracking-এর জন্য আরো অনেক ভালো টুল আছে। এখানে কয়েকটার তুলনা:</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>টুল</th>
+            <th>বিশেষত্ব</th>
+            <th>কার জন্য ভালো</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>MLflow</strong> ⭐</td>
+            <td>Open-source, AWS/Azure/GCP-র সাথে native integration, Databricks-এ built-in</td>
+            <td>Enterprise team, যারা cloud ব্যবহার করে</td>
+          </tr>
+          <tr>
+            <td><strong>Weights &amp; Biases (W&amp;B)</strong></td>
+            <td>খুব সুন্দর visualization, real-time tracking, deep learning-এ দারুণ</td>
+            <td>Deep learning প্রজেক্ট, research teams</td>
+          </tr>
+          <tr>
+            <td><strong>Neptune.ai</strong></td>
+            <td>অত্যন্ত ব্যবহারবান্ধব UI, flexible metadata management</td>
+            <td>Jupyter notebook ব্যবহারকারী, সহজ শুরু</td>
+          </tr>
+          <tr>
+            <td><strong>Comet.ml</strong></td>
+            <td>Automatic experiment tracking, minimal configuration</td>
+            <td>দ্রুত শুরু করতে চায় যারা</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box box-tip">
+      <div class="box-label">💡 কোনটা বেছে নেবে?</div>
+      <p>MLflow বেছে নেওয়ার সবচেয়ে বড় কারণ হলো — এটা free ও open-source, বড় cloud provider-রা (AWS SageMaker, Azure ML, Databricks) এটাকে natively support করে। তুমি যদি ML career শুরু করছো, MLflow শেখা সবচেয়ে কাজে আসবে।</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>🎓 তুমি কী কী শিখলে — Summary</h3>
+    <div class="highlight">
+      <h4>সম্পূর্ণ কোর্সের Summary</h4>
+      <div class="card-grid">
+        <div class="card" style="border-color: rgba(88,166,255,0.4);">
+          <div class="card-icon">📔</div>
+          <h4>MLflow Tracking</h4>
+          <p>Experiment রেকর্ড করা, parameters ও metrics log করা, UI-তে তুলনা করা, autolog ব্যবহার।</p>
+        </div>
+        <div class="card" style="border-color: rgba(63,185,80,0.4);">
+          <div class="card-icon">📦</div>
+          <h4>MLflow Projects</h4>
+          <p>MLproject ফাইল বানানো, environment specify করা, mlflow run command দিয়ে reproduce করা।</p>
+        </div>
+        <div class="card" style="border-color: rgba(255,166,87,0.4);">
+          <div class="card-icon">🤖</div>
+          <h4>MLflow Models</h4>
+          <p>Model format বোঝা, flavors concept, model load করা, REST API হিসেবে deploy করা।</p>
+        </div>
+        <div class="card" style="border-color: rgba(210,168,255,0.4);">
+          <div class="card-icon">🏛️</div>
+          <h4>Model Registry</h4>
+          <p>Model register করা, stages manage করা, versions track করা, descriptions ও tags যোগ করা।</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>🗺️ পরবর্তী পদক্ষেপ — MLOps যাত্রা</h3>
+    <p>MLflow শিখলে তুমি MLOps-এর প্রথম পদক্ষেপ সম্পন্ন করলে। এরপর শিখতে পারো:</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🐳</div>
+        <h4>Docker</h4>
+        <p>মডেল containerize করা। Production deployment-এর জন্য অপরিহার্য।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">☁️</div>
+        <h4>Cloud Platforms</h4>
+        <p>AWS SageMaker, Azure ML, GCP Vertex AI-তে MLflow deploy করা।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚙️</div>
+        <h4>CI/CD Pipelines</h4>
+        <p>Automated testing এবং deployment — model automatically update হবে।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h4>Model Monitoring</h4>
+        <p>Production-এ model-এর performance কমছে কিনা সেটা monitor করা।</p>
+      </div>
+    </div>
+
+    <!-- Final Architecture Overview -->
+    <div class="flow-container" style="margin-top: 30px;">
+      <svg viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;display:block;margin:0 auto;">
+        <defs>
+          <linearGradient id="finalbg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#0d2137"/>
+            <stop offset="100%" style="stop-color:#0d1117"/>
+          </linearGradient>
+        </defs>
+        <rect width="680" height="280" rx="12" fill="url(#finalbg)" stroke="#30363d" stroke-width="1"/>
+        <text x="340" y="30" text-anchor="middle" fill="#e6edf3" font-family="Hind Siliguri,sans-serif" font-size="14" font-weight="700">MLflow সম্পূর্ণ Architecture — একনজরে</text>
+
+        <!-- Data/Code Input -->
+        <rect x="20" y="55" width="110" height="170" rx="8" fill="rgba(88,166,255,0.08)" stroke="#58a6ff" stroke-width="1"/>
+        <text x="75" y="80" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="11" font-weight="700">📥 Input</text>
+        <text x="75" y="100" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">ডেটা</text>
+        <text x="75" y="118" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Python Code</text>
+        <text x="75" y="136" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Parameters</text>
+
+        <!-- Arrow to Projects -->
+        <path d="M 132 140 L 158 140" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+        <!-- MLflow Projects -->
+        <rect x="160" y="55" width="120" height="75" rx="8" fill="rgba(63,185,80,0.1)" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="220" y="80" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">📦 Projects</text>
+        <text x="220" y="98" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Reproducibility</text>
+        <text x="220" y="115" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">MLproject file</text>
+
+        <!-- MLflow Tracking -->
+        <rect x="160" y="150" width="120" height="75" rx="8" fill="rgba(88,166,255,0.1)" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="220" y="175" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">📔 Tracking</text>
+        <text x="220" y="193" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Experiments</text>
+        <text x="220" y="210" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Params/Metrics</text>
+
+        <!-- Arrow to center -->
+        <path d="M 282 90 L 308 120" stroke="#3fb950" stroke-width="1.5" fill="none" marker-end="url(#arrow-green)"/>
+        <path d="M 282 185 L 308 165" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+        <!-- MLflow Models (center) -->
+        <rect x="310" y="100" width="120" height="80" rx="8" fill="rgba(255,166,87,0.15)" stroke="#ffa657" stroke-width="2"/>
+        <text x="370" y="128" text-anchor="middle" fill="#ffa657" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="700">🤖 Models</text>
+        <text x="370" y="148" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Flavors</text>
+        <text x="370" y="165" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">MLmodel file</text>
+
+        <!-- Arrow to Registry -->
+        <path d="M 432 140 L 458 140" stroke="#ffa657" stroke-width="1.5" fill="none" marker-end="url(#arrow-orange)"/>
+
+        <!-- Model Registry -->
+        <rect x="460" y="80" width="120" height="115" rx="8" fill="rgba(210,168,255,0.1)" stroke="#d2a8ff" stroke-width="1.5"/>
+        <text x="520" y="108" text-anchor="middle" fill="#d2a8ff" font-family="Hind Siliguri,sans-serif" font-size="11" font-weight="700">🏛️ Registry</text>
+        <text x="520" y="128" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Versions</text>
+        <text x="520" y="145" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Stages</text>
+        <text x="520" y="162" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="10">Tags &amp; Desc.</text>
+        <text x="520" y="185" text-anchor="middle" fill="#3fb950" font-family="Hind Siliguri,sans-serif" font-size="9">✓ Production</text>
+
+        <!-- Arrow to deployment -->
+        <path d="M 582 140 L 608 140" stroke="#d2a8ff" stroke-width="1.5" fill="none" marker-end="url(#arrow-purple)"/>
+
+        <!-- Deployment -->
+        <rect x="610" y="100" width="60" height="80" rx="8" fill="rgba(247,129,102,0.1)" stroke="#f78166" stroke-width="1.5"/>
+        <text x="640" y="130" text-anchor="middle" fill="#f78166" font-family="Hind Siliguri,sans-serif" font-size="11" font-weight="700">🚀</text>
+        <text x="640" y="150" text-anchor="middle" fill="#f78166" font-family="Hind Siliguri,sans-serif" font-size="10">Deploy</text>
+        <text x="640" y="168" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="9">API</text>
+
+        <!-- Bottom label -->
+        <text x="340" y="255" text-anchor="middle" fill="#58a6ff" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="700">Data → Projects + Tracking → Models → Registry → Production</text>
+      </svg>
+    </div>
+
+    <div class="box box-note">
+      <div class="box-label">🎉 অভিনন্দন!</div>
+      <p>তুমি MLflow-এর সম্পূর্ণ কোর্স শেষ করলে! Data Preparation থেকে শুরু করে Production Deployment পর্যন্ত — সব ধাপ তুমি বাংলায় বুঝলে। এখন একটা নিজের প্রজেক্টে এই সব apply করার চেষ্টা করো!</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- end .main -->
+
+<footer>
+  <p>📚 MLflow সম্পূর্ণ গাইড — বাংলায় | DataScientest কোর্স অবলম্বনে</p>
+  <p style="margin-top: 8px; color: #58a6ff;">MLflow version 2.9.2 | সম্পূর্ণ বাংলায় ব্যাখ্যা</p>
+</footer>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    document.getElementById('progressBar').style.width = scrolled + '%';
+  });
+</script>
+</body>
+</html>

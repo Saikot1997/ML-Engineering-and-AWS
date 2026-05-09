@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MongoDB — সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00e676;
+    --green-dark: #00c853;
+    --green-dim: #1b5e20;
+    --bg: #0a0f0a;
+    --bg2: #0f1a0f;
+    --bg3: #132213;
+    --card: #111a11;
+    --border: #1e3a1e;
+    --text: #e8f5e9;
+    --text-dim: #a5d6a7;
+    --text-muted: #4caf50;
+    --accent: #69f0ae;
+    --orange: #ffb300;
+    --blue: #40c4ff;
+    --red: #ff5252;
+    --purple: #e040fb;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 17px;
+    line-height: 1.85;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0a1a0a 0%, #0d2a0d 50%, #0a1a0a 100%);
+    border-bottom: 2px solid var(--green-dim);
+    padding: 60px 20px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,230,118,0.08) 0%, transparent 70%);
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(0,230,118,0.12);
+    border: 1px solid var(--green-dim);
+    color: var(--green);
+    font-size: 13px;
+    letter-spacing: 3px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  header h1 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: var(--green);
+    text-shadow: 0 0 40px rgba(0,230,118,0.4);
+    margin-bottom: 15px;
+    position: relative;
+  }
+  header p {
+    font-size: 18px;
+    color: var(--text-dim);
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+    display: flex;
+    gap: 4px;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav a {
+    display: inline-block;
+    padding: 14px 18px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  nav a:hover { color: var(--green); border-bottom-color: var(--green); }
+
+  /* MAIN */
+  main { max-width: 900px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  /* SECTIONS */
+  section {
+    margin-bottom: 70px;
+    scroll-margin-top: 60px;
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--green);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+  h2 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    color: var(--green);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 {
+    font-size: 1.25rem;
+    color: var(--accent);
+    margin: 30px 0 14px;
+    font-weight: 600;
+  }
+  h4 {
+    font-size: 1.05rem;
+    color: var(--orange);
+    margin: 20px 0 10px;
+    font-weight: 600;
+  }
+  p { margin-bottom: 14px; color: var(--text); }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 20px 0;
+  }
+  .card-green { border-left: 4px solid var(--green); }
+  .card-orange { border-left: 4px solid var(--orange); }
+  .card-blue { border-left: 4px solid var(--blue); }
+  .card-red { border-left: 4px solid var(--red); }
+  .card-purple { border-left: 4px solid var(--purple); }
+
+  /* CODE */
+  pre, code {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  code {
+    background: rgba(0,230,118,0.1);
+    color: var(--green);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  pre {
+    background: #050d05;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 16px 0;
+    position: relative;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+  .kw { color: #ff79c6; }   /* keyword */
+  .fn { color: #50fa7b; }   /* function */
+  .st { color: #f1fa8c; }   /* string */
+  .nm { color: #bd93f9; }   /* number */
+  .cm { color: #6272a4; font-style: italic; }  /* comment */
+  .op { color: #ff79c6; }   /* operator */
+  .key { color: #8be9fd; }  /* key */
+
+  .code-label {
+    background: var(--green-dim);
+    color: var(--green);
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 4px 4px 0 0;
+    display: inline-block;
+    margin-bottom: -1px;
+    letter-spacing: 1px;
+  }
+
+  /* CALLOUTS */
+  .info { background: rgba(64,196,255,0.07); border: 1px solid rgba(64,196,255,0.25); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+  .warn { background: rgba(255,179,0,0.07); border: 1px solid rgba(255,179,0,0.3); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+  .tip  { background: rgba(0,230,118,0.07); border: 1px solid rgba(0,230,118,0.25); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+  .danger { background: rgba(255,82,82,0.07); border: 1px solid rgba(255,82,82,0.25); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+
+  .info::before  { content: "ℹ️  "; }
+  .warn::before  { content: "⚠️  "; }
+  .tip::before   { content: "💡  "; }
+  .danger::before { content: "🚨  "; }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 15px;
+  }
+  th {
+    background: var(--green-dim);
+    color: var(--green);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+  td { padding: 11px 16px; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: rgba(0,230,118,0.04); }
+
+  /* SVG DIAGRAMS */
+  .diagram-wrap {
+    background: #050d05;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px 20px;
+    margin: 24px 0;
+    overflow-x: auto;
+    text-align: center;
+  }
+  .diagram-wrap svg { max-width: 100%; }
+
+  /* COMPARE GRID */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  @media(max-width:600px) { .compare { grid-template-columns: 1fr; } }
+
+  /* STEP LIST */
+  .steps { counter-reset: step; padding: 0; list-style: none; }
+  .steps li {
+    counter-increment: step;
+    padding: 12px 16px 12px 56px;
+    margin: 8px 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    position: relative;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    background: var(--green-dim);
+    color: var(--green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* TAG */
+  .tag {
+    display: inline-block;
+    background: rgba(0,230,118,0.12);
+    color: var(--green);
+    border: 1px solid rgba(0,230,118,0.3);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 13px;
+    margin: 3px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* CRUD GRID */
+  .crud-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 20px 0; }
+  @media(max-width:550px) { .crud-grid { grid-template-columns: 1fr; } }
+  .crud-card {
+    border-radius: 10px;
+    padding: 18px 20px;
+    text-align: center;
+  }
+  .crud-c { background: rgba(0,230,118,0.1); border: 1px solid rgba(0,230,118,0.3); }
+  .crud-r { background: rgba(64,196,255,0.1); border: 1px solid rgba(64,196,255,0.3); }
+  .crud-u { background: rgba(255,179,0,0.1); border: 1px solid rgba(255,179,0,0.3); }
+  .crud-d { background: rgba(255,82,82,0.1); border: 1px solid rgba(255,82,82,0.3); }
+  .crud-letter { font-size: 2.5rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .crud-c .crud-letter { color: var(--green); }
+  .crud-r .crud-letter { color: var(--blue); }
+  .crud-u .crud-letter { color: var(--orange); }
+  .crud-d .crud-letter { color: var(--red); }
+
+  /* OPERATOR TABLE COLORS */
+  .op-eq { color: #69f0ae; }
+  .op-num { color: #40c4ff; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* SCROLL ANIMATION */
+  section { opacity: 0; transform: translateY(20px); animation: fadeUp 0.5s ease forwards; }
+  section:nth-child(1) { animation-delay: 0.05s; }
+  section:nth-child(2) { animation-delay: 0.1s; }
+  section:nth-child(3) { animation-delay: 0.15s; }
+  section:nth-child(4) { animation-delay: 0.2s; }
+  section:nth-child(n+5) { animation-delay: 0.25s; }
+  @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">NOSQL · MONGODB · বাংলা</div>
+  <h1>🍃 MongoDB — শূন্য থেকে সম্পূর্ণ</h1>
+  <p>একেবারে নতুনদের জন্য, বাংলায় লেখা সম্পূর্ণ গাইড — কোনো কিছুই বাদ যাবে না</p>
+</header>
+
+<nav>
+  <a href="#nosql">NoSQL কী?</a>
+  <a href="#document">ডকুমেন্ট DB</a>
+  <a href="#install">ইনস্টলেশন</a>
+  <a href="#crud">CRUD</a>
+  <a href="#mql">MQL অপারেটর</a>
+  <a href="#cursor">Cursor মেথড</a>
+  <a href="#aggregation">Aggregation</a>
+  <a href="#python">Python</a>
+  <a href="#modeling">Data Modeling</a>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: NoSQL -->
+<!-- ============================================================ -->
+<section id="nosql">
+  <div class="section-num">// ০১</div>
+  <h2>NoSQL কী জিনিস?</h2>
+
+  <p>প্রথমে বুঝতে হবে — ডেটাবেস কী? সহজ করে বলো — ডেটাবেস হলো একটা বিশাল <strong>খাতা</strong> যেখানে তুমি তথ্য রাখো, খোঁজো, আপডেট করো।</p>
+
+  <p>বছরের পর বছর ধরে সবাই <strong>Relational Database</strong> ব্যবহার করতো — যেমন MySQL, PostgreSQL। এগুলোতে ডেটা রাখা হয় <strong>সারি আর কলামের টেবিলে</strong> — ঠিক Excel Spreadsheet এর মতো।</p>
+
+  <div class="diagram-wrap">
+    <svg width="640" height="200" viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gHeader" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#1b5e20"/>
+          <stop offset="100%" stop-color="#2e7d32"/>
+        </linearGradient>
+      </defs>
+      <!-- Table title -->
+      <text x="320" y="22" text-anchor="middle" fill="#69f0ae" font-family="Hind Siliguri" font-size="15" font-weight="600">Relational Database — টেবিল উদাহরণ (ব্যবহারকারীর তথ্য)</text>
+      <!-- Header row -->
+      <rect x="20" y="35" width="600" height="36" fill="url(#gHeader)" rx="4"/>
+      <text x="100" y="58" text-anchor="middle" fill="#00e676" font-family="JetBrains Mono" font-size="13" font-weight="600">id</text>
+      <text x="230" y="58" text-anchor="middle" fill="#00e676" font-family="JetBrains Mono" font-size="13" font-weight="600">name</text>
+      <text x="380" y="58" text-anchor="middle" fill="#00e676" font-family="JetBrains Mono" font-size="13" font-weight="600">email</text>
+      <text x="540" y="58" text-anchor="middle" fill="#00e676" font-family="JetBrains Mono" font-size="13" font-weight="600">age</text>
+      <!-- Row 1 -->
+      <rect x="20" y="71" width="600" height="34" fill="#0a150a"/>
+      <text x="100" y="93" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="13">1</text>
+      <text x="230" y="93" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="13">Saikot</text>
+      <text x="380" y="93" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="13"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a1d2c0c8caced5e1c4ccc0c8cd8fc2cecc">[email&#160;protected]</a></text>
+      <text x="540" y="93" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="13">25</text>
+      <!-- Row 2 -->
+      <rect x="20" y="105" width="600" height="34" fill="#0d1a0d"/>
+      <text x="100" y="127" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="13">2</text>
+      <text x="230" y="127" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="13">Rahim</text>
+      <text x="380" y="127" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="13"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0674676e6f6b46636b676f6a2865696b">[email&#160;protected]</a></text>
+      <text x="540" y="127" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="13">30</text>
+      <!-- Row 3 -->
+      <rect x="20" y="139" width="600" height="34" fill="#0a150a"/>
+      <text x="100" y="161" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="13">3</text>
+      <text x="230" y="161" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="13">Karim</text>
+      <text x="380" y="161" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="13"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dab1bba8b3b79abfb7bbb3b6f4b9b5b7">[email&#160;protected]</a></text>
+      <text x="540" y="161" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="13">28</text>
+      <!-- borders -->
+      <rect x="20" y="35" width="600" height="138" fill="none" stroke="#1e3a1e" stroke-width="1" rx="4"/>
+      <line x1="150" y1="35" x2="150" y2="173" stroke="#1e3a1e" stroke-width="1"/>
+      <line x1="300" y1="35" x2="300" y2="173" stroke="#1e3a1e" stroke-width="1"/>
+      <line x1="450" y1="35" x2="450" y2="173" stroke="#1e3a1e" stroke-width="1"/>
+      <text x="320" y="195" text-anchor="middle" fill="#4caf50" font-family="Hind Siliguri" font-size="13">↑ এই কাঠামো আগে থেকেই ঠিক করতে হয় — কোনো নমনীয়তা নেই</text>
+    </svg>
+  </div>
+
+  <div class="card card-orange">
+    <h4>সমস্যা কোথায়?</h4>
+    <p>ধরো তুমি একটা ওয়েবসাইটের ইউজার ট্র্যাক করছো। প্রথমে শুধু নাম-ইমেইল লাগতো। এখন নতুন ফিচার এলো — কেউ ৩টা ফোন নম্বর দেয়, কেউ ১টাও দেয় না। কেউ পোষা প্রাণীর তথ্য দেয়, কেউ দেয় না।</p>
+    <p>Relational DB-তে প্রতিবার টেবিলের <strong>কাঠামো বদলাতে</strong> হয়! এটা ঝামেলার।</p>
+  </div>
+
+  <h3>NoSQL — সমাধান এলো!</h3>
+  <p>NoSQL মানে শুধু "No SQL" না — এখন এর মানে <strong>"Not Only SQL"</strong> — শুধু SQL নয়, আরো আছে।</p>
+
+  <div class="compare">
+    <div class="card card-blue">
+      <h4>🗄️ Relational (SQL)</h4>
+      <p>• কঠোর schema (ছাঁচ) লাগে<br>• সব row একই structure<br>• পুরনো, পরিপক্ক<br>• সম্পর্ক বোঝাতে ভালো</p>
+    </div>
+    <div class="card card-green">
+      <h4>📄 NoSQL</h4>
+      <p>• নমনীয় structure<br>• প্রতিটি document আলাদা হতে পারে<br>• Big Data-র জন্য উপযুক্ত<br>• দ্রুত উন্নয়নের জন্য সহজ</p>
+    </div>
+  </div>
+
+  <h3>NoSQL-এর তিন পরিবার</h3>
+  <div class="diagram-wrap">
+    <svg width="620" height="160" viewBox="0 0 620 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Document -->
+      <rect x="20" y="30" width="175" height="110" rx="12" fill="#0a1a0a" stroke="#00e676" stroke-width="1.5"/>
+      <text x="107" y="58" text-anchor="middle" fill="#00e676" font-family="JetBrains Mono" font-size="22">📄</text>
+      <text x="107" y="82" text-anchor="middle" fill="#69f0ae" font-family="Hind Siliguri" font-size="15" font-weight="600">Document-oriented</text>
+      <text x="107" y="102" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="13">MongoDB, CouchDB</text>
+      <text x="107" y="122" text-anchor="middle" fill="#4caf50" font-family="Hind Siliguri" font-size="12">JSON ডকুমেন্ট</text>
+      <!-- Column -->
+      <rect x="222" y="30" width="175" height="110" rx="12" fill="#0a0a1a" stroke="#40c4ff" stroke-width="1.5"/>
+      <text x="309" y="58" text-anchor="middle" fill="#40c4ff" font-family="JetBrains Mono" font-size="22">📊</text>
+      <text x="309" y="82" text-anchor="middle" fill="#80d8ff" font-family="Hind Siliguri" font-size="15" font-weight="600">Column-oriented</text>
+      <text x="309" y="102" text-anchor="middle" fill="#b3e5fc" font-family="Hind Siliguri" font-size="13">Cassandra, HBase</text>
+      <text x="309" y="122" text-anchor="middle" fill="#4fc3f7" font-family="Hind Siliguri" font-size="12">কলাম ভিত্তিক</text>
+      <!-- Graph -->
+      <rect x="424" y="30" width="175" height="110" rx="12" fill="#1a0a1a" stroke="#e040fb" stroke-width="1.5"/>
+      <text x="511" y="58" text-anchor="middle" fill="#e040fb" font-family="JetBrains Mono" font-size="22">🕸️</text>
+      <text x="511" y="82" text-anchor="middle" fill="#ea80fc" font-family="Hind Siliguri" font-size="15" font-weight="600">Graph-oriented</text>
+      <text x="511" y="102" text-anchor="middle" fill="#ce93d8" font-family="Hind Siliguri" font-size="13">Neo4j, Amazon Neptune</text>
+      <text x="511" y="122" text-anchor="middle" fill="#ab47bc" font-family="Hind Siliguri" font-size="12">সম্পর্ক বোঝাতে</text>
+    </svg>
+  </div>
+  <p>আমরা এই কোর্সে <strong>Document-oriented</strong> নিয়ে কাজ করবো — MongoDB দিয়ে।</p>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: Document DB -->
+<!-- ============================================================ -->
+<section id="document">
+  <div class="section-num">// ০২</div>
+  <h2>Document-Oriented Database কীভাবে কাজ করে?</h2>
+
+  <p>এখানে ডেটা রাখা হয় <strong>Document</strong> আকারে। Document মানে একটা <strong>key-value জোড়ার সমষ্টি</strong> — এটা অনেকটা Python-এর Dictionary বা JSON ফাইলের মতো।</p>
+
+  <div class="diagram-wrap">
+    <svg width="640" height="340" viewBox="0 0 640 340" xmlns="http://www.w3.org/2000/svg">
+      <text x="320" y="22" text-anchor="middle" fill="#69f0ae" font-family="Hind Siliguri" font-size="15" font-weight="600">MongoDB-র তিন স্তরের কাঠামো</text>
+
+      <!-- Database box -->
+      <rect x="10" y="35" width="618" height="290" rx="14" fill="#0a150a" stroke="#1e3a1e" stroke-width="2" stroke-dasharray="6,3"/>
+      <text x="30" y="58" fill="#4caf50" font-family="Hind Siliguri" font-size="13">🗄️  Database: "sample"</text>
+
+      <!-- Collection box -->
+      <rect x="30" y="68" width="575" height="245" rx="10" fill="#0d1a0d" stroke="#1b5e20" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="50" y="90" fill="#69f0ae" font-family="Hind Siliguri" font-size="13">📁  Collection: "users" (একই ধরনের ডকুমেন্টের দল)</text>
+
+      <!-- Document 1 -->
+      <rect x="50" y="100" width="245" height="185" rx="8" fill="#050d05" stroke="#00e676" stroke-width="1.5"/>
+      <text x="70" y="122" fill="#00e676" font-family="JetBrains Mono" font-size="12" font-weight="600">📄 Document 1</text>
+      <text x="70" y="144" fill="#f1fa8c" font-family="JetBrains Mono" font-size="12">_id: ObjectId("abc123")</text>
+      <text x="70" y="164" fill="#8be9fd" font-family="JetBrains Mono" font-size="12">"name": "Saikot"</text>
+      <text x="70" y="184" fill="#8be9fd" font-family="JetBrains Mono" font-size="12">"age": 25</text>
+      <text x="70" y="204" fill="#8be9fd" font-family="JetBrains Mono" font-size="12">"city": "Dhaka"</text>
+      <text x="70" y="224" fill="#8be9fd" font-family="JetBrains Mono" font-size="12">"hobbies": [</text>
+      <text x="86" y="244" fill="#8be9fd" font-family="JetBrains Mono" font-size="12">  "coding","bengali"</text>
+      <text x="70" y="264" fill="#8be9fd" font-family="JetBrains Mono" font-size="12">]</text>
+
+      <!-- Document 2 -->
+      <rect x="315" y="100" width="270" height="185" rx="8" fill="#050d05" stroke="#00e676" stroke-width="1.5"/>
+      <text x="335" y="122" fill="#00e676" font-family="JetBrains Mono" font-size="12" font-weight="600">📄 Document 2 (ভিন্ন structure!)</text>
+      <text x="335" y="144" fill="#f1fa8c" font-family="JetBrains Mono" font-size="12">_id: ObjectId("xyz789")</text>
+      <text x="335" y="164" fill="#8be9fd" font-family="JetBrains Mono" font-size="12">"name": "Rahim"</text>
+      <text x="335" y="184" fill="#8be9fd" font-family="JetBrains Mono" font-size="12">"age": 30</text>
+      <text x="335" y="204" fill="#bd93f9" font-family="JetBrains Mono" font-size="12">"phone": "+8801700000"</text>
+      <text x="335" y="224" fill="#bd93f9" font-family="JetBrains Mono" font-size="12">"company": "TechCo"</text>
+      <text x="335" y="244" fill="#6272a4" font-family="JetBrains Mono" font-size="12">// "city" নেই — তাও চলে!</text>
+    </svg>
+  </div>
+
+  <div class="tip">
+    <strong>মনে রাখো:</strong> Document DB-তে একই Collection-এ দুটো Document সম্পূর্ণ আলাদা structure রাখতে পারে। এটাই সবচেয়ে বড় সুবিধা!
+  </div>
+
+  <h3>MongoDB-র তিনটি স্তর</h3>
+  <table>
+    <tr><th>MongoDB</th><th>Relational DB</th><th>বাস্তব উদাহরণ</th></tr>
+    <tr><td><span class="tag">Database</span></td><td>Database</td><td>পুরো একটা প্রজেক্ট (e.g. "ecommerce")</td></tr>
+    <tr><td><span class="tag">Collection</span></td><td>Table</td><td>একটা ধরনের তথ্য (e.g. "products")</td></tr>
+    <tr><td><span class="tag">Document</span></td><td>Row</td><td>একটা নির্দিষ্ট পণ্যের তথ্য</td></tr>
+    <tr><td><span class="tag">Field</span></td><td>Column</td><td>পণ্যের নাম, দাম, ইত্যাদি</td></tr>
+  </table>
+
+  <h3>JSON ফরম্যাট — একটু বোঝাই</h3>
+  <p>MongoDB-তে ডেটা <strong>BSON</strong> ফরম্যাটে রাখা হয় (Binary JSON), কিন্তু তুমি দেখবে JSON আকারে। JSON হলো key-value জোড়া:</p>
+
+  <div class="code-label">JSON উদাহরণ</div>
+  <pre><code>{
+  <span class="key">"name"</span>: <span class="st">"Saikot"</span>,           <span class="cm">// string (লেখা)</span>
+  <span class="key">"age"</span>: <span class="nm">25</span>,                 <span class="cm">// number (সংখ্যা)</span>
+  <span class="key">"isStudent"</span>: <span class="kw">true</span>,        <span class="cm">// boolean (হ্যাঁ/না)</span>
+  <span class="key">"address"</span>: {              <span class="cm">// nested object (ভেতরে object)</span>
+    <span class="key">"city"</span>: <span class="st">"Dhaka"</span>,
+    <span class="key">"zip"</span>: <span class="st">"1200"</span>
+  },
+  <span class="key">"hobbies"</span>: [<span class="st">"coding"</span>, <span class="st">"reading"</span>]  <span class="cm">// array (তালিকা)</span>
+}</code></pre>
+
+  <div class="warn">
+    <strong>JSON vs BSON:</strong> JSON হলো মানুষ পড়তে পারে এমন ফরম্যাট। BSON হলো Binary — কম্পিউটার দ্রুত প্রসেস করতে পারে। MongoDB ভেতরে BSON রাখে, বাইরে JSON দেখায়।
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: INSTALLATION -->
+<!-- ============================================================ -->
+<section id="install">
+  <div class="section-num">// ০৩</div>
+  <h2>ইনস্টলেশন — Docker দিয়ে</h2>
+
+  <p>সরাসরি MongoDB ইনস্টল না করে আমরা <strong>Docker</strong> ব্যবহার করবো। Docker হলো একটা "বাক্স" যেখানে পুরো সফটওয়্যার প্যাক করা থাকে — তোমার কম্পিউটারে আলাদা কিছু ইনস্টল করতে হয় না।</p>
+
+  <div class="diagram-wrap">
+    <svg width="560" height="160" viewBox="0 0 560 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Your Computer -->
+      <rect x="10" y="20" width="160" height="120" rx="10" fill="#0a150a" stroke="#1e3a1e" stroke-width="1.5"/>
+      <text x="90" y="48" text-anchor="middle" fill="#4caf50" font-family="Hind Siliguri" font-size="14" font-weight="600">তোমার কম্পিউটার</text>
+      <text x="90" y="72" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="12">Ubuntu Linux</text>
+      <!-- Docker -->
+      <rect x="200" y="20" width="160" height="120" rx="10" fill="#0a0a1a" stroke="#40c4ff" stroke-width="1.5"/>
+      <text x="280" y="48" text-anchor="middle" fill="#40c4ff" font-family="Hind Siliguri" font-size="14" font-weight="600">Docker</text>
+      <text x="280" y="68" text-anchor="middle" fill="#80d8ff" font-family="Hind Siliguri" font-size="12">বিচ্ছিন্ন পরিবেশ</text>
+      <!-- MongoDB Container -->
+      <rect x="390" y="20" width="160" height="120" rx="10" fill="#0a1a0a" stroke="#00e676" stroke-width="2"/>
+      <text x="470" y="48" text-anchor="middle" fill="#00e676" font-family="Hind Siliguri" font-size="14" font-weight="600">🍃 MongoDB</text>
+      <text x="470" y="68" text-anchor="middle" fill="#69f0ae" font-family="Hind Siliguri" font-size="12">Container</text>
+      <text x="470" y="90" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="11">port: 27017</text>
+      <text x="470" y="110" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="11">user: datascientest</text>
+      <!-- Arrows -->
+      <line x1="170" y1="80" x2="195" y2="80" stroke="#4caf50" stroke-width="2" marker-end="url(#arr)"/>
+      <line x1="360" y1="80" x2="385" y2="80" stroke="#4caf50" stroke-width="2" marker-end="url(#arr)"/>
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#4caf50"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <h3>docker-compose.yml ফাইল — লাইন বাই লাইন বোঝাই</h3>
+
+  <div class="code-label">docker-compose.yml</div>
+  <pre><code><span class="key">version</span>: <span class="st">"3.3"</span>          <span class="cm"># Docker Compose ফাইলের সংস্করণ</span>
+<span class="key">services</span>:               <span class="cm"># কোন কোন সার্ভিস চালাবো তার তালিকা</span>
+  <span class="key">mongodb</span>:              <span class="cm"># আমাদের MongoDB সার্ভিসের নাম</span>
+    <span class="key">image</span>: mongo:<span class="nm">7.0</span>    <span class="cm"># MongoDB এর "রেসিপি" — version 7.0</span>
+    <span class="key">container_name</span>: my_mongo  <span class="cm"># container-এর নাম</span>
+    <span class="key">environment</span>:          <span class="cm"># পরিবেশ চলক (secret তথ্য)</span>
+      MONGO_INITDB_ROOT_USERNAME: datascientest  <span class="cm"># ব্যবহারকারীর নাম</span>
+      MONGO_INITDB_ROOT_PASSWORD: dst123         <span class="cm"># পাসওয়ার্ড</span>
+    <span class="key">volumes</span>:              <span class="cm"># কম্পিউটার ↔ container ফোল্ডার সংযোগ</span>
+      - ./sample_training:/data/db
+    <span class="key">ports</span>:                <span class="cm"># port forwarding — 27017:27017</span>
+      - <span class="st">"27017:27017"</span>      <span class="cm"># তোমার PC:container এর port</span></code></pre>
+
+  <h3>পদক্ষেপে পদক্ষেপে চালু করো</h3>
+  <ol class="steps">
+    <li>Docker আপডেট করো ও প্যাকেজ ইনস্টল করো</li>
+    <li><code>docker-compose up -d</code> — background-এ MongoDB চালু করো</li>
+    <li><code>docker ps</code> — নিশ্চিত করো container চলছে</li>
+    <li><code>docker exec -it my_mongo bash</code> — container-এ ঢোকো</li>
+    <li><code>mongosh -u datascientest -p dst123</code> — MongoDB Shell চালু করো</li>
+  </ol>
+
+  <div class="info">
+    <strong>Port কী?</strong> Port হলো কম্পিউটারের একটা "দরজা"। MongoDB সবসময় 27017 দরজায় কথা শোনে। <code>27017:27017</code> মানে — তোমার কম্পিউটারের 27017 দরজা, container-এর 27017 দরজার সাথে সংযুক্ত।
+  </div>
+
+  <h3>ডেটা Import করা</h3>
+  <div class="code-label">Terminal (container-এর বাইরে)</div>
+  <pre><code><span class="cm"># JSON ফাইল ডাউনলোড করো</span>
+mkdir sample_training
+cd sample_training
+wget https://dst-de.s3.eu-west-3.amazonaws.com/mongo_fr/zips.json
+wget https://dst-de.s3.eu-west-3.amazonaws.com/mongo_fr/grades.json
+wget https://dst-de.s3.eu-west-3.amazonaws.com/mongo_fr/companies.json</code></pre>
+
+  <div class="code-label">Container-এর ভেতরে</div>
+  <pre><code><span class="cm"># "sample" database-এ "zips" collection-এ import করো</span>
+mongoimport -d sample -c zips \
+  --authenticationDatabase admin \
+  --username datascientest \
+  --password dst123 \
+  --file /data/db/zips.json</code></pre>
+
+  <div class="tip">
+    <strong>ব্যাখ্যা:</strong> <code>-d sample</code> = database নাম, <code>-c zips</code> = collection নাম, <code>--file</code> = কোন ফাইল থেকে import করবো।
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: CRUD -->
+<!-- ============================================================ -->
+<section id="crud">
+  <div class="section-num">// ০৪</div>
+  <h2>CRUD — তৈরি, পড়া, আপডেট, মুছা</h2>
+
+  <p>Database-এর সব কাজ মূলত চারটি অপারেশনে পড়ে:</p>
+  <div class="crud-grid">
+    <div class="crud-card crud-c"><div class="crud-letter">C</div><strong>Create</strong><br>নতুন document তৈরি</div>
+    <div class="crud-card crud-r"><div class="crud-letter">R</div><strong>Read</strong><br>document পড়া/খোঁজা</div>
+    <div class="crud-card crud-u"><div class="crud-letter">U</div><strong>Update</strong><br>document আপডেট</div>
+    <div class="crud-card crud-d"><div class="crud-letter">D</div><strong>Delete</strong><br>document মুছা</div>
+  </div>
+
+  <h3>MongoDB Shell-এ শুরু</h3>
+  <div class="code-label">MongoDB Shell</div>
+  <pre><code><span class="cm"># সব database দেখো</span>
+<span class="fn">show dbs</span>
+
+<span class="cm"># "sample" database-এ যাও</span>
+<span class="kw">use</span> sample
+
+<span class="cm"># sample database-এর সব collection দেখো</span>
+<span class="fn">show collections</span></code></pre>
+
+  <div class="info">
+    <strong>db মানে কী?</strong> MongoDB Shell-এ <code>db</code> মানে বর্তমানে যে database-এ আছো সেটা। যদি <code>use sample</code> করো, তাহলে <code>db</code> = sample।
+  </div>
+
+  <h3>R — Read: ডকুমেন্ট পড়া</h3>
+
+  <div class="code-label">findOne() — একটা document পাও</div>
+  <pre><code><span class="cm"># zips collection থেকে যেকোনো একটা document দেখাও</span>
+db.zips.<span class="fn">findOne</span>()
+
+<span class="cm"># শর্ত দিয়ে খোঁজো — pop (জনসংখ্যা) যেখানে 3450</span>
+db.zips.<span class="fn">findOne</span>({<span class="st">"pop"</span>: <span class="nm">3450</span>})
+
+<span class="cm"># state = "MA" যেখানে</span>
+db.zips.<span class="fn">findOne</span>({<span class="st">"state"</span>: <span class="st">"MA"</span>})</code></pre>
+
+  <div class="code-label">find() — একাধিক document পাও</div>
+  <pre><code><span class="cm"># MA state-এর সব document</span>
+db.zips.<span class="fn">find</span>({<span class="st">"state"</span>: <span class="st">"MA"</span>})
+
+<span class="cm"># সব document দেখাও (20টা দেখাবে, বাকি দেখতে "it" লেখো)</span>
+db.zips.<span class="fn">find</span>()</code></pre>
+
+  <div class="tip">
+    <strong>findOne vs find:</strong> <code>findOne()</code> শুধু একটা document দেয়। <code>find()</code> সব matching document দেয় (একটা Cursor হিসেবে — সর্বোচ্চ 20টা একসাথে দেখায়)।
+  </div>
+
+  <h3>C — Create: নতুন Document তৈরি</h3>
+
+  <div class="code-label">insertOne() — একটা document যোগ করো</div>
+  <pre><code><span class="cm"># একটা নতুন শহর যোগ করো</span>
+db.zips.<span class="fn">insertOne</span>({
+  <span class="st">"city"</span>: <span class="st">"Paris"</span>,
+  <span class="st">"pop"</span>: <span class="st">"1000000"</span>,
+  <span class="st">"state"</span>: <span class="st">"France"</span>
+})</code></pre>
+
+  <div class="code-label">insertMany() — একসাথে অনেক document</div>
+  <pre><code>db.zips.<span class="fn">insertMany</span>([
+  {<span class="st">"city"</span>: <span class="st">"Paris"</span>,      <span class="st">"state"</span>: <span class="st">"France"</span>},
+  {<span class="st">"city"</span>: <span class="st">"Courbevoie"</span>, <span class="st">"state"</span>: <span class="st">"France"</span>}
+])</code></pre>
+
+  <div class="card card-blue">
+    <h4>_id কী?</h4>
+    <p>প্রতিটা document-এ MongoDB নিজেই একটা unique <code>_id</code> তৈরি করে। এটা ObjectId ধরনের — যেমন <code>ObjectId("5c8eccc1...")</code>। এটা সবসময় unique — কোনো দুটো document-এর _id কখনো এক হবে না।</p>
+  </div>
+
+  <h3>U — Update: Document আপডেট করা</h3>
+
+  <div class="code-label">updateOne() — একটা document আপডেট</div>
+  <pre><code><span class="cm"># BREMEN শহরের state পরিবর্তন করো</span>
+<span class="cm"># প্রথম argument: কোন document → দ্বিতীয়: কী পরিবর্তন</span>
+db.zips.<span class="fn">updateOne</span>(
+  {<span class="st">"city"</span>: <span class="st">"BREMEN"</span>},           <span class="cm">// খোঁজার শর্ত</span>
+  {<span class="op">$set</span>: {<span class="st">"state"</span>: <span class="st">"France"</span>}}  <span class="cm">// পরিবর্তন: $set দিয়ে</span>
+)</code></pre>
+
+  <div class="code-label">$push — array-তে element যোগ</div>
+  <pre><code><span class="cm"># grades collection-এ একটা student-এর score array-তে নতুন item যোগ</span>
+db.grades.<span class="fn">updateOne</span>(
+  {<span class="st">"_id"</span>: ObjectId(<span class="st">"56d5f7eb604eb380b0d8d9c8"</span>)},
+  {<span class="op">$push</span>: {<span class="st">"scores"</span>: {<span class="st">"exam"</span>: <span class="st">"quizz"</span>, <span class="st">"score"</span>: <span class="nm">100.0</span>}}}
+)</code></pre>
+
+  <table>
+    <tr><th>Operator</th><th>কাজ</th><th>উদাহরণ</th></tr>
+    <tr><td><code>$set</code></td><td>field-এর মান সেট করো</td><td><code>{$set: {"age": 30}}</code></td></tr>
+    <tr><td><code>$push</code></td><td>array-তে element যোগ করো</td><td><code>{$push: {"tags": "new"}}</code></td></tr>
+    <tr><td><code>$inc</code></td><td>সংখ্যা বাড়াও/কমাও</td><td><code>{$inc: {"count": 1}}</code></td></tr>
+  </table>
+
+  <h3>D — Delete: Document মুছা</h3>
+
+  <div class="code-label">deleteOne() / deleteMany()</div>
+  <pre><code><span class="cm"># France state-এর সব document মুছো</span>
+db.zips.<span class="fn">deleteMany</span>({<span class="st">"state"</span>: <span class="st">"France"</span>})
+
+<span class="cm"># পুরো collection মুছো (সাবধান!)</span>
+db.zips.<span class="fn">drop</span>()
+
+<span class="cm"># একটা database মুছো (সব collection মুছা গেলে database এমনিই মুছে যায়)</span></code></pre>
+
+  <div class="danger">
+    <strong>সাবধান!</strong> <code>deleteMany()</code> বা <code>drop()</code> করলে ডেটা আর ফিরে পাবে না। সবসময় backup রাখো!
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: MQL OPERATORS -->
+<!-- ============================================================ -->
+<section id="mql">
+  <div class="section-num">// ০৫</div>
+  <h2>Advanced MQL — শক্তিশালী Query</h2>
+
+  <h3>তুলনা Operator (Comparison)</h3>
+  <p>সংখ্যার উপর শর্ত দিতে এগুলো ব্যবহার হয়:</p>
+
+  <table>
+    <tr><th>Operator</th><th>মানে</th><th>উদাহরণ</th></tr>
+    <tr><td><code class="op-eq">$eq</code></td><td>সমান (=)</td><td>pop = 5000</td></tr>
+    <tr><td><code class="op-eq">$ne</code></td><td>সমান নয় (≠)</td><td>state ≠ "TX"</td></tr>
+    <tr><td><code class="op-num">$gt</code></td><td>বড় (&gt;)</td><td>pop &gt; 10000</td></tr>
+    <tr><td><code class="op-num">$lt</code></td><td>ছোট (&lt;)</td><td>pop &lt; 5000</td></tr>
+    <tr><td><code class="op-num">$gte</code></td><td>বড় বা সমান (≥)</td><td>pop ≥ 12678</td></tr>
+    <tr><td><code class="op-num">$lte</code></td><td>ছোট বা সমান (≤)</td><td>pop ≤ 20000</td></tr>
+  </table>
+
+  <div class="code-label">উদাহরণ</div>
+  <pre><code><span class="cm"># জনসংখ্যা 12678 বা বেশি</span>
+db.zips.<span class="fn">find</span>({<span class="st">"pop"</span>: {<span class="op">$gte</span>: <span class="nm">12678</span>}})
+
+<span class="cm"># জনসংখ্যা 10000 থেকে 20000 এর মধ্যে (AND দিয়ে)</span>
+db.zips.<span class="fn">find</span>({
+  <span class="op">$and</span>: [
+    {<span class="st">"pop"</span>: {<span class="op">$gt</span>: <span class="nm">10000</span>}},
+    {<span class="st">"pop"</span>: {<span class="op">$lt</span>: <span class="nm">20000</span>}}
+  ]
+})</code></pre>
+
+  <h3>লজিক্যাল Operator</h3>
+
+  <div class="diagram-wrap">
+    <svg width="580" height="140" viewBox="0 0 580 140" xmlns="http://www.w3.org/2000/svg">
+      <!-- AND -->
+      <rect x="10" y="20" width="125" height="100" rx="8" fill="#0a150a" stroke="#00e676" stroke-width="1.5"/>
+      <text x="72" y="48" text-anchor="middle" fill="#00e676" font-family="JetBrains Mono" font-size="16" font-weight="700">$and</text>
+      <text x="72" y="70" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="13">দুটোই সত্য</text>
+      <text x="72" y="90" text-anchor="middle" fill="#4caf50" font-family="Hind Siliguri" font-size="12">হলে ফলাফল দেবে</text>
+      <!-- OR -->
+      <rect x="155" y="20" width="125" height="100" rx="8" fill="#0a0a1a" stroke="#40c4ff" stroke-width="1.5"/>
+      <text x="217" y="48" text-anchor="middle" fill="#40c4ff" font-family="JetBrains Mono" font-size="16" font-weight="700">$or</text>
+      <text x="217" y="70" text-anchor="middle" fill="#b3e5fc" font-family="Hind Siliguri" font-size="13">যেকোনো একটা</text>
+      <text x="217" y="90" text-anchor="middle" fill="#4fc3f7" font-family="Hind Siliguri" font-size="12">সত্য হলেই চলবে</text>
+      <!-- NOR -->
+      <rect x="300" y="20" width="125" height="100" rx="8" fill="#1a0a0a" stroke="#ff5252" stroke-width="1.5"/>
+      <text x="362" y="48" text-anchor="middle" fill="#ff5252" font-family="JetBrains Mono" font-size="16" font-weight="700">$nor</text>
+      <text x="362" y="70" text-anchor="middle" fill="#ef9a9a" font-family="Hind Siliguri" font-size="13">কোনোটাই সত্য</text>
+      <text x="362" y="90" text-anchor="middle" fill="#e57373" font-family="Hind Siliguri" font-size="12">না হলে ফলাফল</text>
+      <!-- NOT -->
+      <rect x="445" y="20" width="125" height="100" rx="8" fill="#1a1a0a" stroke="#ffb300" stroke-width="1.5"/>
+      <text x="507" y="48" text-anchor="middle" fill="#ffb300" font-family="JetBrains Mono" font-size="16" font-weight="700">$not</text>
+      <text x="507" y="70" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="13">শর্তের বিপরীত</text>
+      <text x="507" y="90" text-anchor="middle" fill="#ffc107" font-family="Hind Siliguri" font-size="12">ফলাফল দেবে</text>
+    </svg>
+  </div>
+
+  <div class="code-label">$expr — একই document-এর দুই field তুলনা</div>
+  <pre><code><span class="cm"># grades collection-এ student_id আর class_id সমান যেগুলো</span>
+db.grades.<span class="fn">find</span>({
+  <span class="op">$expr</span>: {<span class="op">$eq</span>: [<span class="st">"$student_id"</span>, <span class="st">"$class_id"</span>]}
+})</code></pre>
+
+  <div class="info">
+    <strong>$expr কেন?</strong> সাধারণ query-তে একটা field-এর সাথে fixed value তুলনা করো। কিন্তু দুটো field একে অপরের সাথে তুলনা করতে হলে <code>$expr</code> লাগে।
+  </div>
+
+  <h3>Projection — শুধু দরকারি field দেখাও</h3>
+  <p>মাঝে মাঝে পুরো document দরকার নেই — শুধু কিছু field দরকার। এটাকে Projection বলে।</p>
+
+  <div class="code-label">উদাহরণ</div>
+  <pre><code><span class="cm"># TX state-এর শহরগুলোর শুধু pop (জনসংখ্যা) দেখাও</span>
+db.zips.<span class="fn">find</span>(
+  {<span class="st">"state"</span>: <span class="st">"TX"</span>},  <span class="cm">// ফিল্টার</span>
+  {<span class="st">"pop"</span>: <span class="nm">1</span>}         <span class="cm">// projection: 1 = দেখাও</span>
+)
+
+<span class="cm"># pop বাদে বাকি সব দেখাও</span>
+db.zips.<span class="fn">find</span>(
+  {<span class="st">"state"</span>: <span class="st">"TX"</span>},
+  {<span class="st">"pop"</span>: <span class="nm">0</span>}         <span class="cm">// 0 = বাদ দাও</span>
+)
+
+<span class="cm"># _id বাদ দাও, city আর pop দেখাও</span>
+db.zips.<span class="fn">find</span>(
+  {<span class="st">"state"</span>: <span class="st">"TX"</span>},
+  {<span class="st">"_id"</span>: <span class="nm">0</span>, <span class="st">"city"</span>: <span class="nm">1</span>, <span class="st">"pop"</span>: <span class="nm">1</span>}
+)</code></pre>
+
+  <div class="warn">
+    <strong>নিয়ম:</strong> Projection-এ ০ আর ১ একসাথে মেশানো যাবে না। ব্যতিক্রম: <code>_id</code>। যেমন <code>{"_id": 0, "city": 1}</code> — এটা চলবে।
+  </div>
+
+  <h3>Dot Notation — ভেতরের field ধরো</h3>
+  <p>যদি document-এ nested object বা array থাকে, dot (<code>.</code>) দিয়ে ভেতরে ঢোকো:</p>
+
+  <div class="code-label">উদাহরণ</div>
+  <pre><code><span class="cm"># loc.y field দেখাও (nested object)</span>
+db.zips.<span class="fn">find</span>({}, {<span class="st">"loc.y"</span>: <span class="nm">1</span>})
+
+<span class="cm"># acquisitions array-র প্রথম element-এর company name</span>
+<span class="cm"># acquisitions.0 = প্রথম element (index 0)</span>
+<span class="cm"># acquisitions.0.company.name = আরো ভেতরে</span>
+db.cie.<span class="fn">find</span>({}, {<span class="st">"acquisitions.0.company.name"</span>: <span class="nm">1</span>})</code></pre>
+
+  <h3>$elemMatch — Array-র ভেতরে খোঁজো</h3>
+  <p>Array-র কোনো element যদি একাধিক শর্ত পূরণ করে কিনা দেখতে চাও:</p>
+
+  <div class="code-label">উদাহরণ</div>
+  <pre><code><span class="cm"># কে LittleBigPlanet company acquire করেছে?</span>
+db.cie.<span class="fn">find</span>(
+  {
+    <span class="st">"acquisitions"</span>: {
+      <span class="op">$elemMatch</span>: {
+        <span class="st">"acquired_year"</span>: <span class="nm">2010</span>,
+        <span class="st">"acquired_month"</span>: <span class="nm">3</span>,
+        <span class="st">"acquired_day"</span>: <span class="nm">2</span>
+      }
+    }
+  },
+  {<span class="st">"name"</span>: <span class="nm">1</span>}
+)</code></pre>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: CURSOR METHODS -->
+<!-- ============================================================ -->
+<section id="cursor">
+  <div class="section-num">// ০৬</div>
+  <h2>Cursor Methods — ফলাফল নিয়ন্ত্রণ</h2>
+
+  <p><code>find()</code> একটা <strong>Cursor</strong> ফেরত দেয়। Cursor মানে — collection-এর উপর একটা pointer যা ধীরে ধীরে ডেটা দেয়। এই Cursor-এ কিছু দরকারি method আছে:</p>
+
+  <div class="diagram-wrap">
+    <svg width="560" height="100" viewBox="0 0 560 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- find -->
+      <rect x="10" y="25" width="100" height="50" rx="8" fill="#0a1a0a" stroke="#00e676" stroke-width="1.5"/>
+      <text x="60" y="55" text-anchor="middle" fill="#00e676" font-family="JetBrains Mono" font-size="14" font-weight="700">find()</text>
+      <!-- arrow -->
+      <line x1="110" y1="50" x2="140" y2="50" stroke="#4caf50" stroke-width="2" marker-end="url(#arr2)"/>
+      <defs><marker id="arr2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4caf50"/></marker></defs>
+      <!-- cursor -->
+      <rect x="140" y="15" width="100" height="70" rx="8" fill="#0d2a0d" stroke="#00e676" stroke-width="2"/>
+      <text x="190" y="40" text-anchor="middle" fill="#69f0ae" font-family="JetBrains Mono" font-size="13" font-weight="700">Cursor</text>
+      <text x="190" y="58" text-anchor="middle" fill="#4caf50" font-family="Hind Siliguri" font-size="12">ডেটার pointer</text>
+      <!-- methods -->
+      <line x1="240" y1="50" x2="270" y2="50" stroke="#4caf50" stroke-width="2" marker-end="url(#arr2)"/>
+      <rect x="270" y="15" width="280" height="70" rx="8" fill="#050d05" stroke="#1b5e20" stroke-width="1"/>
+      <text x="355" y="38" text-anchor="middle" fill="#8be9fd" font-family="JetBrains Mono" font-size="12">.sort()</text>
+      <text x="430" y="38" text-anchor="middle" fill="#bd93f9" font-family="JetBrains Mono" font-size="12">.limit()</text>
+      <text x="510" y="38" text-anchor="middle" fill="#f1fa8c" font-family="JetBrains Mono" font-size="12">.count()</text>
+      <text x="410" y="62" text-anchor="middle" fill="#6272a4" font-family="Hind Siliguri" font-size="12">→ ফলাফল নিয়ন্ত্রণ করো</text>
+    </svg>
+  </div>
+
+  <h3>sort() — সাজাও</h3>
+  <div class="code-label">উদাহরণ</div>
+  <pre><code><span class="cm"># student_id দিয়ে descending (বড় থেকে ছোট) সাজাও</span>
+db.grades.<span class="fn">find</span>().<span class="fn">sort</span>({<span class="st">"student_id"</span>: <span class="nm">-1</span>})
+<span class="cm">#                              -1 = descending (বড় → ছোট)</span>
+<span class="cm">#                               1 = ascending (ছোট → বড়)</span>
+
+<span class="cm"># দুটো key দিয়ে সাজাও</span>
+db.grades.<span class="fn">find</span>().<span class="fn">sort</span>({<span class="st">"student_id"</span>: <span class="nm">-1</span>, <span class="st">"class_id"</span>: <span class="nm">1</span>})</code></pre>
+
+  <h3>limit() — সর্বোচ্চ কয়টা দেখাবে</h3>
+  <div class="code-label">উদাহরণ</div>
+  <pre><code><span class="cm"># মাত্র ৫টা document দেখাও (pandas-এর head() এর মতো)</span>
+db.zips.<span class="fn">find</span>().<span class="fn">limit</span>(<span class="nm">5</span>)
+
+<span class="cm"># city অনুযায়ী সাজিয়ে প্রথম ৫টা</span>
+db.zips.<span class="fn">find</span>().<span class="fn">limit</span>(<span class="nm">5</span>).<span class="fn">sort</span>({<span class="st">"city"</span>: <span class="nm">1</span>})</code></pre>
+
+  <h3>count() — গণনা করো</h3>
+  <div class="code-label">উদাহরণ</div>
+  <pre><code><span class="cm"># মোট কতটা document আছে?</span>
+db.zips.<span class="fn">find</span>().<span class="fn">count</span>()
+
+<span class="cm"># TX state-এ কতটা শহর?</span>
+db.zips.<span class="fn">find</span>({<span class="st">"state"</span>: <span class="st">"TX"</span>}).<span class="fn">count</span>()</code></pre>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: AGGREGATION -->
+<!-- ============================================================ -->
+<section id="aggregation">
+  <div class="section-num">// ০৭</div>
+  <h2>Aggregation Framework — পাইপলাইন</h2>
+
+  <p>MQL-এ কিছু সীমাবদ্ধতা আছে — যেমন nested field-এ সরাসরি খোঁজা যায় না। Aggregation Framework এই সমস্যা সমাধান করে।</p>
+
+  <div class="diagram-wrap">
+    <svg width="640" height="130" viewBox="0 0 640 130" xmlns="http://www.w3.org/2000/svg">
+      <text x="320" y="20" text-anchor="middle" fill="#69f0ae" font-family="Hind Siliguri" font-size="14" font-weight="600">Aggregation Pipeline — ধাপে ধাপে ডেটা প্রসেস</text>
+      <!-- collection -->
+      <rect x="10" y="35" width="100" height="75" rx="8" fill="#0a1a0a" stroke="#1b5e20" stroke-width="1.5"/>
+      <text x="60" y="68" text-anchor="middle" fill="#4caf50" font-family="Hind Siliguri" font-size="13">Collection</text>
+      <text x="60" y="88" text-anchor="middle" fill="#a5d6a7" font-family="JetBrains Mono" font-size="11">সব ডেটা</text>
+      <!-- arrow -->
+      <polygon points="113,72 128,65 128,79" fill="#4caf50"/>
+      <line x1="110" y1="72" x2="130" y2="72" stroke="#4caf50" stroke-width="2"/>
+      <!-- stage 1 -->
+      <rect x="130" y="35" width="115" height="75" rx="8" fill="#0d2a0d" stroke="#00e676" stroke-width="1.5"/>
+      <text x="187" y="62" text-anchor="middle" fill="#00e676" font-family="JetBrains Mono" font-size="14" font-weight="700">$match</text>
+      <text x="187" y="82" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="12">ফিল্টার করো</text>
+      <text x="187" y="100" text-anchor="middle" fill="#4caf50" font-family="JetBrains Mono" font-size="10">→ কম ডেটা</text>
+      <!-- arrow -->
+      <polygon points="248,72 263,65 263,79" fill="#4caf50"/>
+      <line x1="245" y1="72" x2="265" y2="72" stroke="#4caf50" stroke-width="2"/>
+      <!-- stage 2 -->
+      <rect x="265" y="35" width="115" height="75" rx="8" fill="#0d2a0d" stroke="#69f0ae" stroke-width="1.5"/>
+      <text x="322" y="62" text-anchor="middle" fill="#69f0ae" font-family="JetBrains Mono" font-size="14" font-weight="700">$project</text>
+      <text x="322" y="82" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="12">format করো</text>
+      <text x="322" y="100" text-anchor="middle" fill="#4caf50" font-family="JetBrains Mono" font-size="10">→ shape বদলাও</text>
+      <!-- arrow -->
+      <polygon points="383,72 398,65 398,79" fill="#4caf50"/>
+      <line x1="380" y1="72" x2="400" y2="72" stroke="#4caf50" stroke-width="2"/>
+      <!-- stage 3 -->
+      <rect x="400" y="35" width="115" height="75" rx="8" fill="#0d2a0d" stroke="#8be9fd" stroke-width="1.5"/>
+      <text x="457" y="62" text-anchor="middle" fill="#8be9fd" font-family="JetBrains Mono" font-size="14" font-weight="700">$group</text>
+      <text x="457" y="82" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="12">গ্রুপ করো</text>
+      <text x="457" y="100" text-anchor="middle" fill="#4caf50" font-family="JetBrains Mono" font-size="10">→ সংখ্যা গণনা</text>
+      <!-- arrow -->
+      <polygon points="518,72 533,65 533,79" fill="#4caf50"/>
+      <line x1="515" y1="72" x2="535" y2="72" stroke="#4caf50" stroke-width="2"/>
+      <!-- result -->
+      <rect x="535" y="35" width="95" height="75" rx="8" fill="#1a0d1a" stroke="#e040fb" stroke-width="1.5"/>
+      <text x="582" y="68" text-anchor="middle" fill="#e040fb" font-family="Hind Siliguri" font-size="13">ফলাফল</text>
+      <text x="582" y="88" text-anchor="middle" fill="#ce93d8" font-family="JetBrains Mono" font-size="11">result</text>
+    </svg>
+  </div>
+
+  <h3>$match — ফিল্টার stage</h3>
+  <div class="code-label">উদাহরণ</div>
+  <pre><code><span class="cm"># cie collection: Seattle-এ office আছে এমন company</span>
+db.cie.<span class="fn">aggregate</span>([
+  {<span class="op">$match</span>: {<span class="st">"offices.city"</span>: <span class="st">"Seattle"</span>}},
+  {<span class="op">$project</span>: {<span class="st">"_id"</span>: <span class="nm">1</span>, <span class="st">"name"</span>: <span class="nm">1</span>}}
+])
+
+<span class="cm"># LittleBigPlanet কে acquire করেছে? (nested array খোঁজা)</span>
+db.cie.<span class="fn">aggregate</span>([
+  {<span class="op">$match</span>: {<span class="st">"acquisitions.company.name"</span>: <span class="st">"LittleBigPlanet"</span>}}
+])</code></pre>
+
+  <div class="tip">
+    <strong>$match-এর শক্তি:</strong> MQL-এর <code>find()</code>-এ nested array-তে সরাসরি খোঁজা কঠিন। কিন্তু <code>$match</code> dot notation দিয়ে সহজেই array-র ভেতরে ঢুকতে পারে।
+  </div>
+
+  <h3>$project — ফলাফলের shape বদলাও</h3>
+  <div class="code-label">উদাহরণ</div>
+  <pre><code><span class="cm"># Elon Musk কোন company-তে ছিলেন, নতুন নামে দেখাও</span>
+db.cie.<span class="fn">aggregate</span>([
+  {<span class="op">$match</span>: {
+    <span class="op">$and</span>: [
+      {<span class="st">"relationships.person.first_name"</span>: <span class="st">"Elon"</span>},
+      {<span class="st">"relationships.person.last_name"</span>: <span class="st">"Musk"</span>}
+    ]
+  }},
+  {<span class="op">$project</span>: {
+    <span class="st">"_id"</span>: <span class="nm">1</span>,
+    <span class="st">"society"</span>: <span class="st">"$name"</span>   <span class="cm">// name field-কে "society" নামে দেখাও</span>
+  }}
+])</code></pre>
+
+  <h3>$group — গ্রুপ করো, সংখ্যা গোনো</h3>
+  <div class="code-label">উদাহরণ</div>
+  <pre><code><span class="cm"># Paris-এ office আছে এমন company গুলো কোন বছর তৈরি হয়েছে?</span>
+<span class="cm"># প্রতি বছরে কতটা company — সবচেয়ে বেশি থেকে সাজাও</span>
+db.cie.<span class="fn">aggregate</span>([
+  {<span class="op">$match</span>: {
+    <span class="st">"offices.city"</span>: <span class="st">"Paris"</span>,
+    <span class="st">"founded_year"</span>: {<span class="op">$gt</span>: <span class="nm">1999</span>}
+  }},
+  {<span class="op">$group</span>: {
+    <span class="st">"_id"</span>: <span class="st">"$founded_year"</span>,    <span class="cm">// কোন field দিয়ে গ্রুপ?</span>
+    <span class="st">"nb_cie"</span>: {<span class="op">$sum</span>: <span class="nm">1</span>}         <span class="cm">// প্রতি গ্রুপে কয়টা? গুনে দাও</span>
+  }},
+  {<span class="op">$sort</span>: {<span class="st">"nb_cie"</span>: <span class="nm">-1</span>}}       <span class="cm">// সবচেয়ে বেশি থেকে সাজাও</span>
+])</code></pre>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: PYTHON -->
+<!-- ============================================================ -->
+<section id="python">
+  <div class="section-num">// ০৮</div>
+  <h2>Python দিয়ে MongoDB — pymongo</h2>
+
+  <p>MongoDB Shell ছাড়াও Python দিয়ে সরাসরি MongoDB-তে কাজ করা যায় — <strong>pymongo</strong> library দিয়ে।</p>
+
+  <div class="code-label">ইনস্টল করো</div>
+  <pre><code>pip3 install pymongo</code></pre>
+
+  <h3>Connection — সংযোগ করো</h3>
+  <div class="code-label">Python</div>
+  <pre><code><span class="kw">from</span> pymongo <span class="kw">import</span> MongoClient
+<span class="kw">from</span> pprint <span class="kw">import</span> pprint
+
+<span class="cm"># MongoDB-তে সংযোগ করো</span>
+client = <span class="fn">MongoClient</span>(
+  host=<span class="st">"127.0.0.1"</span>,        <span class="cm"># MongoDB-র address</span>
+  port=<span class="nm">27017</span>,               <span class="cm"># port নম্বর</span>
+  username=<span class="st">"datascientest"</span>, <span class="cm"># ব্যবহারকারীর নাম</span>
+  password=<span class="st">"dst123"</span>         <span class="cm"># পাসওয়ার্ড</span>
+)
+
+<span class="cm"># সব database দেখো</span>
+<span class="fn">print</span>(client.<span class="fn">list_database_names</span>())
+
+<span class="cm"># "sample" database select করো</span>
+sample = client[<span class="st">"sample"</span>]
+
+<span class="cm"># "zips" collection select করো</span>
+c_zips = sample[<span class="st">"zips"</span>]
+
+<span class="cm"># একটা document দেখো</span>
+<span class="fn">pprint</span>(c_zips.<span class="fn">find_one</span>())</code></pre>
+
+  <h3>দরকারি Python Operations</h3>
+
+  <div class="code-label">find, limit, distinct</div>
+  <pre><code><span class="cm"># Projection সহ find — city field দেখাও, _id বাদ দাও</span>
+<span class="kw">for</span> doc <span class="kw">in</span> c_zips.<span class="fn">find</span>({}, {<span class="st">"_id"</span>: <span class="nm">0</span>, <span class="st">"city"</span>: <span class="nm">1</span>}).<span class="fn">limit</span>(<span class="nm">12</span>):
+  <span class="fn">print</span>(doc)
+
+<span class="cm"># distinct — unique মানগুলো দেখো (SQL-এর SELECT DISTINCT)</span>
+<span class="fn">print</span>(c_zips.<span class="fn">find</span>().<span class="fn">distinct</span>(<span class="st">"state"</span>))</code></pre>
+
+  <div class="code-label">Regular Expression — প্যাটার্ন দিয়ে খোঁজা</div>
+  <pre><code><span class="kw">import</span> re
+
+<span class="cm"># যে শহরের নাম শুধু সংখ্যায়</span>
+exp = re.<span class="fn">compile</span>(<span class="st">"^[0-9]*$"</span>)  <span class="cm"># regex: শুরু থেকে শেষ পর্যন্ত শুধু সংখ্যা</span>
+<span class="fn">pprint</span>(<span class="fn">list</span>(c_zips.<span class="fn">find</span>({<span class="st">"city"</span>: exp}, {<span class="st">"city"</span>: <span class="nm">1</span>})))</code></pre>
+
+  <div class="code-label">Aggregation Python-এ</div>
+  <pre><code><span class="cm"># Tumblr কে acquire করেছে?</span>
+cie = client[<span class="st">"sample"</span>][<span class="st">"cie"</span>]
+<span class="fn">pprint</span>(<span class="fn">list</span>(
+  cie.<span class="fn">aggregate</span>([
+    {<span class="st">"$match"</span>: {<span class="st">"acquisitions.company.name"</span>: <span class="st">"Tumblr"</span>}},
+    {<span class="st">"$project"</span>: {<span class="st">"_id"</span>: <span class="nm">1</span>, <span class="st">"society"</span>: <span class="st">"$name"</span>}}
+  ])
+))</code></pre>
+
+  <div class="info">
+    <strong>Python vs MongoDB Shell:</strong> Python-এ সুবিধা হলো তুমি loop, condition, আরো complex logic লিখতে পারো। Shell শুধু interactive query-র জন্য।
+  </div>
+
+  <h3>OpenWeatherMap API + MongoDB — বাস্তব উদাহরণ</h3>
+  <div class="code-label">API থেকে ডেটা এনে MongoDB-তে রাখো</div>
+  <pre><code><span class="kw">import</span> os, requests
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+KEY = os.<span class="fn">getenv</span>(<span class="st">"WEATHER"</span>)  <span class="cm"># API key environment variable থেকে</span>
+CITY = <span class="st">"DHAKA"</span>
+
+<span class="cm"># API call করো</span>
+r = requests.<span class="fn">get</span>(
+  <span class="st">f"https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={KEY}"</span>
+)
+data = r.<span class="fn">json</span>()
+
+<span class="cm"># শুধু দরকারি ডেটা রাখো</span>
+clean_data = {
+  <span class="st">"weather"</span>: data[<span class="st">"weather"</span>],
+  <span class="st">"main"</span>: data[<span class="st">"main"</span>],
+  <span class="st">"city"</span>: CITY,
+  <span class="st">"time"</span>: datetime.<span class="fn">now</span>()
+}
+
+<span class="cm"># MongoDB-তে save করো</span>
+weather_col = client[<span class="st">"sample"</span>][<span class="st">"weather"</span>]
+weather_col.<span class="fn">insert_one</span>(clean_data)</code></pre>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 9: DATA MODELING -->
+<!-- ============================================================ -->
+<section id="modeling">
+  <div class="section-num">// ০৯</div>
+  <h2>Data Modeling — কাঠামো ডিজাইন</h2>
+
+  <p>শুধু ডেটা রাখলেই হয় না — কীভাবে রাখবে সেটাও গুরুত্বপূর্ণ। ভুল কাঠামোয় রাখলে query slow হয়।</p>
+
+  <h3>তিনটি সম্পর্কের ধরন</h3>
+
+  <div class="diagram-wrap">
+    <svg width="620" height="200" viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Green arrow for 1-1 -->
+        <marker id="arr11" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#69f0ae"/>
+        </marker>
+        <!-- Blue arrow for 1-N -->
+        <marker id="arr1n" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#40c4ff"/>
+        </marker>
+        <!-- Purple arrow for N-N -->
+        <marker id="arrnn" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#e040fb"/>
+        </marker>
+      </defs>
+      <text x="310" y="22" text-anchor="middle" fill="#69f0ae" font-family="Hind Siliguri" font-size="15" font-weight="600">Entity Relationship — সম্পর্কের ধরন</text>
+
+      <!-- One to One -->
+      <rect x="10" y="40" width="180" height="145" rx="10" fill="#0a150a" stroke="#00e676" stroke-width="1.5"/>
+      <text x="100" y="63" text-anchor="middle" fill="#00e676" font-family="Hind Siliguri" font-size="14" font-weight="600">One-to-One (1-1)</text>
+      <rect x="30" y="75" width="65" height="35" rx="6" fill="#0d2a0d" stroke="#69f0ae" stroke-width="1"/>
+      <text x="62" y="97" text-anchor="middle" fill="#69f0ae" font-family="Hind Siliguri" font-size="12">ব্যক্তি</text>
+      <rect x="110" y="75" width="65" height="35" rx="6" fill="#0d2a0d" stroke="#69f0ae" stroke-width="1"/>
+      <text x="142" y="97" text-anchor="middle" fill="#69f0ae" font-family="Hind Siliguri" font-size="12">পাসপোর্ট</text>
+      <!-- Double-headed line = exactly 1 ↔ 1 -->
+      <line x1="95" y1="92" x2="110" y2="92" stroke="#69f0ae" stroke-width="1.5" marker-end="url(#arr11)"/>
+      <text x="100" y="135" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="12">একজনের</text>
+      <text x="100" y="153" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="12">একটা পাসপোর্ট</text>
+      <text x="100" y="172" text-anchor="middle" fill="#4caf50" font-family="Hind Siliguri" font-size="11">→ একসাথে রাখো</text>
+
+      <!-- One to Many -->
+      <rect x="218" y="40" width="180" height="145" rx="10" fill="#0a0a1a" stroke="#40c4ff" stroke-width="1.5"/>
+      <text x="308" y="63" text-anchor="middle" fill="#40c4ff" font-family="Hind Siliguri" font-size="14" font-weight="600">One-to-Many (1-N)</text>
+      <rect x="238" y="75" width="65" height="35" rx="6" fill="#0a0d1a" stroke="#80d8ff" stroke-width="1"/>
+      <text x="270" y="97" text-anchor="middle" fill="#80d8ff" font-family="Hind Siliguri" font-size="12">লেখক</text>
+      <rect x="318" y="65" width="65" height="25" rx="4" fill="#0a0d1a" stroke="#40c4ff" stroke-width="1"/>
+      <text x="350" y="81" text-anchor="middle" fill="#40c4ff" font-family="Hind Siliguri" font-size="11">বই ১</text>
+      <rect x="318" y="95" width="65" height="25" rx="4" fill="#0a0d1a" stroke="#40c4ff" stroke-width="1"/>
+      <text x="350" y="111" text-anchor="middle" fill="#40c4ff" font-family="Hind Siliguri" font-size="11">বই ২</text>
+      <!-- Arrows from লেখক to books -->
+      <line x1="303" y1="87" x2="318" y2="75" stroke="#40c4ff" stroke-width="1.5" marker-end="url(#arr1n)"/>
+      <line x1="303" y1="92" x2="318" y2="105" stroke="#40c4ff" stroke-width="1.5" marker-end="url(#arr1n)"/>
+      <text x="308" y="140" text-anchor="middle" fill="#b3e5fc" font-family="Hind Siliguri" font-size="12">একজন লেখকের</text>
+      <text x="308" y="158" text-anchor="middle" fill="#b3e5fc" font-family="Hind Siliguri" font-size="12">অনেক বই</text>
+      <text x="308" y="176" text-anchor="middle" fill="#4fc3f7" font-family="Hind Siliguri" font-size="11">→ array ব্যবহার করো</text>
+
+      <!-- Many to Many -->
+      <rect x="426" y="40" width="180" height="145" rx="10" fill="#1a0a1a" stroke="#e040fb" stroke-width="1.5"/>
+      <text x="516" y="63" text-anchor="middle" fill="#e040fb" font-family="Hind Siliguri" font-size="14" font-weight="600">Many-to-Many (N-N)</text>
+      <rect x="446" y="75" width="55" height="25" rx="4" fill="#1a0a1a" stroke="#ce93d8" stroke-width="1"/>
+      <text x="473" y="91" text-anchor="middle" fill="#ce93d8" font-family="Hind Siliguri" font-size="11">ছাত্র</text>
+      <rect x="516" y="65" width="65" height="25" rx="4" fill="#1a0a1a" stroke="#e040fb" stroke-width="1"/>
+      <text x="548" y="81" text-anchor="middle" fill="#e040fb" font-family="Hind Siliguri" font-size="11">কোর্স ১</text>
+      <rect x="516" y="95" width="65" height="25" rx="4" fill="#1a0a1a" stroke="#e040fb" stroke-width="1"/>
+      <text x="548" y="111" text-anchor="middle" fill="#e040fb" font-family="Hind Siliguri" font-size="11">কোর্স ২</text>
+      <!-- Arrows from ছাত্র to courses -->
+      <line x1="501" y1="85" x2="516" y2="75" stroke="#e040fb" stroke-width="1.5" marker-end="url(#arrnn)"/>
+      <line x1="501" y1="90" x2="516" y2="105" stroke="#e040fb" stroke-width="1.5" marker-end="url(#arrnn)"/>
+      <text x="516" y="140" text-anchor="middle" fill="#ce93d8" font-family="Hind Siliguri" font-size="12">একজন ছাত্র</text>
+      <text x="516" y="158" text-anchor="middle" fill="#ce93d8" font-family="Hind Siliguri" font-size="12">অনেক কোর্সে</text>
+      <text x="516" y="176" text-anchor="middle" fill="#ab47bc" font-family="Hind Siliguri" font-size="11">→ reference ID রাখো</text>
+    </svg>
+  </div>
+
+  <h3>বাস্তব উদাহরণ — ABBA ব্যান্ডের গান</h3>
+  <p>ধরো আমরা গানের তথ্য রাখতে চাই। প্রথমে সব একসাথে রাখলাম:</p>
+
+  <div class="code-label">❌ খারাপ পদ্ধতি (Repeated Data)</div>
+  <pre><code><span class="cm">// প্রতিটা গানে ABBA-র তথ্য বারবার আসছে!</span>
+{<span class="st">"_id"</span>: <span class="nm">1</span>, <span class="st">"name"</span>: <span class="st">"Gimme Gimme"</span>, <span class="st">"singer"</span>: <span class="st">"ABBA"</span>, <span class="st">"nationality"</span>: <span class="st">"Swedish"</span>}
+{<span class="st">"_id"</span>: <span class="nm">2</span>, <span class="st">"name"</span>: <span class="st">"Dancing Queen"</span>, <span class="st">"singer"</span>: <span class="st">"ABBA"</span>, <span class="st">"nationality"</span>: <span class="st">"Swedish"</span>}
+{<span class="st">"_id"</span>: <span class="nm">3</span>, <span class="st">"name"</span>: <span class="st">"Money Money"</span>, <span class="st">"singer"</span>: <span class="st">"ABBA"</span>, <span class="st">"nationality"</span>: <span class="st">"Swedish"</span>}</code></pre>
+
+  <div class="code-label">✅ ভালো পদ্ধতি (আলাদা Collection)</div>
+  <pre><code><span class="cm">// musicians collection</span>
+{<span class="st">"_id"</span>: <span class="nm">1</span>, <span class="st">"name"</span>: <span class="st">"ABBA"</span>, <span class="st">"song_id"</span>: [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>], <span class="st">"nationality"</span>: <span class="st">"Swedish"</span>}
+
+<span class="cm">// songs collection</span>
+{<span class="st">"_id"</span>: <span class="nm">1</span>, <span class="st">"name"</span>: <span class="st">"Gimme Gimme"</span>, <span class="st">"singer_id"</span>: <span class="nm">1</span>}
+{<span class="st">"_id"</span>: <span class="nm">2</span>, <span class="st">"name"</span>: <span class="st">"Dancing Queen"</span>, <span class="st">"singer_id"</span>: <span class="nm">1</span>}
+{<span class="st">"_id"</span>: <span class="nm">3</span>, <span class="st">"name"</span>: <span class="st">"Money Money"</span>, <span class="st">"singer_id"</span>: <span class="nm">1</span>}</code></pre>
+
+  <h3>Data Modeling-এর পদক্ষেপ</h3>
+  <ol class="steps">
+    <li><strong>Application Design তৈরি করো</strong> — কোন ডেটা দরকার? কে ব্যবহার করবে? কতটা পড়া/লেখা হবে?</li>
+    <li><strong>Entity আর Relationship চিহ্নিত করো</strong> — কোন কোন collection লাগবে? তারা কীভাবে সম্পর্কিত?</li>
+    <li><strong>প্রতিটা Collection-এর structure ঠিক করো</strong> — nested object না reference ID — কোনটা better?</li>
+    <li><strong>পরীক্ষা করো আর উন্নত করো</strong> — query slow? structure বদলাও।</li>
+  </ol>
+
+  <div class="card card-green">
+    <h4>🏆 MongoDB Atlas — Cloud Interface</h4>
+    <p>MongoDB-র নিজস্ব cloud service হলো <strong>Atlas</strong>। এখানে তুমি:</p>
+    <p>• Browser থেকে database manage করতে পারবে<br>• Charts দিয়ে ডেটা visualize করতে পারবে<br>• Machine Cluster চালাতে পারবে<br>• Trial period আছে — যা কখনো শেষ হয় না!</p>
+  </div>
+
+  <h3>🎯 Exam প্রস্তুতি — pymongo দিয়ে books collection</h3>
+  <div class="code-label">দরকারি Query উদাহরণ</div>
+  <pre><code>books = client[<span class="st">"sample"</span>][<span class="st">"books"</span>]
+
+<span class="cm"># 400 পৃষ্ঠার বেশি বই কতটা?</span>
+<span class="fn">print</span>(books.<span class="fn">find</span>({<span class="st">"pageCount"</span>: {<span class="st">"$gt"</span>: <span class="nm">400</span>}}).<span class="fn">count</span>())
+
+<span class="cm"># "Android" keyword সহ বই (short বা long description)</span>
+<span class="kw">import</span> re
+android = re.<span class="fn">compile</span>(<span class="st">"Android"</span>, re.IGNORECASE)
+<span class="fn">print</span>(books.<span class="fn">find</span>({
+  <span class="st">"$or"</span>: [
+    {<span class="st">"shortDescription"</span>: android},
+    {<span class="st">"longDescription"</span>: android}
+  ]
+}).<span class="fn">count</span>())
+
+<span class="cm"># প্রতি category-তে max, min, avg পৃষ্ঠা</span>
+<span class="fn">list</span>(books.<span class="fn">aggregate</span>([
+  {<span class="st">"$unwind"</span>: <span class="st">"$categories"</span>},  <span class="cm"># array ভাঙো</span>
+  {<span class="st">"$group"</span>: {
+    <span class="st">"_id"</span>: <span class="st">"$categories"</span>,
+    <span class="st">"max_pages"</span>: {<span class="st">"$max"</span>: <span class="st">"$pageCount"</span>},
+    <span class="st">"min_pages"</span>: {<span class="st">"$min"</span>: <span class="st">"$pageCount"</span>},
+    <span class="st">"avg_pages"</span>: {<span class="st">"$avg"</span>: <span class="st">"$pageCount"</span>}
+  }}
+]))</code></pre>
+</section>
+
+<!-- SUMMARY CARD -->
+<div class="card card-green" style="margin-top:40px;">
+  <h3 style="margin-top:0">📚 সারসংক্ষেপ — যা শিখলাম</h3>
+  <p>✅ <strong>NoSQL</strong> — নমনীয় schema, Big Data-র জন্য উপযুক্ত<br>
+     ✅ <strong>Document DB</strong> — JSON document, Collection, Database স্তর<br>
+     ✅ <strong>CRUD</strong> — insertOne/Many, find/findOne, updateOne/Many, deleteOne/Many<br>
+     ✅ <strong>MQL Operators</strong> — $gt, $lt, $and, $or, $elemMatch, $expr<br>
+     ✅ <strong>Cursor Methods</strong> — sort(), limit(), count()<br>
+     ✅ <strong>Projection</strong> — শুধু দরকারি field দেখাও, dot notation<br>
+     ✅ <strong>Aggregation</strong> — $match, $project, $group, $sort pipeline<br>
+     ✅ <strong>Python pymongo</strong> — MongoClient, find, aggregate, regex<br>
+     ✅ <strong>Data Modeling</strong> — 1-1,

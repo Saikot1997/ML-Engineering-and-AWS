@@ -1,0 +1,4061 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elite MLOps Project — সম্পূর্ণ বাংলা গাইড</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Hind+Siliguri:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060b14;--bg2:#0b1220;--bg3:#0f1928;--bg4:#141f33;--border:#1a2840;--border2:#223058;--accent:#00e5ff;--accent2:#7c3aed;--accent3:#10b981;--accent4:#f59e0b;--accent5:#f43f5e;--accent6:#3b82f6;--text:#e2e8f0;--text2:#94a3b8;--text3:#4a5568;--code-bg:#040810;--sw:290px}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Hind Siliguri',sans-serif;font-size:16px;line-height:1.75;display:flex;min-height:100vh}
+/* SIDEBAR */
+#sb{width:var(--sw);min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:0;left:0;overflow-y:auto;z-index:100;padding-bottom:60px}
+.sb-logo{padding:22px 18px 18px;border-bottom:1px solid var(--border)}
+.sb-logo .lt{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2}
+.sb-logo .ls{font-size:10px;color:var(--text3);margin-top:4px;letter-spacing:2px;text-transform:uppercase}
+.ns{padding:14px 0 0}
+.nt{font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);padding:0 18px 6px;font-weight:600}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 18px;cursor:pointer;color:var(--text2);font-size:13px;text-decoration:none;transition:all .15s;border-left:2px solid transparent}
+.ni:hover{color:var(--text);background:rgba(0,229,255,.04);border-left-color:var(--accent)}
+.ni .sn{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);min-width:20px}
+/* MAIN */
+#main{margin-left:var(--sw);flex:1}
+/* HERO */
+.hero{background:var(--bg2);border-bottom:1px solid var(--border);padding:56px 64px 48px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;right:-60px;width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.1) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-80px;left:30%;width:400px;height:400px;background:radial-gradient(circle,rgba(0,229,255,.06) 0%,transparent 70%);pointer-events:none}
+.hbadge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,229,255,.07);border:1px solid rgba(0,229,255,.18);border-radius:20px;padding:5px 14px;font-size:11px;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:18px;font-weight:600}
+.hero h1{font-family:'Syne',sans-serif;font-size:44px;font-weight:800;line-height:1.12;margin-bottom:14px;background:linear-gradient(135deg,#fff 0%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdesc{font-size:16px;color:var(--text2);max-width:700px;line-height:1.85;margin-bottom:28px}
+.htags{display:flex;flex-wrap:wrap;gap:9px}
+.tag{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 11px;font-size:11.5px;font-family:'JetBrains Mono',monospace;color:var(--text2)}
+.tag.c{border-color:rgba(0,229,255,.25);color:var(--accent);background:rgba(0,229,255,.05)}
+.tag.g{border-color:rgba(16,185,129,.25);color:var(--accent3);background:rgba(16,185,129,.05)}
+.tag.p{border-color:rgba(124,58,237,.25);color:#a78bfa;background:rgba(124,58,237,.05)}
+.tag.a{border-color:rgba(245,158,11,.25);color:var(--accent4);background:rgba(245,158,11,.05)}
+.tag.b{border-color:rgba(59,130,246,.25);color:#60a5fa;background:rgba(59,130,246,.05)}
+/* CONTENT */
+.content{max-width:920px;padding:0 64px 120px}
+/* SECTION */
+.sec{padding-top:64px}
+.sec-hdr{display:flex;align-items:center;gap:16px;margin-bottom:26px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.sico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ic{background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.18)}
+.ip{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.18)}
+.ig{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.18)}
+.ia{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.18)}
+.ir{background:rgba(244,63,94,.08);border:1px solid rgba(244,63,94,.18)}
+.ib{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.18)}
+.stg .sl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:3px}
+.stg h2{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:#fff;line-height:1.2}
+/* EXPLAIN */
+.ex{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:18px 22px;margin-bottom:18px;color:var(--text2);font-size:15px;line-height:1.9}
+.ex.ei{border-left:3px solid var(--accent);background:rgba(0,229,255,.025)}
+.ex.ew{border-left:3px solid var(--accent4);background:rgba(245,158,11,.025)}
+.ex.es{border-left:3px solid var(--accent3);background:rgba(16,185,129,.025)}
+.ex.ep{border-left:3px solid var(--accent2);background:rgba(124,58,237,.025)}
+.ex strong{color:var(--text)}
+.ex code,.ex-inline{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:rgba(0,229,255,.08);color:var(--accent);padding:2px 7px;border-radius:4px}
+/* CODE BLOCK */
+.cb{position:relative;margin-bottom:18px}
+.ch{display:flex;align-items:center;justify-content:space-between;background:#080f1c;border:1px solid var(--border);border-bottom:1px solid #0f1a2e;border-radius:10px 10px 0 0;padding:9px 14px}
+.cf{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--text2);display:flex;align-items:center;gap:8px}
+.d{width:8px;height:8px;border-radius:50%}
+.dr{background:#f43f5e}.dy{background:#f59e0b}.dg{background:#10b981}
+.cpb{background:rgba(0,229,255,.07);border:1px solid rgba(0,229,255,.18);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 12px;border-radius:6px;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.cpb:hover{background:rgba(0,229,255,.14);border-color:var(--accent)}
+.cpb.copied{background:rgba(16,185,129,.1);border-color:var(--accent3);color:var(--accent3)}
+pre{background:var(--code-bg);border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;padding:18px 20px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.8;color:#b8c5d6;tab-size:2}
+/* CALLOUT */
+.cl{display:flex;gap:14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:15px 18px;margin-bottom:18px}
+.cl .ci{font-size:19px;flex-shrink:0;margin-top:2px}
+.cl .cb2{font-size:14px;color:var(--text2);line-height:1.85}
+.cl .cb2 strong{color:var(--text)}
+.cl.ct{border-left:3px solid var(--accent3)}
+.cl.cw{border-left:3px solid var(--accent4)}
+.cl.cn{border-left:3px solid var(--accent2)}
+.cl.cr{border-left:3px solid var(--accent5)}
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+.card h4{font-size:13px;font-weight:600;color:var(--accent);margin-bottom:7px;font-family:'JetBrains Mono',monospace}
+.card p{font-size:13.5px;color:var(--text2);line-height:1.7}
+/* TABLE */
+table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:14px}
+th{background:var(--bg3);border:1px solid var(--border);padding:10px 14px;text-align:left;color:var(--text2);font-weight:600;font-size:12px;letter-spacing:.5px;text-transform:uppercase}
+td{border:1px solid var(--border);padding:10px 14px;color:var(--text2);line-height:1.6}
+td code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(0,229,255,.07);color:var(--accent);padding:1px 6px;border-radius:3px}
+tr:hover td{background:rgba(255,255,255,.015)}
+/* STEP LIST */
+.sl2{list-style:none;counter-reset:st;margin-bottom:18px}
+.sl2 li{counter-increment:st;display:flex;gap:12px;margin-bottom:12px;font-size:14.5px;color:var(--text2);line-height:1.8}
+.sl2 li::before{content:counter(st);min-width:24px;height:24px;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);flex-shrink:0;margin-top:2px}
+.sl2 li code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(0,229,255,.07);color:var(--accent);padding:1px 6px;border-radius:3px}
+h3{font-family:'Syne',sans-serif;font-size:18px;color:#fff;margin:22px 0 12px}
+h4{font-size:15px;color:var(--text);margin:16px 0 10px;font-weight:600}
+p{color:var(--text2);line-height:1.8;margin-bottom:10px}
+strong{color:var(--text)}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.div{height:1px;background:var(--border);margin:36px 0}
+/* BADGE */
+.br{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.bdg{font-size:11px;font-family:'JetBrains Mono',monospace;padding:3px 10px;border-radius:4px;font-weight:600;letter-spacing:.5px}
+.bc{background:rgba(0,229,255,.12);color:var(--accent);border:1px solid rgba(0,229,255,.2)}
+.bg{background:rgba(16,185,129,.12);color:var(--accent3);border:1px solid rgba(16,185,129,.2)}
+.ba{background:rgba(245,158,11,.12);color:var(--accent4);border:1px solid rgba(245,158,11,.2)}
+.brd{background:rgba(244,63,94,.12);color:var(--accent5);border:1px solid rgba(244,63,94,.2)}
+.bp{background:rgba(124,58,237,.12);color:#a78bfa;border:1px solid rgba(124,58,237,.2)}
+.bb{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.2)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+/* ARCH DIAGRAM */
+.arch-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:24px;overflow-x:auto}
+.arch-wrap svg{min-width:680px;width:100%;height:auto;display:block}
+</style>
+</head>
+<body>
+<!-- SIDEBAR -->
+<nav id="sb">
+<div class="sb-logo"><div class="lt">MLOps Elite</div><div class="ls">সম্পূর্ণ বাংলা গাইড</div></div>
+<div class="ns"><div class="nt">ভূমিকা</div>
+<a class="ni" href="#overview"><span class="sn">00</span>Project Overview</a>
+<a class="ni" href="#arch"><span class="sn">01</span>Architecture Design</a>
+<a class="ni" href="#github-desc"><span class="sn">02</span>GitHub Description</a>
+<a class="ni" href="#recruiter"><span class="sn">03</span>Recruiter Quick Start</a>
+</div>
+<div class="ns"><div class="nt">Setup</div>
+<a class="ni" href="#prereqs"><span class="sn">04</span>Prerequisites</a>
+<a class="ni" href="#github-repo"><span class="sn">05</span>GitHub Repo তৈরি</a>
+<a class="ni" href="#structure"><span class="sn">06</span>Project Structure</a>
+<a class="ni" href="#venv"><span class="sn">07</span>Virtual Environment</a>
+<a class="ni" href="#gitinit"><span class="sn">08</span>Git Init & Remote Push</a>
+</div>
+<div class="ns"><div class="nt">Config & Data</div>
+<a class="ni" href="#configs"><span class="sn">09</span>Config YAML Files</a>
+<a class="ni" href="#kaggle"><span class="sn">10</span>Kaggle Dataset</a>
+<a class="ni" href="#dvc"><span class="sn">11</span>DVC Setup</a>
+</div>
+<div class="ns"><div class="nt">Source Code</div>
+<a class="ni" href="#preprocess"><span class="sn">12</span>Preprocessing</a>
+<a class="ni" href="#features"><span class="sn">13</span>Feature Engineering</a>
+<a class="ni" href="#train"><span class="sn">14</span>Training + MLflow</a>
+<a class="ni" href="#evaluate"><span class="sn">15</span>Evaluation</a>
+<a class="ni" href="#predict"><span class="sn">16</span>Predict Script</a>
+</div>
+<div class="ns"><div class="nt">Serving</div>
+<a class="ni" href="#fastapi"><span class="sn">17</span>FastAPI + Redis</a>
+<a class="ni" href="#bentoml"><span class="sn">18</span>BentoML Service</a>
+<a class="ni" href="#schemas"><span class="sn">19</span>Pydantic Schemas</a>
+</div>
+<div class="ns"><div class="nt">Streaming</div>
+<a class="ni" href="#kafka"><span class="sn">20</span>Kafka Producer</a>
+<a class="ni" href="#kafka-consumer"><span class="sn">21</span>Kafka Consumer</a>
+</div>
+<div class="ns"><div class="nt">Monitoring</div>
+<a class="ni" href="#evidently"><span class="sn">22</span>Evidently Drift</a>
+<a class="ni" href="#prometheus"><span class="sn">23</span>Prometheus Metrics</a>
+<a class="ni" href="#grafana"><span class="sn">24</span>Grafana Dashboard</a>
+</div>
+<div class="ns"><div class="nt">Infrastructure</div>
+<a class="ni" href="#dvc-pipeline"><span class="sn">25</span>DVC Pipeline</a>
+<a class="ni" href="#dockerfile"><span class="sn">26</span>Dockerfile</a>
+<a class="ni" href="#compose"><span class="sn">27</span>Docker Compose</a>
+</div>
+<div class="ns"><div class="nt">Quality</div>
+<a class="ni" href="#tests"><span class="sn">28</span>pytest Tests</a>
+<a class="ni" href="#precommit"><span class="sn">29</span>Pre-commit Hooks</a>
+<a class="ni" href="#cicd"><span class="sn">30</span>CI/CD GitHub Actions</a>
+</div>
+<div class="ns"><div class="nt">Final</div>
+<a class="ni" href="#makefile"><span class="sn">31</span>Makefile</a>
+<a class="ni" href="#readme"><span class="sn">32</span>README.md</a>
+<a class="ni" href="#gitpush"><span class="sn">33</span>Version Control & Push</a>
+</div>
+</nav>
+<div id="main"><div class="hero">
+<div class="hbadge">🚀 Elite MLOps · সম্পূর্ণ বাংলা</div>
+<h1>Predictive Maintenance<br>MLOps Project</h1>
+<p class="hdesc">শিল্প-স্তরের Machine Learning Operations pipeline। Data ingestion থেকে production deployment পর্যন্ত প্রতিটি ধাপ বাংলায় ব্যাখ্যা করা। Real manufacturing sensor data ব্যবহার করে machine failure predict করবে।</p>
+<div class="htags">
+<span class="tag c">MLflow</span><span class="tag g">DVC</span><span class="tag p">FastAPI</span>
+<span class="tag b">Docker</span><span class="tag a">GitHub Actions</span><span class="tag g">BentoML</span>
+<span class="tag c">Kafka</span><span class="tag b">PostgreSQL</span><span class="tag p">Redis</span>
+<span class="tag a">Prometheus</span><span class="tag g">Grafana</span><span class="tag c">Evidently AI</span>
+<span class="tag b">Ubuntu 22.04+</span><span class="tag p">pytest</span><span class="tag a">pre-commit</span>
+</div>
+</div>
+<div class="content">
+<!-- ═══ SECTION 00: OVERVIEW ═══ -->
+<div class="sec" id="overview">
+<div class="sec-hdr"><div class="sico ic">🎯</div><div class="stg"><div class="sl">Section 00</div><h2>Project Overview</h2></div></div>
+<div class="ex ei"><strong>এই project টা কী?</strong><br>
+ধরো একটা manufacturing plant আছে। সেখানে হাজারো machine চলছে। কোনো machine হঠাৎ বন্ধ হয়ে গেলে production থেমে যায়, লক্ষ লক্ষ টাকা ক্ষতি হয়। <strong>Predictive Maintenance</strong> হলো সেই system যেটা machine এর sensor data (temperature, vibration, torque) দেখে আগেই বলে দেয় — "এই machine টা আর ৫ ঘন্টা পরে fail করবে।" আমরা সেটাই build করবো, পুরো MLOps pipeline সহ।
+</div>
+<div class="g2">
+<div class="card"><h4>📊 Dataset</h4><p>AI4I 2020 Predictive Maintenance (Kaggle) — ১০,০০০ rows, ১৪ features। Real manufacturing sensor readings। সম্পূর্ণ free।</p></div>
+<div class="card"><h4>🎯 Problem Type</h4><p>Binary Classification — machine fail হবে কি না। Plus ৫ ধরনের failure type separately predict।</p></div>
+<div class="card"><h4>🧠 ML Models</h4><p>RandomForest + XGBoost। MLflow দিয়ে সব experiment track। Best model automatically select।</p></div>
+<div class="card"><h4>🚀 Stack Size</h4><p>১৫+ tools, সব free। Docker Compose এ একটা command এ সব start। ১৬GB RAM তে smoothly run করবে।</p></div>
+</div>
+<div class="cl ct"><div class="ci">💡</div><div class="cb2"><strong>Recruiter কেন impress হবে?</strong> এই project এ আছে: Data versioning (DVC), Experiment tracking (MLflow), Model serving (FastAPI+BentoML), Stream processing (Kafka), Monitoring (Prometheus+Grafana+Evidently), Database (PostgreSQL+Redis), CI/CD (GitHub Actions), Containerization (Docker)। এটা একটা complete MLOps lifecycle।</div></div>
+</div>
+
+<!-- ═══ SECTION 01: ARCHITECTURE ═══ -->
+<div class="sec" id="arch">
+<div class="sec-hdr"><div class="sico ip">🏗️</div><div class="stg"><div class="sl">Section 01</div><h2>Software Architecture Design</h2></div></div>
+<div class="ex ei"><strong>Architecture কী এবং কেন দরকার?</strong><br>
+Architecture মানে হলো system এর blueprint — কোন component কোথায় থাকবে, কীভাবে একে অপরের সাথে কথা বলবে। Interview তে এটা explain করতে পারলে recruiter বুঝবে তুমি শুধু code করো না, <strong>system design ও জানো</strong>।
+</div>
+
+<div class="arch-wrap">
+<svg viewBox="0 0 760 578" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <linearGradient id="ga" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00e5ff" stop-opacity=".18"/><stop offset="100%" stop-color="#00e5ff" stop-opacity=".04"/></linearGradient>
+  <linearGradient id="gb" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c3aed" stop-opacity=".18"/><stop offset="100%" stop-color="#7c3aed" stop-opacity=".04"/></linearGradient>
+  <linearGradient id="gc" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#10b981" stop-opacity=".18"/><stop offset="100%" stop-color="#10b981" stop-opacity=".04"/></linearGradient>
+  <linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f59e0b" stop-opacity=".18"/><stop offset="100%" stop-color="#f59e0b" stop-opacity=".04"/></linearGradient>
+  <linearGradient id="ge" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#f43f5e" stop-opacity=".18"/><stop offset="100%" stop-color="#f43f5e" stop-opacity=".04"/></linearGradient>
+  <!-- Arrowhead markers — visible colors, triangular tip -->
+  <marker id="mac" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0.5 L0,6.5 L6.5,3.5 Z" fill="#00e5ff" fill-opacity=".7"/></marker>
+  <marker id="mag" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0.5 L0,6.5 L6.5,3.5 Z" fill="#10b981" fill-opacity=".7"/></marker>
+  <marker id="map" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0.5 L0,6.5 L6.5,3.5 Z" fill="#a78bfa" fill-opacity=".7"/></marker>
+  <marker id="mar" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0.5 L0,6.5 L6.5,3.5 Z" fill="#fb7185" fill-opacity=".7"/></marker>
+  <marker id="mav" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0.5 L0,6.5 L6.5,3.5 Z" fill="#94a3b8" fill-opacity=".6"/></marker>
+  <marker id="maa" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0.5 L0,6.5 L6.5,3.5 Z" fill="#f59e0b" fill-opacity=".7"/></marker>
+</defs>
+
+<!-- ═══ LAYER BACKGROUND BANDS ═══ -->
+<rect x="4" y="38" width="632" height="68" rx="5" fill="#00e5ff" fill-opacity=".018"/>
+<rect x="4" y="148" width="632" height="68" rx="5" fill="#10b981" fill-opacity=".018"/>
+<rect x="4" y="258" width="632" height="68" rx="5" fill="#7c3aed" fill-opacity=".018"/>
+<rect x="4" y="368" width="632" height="68" rx="5" fill="#f43f5e" fill-opacity=".018"/>
+<rect x="4" y="478" width="750" height="68" rx="5" fill="#00e5ff" fill-opacity=".018"/>
+
+<!-- ═══ LAYER LABELS (all-caps, written out — no text-transform) ═══ -->
+<text x="8" y="37" font-family="JetBrains Mono,monospace" font-size="8" fill="#3a5070" letter-spacing="2">DATA LAYER</text>
+<text x="8" y="147" font-family="JetBrains Mono,monospace" font-size="8" fill="#3a5070" letter-spacing="2">PIPELINE LAYER</text>
+<text x="8" y="257" font-family="JetBrains Mono,monospace" font-size="8" fill="#3a5070" letter-spacing="2">MODEL LAYER</text>
+<text x="8" y="367" font-family="JetBrains Mono,monospace" font-size="8" fill="#3a5070" letter-spacing="2">SERVING LAYER</text>
+<text x="8" y="477" font-family="JetBrains Mono,monospace" font-size="8" fill="#3a5070" letter-spacing="2">MONITORING</text>
+
+<!--
+  COLUMN LAYOUT (box width=120, height=44):
+  Col A  cx=155  box x=95
+  Col B  cx=305  box x=245
+  Col C  cx=455  box x=395
+  Col D  cx=580  box x=520  (Kafka + GH Actions only)
+
+  LAYER ROW Y (box top):
+  Data      y=42   mid=64   bottom=86
+  Pipeline  y=152  mid=174  bottom=196
+  Model     y=262  mid=284  bottom=306
+  Serving   y=372  mid=394  bottom=416
+  Monitor   y=482  mid=504  bottom=526
+-->
+
+<!-- ══════════════ DATA LAYER ══════════════ -->
+<!-- Col A: Kaggle CSV -->
+<rect x="95" y="42" width="120" height="44" rx="8" fill="url(#ga)" stroke="#00e5ff" stroke-opacity=".35" stroke-width="1"/>
+<text x="155" y="60" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#00e5ff">Kaggle CSV</text>
+<text x="155" y="74" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">Raw Dataset</text>
+
+<!-- Col B: DVC -->
+<rect x="245" y="42" width="120" height="44" rx="8" fill="url(#ga)" stroke="#00e5ff" stroke-opacity=".35" stroke-width="1"/>
+<text x="305" y="60" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#00e5ff">DVC</text>
+<text x="305" y="74" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">Data Versioning</text>
+
+<!-- Col C: Google Drive -->
+<rect x="395" y="42" width="120" height="44" rx="8" fill="url(#ga)" stroke="#00e5ff" stroke-opacity=".35" stroke-width="1"/>
+<text x="455" y="60" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#00e5ff">Google Drive</text>
+<text x="455" y="74" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">DVC Remote</text>
+
+<!-- Col D: Kafka -->
+<rect x="520" y="42" width="120" height="44" rx="8" fill="url(#gb)" stroke="#7c3aed" stroke-opacity=".35" stroke-width="1"/>
+<text x="580" y="60" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#a78bfa">Kafka</text>
+<text x="580" y="74" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">Stream Sensor</text>
+
+<!-- Data row horizontal arrows: A→B, B→C -->
+<line x1="216" y1="64" x2="244" y2="64" stroke="#00e5ff" stroke-opacity=".5" stroke-width="1.3" marker-end="url(#mac)"/>
+<line x1="366" y1="64" x2="394" y2="64" stroke="#00e5ff" stroke-opacity=".5" stroke-width="1.3" marker-end="url(#mac)"/>
+
+<!-- ══════════════ PIPELINE LAYER ══════════════ -->
+<!-- Col A: Preprocess -->
+<rect x="95" y="152" width="120" height="44" rx="8" fill="url(#gc)" stroke="#10b981" stroke-opacity=".35" stroke-width="1"/>
+<text x="155" y="170" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#10b981">Preprocess</text>
+<text x="155" y="184" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">Clean + Encode</text>
+
+<!-- Col B: Features -->
+<rect x="245" y="152" width="120" height="44" rx="8" fill="url(#gc)" stroke="#10b981" stroke-opacity=".35" stroke-width="1"/>
+<text x="305" y="170" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#10b981">Features</text>
+<text x="305" y="184" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">Engineering</text>
+
+<!-- Col C: DVC Pipeline -->
+<rect x="395" y="152" width="120" height="44" rx="8" fill="url(#gd)" stroke="#f59e0b" stroke-opacity=".35" stroke-width="1"/>
+<text x="455" y="170" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f59e0b">DVC Pipeline</text>
+<text x="455" y="184" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">Orchestration</text>
+
+<!-- Pipeline row horizontal arrows: A→B, B→C -->
+<line x1="216" y1="174" x2="244" y2="174" stroke="#10b981" stroke-opacity=".5" stroke-width="1.3" marker-end="url(#mag)"/>
+<line x1="366" y1="174" x2="394" y2="174" stroke="#10b981" stroke-opacity=".5" stroke-width="1.3" marker-end="url(#mag)"/>
+
+<!-- Vertical: Data→Pipeline  (Col A, Col B, Col C) -->
+<line x1="155" y1="87" x2="155" y2="151" stroke="#94a3b8" stroke-opacity=".4" stroke-width="1.3" marker-end="url(#mav)"/>
+<line x1="305" y1="87" x2="305" y2="151" stroke="#94a3b8" stroke-opacity=".4" stroke-width="1.3" marker-end="url(#mav)"/>
+<line x1="455" y1="87" x2="455" y2="151" stroke="#94a3b8" stroke-opacity=".4" stroke-width="1.3" marker-end="url(#mav)"/>
+
+<!-- ══════════════ MODEL LAYER ══════════════ -->
+<!-- Col A: MLflow + PostgreSQL -->
+<rect x="95" y="262" width="120" height="44" rx="8" fill="url(#gb)" stroke="#7c3aed" stroke-opacity=".35" stroke-width="1"/>
+<text x="155" y="280" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#a78bfa">MLflow+PgSQL</text>
+<text x="155" y="294" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">Experiment Track</text>
+
+<!-- Col B: XGBoost/RF -->
+<rect x="245" y="262" width="120" height="44" rx="8" fill="url(#gb)" stroke="#7c3aed" stroke-opacity=".35" stroke-width="1"/>
+<text x="305" y="280" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#a78bfa">XGBoost / RF</text>
+<text x="305" y="294" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">Trained Models</text>
+
+<!-- Col C: Model Registry -->
+<rect x="395" y="262" width="120" height="44" rx="8" fill="url(#gb)" stroke="#7c3aed" stroke-opacity=".35" stroke-width="1"/>
+<text x="455" y="280" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#a78bfa">Model Registry</text>
+<text x="455" y="294" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">MLflow Store</text>
+
+<!-- Model row horizontal arrows: A→B, B→C -->
+<line x1="216" y1="284" x2="244" y2="284" stroke="#a78bfa" stroke-opacity=".5" stroke-width="1.3" marker-end="url(#map)"/>
+<line x1="366" y1="284" x2="394" y2="284" stroke="#a78bfa" stroke-opacity=".5" stroke-width="1.3" marker-end="url(#map)"/>
+
+<!-- Vertical: Pipeline→Model (Col A, Col B, Col C) -->
+<line x1="155" y1="197" x2="155" y2="261" stroke="#94a3b8" stroke-opacity=".4" stroke-width="1.3" marker-end="url(#mav)"/>
+<line x1="305" y1="197" x2="305" y2="261" stroke="#94a3b8" stroke-opacity=".4" stroke-width="1.3" marker-end="url(#mav)"/>
+<line x1="455" y1="197" x2="455" y2="261" stroke="#94a3b8" stroke-opacity=".4" stroke-width="1.3" marker-end="url(#mav)"/>
+
+<!-- ══════════════ SERVING LAYER ══════════════ -->
+<!-- Col A: FastAPI -->
+<rect x="95" y="372" width="120" height="44" rx="8" fill="url(#ge)" stroke="#f43f5e" stroke-opacity=".35" stroke-width="1"/>
+<text x="155" y="390" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#fb7185">FastAPI</text>
+<text x="155" y="404" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">REST API</text>
+
+<!-- Col B: BentoML -->
+<rect x="245" y="372" width="120" height="44" rx="8" fill="url(#ge)" stroke="#f43f5e" stroke-opacity=".35" stroke-width="1"/>
+<text x="305" y="390" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#fb7185">BentoML</text>
+<text x="305" y="404" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">ML Serving</text>
+
+<!-- Col C: Redis -->
+<rect x="395" y="372" width="120" height="44" rx="8" fill="url(#ge)" stroke="#f43f5e" stroke-opacity=".35" stroke-width="1"/>
+<text x="455" y="390" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#fb7185">Redis Cache</text>
+<text x="455" y="404" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">Fast Lookup</text>
+
+<!-- Serving row horizontal arrows: A→B, B→C -->
+<line x1="216" y1="394" x2="244" y2="394" stroke="#fb7185" stroke-opacity=".5" stroke-width="1.3" marker-end="url(#mar)"/>
+<line x1="366" y1="394" x2="394" y2="394" stroke="#fb7185" stroke-opacity=".5" stroke-width="1.3" marker-end="url(#mar)"/>
+
+<!-- Vertical: XGBoost→BentoML (Col B) and MLflow→FastAPI (Col A) -->
+<line x1="305" y1="307" x2="305" y2="371" stroke="#94a3b8" stroke-opacity=".4" stroke-width="1.3" marker-end="url(#mav)"/>
+<line x1="155" y1="307" x2="155" y2="371" stroke="#94a3b8" stroke-opacity=".4" stroke-width="1.3" marker-end="url(#mav)"/>
+
+<!-- Bent path: ModelRegistry(C)→FastAPI(A) — goes down then left then down -->
+<path d="M455,307 L455,339 L155,339 L155,371" fill="none" stroke="#a78bfa" stroke-opacity=".45" stroke-width="1.3" stroke-dasharray="5,3" marker-end="url(#map)"/>
+<!-- Label on the bent path -->
+<text x="300" y="335" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#a78bfa" fill-opacity=".7">load model</text>
+
+<!-- ══════════════ MONITORING LAYER ══════════════ -->
+<!-- Col A: Prometheus -->
+<rect x="95" y="482" width="120" height="44" rx="8" fill="url(#ga)" stroke="#00e5ff" stroke-opacity=".35" stroke-width="1"/>
+<text x="155" y="500" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#00e5ff">Prometheus</text>
+<text x="155" y="514" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">Metrics Pull</text>
+
+<!-- Col B: Grafana -->
+<rect x="245" y="482" width="120" height="44" rx="8" fill="url(#ga)" stroke="#00e5ff" stroke-opacity=".35" stroke-width="1"/>
+<text x="305" y="500" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#00e5ff">Grafana</text>
+<text x="305" y="514" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">Dashboard</text>
+
+<!-- Col C: Evidently AI -->
+<rect x="395" y="482" width="120" height="44" rx="8" fill="url(#ga)" stroke="#00e5ff" stroke-opacity=".35" stroke-width="1"/>
+<text x="455" y="500" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#00e5ff">Evidently AI</text>
+<text x="455" y="514" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">Data Drift</text>
+
+<!-- Col D: GH Actions -->
+<rect x="520" y="482" width="120" height="44" rx="8" fill="url(#gd)" stroke="#f59e0b" stroke-opacity=".35" stroke-width="1"/>
+<text x="580" y="500" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f59e0b">GH Actions</text>
+<text x="580" y="514" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#64748b">CI / CD</text>
+
+<!-- Kafka→FastAPI: streaming path (right column down to serving) -->
+<path d="M580,87 L580,120 L68,120 L68,394 L94,394" fill="none" stroke="#7c3aed" stroke-opacity=".35" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#map)"/>
+<text x="80" y="260" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#a78bfa" fill-opacity=".6" transform="rotate(-90,80,260)">stream</text>
+
+<!-- Monitoring row horizontal arrows: A→B, B→C, C→D — all cyan for consistency -->
+<line x1="216" y1="504" x2="244" y2="504" stroke="#00e5ff" stroke-opacity=".5" stroke-width="1.3" marker-end="url(#mac)"/>
+<line x1="366" y1="504" x2="394" y2="504" stroke="#00e5ff" stroke-opacity=".5" stroke-width="1.3" marker-end="url(#mac)"/>
+<!-- Evidently→GHActions: boxes are adjacent (5px gap), bent path via bottom to avoid invisible arrowhead -->
+<path d="M455,526 L455,542 L580,542 L580,526" fill="none" stroke="#f59e0b" stroke-opacity=".45" stroke-width="1.3" marker-end="url(#maa)"/>
+<text x="517" y="555" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#f59e0b" fill-opacity=".6">trigger</text>
+
+<!-- Vertical: FastAPI→Prometheus (Col A) -->
+<line x1="155" y1="417" x2="155" y2="481" stroke="#94a3b8" stroke-opacity=".4" stroke-width="1.3" marker-end="url(#mav)"/>
+
+<!-- Vertical: BentoML→Prometheus (Col B) — BentoML also exports metrics -->
+<line x1="305" y1="417" x2="305" y2="481" stroke="#94a3b8" stroke-opacity=".4" stroke-width="1.3" marker-end="url(#mav)"/>
+
+<!-- Retraining feedback loop: GH Actions (Monitor D) → DVC Pipeline (Pipeline C) — dashed amber -->
+<path d="M640,504 L648,504 L648,174 L516,174" fill="none" stroke="#f59e0b" stroke-opacity=".4" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#maa)"/>
+<text x="648" y="340" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#f59e0b" fill-opacity=".6" transform="rotate(90,648,340)">retrain</text>
+
+<!-- Arrow from GH Actions monitor box (Col D) to CI/CD sidebar -->
+<line x1="641" y1="504" x2="659" y2="504" stroke="#f59e0b" stroke-opacity=".5" stroke-width="1.2" marker-end="url(#maa)"/>
+
+<!-- ══════════════ CI/CD SIDEBAR BOX ══════════════ -->
+<rect x="660" y="42" width="94" height="484" rx="8" fill="none" stroke="#f59e0b" stroke-opacity=".25" stroke-width="1" stroke-dasharray="5,3"/>
+<text x="707" y="62" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#f59e0b" letter-spacing="1">CI / CD</text>
+<line x1="668" y1="70" x2="746" y2="70" stroke="#f59e0b" stroke-opacity=".15" stroke-width="1"/>
+<text x="707" y="94" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#94a3b8">GitHub</text>
+<text x="707" y="108" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#94a3b8">Actions</text>
+<text x="707" y="138" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#64748b">→ lint</text>
+<text x="707" y="155" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#64748b">→ test</text>
+<text x="707" y="172" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#64748b">→ build</text>
+<text x="707" y="189" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#64748b">→ push</text>
+<text x="707" y="206" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#64748b">→ deploy</text>
+<!-- Brace connecting CI/CD box to layers -->
+<path d="M660,504 L654,504 L654,64 L660,64" fill="none" stroke="#f59e0b" stroke-opacity=".2" stroke-width="1"/>
+
+<!-- ══════════════ COLOR LEGEND ══════════════ -->
+<rect x="8" y="540" width="278" height="24" rx="4" fill="#0b1220" fill-opacity=".8"/>
+<circle cx="22" cy="552" r="4" fill="#00e5ff" fill-opacity=".6"/>
+<text x="30" y="556" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#64748b">Data/Monitor</text>
+<circle cx="98" cy="552" r="4" fill="#10b981" fill-opacity=".6"/>
+<text x="106" y="556" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#64748b">Pipeline</text>
+<circle cx="158" cy="552" r="4" fill="#a78bfa" fill-opacity=".6"/>
+<text x="166" y="556" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#64748b">Model</text>
+<circle cx="210" cy="552" r="4" fill="#fb7185" fill-opacity=".6"/>
+<text x="218" y="556" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#64748b">Serving</text>
+<circle cx="262" cy="552" r="4" fill="#f59e0b" fill-opacity=".6"/>
+<text x="270" y="556" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#64748b">CI/CD</text>
+
+</svg>
+</div>
+
+<h3>প্রতিটি Layer এর কাজ কী?</h3>
+<table>
+<tr><th>Layer</th><th>Tools</th><th>কী করে</th></tr>
+<tr><td>Data Layer</td><td><code>DVC + Google Drive + Kafka</code></td><td>Data সংরক্ষণ, versioning, এবং real-time streaming</td></tr>
+<tr><td>Pipeline Layer</td><td><code>DVC Pipeline</code></td><td>Preprocess → Feature Engineering → Train এর automatic chain</td></tr>
+<tr><td>Model Layer</td><td><code>MLflow + PostgreSQL</code></td><td>Experiment track করা, best model register করা</td></tr>
+<tr><td>Serving Layer</td><td><code>FastAPI + BentoML + Redis</code></td><td>Model কে REST API হিসেবে serve করা, cache করা</td></tr>
+<tr><td>Monitoring</td><td><code>Prometheus + Grafana + Evidently</code></td><td>System health ও data drift monitor করা</td></tr>
+<tr><td>CI/CD</td><td><code>GitHub Actions</code></td><td>Code push হলে auto test → build → deploy</td></tr>
+</table>
+</div>
+<!-- ═══ SECTION 02: GITHUB DESCRIPTION ═══ -->
+<div class="sec" id="github-desc">
+<div class="sec-hdr"><div class="sico ig">🐙</div><div class="stg"><div class="sl">Section 02</div><h2>GitHub Repository Description</h2></div></div>
+<div class="ex ei"><strong>এটা কোথায় যাবে?</strong> GitHub এ repository তৈরি করার সময় "Description" box এ এটা লিখবে। Recruiter GitHub profile দেখলে প্রথমে এটাই চোখে পড়বে।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> GitHub Repository Description (Short)</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>🏭 End-to-end MLOps pipeline for industrial predictive maintenance | MLflow · DVC · FastAPI · BentoML · Kafka · Prometheus · Grafana · Docker | AI4I 2020 Dataset</pre></div>
+
+<h3>GitHub Repository Topics (Tags)</h3>
+<div class="ex ei">GitHub এ repository এর Topics section এ এই keywords গুলো add করো। এটা SEO এর মতো — recruiters ও GitHub search এ এই keywords দিয়ে খোঁজে।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> GitHub Topics</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>mlops machine-learning fastapi docker kafka mlflow dvc prometheus grafana bentoml predictive-maintenance xgboost python cicd github-actions postgresql redis evidently</pre></div>
+
+<h3>GitHub Repository About Section — Long Description</h3>
+<div class="ex ei">Repository এর README এর শুরুতে এবং GitHub About section এ এই description ব্যবহার করো।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> GitHub About (Long)</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>A production-grade MLOps pipeline that predicts industrial equipment failure using the AI4I 2020 Predictive Maintenance dataset. 
+
+This project demonstrates a complete ML lifecycle:
+• Data versioning with DVC (Google Drive remote)
+• Experiment tracking with MLflow + PostgreSQL backend  
+• Model training: XGBoost + RandomForest with hyperparameter tuning
+• Dual model serving: FastAPI REST API + BentoML
+• Real-time sensor data streaming via Apache Kafka
+• Prediction caching with Redis
+• System monitoring: Prometheus metrics + Grafana dashboards
+• Data drift detection with Evidently AI
+• Full CI/CD via GitHub Actions (lint → test → build → deploy)
+• One-command startup with Docker Compose (15+ services)
+
+Stack: Python 3.11 · scikit-learn · XGBoost · FastAPI · BentoML · Apache Kafka · MLflow · DVC · PostgreSQL · Redis · Prometheus · Grafana · Evidently AI · Docker · GitHub Actions</pre></div>
+</div>
+
+<!-- ═══ SECTION 03: RECRUITER QUICK START ═══ -->
+<div class="sec" id="recruiter">
+<div class="sec-hdr"><div class="sico ia">🏃</div><div class="stg"><div class="sl">Section 03</div><h2>Recruiter Quick Start Guide</h2></div></div>
+<div class="ex es"><strong>এই section টা কী?</strong><br>
+Recruiter রা সাধারণত নিজেরা project run করে দেখতে চায়। তাদের জন্য এই ultra-simple guide। README এ একটা "Quick Start" section হিসেবে এটা থাকবে।
+</div>
+<div class="cl ct"><div class="ci">💡</div><div class="cb2"><strong>মাত্র ৩টা command এ পুরো project চলবে।</strong> Docker installed থাকলেই হবে — Python, Kafka, PostgreSQL কিছুই manually install করতে হবে না।</div></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> Quick Start — ৩ টি Command</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># Step 1: Repository clone করো
+git clone https://github.com/YOUR_USERNAME/predictive-maintenance-mlops.git
+cd predictive-maintenance-mlops
+
+# Step 2: Environment file তৈরি করো
+cp .env.example .env
+
+# Step 3: সব services একসাথে start করো
+docker compose up --build</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> Services চালু হওয়ার পর এই URLs তে যাও</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># FastAPI Docs (Swagger UI) — prediction API test করো
+http://localhost:8000/docs
+
+# MLflow UI — experiments ও models দেখো
+http://localhost:5000
+
+# Grafana Dashboard — metrics দেখো (admin/admin)
+http://localhost:3000
+
+# BentoML API
+http://localhost:3001
+
+# Prometheus
+http://localhost:9090</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> Test Prediction করো (curl)</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>curl -X POST "http://localhost:8000/predict" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "air_temperature": 298.1,
+    "process_temperature": 308.6,
+    "rotational_speed": 1551,
+    "torque": 42.8,
+    "tool_wear": 0,
+    "type": "M"
+  }'
+
+# Expected Response:
+# {"prediction": 0, "probability": 0.03, "failure_type": "No Failure", "cached": false}</pre></div>
+</div>
+
+<!-- ═══ SECTION 04: PREREQS ═══ -->
+<div class="sec" id="prereqs">
+<div class="sec-hdr"><div class="sico ic">⚙️</div><div class="stg"><div class="sl">Step 04</div><h2>Prerequisites — সব কিছু Install করো</h2></div></div>
+<div class="ex ei"><strong>Ubuntu 22.04 বা 24.04 লাগবে।</strong> WSL নয়, real Ubuntu। Dual boot বা dedicated machine — দুটোতেই কাজ করবে।</div>
+
+<h3>System Update এবং Base Packages</h3>
+<div class="ex"><strong>কেন করছি:</strong> পুরনো packages এ bug থাকতে পারে। সবসময় fresh system দিয়ে শুরু করা best practice।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>sudo apt update && sudo apt upgrade -y
+sudo apt install -y python3 python3-pip python3-venv python3-dev \
+    git curl wget unzip build-essential software-properties-common \
+    ca-certificates gnupg lsb-release make
+python3 --version  # Python 3.10 বা বেশি দেখাবে</pre></div>
+
+<h3>Docker Install</h3>
+<div class="ex"><strong>Docker কী:</strong> একটা "container" technology। আমাদের Kafka, PostgreSQL, Redis, Prometheus, Grafana — সব Docker এর ভেতরে চলবে। তুমি manually কিছু install করবে না। Docker একটা ছোট virtual environment তৈরি করে।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — Docker Install</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># Docker GPG key add করো
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+# Docker repository add করো
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Docker install করো
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io \
+    docker-buildx-plugin docker-compose-plugin
+
+# তোমার user কে docker group এ add করো (sudo ছাড়া docker চালাতে পারবে)
+sudo usermod -aG docker $USER
+
+# IMPORTANT: এই command দেওয়ার পর logout করে আবার login করো
+# অথবা নিচের command টা দাও:
+newgrp docker
+
+# Check করো
+docker --version
+docker compose version</pre></div>
+
+<h3>Git Config</h3>
+<div class="ex"><strong>Git কী:</strong> Code এর version control system। মনে করো Google Docs এর "version history" — কিন্তু code এর জন্য, অনেক বেশি powerful।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — Git Setup</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># তোমার নাম ও email দাও — GitHub account এর সাথে same হতে হবে
+git config --global user.name "Tomar Nam"
+git config --global user.email "your@email.com"
+git config --global init.defaultBranch main
+git config --global core.editor "nano"
+
+# Check করো
+git config --list</pre></div>
+
+<h3>GitHub SSH Key Setup</h3>
+<div class="ex ew"><strong>SSH Key কেন?</strong> Password দিয়ে GitHub এ push করলে বারবার password দিতে হয়। SSH Key হলো একটা digital lock-key pair। তোমার computer এ key থাকবে, GitHub এ lock থাকবে। একবার setup করলে আর কোনো password লাগবে না।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — SSH Key</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># নতুন SSH key তৈরি করো (email টা তোমার GitHub email দাও)
+ssh-keygen -t ed25519 -C "your@email.com"
+# সব prompt এ Enter চাপো (default location, no passphrase)
+
+# SSH agent start করো
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+
+# Public key টা copy করো — এটা GitHub এ paste করতে হবে
+cat ~/.ssh/id_ed25519.pub
+# উপরের output টা copy করো (ssh-ed25519 দিয়ে শুরু হবে)</pre></div>
+
+<div class="cl ct"><div class="ci">📋</div><div class="cb2"><strong>GitHub এ SSH Key add করো:</strong><br>
+1. GitHub.com → Settings → SSH and GPG keys → "New SSH key"<br>
+2. Title: "Ubuntu Machine" (যেকোনো নাম)<br>
+3. Key: উপরের cat command এর output paste করো<br>
+4. "Add SSH key" click করো<br><br>
+তারপর test করো: <code>ssh -T git@github.com</code> → "Hi username! You've successfully authenticated" দেখাবে।
+</div></div>
+</div>
+<!-- ═══ SECTION 05: GITHUB REPO ═══ -->
+<div class="sec" id="github-repo">
+<div class="sec-hdr"><div class="sico ig">🐙</div><div class="stg"><div class="sl">Step 05</div><h2>GitHub Repository তৈরি করো</h2></div></div>
+<div class="ex ei"><strong>GitHub CLI দিয়ে terminal থেকেই repo তৈরি হবে।</strong> Browser খুলতে হবে না।</div>
+
+<h3>GitHub CLI দিয়ে Repository তৈরি</h3>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># GitHub CLI install করো
+type -p curl >/dev/null || sudo apt install curl -y
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | \
+  sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] \
+  https://cli.github.com/packages stable main" | \
+  sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+sudo apt update && sudo apt install gh -y
+
+# GitHub এ login করো (browser খুলবে)
+gh auth login
+# Select: GitHub.com → SSH → Yes → Login with a web browser → Enter
+
+# নতুন public repository তৈরি করো
+gh repo create predictive-maintenance-mlops \
+  --public \
+  --description "🏭 End-to-end MLOps pipeline for industrial predictive maintenance | MLflow · DVC · FastAPI · BentoML · Kafka · Prometheus · Grafana · Docker"
+
+# Repository URL দেখাবে — note করো</pre></div>
+</div>
+
+<!-- ═══ SECTION 06: PROJECT STRUCTURE ═══ -->
+<div class="sec" id="structure">
+<div class="sec-hdr"><div class="sico ic">📁</div><div class="stg"><div class="sl">Step 06</div><h2>Project Structure তৈরি করো</h2></div></div>
+<div class="ex ei"><strong>এই command গুলো run করলেই পুরো folder structure তৈরি হয়ে যাবে।</strong> প্রতিটি folder কী কাজের সেটা নিচে explain করা আছে।</div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — সব folder একসাথে তৈরি করো</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>mkdir predictive-maintenance-mlops
+cd predictive-maintenance-mlops
+
+# সব directories একসাথে তৈরি করো
+mkdir -p .github/workflows \
+    configs \
+    data/{raw,processed,reports} \
+    models/trained \
+    notebooks \
+    src/{data,features,models,api,monitoring,streaming} \
+    tests \
+    scripts \
+    grafana/{provisioning/{dashboards,datasources},dashboards} \
+    prometheus
+
+# সব __init__.py তৈরি করো
+touch src/__init__.py \
+      src/data/__init__.py \
+      src/features/__init__.py \
+      src/models/__init__.py \
+      src/api/__init__.py \
+      src/monitoring/__init__.py \
+      src/streaming/__init__.py \
+      tests/__init__.py
+
+# Placeholder files (git empty folder track করে না)
+touch data/raw/.gitkeep \
+      data/processed/.gitkeep \
+      data/reports/.gitkeep \
+      models/trained/.gitkeep
+
+echo "✅ Project structure তৈরি হয়েছে!"
+
+# Structure দেখো
+find . -type f -o -type d | grep -v "__pycache__" | grep -v ".git" | sort | head -60</pre></div>
+
+<h3>Folder গুলোর কাজ</h3>
+<table>
+<tr><th>Folder</th><th>কী রাখবে</th><th>কেন</th></tr>
+<tr><td><code>.github/workflows/</code></td><td>CI/CD YAML files</td><td>GitHub Actions auto-run করে</td></tr>
+<tr><td><code>configs/</code></td><td>YAML config files</td><td>Hardcoded values না রেখে config এ রাখা best practice</td></tr>
+<tr><td><code>data/raw/</code></td><td>Original Kaggle CSV</td><td>কখনো modify করা যাবে না — DVC track করবে</td></tr>
+<tr><td><code>data/processed/</code></td><td>Clean করা data</td><td>Preprocessing এর output</td></tr>
+<tr><td><code>src/data/</code></td><td>Data loading ও preprocessing code</td><td>Separation of concerns</td></tr>
+<tr><td><code>src/models/</code></td><td>Training, evaluation, prediction</td><td>ML logic আলাদা রাখা</td></tr>
+<tr><td><code>src/api/</code></td><td>FastAPI app</td><td>Serving layer</td></tr>
+<tr><td><code>src/monitoring/</code></td><td>Evidently, Prometheus metrics</td><td>Observability</td></tr>
+<tr><td><code>src/streaming/</code></td><td>Kafka producer/consumer</td><td>Real-time data pipeline</td></tr>
+<tr><td><code>tests/</code></td><td>pytest test files</td><td>Code quality guarantee</td></tr>
+<tr><td><code>grafana/</code></td><td>Dashboard config</td><td>Auto-provision dashboards</td></tr>
+</table>
+</div>
+
+<!-- ═══ SECTION 07: VENV ═══ -->
+<div class="sec" id="venv">
+<div class="sec-hdr"><div class="sico ip">🐍</div><div class="stg"><div class="sl">Step 07</div><h2>Virtual Environment ও Dependencies</h2></div></div>
+<div class="ex ei"><strong>Virtual Environment কী?</strong> ধরো তোমার computer এ Python আছে। তুমি একটা project এ pandas 1.5 use করো, আরেকটাতে pandas 2.0। এরা conflict করবে। Virtual environment হলো একটা isolated Python installation — একটা project এর জন্য আলাদা "বাক্স"।</div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — Virtual Environment</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># Virtual environment তৈরি করো
+python3 -m venv venv
+
+# Activate করো (প্রতিবার terminal খুললে এটা দিতে হবে)
+source venv/bin/activate
+
+# Prompt এ (venv) দেখাবে — মানে active আছে
+# (venv) chaiti@machine:~/predictive-maintenance-mlops$
+
+# pip update করো
+pip install --upgrade pip</pre></div>
+
+<h3>requirements.txt তৈরি করো</h3>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> requirements.txt</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># Core ML
+scikit-learn==1.4.2
+xgboost==2.0.3
+pandas==2.2.1
+numpy==1.26.4
+imbalanced-learn==0.12.2
+
+# MLflow
+mlflow==2.13.0
+psycopg2-binary==2.9.9
+
+# Data Versioning
+dvc==3.50.1
+dvc-gdrive==3.0.1
+
+# API
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+pydantic==2.7.1
+python-dotenv==1.0.1
+
+# BentoML
+bentoml==1.2.16
+
+# Redis cache
+redis==5.0.4
+
+# Kafka
+confluent-kafka==2.4.0
+
+# Monitoring
+evidently==0.4.30
+prometheus-client==0.20.0
+
+# Utils
+pyyaml==6.0.1
+joblib==1.4.2
+matplotlib==3.9.0
+seaborn==0.13.2
+kaggle==1.6.14</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> requirements-dev.txt</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># Testing
+pytest==8.2.0
+pytest-cov==5.0.0
+httpx==0.27.0
+
+# Code Quality
+black==24.4.2
+flake8==7.0.0
+isort==5.13.2
+pre-commit==3.7.1</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — Install করো</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>pip install -r requirements.txt
+pip install -r requirements-dev.txt
+echo "✅ সব dependencies install হয়েছে!"</pre></div>
+</div>
+
+<!-- ═══ SECTION 08: GIT INIT ═══ -->
+<div class="sec" id="gitinit">
+<div class="sec-hdr"><div class="sico ig">🔧</div><div class="stg"><div class="sl">Step 08</div><h2>Git Init, .gitignore ও First Push</h2></div></div>
+<div class="ex ei"><strong>এই section এ:</strong> Local git repository initialize, GitHub এর সাথে connect এবং first commit push করবো।</div>
+
+<h3>.gitignore তৈরি করো</h3>
+<div class="ex"><strong>.gitignore কী?</strong> এই file এ যা লিখবে সেই files/folders GitHub এ upload হবে না। যেমন: venv folder, data files, secret keys — এগুলো GitHub এ দেওয়া যাবে না।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> .gitignore</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Data files (DVC manage করবে)
+data/raw/*.csv
+data/raw/*.zip
+data/processed/*.csv
+data/processed/*.parquet
+
+# Models (DVC manage করবে)
+models/trained/*.pkl
+models/trained/*.json
+
+# Environment variables (secret!)
+.env
+*.env
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Logs
+*.log
+logs/</pre></div>
+
+<h3>.env.example তৈরি করো</h3>
+<div class="ex ew"><strong>.env file কী?</strong> Secret values (passwords, API keys) এখানে রাখা হয়। এই file টা GitHub এ যাবে না (.gitignore এ আছে)। .env.example হলো template — recruiter রা এটা দেখে .env বানাবে।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> .env.example</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># PostgreSQL (MLflow backend)
+POSTGRES_USER=mlflow
+POSTGRES_PASSWORD=mlflow_password
+POSTGRES_DB=mlflow
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+
+# MLflow
+MLFLOW_TRACKING_URI=http://mlflow:5000
+MLFLOW_EXPERIMENT_NAME=predictive_maintenance_v1
+
+# Redis
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_PASSWORD=
+
+# Kafka
+KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+KAFKA_TOPIC_SENSOR=sensor-data
+KAFKA_TOPIC_PREDICTIONS=predictions
+
+# API
+API_HOST=0.0.0.0
+API_PORT=8000
+MODEL_NAME=predictive_maintenance_model
+
+# Kaggle (data download এর জন্য)
+KAGGLE_USERNAME=your_kaggle_username
+KAGGLE_KEY=your_kaggle_api_key</pre></div>
+
+<h3>First Commit এবং GitHub Push</h3>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — Git Init ও First Push</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># Git initialize করো
+git init
+
+# Remote add করো (SSH URL ব্যবহার করো)
+git remote add origin git@github.com:YOUR_USERNAME/predictive-maintenance-mlops.git
+
+# সব files stage করো
+git add .
+
+# First commit করো
+git commit -m "feat: initial project structure and configuration
+
+- Add project directory structure
+- Add requirements.txt with all dependencies  
+- Add .gitignore and .env.example
+- Add configs placeholder"
+
+# main branch এ push করো
+git push -u origin main
+
+echo "✅ GitHub এ push হয়েছে!"</pre></div>
+
+<div class="cl ct"><div class="ci">📌</div><div class="cb2"><strong>Commit message লেখার নিয়ম (Conventional Commits):</strong><br>
+<strong>feat:</strong> নতুন feature যোগ করলে<br>
+<strong>fix:</strong> bug fix করলে<br>
+<strong>docs:</strong> documentation update করলে<br>
+<strong>refactor:</strong> code restructure করলে<br>
+<strong>test:</strong> test add করলে<br>
+<strong>chore:</strong> build/config change করলে<br><br>
+এই format recruiter কে দেখায় তুমি professional workflow follow করো।
+</div></div>
+</div>
+<!-- ═══ SECTION 09: CONFIGS ═══ -->
+<div class="sec" id="configs">
+<div class="sec-hdr"><div class="sico ia">⚙️</div><div class="stg"><div class="sl">Step 09</div><h2>Configuration YAML Files</h2></div></div>
+<div class="ex ei"><strong>YAML config কেন?</strong> Code এর ভেতরে hardcoded values না রেখে config file এ রাখলে — model path change করতে হলে code touch করতে হবে না। শুধু config বদলাও। এটা production-level practice।</div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> configs/data_config.yaml</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>data:
+  raw_path: "data/raw/predictive_maintenance.csv"
+  processed_train: "data/processed/train.parquet"
+  processed_test: "data/processed/test.parquet"
+  reports_path: "data/reports/"
+
+  # Dataset এর column names
+  target_col: "Machine failure"
+  failure_types:
+    - "TWF"   # Tool Wear Failure
+    - "HDF"   # Heat Dissipation Failure
+    - "PWF"   # Power Failure
+    - "OSF"   # Overstrain Failure
+    - "RNF"   # Random Failures
+
+  feature_cols:
+    - "Type"
+    - "Air temperature [K]"
+    - "Process temperature [K]"
+    - "Rotational speed [rpm]"
+    - "Torque [Nm]"
+    - "Tool wear [min]"
+
+  # Train/Test split
+  test_size: 0.2
+  random_state: 42
+  stratify: true</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> configs/model_config.yaml</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>models:
+  random_forest:
+    n_estimators: 200
+    max_depth: 15
+    min_samples_split: 5
+    min_samples_leaf: 2
+    class_weight: "balanced"
+    n_jobs: -1
+    random_state: 42
+
+  xgboost:
+    n_estimators: 300
+    max_depth: 7
+    learning_rate: 0.05
+    subsample: 0.8
+    colsample_bytree: 0.8
+    scale_pos_weight: 10   # imbalanced dataset handle
+    eval_metric: "aucpr"
+    random_state: 42
+
+  best_model_metric: "f1_score"  # এই metric দিয়ে best model select হবে
+  model_save_path: "models/trained/"
+  registered_model_name: "predictive_maintenance_model"</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> configs/training_config.yaml</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>training:
+  experiment_name: "predictive_maintenance_v1"
+  run_name_prefix: "pm_run"
+
+  # Cross-validation
+  cv_folds: 5
+
+  # Metrics to log in MLflow
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "roc_auc"
+    - "pr_auc"
+
+  # Artifacts to log
+  log_model: true
+  log_confusion_matrix: true
+  log_feature_importance: true
+
+monitoring:
+  drift_threshold: 0.1        # এর বেশি drift হলে alert
+  prediction_log_path: "data/reports/predictions.parquet"
+  reference_data_path: "data/processed/train.parquet"</pre></div>
+</div>
+
+<!-- ═══ SECTION 10: KAGGLE ═══ -->
+<div class="sec" id="kaggle">
+<div class="sec-hdr"><div class="sico ic">📊</div><div class="stg"><div class="sl">Step 10</div><h2>Kaggle Dataset Download করো</h2></div></div>
+<div class="ex ei"><strong>Dataset:</strong> AI4I 2020 Predictive Maintenance Dataset। Kaggle থেকে API দিয়ে download হবে।</div>
+
+<h3>Kaggle API Key Setup</h3>
+<div class="cl cw"><div class="ci">⚠️</div><div class="cb2"><strong>Kaggle account লাগবে।</strong> kaggle.com এ free account তৈরি করো। তারপর: Profile → Settings → API → "Create New Token" → kaggle.json download হবে।</div></div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — Kaggle API Setup</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># Kaggle credentials folder তৈরি করো
+mkdir -p ~/.kaggle
+
+# Download করা kaggle.json কে সঠিক জায়গায় রাখো
+cp ~/Downloads/kaggle.json ~/.kaggle/kaggle.json
+
+# Permission set করো (security)
+chmod 600 ~/.kaggle/kaggle.json
+
+# Dataset download করো
+kaggle datasets download -d stephanmatzka/predictive-maintenance-dataset-ai4i-2020 \
+    -p data/raw/ --unzip
+
+# IMPORTANT: downloaded file টা rename করো
+# Kaggle ai4i2020.csv নামে দেয়, কিন্তু DVC pipeline predictive_maintenance.csv expect করে
+mv data/raw/ai4i2020.csv data/raw/predictive_maintenance.csv
+
+# Check করো
+ls -la data/raw/
+# predictive_maintenance.csv দেখাবে</pre></div>
+
+<h3>src/data/download_data.py</h3>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> src/data/download_data.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""
+Kaggle থেকে dataset download করার script।
+Terminal থেকে: python -m src.data.download_data
+"""
+import os
+import shutil
+from pathlib import Path
+import yaml
+
+
+def download_dataset(config_path: str = "configs/data_config.yaml") -> None:
+    """Dataset download এবং সঠিক জায়গায় রাখো।"""
+    with open(config_path) as f:
+        config = yaml.safe_load(f)
+
+    raw_path = Path(config["data"]["raw_path"]).parent
+    raw_path.mkdir(parents=True, exist_ok=True)
+
+    dataset_slug = "stephanmatzka/predictive-maintenance-dataset-ai4i-2020"
+    print(f"📥 Downloading: {dataset_slug}")
+
+    os.system(
+        f"kaggle datasets download -d {dataset_slug} "
+        f"-p {raw_path} --unzip"
+    )
+
+    # Rename করো যদি দরকার হয়
+    downloaded = raw_path / "ai4i2020.csv"
+    target = raw_path / "predictive_maintenance.csv"
+    if downloaded.exists() and not target.exists():
+        shutil.move(str(downloaded), str(target))
+
+    print(f"✅ Dataset saved: {target}")
+
+
+if __name__ == "__main__":
+    download_dataset()</pre></div>
+</div>
+
+<!-- ═══ SECTION 11: DVC ═══ -->
+<div class="sec" id="dvc">
+<div class="sec-hdr"><div class="sico ig">🗃️</div><div class="stg"><div class="sl">Step 11</div><h2>DVC — Data Version Control</h2></div></div>
+<div class="ex ei"><strong>DVC কী?</strong> Git শুধু code এর version control করে — large data files Git এ রাখা যায় না (GitHub এর 100MB limit)। DVC হলো Git এর মতো, কিন্তু data এর জন্য। Data Google Drive এ রাখবে, pointer টা Git এ রাখবে।</div>
+<div class="ex"><strong>Analogy:</strong> তুমি Google Docs এর link note করে রাখলে। Note টা (pointer) তোমার কাছে থাকে, actual document Google Drive এ থাকে। DVC ও একই কাজ করে।</div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — DVC Setup</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># DVC initialize করো
+dvc init
+
+# এটা .dvc/ folder তৈরি করবে — check করো
+ls .dvc/
+
+# Google Drive remote add করো
+# Note: Google Drive এ একটা folder তৈরি করো, URL থেকে folder ID নাও
+# URL: https://drive.google.com/drive/folders/FOLDER_ID_HERE
+dvc remote add -d gdrive_remote gdrive://YOUR_GOOGLE_DRIVE_FOLDER_ID
+
+# Remote config দেখো
+dvc remote list
+
+# Data folder টা track করো
+dvc add data/raw/predictive_maintenance.csv
+
+# এটা data/raw/predictive_maintenance.csv.dvc file তৈরি করবে
+# এই .dvc file টা Git এ যাবে, actual data Google Drive এ
+
+git add data/raw/predictive_maintenance.csv.dvc data/.gitignore
+git commit -m "feat: add DVC tracking for raw dataset"
+
+# Data Google Drive এ push করো
+dvc push
+# Browser খুলবে, Google account দিয়ে authorize করো</pre></div>
+
+<div class="cl ct"><div class="ci">💡</div><div class="cb2"><strong>অন্য machine এ data নামাতে:</strong> <code>dvc pull</code> — এটা Google Drive থেকে data নামিয়ে আনবে। Recruiter রাও এই command দিয়ে data পাবে।</div></div>
+</div>
+<!-- ═══ SECTION 12: PREPROCESSING ═══ -->
+<div class="sec" id="preprocess">
+<div class="sec-hdr"><div class="sico ip">🧹</div><div class="stg"><div class="sl">Step 12</div><h2>Data Preprocessing</h2></div></div>
+<div class="ex ei"><strong>Preprocessing কী?</strong> Raw data সরাসরি model এ দেওয়া যায় না। আগে clean করতে হয়: missing values handle, categorical values encode (text → number), numeric values scale। এই step ছাড়া model কাজ করবে না।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> src/data/preprocess.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""
+Raw data clean এবং processed data তৈরি করে।
+DVC pipeline এর প্রথম step।
+"""
+import logging
+import yaml
+import pandas as pd
+import numpy as np
+from pathlib import Path
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+import joblib
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
+
+
+def load_config(path: str = "configs/data_config.yaml") -> dict:
+    with open(path) as f:
+        return yaml.safe_load(f)
+
+
+def load_raw_data(filepath: str) -> pd.DataFrame:
+    """Raw CSV load করো।"""
+    logger.info(f"Loading data from: {filepath}")
+    df = pd.read_csv(filepath)
+    logger.info(f"Shape: {df.shape} | Columns: {list(df.columns)}")
+    return df
+
+
+def clean_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Basic cleaning।"""
+    # Missing values check — fillna with median instead of dropping rows
+    missing = df.isnull().sum()
+    if missing.any():
+        logger.warning(f"Missing values found:\n{missing[missing > 0]}")
+        # Fill numeric columns with median (preserves rows, better than dropna)
+        numeric_cols = df.select_dtypes(include="number").columns
+        df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].median(numeric_only=True))
+        # Fill categorical columns with mode
+        cat_cols = df.select_dtypes(include="object").columns
+        for col in cat_cols:
+            df[col] = df[col].fillna(df[col].mode()[0])
+        logger.info("Missing values filled with median/mode")
+
+    # Duplicate rows remove
+    dups = df.duplicated().sum()
+    if dups > 0:
+        logger.info(f"Removing {dups} duplicate rows")
+        df = df.drop_duplicates()
+
+    # Unnecessary columns drop (Product ID একটা identifier, ML তে লাগবে না)
+    drop_cols = ["UDI", "Product ID"]
+    df = df.drop(columns=[c for c in drop_cols if c in df.columns], errors="ignore")
+
+    logger.info(f"After cleaning shape: {df.shape}")
+    return df
+
+
+def encode_features(df: pd.DataFrame, fit: bool = True,
+                    encoder_path: str = "models/trained/label_encoder.pkl") -> pd.DataFrame:
+    """Categorical features encode করো।
+    'Type' column: L/M/H → 0/1/2
+    fit=True মানে নতুন encoder তৈরি করো (training)
+    fit=False মানে existing encoder load করো (prediction)
+    """
+    df = df.copy()
+    Path("models/trained").mkdir(parents=True, exist_ok=True)
+
+    if fit:
+        le = LabelEncoder()
+        df["Type"] = le.fit_transform(df["Type"])
+        joblib.dump(le, encoder_path)
+        logger.info(f"Label encoder saved: {encoder_path}")
+    else:
+        le = joblib.load(encoder_path)
+        df["Type"] = le.transform(df["Type"])
+
+    return df
+
+
+def scale_features(df: pd.DataFrame, feature_cols: list,
+                   fit: bool = True,
+                   scaler_path: str = "models/trained/scaler.pkl") -> pd.DataFrame:
+    """Numeric features scale করো (StandardScaler: mean=0, std=1)।
+    কেন scale করা লাগে: Rotational speed ৩০০০ RPM, Torque ৪০ Nm — এই দুটো খুব different scale।
+    Model confuse হয়। Scale করলে সব same range এ আসে।
+    """
+    df = df.copy()
+    Path("models/trained").mkdir(parents=True, exist_ok=True)
+
+    if fit:
+        scaler = StandardScaler()
+        df[feature_cols] = scaler.fit_transform(df[feature_cols])
+        joblib.dump(scaler, scaler_path)
+        logger.info(f"Scaler saved: {scaler_path}")
+    else:
+        scaler = joblib.load(scaler_path)
+        df[feature_cols] = scaler.transform(df[feature_cols])
+
+    return df
+
+
+def run_preprocessing(config_path: str = "configs/data_config.yaml") -> None:
+    """Full preprocessing pipeline চালাও।"""
+    config = load_config(config_path)
+    data_cfg = config["data"]
+
+    # Load
+    df = load_raw_data(data_cfg["raw_path"])
+
+    # Clean
+    df = clean_data(df)
+
+    # Encode categorical (fit on full df before split — encoder sees all categories)
+    df = encode_features(df, fit=True)
+
+    # Rename columns — use clean names for everything downstream
+    df = df.rename(columns={
+        "Air temperature [K]": "air_temperature",
+        "Process temperature [K]": "process_temperature",
+        "Rotational speed [rpm]": "rotational_speed",
+        "Torque [Nm]": "torque",
+        "Tool wear [min]": "tool_wear",
+        "Machine failure": "target",
+    })
+
+    # ── STEP 1: Feature engineering on RAW (unscaled) values ──
+    # MUST run before scaling so physics-based features are computed on
+    # real sensor units (Kelvin, RPM, Nm, minutes) — not z-scores.
+    from src.features.feature_engineering import (
+        add_temperature_features, add_power_features, add_wear_features
+    )
+    df = add_temperature_features(df)
+    df = add_power_features(df)
+    df = add_wear_features(df)
+    logger.info(f"After feature engineering: {df.shape[1]} columns")
+
+    # ── STEP 2: Split BEFORE any scaling — prevents data leakage ──
+    # failure_types keep their original names (TWF, HDF etc.)
+    failure_cols = [c for c in data_cfg["failure_types"] if c in df.columns]
+    X = df.drop(columns=["target"] + failure_cols)
+    y = df["target"]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y,
+        test_size=data_cfg["test_size"],
+        random_state=data_cfg["random_state"],
+        stratify=y if data_cfg["stratify"] else None
+    )
+
+    # ── STEP 3: Scale numeric features — fit on X_train ONLY ──
+    # This is the correct order: no test-set statistics leak into the scaler.
+    # predict.py receives raw sensor values and applies the same fitted scaler.
+    numeric_features = [
+        "air_temperature",
+        "process_temperature",
+        "rotational_speed",
+        "torque",
+        "tool_wear",
+    ]
+    X_train = scale_features(pd.DataFrame(X_train), numeric_features, fit=True)
+    X_test  = scale_features(pd.DataFrame(X_test),  numeric_features, fit=False)
+
+    # Save
+    Path(data_cfg["processed_train"]).parent.mkdir(parents=True, exist_ok=True)
+
+    train_df = pd.concat([X_train, y_train.reset_index(drop=True)], axis=1)
+    test_df  = pd.concat([X_test,  y_test.reset_index(drop=True)],  axis=1)
+
+    train_df.to_parquet(data_cfg["processed_train"], index=False)
+    test_df.to_parquet(data_cfg["processed_test"], index=False)
+
+    logger.info(f"✅ Train: {train_df.shape}, Test: {test_df.shape}")
+    logger.info(f"Train saved: {data_cfg['processed_train']}")
+    logger.info(f"Test saved: {data_cfg['processed_test']}")
+
+    # Class distribution দেখো
+    logger.info(f"Target distribution:\n{y_train.value_counts(normalize=True)}")
+
+
+if __name__ == "__main__":
+    run_preprocessing()</pre></div>
+</div>
+
+<!-- ═══ SECTION 13: FEATURES ═══ -->
+<div class="sec" id="features">
+<div class="sec-hdr"><div class="sico ig">🔬</div><div class="stg"><div class="sl">Step 13</div><h2>Feature Engineering</h2></div></div>
+<div class="ex ei"><strong>Feature Engineering কী?</strong> Original data থেকে নতুন, আরো informative features তৈরি করা। যেমন: Temperature Difference = Process Temp - Air Temp। এই নতুন feature টা model কে আরো ভালো pattern খুঁজতে সাহায্য করে।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> src/features/feature_engineering.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""
+নতুন features তৈরি করো — model এর performance বাড়ানোর জন্য।
+Domain knowledge ব্যবহার করে meaningful features create করা।
+"""
+import logging
+import yaml
+import pandas as pd
+import numpy as np
+from pathlib import Path
+
+logger = logging.getLogger(__name__)
+
+
+def add_temperature_features(df: pd.DataFrame) -> pd.DataFrame:
+    """Temperature related নতুন features।"""
+    df = df.copy()
+    # Temperature difference — high difference = cooling problem
+    df["temp_diff"] = df["process_temperature"] - df["air_temperature"]
+    # Temperature ratio
+    df["temp_ratio"] = df["process_temperature"] / (df["air_temperature"] + 1e-8)
+    return df
+
+
+def add_power_features(df: pd.DataFrame) -> pd.DataFrame:
+    """Power consumption related features।
+    Physics: Power = Torque × Angular Velocity (rpm × 2π/60)
+    """
+    df = df.copy()
+    df["power_consumption"] = df["torque"] * df["rotational_speed"] * (2 * np.pi / 60)
+    # High power + high tool wear = failure risk
+    df["power_wear_interaction"] = df["power_consumption"] * df["tool_wear"]
+    return df
+
+
+def add_wear_features(df: pd.DataFrame) -> pd.DataFrame:
+    """Tool wear related features।"""
+    df = df.copy()
+    # Wear rate normalized by speed
+    df["wear_speed_ratio"] = df["tool_wear"] / (df["rotational_speed"] + 1e-8)
+    # Torque per wear unit — high value means stress
+    df["torque_per_wear"] = df["torque"] / (df["tool_wear"] + 1)
+    return df
+
+
+def run_feature_engineering(config_path: str = "configs/data_config.yaml") -> None:
+    """Feature engineering pipeline চালাও।"""
+    with open(config_path) as f:
+        config = yaml.safe_load(f)
+
+    data_cfg = config["data"]
+
+    for split in ["processed_train", "processed_test"]:
+        path = data_cfg[split]
+        logger.info(f"Feature engineering: {path}")
+
+        df = pd.read_parquet(path)
+        original_cols = df.shape[1]
+
+        # নতুন features add করো
+        df = add_temperature_features(df)
+        df = add_power_features(df)
+        df = add_wear_features(df)
+
+        new_cols = df.shape[1] - original_cols
+        logger.info(f"Added {new_cols} new features. Total: {df.shape[1]} columns")
+
+        # Save করো (overwrite processed file)
+        df.to_parquet(path, index=False)
+        logger.info(f"✅ Saved: {path}")
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+    run_feature_engineering()</pre></div>
+</div>
+
+<!-- ═══ SECTION 14: TRAINING ═══ -->
+<div class="sec" id="train">
+<div class="sec-hdr"><div class="sico ip">🧠</div><div class="stg"><div class="sl">Step 14</div><h2>Model Training + MLflow Experiment Tracking</h2></div></div>
+<div class="ex ei"><strong>MLflow কী?</strong> তুমি ১০০ বার model train করলে — কোন run এ কোন parameter ছিল, কোন result পেয়েছিলে — এটা track করে রাখে। PostgreSQL database এ সব data store হয়। MLflow UI তে সব দেখতে পারবে।</div>
+<div class="cl ct"><div class="ci">💡</div><div class="cb2"><strong>Analogy:</strong> একজন scientist lab notebook রাখে — প্রতিটা experiment এর conditions লিখে রাখে। MLflow হলো সেই notebook, কিন্তু automated এবং searchable।</div></div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> src/models/train.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""
+Model training with full MLflow experiment tracking।
+RandomForest এবং XGBoost দুটো model train হবে।
+Best model automatically MLflow Model Registry তে register হবে।
+"""
+import logging
+import os
+import yaml
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import mlflow
+import mlflow.sklearn
+import mlflow.xgboost
+from mlflow.models import infer_signature
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score,
+    f1_score, roc_auc_score, confusion_matrix,
+    average_precision_score
+)
+from sklearn.utils.class_weight import compute_sample_weight
+from xgboost import XGBClassifier
+import joblib
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
+
+
+def load_configs() -> tuple:
+    with open("configs/data_config.yaml") as f:
+        data_cfg = yaml.safe_load(f)
+    with open("configs/model_config.yaml") as f:
+        model_cfg = yaml.safe_load(f)
+    with open("configs/training_config.yaml") as f:
+        train_cfg = yaml.safe_load(f)
+    return data_cfg, model_cfg, train_cfg
+
+
+def load_data(data_cfg: dict) -> tuple:
+    """Processed data load করো।"""
+    train = pd.read_parquet(data_cfg["data"]["processed_train"])
+    test = pd.read_parquet(data_cfg["data"]["processed_test"])
+
+    target = "target"
+    feature_cols = [c for c in train.columns if c != target]
+
+    X_train = train[feature_cols]
+    y_train = train[target]
+    X_test = test[feature_cols]
+    y_test = test[target]
+
+    logger.info(f"Train: {X_train.shape}, Test: {X_test.shape}")
+    logger.info(f"Failure rate (train): {y_train.mean():.3f}")
+    return X_train, X_test, y_train, y_test, feature_cols
+
+
+def compute_metrics(y_true, y_pred, y_prob) -> dict:
+    """সব evaluation metrics calculate করো।"""
+    return {
+        "accuracy": accuracy_score(y_true, y_pred),
+        "precision": precision_score(y_true, y_pred, zero_division=0),
+        "recall": recall_score(y_true, y_pred, zero_division=0),
+        "f1_score": f1_score(y_true, y_pred, zero_division=0),
+        "roc_auc": roc_auc_score(y_true, y_prob),
+        "pr_auc": average_precision_score(y_true, y_prob),
+    }
+
+
+def plot_confusion_matrix(y_true, y_pred, model_name: str) -> str:
+    """Confusion matrix plot তৈরি করো।"""
+    fig, ax = plt.subplots(figsize=(6, 5))
+    cm = confusion_matrix(y_true, y_pred)
+    im = ax.imshow(cm, cmap="Blues")
+    plt.colorbar(im, ax=ax)
+    ax.set_xlabel("Predicted", fontsize=12)
+    ax.set_ylabel("Actual", fontsize=12)
+    ax.set_title(f"Confusion Matrix — {model_name}", fontsize=13)
+    ax.set_xticks([0, 1]); ax.set_yticks([0, 1])
+    ax.set_xticklabels(["No Fail", "Fail"])
+    ax.set_yticklabels(["No Fail", "Fail"])
+    for i in range(2):
+        for j in range(2):
+            ax.text(j, i, cm[i, j], ha="center", va="center", fontsize=14,
+                    color="white" if cm[i, j] > cm.max() / 2 else "black")
+    plt.tight_layout()
+    path = f"/tmp/cm_{model_name}.png"
+    plt.savefig(path, dpi=100, bbox_inches="tight")
+    plt.close()
+    return path
+
+
+def train_random_forest(X_train, y_train, X_test, y_test,
+                         model_cfg: dict, train_cfg: dict) -> tuple:
+    """RandomForest train করো এবং MLflow এ log করো।"""
+    rf_params = model_cfg["models"]["random_forest"]
+    exp_name = train_cfg["training"]["experiment_name"]
+
+    mlflow.set_experiment(exp_name)
+
+    with mlflow.start_run(run_name="random_forest") as run:
+        logger.info("Training RandomForest...")
+
+        # Sample weights (imbalanced data handle)
+        sample_w = compute_sample_weight("balanced", y_train)
+
+        model = RandomForestClassifier(**rf_params)
+        model.fit(X_train, y_train, sample_weight=sample_w)
+
+        y_pred = model.predict(X_test)
+        y_prob = model.predict_proba(X_test)[:, 1]
+
+        metrics = compute_metrics(y_test, y_pred, y_prob)
+
+        # MLflow এ log করো
+        mlflow.log_params(rf_params)
+        mlflow.log_metrics(metrics)
+
+        # Confusion matrix artifact
+        cm_path = plot_confusion_matrix(y_test, y_pred, "RandomForest")
+        mlflow.log_artifact(cm_path, "plots")
+
+        # Feature importance log করো
+        fi = pd.Series(model.feature_importances_,
+                       index=X_train.columns).sort_values(ascending=False)
+        fig, ax = plt.subplots(figsize=(8, 5))
+        fi.head(10).plot(kind="bar", ax=ax, color="#4f86c6")
+        ax.set_title("Top 10 Feature Importances")
+        ax.set_xlabel("Feature"); ax.set_ylabel("Importance")
+        plt.tight_layout()
+        fi_path = "/tmp/feature_importance_rf.png"
+        plt.savefig(fi_path, dpi=100)
+        plt.close()
+        mlflow.log_artifact(fi_path, "plots")
+
+        # Model save করো
+        signature = infer_signature(X_train, y_pred)
+        mlflow.sklearn.log_model(
+            model, "model",
+            signature=signature,
+            registered_model_name=None,  # Best model পরে register হবে
+        )
+
+        run_id = run.info.run_id
+        logger.info(f"RandomForest | F1: {metrics['f1_score']:.4f} | ROC-AUC: {metrics['roc_auc']:.4f}")
+
+    return model, metrics, run_id
+
+
+def train_xgboost(X_train, y_train, X_test, y_test,
+                  model_cfg: dict, train_cfg: dict) -> tuple:
+    """XGBoost train করো এবং MLflow এ log করো।"""
+    xgb_params = model_cfg["models"]["xgboost"]
+    exp_name = train_cfg["training"]["experiment_name"]
+
+    mlflow.set_experiment(exp_name)
+
+    with mlflow.start_run(run_name="xgboost") as run:
+        logger.info("Training XGBoost...")
+
+        model = XGBClassifier(
+            **xgb_params,
+            verbosity=0,
+        )
+        model.fit(X_train, y_train,
+                  eval_set=[(X_test, y_test)],
+                  verbose=False)
+
+        y_pred = model.predict(X_test)
+        y_prob = model.predict_proba(X_test)[:, 1]
+
+        metrics = compute_metrics(y_test, y_pred, y_prob)
+
+        mlflow.log_params(xgb_params)
+        mlflow.log_metrics(metrics)
+
+        cm_path = plot_confusion_matrix(y_test, y_pred, "XGBoost")
+        mlflow.log_artifact(cm_path, "plots")
+
+        signature = infer_signature(X_train, y_pred)
+        mlflow.xgboost.log_model(
+            model, "model",
+            signature=signature,
+            registered_model_name=None,
+        )
+
+        run_id = run.info.run_id
+        logger.info(f"XGBoost | F1: {metrics['f1_score']:.4f} | ROC-AUC: {metrics['roc_auc']:.4f}")
+
+    return model, metrics, run_id
+
+
+def register_best_model(rf_metrics, xgb_metrics, rf_run_id, xgb_run_id,
+                        model_cfg: dict) -> None:
+    """Best model MLflow Model Registry তে register করো।"""
+    metric = model_cfg["models"]["best_model_metric"]
+    model_name = model_cfg["models"]["registered_model_name"]
+
+    if rf_metrics[metric] >= xgb_metrics[metric]:
+        best_run_id = rf_run_id
+        best_model = "RandomForest"
+        best_score = rf_metrics[metric]
+    else:
+        best_run_id = xgb_run_id
+        best_model = "XGBoost"
+        best_score = xgb_metrics[metric]
+
+    logger.info(f"🏆 Best Model: {best_model} | {metric}: {best_score:.4f}")
+
+    # Model register করো
+    model_uri = f"runs:/{best_run_id}/model"
+    registered = mlflow.register_model(model_uri, model_name)
+    logger.info(f"✅ Model registered: {model_name} v{registered.version}")
+
+    # MLflow 2.x alias API ব্যবহার করো (deprecated stage API এর পরিবর্তে)
+    # transition_model_version_stage() MLflow 2.38+ এ remove হয়েছে
+    client = mlflow.MlflowClient()
+    try:
+        # Modern approach: alias set করো ("champion" = production equivalent)
+        client.set_registered_model_alias(
+            name=model_name,
+            alias="champion",
+            version=registered.version,
+        )
+        logger.info(f"✅ Model alias 'champion' set → version {registered.version}")
+    except Exception:
+        # Fallback for older MLflow versions (< 2.x)
+        client.transition_model_version_stage(
+            name=model_name,
+            version=registered.version,
+            stage="Production",
+            archive_existing_versions=True,
+        )
+        logger.info(f"✅ Model promoted to Production stage (legacy stage API)!")
+
+
+def main():
+    mlflow.set_tracking_uri(
+        os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
+    )
+
+    data_cfg, model_cfg, train_cfg = load_configs()
+    X_train, X_test, y_train, y_test, feature_cols = load_data(data_cfg)
+
+    # Train করো
+    rf_model, rf_metrics, rf_run_id = train_random_forest(
+        X_train, y_train, X_test, y_test, model_cfg, train_cfg
+    )
+    xgb_model, xgb_metrics, xgb_run_id = train_xgboost(
+        X_train, y_train, X_test, y_test, model_cfg, train_cfg
+    )
+
+    # Best model register করো
+    register_best_model(rf_metrics, xgb_metrics, rf_run_id, xgb_run_id, model_cfg)
+
+    # Local backup save করো
+    save_path = model_cfg["models"]["model_save_path"]
+    Path(save_path).mkdir(parents=True, exist_ok=True)
+    joblib.dump(rf_model, f"{save_path}/random_forest.pkl")
+    joblib.dump(xgb_model, f"{save_path}/xgboost.pkl")
+    logger.info(f"Models saved to: {save_path}")
+
+
+if __name__ == "__main__":
+    main()</pre></div>
+</div>
+<!-- ═══ SECTION 15: EVALUATE ═══ -->
+<div class="sec" id="evaluate">
+<div class="sec-hdr"><div class="sico ig">📊</div><div class="stg"><div class="sl">Step 15</div><h2>Model Evaluation</h2></div></div>
+<div class="ex ei"><strong>Evaluation কেন আলাদা?</strong> Training এ শুধু model fit হয়। Evaluation এ বলো model টা কতটা ভালো কাজ করছে — precision, recall, F1 কত। Predictive maintenance এ <strong>Recall বেশি গুরুত্বপূর্ণ</strong>: machine fail হবে কিন্তু আমরা miss করলে বড় ক্ষতি।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> src/models/evaluate.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""
+Trained model এর comprehensive evaluation।
+সব metrics calculate করো এবং report তৈরি করো।
+"""
+import os
+import json
+import logging
+import yaml
+import pandas as pd
+import mlflow
+import mlflow.sklearn
+from sklearn.metrics import classification_report
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+logger = logging.getLogger(__name__)
+
+
+def load_production_model(model_name: str):
+    """MLflow registry থেকে champion/Production model load করো।
+    MLflow 2.x alias ("champion") আগে try করো, না থাকলে legacy stage ("Production") ব্যবহার করো।
+    """
+    client = mlflow.MlflowClient()
+    # Try alias first (MLflow 2.x modern approach)
+    try:
+        model_uri = f"models:/{model_name}@champion"
+        model = mlflow.pyfunc.load_model(model_uri)
+        logger.info(f"Loaded: {model_name}@champion")
+        return model
+    except Exception:
+        pass
+    # Fallback to legacy stage API
+    versions = client.get_latest_versions(model_name, stages=["Production"])
+    if not versions:
+        raise ValueError(f"No model found for '{model_name}' (tried alias 'champion' and stage 'Production')")
+    model_uri = f"models:/{model_name}/Production"
+    model = mlflow.pyfunc.load_model(model_uri)
+    logger.info(f"Loaded: {model_name} v{versions[0].version} (stage=Production)")
+    return model
+
+
+def evaluate_model(model_name: str = "predictive_maintenance_model",
+                   config_path: str = "configs/data_config.yaml") -> dict:
+    """Production model evaluate করো এবং metrics save করো।"""
+    mlflow.set_tracking_uri(
+        os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
+    )
+
+    with open(config_path) as f:
+        data_cfg = yaml.safe_load(f)["data"]
+
+    # Test data load
+    test = pd.read_parquet(data_cfg["processed_test"])
+    X_test = test.drop(columns=["target"])
+    y_test = test["target"]
+
+    # Model load
+    model = load_production_model(model_name)
+
+    # Predict
+    y_pred = model.predict(X_test)
+
+    # Report
+    report = classification_report(y_test, y_pred,
+                                    target_names=["No Failure", "Failure"],
+                                    output_dict=True)
+
+    # Save metrics as JSON (DVC metrics tracking এর জন্য)
+    metrics = {
+        "precision": report["Failure"]["precision"],
+        "recall": report["Failure"]["recall"],
+        "f1_score": report["Failure"]["f1-score"],
+        "accuracy": report["accuracy"],
+    }
+    Path("data/reports").mkdir(exist_ok=True)
+    with open("data/reports/metrics.json", "w") as f:
+        json.dump(metrics, f, indent=2)
+
+    logger.info("Evaluation Metrics:")
+    for k, v in metrics.items():
+        logger.info(f"  {k}: {v:.4f}")
+
+    return metrics
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    evaluate_model()</pre></div>
+</div>
+
+<!-- ═══ SECTION 16: PREDICT ═══ -->
+<div class="sec" id="predict">
+<div class="sec-hdr"><div class="sico ia">🔮</div><div class="stg"><div class="sl">Step 16</div><h2>Prediction Script</h2></div></div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> src/models/predict.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""
+Prediction logic — FastAPI ও BentoML দুটোতেই ব্যবহার হবে।
+MLflow registry থেকে latest Production model load করে predict করে।
+"""
+import os
+import logging
+import numpy as np
+import pandas as pd
+import mlflow
+import mlflow.pyfunc
+import joblib
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+logger = logging.getLogger(__name__)
+
+# Module level model cache — প্রতিটা request এ reload না করতে
+_model = None
+_scaler = None
+_encoder = None
+
+
+def get_model():
+    """Singleton pattern: model একবারই load হবে।"""
+    global _model
+    if _model is None:
+        model_name = os.getenv("MODEL_NAME", "predictive_maintenance_model")
+        tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
+        mlflow.set_tracking_uri(tracking_uri)
+        try:
+            # Try alias first (MLflow 2.x), fallback to legacy stage
+            try:
+                _model = mlflow.pyfunc.load_model(f"models:/{model_name}@champion")
+                logger.info(f"Model loaded from MLflow registry: {model_name}@champion")
+            except Exception:
+                _model = mlflow.pyfunc.load_model(f"models:/{model_name}/Production")
+                logger.info(f"Model loaded from MLflow registry: {model_name}/Production")
+        except Exception as e:
+            # Fallback: local pkl file থেকে load করো
+            logger.warning(f"MLflow unavailable: {e}. Loading local model.")
+            local_path = "models/trained/xgboost.pkl"
+            _model = joblib.load(local_path)
+            logger.info(f"Local model loaded: {local_path}")
+    return _model
+
+
+def get_preprocessors():
+    """Scaler ও encoder load করো।"""
+    global _scaler, _encoder
+    if _scaler is None:
+        _scaler = joblib.load("models/trained/scaler.pkl")
+    if _encoder is None:
+        _encoder = joblib.load("models/trained/label_encoder.pkl")
+    return _scaler, _encoder
+
+
+def preprocess_input(data: dict) -> pd.DataFrame:
+    """Single prediction input preprocess করো।
+    Order must match training pipeline exactly:
+    encode → rename → feature engineering → scale numeric
+    """
+    scaler, encoder = get_preprocessors()
+
+    # Type encode করো
+    type_encoded = encoder.transform([data["type"]])[0]
+
+    # DataFrame তৈরি করো (column names must match training)
+    df = pd.DataFrame([{
+        "Type": type_encoded,
+        "air_temperature": data["air_temperature"],
+        "process_temperature": data["process_temperature"],
+        "rotational_speed": data["rotational_speed"],
+        "torque": data["torque"],
+        "tool_wear": data["tool_wear"],
+    }])
+
+    # Feature engineering FIRST (same order as training pipeline)
+    df["temp_diff"] = df["process_temperature"] - df["air_temperature"]
+    df["temp_ratio"] = df["process_temperature"] / (df["air_temperature"] + 1e-8)
+    df["power_consumption"] = df["torque"] * df["rotational_speed"] * (2 * np.pi / 60)
+    df["power_wear_interaction"] = df["power_consumption"] * df["tool_wear"]
+    df["wear_speed_ratio"] = df["tool_wear"] / (df["rotational_speed"] + 1e-8)
+    df["torque_per_wear"] = df["torque"] / (df["tool_wear"] + 1)
+
+    # Scale numeric columns AFTER feature engineering (matches training order)
+    numeric_cols = ["air_temperature", "process_temperature",
+                    "rotational_speed", "torque", "tool_wear"]
+    df[numeric_cols] = scaler.transform(df[numeric_cols])
+
+    return df
+
+
+FAILURE_TYPES = {
+    0: "No Failure",
+    1: "Machine Failure",
+    # Note: this is a binary classifier — prediction is 0 or 1 only.
+    # Specific failure type classification (TWF/HDF/PWF/OSF/RNF)
+    # would require a separate multi-label model.
+}
+
+
+def predict(data: dict) -> dict:
+    """Single sample prediction।
+    Returns: prediction (0/1), probability, failure_type string
+    """
+    model = get_model()
+    df = preprocess_input(data)
+
+    prediction = int(model.predict(df)[0])
+
+    # Probability
+    if hasattr(model, "predict_proba"):
+        prob = float(model.predict_proba(df)[0][1])
+    else:
+        # MLflow pyfunc এর জন্য
+        try:
+            prob = float(model.predict(df)[0])
+        except Exception:
+            prob = float(prediction)
+
+    failure_type = FAILURE_TYPES.get(prediction, "Unknown")
+
+    return {
+        "prediction": prediction,
+        "probability": round(prob, 4),
+        "failure_type": failure_type,
+        "risk_level": "HIGH" if prob > 0.7 else "MEDIUM" if prob > 0.3 else "LOW",
+    }</pre></div>
+</div>
+
+<!-- ═══ SECTION 17: FASTAPI ═══ -->
+<div class="sec" id="fastapi">
+<div class="sec-hdr"><div class="sico ir">⚡</div><div class="stg"><div class="sl">Step 17</div><h2>FastAPI + Redis Cache</h2></div></div>
+<div class="ex ei"><strong>FastAPI কী?</strong> Python দিয়ে REST API বানানোর framework। আমাদের ML model কে HTTP endpoint এ expose করে — যেকোনো application (mobile app, web app, another service) এটা call করতে পারবে।</div>
+<div class="ex"><strong>Redis cache কেন?</strong> Same input দিয়ে বারবার predict request আসলে model reload না করে cache থেকে দেওয়া যায়। Response time ১০০ms → ২ms।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> src/api/main.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""
+FastAPI application — ML model এর REST API।
+Features: prediction endpoint, health check, Redis caching, Prometheus metrics।
+"""
+import hashlib
+import json
+import logging
+import os
+import time
+from contextlib import asynccontextmanager
+
+import redis
+import uvicorn
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from starlette.responses import Response
+
+from src.api.schemas import PredictionRequest, PredictionResponse, HealthResponse
+from src.models.predict import predict
+from dotenv import load_dotenv
+
+load_dotenv()
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# ── Prometheus Metrics ──────────────────────────────────
+REQUEST_COUNT = Counter(
+    "api_requests_total",
+    "Total API requests",
+    ["method", "endpoint", "status"]
+)
+PREDICTION_COUNT = Counter(
+    "predictions_total",
+    "Total predictions made",
+    ["result", "risk_level"]
+)
+REQUEST_LATENCY = Histogram(
+    "request_duration_seconds",
+    "Request duration",
+    ["endpoint"]
+)
+CACHE_HITS = Counter("cache_hits_total", "Redis cache hits")
+CACHE_MISSES = Counter("cache_misses_total", "Redis cache misses")
+
+
+# ── Redis Connection ────────────────────────────────────
+def get_redis_client():
+    try:
+        client = redis.Redis(
+            host=os.getenv("REDIS_HOST", "localhost"),
+            port=int(os.getenv("REDIS_PORT", 6379)),
+            password=os.getenv("REDIS_PASSWORD", None) or None,
+            decode_responses=True,
+        )
+        client.ping()
+        logger.info("✅ Redis connected")
+        return client
+    except Exception as e:
+        logger.warning(f"Redis unavailable: {e}. Running without cache.")
+        return None
+
+
+redis_client = None
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """App startup ও shutdown।"""
+    global redis_client
+    redis_client = get_redis_client()
+    logger.info("🚀 FastAPI starting up...")
+    yield
+    logger.info("👋 FastAPI shutting down...")
+
+
+# ── FastAPI App ─────────────────────────────────────────
+app = FastAPI(
+    title="Predictive Maintenance API",
+    description="Industrial equipment failure prediction using ML",
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.middleware("http")
+async def metrics_middleware(request: Request, call_next):
+    """প্রতিটা request এর latency ও count track করো।"""
+    start = time.time()
+    response = await call_next(request)
+    duration = time.time() - start
+    REQUEST_LATENCY.labels(endpoint=request.url.path).observe(duration)
+    REQUEST_COUNT.labels(
+        method=request.method,
+        endpoint=request.url.path,
+        status=response.status_code,
+    ).inc()
+    return response
+
+
+# ── Endpoints ───────────────────────────────────────────
+@app.get("/", tags=["Root"])
+async def root():
+    return {"message": "Predictive Maintenance API", "docs": "/docs"}
+
+
+@app.get("/health", response_model=HealthResponse, tags=["Health"])
+async def health():
+    """API health check।"""
+    redis_ok = False
+    if redis_client:
+        try:
+            redis_client.ping()
+            redis_ok = True
+        except Exception:
+            pass
+    return HealthResponse(status="healthy", redis=redis_ok)
+
+
+@app.post("/predict", response_model=PredictionResponse, tags=["Prediction"])
+async def predict_endpoint(request: PredictionRequest):
+    """Machine failure prediction।
+
+    Input: sensor readings (temperature, torque, speed, wear)
+    Output: failure prediction (0/1), probability, risk level
+    """
+    data = request.model_dump()
+
+    # Cache key তৈরি করো (input এর hash)
+    cache_key = "pred:" + hashlib.md5(
+        json.dumps(data, sort_keys=True).encode()
+    ).hexdigest()
+
+    # Cache check করো
+    if redis_client:
+        cached = redis_client.get(cache_key)
+        if cached:
+            CACHE_HITS.inc()
+            result = json.loads(cached)
+            result["cached"] = True
+            return PredictionResponse(**result)
+        CACHE_MISSES.inc()
+
+    # Predict করো
+    try:
+        result = predict(data)
+    except Exception as e:
+        logger.error(f"Prediction error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+    # Metrics track করো
+    PREDICTION_COUNT.labels(
+        result=str(result["prediction"]),
+        risk_level=result["risk_level"],
+    ).inc()
+
+    # Cache এ save করো (১ ঘন্টা)
+    if redis_client:
+        redis_client.setex(cache_key, 3600, json.dumps(result))
+
+    result["cached"] = False
+    return PredictionResponse(**result)
+
+
+@app.get("/metrics", tags=["Monitoring"])
+async def metrics():
+    """Prometheus metrics endpoint।"""
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
+
+@app.get("/model/info", tags=["Model"])
+async def model_info():
+    """Current production model এর info।"""
+    return {
+        "model_name": os.getenv("MODEL_NAME", "predictive_maintenance_model"),
+        "tracking_uri": os.getenv("MLFLOW_TRACKING_URI"),
+        "stage": "Production",
+    }
+
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "src.api.main:app",
+        host=os.getenv("API_HOST", "0.0.0.0"),
+        port=int(os.getenv("API_PORT", 8000)),
+        reload=False,
+    )</pre></div>
+</div>
+
+<!-- ═══ SECTION 19: SCHEMAS ═══ -->
+<div class="sec" id="schemas">
+<div class="sec-hdr"><div class="sico ib">📋</div><div class="stg"><div class="sl">Step 19</div><h2>Pydantic Schemas</h2></div></div>
+<div class="ex ei"><strong>Schema কী?</strong> API কে বলে দেয় input/output এর format কেমন হবে। User ভুল data দিলে automatic validation error দেবে। FastAPI এর সাথে Pydantic দারুণ কাজ করে।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> src/api/schemas.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""API request ও response schemas — Pydantic দিয়ে type validation।"""
+from pydantic import BaseModel, Field
+from typing import Literal
+
+
+class PredictionRequest(BaseModel):
+    """Machine sensor readings।"""
+    air_temperature: float = Field(
+        ..., ge=290.0, le=310.0,
+        description="Air temperature in Kelvin (290–310 K)",
+    )
+    process_temperature: float = Field(
+        ..., ge=300.0, le=320.0,
+        description="Process temperature in Kelvin",
+    )
+    rotational_speed: float = Field(
+        ..., ge=1000.0, le=3000.0,
+        description="Rotational speed in RPM",
+    )
+    torque: float = Field(
+        ..., ge=0.0, le=100.0,
+        description="Torque in Nm",
+    )
+    tool_wear: float = Field(
+        ..., ge=0.0, le=300.0,
+        description="Tool wear in minutes",
+    )
+    type: Literal["L", "M", "H"] = Field(
+        ..., description="Machine quality variant: L (Low), M (Medium), H (High)",
+    )
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "air_temperature": 298.1,
+                "process_temperature": 308.6,
+                "rotational_speed": 1551,
+                "torque": 42.8,
+                "tool_wear": 0,
+                "type": "M"
+            }
+        }
+
+
+class PredictionResponse(BaseModel):
+    """Prediction result।"""
+    prediction: int = Field(..., description="0 = No Failure, 1 = Failure")
+    probability: float = Field(..., description="Failure probability (0.0–1.0)")
+    failure_type: str = Field(..., description="Type of predicted failure")
+    risk_level: Literal["LOW", "MEDIUM", "HIGH"] = Field(
+        ..., description="Risk assessment level"
+    )
+    cached: bool = Field(..., description="Was this result served from cache?")
+
+
+class HealthResponse(BaseModel):
+    """API health status।"""
+    status: str
+    redis: bool</pre></div>
+</div>
+<!-- ═══ SECTION 18: BENTOML ═══ -->
+<div class="sec" id="bentoml">
+<div class="sec-hdr"><div class="sico ip">🍱</div><div class="stg"><div class="sl">Step 18</div><h2>BentoML — ML-Native Model Serving</h2></div></div>
+<div class="ex ei"><strong>BentoML কী?</strong> FastAPI manually model serving করে। BentoML automatically model কে package করে serve করে — auto-generated API docs, batching support, GPU support সব built-in। FastAPI + BentoML দুটো থাকলে recruiter দেখবে তুমি multiple serving strategies জানো।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> src/api/bento_service.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""
+BentoML 1.x service — ML-native model serving।
+BentoML 1.x এর নতুন @bentoml.service decorator API ব্যবহার করা হয়েছে।
+MLflow registry থেকে model নিয়ে BentoML এ save করে serve করে।
+"""
+import os
+import numpy as np
+import bentoml
+import mlflow
+import mlflow.sklearn
+from pydantic import BaseModel
+from typing import Literal
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+# ── Step 1: MLflow থেকে model নিয়ে BentoML এ save করো ──
+def save_model_to_bentoml() -> str:
+    """MLflow Production model BentoML model store এ save করো।
+    এটা একবারই run করতে হবে।
+    Usage: python -c "from src.api.bento_service import save_model_to_bentoml; save_model_to_bentoml()"
+    """
+    tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
+    mlflow.set_tracking_uri(tracking_uri)
+    model_name = os.getenv("MODEL_NAME", "predictive_maintenance_model")
+    # Try alias first (MLflow 2.x), fallback to legacy stage
+    try:
+        sklearn_model = mlflow.sklearn.load_model(f"models:/{model_name}@champion")
+    except Exception:
+        sklearn_model = mlflow.sklearn.load_model(f"models:/{model_name}/Production")
+    bento_model = bentoml.sklearn.save_model(
+        "pm_model",
+        sklearn_model,
+        metadata={"description": "Predictive Maintenance Model", "dataset": "AI4I 2020"},
+    )
+    print(f"Saved to BentoML: {bento_model.tag}")
+    return str(bento_model.tag)
+
+
+# ── Step 2: Input/Output Schema ──────────────────────────
+class SensorInput(BaseModel):
+    air_temperature: float
+    process_temperature: float
+    rotational_speed: float
+    torque: float
+    tool_wear: float
+    type: Literal["L", "M", "H"]
+
+
+class PredictionOutput(BaseModel):
+    prediction: int
+    probability: float
+    risk_level: str
+
+
+# ── Step 3: BentoML 1.x Service (new decorator API) ──────
+# BentoML 1.x তে class-based service ব্যবহার করতে হয়।
+# পুরনো bentoml.Service() এবং bentoml.io — 1.x তে নেই।
+@bentoml.service(
+    name="predictive_maintenance_svc",
+    resources={"cpu": "2"},
+    traffic={"timeout": 10},
+)
+class PredictiveMaintenanceService:
+    """BentoML 1.x class-based service।"""
+
+    def __init__(self):
+        # Load model lazily in __init__, not at class definition time.
+        # bentoml.models.get() at class scope crashes on import if the model
+        # store is empty (before save_model_to_bentoml() has been called).
+        try:
+            pm_model_ref = bentoml.models.get("pm_model:latest")
+            self.model = pm_model_ref.load_model()
+        except Exception as e:
+            raise RuntimeError(
+                f"BentoML model 'pm_model:latest' not found in store. "
+                f"Run save_model_to_bentoml() first. Original error: {e}"
+            )
+
+    def _build_features(self, inp: SensorInput) -> "pd.DataFrame":
+        """Feature vector তৈরি করো।
+        DataFrame use করা হয়েছে যাতে column names match হয় training এর সাথে।
+        Raw numpy array use করলে XGBoost feature order mismatch হয়।
+        IMPORTANT: LabelEncoder alphabetically sorts: H=0, L=1, M=2.
+        Hardcoding L=0,M=1,H=2 would be WRONG — always load the saved encoder.
+        """
+        import pandas as pd
+        import joblib
+        # Load saved encoder to get correct mapping (H=0, L=1, M=2 alphabetically)
+        try:
+            encoder = joblib.load("models/trained/label_encoder.pkl")
+            type_enc = int(encoder.transform([inp.type])[0])
+        except Exception:
+            # Fallback: alphabetical order H=0, L=1, M=2
+            type_enc = {"H": 0, "L": 1, "M": 2}.get(inp.type, 1)
+        power = inp.torque * inp.rotational_speed * (2 * np.pi / 60)
+        temp_diff = inp.process_temperature - inp.air_temperature
+        temp_ratio = inp.process_temperature / (inp.air_temperature + 1e-8)
+        wear_speed = inp.tool_wear / (inp.rotational_speed + 1e-8)
+        torque_wear = inp.torque / (inp.tool_wear + 1)
+
+        # Build DataFrame with feature engineering first, then scale
+        df = pd.DataFrame([{
+            "Type": type_enc,
+            "air_temperature": inp.air_temperature,
+            "process_temperature": inp.process_temperature,
+            "rotational_speed": inp.rotational_speed,
+            "torque": inp.torque,
+            "tool_wear": inp.tool_wear,
+            "temp_diff": temp_diff,
+            "temp_ratio": temp_ratio,
+            "power_consumption": power,
+            "power_wear_interaction": power * inp.tool_wear,
+            "wear_speed_ratio": wear_speed,
+            "torque_per_wear": torque_wear,
+        }])
+        # Apply saved scaler to numeric columns
+        try:
+            scaler = joblib.load("models/trained/scaler.pkl")
+            numeric_cols = ["air_temperature", "process_temperature",
+                            "rotational_speed", "torque", "tool_wear"]
+            df[numeric_cols] = scaler.transform(df[numeric_cols])
+        except Exception:
+            pass  # Fallback: serve unscaled if scaler unavailable
+        return df
+
+    @bentoml.api
+    def predict(self, input_data: SensorInput) -> PredictionOutput:
+        """Prediction endpoint।"""
+        features = self._build_features(input_data)
+        prediction = int(self.model.predict(features)[0])
+        try:
+            probability = float(self.model.predict_proba(features)[0][1])
+        except AttributeError:
+            probability = float(prediction)
+        risk = "HIGH" if probability > 0.7 else "MEDIUM" if probability > 0.3 else "LOW"
+        return PredictionOutput(
+            prediction=prediction,
+            probability=round(probability, 4),
+            risk_level=risk,
+        )</pre></div>
+
+<h3>BentoML serve করো</h3>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># প্রথমে model BentoML এ save করো
+python -c "from src.api.bento_service import save_model_to_bentoml; save_model_to_bentoml()"
+
+# BentoML serve করো (1.x syntax — class name ব্যবহার করো)
+bentoml serve src.api.bento_service:PredictiveMaintenanceService --port 3001
+
+# অথবা Docker image build করো (production ready)
+# build command একটা tag print করবে যেমন: predictive_maintenance_svc:a1b2c3d4e5f6
+bentoml build src.api.bento_service:PredictiveMaintenanceService
+# উপরের output থেকে exact tag নাও, তারপর containerize করো:
+# bentoml containerize predictive_maintenance_svc:&lt;version_tag&gt;
+# Note: ":latest" is NOT a valid BentoML tag — always use the exact version from build output</pre></div>
+</div>
+
+<!-- ═══ SECTION 20: KAFKA PRODUCER ═══ -->
+<div class="sec" id="kafka">
+<div class="sec-hdr"><div class="sico ic">🌊</div><div class="stg"><div class="sl">Step 20</div><h2>Kafka — Real-time Sensor Data Streaming</h2></div></div>
+<div class="ex ei"><strong>Kafka কী?</strong> ধরো factory তে ১০০০ machine আছে, প্রতিটা প্রতি সেকেন্ডে sensor reading পাঠাচ্ছে। এই massive data stream handle করতে Kafka ব্যবহার হয়। Kafka একটা "message bus" — data producer পাঠায়, consumer receive করে process করে।</div>
+<div class="ex"><strong>Analogy:</strong> Kafka হলো একটা conveyor belt। Factory থেকে product (data) তুলে দেওয়া হয়, belt এ করে চলে যায়, warehouse (ML model) receive করে। Belt কখনো বন্ধ হয় না।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> src/streaming/kafka_producer.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""
+Kafka Producer — real-time sensor data stream simulate করে।
+confluent-kafka library ব্যবহার করা হয়েছে (maintained, Python 3.11+ compatible)।
+"""
+import json
+import logging
+import os
+import time
+import random
+from datetime import datetime, timezone
+from confluent_kafka import Producer
+from dotenv import load_dotenv
+
+load_dotenv()
+logger = logging.getLogger(__name__)
+
+
+def delivery_report(err, msg):
+    """Kafka delivery callback — deliver হলে কি না জানায়।"""
+    if err is not None:
+        logger.error(f"Delivery failed for {msg.key()}: {err}")
+
+
+def create_producer() -> Producer:
+    """confluent-kafka Producer তৈরি করো।"""
+    return Producer({
+        "bootstrap.servers": os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092"),
+        "acks": "all",
+        "retries": 3,
+        "linger.ms": 5,
+    })
+
+
+def generate_sensor_reading(machine_id: str) -> dict:
+    """Realistic sensor data generate করো।
+    Normal operation এর মধ্যে ৩% failure scenario simulate।
+    """
+    is_failure = random.random() < 0.03
+
+    if is_failure:
+        return {
+            "machine_id": machine_id,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "type": random.choice(["L", "M", "H"]),
+            "air_temperature": round(random.uniform(300.0, 310.0), 1),
+            "process_temperature": round(random.uniform(315.0, 320.0), 1),
+            "rotational_speed": round(random.uniform(1200.0, 1600.0), 0),
+            "torque": round(random.uniform(60.0, 80.0), 1),
+            "tool_wear": round(random.uniform(200.0, 300.0), 0),
+        }
+    return {
+        "machine_id": machine_id,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "type": random.choice(["L", "M", "H"]),
+        "air_temperature": round(random.uniform(295.0, 302.0), 1),
+        "process_temperature": round(random.uniform(305.0, 312.0), 1),
+        "rotational_speed": round(random.uniform(1400.0, 2000.0), 0),
+        "torque": round(random.uniform(25.0, 55.0), 1),
+        "tool_wear": round(random.uniform(0.0, 150.0), 0),
+    }
+
+
+def run_producer(num_machines: int = 5, interval_sec: float = 1.0):
+    """Producer চালাও — প্রতি interval_sec সেকেন্ডে reading পাঠাও।"""
+    topic = os.getenv("KAFKA_TOPIC_SENSOR", "sensor-data")
+    machines = [f"MACHINE_{i:03d}" for i in range(1, num_machines + 1)]
+    producer = create_producer()
+    sent_count = 0
+
+    logger.info(f"Producer started | Topic: {topic} | Machines: {num_machines}")
+    try:
+        while True:
+            for machine_id in machines:
+                reading = generate_sensor_reading(machine_id)
+                producer.produce(
+                    topic=topic,
+                    key=machine_id.encode("utf-8"),
+                    value=json.dumps(reading).encode("utf-8"),
+                    callback=delivery_report,
+                )
+                sent_count += 1
+
+            producer.poll(0)  # Non-blocking — delivery callbacks trigger করে
+            if sent_count % 50 == 0:
+                logger.info(f"Sent {sent_count} readings")
+            time.sleep(interval_sec)
+
+    except KeyboardInterrupt:
+        logger.info("Producer stopping...")
+    finally:
+        producer.flush(timeout=10)
+        logger.info("Producer stopped.")
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    run_producer()</pre></div>
+</div>
+
+<!-- ═══ SECTION 21: KAFKA CONSUMER ═══ -->
+<div class="sec" id="kafka-consumer">
+<div class="sec-hdr"><div class="sico ip">🔄</div><div class="stg"><div class="sl">Step 21</div><h2>Kafka Consumer — Real-time Prediction</h2></div></div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> src/streaming/kafka_consumer.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""
+Kafka Consumer — sensor data receive করে real-time prediction করে।
+confluent-kafka library ব্যবহার করা হয়েছে।
+"""
+import json
+import logging
+import os
+import requests
+from confluent_kafka import Consumer, KafkaError
+from dotenv import load_dotenv
+
+load_dotenv()
+logger = logging.getLogger(__name__)
+
+
+def run_consumer():
+    """Consumer চালাও — Kafka থেকে data নিয়ে predict করো।"""
+    topic = os.getenv("KAFKA_TOPIC_SENSOR", "sensor-data")
+    # Use KAFKA_CONSUMER_API_HOST to avoid collision with API_HOST=0.0.0.0 (bind address)
+    api_host = os.getenv("KAFKA_CONSUMER_API_HOST", os.getenv("API_HOST", "localhost"))
+    api_port = os.getenv("API_PORT", "8000")
+    api_url  = f"http://{api_host}:{api_port}/predict"
+
+    consumer = Consumer({
+        "bootstrap.servers": os.getenv("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092"),
+        "group.id": "ml-prediction-group",
+        "auto.offset.reset": "latest",
+        "enable.auto.commit": False,  # Fix: manual commit prevents message loss on API failure
+    })
+    consumer.subscribe([topic])
+    logger.info(f"Consumer listening on: {topic}")
+
+    try:
+        while True:
+            msg = consumer.poll(timeout=1.0)
+
+            if msg is None:
+                continue
+            if msg.error():
+                if msg.error().code() == KafkaError._PARTITION_EOF:
+                    continue
+                logger.error(f"Kafka error: {msg.error()}")
+                continue
+
+            # Message decode করো
+            try:
+                data_msg = json.loads(msg.value().decode("utf-8"))
+            except (json.JSONDecodeError, UnicodeDecodeError) as e:
+                logger.error(f"Decode error: {e}")
+                continue
+
+            machine_id = data_msg.get("machine_id", "UNKNOWN")
+
+            # API কে prediction request পাঠাও
+            try:
+                payload = {k: v for k, v in data_msg.items()
+                           if k not in ["machine_id", "timestamp"]}
+                response = requests.post(api_url, json=payload, timeout=5)
+                response.raise_for_status()
+                result = response.json()
+
+                if result.get("risk_level") == "HIGH":
+                    logger.warning(
+                        f"HIGH RISK | Machine: {machine_id} | "
+                        f"Prob: {result['probability']:.3f} | "
+                        f"Failure: {result['failure_type']}"
+                    )
+                else:
+                    logger.debug(f"OK | Machine: {machine_id} | Risk: {result.get('risk_level')}")
+
+                # Manual commit — only after successful prediction
+                consumer.commit(asynchronous=False)
+
+            except requests.RequestException as e:
+                logger.error(f"Prediction failed for {machine_id}: {e}")
+                # Do NOT commit — message will be retried on restart
+
+    except KeyboardInterrupt:
+        logger.info("Consumer stopping...")
+    finally:
+        consumer.close()
+        logger.info("Consumer closed.")
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    run_consumer()</pre></div>
+</div>
+<!-- ═══ SECTION 22: EVIDENTLY ═══ -->
+<div class="sec" id="evidently">
+<div class="sec-hdr"><div class="sico ig">📉</div><div class="stg"><div class="sl">Step 22</div><h2>Evidently AI — Data Drift Detection</h2></div></div>
+<div class="ex ei"><strong>Data Drift কী?</strong> Model train করা হয়েছিল ২০২৪ সালের data দিয়ে। এখন ২০২৫ সালে production এ নতুন data আসছে, সেটার distribution আলাদা। Model টা outdated হয়ে গেছে — কিন্তু কেউ জানে না। <strong>Evidently</strong> automatically detect করে "এই data টা training data থেকে কতটা আলাদা হয়ে গেছে।"</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> src/monitoring/data_drift.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""
+Evidently AI দিয়ে data drift detection।
+Reference data (training) vs Current data (production) compare করে।
+HTML report তৈরি করে — browser এ দেখা যাবে।
+"""
+import logging
+import yaml
+import pandas as pd
+from pathlib import Path
+from datetime import datetime
+from evidently.report import Report
+from evidently.metric_preset import DataDriftPreset, DataQualityPreset, TargetDriftPreset
+from evidently.metrics import DatasetDriftMetric
+
+logger = logging.getLogger(__name__)
+
+
+def generate_drift_report(
+    reference_path: str = "data/processed/train.parquet",
+    current_path: str = "data/processed/test.parquet",
+    output_dir: str = "data/reports/",
+    config_path: str = "configs/training_config.yaml",
+) -> dict:
+    """Data drift report তৈরি করো।
+
+    Returns: drift summary dict (drift detected: True/False, score)
+    """
+    with open(config_path) as f:
+        cfg = yaml.safe_load(f)
+    threshold = cfg["monitoring"]["drift_threshold"]
+
+    # Data load করো
+    reference = pd.read_parquet(reference_path)
+    current = pd.read_parquet(current_path)
+
+    # Target column আলাদা করো
+    target_col = "target"
+    feature_cols = [c for c in reference.columns if c != target_col]
+
+    # ── Report 1: Data Drift ────────────────────────────
+    drift_report = Report(metrics=[
+        DataDriftPreset(num_stattest="ks", cat_stattest="chi2"),
+        DatasetDriftMetric(threshold=threshold),
+        DataQualityPreset(),
+    ])
+    drift_report.run(
+        reference_data=reference[feature_cols],
+        current_data=current[feature_cols],
+    )
+
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d_%H%M")
+    drift_html = f"{output_dir}/drift_report_{ts}.html"
+    drift_report.save_html(drift_html)
+    logger.info(f"Drift report saved: {drift_html}")
+
+    # ── Report 2: Target Drift (label distribution change) ──
+    if target_col in reference.columns and target_col in current.columns:
+        from evidently import ColumnMapping
+        col_map = ColumnMapping(target=target_col)
+        target_report = Report(metrics=[
+            TargetDriftPreset(),
+        ])
+        target_report.run(
+            reference_data=reference[[target_col]],
+            current_data=current[[target_col]],
+            column_mapping=col_map,
+        )
+        target_html = f"{output_dir}/target_drift_{ts}.html"
+        target_report.save_html(target_html)
+        logger.info(f"Target drift report saved: {target_html}")
+
+    # Summary extract করো
+    # IMPORTANT: as_dict()["metrics"] is a flat list — DataDriftPreset expands to
+    # multiple entries (one per column + aggregates). We must search by metric class
+    # name, NOT use a hardcoded index like [1].
+    drift_result = drift_report.as_dict()
+    dataset_drift_result = None
+    for metric_entry in drift_result["metrics"]:
+        metric_id = metric_entry.get("metric", "")
+        if "DatasetDriftMetric" in metric_id:
+            dataset_drift_result = metric_entry["result"]
+            break
+    if dataset_drift_result is None:
+        logger.warning("DatasetDriftMetric result not found in report — using defaults")
+        dataset_drift_result = {}
+
+    summary = {
+        "drift_detected": dataset_drift_result.get("dataset_drift", False),
+        "drift_score": dataset_drift_result.get("share_drifted_columns", 0.0),
+        "drifted_columns": dataset_drift_result.get("number_of_drifted_columns", 0),
+        "total_columns": dataset_drift_result.get("number_of_columns", 0),
+        "report_path": drift_html,
+        "threshold": threshold,
+    }
+
+    if summary["drift_detected"]:
+        logger.warning(
+            f"⚠️  DATA DRIFT DETECTED! "
+            f"Score: {summary['drift_score']:.3f} > threshold: {threshold}"
+        )
+        logger.warning("Consider retraining the model!")
+    else:
+        logger.info(f"✅ No significant drift. Score: {summary['drift_score']:.3f}")
+
+    return summary
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    summary = generate_drift_report()
+    print(f"\nDrift Summary: {summary}")</pre></div>
+</div>
+
+<!-- ═══ SECTION 23: PROMETHEUS ═══ -->
+<div class="sec" id="prometheus">
+<div class="sec-hdr"><div class="sico ia">📡</div><div class="stg"><div class="sl">Step 23</div><h2>Prometheus — Metrics Collection</h2></div></div>
+<div class="ex ei"><strong>Prometheus কী?</strong> System monitoring tool। প্রতি কয়েক সেকেন্ডে FastAPI এর <code>/metrics</code> endpoint থেকে data pull করে store করে। কতটা request আসছে, response time কত, কয়টা failure predict হচ্ছে — সব track করে।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> prometheus/prometheus.yml</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>global:
+  scrape_interval: 15s       # প্রতি ১৫ সেকেন্ডে metrics pull করবে
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+scrape_configs:
+  # FastAPI application metrics
+  - job_name: "fastapi_app"
+    static_configs:
+      - targets: ["api:8000"]
+    metrics_path: "/metrics"
+    scheme: "http"
+
+  # Prometheus নিজের metrics (self-monitoring)
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]</pre></div>
+</div>
+
+<!-- ═══ SECTION 24: GRAFANA ═══ -->
+<div class="sec" id="grafana">
+<div class="sec-hdr"><div class="sico ic">📊</div><div class="stg"><div class="sl">Step 24</div><h2>Grafana — Dashboard Setup</h2></div></div>
+<div class="ex ei"><strong>Grafana কী?</strong> Prometheus এর data নিয়ে সুন্দর interactive dashboard তৈরি করে। Recruiter এটা দেখলে বুঝবে তুমি production monitoring জানো।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> grafana/provisioning/datasources/prometheus.yml</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>apiVersion: 1
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> grafana/provisioning/dashboards/dashboard.yml</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>apiVersion: 1
+providers:
+  - name: "Default"
+    orgId: 1
+    folder: ""
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/dashboards</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> grafana/dashboards/mlops_dashboard.json</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>{
+  "title": "Predictive Maintenance MLOps",
+  "uid": "pm-mlops-v1",
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Total Predictions",
+      "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "expr": "sum(predictions_total)",
+        "legendFormat": "Total"
+      }],
+      "options": {"colorMode": "background"}
+    },
+    {
+      "type": "stat",
+      "title": "HIGH Risk Predictions",
+      "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "expr": "sum(predictions_total{risk_level=\"HIGH\"})",
+        "legendFormat": "High Risk"
+      }],
+      "options": {"colorMode": "background", "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": 0}]}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Request Rate (req/sec)",
+      "gridPos": {"x": 0, "y": 4, "w": 12, "h": 6},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "expr": "rate(api_requests_total[5m])",
+        "legendFormat": "{{endpoint}} {{status}}"
+      }]
+    },
+    {
+      "type": "timeseries",
+      "title": "API Latency (P95)",
+      "gridPos": {"x": 0, "y": 10, "w": 12, "h": 6},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "expr": "histogram_quantile(0.95, rate(request_duration_seconds_bucket[5m]))",
+        "legendFormat": "p95 {{endpoint}}"
+      }]
+    },
+    {
+      "type": "stat",
+      "title": "Cache Hit Rate",
+      "gridPos": {"x": 12, "y": 0, "w": 6, "h": 4},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "expr": "rate(cache_hits_total[5m]) / (rate(cache_hits_total[5m]) + rate(cache_misses_total[5m]))",
+        "legendFormat": "Hit Rate"
+      }]
+    }
+  ],
+  "refresh": "10s",
+  "time": {"from": "now-1h", "to": "now"}
+}</pre></div>
+</div>
+<!-- ═══ SECTION 25: DVC PIPELINE ═══ -->
+<div class="sec" id="dvc-pipeline">
+<div class="sec-hdr"><div class="sico ig">🔗</div><div class="stg"><div class="sl">Step 25</div><h2>DVC Pipeline — Automated Orchestration</h2></div></div>
+<div class="ex ei"><strong>DVC Pipeline কী?</strong> Preprocess → Feature Engineering → Train → Evaluate — এই chain কে define করে। একটা command এ পুরো pipeline চলে। আর smart: শুধু যে step এর input বদলেছে সেটাই rerun করে।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> dvc.yaml</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>stages:
+  preprocess:
+    cmd: python -m src.data.preprocess
+    deps:
+      - src/data/preprocess.py
+      - src/features/feature_engineering.py
+      - data/raw/predictive_maintenance.csv
+      - configs/data_config.yaml
+    outs:
+      - data/processed/train.parquet
+      - data/processed/test.parquet
+      - models/trained/scaler.pkl
+      - models/trained/label_encoder.pkl
+    params:
+      - configs/data_config.yaml:
+          - data.test_size
+          - data.random_state
+
+  train:
+    cmd: python -m src.models.train
+    deps:
+      - src/models/train.py
+      - data/processed/train.parquet
+      - data/processed/test.parquet
+      - configs/model_config.yaml
+      - configs/training_config.yaml
+    outs:
+      - models/trained/random_forest.pkl
+      - models/trained/xgboost.pkl
+    params:
+      - configs/model_config.yaml:
+          - models.random_forest
+          - models.xgboost
+
+  evaluate:
+    cmd: python -m src.models.evaluate
+    deps:
+      - src/models/evaluate.py
+      - data/processed/test.parquet
+      - models/trained/random_forest.pkl
+      - models/trained/xgboost.pkl
+    metrics:
+      - data/reports/metrics.json:
+          cache: false</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> params.yaml — DVC tracked hyperparameters</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>random_forest:
+  n_estimators: 200
+  max_depth: 15
+  random_state: 42
+
+xgboost:
+  n_estimators: 300
+  max_depth: 7
+  learning_rate: 0.05
+  random_state: 42</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — Pipeline চালাও</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># পুরো pipeline একটা command এ চালাও
+dvc repro
+
+# Metrics দেখো
+dvc metrics show
+
+# দুটো experiment compare করো
+dvc params diff HEAD~1
+
+# Pipeline visualize করো (ASCII diagram)
+dvc dag</pre></div>
+</div>
+
+<!-- ═══ SECTION 26: DOCKERFILE ═══ -->
+<div class="sec" id="dockerfile">
+<div class="sec-hdr"><div class="sico ib">🐳</div><div class="stg"><div class="sl">Step 26</div><h2>Dockerfile — FastAPI Containerize</h2></div></div>
+<div class="ex ei"><strong>Dockerfile কী?</strong> এটা একটা recipe। Docker এই recipe পড়ে একটা "image" বানায়। Image থেকে container run হয়। তোমার Ubuntu, recruiter এর Mac — সব জায়গায় same container same ভাবে চলবে।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> Dockerfile</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># Base image: Python 3.11 slim (ছোট size)
+FROM python:3.11-slim
+
+# Metadata
+LABEL maintainer="Your Name"
+LABEL description="Predictive Maintenance FastAPI Service"
+
+# Non-root user তৈরি করো (security best practice)
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Work directory
+WORKDIR /app
+
+# System dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Python dependencies আগে copy করো (Docker layer cache optimize)
+# এটা করলে code বদলালে dependencies আবার install হবে না
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Application code copy করো
+COPY src/ ./src/
+COPY configs/ ./configs/
+# NOTE: models/ folder copy করা হচ্ছে না কারণ:
+# 1. .gitignore তে আছে (DVC manage করে)
+# 2. Build time এ folder খালি থাকলে API startup এ crash করবে
+# 3. docker-compose.yml এ volume mount করা আছে: ./models:/app/models
+# models/ folder DVC দিয়ে: dvc pull করার পরে docker compose up দাও
+RUN mkdir -p /app/models/trained
+COPY .env.example .env
+
+# Ownership দাও
+RUN chown -R appuser:appuser /app
+
+# Non-root user তে switch করো
+USER appuser
+
+# Port expose করো
+EXPOSE 8000
+
+# Health check — Docker জানবে container healthy কি না
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# App start করো
+CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2", "--log-level", "info"]</pre></div>
+</div>
+
+<!-- ═══ SECTION 27: DOCKER COMPOSE ═══ -->
+<div class="sec" id="compose">
+<div class="sec-hdr"><div class="sico ic">🎼</div><div class="stg"><div class="sl">Step 27</div><h2>Docker Compose — সব Services একসাথে</h2></div></div>
+<div class="ex ei"><strong>Docker Compose কী?</strong> একা একা FastAPI, PostgreSQL, Redis, Kafka, Prometheus, Grafana চালানো কঠিন। Docker Compose একটা YAML file এ সব define করে — একটা command এ সব start হয়।</div>
+<div class="cl cw"><div class="ci">⚠️</div><div class="cb2"><strong>RAM usage:</strong> সব services একসাথে চালালে প্রায় ৬-৮GB RAM লাগবে। তোমার ১৬GB আছে, কোনো সমস্যা নেই।</div></div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> docker-compose.yml</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># version field removed — obsolete in Docker Compose V2 (docker compose v2.x)
+
+networks:
+  mlops-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mlflow_artifacts:
+  redis_data:
+  grafana_data:
+  prometheus_data:
+  bentoml_store:
+
+services:
+
+  # ── PostgreSQL: MLflow backend database ──────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: pm_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mlflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mlflow_password}
+      POSTGRES_DB: ${POSTGRES_DB:-mlflow}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - mlops-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mlflow}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── MLflow Tracking Server ───────────────────────────
+  mlflow:
+    image: python:3.11-slim
+    container_name: pm_mlflow
+    command: >
+      bash -c "pip install mlflow==2.13.0 psycopg2-binary==2.9.9 -q &&
+               mlflow server
+               --backend-store-uri postgresql://${POSTGRES_USER:-mlflow}:${POSTGRES_PASSWORD:-mlflow_password}@postgres/${POSTGRES_DB:-mlflow}
+               --default-artifact-root /mlartifacts
+               --host 0.0.0.0
+               --port 5000"
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_artifacts:/mlartifacts
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - mlops-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:5000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+
+  # ── Redis: Prediction Cache ──────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: pm_redis
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - mlops-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── Zookeeper: Kafka এর জন্য লাগে ───────────────────
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: pm_zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - mlops-net
+
+  # ── Apache Kafka: Message Streaming ─────────────────
+  kafka:
+    image: confluentinc/cp-kafka:7.6.0
+    container_name: pm_kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9093:9093"  # external access from host machine
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      - mlops-net
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 9092 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ── FastAPI Application ──────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pm_api
+    env_file:
+      - .env
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      REDIS_HOST: redis
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
+    depends_on:
+      mlflow:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      kafka:
+        condition: service_started
+    networks:
+      - mlops-net
+    restart: unless-stopped
+
+  # ── Kafka Producer (sensor simulator) ───────────────
+  kafka-producer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pm_producer
+    command: python -m src.streaming.kafka_producer
+    env_file:
+      - .env
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    depends_on:
+      kafka:
+        condition: service_healthy
+    networks:
+      - mlops-net
+    restart: unless-stopped
+
+  # ── Kafka Consumer (real-time predictions) ───────────
+  kafka-consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pm_consumer
+    command: python -m src.streaming.kafka_consumer
+    env_file:
+      - .env
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      KAFKA_CONSUMER_API_HOST: api
+      API_PORT: "8000"
+      # Note: Do NOT set API_HOST here — that overrides the bind address in other services.
+      # KAFKA_CONSUMER_API_HOST is used by kafka_consumer.py to reach the API container.
+    depends_on:
+      kafka:
+        condition: service_healthy
+      api:
+        condition: service_started
+    networks:
+      - mlops-net
+    restart: unless-stopped
+
+  # ── Prometheus: Metrics Collection ──────────────────
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: pm_prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=7d"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    depends_on:
+      - api
+    networks:
+      - mlops-net
+
+  # ── Grafana: Dashboards ──────────────────────────────
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: pm_grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/etc/grafana/dashboards
+    depends_on:
+      - prometheus
+    networks:
+      - mlops-net
+
+  # ── BentoML Service (optional — ML-native serving) ──
+  bentoml:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pm_bentoml
+    # প্রথমে model BentoML store এ save করতে হবে:
+    # python -c "from src.api.bento_service import save_model_to_bentoml; save_model_to_bentoml()"
+    command: bentoml serve src.api.bento_service:PredictiveMaintenanceService --port 3001 --host 0.0.0.0
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./models:/app/models
+      - bentoml_store:/root/bentoml
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    depends_on:
+      - mlflow
+    networks:
+      - mlops-net
+    profiles:
+      - bentoml  # শুধু চালাতে: docker compose --profile bentoml up bentoml</pre></div>
+</div>
+<!-- ═══ SECTION 28: TESTS ═══ -->
+<div class="sec" id="tests">
+<div class="sec-hdr"><div class="sico ig">🧪</div><div class="stg"><div class="sl">Step 28</div><h2>pytest — Automated Testing</h2></div></div>
+<div class="ex ei"><strong>Testing কেন?</strong> Code লিখলে bug থাকে। Test লিখলে automatic detect হয়। CI/CD এ test fail হলে buggy code automatically block হয়ে যায় — production এ যাবে না। Recruiter দেখবে তুমি code quality নিয়ে serious।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> tests/test_data.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""Data preprocessing এর tests।"""
+import pytest
+import pandas as pd
+import numpy as np
+from src.data.preprocess import clean_data, encode_features
+
+
+def make_sample_df():
+    """Test এর জন্য sample data।"""
+    return pd.DataFrame({
+        "Type": ["L", "M", "H", "M", "L"],
+        "Air temperature [K]": [298.1, 297.5, 300.0, 299.0, 296.0],
+        "Process temperature [K]": [308.6, 307.5, 310.0, 309.0, 306.0],
+        "Rotational speed [rpm]": [1551, 1408, 1500, 1300, 1700],
+        "Torque [Nm]": [42.8, 46.3, 55.0, 38.0, 40.0],
+        "Tool wear [min]": [0, 3, 100, 200, 50],
+        "Machine failure": [0, 0, 1, 0, 0],
+    })
+
+
+def test_clean_data_removes_duplicates():
+    """Duplicate rows remove হচ্ছে কি না।"""
+    df = make_sample_df()
+    df_with_dup = pd.concat([df, df.iloc[[0]]], ignore_index=True)
+    cleaned = clean_data(df_with_dup)
+    assert len(cleaned) == len(df)
+
+
+def test_clean_data_handles_missing():
+    """Missing values handle হচ্ছে কি না।"""
+    df = make_sample_df()
+    df.loc[0, "Torque [Nm]"] = None
+    cleaned = clean_data(df)
+    assert cleaned.isnull().sum().sum() == 0
+
+
+def test_encode_features_type_column(tmp_path):
+    """Type column encode হচ্ছে কি না।"""
+    df = make_sample_df()
+    encoder_path = str(tmp_path / "test_encoder.pkl")
+    encoded = encode_features(df, fit=True, encoder_path=encoder_path)
+    assert pd.api.types.is_integer_dtype(encoded["Type"]), \
+        f"Expected integer dtype, got {encoded['Type'].dtype}"
+    assert encoded["Type"].nunique() == 3
+
+
+def test_data_shape_preserved():
+    """Cleaning এ অযথা rows delete হচ্ছে না।"""
+    df = make_sample_df()
+    cleaned = clean_data(df)
+    assert len(cleaned) <= len(df)  # শুধু duplicates/NaN বাদ যাবে</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> tests/test_api.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""FastAPI endpoints এর tests।"""
+import pytest
+from fastapi.testclient import TestClient
+from unittest.mock import patch, MagicMock
+
+
+@pytest.fixture
+def client():
+    """Test client তৈরি করো।"""
+    with patch("src.api.main.redis_client", None):  # Redis mock
+        from src.api.main import app
+        with TestClient(app) as c:
+            yield c
+
+
+def test_root_endpoint(client):
+    """Root endpoint কাজ করছে কি না।"""
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "message" in response.json()
+
+
+def test_health_endpoint(client):
+    """Health check endpoint।"""
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "healthy"
+
+
+def test_predict_valid_input(client):
+    """Valid input দিয়ে prediction।"""
+    with patch("src.api.main.predict") as mock_predict:
+        mock_predict.return_value = {
+            "prediction": 0,
+            "probability": 0.05,
+            "failure_type": "No Failure",
+            "risk_level": "LOW",
+            # main.py তে result["cached"] = False set করে PredictionResponse build করে।
+            # predict() mock শুধু এই 4টা field return করলেই যথেষ্ট।
+        }
+        response = client.post("/predict", json={
+            "air_temperature": 298.1,
+            "process_temperature": 308.6,
+            "rotational_speed": 1551,
+            "torque": 42.8,
+            "tool_wear": 0,
+            "type": "M",
+        })
+    assert response.status_code == 200
+    data = response.json()
+    assert "prediction" in data
+    assert "probability" in data
+    assert data["prediction"] in [0, 1]
+
+
+def test_predict_invalid_type(client):
+    """Invalid machine type এ validation error।"""
+    response = client.post("/predict", json={
+        "air_temperature": 298.1,
+        "process_temperature": 308.6,
+        "rotational_speed": 1551,
+        "torque": 42.8,
+        "tool_wear": 0,
+        "type": "X",  # Invalid!
+    })
+    assert response.status_code == 422  # Validation error
+
+
+def test_predict_out_of_range(client):
+    """Out-of-range temperature validation।"""
+    response = client.post("/predict", json={
+        "air_temperature": 999.9,  # Way too high
+        "process_temperature": 308.6,
+        "rotational_speed": 1551,
+        "torque": 42.8,
+        "tool_wear": 0,
+        "type": "M",
+    })
+    assert response.status_code == 422</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> tests/test_features.py</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>"""Feature engineering tests।"""
+import pytest
+import pandas as pd
+import numpy as np
+from src.features.feature_engineering import (
+    add_temperature_features, add_power_features, add_wear_features
+)
+
+
+@pytest.fixture
+def sample_df():
+    return pd.DataFrame({
+        "air_temperature": [298.0, 300.0],
+        "process_temperature": [308.0, 310.0],
+        "rotational_speed": [1500.0, 2000.0],
+        "torque": [40.0, 55.0],
+        "tool_wear": [50.0, 100.0],
+    })
+
+
+def test_temperature_features_added(sample_df):
+    result = add_temperature_features(sample_df)
+    assert "temp_diff" in result.columns
+    assert "temp_ratio" in result.columns
+
+
+def test_temp_diff_calculation(sample_df):
+    result = add_temperature_features(sample_df)
+    expected = sample_df["process_temperature"] - sample_df["air_temperature"]
+    pd.testing.assert_series_equal(result["temp_diff"], expected, check_names=False)
+
+
+def test_power_features_added(sample_df):
+    result = add_power_features(sample_df)
+    assert "power_consumption" in result.columns
+    assert "power_wear_interaction" in result.columns
+
+
+def test_no_nan_in_features(sample_df):
+    result = add_temperature_features(sample_df)
+    result = add_power_features(result)
+    result = add_wear_features(result)
+    assert result.isnull().sum().sum() == 0</pre></div>
+
+<h3>pytest চালাও</h3>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># সব tests চালাও
+pytest tests/ -v
+
+# Coverage report সহ চালাও
+pytest tests/ -v --cov=src --cov-report=html --cov-report=term-missing
+
+# Coverage HTML report open করো
+xdg-open htmlcov/index.html  # Ubuntu এ</pre></div>
+</div>
+
+<!-- ═══ SECTION 29: PRE-COMMIT ═══ -->
+<div class="sec" id="precommit">
+<div class="sec-hdr"><div class="sico ia">🪝</div><div class="stg"><div class="sl">Step 29</div><h2>Pre-commit Hooks — Code Quality</h2></div></div>
+<div class="ex ei"><strong>Pre-commit hook কী?</strong> Git commit করার আগে automatic code check চলে। Code format ঠিক না থাকলে commit হবেই না। এটা ensure করে সব developer একই code style follow করে।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> .pre-commit-config.yaml</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>repos:
+  # Black: Python code auto-format
+  - repo: https://github.com/psf/black
+    rev: 24.4.2
+    hooks:
+      - id: black
+        language_version: python3.11
+
+  # isort: Import গুলো sort করে
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile", "black"]
+
+  # Flake8: Code style ও error check
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        args: ["--max-line-length=100", "--exclude=venv,__pycache__"]
+
+  # General hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace     # Line ending এর extra space remove
+      - id: end-of-file-fixer       # File এর শেষে newline ensure করে
+      - id: check-yaml              # YAML file valid কি না check
+      - id: check-json              # JSON file valid কি না check
+      - id: check-merge-conflict    # Merge conflict marker আছে কি না
+      - id: debug-statements        # পুরনো print/breakpoint remove
+      - id: check-added-large-files # ৫০০KB+ file commit হতে দেবে না
+        args: ["--maxkb=500"]</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — Pre-commit Install করো</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># Pre-commit install করো (একবারই করতে হয়)
+pre-commit install
+
+# সব files এ manually run করো
+pre-commit run --all-files
+
+# এখন থেকে git commit করলে automatic চলবে
+git add .
+git commit -m "feat: add pre-commit hooks"
+# Commit এর আগে black, isort, flake8 automatic চলবে</pre></div>
+</div>
+
+<!-- ═══ SECTION 30: CI/CD ═══ -->
+<div class="sec" id="cicd">
+<div class="sec-hdr"><div class="sico ir">🚀</div><div class="stg"><div class="sl">Step 30</div><h2>CI/CD — GitHub Actions</h2></div></div>
+<div class="ex ei"><strong>CI/CD কী?</strong><br>
+<strong>CI (Continuous Integration):</strong> Code push করলে automatic test ও lint চলে।<br>
+<strong>CD (Continuous Delivery):</strong> Test pass হলে automatic Docker image build ও push হয়।<br>
+এটা ensure করে — কোনো buggy code production এ যেতে পারবে না।
+</div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> .github/workflows/ci.yml — Continuous Integration</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>name: CI — Test & Lint
+
+# কখন চলবে: যেকোনো branch এ push বা PR create হলে
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint-and-test:
+    name: Lint & Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+      # Step 1: Code checkout
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Python setup
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      # Step 3: Dependencies install
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      # Step 4: Code format check (Black)
+      - name: Check code format (black)
+        run: black --check src/ tests/
+
+      # Step 5: Import sort check
+      - name: Check import order (isort)
+        run: isort --check-only --profile black src/ tests/
+
+      # Step 6: Lint check (flake8)
+      - name: Lint check (flake8)
+        run: flake8 src/ tests/ --max-line-length=100
+
+      # Step 7: Tests run করো
+      - name: Run tests with coverage
+        run: |
+          pytest tests/ -v \
+            --cov=src \
+            --cov-report=xml \
+            --cov-report=term-missing
+
+      # Step 8: Coverage report upload (GitHub PR তে দেখা যাবে)
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.xml
+          fail_ci_if_error: false
+
+  # Docker build test (আসল push নয়, শুধু build হয় কি না check)
+  docker-build-check:
+    name: Docker Build Verification
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image (no push)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: predictive-maintenance:test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max</pre></div>
+
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> .github/workflows/cd.yml — Continuous Delivery</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>name: CD — Build & Push Docker Image
+
+# কখন চলবে: main branch এ push হলে শুধু
+on:
+  push:
+    branches: [main]
+    tags:
+      - "v*"  # v1.0.0 এর মতো tag এ
+
+jobs:
+  build-and-push:
+    name: Build & Push to Docker Hub
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Docker Hub login (GitHub Secrets থেকে credentials)
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Image metadata (tag, label) তৈরি করো
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/predictive-maintenance-mlops
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=sha,prefix=sha-
+
+      # Build এবং push করো
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Deployment summary
+      - name: Summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Image: ${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Time: $(date)" >> $GITHUB_STEP_SUMMARY</pre></div>
+
+<h3>GitHub Secrets Setup</h3>
+<div class="ex ew"><strong>Secrets কী?</strong> Passwords, API keys code এ লেখা যাবে না। GitHub Secrets এ store করলে Actions এ use করা যায়, কিন্তু কেউ দেখতে পারে না।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> GitHub Secrets Add করো</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># GitHub Repository → Settings → Secrets and variables → Actions → New secret
+
+# এই secrets গুলো add করো:
+DOCKERHUB_USERNAME    = tomar_dockerhub_username
+DOCKERHUB_TOKEN       = dockerhub_access_token  # Docker Hub → Account Settings → Security → New Token</pre></div>
+</div>
+<!-- ═══ SECTION 31: MAKEFILE ═══ -->
+<div class="sec" id="makefile">
+<div class="sec-hdr"><div class="sico ib">⚡</div><div class="stg"><div class="sl">Step 31</div><h2>Makefile — Shortcut Commands</h2></div></div>
+<div class="ex ei"><strong>Makefile কী?</strong> Long commands কে short alias দেওয়া। <code>make train</code> লিখলে পুরো training pipeline চলবে। Recruiter দেখবে তুমি developer experience নিয়ে ভাবো।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> Makefile</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre>.PHONY: help setup install lint format test train pipeline docker-up docker-down clean-volumes logs mlflow-ui drift clean
+
+# Default: help দেখাও
+help:
+	@echo "Predictive Maintenance MLOps — Available Commands"
+	@echo "─────────────────────────────────────────────────"
+	@echo "  make setup        → Virtual env তৈরি ও dependencies install"
+	@echo "  make install      → Dependencies install"
+	@echo "  make lint         → Code quality check"
+	@echo "  make test         → Tests run করো"
+	@echo "  make download     → Kaggle dataset download"
+	@echo "  make train        → Model training চালাও (MLflow tracking সহ)"
+	@echo "  make pipeline     → DVC pipeline চালাও (preprocess → train → evaluate)"
+	@echo "  make docker-up      → সব Docker services start করো"
+	@echo "  make docker-down    → সব Docker services stop করো (volumes preserved)"
+	@echo "  make clean-volumes  → Services stop ও সব volumes delete করো (fresh start)"
+	@echo "  make mlflow-ui    → MLflow UI open করো"
+	@echo "  make drift        → Data drift check করো"
+	@echo "  make clean        → Build artifacts মুছে ফেলো"
+
+setup:
+	python3 -m venv venv
+	. venv/bin/activate && pip install --upgrade pip
+	. venv/bin/activate && pip install -r requirements.txt -r requirements-dev.txt
+	. venv/bin/activate && pre-commit install
+	cp .env.example .env
+	@echo "✅ Setup complete! 'source venv/bin/activate' দিয়ে activate করো।"
+
+install:
+	pip install -r requirements.txt -r requirements-dev.txt
+
+lint:
+	black --check src/ tests/
+	isort --check-only --profile black src/ tests/
+	flake8 src/ tests/ --max-line-length=100
+
+format:
+	black src/ tests/
+	isort --profile black src/ tests/
+
+test:
+	pytest tests/ -v --cov=src --cov-report=term-missing
+
+download:
+	python -m src.data.download_data
+
+train:
+	python -m src.models.train
+
+pipeline:
+	@echo "Note: data/raw/predictive_maintenance.csv না থাকলে আগে 'dvc pull' দাও"
+	dvc repro
+	dvc metrics show
+
+docker-up:
+	docker compose up --build -d
+	@echo "✅ All services started!"
+	@echo "  FastAPI:    http://localhost:8000/docs"
+	@echo "  MLflow:     http://localhost:5000"
+	@echo "  Grafana:    http://localhost:3000 (admin/admin)"
+	@echo "  Prometheus: http://localhost:9090"
+
+docker-down:
+	docker compose down
+	@echo "✅ All services stopped. (Data volumes preserved)"
+	@echo "  To also delete all volumes: make clean-volumes"
+
+clean-volumes:
+	docker compose down -v
+	@echo "✅ All services stopped and volumes deleted (fresh state)."
+
+logs:
+	docker compose logs -f api
+
+mlflow-ui:
+	@echo "MLflow UI → http://localhost:5000"
+	@xdg-open http://localhost:5000 2>/dev/null || open http://localhost:5000 2>/dev/null || true
+
+drift:
+	python -m src.monitoring.data_drift
+
+clean:
+	find . -type f -name "*.pyc" -delete
+	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null; true
+	rm -rf htmlcov/ .coverage
+	@echo "✅ Cleaned!"</pre></div>
+</div>
+
+<!-- ═══ SECTION 32: README ═══ -->
+<div class="sec" id="readme">
+<div class="sec-hdr"><div class="sico ig">📖</div><div class="stg"><div class="sl">Step 32</div><h2>README.md — Impressive Documentation</h2></div></div>
+<div class="ex ei"><strong>README হলো তোমার project এর "মুখ"।</strong> GitHub এ গেলে এটাই প্রথম দেখা যায়। Badges, architecture diagram, clear instructions — এটা দেখেই recruiter judge করবে।</div>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> README.md</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># 🏭 Predictive Maintenance MLOps Pipeline
+
+[![CI](https://github.com/YOUR_USERNAME/predictive-maintenance-mlops/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/predictive-maintenance-mlops/actions/workflows/ci.yml)
+[![CD](https://github.com/YOUR_USERNAME/predictive-maintenance-mlops/actions/workflows/cd.yml/badge.svg)](https://github.com/YOUR_USERNAME/predictive-maintenance-mlops/actions/workflows/cd.yml)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://python.org)
+[![Docker](https://img.shields.io/badge/docker-compose-2496ED.svg?logo=docker)](https://docker.com)
+[![MLflow](https://img.shields.io/badge/mlflow-2.13-0194E2.svg)](https://mlflow.org)
+[![DVC](https://img.shields.io/badge/dvc-3.50-945DD6.svg)](https://dvc.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+A **production-grade MLOps pipeline** that predicts industrial equipment failure before it happens.  
+Built on the [AI4I 2020 Predictive Maintenance Dataset](https://www.kaggle.com/datasets/stephanmatzka/predictive-maintenance-dataset-ai4i-2020).
+
+---
+
+## ✨ Features
+
+| Category | Tools |
+|---|---|
+| **ML Framework** | scikit-learn, XGBoost |
+| **Experiment Tracking** | MLflow + PostgreSQL backend |
+| **Data Versioning** | DVC + Google Drive remote |
+| **Model Serving** | FastAPI + BentoML |
+| **Stream Processing** | Apache Kafka + Zookeeper |
+| **Caching** | Redis |
+| **Monitoring** | Prometheus + Grafana + Evidently AI |
+| **CI/CD** | GitHub Actions |
+| **Containerization** | Docker + Docker Compose |
+| **Code Quality** | pre-commit, black, flake8, isort, pytest |
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────┐     ┌─────────────┐     ┌──────────────────┐
+│ Kaggle Data │────▶│  DVC Track  │────▶│  Google Drive    │
+└─────────────┘     └─────────────┘     └──────────────────┘
+                           │
+                           ▼
+              ┌────────────────────────┐
+              │   DVC Pipeline         │
+              │  preprocess → features │
+              │       → train          │
+              └────────────────────────┘
+                           │
+                    ┌──────▼──────┐
+                    │   MLflow    │
+                    │ + PostgreSQL│
+                    └──────┬──────┘
+                           │
+           ┌───────────────┼────────────────┐
+           ▼               ▼                ▼
+      ┌─────────┐    ┌──────────┐    ┌──────────┐
+      │ FastAPI │    │ BentoML  │    │  Redis   │
+      │  :8000  │    │  :3001   │    │ (Cache)  │
+      └────┬────┘    └──────────┘    └──────────┘
+           │
+    ┌──────┴───────┐
+    │    Kafka     │
+    │  Streaming   │
+    └──────┬───────┘
+           │
+    ┌──────┴────────────────┐
+    ▼                       ▼
+┌──────────┐         ┌──────────────┐
+│Prometheus│────────▶│   Grafana    │
+│  :9090   │         │    :3000     │
+└──────────┘         └──────────────┘
+```
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Docker Engine 24+
+- Docker Compose V2
+- Git
+
+### 3-Command Setup
+
+```bash
+# 1. Clone
+git clone https://github.com/YOUR_USERNAME/predictive-maintenance-mlops.git
+cd predictive-maintenance-mlops
+
+# 2. Environment
+cp .env.example .env
+
+# 3. Launch everything
+docker compose up --build
+```
+
+### 📍 Service URLs
+
+| Service | URL | Credentials |
+|---|---|---|
+| FastAPI Swagger | http://localhost:8000/docs | — |
+| MLflow UI | http://localhost:5000 | — |
+| Grafana | http://localhost:3000 | admin / admin |
+| Prometheus | http://localhost:9090 | — |
+| BentoML | http://localhost:3001 | — (চালাতে: `docker compose --profile bentoml up bentoml`) |
+
+### Test a Prediction
+
+```bash
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "air_temperature": 298.1,
+    "process_temperature": 308.6,
+    "rotational_speed": 1551,
+    "torque": 42.8,
+    "tool_wear": 0,
+    "type": "M"
+  }'
+```
+
+---
+
+## 🔧 Development Setup
+
+```bash
+# Virtual environment
+python3 -m venv venv && source venv/bin/activate
+
+# Dependencies
+make install
+
+# Pre-commit hooks
+pre-commit install
+
+# Run tests
+make test
+
+# Full ML pipeline
+make pipeline
+```
+
+---
+
+## 📊 Dataset
+
+**AI4I 2020 Predictive Maintenance** — 10,000 data points, 14 features  
+Sensor readings from a manufacturing system: air/process temperature, rotational speed, torque, tool wear.  
+**Target**: Binary machine failure (3.4% failure rate — imbalanced dataset).
+
+---
+
+## 🔬 ML Pipeline
+
+```
+Raw CSV → Preprocessing → Feature Engineering → Train (RF + XGBoost)
+       ↓ DVC tracks                              ↓ MLflow logs
+       Google Drive                          Model Registry (Production)
+```
+
+**Models**: RandomForest + XGBoost  
+**Handling imbalance**: class_weight="balanced" + scale_pos_weight  
+**Best model selection**: F1-score on test set
+
+---
+
+## 📡 Monitoring
+
+- **Data Drift**: Evidently AI generates HTML reports comparing training vs production data
+- **System Metrics**: Prometheus scrapes `/metrics` → Grafana dashboards
+- **Kafka Stream**: Real-time sensor simulation → live predictions
+
+---
+
+## 🧪 Testing
+
+```bash
+pytest tests/ -v --cov=src --cov-report=html
+```
+
+Coverage includes: data preprocessing, feature engineering, API endpoints, schemas.
+
+---
+
+## 📁 Project Structure
+
+```
+predictive-maintenance-mlops/
+├── .github/workflows/    ← CI/CD pipelines
+├── configs/              ← YAML configuration files
+├── data/                 ← DVC-tracked datasets
+├── grafana/              ← Dashboard provisioning
+├── models/               ← Trained model artifacts
+├── prometheus/           ← Metrics config
+├── src/
+│   ├── api/              ← FastAPI + BentoML serving
+│   ├── data/             ← Data loading & preprocessing
+│   ├── features/         ← Feature engineering
+│   ├── models/           ← Training, evaluation, prediction
+│   ├── monitoring/       ← Evidently + Prometheus metrics
+│   └── streaming/        ← Kafka producer & consumer
+├── tests/                ← pytest test suite
+├── docker-compose.yml    ← Full stack orchestration
+├── dvc.yaml              ← ML pipeline definition
+└── Makefile              ← Developer shortcuts
+```
+
+---
+
+## 📜 License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+*Built with ❤️ | MLOps Best Practices | Production-Ready*</pre></div>
+</div>
+
+<!-- ═══ SECTION 33: FINAL GIT PUSH ═══ -->
+<div class="sec" id="gitpush">
+<div class="sec-hdr"><div class="sico ig">📤</div><div class="stg"><div class="sl">Step 33</div><h2>Version Control Best Practices ও Final Push</h2></div></div>
+<div class="ex ei"><strong>Professional Git workflow মেনে চলো।</strong> Recruiter GitHub contribution graph ও commit history দেখে। Meaningless commit বা single giant commit — দুটোই খারাপ।</div>
+
+<h3>Git Branching Strategy</h3>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — Branch তৈরি ও কাজ করার workflow</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># main: production-ready code শুধু
+# develop: integration branch
+# feature/xyz: নতুন feature এর জন্য
+
+# নতুন feature branch তৈরি করো
+git checkout -b feature/add-kafka-streaming
+
+# কাজ করো, commit করো
+git add src/streaming/
+git commit -m "feat(streaming): add Kafka producer for sensor data simulation
+
+- Add generate_sensor_reading() with realistic distributions
+- Add 3% failure scenario simulation
+- Configure acks=all for durability"
+
+# develop এ merge করো
+git checkout develop
+git merge feature/add-kafka-streaming
+
+# main এ merge করো (release ready হলে)
+git checkout main
+git merge develop
+
+# Version tag দাও
+git tag -a v1.0.0 -m "Release v1.0.0: Full MLOps pipeline with monitoring"
+
+# সব push করো
+git push origin main develop
+git push origin v1.0.0</pre></div>
+
+<h3>সব Files এক সাথে Final Push</h3>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — Complete Final Push</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># সব নতুন files stage করো
+git add .
+
+# Status দেখো — কোন files add হবে
+git status
+
+# Comprehensive commit
+git commit -m "feat: complete MLOps pipeline implementation
+
+Core ML:
+- Add preprocessing pipeline with DVC tracking
+- Add feature engineering (temp, power, wear features)
+- Add XGBoost + RandomForest training with MLflow logging
+- Add model evaluation and registry promotion
+
+Serving:
+- Add FastAPI REST API with Redis caching
+- Add BentoML service for ML-native serving
+- Add Pydantic schemas for input validation
+
+Streaming:
+- Add Kafka producer (sensor data simulator)
+- Add Kafka consumer (real-time predictions)
+
+Monitoring:
+- Add Evidently data drift detection
+- Add Prometheus metrics (requests, predictions, cache)
+- Add Grafana dashboard provisioning
+
+Infrastructure:
+- Add Docker Compose (15 services)
+- Add GitHub Actions CI/CD
+- Add pre-commit hooks
+- Add comprehensive pytest test suite
+- Add Makefile developer shortcuts"
+
+# Push করো
+git push origin main
+
+echo "🎉 Project successfully pushed to GitHub!"</pre></div>
+
+<h3>DVC Data Push</h3>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — Data ও Model Push</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># Data ও trained models Google Drive এ push করো
+dvc push
+
+# অন্য machine এ pull করতে:
+# git clone &lt;repo-url&gt;
+# dvc pull   ← Google Drive থেকে data নামিয়ে আনবে</pre></div>
+
+<h3>সব কিছু চালু করো — Final Check</h3>
+<div class="cb"><div class="ch"><div class="cf"><span class="d dr"></span><span class="d dy"></span><span class="d dg"></span> terminal — Full System Start</div><button class="cpb" onclick="copyCode(this)">Copy</button></div>
+<pre># সব services একসাথে start করো (background এ)
+docker compose up -d
+
+# সব containers এর status দেখো
+docker compose ps
+
+# API logs দেখো (live)
+docker compose logs -f api
+
+# সব services এর logs একসাথে
+docker compose logs -f
+
+# ML pipeline চালাও (docker এর বাইরে, venv activate করে)
+source venv/bin/activate
+dvc repro          # preprocess → train → evaluate
+
+# কোনো service restart করতে হলে
+docker compose restart api
+
+# সব বন্ধ করতে (data volumes preserved)
+docker compose down
+
+# Data সহ সব মুছে ফেলতে (fresh start — MLflow data, Grafana dashboards সব যাবে)
+docker compose down -v</pre></div>
+</div>
+
+<div class="div"></div>
+
+<!-- FINAL SUMMARY -->
+<div style="background:var(--bg3);border:1px solid var(--border2);border-radius:16px;padding:32px;margin-top:32px;text-align:center">
+<div style="font-size:40px;margin-bottom:16px">🎉</div>
+<div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff;margin-bottom:12px">Project Complete!</div>
+<p style="color:var(--text2);max-width:600px;margin:0 auto 24px">তুমি এখন একটা industry-grade MLOps project তৈরি করেছো। এটা resume তে লিখলে এবং GitHub এ রাখলে recruiter দেখবে তুমি শুধু ML না — পুরো production pipeline জানো।</p>
+<div class="br" style="justify-content:center">
+<span class="bdg bc">MLflow ✓</span>
+<span class="bdg bg">DVC ✓</span>
+<span class="bdg bp">FastAPI ✓</span>
+<span class="bdg bb">BentoML ✓</span>
+<span class="bdg bc">Kafka ✓</span>
+<span class="bdg ba">Prometheus ✓</span>
+<span class="bdg bg">Grafana ✓</span>
+<span class="bdg bb">PostgreSQL ✓</span>
+<span class="bdg bp">Redis ✓</span>
+<span class="bdg brd">GitHub Actions ✓</span>
+<span class="bdg bg">Evidently ✓</span>
+<span class="bdg ba">Docker ✓</span>
+<span class="bdg bc">pytest ✓</span>
+<span class="bdg bp">pre-commit ✓</span>
+</div>
+</div>
+
+</div><!-- end content -->
+</div><!-- end main -->
+<script>
+function copyCode(btn) {
+  var pre = btn.closest('.cb').querySelector('pre');
+  if (!pre) return;
+  var text = pre.innerText || pre.textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(function() {
+    // Fallback for older browsers
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// Sidebar active link highlight on scroll
+(function() {
+  var links = document.querySelectorAll('#sb .ni');
+  var sections = [];
+  links.forEach(function(link) {
+    var id = link.getAttribute('href');
+    if (id && id.startsWith('#')) {
+      var el = document.getElementById(id.slice(1));
+      if (el) sections.push({ el: el, link: link });
+    }
+  });
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        sections.forEach(function(s) { s.link.style.borderLeftColor = 'transparent'; s.link.style.color = ''; });
+        var active = sections.find(function(s) { return s.el === entry.target; });
+        if (active) {
+          active.link.style.borderLeftColor = 'var(--accent)';
+          active.link.style.color = 'var(--text)';
+        }
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  sections.forEach(function(s) { observer.observe(s.el); });
+})();
+</script>
+</body>
+</html>

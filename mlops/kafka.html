@@ -1,0 +1,2117 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apache Kafka - সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f1a;
+    --bg2: #131629;
+    --bg3: #1a1f35;
+    --card: #1e2440;
+    --card2: #252b48;
+    --accent: #f7c948;
+    --accent2: #ff6b6b;
+    --accent3: #4ecdc4;
+    --accent4: #a29bfe;
+    --text: #e8eaf6;
+    --text2: #b0b8d8;
+    --text3: #7b84a8;
+    --green: #55efc4;
+    --orange: #fd9644;
+    --border: rgba(247,201,72,0.15);
+    --shadow: 0 8px 40px rgba(0,0,0,0.5);
+    --radius: 16px;
+    --code-bg: #0a0c18;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 18px;
+    line-height: 1.8;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+  /* HEADER */
+  .hero {
+    background: linear-gradient(135deg, #0d0f1a 0%, #1a1035 50%, #0d1a2a 100%);
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 2px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 60% 40%, rgba(247,201,72,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 30% 70%, rgba(78,205,196,0.06) 0%, transparent 60%);
+    animation: pulse 8s ease-in-out infinite alternate;
+  }
+  @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(247,201,72,0.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 50px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    color: var(--accent);
+    line-height: 1.1;
+    margin-bottom: 12px;
+    position: relative;
+    text-shadow: 0 0 40px rgba(247,201,72,0.3);
+  }
+  .hero-sub {
+    font-size: 1.2rem;
+    color: var(--text2);
+    max-width: 600px;
+    margin: 0 auto 30px;
+    position: relative;
+  }
+  .hero-kafka-logo {
+    position: relative;
+    margin: 30px auto 0;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,15,26,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  nav ul {
+    display: inline-flex;
+    gap: 0;
+    list-style: none;
+    padding: 0;
+    min-width: 100%;
+  }
+  nav a {
+    display: block;
+    padding: 16px 20px;
+    color: var(--text3);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+    border-bottom: 2px solid transparent;
+  }
+  nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN */
+  main { max-width: 1000px; margin: 0 auto; padding: 40px 24px 100px; }
+
+  /* SECTIONS */
+  section { margin-bottom: 80px; }
+  .section-label {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    color: var(--text);
+    margin-bottom: 24px;
+    line-height: 1.2;
+  }
+  h2 span { color: var(--accent); }
+  h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--accent3);
+    margin: 32px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h3::before { content: '▶'; font-size: 0.7rem; color: var(--accent); }
+  h4 {
+    font-size: 1.1rem;
+    color: var(--orange);
+    margin: 20px 0 8px;
+    font-weight: 600;
+  }
+
+  p { color: var(--text2); margin-bottom: 16px; }
+  p strong { color: var(--text); font-weight: 600; }
+  p em { color: var(--accent3); font-style: normal; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin: 24px 0;
+    box-shadow: var(--shadow);
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .card-item {
+    background: var(--card2);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 20px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .card-item:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .card-item .icon { font-size: 2rem; margin-bottom: 10px; }
+  .card-item h4 { margin: 0 0 8px; color: var(--accent); font-size: 1rem; }
+  .card-item p { font-size: 0.9rem; color: var(--text3); margin: 0; }
+
+  /* HIGHLIGHT BOXES */
+  .highlight {
+    border-left: 4px solid var(--accent);
+    background: rgba(247,201,72,0.05);
+    border-radius: 0 12px 12px 0;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .highlight.blue { border-color: var(--accent4); background: rgba(162,155,254,0.05); }
+  .highlight.green { border-color: var(--green); background: rgba(85,239,196,0.05); }
+  .highlight.red { border-color: var(--accent2); background: rgba(255,107,107,0.05); }
+  .highlight.teal { border-color: var(--accent3); background: rgba(78,205,196,0.05); }
+  .highlight-title {
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+  }
+  .highlight.blue .highlight-title { color: var(--accent4); }
+  .highlight.green .highlight-title { color: var(--green); }
+  .highlight.red .highlight-title { color: var(--accent2); }
+  .highlight.teal .highlight-title { color: var(--accent3); }
+  .highlight p { margin: 0; font-size: 0.95rem; }
+
+  /* CODE */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid rgba(247,201,72,0.2);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+  .code-header {
+    background: rgba(247,201,72,0.08);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid rgba(247,201,72,0.15);
+  }
+  .code-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .code-dot.r { background: #ff5f57; }
+  .code-dot.y { background: #ffbd2e; }
+  .code-dot.g { background: #28c840; }
+  .code-label { font-size: 12px; color: var(--text3); margin-left: auto; font-family: 'Fira Code', monospace; }
+  pre {
+    padding: 20px;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #abb2bf;
+  }
+  .kw { color: #c678dd; }
+  .fn { color: #61afef; }
+  .str { color: #98c379; }
+  .num { color: #d19a66; }
+  .cm { color: #5c6370; font-style: italic; }
+  .var { color: #e06c75; }
+  .op { color: #56b6c2; }
+
+  /* SVG DIAGRAM CONTAINERS */
+  .diagram-wrap {
+    margin: 30px 0;
+    text-align: center;
+  }
+  .diagram-title {
+    font-size: 0.85rem;
+    color: var(--text3);
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; margin: 20px 0; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: rgba(247,201,72,0.1);
+    color: var(--accent);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: var(--text2);
+    font-size: 0.95rem;
+  }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* STEP LIST */
+  .steps { counter-reset: step; }
+  .step {
+    counter-increment: step;
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+    align-items: flex-start;
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--accent);
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .step-content { flex: 1; }
+  .step-content p { margin: 4px 0 0; }
+
+  /* QUIZ */
+  .quiz-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin: 20px 0;
+  }
+  .quiz-q {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+  }
+  .quiz-opt {
+    display: block;
+    padding: 12px 18px;
+    margin: 8px 0;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--text2);
+    transition: all 0.2s;
+    font-size: 0.95rem;
+  }
+  .quiz-opt:hover { border-color: var(--accent); color: var(--accent); }
+  .quiz-opt.correct { border-color: var(--green); background: rgba(85,239,196,0.1); color: var(--green); }
+  .quiz-opt.wrong { border-color: var(--accent2); background: rgba(255,107,107,0.1); color: var(--accent2); }
+  .quiz-explain {
+    display: none;
+    margin-top: 16px;
+    padding: 14px;
+    background: rgba(247,201,72,0.05);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent);
+    color: var(--text2);
+    font-size: 0.9rem;
+  }
+  .quiz-explain.show { display: block; }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 4px;
+  }
+  .badge.yellow { background: rgba(247,201,72,0.15); color: var(--accent); border: 1px solid rgba(247,201,72,0.3); }
+  .badge.teal { background: rgba(78,205,196,0.15); color: var(--accent3); border: 1px solid rgba(78,205,196,0.3); }
+  .badge.red { background: rgba(255,107,107,0.15); color: var(--accent2); border: 1px solid rgba(255,107,107,0.3); }
+  .badge.purple { background: rgba(162,155,254,0.15); color: var(--accent4); border: 1px solid rgba(162,155,254,0.3); }
+
+  /* RESPONSIVE */
+
+  /* SILLY NOTES */
+  .silly-note {
+    background: rgba(253,150,68,0.07);
+    border: 1px solid rgba(253,150,68,0.28);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 0.92rem;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+  .silly-note strong { color: var(--orange); }
+
+  /* DATASET TABLE */
+  .dataset-table td:first-child {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    color: var(--accent3);
+  }
+  code {
+    background: rgba(247,201,72,0.08);
+    border: 1px solid rgba(247,201,72,0.2);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.88em;
+    color: var(--accent);
+  }
+
+  /* BADGE green */
+  .badge.green { background: rgba(85,239,196,0.15); color: var(--green); border: 1px solid rgba(85,239,196,0.3); }
+
+  @media (max-width: 640px) {
+    main { padding: 24px 16px 80px; }
+    .hero { padding: 60px 20px 40px; }
+    .card { padding: 20px; }
+    pre { font-size: 12px; }
+  }
+
+  /* SCROLL REVEAL ANIMATION */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* TOC */
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin: 40px 0;
+  }
+  .toc h3 { color: var(--accent); margin: 0 0 16px; }
+  .toc h3::before { display: none; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 8px 0; }
+  .toc a { color: var(--text2); text-decoration: none; font-size: 0.95rem; }
+  .toc a:hover { color: var(--accent); }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    margin: 40px 0;
+    opacity: 0.3;
+  }
+
+  /* COMPARISON */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .compare-col { padding: 20px; border-radius: 12px; }
+  .compare-col.bad { background: rgba(255,107,107,0.05); border: 1px solid rgba(255,107,107,0.2); }
+  .compare-col.good { background: rgba(85,239,196,0.05); border: 1px solid rgba(85,239,196,0.2); }
+  .compare-col h4 { margin: 0 0 12px; }
+  .compare-col.bad h4 { color: var(--accent2); }
+  .compare-col.good h4 { color: var(--green); }
+  .compare-col ul { padding-left: 20px; }
+  .compare-col li { color: var(--text2); font-size: 0.9rem; margin: 6px 0; }
+
+  @media (max-width: 600px) { .compare { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">সম্পূর্ণ বাংলা গাইড</div>
+  <h1>Apache Kafka</h1>
+  <p class="hero-sub">একজন নতুন শিক্ষার্থীর জন্য — শুরু থেকে শেষ পর্যন্ত, সবকিছু বাংলায়</p>
+  
+  <!-- Kafka Logo SVG -->
+  <div class="hero-kafka-logo">
+    <svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="60" cy="20" r="14" fill="none" stroke="#f7c948" stroke-width="3"/>
+      <circle cx="20" cy="85" r="14" fill="none" stroke="#f7c948" stroke-width="3"/>
+      <circle cx="100" cy="85" r="14" fill="none" stroke="#f7c948" stroke-width="3"/>
+      <circle cx="60" cy="55" r="8" fill="#f7c948"/>
+      <line x1="60" y1="34" x2="60" y2="47" stroke="#f7c948" stroke-width="2.5"/>
+      <line x1="52" y1="59" x2="28" y2="74" stroke="#f7c948" stroke-width="2.5"/>
+      <line x1="68" y1="59" x2="92" y2="74" stroke="#f7c948" stroke-width="2.5"/>
+      <circle cx="60" cy="20" r="7" fill="#f7c948"/>
+      <circle cx="20" cy="85" r="7" fill="#f7c948"/>
+      <circle cx="100" cy="85" r="7" fill="#f7c948"/>
+    </svg>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <ul>
+    <li><a href="#intro">পরিচিতি</a></li>
+    <li><a href="#problem">সমস্যা</a></li>
+    <li><a href="#msgqueue">Msg Queue</a></li>
+    <li><a href="#pubsub">Pub/Sub</a></li>
+    <li><a href="#architecture">আর্কিটেকচার</a></li>
+    <li><a href="#topics">Topic/Partition</a></li>
+    <li><a href="#connect">Kafka Connect</a></li>
+    <li><a href="#streams">Kafka Streams</a></li>
+    <li><a href="#setup">Setup</a></li>
+    <li><a href="#python">Python</a></li>
+    <li><a href="#advanced">Advanced</a></li>
+    <li><a href="#dataset">Dummy Data</a></li>
+    <li><a href="#quiz">MCQ</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- TABLE OF CONTENTS -->
+  <div class="toc reveal">
+    <h3>📋 বিষয়সূচি</h3>
+    <ol>
+      <li><a href="#intro">Kafka কী? — সহজ ভাষায় পরিচিতি</a></li>
+      <li><a href="#problem">সমস্যাটা আসলে কী? — কেন Kafka দরকার হলো</a></li>
+      <li><a href="#msgqueue">Message Queue — প্রথম সমাধান</a></li>
+      <li><a href="#pubsub">Publish-Subscribe — Kafka-র আসল পদ্ধতি</a></li>
+      <li><a href="#architecture">Kafka-র ভেতরের গঠন (Distributed Architecture)</a></li>
+      <li><a href="#topics">Topic, Partition, Offset, Broker — সব কিছু ব্যাখ্যা</a></li>
+      <li><a href="#connect">Kafka Connect — অন্য সিস্টেমের সাথে সংযোগ</a></li>
+      <li><a href="#streams">Kafka Streams — রিয়েলটাইম ডেটা প্রসেসিং</a></li>
+      <li><a href="#setup">Docker দিয়ে Kafka চালু করা</a></li>
+      <li><a href="#python">Python দিয়ে Kafka ব্যবহার</a></li>
+      <li><a href="#advanced">Advanced Python Client</a></li>
+      <li><a href="#quiz">MCQ — নিজেকে যাচাই করো</a></li>
+    </ol>
+  </div>
+
+  <!-- ===================== SECTION 1: INTRO ===================== -->
+  <section id="intro" class="reveal">
+    <div class="section-label">অধ্যায় ০১</div>
+    <h2>Kafka কী? <span>সহজ ভাষায়</span></h2>
+
+    <p>
+      <strong>Apache Kafka</strong> হলো একটি টুল যেটা দিয়ে এক সিস্টেম থেকে আরেক সিস্টেমে <em>রিয়েলটাইমে ডেটা পাঠানো যায়</em>। 
+      এটা মূলত LinkedIn তৈরি করেছিল, তারপর ২০১১ সালে Open Source হিসেবে ছেড়ে দেয়।
+    </p>
+
+    <div class="highlight green">
+      <div class="highlight-title">🎯 সহজ উপমা</div>
+      <p>কল্পনা করো একটা <strong>ডাকঘর (Post Office)</strong> — অনেক মানুষ চিঠি দেয়, আর অনেক মানুষ সেই চিঠি পায়। Kafka হলো সেই ডাকঘর, শুধু পার্থক্য হলো এখানে চিঠি কোটি কোটি, আর সব কিছু হয় <em>একটা সেকেন্ডের মধ্যে</em>।</p>
+    </div>
+
+    <p>অনেকেই Kafka-কে বিভিন্নভাবে সংজ্ঞায়িত করে:</p>
+
+    <div class="card-grid">
+      <div class="card-item">
+        <div class="icon">📨</div>
+        <h4>Message Broker</h4>
+        <p>এক জায়গা থেকে বার্তা নিয়ে অন্য জায়গায় দেওয়া</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🔄</div>
+        <h4>ETL Tool</h4>
+        <p>Extract → Transform → Load — ডেটা এক সিস্টেম থেকে অন্যটায় নেওয়া</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🗄️</div>
+        <h4>Database</h4>
+        <p>কিছু ক্ষেত্রে ডেটা স্টোরেজ হিসেবেও ব্যবহার হয়</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🌊</div>
+        <h4>Streaming Platform</h4>
+        <p>সঠিক সংজ্ঞা — একটা Distributed Streaming Platform</p>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <div class="highlight-title">✅ সরকারি সংজ্ঞা</div>
+      <p>Kafka হলো একটি <strong>Distributed Event Streaming Platform</strong> — মানে, অনেক সার্ভারে ছড়িয়ে থাকা, রিয়েলটাইমে ইভেন্ট (ঘটনা/বার্তা) প্রসেস করার একটি প্ল্যাটফর্ম।</p>
+    </div>
+
+    <h3>Kafka কেন এত জনপ্রিয়?</h3>
+    <p>Kafka-র জনপ্রিয়তার ৪টি মূল কারণ আছে:</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">১</div>
+        <div class="step-content">
+          <strong style="color:var(--accent)">Publish-Subscribe পদ্ধতি</strong>
+          <p>এক সিস্টেম বার্তা "ছাড়ে", অন্য সিস্টেম সেটা "ধরে" — সরাসরি যোগাযোগ না করে</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">২</div>
+        <div class="step-content">
+          <strong style="color:var(--accent)">Distributed Architecture (স্কেলেবিলিটি)</strong>
+          <p>অনেক সার্ভার মিলে কাজ করে, তাই কোটি কোটি বার্তাও সামলাতে পারে</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">৩</div>
+        <div class="step-content">
+          <strong style="color:var(--accent)">Connector System (Kafka Connect)</strong>
+          <p>MongoDB, MySQL, ElasticSearch ইত্যাদির সাথে সহজে সংযোগ করা যায়</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">৪</div>
+        <div class="step-content">
+          <strong style="color:var(--accent)">Stream Processing (Kafka Streams)</strong>
+          <p>ডেটা আসার সাথে সাথে সেটা প্রসেস করা, ফিল্টার করা, ট্রান্সফর্ম করা যায়</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 2: PROBLEM ===================== -->
+  <section id="problem" class="reveal">
+    <div class="section-label">অধ্যায় ০২</div>
+    <h2>সমস্যাটা <span>আসলে কী?</span></h2>
+
+    <p>
+      Kafka কেন তৈরি হয়েছিল সেটা বুঝতে হলে আগে সমস্যাটা বুঝতে হবে।
+    </p>
+
+    <h3>বাস্তব জীবনের উদাহরণ</h3>
+    <p>
+      ধরো তোমার কোম্পানিতে ৩টা সিস্টেম আছে:
+    </p>
+    <ul style="padding-left:24px; color:var(--text2); line-height:2.2;">
+      <li>🛒 <strong style="color:var(--text)">Orders Management</strong> — অর্ডার ম্যানেজমেন্ট সিস্টেম</li>
+      <li>📦 <strong style="color:var(--text)">Stock Management</strong> — স্টক ম্যানেজমেন্ট সিস্টেম</li>
+      <li>📧 <strong style="color:var(--text)">Email Notification</strong> — ইমেইল নোটিফিকেশন সিস্টেম</li>
+    </ul>
+
+    <p>যখন কেউ অর্ডার দেয়, তখন:</p>
+
+    <!-- Diagram 1: Simple problem -->
+    <div class="diagram-wrap">
+      <svg width="100%" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" style="max-width:600px;">
+        <defs>
+          <marker id="arr1" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#f7c948"/>
+          </marker>
+        </defs>
+        <!-- Orders box -->
+        <rect x="10" y="60" width="140" height="80" rx="12" fill="#1e2440" stroke="#f7c948" stroke-width="2"/>
+        <text x="80" y="95" text-anchor="middle" fill="#f7c948" font-size="14" font-family="Hind Siliguri">🛒 Orders</text>
+        <text x="80" y="118" text-anchor="middle" fill="#b0b8d8" font-size="12" font-family="Hind Siliguri">Management</text>
+        <!-- Arrow 1 -->
+        <line x1="150" y1="100" x2="220" y2="70" stroke="#f7c948" stroke-width="2" marker-end="url(#arr1)" stroke-dasharray="5,3"/>
+        <!-- Arrow 2 -->
+        <line x1="150" y1="100" x2="220" y2="130" stroke="#f7c948" stroke-width="2" marker-end="url(#arr1)" stroke-dasharray="5,3"/>
+        <!-- Stock box -->
+        <rect x="230" y="40" width="140" height="60" rx="12" fill="#1e2440" stroke="#4ecdc4" stroke-width="2"/>
+        <text x="300" y="68" text-anchor="middle" fill="#4ecdc4" font-size="14" font-family="Hind Siliguri">📦 Stock</text>
+        <text x="300" y="88" text-anchor="middle" fill="#b0b8d8" font-size="12" font-family="Hind Siliguri">Management</text>
+        <!-- Email box -->
+        <rect x="230" y="110" width="140" height="60" rx="12" fill="#1e2440" stroke="#a29bfe" stroke-width="2"/>
+        <text x="300" y="138" text-anchor="middle" fill="#a29bfe" font-size="14" font-family="Hind Siliguri">📧 Email</text>
+        <text x="300" y="158" text-anchor="middle" fill="#b0b8d8" font-size="12" font-family="Hind Siliguri">Notification</text>
+        <!-- Question mark -->
+        <text x="185" y="100" text-anchor="middle" fill="#ff6b6b" font-size="28" font-weight="bold">?</text>
+      </svg>
+      <p class="diagram-title">চিত্র ১: Orders সিস্টেম থেকে অন্য সিস্টেমে ডেটা পাঠাতে হবে — কীভাবে?</p>
+    </div>
+
+    <h3>প্রথম সমাধান: সরাসরি API Call</h3>
+    <p>সবচেয়ে সহজ উপায় হলো Orders সিস্টেম সরাসরি Stock সিস্টেমের <strong>API call</strong> করবে।</p>
+    <div class="silly-note"><strong>🤔 API Call মানে কী? (silly মনে হলেও জানা দরকার!)</strong><br>ধরো তুমি রেস্তোরাঁয় বসে ওয়েটারকে ডেকে অর্ডার দিলে — সেটা API call-এর মতো। তুমি সরাসরি রান্নাঘরে গেলে না, ওয়েটারের মাধ্যমে বার্তা গেল। এখানে Orders সিস্টেম = "তুমি", Stock সিস্টেম = "রান্নাঘর", HTTP Request = "ওয়েটার"। যদি রান্নাঘর বন্ধ থাকে (down), ওয়েটার ফিরে আসবে ব্যর্থ হয়ে!</div>
+
+    <div class="compare">
+      <div class="compare-col bad">
+        <h4>❌ সমস্যা কী?</h4>
+        <ul>
+          <li>Stock সিস্টেম যদি down থাকে?</li>
+          <li>API call fail করবে</li>
+          <li>স্টক update হবে না</li>
+          <li>Stock-out হয়ে যাবে!</li>
+          <li>নতুন সিস্টেম যোগ হলে জটিলতা বাড়বে</li>
+        </ul>
+      </div>
+      <div class="compare-col good">
+        <h4>✅ দরকার কী?</h4>
+        <ul>
+          <li>Stock down থাকলেও বার্তা রাখতে পারা</li>
+          <li>পরে Stock উঠলে বার্তা পাওয়া</li>
+          <li>একই বার্তা Email সিস্টেমও পাওয়া</li>
+          <li>সহজে নতুন সিস্টেম যোগ করা</li>
+          <li>সিস্টেমগুলো একে অপরের উপর নির্ভরশীল না হওয়া</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 3: MESSAGE QUEUE ===================== -->
+  <section id="msgqueue" class="reveal">
+    <div class="section-label">অধ্যায় ০৩</div>
+    <h2>Message Queue — <span>প্রথম সমাধান</span></h2>
+
+    <p>
+      এই সমস্যার প্রথম সমাধান হলো <strong>Message Queue</strong> — একটা সারি (queue) যেখানে বার্তা জমা থাকে।
+    </p>
+
+    <div class="highlight teal">
+      <div class="highlight-title">📬 Message Queue কী?</div>
+      <p>Message Queue হলো একটা <em>Asynchronous (অ-সমকালীন)</em> পদ্ধতি যেখানে পাঠানো বার্তা একটা "লাইনে" জমা হয়। টার্গেট সিস্টেম যখন প্রস্তুত থাকবে, তখন সেই বার্তাগুলো প্রসেস করবে।</p>
+    </div>
+    <div class="silly-note"><strong>🤔 Asynchronous মানে কী?</strong><br><strong>Synchronous (সমকালীন):</strong> তুমি দোকানে ফোন করলে — দোকানদার ধরল, কথা হলো, শেষ। দুজন একই সময়ে কথা বলল।<br><strong>Asynchronous (অ-সমকালীন):</strong> তুমি WhatsApp message পাঠালে — দোকানদার এখন ব্যস্ত, পরে দেখবে। তোমাকে অপেক্ষা করতে হলো না। Message Queue এভাবে কাজ করে!</div>
+    <div class="silly-note"><strong>🤔 FIFO মানে কী?</strong><br>First In, First Out — মুদির দোকানে লাইন ধরার মতো। যে আগে এসেছে সে আগে সার্ভিস পাবে। বার্তা #১ আগে Queue-তে গেলে, #১ আগে প্রসেস হবে, তারপর #২, তারপর #৩। উল্টোটা হলো LIFO (Last In First Out) — যেমন stack of plates।</div>
+
+    <!-- Diagram: Message Queue -->
+    <div class="diagram-wrap">
+      <svg width="100%" viewBox="0 0 560 300" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;">
+        <defs>
+          <marker id="arr2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#4ecdc4"/>
+          </marker>
+        </defs>
+        <!-- Orders -->
+        <rect x="10" y="110" width="120" height="80" rx="12" fill="#1e2440" stroke="#f7c948" stroke-width="2"/>
+        <text x="70" y="148" text-anchor="middle" fill="#f7c948" font-size="13" font-family="Hind Siliguri">🛒 Orders</text>
+        <text x="70" y="168" text-anchor="middle" fill="#b0b8d8" font-size="11" font-family="Hind Siliguri">Management</text>
+        <!-- Arrow to queue -->
+        <line x1="130" y1="150" x2="193" y2="150" stroke="#4ecdc4" stroke-width="2.5" marker-end="url(#arr2)"/>
+        <!-- Queue box -->
+        <rect x="195" y="70" width="160" height="160" rx="12" fill="#131629" stroke="#4ecdc4" stroke-width="2"/>
+        <text x="275" y="100" text-anchor="middle" fill="#4ecdc4" font-size="12" font-family="Hind Siliguri">📥 Message Queue</text>
+        <!-- Messages in queue -->
+        <rect x="215" y="108" width="120" height="28" rx="6" fill="#252b48" stroke="#f7c948" stroke-width="1"/>
+        <text x="275" y="127" text-anchor="middle" fill="#f7c948" font-size="11" font-family="Hind Siliguri">✉ বার্তা #১</text>
+        <rect x="215" y="142" width="120" height="28" rx="6" fill="#252b48" stroke="#f7c948" stroke-width="1"/>
+        <text x="275" y="161" text-anchor="middle" fill="#f7c948" font-size="11" font-family="Hind Siliguri">✉ বার্তা #২</text>
+        <rect x="215" y="176" width="120" height="28" rx="6" fill="#252b48" stroke="#f7c948" stroke-width="1"/>
+        <text x="275" y="195" text-anchor="middle" fill="#f7c948" font-size="11" font-family="Hind Siliguri">✉ বার্তা #৩</text>
+        <!-- FIFO label -->
+        <text x="275" y="220" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="monospace">FIFO (First In, First Out)</text>
+        <!-- Arrow to stock -->
+        <line x1="355" y1="150" x2="418" y2="150" stroke="#4ecdc4" stroke-width="2.5" marker-end="url(#arr2)"/>
+        <!-- Stock -->
+        <rect x="420" y="110" width="120" height="80" rx="12" fill="#1e2440" stroke="#55efc4" stroke-width="2"/>
+        <text x="480" y="148" text-anchor="middle" fill="#55efc4" font-size="13" font-family="Hind Siliguri">📦 Stock</text>
+        <text x="480" y="168" text-anchor="middle" fill="#b0b8d8" font-size="11" font-family="Hind Siliguri">Management</text>
+        <!-- Down indicator -->
+        <text x="480" y="195" text-anchor="middle" fill="#ff6b6b" font-size="10" font-family="Hind Siliguri">⚠ Down থাকলেও</text>
+        <text x="480" y="210" text-anchor="middle" fill="#ff6b6b" font-size="10" font-family="Hind Siliguri">বার্তা জমা থাকে</text>
+      </svg>
+      <p class="diagram-title">চিত্র ২: Message Queue — বার্তা লাইনে জমা হয়, পরে প্রসেস হয়</p>
+    </div>
+
+    <h3>Message Queue-র সুবিধা</h3>
+    <p>
+      Stock সিস্টেম যদি কিছুক্ষণ <em>down</em> থাকে, তাহলে বার্তাগুলো Queue-তে জমা হতে থাকবে। 
+      সিস্টেম আবার উঠলে, সেই বার্তাগুলো <strong>FIFO (First In, First Out)</strong> অর্থাৎ যে বার্তা আগে এসেছে সেটা আগে প্রসেস হবে।
+    </p>
+
+    <h3>কিন্তু Message Queue-রও সমস্যা আছে!</h3>
+
+    <div class="highlight red">
+      <div class="highlight-title">❌ মূল সমস্যা</div>
+      <p>Queue-তে কোনো বার্তা প্রসেস হয়ে গেলে সেটা <strong>মুছে যায়</strong>। তাই একই বার্তা যদি Email সিস্টেমও পেতে চায়, তাহলে <em>আলাদা একটা Queue</em> বানাতে হবে!</p>
+    </div>
+
+    <!-- Diagram: Multiple Queues Problem -->
+    <div class="diagram-wrap">
+      <svg width="100%" viewBox="0 0 640 320" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;">
+        <defs>
+          <marker id="arr3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#a29bfe"/>
+          </marker>
+        </defs>
+        <!-- Orders -->
+        <rect x="10" y="130" width="110" height="60" rx="10" fill="#1e2440" stroke="#f7c948" stroke-width="2"/>
+        <text x="65" y="158" text-anchor="middle" fill="#f7c948" font-size="12" font-family="Hind Siliguri">🛒 Orders</text>
+        <text x="65" y="176" text-anchor="middle" fill="#b0b8d8" font-size="10" font-family="Hind Siliguri">Management</text>
+        <!-- Arrows -->
+        <line x1="120" y1="148" x2="193" y2="110" stroke="#a29bfe" stroke-width="2" marker-end="url(#arr3)"/>
+        <line x1="120" y1="168" x2="193" y2="220" stroke="#a29bfe" stroke-width="2" marker-end="url(#arr3)"/>
+        <!-- Queue 1 -->
+        <rect x="195" y="70" width="130" height="80" rx="10" fill="#131629" stroke="#4ecdc4" stroke-width="1.5"/>
+        <text x="260" y="98" text-anchor="middle" fill="#4ecdc4" font-size="11" font-family="Hind Siliguri">Queue #১</text>
+        <rect x="212" y="105" width="96" height="18" rx="4" fill="#252b48" stroke="#f7c948" stroke-width="1"/>
+        <text x="260" y="118" text-anchor="middle" fill="#f7c948" font-size="9" font-family="Hind Siliguri">✉ messages</text>
+        <rect x="212" y="127" width="96" height="18" rx="4" fill="#252b48" stroke="#f7c948" stroke-width="1"/>
+        <text x="260" y="140" text-anchor="middle" fill="#f7c948" font-size="9" font-family="Hind Siliguri">✉ messages</text>
+        <!-- Queue 2 -->
+        <rect x="195" y="190" width="130" height="80" rx="10" fill="#131629" stroke="#a29bfe" stroke-width="1.5"/>
+        <text x="260" y="218" text-anchor="middle" fill="#a29bfe" font-size="11" font-family="Hind Siliguri">Queue #২</text>
+        <rect x="212" y="225" width="96" height="18" rx="4" fill="#252b48" stroke="#f7c948" stroke-width="1"/>
+        <text x="260" y="238" text-anchor="middle" fill="#f7c948" font-size="9" font-family="Hind Siliguri">✉ messages</text>
+        <rect x="212" y="247" width="96" height="18" rx="4" fill="#252b48" stroke="#f7c948" stroke-width="1"/>
+        <text x="260" y="260" text-anchor="middle" fill="#f7c948" font-size="9" font-family="Hind Siliguri">✉ messages</text>
+        <!-- Arrows to targets -->
+        <line x1="325" y1="110" x2="398" y2="110" stroke="#a29bfe" stroke-width="2" marker-end="url(#arr3)"/>
+        <line x1="325" y1="230" x2="398" y2="230" stroke="#a29bfe" stroke-width="2" marker-end="url(#arr3)"/>
+        <!-- Stock -->
+        <rect x="400" y="80" width="110" height="60" rx="10" fill="#1e2440" stroke="#55efc4" stroke-width="2"/>
+        <text x="455" y="108" text-anchor="middle" fill="#55efc4" font-size="12" font-family="Hind Siliguri">📦 Stock</text>
+        <text x="455" y="126" text-anchor="middle" fill="#b0b8d8" font-size="10" font-family="Hind Siliguri">Management</text>
+        <!-- Email -->
+        <rect x="400" y="200" width="110" height="60" rx="10" fill="#1e2440" stroke="#a29bfe" stroke-width="2"/>
+        <text x="455" y="228" text-anchor="middle" fill="#a29bfe" font-size="12" font-family="Hind Siliguri">📧 Email</text>
+        <text x="455" y="246" text-anchor="middle" fill="#b0b8d8" font-size="10" font-family="Hind Siliguri">Notification</text>
+        <!-- Problem labels -->
+        <text x="260" y="30" text-anchor="middle" fill="#ff6b6b" font-size="12" font-family="Hind Siliguri" font-weight="bold">⚠ দুটো সিস্টেমের জন্য দুটো Queue!</text>
+        <text x="260" y="50" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">সিস্টেম বাড়লে Queue-ও বাড়বে → জটিলতা!</text>
+      </svg>
+      <p class="diagram-title">চিত্র ৩: একাধিক সিস্টেমের জন্য একাধিক Queue — ক্রমশ জটিল হয়ে পড়ে</p>
+    </div>
+
+    <p>
+      ১০টা সিস্টেম হলে ১০টা Queue লাগবে, ১০০টা হলে ১০০টা — এটা <em>ম্যানেজ করা অসম্ভব হয়ে পড়বে!</em>
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 4: PUB/SUB ===================== -->
+  <section id="pubsub" class="reveal">
+    <div class="section-label">অধ্যায় ০৪</div>
+    <h2>Publish-Subscribe — <span>Kafka-র আসল পদ্ধতি</span></h2>
+
+    <p>
+      এই সমস্যার সমাধান দিতেই এসেছে <strong>Publish-Subscribe (Pub/Sub)</strong> মডেল।
+    </p>
+
+    <div class="highlight green">
+      <div class="highlight-title">📡 Pub/Sub কী?</div>
+      <p>Pub/Sub-এ পাঠানো সিস্টেম (<em>Publisher/Producer</em>) বার্তা পাঠায় একটা <strong>Topic</strong>-এ। গ্রহণকারী সিস্টেমগুলো (<em>Subscriber/Consumer</em>) সেই Topic-এ <em>Subscribe</em> করে রাখে। এভাবে একটা Topic থেকে অনেক সিস্টেম একই বার্তা পেতে পারে।</p>
+    </div>
+
+    <div class="highlight teal">
+      <div class="highlight-title">📺 সহজ উপমা: YouTube Channel</div>
+      <p>ধরো একজন YouTuber ভিডিও আপলোড করল (Publisher)। যারা Channel Subscribe করেছে তারা সবাই নোটিফিকেশন পাবে (Consumers)। YouTuber জানে না কারা subscribe করেছে — সে শুধু ভিডিও দেয়, বাকিরা নিজেরা নেয়। এটাই Pub/Sub!</p>
+    </div>
+
+    <!-- Pub/Sub Diagram -->
+    <div class="diagram-wrap">
+      <svg width="100%" viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;">
+        <defs>
+          <marker id="arr4" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#f7c948"/>
+          </marker>
+        </defs>
+        <!-- Background for Kafka system -->
+        <rect x="220" y="20" width="260" height="340" rx="16" fill="rgba(247,201,72,0.03)" stroke="rgba(247,201,72,0.2)" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="350" y="48" text-anchor="middle" fill="rgba(247,201,72,0.5)" font-size="11" font-family="monospace">Kafka (Pub/Sub System)</text>
+
+        <!-- Producers (left) -->
+        <rect x="10" y="60" width="100" height="50" rx="10" fill="#1e2440" stroke="#f7c948" stroke-width="1.5"/>
+        <text x="60" y="83" text-anchor="middle" fill="#f7c948" font-size="11" font-family="Hind Siliguri">🛒 Orders</text>
+        <text x="60" y="99" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">Producer</text>
+
+        <rect x="10" y="165" width="100" height="50" rx="10" fill="#1e2440" stroke="#f7c948" stroke-width="1.5"/>
+        <text x="60" y="188" text-anchor="middle" fill="#f7c948" font-size="11" font-family="Hind Siliguri">🏭 Service A</text>
+        <text x="60" y="204" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">Producer</text>
+
+        <rect x="10" y="270" width="100" height="50" rx="10" fill="#1e2440" stroke="#f7c948" stroke-width="1.5"/>
+        <text x="60" y="293" text-anchor="middle" fill="#f7c948" font-size="11" font-family="Hind Siliguri">🔧 Service B</text>
+        <text x="60" y="309" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">Producer</text>
+
+        <!-- Arrows from producers to topics -->
+        <line x1="110" y1="85" x2="233" y2="105" stroke="#f7c948" stroke-width="1.5" marker-end="url(#arr4)" opacity="0.7"/>
+        <line x1="110" y1="190" x2="233" y2="190" stroke="#f7c948" stroke-width="1.5" marker-end="url(#arr4)" opacity="0.7"/>
+        <line x1="110" y1="295" x2="233" y2="275" stroke="#f7c948" stroke-width="1.5" marker-end="url(#arr4)" opacity="0.7"/>
+
+        <!-- Topics (center) -->
+        <rect x="238" y="70" width="124" height="50" rx="10" fill="#252b48" stroke="#4ecdc4" stroke-width="2"/>
+        <text x="300" y="93" text-anchor="middle" fill="#4ecdc4" font-size="13" font-family="Hind Siliguri">📌 Orders Topic</text>
+        <text x="300" y="110" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="monospace">topic: "orders"</text>
+
+        <rect x="238" y="165" width="124" height="50" rx="10" fill="#252b48" stroke="#a29bfe" stroke-width="2"/>
+        <text x="300" y="188" text-anchor="middle" fill="#a29bfe" font-size="13" font-family="Hind Siliguri">📌 Payments Topic</text>
+        <text x="300" y="205" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="monospace">topic: "payments"</text>
+
+        <rect x="238" y="260" width="124" height="50" rx="10" fill="#252b48" stroke="#fd9644" stroke-width="2"/>
+        <text x="300" y="283" text-anchor="middle" fill="#fd9644" font-size="13" font-family="Hind Siliguri">📌 Logs Topic</text>
+        <text x="300" y="300" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="monospace">topic: "logs"</text>
+
+        <!-- Arrows from topics to consumers -->
+        <line x1="362" y1="95" x2="433" y2="75" stroke="#4ecdc4" stroke-width="1.5" marker-end="url(#arr4)" opacity="0.7"/>
+        <line x1="362" y1="95" x2="433" y2="155" stroke="#4ecdc4" stroke-width="1.5" marker-end="url(#arr4)" opacity="0.7"/>
+        <line x1="362" y1="190" x2="433" y2="235" stroke="#a29bfe" stroke-width="1.5" marker-end="url(#arr4)" opacity="0.7"/>
+        <line x1="362" y1="285" x2="433" y2="310" stroke="#fd9644" stroke-width="1.5" marker-end="url(#arr4)" opacity="0.7"/>
+        <line x1="362" y1="95" x2="430" y2="315" stroke="#4ecdc4" stroke-width="1.5" marker-end="url(#arr4)" opacity="0.4"/>
+
+        <!-- Consumers (right) -->
+        <rect x="435" y="55" width="110" height="40" rx="8" fill="#1e2440" stroke="#55efc4" stroke-width="1.5"/>
+        <text x="490" y="72" text-anchor="middle" fill="#55efc4" font-size="11" font-family="Hind Siliguri">📦 Stock</text>
+        <text x="490" y="87" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="Hind Siliguri">Consumer</text>
+
+        <rect x="435" y="135" width="110" height="40" rx="8" fill="#1e2440" stroke="#55efc4" stroke-width="1.5"/>
+        <text x="490" y="152" text-anchor="middle" fill="#55efc4" font-size="11" font-family="Hind Siliguri">📧 Email</text>
+        <text x="490" y="167" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="Hind Siliguri">Consumer</text>
+
+        <rect x="435" y="215" width="110" height="40" rx="8" fill="#1e2440" stroke="#55efc4" stroke-width="1.5"/>
+        <text x="490" y="232" text-anchor="middle" fill="#55efc4" font-size="11" font-family="Hind Siliguri">💳 Billing</text>
+        <text x="490" y="247" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="Hind Siliguri">Consumer</text>
+
+        <rect x="435" y="295" width="110" height="40" rx="8" fill="#1e2440" stroke="#55efc4" stroke-width="1.5"/>
+        <text x="490" y="312" text-anchor="middle" fill="#55efc4" font-size="11" font-family="Hind Siliguri">📊 Analytics</text>
+        <text x="490" y="327" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="Hind Siliguri">Consumer</text>
+
+        <!-- Labels -->
+        <text x="60" y="340" text-anchor="middle" fill="#7b84a8" font-size="11" font-family="Hind Siliguri">Producers</text>
+        <text x="490" y="350" text-anchor="middle" fill="#7b84a8" font-size="11" font-family="Hind Siliguri">Consumers</text>
+      </svg>
+      <p class="diagram-title">চিত্র ৪: Pub/Sub মডেল — Topic-এ বার্তা জমা, যে কেউ Subscribe করে নিতে পারে</p>
+    </div>
+
+    <h3>Pub/Sub-এর মূল সুবিধাগুলো</h3>
+
+    <div class="card-grid">
+      <div class="card-item">
+        <div class="icon">🔗</div>
+        <h4>Loosely Coupled</h4>
+        <p>Producer জানে না Consumer কে, Consumer জানে না Producer কে — স্বাধীনভাবে কাজ করে</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">♻️</div>
+        <h4>বার্তা টিকে থাকে</h4>
+        <p>Queue-র মতো প্রসেসের পর মুছে যায় না, একটা নির্দিষ্ট সময় পর্যন্ত থাকে</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">👥</div>
+        <h4>Multiple Consumers</h4>
+        <p>একই Topic থেকে অনেক Consumer একই বার্তা পেতে পারে</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">⚡</div>
+        <h4>Scalable</h4>
+        <p>নতুন Consumer যোগ করা বা বাদ দেওয়া যায় কোনো প্রভাব ছাড়া</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 5: ARCHITECTURE ===================== -->
+  <section id="architecture" class="reveal">
+    <div class="section-label">অধ্যায় ০৫</div>
+    <h2>Kafka-র ভেতরের গঠন — <span>Distributed Architecture</span></h2>
+
+    <p>
+      Kafka শুধু Pub/Sub না, এর পেছনে আছে একটা শক্তিশালী <strong>Distributed Architecture</strong> — মানে অনেক সার্ভার মিলে কাজ করে।
+    </p>
+
+    <h3>মূল তিনটি উপাদান</h3>
+
+    <div class="card-grid">
+      <div class="card-item">
+        <div class="icon">📤</div>
+        <h4>Producer (উৎপাদক)</h4>
+        <p>যে সিস্টেম বার্তা পাঠায়। যেমন: অর্ডার সিস্টেম।</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🖥️</div>
+        <h4>Broker (দালাল/সার্ভার)</h4>
+        <p>Kafka Cluster-এর প্রতিটা সার্ভার। এরা বার্তা ধরে রাখে এবং পরিচালনা করে।</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">📥</div>
+        <h4>Consumer (ভোক্তা)</h4>
+        <p>যে সিস্টেম বার্তা পায়। যেমন: স্টক সিস্টেম, ইমেইল সিস্টেম।</p>
+      </div>
+    </div>
+
+    <!-- Architecture Diagram -->
+    <div class="diagram-wrap">
+      <svg width="100%" viewBox="0 0 720 340" xmlns="http://www.w3.org/2000/svg" style="max-width:720px;">
+        <defs>
+          <marker id="arr5" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#f7c948"/>
+          </marker>
+        </defs>
+
+        <!-- Producers -->
+        <text x="60" y="25" text-anchor="middle" fill="#7b84a8" font-size="12" font-family="Hind Siliguri" font-weight="600">Producers</text>
+        <rect x="10" y="40" width="100" height="45" rx="8" fill="#1e2440" stroke="#f7c948" stroke-width="1.5"/>
+        <text x="60" y="58" text-anchor="middle" fill="#f7c948" font-size="11" font-family="Hind Siliguri">Producer A</text>
+        <text x="60" y="75" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="Hind Siliguri">অর্ডার সিস্টেম</text>
+
+        <rect x="10" y="140" width="100" height="45" rx="8" fill="#1e2440" stroke="#f7c948" stroke-width="1.5"/>
+        <text x="60" y="158" text-anchor="middle" fill="#f7c948" font-size="11" font-family="Hind Siliguri">Producer B</text>
+        <text x="60" y="175" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="Hind Siliguri">পেমেন্ট সিস্টেম</text>
+
+        <rect x="10" y="240" width="100" height="45" rx="8" fill="#1e2440" stroke="#f7c948" stroke-width="1.5"/>
+        <text x="60" y="258" text-anchor="middle" fill="#f7c948" font-size="11" font-family="Hind Siliguri">Producer C</text>
+        <text x="60" y="275" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="Hind Siliguri">লগ সিস্টেম</text>
+
+        <!-- Arrows to Kafka -->
+        <line x1="110" y1="62" x2="188" y2="100" stroke="#f7c948" stroke-width="1.5" marker-end="url(#arr5)" opacity="0.8"/>
+        <line x1="110" y1="162" x2="188" y2="162" stroke="#f7c948" stroke-width="1.5" marker-end="url(#arr5)" opacity="0.8"/>
+        <line x1="110" y1="262" x2="188" y2="220" stroke="#f7c948" stroke-width="1.5" marker-end="url(#arr5)" opacity="0.8"/>
+
+        <!-- Kafka Cluster background -->
+        <rect x="188" y="30" width="330" height="280" rx="14" fill="rgba(78,205,196,0.03)" stroke="rgba(78,205,196,0.25)" stroke-width="1.5"/>
+        <text x="353" y="55" text-anchor="middle" fill="rgba(78,205,196,0.6)" font-size="11" font-family="monospace">⚙ Kafka Cluster</text>
+
+        <!-- Broker 1 -->
+        <rect x="205" y="65" width="88" height="220" rx="10" fill="#131629" stroke="#4ecdc4" stroke-width="1.5"/>
+        <text x="249" y="90" text-anchor="middle" fill="#4ecdc4" font-size="11" font-family="Hind Siliguri" font-weight="600">Broker 1</text>
+        <rect x="215" y="98" width="68" height="22" rx="5" fill="#f7c948" opacity="0.9"/>
+        <text x="249" y="113" text-anchor="middle" fill="#000" font-size="9" font-family="monospace">P1-Leader</text>
+        <rect x="215" y="126" width="68" height="22" rx="5" fill="rgba(247,201,72,0.3)"/>
+        <text x="249" y="141" text-anchor="middle" fill="#f7c948" font-size="9" font-family="monospace">P2-Follower</text>
+        <rect x="215" y="154" width="68" height="22" rx="5" fill="rgba(247,201,72,0.3)"/>
+        <text x="249" y="169" text-anchor="middle" fill="#f7c948" font-size="9" font-family="monospace">P3-Follower</text>
+
+        <!-- Broker 2 -->
+        <rect x="308" y="65" width="88" height="220" rx="10" fill="#131629" stroke="#a29bfe" stroke-width="1.5"/>
+        <text x="352" y="90" text-anchor="middle" fill="#a29bfe" font-size="11" font-family="Hind Siliguri" font-weight="600">Broker 2</text>
+        <rect x="318" y="98" width="68" height="22" rx="5" fill="rgba(162,155,254,0.3)"/>
+        <text x="352" y="113" text-anchor="middle" fill="#a29bfe" font-size="9" font-family="monospace">P1-Follower</text>
+        <rect x="318" y="126" width="68" height="22" rx="5" fill="#a29bfe" opacity="0.9"/>
+        <text x="352" y="141" text-anchor="middle" fill="#000" font-size="9" font-family="monospace">P2-Leader</text>
+        <rect x="318" y="154" width="68" height="22" rx="5" fill="rgba(162,155,254,0.3)"/>
+        <text x="352" y="169" text-anchor="middle" fill="#a29bfe" font-size="9" font-family="monospace">P3-Follower</text>
+
+        <!-- Broker 3 -->
+        <rect x="411" y="65" width="88" height="220" rx="10" fill="#131629" stroke="#fd9644" stroke-width="1.5"/>
+        <text x="455" y="90" text-anchor="middle" fill="#fd9644" font-size="11" font-family="Hind Siliguri" font-weight="600">Broker 3</text>
+        <rect x="421" y="98" width="68" height="22" rx="5" fill="rgba(253,150,68,0.3)"/>
+        <text x="455" y="113" text-anchor="middle" fill="#fd9644" font-size="9" font-family="monospace">P1-Follower</text>
+        <rect x="421" y="126" width="68" height="22" rx="5" fill="rgba(253,150,68,0.3)"/>
+        <text x="455" y="141" text-anchor="middle" fill="#fd9644" font-size="9" font-family="monospace">P2-Follower</text>
+        <rect x="421" y="154" width="68" height="22" rx="5" fill="#fd9644" opacity="0.9"/>
+        <text x="455" y="169" text-anchor="middle" fill="#000" font-size="9" font-family="monospace">P3-Leader</text>
+
+        <!-- Legend inside -->
+        <rect x="215" y="215" width="280" height="20" rx="4" fill="rgba(255,255,255,0.03)"/>
+        <rect x="220" y="219" width="12" height="12" rx="2" fill="#f7c948" opacity="0.9"/>
+        <text x="238" y="229" fill="#7b84a8" font-size="9" font-family="monospace">Leader (প্রধান)</text>
+        <rect x="310" y="219" width="12" height="12" rx="2" fill="rgba(247,201,72,0.3)"/>
+        <text x="328" y="229" fill="#7b84a8" font-size="9" font-family="monospace">Follower (প্রতিলিপি)</text>
+
+        <!-- Arrows from Kafka to Consumers -->
+        <line x1="518" y1="100" x2="583" y2="70" stroke="#4ecdc4" stroke-width="1.5" marker-end="url(#arr5)" opacity="0.8"/>
+        <line x1="518" y1="162" x2="583" y2="162" stroke="#4ecdc4" stroke-width="1.5" marker-end="url(#arr5)" opacity="0.8"/>
+        <line x1="518" y1="220" x2="583" y2="270" stroke="#4ecdc4" stroke-width="1.5" marker-end="url(#arr5)" opacity="0.8"/>
+
+        <!-- Consumers -->
+        <text x="635" y="25" text-anchor="middle" fill="#7b84a8" font-size="12" font-family="Hind Siliguri" font-weight="600">Consumers</text>
+        <rect x="585" y="48" width="120" height="45" rx="8" fill="#1e2440" stroke="#55efc4" stroke-width="1.5"/>
+        <text x="645" y="66" text-anchor="middle" fill="#55efc4" font-size="11" font-family="Hind Siliguri">Consumer A</text>
+        <text x="645" y="83" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="Hind Siliguri">স্টক সিস্টেম</text>
+
+        <rect x="585" y="140" width="120" height="45" rx="8" fill="#1e2440" stroke="#55efc4" stroke-width="1.5"/>
+        <text x="645" y="158" text-anchor="middle" fill="#55efc4" font-size="11" font-family="Hind Siliguri">Consumer B</text>
+        <text x="645" y="175" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="Hind Siliguri">ইমেইল সিস্টেম</text>
+
+        <rect x="585" y="247" width="120" height="45" rx="8" fill="#1e2440" stroke="#55efc4" stroke-width="1.5"/>
+        <text x="645" y="265" text-anchor="middle" fill="#55efc4" font-size="11" font-family="Hind Siliguri">Consumer C</text>
+        <text x="645" y="282" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="Hind Siliguri">অ্যানালিটিক্স</text>
+      </svg>
+      <p class="diagram-title">চিত্র ৫: Kafka Cluster — ৩টা Broker, Leader ও Follower Partition সহ</p>
+    </div>
+
+    <h3>Leader ও Follower Partition</h3>
+    <p>
+      প্রতিটা Partition-এর একটা <strong>Leader</strong> আছে এবং বাকিগুলো <strong>Follower</strong>। Leader-ই মূলত সব কাজ করে, Follower শুধু নকল (replica) রাখে।
+    </p>
+
+    <div class="highlight">
+      <div class="highlight-title">🔐 Fault Tolerance — কী হয় যদি একটা Broker নষ্ট হয়?</div>
+      <p>যদি কোনো Broker নষ্ট হয়, তার Leader Partition-গুলো <em>স্বয়ংক্রিয়ভাবে</em> অন্য Broker-এর Follower থেকে নতুন Leader হিসেবে নির্বাচিত হয়। এতে কোনো ডেটা হারায় না!</p>
+    </div>
+
+    <h3>Apache ZooKeeper কী?</h3>
+    <p>
+      ZooKeeper হলো একটা আলাদা টুল যেটা Kafka-কে সাহায্য করে:
+    </p>
+    <ul style="padding-left:24px; color:var(--text2); line-height:2.2;">
+      <li>কোন Partition Leader, কোনটা Follower — সেটা ঠিক করা</li>
+      <li>Broker নষ্ট হলে নতুন Leader নির্বাচন করা</li>
+      <li>Cluster-এর সার্বিক ব্যবস্থাপনা</li>
+    </ul>
+
+    <div class="highlight blue">
+      <div class="highlight-title">ℹ️ জানার বিষয়</div>
+      <p>ভবিষ্যতে Kafka-র নতুন ভার্সনে ZooKeeper সরিয়ে দেওয়া হবে, Kafka নিজেই এই কাজ করবে। এই ফিচারটার নাম <em>KRaft mode</em>।</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 6: TOPICS & PARTITIONS ===================== -->
+  <section id="topics" class="reveal">
+    <div class="section-label">অধ্যায় ০৬</div>
+    <h2>Topic, Partition, Offset — <span>সব বিস্তারিত</span></h2>
+
+    <h3>Topic কী?</h3>
+    <p>
+      <strong>Topic</strong> হলো একটা বার্তার বিভাগ বা ক্যাটাগরি — যেমন একটা YouTube Channel। 
+      Producer বার্তা পাঠায় একটা নির্দিষ্ট Topic-এ, Consumer সেই Topic থেকে পড়ে।
+    </p>
+
+    <div class="highlight teal">
+      <div class="highlight-title">🗂️ উদাহরণ</div>
+      <p>একটা E-commerce সাইটে হতে পারে: <span class="badge yellow">orders</span> <span class="badge teal">payments</span> <span class="badge purple">notifications</span> <span class="badge red">inventory</span> — এগুলো আলাদা Topic।</p>
+    </div>
+
+    <h3>Partition কী?</h3>
+    <p>
+      প্রতিটা Topic-কে কয়েকটা <strong>Partition</strong>-এ ভাগ করা হয়। এটা করা হয় দুটো কারণে:
+    </p>
+    <ul style="padding-left:24px; color:var(--text2); line-height:2.2;">
+      <li><strong style="color:var(--text)">Parallelism:</strong> একাধিক Consumer একই সময়ে আলাদা Partition থেকে পড়তে পারে</li>
+      <li><strong style="color:var(--text)">Scalability:</strong> বিভিন্ন Broker-এ ছড়িয়ে রাখা যায়</li>
+    </ul>
+
+    <!-- Partition Diagram -->
+    <div class="diagram-wrap">
+      <svg width="100%" viewBox="0 0 580 260" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;">
+        <!-- Topic label -->
+        <rect x="10" y="10" width="560" height="240" rx="14" fill="rgba(78,205,196,0.03)" stroke="rgba(78,205,196,0.2)" stroke-width="1.5"/>
+        <text x="290" y="35" text-anchor="middle" fill="#4ecdc4" font-size="13" font-family="Hind Siliguri" font-weight="600">📌 Topic: "orders" — ৩টা Partition</text>
+
+        <!-- Partition 0 -->
+        <text x="30" y="65" fill="#7b84a8" font-size="11" font-family="monospace">Partition 0:</text>
+        <g transform="translate(120, 48)">
+          <rect x="0" y="0" width="70" height="34" rx="6" fill="#252b48" stroke="#f7c948" stroke-width="1.5"/>
+          <text x="35" y="14" text-anchor="middle" fill="#f7c948" font-size="9" font-family="monospace">offset: 0</text>
+          <text x="35" y="28" text-anchor="middle" fill="#7b84a8" font-size="8" font-family="Hind Siliguri">বার্তা #১</text>
+        </g>
+        <g transform="translate(198, 48)">
+          <rect x="0" y="0" width="70" height="34" rx="6" fill="#252b48" stroke="#f7c948" stroke-width="1.5"/>
+          <text x="35" y="14" text-anchor="middle" fill="#f7c948" font-size="9" font-family="monospace">offset: 1</text>
+          <text x="35" y="28" text-anchor="middle" fill="#7b84a8" font-size="8" font-family="Hind Siliguri">বার্তা #৩</text>
+        </g>
+        <g transform="translate(276, 48)">
+          <rect x="0" y="0" width="70" height="34" rx="6" fill="#252b48" stroke="#f7c948" stroke-width="1.5"/>
+          <text x="35" y="14" text-anchor="middle" fill="#f7c948" font-size="9" font-family="monospace">offset: 2</text>
+          <text x="35" y="28" text-anchor="middle" fill="#7b84a8" font-size="8" font-family="Hind Siliguri">বার্তা #৫</text>
+        </g>
+        <g transform="translate(354, 48)">
+          <rect x="0" y="0" width="70" height="34" rx="6" fill="#252b48" stroke="#f7c948" stroke-width="1.5"/>
+          <text x="35" y="14" text-anchor="middle" fill="#f7c948" font-size="9" font-family="monospace">offset: 3</text>
+          <text x="35" y="28" text-anchor="middle" fill="#7b84a8" font-size="8" font-family="Hind Siliguri">বার্তা #৭</text>
+        </g>
+        <text x="440" y="70" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">→ নতুন</text>
+
+        <!-- Partition 1 -->
+        <text x="30" y="130" fill="#7b84a8" font-size="11" font-family="monospace">Partition 1:</text>
+        <g transform="translate(120, 113)">
+          <rect x="0" y="0" width="70" height="34" rx="6" fill="#252b48" stroke="#a29bfe" stroke-width="1.5"/>
+          <text x="35" y="14" text-anchor="middle" fill="#a29bfe" font-size="9" font-family="monospace">offset: 0</text>
+          <text x="35" y="28" text-anchor="middle" fill="#7b84a8" font-size="8" font-family="Hind Siliguri">বার্তা #২</text>
+        </g>
+        <g transform="translate(198, 113)">
+          <rect x="0" y="0" width="70" height="34" rx="6" fill="#252b48" stroke="#a29bfe" stroke-width="1.5"/>
+          <text x="35" y="14" text-anchor="middle" fill="#a29bfe" font-size="9" font-family="monospace">offset: 1</text>
+          <text x="35" y="28" text-anchor="middle" fill="#7b84a8" font-size="8" font-family="Hind Siliguri">বার্তা #৪</text>
+        </g>
+        <g transform="translate(276, 113)">
+          <rect x="0" y="0" width="70" height="34" rx="6" fill="#252b48" stroke="#a29bfe" stroke-width="1.5"/>
+          <text x="35" y="14" text-anchor="middle" fill="#a29bfe" font-size="9" font-family="monospace">offset: 2</text>
+          <text x="35" y="28" text-anchor="middle" fill="#7b84a8" font-size="8" font-family="Hind Siliguri">বার্তা #৬</text>
+        </g>
+        <text x="360" y="135" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">→ নতুন</text>
+
+        <!-- Partition 2 -->
+        <text x="30" y="195" fill="#7b84a8" font-size="11" font-family="monospace">Partition 2:</text>
+        <g transform="translate(120, 178)">
+          <rect x="0" y="0" width="70" height="34" rx="6" fill="#252b48" stroke="#fd9644" stroke-width="1.5"/>
+          <text x="35" y="14" text-anchor="middle" fill="#fd9644" font-size="9" font-family="monospace">offset: 0</text>
+          <text x="35" y="28" text-anchor="middle" fill="#7b84a8" font-size="8" font-family="Hind Siliguri">বার্তা #৮</text>
+        </g>
+        <text x="205" y="198" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">→ নতুন</text>
+
+        <!-- Note -->
+        <text x="290" y="242" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">প্রতিটা Partition-এ আলাদা Offset গণনা — বার্তার সিরিয়াল নম্বর</text>
+      </svg>
+      <p class="diagram-title">চিত্র ৬: একটা Topic-এ ৩টা Partition, প্রতিটায় আলাদা Offset</p>
+    </div>
+
+    <h3>Offset কী?</h3>
+    <p>
+      <strong>Offset</strong> হলো প্রতিটা Partition-এ প্রতিটা বার্তার একটা সিরিয়াল নম্বর (index)। যেমন ডায়েরির পৃষ্ঠা নম্বর।
+    </p>
+    <div class="highlight">
+      <div class="highlight-title">💡 গুরুত্বপূর্ণ</div>
+      <p>Offset হিসাব হয় <em>প্রতিটা Partition-এ আলাদাভাবে</em>। Partition 0-তে offset 0, 1, 2... এবং Partition 1-এও offset 0, 1, 2... — এগুলো আলাদা।</p>
+    </div>
+
+    <h3>Key দিয়ে Partition নির্ধারণ</h3>
+    <p>
+      Producer চাইলে প্রতিটা বার্তার সাথে একটা <strong>Key</strong> দিতে পারে। একই Key-এর সব বার্তা সবসময় একই Partition-এ যাবে।
+    </p>
+    <div class="highlight green">
+      <div class="highlight-title">🎯 কেন Key ব্যবহার করব?</div>
+      <p>ধরো User ID = "101" এর সব অর্ডার Events একই Partition-এ রাখলে, সেগুলো সিরিয়াল মেনে প্রসেস হবে। "Order Created" → "Order Shipped" → "Order Delivered" — এই ক্রম নিশ্চিত হবে।</p>
+    </div>
+
+    <h3>Consumer Group কী?</h3>
+    <p>
+      একাধিক Consumer মিলে একটা <strong>Consumer Group</strong> তৈরি করতে পারে। Group-এর ভেতরে প্রতিটা Partition একটাই Consumer পাবে — এতে কাজ ভাগ হয়ে যায়।
+    </p>
+
+    <!-- Consumer Group Diagram -->
+    <div class="diagram-wrap">
+      <svg width="100%" viewBox="0 0 620 220" xmlns="http://www.w3.org/2000/svg" style="max-width:620px;">
+        <defs>
+          <marker id="arr6" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#55efc4"/>
+          </marker>
+        </defs>
+        <!-- Topic Partitions -->
+        <text x="130" y="22" text-anchor="middle" fill="#4ecdc4" font-size="12" font-family="Hind Siliguri">Topic Partitions</text>
+        <rect x="20" y="35" width="220" height="50" rx="8" fill="#252b48" stroke="#f7c948" stroke-width="1.5"/>
+        <text x="130" y="55" text-anchor="middle" fill="#f7c948" font-size="11" font-family="monospace">Partition 0</text>
+        <text x="130" y="73" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">বার্তা: #১, #৩, #৫...</text>
+
+        <rect x="20" y="100" width="220" height="50" rx="8" fill="#252b48" stroke="#a29bfe" stroke-width="1.5"/>
+        <text x="130" y="120" text-anchor="middle" fill="#a29bfe" font-size="11" font-family="monospace">Partition 1</text>
+        <text x="130" y="138" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">বার্তা: #২, #৪, #৬...</text>
+
+        <rect x="20" y="165" width="220" height="45" rx="8" fill="#252b48" stroke="#fd9644" stroke-width="1.5"/>
+        <text x="130" y="185" text-anchor="middle" fill="#fd9644" font-size="11" font-family="monospace">Partition 2</text>
+        <text x="130" y="202" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">বার্তা: #৭, #৮...</text>
+
+        <!-- Arrows -->
+        <line x1="265" y1="53" x2="343" y2="53" stroke="#55efc4" stroke-width="1.5" marker-end="url(#arr6)"/>
+        <line x1="265" y1="115" x2="343" y2="115" stroke="#55efc4" stroke-width="1.5" marker-end="url(#arr6)"/>
+        <line x1="265" y1="177" x2="343" y2="165" stroke="#55efc4" stroke-width="1.5" marker-end="url(#arr6)"/>
+
+        <!-- Consumer Group box -->
+        <rect x="340" y="20" width="260" height="190" rx="12" fill="rgba(85,239,196,0.04)" stroke="rgba(85,239,196,0.3)" stroke-width="1.5"/>
+        <text x="470" y="42" text-anchor="middle" fill="#55efc4" font-size="11" font-family="Hind Siliguri">Consumer Group: "stock-team"</text>
+
+        <rect x="358" y="52" width="220" height="40" rx="8" fill="#1e2440" stroke="#55efc4" stroke-width="1"/>
+        <text x="468" y="70" text-anchor="middle" fill="#55efc4" font-size="11" font-family="Hind Siliguri">Consumer 1 ← Partition 0</text>
+        <text x="468" y="84" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="Hind Siliguri">স্টক সিস্টেম Instance 1</text>
+
+        <rect x="358" y="107" width="220" height="40" rx="8" fill="#1e2440" stroke="#55efc4" stroke-width="1"/>
+        <text x="468" y="125" text-anchor="middle" fill="#55efc4" font-size="11" font-family="Hind Siliguri">Consumer 2 ← Partition 1</text>
+        <text x="468" y="139" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="Hind Siliguri">স্টক সিস্টেম Instance 2</text>
+
+        <rect x="358" y="160" width="220" height="40" rx="8" fill="#1e2440" stroke="#55efc4" stroke-width="1"/>
+        <text x="468" y="178" text-anchor="middle" fill="#55efc4" font-size="11" font-family="Hind Siliguri">Consumer 3 ← Partition 2</text>
+        <text x="468" y="192" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="Hind Siliguri">স্টক সিস্টেম Instance 3</text>
+      </svg>
+      <p class="diagram-title">চিত্র ৭: Consumer Group — কাজ ভাগ করে নেওয়া হয় Partition অনুযায়ী</p>
+    </div>
+
+    <div class="highlight blue">
+      <div class="highlight-title">⚖️ Consumer Group-এর নিয়ম</div>
+      <p>একটা Group-এ Consumer-এর সংখ্যা যদি Partition-এর সংখ্যার বেশি হয়, তাহলে কিছু Consumer বেকার বসে থাকবে। সর্বোচ্চ সমতা হয় যখন Consumer সংখ্যা = Partition সংখ্যা।</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 7: KAFKA CONNECT ===================== -->
+  <section id="connect" class="reveal">
+    <div class="section-label">অধ্যায় ০৭</div>
+    <h2>Kafka Connect — <span>অন্য সিস্টেমের সাথে সংযোগ</span></h2>
+
+    <p>
+      <strong>Kafka Connect</strong> হলো Kafka-র একটা কম্পোনেন্ট যেটা দিয়ে বাইরের সিস্টেম (Database, Cloud storage ইত্যাদি) থেকে সহজে ডেটা আনা এবং পাঠানো যায় — কোনো কোড না লিখেই!
+    </p>
+
+    <div class="card-grid">
+      <div class="card-item">
+        <div class="icon">📤</div>
+        <h4>Source Connector</h4>
+        <p>বাইরের সিস্টেম থেকে Kafka-তে ডেটা আনে। যেমন MongoDB → Kafka।</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">📥</div>
+        <h4>Sink Connector</h4>
+        <p>Kafka থেকে বাইরের সিস্টেমে ডেটা পাঠায়। যেমন Kafka → Elasticsearch।</p>
+      </div>
+    </div>
+
+    <!-- Kafka Connect Diagram -->
+    <div class="diagram-wrap">
+      <svg width="100%" viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;">
+        <defs>
+          <marker id="arr7" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#f7c948"/>
+          </marker>
+        </defs>
+        <!-- DB A -->
+        <rect x="10" y="60" width="120" height="60" rx="10" fill="#1e2440" stroke="#4ecdc4" stroke-width="2"/>
+        <text x="70" y="84" text-anchor="middle" fill="#4ecdc4" font-size="13" font-family="Hind Siliguri">🗄️ Database A</text>
+        <text x="70" y="102" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">MongoDB</text>
+        <!-- Source Connector -->
+        <rect x="148" y="65" width="120" height="50" rx="8" fill="#252b48" stroke="#f7c948" stroke-width="1.5"/>
+        <text x="208" y="84" text-anchor="middle" fill="#f7c948" font-size="11" font-family="Hind Siliguri">Kafka Connect</text>
+        <text x="208" y="103" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">(Source)</text>
+        <line x1="130" y1="90" x2="146" y2="90" stroke="#f7c948" stroke-width="2" marker-end="url(#arr7)"/>
+        <!-- Arrow to Topic -->
+        <line x1="268" y1="90" x2="333" y2="90" stroke="#f7c948" stroke-width="2" marker-end="url(#arr7)"/>
+        <!-- Topic -->
+        <rect x="335" y="55" width="130" height="70" rx="10" fill="#131629" stroke="#a29bfe" stroke-width="2"/>
+        <text x="400" y="82" text-anchor="middle" fill="#a29bfe" font-size="12" font-family="Hind Siliguri">📌 Kafka</text>
+        <text x="400" y="99" text-anchor="middle" fill="#a29bfe" font-size="12" font-family="Hind Siliguri">Topic</text>
+        <text x="400" y="116" text-anchor="middle" fill="#7b84a8" font-size="9" font-family="monospace">data-pipeline</text>
+        <!-- Arrow to Sink -->
+        <line x1="465" y1="90" x2="531" y2="90" stroke="#f7c948" stroke-width="2" marker-end="url(#arr7)"/>
+        <!-- Sink Connector -->
+        <rect x="533" y="65" width="120" height="50" rx="8" fill="#252b48" stroke="#f7c948" stroke-width="1.5"/>
+        <text x="593" y="84" text-anchor="middle" fill="#f7c948" font-size="11" font-family="Hind Siliguri">Kafka Connect</text>
+        <text x="593" y="103" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">(Sink)</text>
+        <!-- Arrow to DB B -->
+        <line x1="653" y1="90" x2="670" y2="90" stroke="#f7c948" stroke-width="2" marker-end="url(#arr7)"/>
+        <!-- DB B placeholder -->
+        <text x="680" y="93" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">→ DB B</text>
+        <!-- Labels -->
+        <text x="208" y="155" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">ডেটা আনে</text>
+        <text x="593" y="155" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">ডেটা পাঠায়</text>
+      </svg>
+      <p class="diagram-title">চিত্র ৮: Kafka Connect — Source থেকে Sink-এ ডেটা পাইপলাইন</p>
+    </div>
+
+    <h3>Kafka Connect দিয়ে ETL</h3>
+    <p>
+      <strong>ETL</strong> মানে হলো <em>Extract → Transform → Load</em>। Kafka Connect + Kafka Streams একসাথে ব্যবহার করলে সম্পূর্ণ ETL pipeline বানানো যায়।
+    </p>
+    <p>
+      উদাহরণ: একটা MySQL Database থেকে ডেটা এনে, কিছু ট্রান্সফর্ম করে (যেমন ফিল্টার করা), তারপর একটা Data Lake-এ পাঠানো।
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 8: KAFKA STREAMS ===================== -->
+  <section id="streams" class="reveal">
+    <div class="section-label">অধ্যায় ০৮</div>
+    <h2>Kafka Streams — <span>রিয়েলটাইম ডেটা প্রসেসিং</span></h2>
+
+    <p>
+      <strong>Kafka Streams</strong> হলো একটা API যেটা দিয়ে আসন্ন ডেটা Stream-কে রিয়েলটাইমে প্রসেস করা যায়।
+    </p>
+
+    <div class="card-grid">
+      <div class="card-item"><div class="icon">🔍</div><h4>Filter</h4><p>শর্ত অনুযায়ী বার্তা বাছাই করা</p></div>
+      <div class="card-item"><div class="icon">➕</div><h4>Aggregation</h4><p>গড়, সমষ্টি ইত্যাদি হিসাব করা</p></div>
+      <div class="card-item"><div class="icon">🔗</div><h4>Join</h4><p>একাধিক Stream একসাথে মেলানো</p></div>
+      <div class="card-item"><div class="icon">🔄</div><h4>Transform</h4><p>বার্তার গঠন পরিবর্তন করা</p></div>
+    </div>
+
+    <div class="highlight red">
+      <div class="highlight-title">⚠️ সীমাবদ্ধতা</div>
+      <p>Kafka Streams শুধু <strong>Java বা Scala</strong>-তে লেখা যায়। Python-এ এটা সরাসরি নেই। Python-এ বিকল্প হিসেবে <em>Spark Streaming</em> বা <em>Faust</em> ব্যবহার করা হয়।</p>
+    </div>
+
+    <!-- Streams diagram -->
+    <div class="diagram-wrap">
+      <svg width="100%" viewBox="0 0 640 180" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;">
+        <defs>
+          <marker id="arr8" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#a29bfe"/>
+          </marker>
+        </defs>
+        <!-- Source DB -->
+        <rect x="10" y="60" width="110" height="60" rx="10" fill="#1e2440" stroke="#4ecdc4" stroke-width="1.5"/>
+        <text x="65" y="84" text-anchor="middle" fill="#4ecdc4" font-size="12" font-family="Hind Siliguri">🗄️ Source DB</text>
+        <text x="65" y="104" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">Kafka Connect</text>
+        <line x1="120" y1="90" x2="158" y2="90" stroke="#a29bfe" stroke-width="2" marker-end="url(#arr8)"/>
+        <!-- Topic 1 -->
+        <rect x="163" y="65" width="110" height="50" rx="8" fill="#252b48" stroke="#a29bfe" stroke-width="1.5"/>
+        <text x="218" y="85" text-anchor="middle" fill="#a29bfe" font-size="11" font-family="Hind Siliguri">📌 Topic 1</text>
+        <text x="218" y="103" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">raw data</text>
+        <line x1="273" y1="90" x2="316" y2="90" stroke="#a29bfe" stroke-width="2" marker-end="url(#arr8)"/>
+        <!-- Streams Processing -->
+        <rect x="318" y="55" width="130" height="70" rx="10" fill="#1a1f35" stroke="#f7c948" stroke-width="2"/>
+        <text x="383" y="78" text-anchor="middle" fill="#f7c948" font-size="12" font-family="Hind Siliguri">⚡ Kafka Streams</text>
+        <text x="383" y="97" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">Filter + Transform</text>
+        <text x="383" y="114" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">+ Aggregate</text>
+        <line x1="448" y1="90" x2="491" y2="90" stroke="#a29bfe" stroke-width="2" marker-end="url(#arr8)"/>
+        <!-- Topic 2 -->
+        <rect x="493" y="65" width="110" height="50" rx="8" fill="#252b48" stroke="#55efc4" stroke-width="1.5"/>
+        <text x="548" y="85" text-anchor="middle" fill="#55efc4" font-size="11" font-family="Hind Siliguri">📌 Topic 2</text>
+        <text x="548" y="103" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">processed data</text>
+        <!-- Labels below -->
+        <text x="383" y="155" text-anchor="middle" fill="#7b84a8" font-size="10" font-family="Hind Siliguri">Topic 1 → প্রসেস → নতুন Topic 2 তৈরি</text>
+      </svg>
+      <p class="diagram-title">চিত্র ৯: Kafka Streams — একটা Topic-এর ডেটা প্রসেস করে নতুন Topic তৈরি</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 9: SETUP ===================== -->
+  <section id="setup" class="reveal">
+    <div class="section-label">অধ্যায় ০৯</div>
+    <h2>Docker দিয়ে <span>Kafka চালু করা</span></h2>
+
+    <p>
+      অনুশীলনের জন্য আমরা <strong>Docker</strong> ব্যবহার করব। Docker হলো একটা টুল যেটা দিয়ে সফটওয়্যার <em>Container</em>-এ চালানো যায় — একটা হালকা Virtual Machine-এর মতো।
+    </p>
+
+    <div class="highlight">
+      <div class="highlight-title">🐳 Docker কেন?</div>
+      <p>Kafka সরাসরি ইন্সটল করা জটিল। Docker দিয়ে একটা কমান্ডেই পুরো Kafka Cluster (ZooKeeper + Kafka Brokers + Kafka UI) চালু করা যায়।</p>
+    </div>
+
+    <h3>Step 1: ফাইল ডাউনলোড করো</h3>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">Terminal / Bash</span></div>
+      <pre><span class="cm"># kafka.zip ডাউনলোড করো</span>
+<span class="fn">wget</span> https://dst-de.s3.eu-west-3.amazonaws.com/kafka_fr/kafka.zip
+
+<span class="cm"># Unzip করো</span>
+<span class="fn">unzip</span> kafka.zip
+
+<span class="cm"># kafka ফোল্ডারে ঢোকো</span>
+<span class="fn">cd</span> kafka
+
+<span class="cm"># ফাইলগুলো দেখো</span>
+<span class="fn">ls</span>
+<span class="cm"># দেখবে: docker-compose.yml, producer.py, consumer.py, admin.py</span></pre>
+    </div>
+
+    <h3>Step 2: docker-compose.yml বোঝো</h3>
+    <p>এই ফাইলটা তিনটা সার্ভিস চালু করবে:</p>
+
+    <div class="card-grid">
+      <div class="card-item"><div class="icon">🦒</div><h4>ZooKeeper</h4><p>Kafka-র cluster ম্যানেজার। Port: 2181</p></div>
+      <div class="card-item"><div class="icon">⚙️</div><h4>Kafka Broker</h4><p>মূল Kafka সার্ভার। Port: 9092</p></div>
+      <div class="card-item"><div class="icon">🖥️</div><h4>Kafka UI</h4><p>Web interface দিয়ে Kafka দেখা। Port: 8080</p></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">docker-compose.yml</span></div>
+      <pre><span class="kw">version</span>: <span class="str">"3.2"</span>
+<span class="kw">services</span>:
+  <span class="var">zookeeper</span>:                         <span class="cm"># Kafka-র cluster manager</span>
+    image: wurstmeister/zookeeper
+    ports:
+      - <span class="str">"2181"</span>
+
+  <span class="var">kafka</span>:
+    image: wurstmeister/kafka
+    depends_on:
+      - zookeeper                      <span class="cm"># আগে ZooKeeper চাই</span>
+    ports:
+      - <span class="str">"9092-9094:9092"</span>              <span class="cm"># ৩টা broker-এর জন্য ৩টা port</span>
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: <span class="num">X.X.X.X</span>  <span class="cm"># তোমার IP দাও</span>
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:<span class="num">2181</span>
+
+  <span class="var">kafkaui</span>:
+    image: provectuslabs/kafka-ui
+    ports:
+      - <span class="str">"8080:8080"</span>                   <span class="cm"># Browser-এ দেখার জন্য</span>
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: <span class="str">"kafka:9092"</span></pre>
+    </div>
+
+    <h3>Step 3: Docker চালু করো</h3>
+    <div class="silly-note"><strong>🤔 docker-compose কী?</strong> Docker-compose হলো একটা tool যেটা একসাথে অনেকগুলো Docker Container চালু করে। আমাদের একটা yml ফাইলে ZooKeeper, Kafka, Kafka UI — এই তিনটা Container describe করা আছে। একটা command-এই তিনটা চালু হয়ে যায়!</div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">Terminal</span></div>
+      <pre><span class="cm"># IP address সম্পাদনা করো</span>
+<span class="fn">nano</span> docker-compose.yml
+<span class="cm"># KAFKA_ADVERTISED_HOST_NAME-এর জায়গায় তোমার Public IP দাও</span>
+
+<span class="cm"># Docker চালু করো</span>
+docker-compose up -d
+
+<span class="cm"># ৩টা Broker চালু করো (scale করো)</span>
+docker-compose up --scale kafka=<span class="num">3</span> -d
+
+<span class="cm"># চলছে কিনা চেক করো</span>
+docker container ls</pre>
+    </div>
+
+    <div class="highlight green">
+      <div class="highlight-title">🌐 Kafka UI</div>
+      <p>Browser-এ <strong>X.X.X.X:8080</strong> দিয়ে Kafka UI দেখতে পাবে। এখান থেকে Broker, Topic, Message সব দেখা ও ম্যানেজ করা যায়।</p>
+    </div>
+
+    <h3>Topic তৈরি করো (Admin CLI)</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">Terminal</span></div>
+      <pre><span class="cm"># "test" নামে Topic তৈরি: ২টা Partition, ৩ বার Replicate</span>
+<span class="fn">python3</span> admin.py create --name test --partition <span class="num">2</span> --replication <span class="num">3</span>
+
+<span class="cm"># Topic মুছে ফেলতে</span>
+<span class="fn">python3</span> admin.py delete --name test</pre>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 10: PYTHON ===================== -->
+  <section id="python" class="reveal">
+    <div class="section-label">অধ্যায় ১০</div>
+    <h2>Python দিয়ে <span>Kafka ব্যবহার</span></h2>
+
+    <p>
+      Python-এ Kafka-র সাথে কাজ করার জন্য সবচেয়ে জনপ্রিয় লাইব্রেরি হলো <span class="badge yellow">kafka-python</span>।
+    </p>
+
+    <h3>ইন্সটল করো</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">Terminal</span></div>
+      <pre>pip3 install kafka-python</pre>
+    </div>
+
+    <h3>Producer — বার্তা পাঠানো</h3>
+    <p>
+      <strong>Producer</strong> হলো সেই কোড যেটা Kafka-তে বার্তা পাঠায়।
+    </p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">producer.py — সহজ উদাহরণ</span></div>
+      <pre><span class="kw">from</span> kafka <span class="kw">import</span> <span class="fn">KafkaProducer</span>
+
+<span class="cm"># Kafka Cluster-এর সাথে সংযোগ করো</span>
+kafka_producer = <span class="fn">KafkaProducer</span>(
+    <span class="cm"># bootstrap_servers = "Kafka-র দরজায় কড়া নাড়ো"</span>
+    <span class="cm"># localhost = তোমার নিজের কম্পিউটার (127.0.0.1 একই কথা)</span>
+    <span class="cm"># 9092 = Port নম্বর (বাড়ির দরজা নম্বরের মতো, Kafka এই দরজায় থাকে)</span>
+    <span class="cm"># "bootstrap" মানে শুরুতে একটা Broker-এর address দাও,</span>
+    <span class="cm"># Kafka বাকি সব Broker নিজেই খুঁজে নেবে!</span>
+    bootstrap_servers=<span class="str">"localhost:9092"</span>
+)
+
+<span class="cm"># ৩০টা বার্তা পাঠাও</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">30</span>):
+    kafka_producer.<span class="fn">send</span>(
+        topic=<span class="str">"test"</span>,                              <span class="cm"># কোন Topic-এ?</span>
+        value=<span class="fn">f"New message # {i}"</span>.<span class="fn">encode</span>(<span class="str">"utf-8"</span>)  <span class="cm"># বার্তা (bytes-এ)</span>
+    )
+
+<span class="cm"># সব বার্তা পাঠানো নিশ্চিত করো</span>
+kafka_producer.<span class="fn">flush</span>()</pre>
+    </div>
+
+    <div class="silly-note"><strong>🤔 flush() মানে কী?</strong> Kafka Producer বার্তা পাঠানোর সময় সেগুলো প্রথমে একটা <strong>buffer</strong> (অস্থায়ী মেমোরি) তে জমায় — performance বাড়াতে। <code>flush()</code> মানে: "এখনই buffer খালি করো, সব জমানো বার্তা এখনই পাঠাও!" Script শেষ হওয়ার আগে flush না করলে buffer-এ থাকা বার্তা হারিয়ে যেতে পারে।</div>
+
+    <div class="highlight">
+      <div class="highlight-title">💡 কেন .encode("utf-8")?</div>
+      <p>Kafka-তে বার্তা অবশ্যই <strong>bytes</strong> ফরম্যাটে দিতে হয়। Python-এর string সরাসরি দেওয়া যায় না। তাই <code style="color:var(--accent);">.encode("utf-8")</code> দিয়ে bytes-এ রূপান্তর করতে হয়।</p>
+    </div>
+
+    <h3>Key সহ বার্তা পাঠানো</h3>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">producer_with_key.py</span></div>
+      <pre><span class="kw">from</span> kafka <span class="kw">import</span> <span class="fn">KafkaProducer</span>
+
+kafka_producer = <span class="fn">KafkaProducer</span>(
+    bootstrap_servers=<span class="str">"localhost:9092"</span>
+)
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">30</span>):
+    kafka_producer.<span class="fn">send</span>(
+        topic=<span class="str">"test"</span>,
+        value=<span class="fn">f"New message # {i}"</span>.<span class="fn">encode</span>(<span class="str">"utf-8"</span>),
+        <span class="cm"># জোড় নম্বর → key "0" → Partition 0</span>
+        <span class="cm"># বেজোড় নম্বর → key "1" → Partition 1</span>
+        key=<span class="fn">f"{i % 2}"</span>.<span class="fn">encode</span>(<span class="str">"utf-8"</span>)
+    )
+
+kafka_producer.<span class="fn">flush</span>()</pre>
+    </div>
+
+    <div class="highlight teal">
+      <div class="highlight-title">🗝️ Key কীভাবে কাজ করে?</div>
+      <p><code style="color:var(--accent3);">i % 2</code> মানে i-কে 2 দিয়ে ভাগের ভাগশেষ। যদি i=4, তাহলে 4%2=0 → key="0"। যদি i=5, তাহলে 5%2=1 → key="1"। একই key-এর বার্তা সবসময় একই Partition-এ যাবে।</p>
+    </div>
+
+    <h3>Consumer — বার্তা পড়া</h3>
+    <p><strong>Consumer</strong> হলো সেই কোড যেটা Kafka থেকে বার্তা পড়ে।</p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">consumer.py</span></div>
+      <pre><span class="kw">from</span> kafka <span class="kw">import</span> <span class="fn">KafkaConsumer</span>
+
+kafka_consumer = <span class="fn">KafkaConsumer</span>(
+    <span class="str">"test"</span>,                         <span class="cm"># কোন Topic পড়বে?</span>
+    bootstrap_servers=<span class="str">"localhost:9092"</span>,
+    auto_offset_reset=<span class="str">"earliest"</span>    <span class="cm"># শুরু থেকে পড়বে</span>
+)
+
+<span class="cm"># অনন্তকাল বার্তার জন্য অপেক্ষা করবে</span>
+<span class="kw">for</span> message <span class="kw">in</span> kafka_consumer:
+    <span class="fn">print</span>(message.value.<span class="fn">decode</span>(<span class="str">"utf-8"</span>))  <span class="cm"># bytes → string</span></pre>
+    </div>
+
+    <div class="card">
+      <h4 style="margin:0 0 12px; color:var(--accent)">auto_offset_reset-এর দুটো মান:</h4>
+      <div class="table-wrap">
+        <table>
+          <tr><th>মান</th><th>কী করে</th><th>কখন ব্যবহার</th></tr>
+          <tr><td><code style="color:var(--green)">earliest</code></td><td>Partition-এর শুরু থেকে পড়ে (পুরনো বার্তাও)</td><td>সব বার্তা দরকার হলে</td></tr>
+          <tr><td><code style="color:var(--orange)">latest</code></td><td>শুধু নতুন (এখন থেকে আসা) বার্তা পড়ে</td><td>শুধু নতুন বার্তা দরকার হলে</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="highlight blue">
+      <div class="highlight-title">🔄 Consumer কখন থামে?</div>
+      <p>Consumer কখনো নিজে থামে না! সে সবসময় নতুন বার্তার জন্য অপেক্ষা করে। থামাতে হলে <code>Ctrl+C</code> দিতে হবে। বা <code style="color:var(--accent4)">consumer_timeout_ms=1000</code> দিলে ১ সেকেন্ড অপেক্ষার পর থামবে।</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 11: ADVANCED PYTHON ===================== -->
+  <section id="advanced" class="reveal">
+    <div class="section-label">অধ্যায় ১১</div>
+    <h2>Advanced Python Client — <span>বিস্তারিত</span></h2>
+
+    <h3>Python-এ Kafka-র কোন API পাওয়া যায়?</h3>
+
+    <p>Kafka-র মূলত ৫টা API আছে, কিন্তু Python-এ সব পাওয়া যায় না:</p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>API</th><th>কাজ</th><th>Python-এ?</th></tr>
+        <tr><td>Producer API</td><td>বার্তা পাঠানো</td><td><span style="color:var(--green)">✅ হ্যাঁ</span></td></tr>
+        <tr><td>Consumer API</td><td>বার্তা পড়া</td><td><span style="color:var(--green)">✅ হ্যাঁ</span></td></tr>
+        <tr><td>Admin API</td><td>Topic ম্যানেজমেন্ট</td><td><span style="color:var(--green)">✅ হ্যাঁ</span></td></tr>
+        <tr><td>Streams API</td><td>রিয়েলটাইম প্রসেসিং</td><td><span style="color:var(--accent2)">❌ না (Java/Scala only)</span></td></tr>
+        <tr><td>Connect API</td><td>বাইরের সিস্টেম সংযোগ</td><td><span style="color:var(--orange)">⚠️ আলাদাভাবে</span></td></tr>
+      </table>
+    </div>
+
+    <h3>Python-এ ৩টা লাইব্রেরি আছে:</h3>
+    <div class="card-grid">
+      <div class="card-item">
+        <div class="icon">⭐</div>
+        <h4>kafka-python</h4>
+        <p>সবচেয়ে জনপ্রিয়, সহজে ব্যবহারযোগ্য, Python-এ native। <strong>এটাই ব্যবহার করো।</strong></p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🏢</div>
+        <h4>confluent-kafka</h4>
+        <p>Confluent (Kafka-র creators) বানিয়েছে। অফিশিয়াল, দ্রুত, কিন্তু ইন্সটল জটিল।</p>
+      </div>
+      <div class="card-item">
+        <div class="icon">🦕</div>
+        <h4>PyKafka</h4>
+        <p>পুরনো লাইব্রেরি। আর আপডেট হয় না। ব্যবহার করো না।</p>
+      </div>
+    </div>
+
+    <h3>Serializer — স্বয়ংক্রিয় এনকোডিং</h3>
+    <div class="silly-note"><strong>🤔 lambda কী? (Python-এর anonymous function — silly কিন্তু জানা দরকার!)</strong><br>
+    সাধারণত Python-এ ফাংশন এভাবে লেখা হয়:<br>
+    <code>def encode_value(v): return v.encode("utf-8")</code><br>
+    Lambda দিয়ে একই জিনিস এক লাইনে লেখা যায়:<br>
+    <code>lambda v: v.encode("utf-8")</code><br>
+    মানে: "v নামে একটা input নাও, তারপর v.encode("utf-8") return করো।" Lambda হলো ছোট, একবার-ব্যবহারের নামহীন ফাংশনের শর্টকাট — যেখানে পুরো def লেখা অপচয় হয়।</div>
+    <p>
+      প্রতিটা বার্তায় <code>.encode("utf-8")</code> লেখা ক্লান্তিকর। এর বদলে Producer-এ একবার <strong>value_serializer</strong> সেট করলেই হয়:
+    </p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">Serializer দিয়ে Producer</span></div>
+      <pre><span class="kw">from</span> kafka <span class="kw">import</span> <span class="fn">KafkaProducer</span>
+
+kafka_producer = <span class="fn">KafkaProducer</span>(
+    bootstrap_servers=<span class="str">"localhost:9092"</span>,
+    client_id=<span class="str">"easy_production"</span>,          <span class="cm"># Producer-এর নাম (log-এ দেখা যাবে)</span>
+    value_serializer=<span class="kw">lambda</span> v: v.<span class="fn">encode</span>(<span class="str">"utf-8"</span>),  <span class="cm"># স্বয়ংক্রিয় encode</span>
+    key_serializer=<span class="kw">lambda</span> k: k.<span class="fn">encode</span>(<span class="str">"utf-8"</span>)      <span class="cm"># key-ও encode</span>
+)
+
+<span class="cm"># এখন আর .encode() লাগবে না!</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">6</span>):
+    kafka_producer.<span class="fn">send</span>(topic=<span class="str">"test"</span>, value=<span class="fn">f"No need encoding # {i}"</span>)</pre>
+    </div>
+
+    <h3>acks — বার্তা প্রাপ্তি নিশ্চিতকরণ</h3>
+    <p>
+      <strong>acks</strong> প্যারামিটার দিয়ে ঠিক করা যায় কতটা নিশ্চিত হতে চাও যে বার্তা পৌঁছেছে:
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>acks মান</th><th>মানে কী</th><th>ঝুঁকি</th><th>গতি</th></tr>
+        <tr><td><code style="color:var(--accent2)">0</code></td><td>কোনো নিশ্চিতকরণ নেই</td><td>সর্বোচ্চ ঝুঁকি — বার্তা হারাতে পারে</td><td>🚀 সবচেয়ে দ্রুত</td></tr>
+        <tr><td><code style="color:var(--orange)">1</code></td><td>শুধু Leader Broker নিশ্চিত করলেই হয়</td><td>Leader crash করলে হারাতে পারে</td><td>⚡ দ্রুত</td></tr>
+        <tr><td><code style="color:var(--green)">'all'</code></td><td>সব Broker নিশ্চিত করতে হবে</td><td>সবচেয়ে নিরাপদ</td><td>🐢 সবচেয়ে ধীর</td></tr>
+      </table>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">acks উদাহরণ</span></div>
+      <pre>kafka_producer = <span class="fn">KafkaProducer</span>(
+    bootstrap_servers=<span class="str">"localhost:9092"</span>,
+    acks=<span class="str">'all'</span>,          <span class="cm"># সর্বোচ্চ নিরাপত্তা</span>
+    retries=<span class="num">5</span>,           <span class="cm"># fail হলে ৫ বার চেষ্টা করবে</span>
+    retry_backoff_ms=<span class="num">100</span>  <span class="cm"># প্রতি চেষ্টার মাঝে ১০০ms অপেক্ষা</span>
+)</pre>
+    </div>
+
+    <h3>Consumer-এ Group ID ও Manual Commit</h3>
+    <p>
+      <strong>group_id</strong> দিলে Consumer Group তৈরি হয়। <strong>enable_auto_commit=False</strong> দিলে বার্তা সফলভাবে প্রসেস না হওয়া পর্যন্ত নিশ্চিতকরণ দেওয়া হবে না:
+    </p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">Advanced Consumer</span></div>
+      <pre><span class="kw">from</span> kafka <span class="kw">import</span> <span class="fn">KafkaConsumer</span>
+
+<span class="kw">def</span> <span class="fn">decode_str</span>(string):
+    <span class="kw">if</span> string <span class="kw">is</span> <span class="kw">None</span>:
+        <span class="kw">return</span> <span class="kw">None</span>
+    <span class="kw">else</span>:
+        <span class="kw">return</span> string.<span class="fn">decode</span>(<span class="str">"utf-8"</span>)
+
+kafka_consumer = <span class="fn">KafkaConsumer</span>(
+    <span class="str">"test"</span>,
+    bootstrap_servers=<span class="str">"localhost:9092"</span>,
+    group_id=<span class="str">"my-consumer-group"</span>,  <span class="cm"># Consumer Group-এর নাম</span>
+    auto_offset_reset=<span class="str">"earliest"</span>,
+    key_deserializer=decode_str,    <span class="cm"># স্বয়ংক্রিয় decode</span>
+    value_deserializer=decode_str,
+    enable_auto_commit=<span class="kw">False</span>,      <span class="cm"># Manual commit চাই</span>
+    consumer_timeout_ms=<span class="num">5000</span>       <span class="cm"># ৫ সেকেন্ড অপেক্ষার পর থামবে</span>
+)
+
+<span class="kw">for</span> message <span class="kw">in</span> kafka_consumer:
+    <span class="fn">print</span>(message.key, message.value)
+    kafka_consumer.<span class="fn">commit</span>()        <span class="cm"># বার্তা প্রসেস হলো, তারপর commit</span>
+
+kafka_consumer.<span class="fn">close</span>()</pre>
+    </div>
+
+    <div class="highlight">
+      <div class="highlight-title">🔑 Manual Commit কেন দরকার?</div>
+      <p>ধরো বার্তা পড়া হলো কিন্তু প্রসেস করার আগেই Consumer crash করল। Auto Commit থাকলে Kafka মনে করবে বার্তা প্রসেস হয়ে গেছে — কিন্তু আসলে হয়নি! Manual Commit দিলে কাজ শেষ হওয়ার পরেই Kafka-কে জানাবে।</p>
+    </div>
+
+    <h3>নির্দিষ্ট Partition পড়া (TopicPartition)</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">Specific Partition Consumer</span></div>
+      <pre><span class="kw">from</span> kafka <span class="kw">import</span> <span class="fn">KafkaConsumer</span>, <span class="fn">TopicPartition</span>
+
+kafka_consumer = <span class="fn">KafkaConsumer</span>(
+    bootstrap_servers=<span class="str">"localhost:9092"</span>,
+    auto_offset_reset=<span class="str">"earliest"</span>,
+    enable_auto_commit=<span class="kw">False</span>,
+    consumer_timeout_ms=<span class="num">1000</span>
+)
+
+<span class="cm"># শুধু "test" Topic-এর Partition 0 পড়বো</span>
+test0 = <span class="fn">TopicPartition</span>(<span class="str">"test"</span>, <span class="num">0</span>)
+kafka_consumer.<span class="fn">assign</span>([test0])
+
+<span class="kw">for</span> message <span class="kw">in</span> kafka_consumer:
+    <span class="fn">print</span>(message.key, message.value)
+    kafka_consumer.<span class="fn">commit</span>()
+
+kafka_consumer.<span class="fn">close</span>()</pre>
+    </div>
+
+    <h3>Admin API — Python দিয়ে Topic তৈরি</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">admin.py</span></div>
+      <pre><span class="kw">from</span> kafka.admin <span class="kw">import</span> <span class="fn">KafkaAdminClient</span>, <span class="fn">NewTopic</span>
+<span class="kw">from</span> kafka.errors <span class="kw">import</span> <span class="fn">TopicAlreadyExistsError</span>
+
+admin = <span class="fn">KafkaAdminClient</span>(
+    bootstrap_servers=<span class="str">"localhost:9092"</span>,
+    client_id=<span class="str">"admin-client"</span>
+)
+
+<span class="cm"># নতুন Topic define করো</span>
+new_topic = <span class="fn">NewTopic</span>(
+    name=<span class="str">"test"</span>,
+    num_partitions=<span class="num">2</span>,
+    replication_factor=<span class="num">3</span>
+)
+
+<span class="cm"># Topic তৈরি করো (যদি না থাকে)</span>
+<span class="kw">try</span>:
+    admin.<span class="fn">create_topics</span>([new_topic])
+    <span class="fn">print</span>(<span class="str">"Topic তৈরি হয়েছে!"</span>)
+<span class="kw">except</span> <span class="fn">TopicAlreadyExistsError</span>:
+    <span class="fn">print</span>(<span class="str">"Topic আগে থেকেই আছে!"</span>)</pre>
+    </div>
+
+    <h3>Data Compression — বড় বার্তা ছোট করা</h3>
+    <p>
+      ১ MB-এর বেশি বার্তা পাঠাতে হলে compress করা ভালো:
+    </p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">Compression উদাহরণ</span></div>
+      <pre>kafka_producer = <span class="fn">KafkaProducer</span>(
+    bootstrap_servers=<span class="str">"localhost:9092"</span>,
+    compression_type=<span class="str">'gzip'</span>  <span class="cm"># বিকল্প: 'snappy', 'lz4'</span>
+)</pre>
+    </div>
+
+    <h3>Fault Tolerance টেস্ট করা</h3>
+    <p>৩টা Broker থেকে একটা কমালে কী হয় দেখো:</p>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">Terminal</span></div>
+      <pre><span class="cm"># ৩ থেকে ২-এ নামাও</span>
+docker-compose up --scale kafka=<span class="num">2</span> -d
+
+<span class="cm"># Consumer চালাও — সব ডেটা এখনো আছে!</span>
+<span class="fn">python3</span> consumer.py</pre>
+    </div>
+    <div class="highlight green">
+      <div class="highlight-title">✅ ফলাফল</div>
+      <p>একটা Broker নষ্ট হলেও সব ডেটা পাওয়া যাবে, কারণ Replication-এর মাধ্যমে অন্য Broker-এ কপি আছে। এটাই Kafka-র Fault Tolerance!</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION: DUMMY DATASET ===================== -->
+  <section id="dataset" class="reveal">
+    <div class="section-label">অধ্যায় ১২</div>
+    <h2>Dummy Dataset — <span>ডাউনলোড fail হলে নিজেই বানাও!</span></h2>
+
+    <p>কখনো কখনো <code>wget</code> দিয়ে ফাইল নামাতে গেলে server down, internet সমস্যা, বা link expire হয়। চিন্তা নেই — নিজেই dummy data বানিয়ে নাও!</p>
+
+    <div class="highlight teal">
+      <div class="highlight-title">💡 Dummy Data কী এবং কেন দরকার?</div>
+      <p><strong>Dummy data</strong> মানে নকল/পরীক্ষামূলক ডেটা। বাস্তব না হলেও Kafka শেখার জন্য যথেষ্ট। Producer থেকে পাঠাবে, Consumer পড়বে — এটুকু practice-এর জন্য real data লাগে না।</p>
+    </div>
+
+    <h3>Option 1: Smart Downloader (ডাউনলোড fail হলে dummy বানাও)</h3>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">smart_setup.py — ডাউনলোড না হলে dummy তৈরি</span></div>
+      <pre><span class="kw">import</span> os, urllib.request, json, random
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+
+URL = <span class="str">"https://dst-de.s3.eu-west-3.amazonaws.com/kafka_fr/kafka.zip"</span>
+
+<span class="kw">def</span> <span class="fn">try_download</span>():
+    <span class="fn">print</span>(<span class="str">"⏳ ডাউনলোড চেষ্টা করছি..."</span>)
+    <span class="kw">try</span>:
+        <span class="cm"># urllib.request.urlretrieve = URL থেকে ফাইল নামাও</span>
+        urllib.request.<span class="fn">urlretrieve</span>(URL, <span class="str">"kafka.zip"</span>)
+        <span class="fn">print</span>(<span class="str">"✅ ডাউনলোড সফল!"</span>)
+        <span class="kw">return</span> <span class="kw">True</span>
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        <span class="fn">print</span>(<span class="fn">f"❌ ডাউনলোড fail হয়েছে: {e}"</span>)
+        <span class="kw">return</span> <span class="kw">False</span>
+
+<span class="kw">def</span> <span class="fn">create_dummy_data</span>():
+    <span class="fn">print</span>(<span class="str">"🔧 Dummy ডেটা তৈরি করছি..."</span>)
+    products  = [<span class="str">"Laptop"</span>, <span class="str">"Phone"</span>, <span class="str">"Tablet"</span>, <span class="str">"Headphones"</span>, <span class="str">"Keyboard"</span>]
+    customers = [<span class="str">"Rahim"</span>, <span class="str">"Karim"</span>, <span class="str">"Saikot"</span>, <span class="str">"Priya"</span>, <span class="str">"Tamal"</span>]
+    statuses  = [<span class="str">"order_created"</span>, <span class="str">"payment_done"</span>, <span class="str">"order_shipped"</span>, <span class="str">"delivered"</span>]
+
+    orders = []
+    base_time = datetime(<span class="num">2024</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">9</span>, <span class="num">0</span>, <span class="num">0</span>)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">51</span>):  <span class="cm"># ৫০টা নকল অর্ডার</span>
+        orders.<span class="fn">append</span>({
+            <span class="str">"order_id"</span>  : <span class="fn">f"ORD-{i:04d}"</span>,
+            <span class="str">"customer"</span>  : random.<span class="fn">choice</span>(customers),
+            <span class="str">"product"</span>   : random.<span class="fn">choice</span>(products),
+            <span class="str">"quantity"</span>  : random.<span class="fn">randint</span>(<span class="num">1</span>, <span class="num">5</span>),
+            <span class="str">"price_bdt"</span>: random.<span class="fn">randint</span>(<span class="num">1000</span>, <span class="num">80000</span>),
+            <span class="str">"status"</span>    : random.<span class="fn">choice</span>(statuses),
+            <span class="str">"timestamp"</span>: (base_time + timedelta(minutes=i*<span class="num">5</span>)).<span class="fn">isoformat</span>()
+        })
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="str">"dummy_orders.json"</span>, <span class="str">"w"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> f:
+        json.<span class="fn">dump</span>(orders, f, ensure_ascii=<span class="kw">False</span>, indent=<span class="num">2</span>)
+    <span class="fn">print</span>(<span class="fn">f"✅ {len(orders)}টা নকল অর্ডার dummy_orders.json-এ সংরক্ষিত!"</span>)
+    <span class="kw">return</span> orders
+
+<span class="cm"># মূল যুক্তি: আগে download চেষ্টা, fail হলে dummy বানাও</span>
+<span class="kw">if</span> <span class="kw">not</span> <span class="fn">try_download</span>():
+    orders = <span class="fn">create_dummy_data</span>()</pre>
+    </div>
+
+    <h3>Option 2: সরাসরি Kafka-তে Dummy ডেটা পাঠাও</h3>
+    <p>ফাইল ডাউনলোড বা unzip-এর ঝামেলা না করে সরাসরি Kafka-তে JSON বার্তা পাঠাতে পারো:</p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">dummy_producer.py — JSON ডেটা সরাসরি Kafka-তে</span></div>
+      <pre><span class="kw">from</span> kafka <span class="kw">import</span> <span class="fn">KafkaProducer</span>
+<span class="kw">import</span> json, random, time
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="cm"># JSON Serializer: Python dict → JSON string → bytes</span>
+<span class="cm"># json.dumps() = Python object-কে JSON string-এ রূপান্তর করে</span>
+<span class="cm"># ensure_ascii=False = বাংলা অক্ষর ঠিকমতো থাকে</span>
+producer = <span class="fn">KafkaProducer</span>(
+    bootstrap_servers=<span class="str">"localhost:9092"</span>,
+    value_serializer=<span class="kw">lambda</span> v: json.<span class="fn">dumps</span>(v, ensure_ascii=<span class="kw">False</span>).<span class="fn">encode</span>(<span class="str">"utf-8"</span>),
+    key_serializer=<span class="kw">lambda</span> k: k.<span class="fn">encode</span>(<span class="str">"utf-8"</span>)
+)
+
+products  = [<span class="str">"Laptop"</span>, <span class="str">"Phone"</span>, <span class="str">"Tablet"</span>, <span class="str">"Mouse"</span>, <span class="str">"Keyboard"</span>]
+customers = [<span class="str">"user_101"</span>, <span class="str">"user_202"</span>, <span class="str">"user_303"</span>, <span class="str">"user_404"</span>]
+statuses  = [<span class="str">"order_created"</span>, <span class="str">"payment_done"</span>, <span class="str">"order_shipped"</span>, <span class="str">"delivered"</span>]
+
+<span class="fn">print</span>(<span class="str">"🚀 Kafka-তে Dummy ডেটা পাঠানো শুরু..."</span>)
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">31</span>):
+    customer_id = random.<span class="fn">choice</span>(customers)
+    event = {
+        <span class="str">"event_id"</span>  : i,
+        <span class="str">"customer_id"</span>: customer_id,
+        <span class="str">"product"</span>   : random.<span class="fn">choice</span>(products),
+        <span class="str">"quantity"</span>  : random.<span class="fn">randint</span>(<span class="num">1</span>, <span class="num">3</span>),
+        <span class="str">"price_bdt"</span>: random.<span class="fn">randint</span>(<span class="num">500</span>, <span class="num">50000</span>),
+        <span class="str">"status"</span>    : random.<span class="fn">choice</span>(statuses),
+        <span class="str">"timestamp"</span>: datetime.<span class="fn">now</span>().<span class="fn">isoformat</span>()
+    }
+    <span class="cm"># customer_id = Key → একই customer এর সব event একই Partition-এ</span>
+    producer.<span class="fn">send</span>(topic=<span class="str">"test"</span>, key=customer_id, value=event)
+    <span class="fn">print</span>(<span class="fn">f"  ✉ [{customer_id}] {event['status']} — {event['product']} (৳{event['price_bdt']})"</span>)
+    time.<span class="fn">sleep</span>(<span class="num">0.1</span>)  <span class="cm"># ১০০ms বিরতি</span>
+
+producer.<span class="fn">flush</span>()
+<span class="fn">print</span>(<span class="str">"✅ সব ডেটা পাঠানো শেষ!"</span>)</pre>
+    </div>
+
+    <h3>Dummy Dataset-এর নমুনা ডেটা</h3>
+    <div class="table-wrap">
+      <table class="dataset-table">
+        <tr><th>event_id</th><th>customer_id</th><th>product</th><th>qty</th><th>price_bdt</th><th>status</th></tr>
+        <tr><td>1</td><td>user_101</td><td>Laptop</td><td>1</td><td>45000</td><td>order_created</td></tr>
+        <tr><td>2</td><td>user_202</td><td>Phone</td><td>2</td><td>18000</td><td>payment_done</td></tr>
+        <tr><td>3</td><td>user_101</td><td>Laptop</td><td>1</td><td>45000</td><td>order_shipped</td></tr>
+        <tr><td>4</td><td>user_303</td><td>Mouse</td><td>3</td><td>850</td><td>order_created</td></tr>
+        <tr><td>5</td><td>user_101</td><td>Laptop</td><td>1</td><td>45000</td><td>delivered</td></tr>
+      </table>
+    </div>
+    <p style="font-size:0.9rem;color:var(--text3);margin-top:8px;">⬆ user_101 এর তিনটা event (row 1,3,5) key="user_101" দিলে একই Partition-এ → ক্রম নিশ্চিত</p>
+
+    <h3>Dummy Consumer — JSON বার্তা পড়া</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div><span class="code-label">dummy_consumer.py</span></div>
+      <pre><span class="kw">from</span> kafka <span class="kw">import</span> <span class="fn">KafkaConsumer</span>
+<span class="kw">import</span> json
+
+consumer = <span class="fn">KafkaConsumer</span>(
+    <span class="str">"test"</span>,
+    bootstrap_servers=<span class="str">"localhost:9092"</span>,
+    auto_offset_reset=<span class="str">"earliest"</span>,
+    <span class="cm"># JSON Deserializer: bytes → JSON string → Python dict</span>
+    <span class="cm"># json.loads() = JSON string-কে Python object-এ রূপান্তর</span>
+    value_deserializer=<span class="kw">lambda</span> v: json.<span class="fn">loads</span>(v.<span class="fn">decode</span>(<span class="str">"utf-8"</span>)),
+    key_deserializer=<span class="kw">lambda</span> k: k.<span class="fn">decode</span>(<span class="str">"utf-8"</span>) <span class="kw">if</span> k <span class="kw">else</span> <span class="kw">None</span>,
+    consumer_timeout_ms=<span class="num">3000</span>  <span class="cm"># ৩ সেকেন্ড কিছু না আসলে থামো</span>
+)
+
+<span class="fn">print</span>(<span class="str">"📥 Kafka থেকে ডেটা পড়ছি..."</span>)
+total = <span class="num">0</span>
+
+<span class="kw">for</span> message <span class="kw">in</span> consumer:
+    event = message.value  <span class="cm"># এখন Python dict — সরাসরি key দিয়ে access করো</span>
+    <span class="fn">print</span>(
+        <span class="fn">f"  [{event['customer_id']}] {event['product']} "</span>
+        <span class="fn">f"→ {event['status']} (৳{event['price_bdt']})"</span>
+    )
+    total += <span class="num">1</span>
+
+consumer.<span class="fn">close</span>()
+<span class="fn">print</span>(<span class="fn">f"✅ মোট {total}টা বার্তা পড়া হলো।"</span>)</pre>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ===================== SECTION 12: MCQ ===================== -->
+  <section id="quiz" class="reveal">
+    <div class="section-label">অধ্যায় ১৩</div>
+    <h2>MCQ — <span>নিজেকে যাচাই করো</span></h2>
+
+    <p>কোর্সের শেষে এই প্রশ্নগুলো দিয়ে নিজেকে পরীক্ষা করো। উত্তর বেছে নিলে ব্যাখ্যা দেখতে পাবে।</p>
+
+    <!-- Q1 -->
+    <div class="quiz-card">
+      <div class="quiz-q">প্রশ্ন ১: Kafka আসলে কী?</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">A) একটা Python লাইব্রেরি</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, true)">B) একটা Distributed Event Streaming Platform</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">C) একটা Batch ডেটা প্রসেসিং টুল</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">D) একটা সাধারণ Message Queue</div>
+      <div class="quiz-explain">✅ <strong>সঠিক উত্তর: B</strong><br>Kafka হলো একটা <strong>Distributed Event Streaming Platform</strong>। এটা শুধু Message Queue না — এটা Pub/Sub, Kafka Streams (প্রসেসিং), Kafka Connect (সংযোগ) — সব একসাথে দেয়।</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quiz-card">
+      <div class="quiz-q">প্রশ্ন ২: Kafka Cluster-এর Broker কী?</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">A) Cluster-এর একটা Failure</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, true)">B) Cluster-এর একটা সার্ভার, যেখানে Partition-এর ডেটা থাকে</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">C) Kafka আর Database-এর মধ্যে সংযোগ</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">D) একটা Docker Image</div>
+      <div class="quiz-explain">✅ <strong>সঠিক উত্তর: B</strong><br><strong>Broker</strong> হলো Kafka Cluster-এর একটা সার্ভার। প্রতিটা Broker এক বা একাধিক Partition-এর ডেটা ধরে রাখে এবং অন্য Broker-এর সাথে যোগাযোগ করে।</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quiz-card">
+      <div class="quiz-q">প্রশ্ন ৩: একটা Broker নষ্ট হলে কী হয়?</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">A) Broker কখনো নষ্ট হতে পারে না</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">B) পুরো Cluster বন্ধ হয়ে যায়</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, true)">C) সেই Broker-এর Leader Partition-গুলো স্বয়ংক্রিয়ভাবে অন্য Broker-এ চলে যায়</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">D) সব ডেটা হারিয়ে যায়</div>
+      <div class="quiz-explain">✅ <strong>সঠিক উত্তর: C</strong><br>Kafka Fault Tolerant! Broker নষ্ট হলে তার Leader Partition-এর Follower অন্য Broker-এ ছিল — সেটাই নতুন Leader হয়। ZooKeeper এই leader election পরিচালনা করে। কোনো ডেটা হারায় না।</div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="quiz-card">
+      <div class="quiz-q">প্রশ্ন ৪: একজন User-এর সব বার্তা Production Order-এ পেতে হলে কী করতে হবে?</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">A) কিছু করতে হবে না, Kafka নিজেই গ্যারান্টি দেয়</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">B) এটা অসম্ভব, Kafka Order গ্যারান্টি দেয় না</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, true)">C) User ID-কে Key হিসেবে ব্যবহার করে Partition করতে হবে</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">D) User-এর ডেটা বাইরের Database-এ রাখতে হবে</div>
+      <div class="quiz-explain">✅ <strong>সঠিক উত্তর: C</strong><br>Kafka শুধু <strong>একটা Partition-এর ভেতরে</strong> Order গ্যারান্টি দেয়। তাই একই User-এর বার্তা একই Partition-এ রাখতে User ID-কে Key করতে হবে। একই Key → একই Partition → ক্রম নিশ্চিত।</div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="quiz-card">
+      <div class="quiz-q">প্রশ্ন ৫: Kafka Connect কী?</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, true)">A) Apache Kafka-র একটা Component যেটা বাইরের সিস্টেম থেকে ডেটা আনা-নেওয়ার জন্য Connector ব্যবহার করে</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">B) Kafka-র জন্য একটা VPN</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">C) Kafka-র একটা Python Client</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">D) Cloud-এর জন্য Kafka-র একটা ভার্সন</div>
+      <div class="quiz-explain">✅ <strong>সঠিক উত্তর: A</strong><br><strong>Kafka Connect</strong> হলো Kafka-র Connector System। এটা দিয়ে MongoDB, MySQL, Elasticsearch ইত্যাদির সাথে শুধু configure করেই (কোড না লিখে) ডেটা আদান-প্রদান করা যায়।</div>
+    </div>
+
+    <!-- Bonus Q -->
+    <div class="quiz-card">
+      <div class="quiz-q">বোনাস: Python-এ acks='all' দিলে কী হয়?</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">A) বার্তা দ্রুত পাঠানো হয়, কোনো নিশ্চিতকরণ নেই</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">B) শুধু Leader Broker নিশ্চিত করলেই হয়</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, true)">C) সব Broker (Leader + সব Follower) নিশ্চিত করলে তবেই পরবর্তী বার্তা পাঠানো হয়</div>
+      <div class="quiz-opt" onclick="checkAnswer(this, false)">D) Kafka-তে কোনো পার্থক্য নেই</div>
+      <div class="quiz-explain">✅ <strong>সঠিক উত্তর: C</strong><br><code>acks='all'</code> মানে সর্বোচ্চ নিরাপত্তা — Leader ও সব Follower Broker-কে নিশ্চিত করতে হবে। এতে latency বাড়ে কিন্তু ডেটা হারানোর কোনো সম্ভাবনা নেই। Bank, payment system-এ এটাই ব্যবহার হয়।</div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SUMMARY -->
+  <section class="reveal">
+    <div class="section-label">সারসংক্ষেপ</div>
+    <h2>সব কিছু <span>এক নজরে</span></h2>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <tr><th>ধারণা</th><th>বাংলায় সহজ ব্যাখ্যা</th></tr>
+          <tr><td><strong style="color:var(--accent)">Kafka</strong></td><td>রিয়েলটাইমে অনেক বার্তা আদান-প্রদানের একটা শক্তিশালী প্ল্যাটফর্ম</td></tr>
+          <tr><td><strong style="color:var(--accent)">Topic</strong></td><td>বার্তার বিভাগ — YouTube Channel-এর মতো</td></tr>
+          <tr><td><strong style="color:var(--accent)">Partition</strong></td><td>Topic-এর ভেতরে ছোট ছোট ভাগ, Parallelism-এর জন্য</td></tr>
+          <tr><td><strong style="color:var(--accent)">Offset</strong></td><td>Partition-এর প্রতিটা বার্তার সিরিয়াল নম্বর</td></tr>
+          <tr><td><strong style="color:var(--accent)">Broker</strong></td><td>Kafka Cluster-এর একটা সার্ভার</td></tr>
+          <tr><td><strong style="color:var(--accent)">Producer</strong></td><td>বার্তা পাঠানোর সিস্টেম</td></tr>
+          <tr><td><strong style="color:var(--accent)">Consumer</strong></td><td>বার্তা গ্রহণকারী সিস্টেম</td></tr>
+          <tr><td><strong style="color:var(--accent)">Consumer Group</strong></td><td>অনেক Consumer মিলে একটা দল, কাজ ভাগ করে নেয়</td></tr>
+          <tr><td><strong style="color:var(--accent)">Key</strong></td><td>বার্তার সাথে দেওয়া পরিচয়, একই Key → একই Partition</td></tr>
+          <tr><td><strong style="color:var(--accent)">Replication</strong></td><td>ডেটার নকল রাখা, একটা Broker নষ্ট হলেও ডেটা থাকে</td></tr>
+          <tr><td><strong style="color:var(--accent)">ZooKeeper</strong></td><td>Kafka Cluster-এর ব্যবস্থাপক</td></tr>
+          <tr><td><strong style="color:var(--accent)">Kafka Connect</strong></td><td>বাইরের সিস্টেমের সাথে ডেটা পাইপলাইন</td></tr>
+          <tr><td><strong style="color:var(--accent)">Kafka Streams</strong></td><td>রিয়েলটাইম ডেটা প্রসেসিং (Java/Scala)</td></tr>
+          <tr><td><strong style="color:var(--accent)">acks</strong></td><td>বার্তা পৌঁছানোর নিশ্চিতকরণের মাত্রা</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="highlight green">
+      <div class="highlight-title">🎓 অভিনন্দন!</div>
+      <p>তুমি Apache Kafka-র মূল ধারণা, আর্কিটেকচার, এবং Python দিয়ে ব্যবহার — সব শিখে নিয়েছ! এখন তুমি Kafka নিয়ে কাজ শুরু করতে পারবে।</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer style="text-align:center; padding:40px; color:var(--text3); font-size:0.85rem; border-top:1px solid var(--border);">
+  <p>Apache Kafka — সম্পূর্ণ বাংলা গাইড | DataScientest কোর্স উপকরণ অবলম্বনে</p>
+  <p style="margin-top:8px;">Saikot Das Joy-এর জন্য তৈরি 🇧🇩 | SVG arrows verified ✅ | Quiz JS fixed ✅ | Dummy Dataset ✅</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  reveals.forEach(r => obs.observe(r));
+
+  // Quiz — FIXED: now highlights correct answer when wrong one is clicked
+  function checkAnswer(el, correct) {
+    const card = el.closest('.quiz-card');
+    if (card.dataset.answered) return; // prevent re-clicking after answered
+    card.dataset.answered = '1';
+
+    const opts = card.querySelectorAll('.quiz-opt');
+    const explain = card.querySelector('.quiz-explain');
+
+    // Disable all options so no more clicks
+    opts.forEach(o => { o.style.pointerEvents = 'none'; });
+
+    if (correct) {
+      el.classList.add('correct');
+    } else {
+      // Mark clicked one as wrong
+      el.classList.add('wrong');
+      // Find and highlight the correct one
+      opts.forEach(o => {
+        if (o.getAttribute('onclick') && o.getAttribute('onclick').includes('true')) {
+          o.style.borderColor = 'var(--green)';
+          o.style.background = 'rgba(85,239,196,0.07)';
+          o.style.color = 'var(--green)';
+          o.style.borderStyle = 'dashed';
+        }
+      });
+    }
+    explain.classList.add('show');
+  }
+</script>
+</body>
+</html>

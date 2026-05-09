@@ -1,0 +1,2393 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DVC সম্পূর্ণ গাইড বাংলায়</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1e2732;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #ffa657;
+    --accent5: #d2a8ff;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --code-bg: #0d1117;
+    --highlight: #1f6feb;
+    --warning: #d29922;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 17px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #0d1117 0%, #0f2538 50%, #0d1117 100%);
+    padding: 80px 40px 60px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(88,166,255,0.12), transparent);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(88,166,255,0.1);
+    border: 1px solid rgba(88,166,255,0.3);
+    color: var(--accent);
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #e6edf3, #58a6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto 30px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .hero-stat {
+    text-align: center;
+  }
+  .hero-stat-num {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .hero-stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  /* Layout */
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* Sidebar TOC */
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+  }
+  .sidebar-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    padding: 0 20px 12px;
+  }
+  .toc-item {
+    display: block;
+    padding: 8px 20px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    border-left: 2px solid transparent;
+    transition: all 0.2s;
+    line-height: 1.5;
+  }
+  .toc-item:hover {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(88,166,255,0.05);
+  }
+  .toc-item.sub { padding-left: 36px; font-size: 13px; }
+  .toc-num {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background: var(--surface2);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    font-size: 11px;
+    margin-right: 8px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* Content */
+  .content {
+    flex: 1;
+    max-width: 900px;
+    padding: 48px 48px;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 80px;
+    animation: fadeIn 0.5s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--highlight), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent4);
+    margin: 32px 0 12px;
+  }
+  h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent5);
+    margin: 20px 0 8px;
+  }
+
+  p { margin-bottom: 16px; color: var(--text); }
+
+  /* Callout boxes */
+  .callout {
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 24px 0;
+    border-left: 4px solid;
+    position: relative;
+  }
+  .callout-icon {
+    font-size: 1.2rem;
+    margin-right: 8px;
+  }
+  .callout-title {
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+  }
+  .callout.info { background: rgba(88,166,255,0.07); border-color: var(--accent); }
+  .callout.info .callout-title { color: var(--accent); }
+  .callout.success { background: rgba(63,185,80,0.07); border-color: var(--accent2); }
+  .callout.success .callout-title { color: var(--accent2); }
+  .callout.warning { background: rgba(210,153,34,0.07); border-color: var(--warning); }
+  .callout.warning .callout-title { color: var(--warning); }
+  .callout.danger { background: rgba(247,129,102,0.07); border-color: var(--accent3); }
+  .callout.danger .callout-title { color: var(--accent3); }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .code-header {
+    background: var(--surface);
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .code-dots { display: flex; gap: 6px; }
+  .code-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .code-dot.r { background: #ff5f57; }
+  .code-dot.y { background: #febc2e; }
+  .code-dot.g { background: #28c840; }
+  .code-content {
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #e6edf3;
+  }
+  .code-content .cmd { color: #58a6ff; }
+  .code-content .comment { color: #8b949e; font-style: italic; }
+  .code-content .flag { color: #ffa657; }
+  .code-content .path { color: #3fb950; }
+  .code-content .kw { color: #d2a8ff; }
+  .code-content .str { color: #a5d6ff; }
+  .code-content .num { color: #79c0ff; }
+  code {
+    background: rgba(88,166,255,0.1);
+    color: var(--accent);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+  }
+
+  /* SVG Diagrams */
+  .diagram-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .diagram-title {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  /* Comparison table */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.95rem;
+  }
+  .compare-table th {
+    background: var(--surface2);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    color: var(--accent);
+  }
+  .compare-table td {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .compare-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .check { color: var(--accent2); }
+  .cross { color: var(--accent3); }
+
+  /* Step boxes */
+  .steps { margin: 20px 0; }
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .step::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: -20px;
+    width: 2px;
+    background: var(--border);
+  }
+  .step:last-child::before { display: none; }
+  .step-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--highlight);
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 0.9rem;
+  }
+  .step-content { flex: 1; padding-top: 8px; }
+  .step-title { font-weight: 600; color: var(--accent4); margin-bottom: 6px; }
+
+  /* Tool cards */
+  .tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .tool-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .tool-card:hover { border-color: var(--accent); }
+  .tool-name { font-weight: 700; color: var(--accent); margin-bottom: 8px; font-size: 1.1rem; }
+  .tool-desc { font-size: 0.9rem; color: var(--text-muted); }
+  .tool-pros, .tool-cons { font-size: 0.85rem; margin-top: 8px; }
+  .tool-pros { color: var(--accent2); }
+  .tool-cons { color: var(--accent3); }
+
+  /* Command reference */
+  .cmd-ref {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  .cmd-ref-row {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+  .cmd-ref-row:last-child { border-bottom: none; }
+  .cmd-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    min-width: 220px;
+    flex-shrink: 0;
+  }
+  .cmd-desc { font-size: 0.9rem; color: var(--text-muted); }
+
+  /* Analogy box */
+  .analogy {
+    background: linear-gradient(135deg, rgba(210,168,255,0.08), rgba(88,166,255,0.08));
+    border: 1px solid rgba(210,168,255,0.2);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .analogy-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent5);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  /* Pipeline flow */
+  .pipeline-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 20px 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .pipe-step {
+    background: var(--surface2);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px 20px;
+    text-align: center;
+    min-width: 130px;
+  }
+  .pipe-step-name { font-weight: 700; color: var(--accent); font-size: 0.9rem; }
+  .pipe-step-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+  .pipe-arrow {
+    font-size: 1.5rem;
+    color: var(--accent4);
+    padding: 0 4px;
+  }
+
+  /* File structure */
+  .file-tree {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    margin: 16px 0;
+    line-height: 2;
+  }
+  .file-tree .dir { color: #79c0ff; }
+  .file-tree .file { color: #e6edf3; }
+  .file-tree .dvc-file { color: #3fb950; }
+  .file-tree .meta { color: #8b949e; font-size: 11px; }
+
+  /* Summary box */
+  .summary-box {
+    background: linear-gradient(135deg, rgba(63,185,80,0.05), rgba(88,166,255,0.05));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 32px 0;
+  }
+  .summary-title { font-size: 1.1rem; font-weight: 700; color: var(--accent2); margin-bottom: 12px; }
+
+  /* Key concept pill */
+  .key-pill {
+    display: inline-block;
+    background: rgba(255,166,87,0.1);
+    border: 1px solid rgba(255,166,87,0.3);
+    color: var(--accent4);
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin: 2px;
+  }
+
+  /* Chapter divider */
+  .chapter-divider {
+    text-align: center;
+    margin: 60px 0 40px;
+    position: relative;
+  }
+  .chapter-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+  .chapter-divider span {
+    background: var(--bg);
+    padding: 0 16px;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .content { padding: 24px 20px; }
+    .pipeline-flow { gap: 8px; }
+    .pipe-arrow { display: none; }
+    .hero { padding: 40px 20px; }
+  }
+
+  /* Print */
+  @media print {
+    .sidebar { display: none; }
+    .content { padding: 20px; }
+  }
+
+  /* Highlight animation */
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(88,166,255,0); }
+    50% { box-shadow: 0 0 0 4px rgba(88,166,255,0.15); }
+  }
+
+  .important-box {
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    animation: pulse-border 3s infinite;
+  }
+
+  /* YAML syntax */
+  .yaml-key { color: #79c0ff; }
+  .yaml-val { color: #a5d6ff; }
+  .yaml-comment { color: #6e7681; font-style: italic; }
+  .yaml-dash { color: #ffa657; }
+
+  /* Reading progress */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent5));
+    z-index: 999;
+    transition: width 0.1s;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">সম্পূর্ণ বাংলা গাইড · MLOps</div>
+  <h1>Data Version Control (DVC)<br>সম্পূর্ণ বাংলা টিউটোরিয়াল</h1>
+  <p class="hero-sub">একজন সম্পূর্ণ নতুন মানুষও যেন বুঝতে পারেন — সেই লক্ষ্যে লেখা। কোনো প্রশ্নই ছোট নয়।</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-num">৭</div><div class="hero-stat-label">অধ্যায়</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">৫০+</div><div class="hero-stat-label">কোড উদাহরণ</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">১৫+</div><div class="hero-stat-label">ডায়াগ্রাম</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">১০০%</div><div class="hero-stat-label">বাংলায়</div></div>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-title">বিষয়সূচি</div>
+  <a class="toc-item" href="#s1"><span class="toc-num">১</span>Data Version Control কী?</a>
+  <a class="toc-item sub" href="#s1-why">কেন দরকার?</a>
+  <a class="toc-item sub" href="#s1-tools">টুলসের তুলনা</a>
+  <a class="toc-item" href="#s2"><span class="toc-num">২</span>DVC কী ও কীভাবে কাজ করে?</a>
+  <a class="toc-item sub" href="#s2-how">Git এর সাথে পার্থক্য</a>
+  <a class="toc-item sub" href="#s2-arch">আর্কিটেকচার</a>
+  <a class="toc-item" href="#s3"><span class="toc-num">৩</span>সেটআপ ও প্রথম পদক্ষেপ</a>
+  <a class="toc-item sub" href="#s3-install">ইনস্টলেশন</a>
+  <a class="toc-item sub" href="#s3-init">dvc init</a>
+  <a class="toc-item sub" href="#s3-remote">Remote Storage</a>
+  <a class="toc-item" href="#s4"><span class="toc-num">৪</span>ডেটা ট্র্যাক করা</a>
+  <a class="toc-item sub" href="#s4-add">dvc add</a>
+  <a class="toc-item sub" href="#s4-push">push ও pull</a>
+  <a class="toc-item sub" href="#s4-version">ভার্সন ব্যবস্থাপনা</a>
+  <a class="toc-item" href="#s5"><span class="toc-num">৫</span>মডেল ট্র্যাক করা</a>
+  <a class="toc-item sub" href="#s5-train">ট্রেনিং ও ট্র্যাকিং</a>
+  <a class="toc-item sub" href="#s5-gdrive">Google Drive Remote</a>
+  <a class="toc-item" href="#s6"><span class="toc-num">৬</span>DVC Pipeline</a>
+  <a class="toc-item sub" href="#s6-stage">Stage কী?</a>
+  <a class="toc-item sub" href="#s6-repro">dvc repro</a>
+  <a class="toc-item sub" href="#s6-dag">DAG ও dvc dag</a>
+  <a class="toc-item" href="#s7"><span class="toc-num">৭</span>DagsHub</a>
+  <a class="toc-item sub" href="#s7-what">DagsHub কী?</a>
+  <a class="toc-item sub" href="#s7-setup">সংযোগ করা</a>
+  <a class="toc-item sub" href="#s7-remote">Remote Storage</a>
+  <a class="toc-item" href="#s8"><span class="toc-num">৮</span>পরীক্ষা (Exam গাইড)</a>
+  <a class="toc-item" href="#s9"><span class="toc-num">৯</span>চিটশিট ও রেফারেন্স</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="content">
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 1: What is Data Version Control?
+═══════════════════════════════════════════════ -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <div class="section-num">১</div>
+    <div class="section-title">Data Version Control কী?</div>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-title">🍳 রান্নার রেসিপি দিয়ে বুঝি</div>
+    <p>ধরুন আপনি একটি রেসিপি লিখছেন। প্রথমে শুধু উপকরণের তালিকা। তারপর রান্নার পদ্ধতি যোগ করলেন। তারপর পরিমাণ ঠিক করলেন। এখন যদি কেউ জিজ্ঞেস করেন — "তোমার প্রথম ড্রাফটে কী ছিল?" — আপনি মনে করতে পারবেন না! <strong>Data Version Control</strong> হলো সেই ম্যাজিক রেকর্ডার যে প্রতিটি পরিবর্তন মনে রাখে।</p>
+  </div>
+
+  <p>কম্পিউটার বিজ্ঞানের দুনিয়ায় <strong>Version Control</strong> মানে হলো — কোনো ফাইলের প্রতিটি পরিবর্তন ট্র্যাক করে রাখা, যাতে যেকোনো সময় আগের অবস্থায় ফিরে যাওয়া যায়।</p>
+
+  <p>কোডের জন্য আমরা <strong>Git</strong> ব্যবহার করি। কিন্তু ডেটার জন্য? সেটাই হলো <strong>Data Version Control (DVC)</strong>।</p>
+
+  <div id="s1-why"></div>
+  <h3>🤔 কেন ডেটার ভার্সন কন্ট্রোল দরকার?</h3>
+
+  <p>Machine Learning প্রজেক্টে সমস্যাটা হলো — একই ডেটাসেট নিয়ে অনেকে কাজ করেন, বিভিন্ন পরিবর্তন হয়, এবং কোন মডেল কোন ডেটায় ট্রেন হয়েছিল সেটা মনে থাকে না।</p>
+
+  <div class="diagram-container">
+    <div class="diagram-title">চিত্র ১: ডেটা ভার্সন কন্ট্রোল ছাড়া যে সমস্যা হয়</div>
+    <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" font-family="'Hind Siliguri',sans-serif">
+      <defs>
+        <marker id="g1a" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto"><path d="M0,0 L8,3.5 L0,7Z" fill="#3fb950"/></marker>
+      </defs>
+      <!-- LEFT: Problem box -->
+      <rect x="8" y="8" width="330" height="244" rx="10" fill="#1e1414" stroke="#f78166" stroke-width="1.5"/>
+      <text x="173" y="32" text-anchor="middle" fill="#f78166" font-size="13" font-weight="bold">❌ DVC ছাড়া — সমস্যা</text>
+      <rect x="24" y="46" width="135" height="32" rx="5" fill="#2a1a1a" stroke="#f78166" stroke-width="1"/>
+      <text x="91" y="66" text-anchor="middle" fill="#f78166" font-size="11" font-family="monospace">data_v1.csv (5GB)</text>
+      <rect x="170" y="46" width="150" height="32" rx="5" fill="#2a1a1a" stroke="#f78166" stroke-width="1"/>
+      <text x="245" y="66" text-anchor="middle" fill="#f78166" font-size="11" font-family="monospace">data_v2_final.csv</text>
+      <rect x="24" y="90" width="155" height="32" rx="5" fill="#2a1a1a" stroke="#f78166" stroke-width="1"/>
+      <text x="101" y="110" text-anchor="middle" fill="#f78166" font-size="11" font-family="monospace">data_FINAL_v3.csv</text>
+      <rect x="190" y="90" width="130" height="32" rx="5" fill="#2a1a1a" stroke="#f78166" stroke-width="1"/>
+      <text x="255" y="110" text-anchor="middle" fill="#f78166" font-size="11" font-family="monospace">USE_THIS!!.csv</text>
+      <text x="24" y="146" fill="#8b949e" font-size="12">😱 কোনটা সর্বশেষ ভার্সন?</text>
+      <text x="24" y="166" fill="#8b949e" font-size="12">💥 Git রেপো ১৫GB হয়ে গেছে!</text>
+      <text x="24" y="186" fill="#8b949e" font-size="12">❓ কোন মডেল কোন ডেটায় train?</text>
+      <text x="24" y="206" fill="#8b949e" font-size="12">😤 আগের ভার্সন পাওয়া যাচ্ছে না</text>
+      <text x="24" y="234" fill="#6e7681" font-size="11">→ প্রতি পরিবর্তনে Git নতুন কপি রাখে</text>
+      <!-- RIGHT: Solution box -->
+      <rect x="362" y="8" width="330" height="244" rx="10" fill="#121e14" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="527" y="32" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="bold">✅ DVC দিয়ে — সমাধান</text>
+      <rect x="378" y="46" width="145" height="48" rx="5" fill="#0f1f10" stroke="#3fb950" stroke-width="1"/>
+      <text x="450" y="67" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="bold">data.csv.dvc</text>
+      <text x="450" y="84" text-anchor="middle" fill="#6e7681" font-size="10" font-family="monospace">মাত্র ১ KB!</text>
+      <line x1="450" y1="95" x2="450" y2="113" stroke="#3fb950" stroke-width="1.5" marker-end="url(#g1a)"/>
+      <rect x="378" y="114" width="295" height="44" rx="5" fill="#0f1f10" stroke="#3fb950" stroke-width="1"/>
+      <text x="525" y="133" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">☁️ Remote Storage</text>
+      <text x="525" y="150" text-anchor="middle" fill="#6e7681" font-size="10">S3 / Google Drive / DagsHub — আসল ডেটা এখানে</text>
+      <text x="378" y="182" fill="#8b949e" font-size="12">✓ Git রেপো সবসময় ছোট থাকে</text>
+      <text x="378" y="202" fill="#8b949e" font-size="12">✓ প্রতিটি ভার্সন আলাদাভাবে সংরক্ষিত</text>
+      <text x="378" y="222" fill="#8b949e" font-size="12">✓ যেকোনো ভার্সনে মুহূর্তে ফিরে যাও</text>
+      <text x="378" y="242" fill="#8b949e" font-size="12">✓ দলের সবাই একই ডেটায় কাজ করে</text>
+    </svg>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title"><span class="callout-icon">💡</span>মূল সমস্যা</div>
+    <p>Git ডেটা ফাইল ট্র্যাক করতে পারে না কারণ: ডেটা ফাইল অনেক বড় (GB), এবং প্রতিটি পরিবর্তনে Git একটি নতুন কপি রাখে — ফলে রেপো দ্রুত বিশাল হয়ে যায়।</p>
+  </div>
+
+  <p>Data Version Control এর দুটো বড় সুবিধা:</p>
+  <div class="callout success">
+    <div class="callout-title"><span class="callout-icon">✅</span>সুবিধা ১: প্রজেক্টের বিবর্তন দেখা যায়</div>
+    <p>কী যোগ হয়েছে, কী বাদ দেওয়া হয়েছে, কখন — সব ইতিহাস আছে।</p>
+  </div>
+  <div class="callout success">
+    <div class="callout-title"><span class="callout-icon">✅</span>সুবিধা ২: Risk Management</div>
+    <p>কোনো সমস্যা হলে আগের ভার্সনে ফিরে যাও — undo বাটনের মতো, কিন্তু পুরো ডেটাসেটের জন্য!</p>
+  </div>
+
+  <div id="s1-tools"></div>
+  <h3>🛠️ DVC ছাড়াও আরও টুল আছে</h3>
+
+  <div class="tool-grid">
+    <div class="tool-card">
+      <div class="tool-name">DVC</div>
+      <div class="tool-desc">Git এর সাথে মিলিয়ে কাজ করে। ML প্রজেক্টের জন্য সেরা।</div>
+      <div class="tool-pros">✅ ফ্রি, ওপেন-সোর্স<br>✅ Git এর মতো কমান্ড</div>
+      <div class="tool-cons">❌ Relational DB এর ফিচার নেই</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">Git-LFS</div>
+      <div class="tool-desc">Git এর একটি extension। Game dev থেকে এসেছে।</div>
+      <div class="tool-pros">✅ Git এর সাথে ইন্টিগ্রেটেড</div>
+      <div class="tool-cons">❌ হ্যান্ডেল করা কঠিন<br>❌ একবার যোগ করলে সরানো কষ্টকর</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">Dolt</div>
+      <div class="tool-desc">SQL database + GitHub এর মতো ফিচার (fork, clone, merge)।</div>
+      <div class="tool-pros">✅ SQL query করা যায়</div>
+      <div class="tool-cons">❌ শুধু tabular data<br>❌ private data এ paid plan</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">LakeFS</div>
+      <div class="tool-desc">বড় data lake এর জন্য। Airflow, Spark ইত্যাদির সাথে কাজ করে।</div>
+      <div class="tool-pros">✅ বড় ডেটাসেটের জন্য আদর্শ</div>
+      <div class="tool-cons">❌ ফাইল ডিলিট করা সহজ নয়</div>
+    </div>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title"><span class="callout-icon">⚠️</span>এই কোর্সে আমরা DVC শিখব</div>
+    <p>কারণ DVC সবচেয়ে বেশি ব্যবহৃত, ফ্রি, এবং Git এর সাথে সুন্দরভাবে কাজ করে।</p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 2: What is DVC and How it Works
+═══════════════════════════════════════════════ -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <div class="section-num">২</div>
+    <div class="section-title">DVC কী এবং কীভাবে কাজ করে?</div>
+  </div>
+
+  <p><strong>DVC (Data Version Control)</strong> হলো ডেটা এবং Machine Learning মডেলের ভার্সন ট্র্যাক করার একটি টুল। এটি Git এর সাথে মিলে কাজ করে।</p>
+
+  <div class="analogy">
+    <div class="analogy-title">📚 লাইব্রেরি কার্ড দিয়ে বুঝি</div>
+    <p>ধরুন লাইব্রেরিতে ৫০০ পৃষ্ঠার বই আছে। আপনাকে প্রতিবার পুরো বই বহন না করে — শুধু একটি <strong>কার্ড</strong> দেওয়া হলো যাতে বইয়ের লোকেশন লেখা আছে। DVC ঠিক এটাই করে।</p>
+    <p>বড় ফাইল (ডেটা/মডেল) → আলাদা জায়গায় রাখে<br>
+    ছোট pointer file (.dvc) → Git এ রাখে</p>
+  </div>
+
+  <div id="s2-how"></div>
+  <h3>Git এর সাথে পার্থক্য কী?</h3>
+
+  <table class="compare-table">
+    <tr>
+      <th>বিষয়</th>
+      <th>Git</th>
+      <th>DVC</th>
+    </tr>
+    <tr>
+      <td>কী ট্র্যাক করে?</td>
+      <td>কোড, ছোট ফাইল</td>
+      <td>বড় ডেটা ফাইল, ML মডেল</td>
+    </tr>
+    <tr>
+      <td>ফাইল কোথায় রাখে?</td>
+      <td>Git রেপোতেই</td>
+      <td>বাইরে (S3, GDrive, local)</td>
+    </tr>
+    <tr>
+      <td>রেপোতে কী থাকে?</td>
+      <td>আসল ফাইল</td>
+      <td>শুধু pointer (.dvc ফাইল)</td>
+    </tr>
+    <tr>
+      <td>ফাইল সাইজ সীমা</td>
+      <td>~100MB (GitHub limit)</td>
+      <td>কোনো সীমা নেই</td>
+    </tr>
+    <tr>
+      <td>কমান্ড স্টাইল</td>
+      <td>git add, git commit, git push</td>
+      <td>dvc add, dvc commit, dvc push</td>
+    </tr>
+  </table>
+
+  <div id="s2-arch"></div>
+  <h3>DVC এর আর্কিটেকচার — কোথায় কী থাকে?</h3>
+
+  <!-- SVG Architecture Diagram -->
+  <div class="diagram-container">
+    <div class="diagram-title">চিত্র ২: DVC এর সম্পূর্ণ আর্কিটেকচার</div>
+    <svg viewBox="0 0 660 380" xmlns="http://www.w3.org/2000/svg" font-family="'Hind Siliguri',sans-serif">
+      <defs>
+        <marker id="arrowB" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L8,3.5 L0,7Z" fill="#58a6ff"/>
+        </marker>
+        <marker id="arrowO" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L8,3.5 L0,7Z" fill="#ffa657"/>
+        </marker>
+      </defs>
+
+      <!-- ── Local Machine (big box) ── -->
+      <rect x="10" y="160" width="400" height="200" rx="12" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+      <text x="210" y="182" text-anchor="middle" fill="#6e7681" font-size="12">💻 আপনার কম্পিউটার (Local)</text>
+
+      <!-- Local Workspace -->
+      <rect x="25" y="195" width="160" height="80" rx="8" fill="#1e2732" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="105" y="215" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="bold">Local Workspace</text>
+      <text x="105" y="235" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">model.pkl (500MB)</text>
+      <text x="105" y="250" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">data/raw/*.csv</text>
+      <text x="105" y="268" text-anchor="middle" fill="#6e7681" font-size="10">(আসল বড় ফাইল)</text>
+
+      <!-- Local Cache -->
+      <rect x="220" y="195" width="170" height="80" rx="8" fill="#1e2732" stroke="#ffa657" stroke-width="1.5"/>
+      <text x="305" y="215" text-anchor="middle" fill="#ffa657" font-size="12" font-weight="bold">DVC Cache</text>
+      <text x="305" y="235" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">.dvc/cache/</text>
+      <text x="305" y="255" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">3caf...874a</text>
+      <text x="305" y="272" text-anchor="middle" fill="#6e7681" font-size="10">(MD5 hash দিয়ে সংরক্ষিত)</text>
+
+      <!-- Git area (bottom of local) -->
+      <rect x="25" y="295" width="365" height="55" rx="8" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="50" y="318" fill="#58a6ff" font-size="11" font-weight="bold">Git Staging Area / Local Git Control</text>
+      <text x="50" y="338" fill="#e6edf3" font-size="11" font-family="monospace">model.pkl.dvc (1KB) · .gitignore · code.py</text>
+
+      <!-- ── Remote Code Storage ── -->
+      <rect x="450" y="10" width="190" height="130" rx="12" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="545" y="35" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">Remote Code</text>
+      <text x="545" y="52" text-anchor="middle" fill="#58a6ff" font-size="11">Storage (GitHub)</text>
+      <!-- Git icon -->
+      <circle cx="545" cy="95" r="28" fill="#1e2732" stroke="#58a6ff" stroke-width="1"/>
+      <text x="545" y="100" text-anchor="middle" fill="#58a6ff" font-size="22">⑂</text>
+      <text x="545" y="125" text-anchor="middle" fill="#6e7681" font-size="10">git push / git pull</text>
+
+      <!-- ── Remote Data Storage ── -->
+      <rect x="450" y="160" width="190" height="130" rx="12" fill="#161b22" stroke="#ffa657" stroke-width="1.5"/>
+      <text x="545" y="185" text-anchor="middle" fill="#ffa657" font-size="12" font-weight="bold">Remote Data</text>
+      <text x="545" y="202" text-anchor="middle" fill="#ffa657" font-size="11">Storage</text>
+      <text x="545" y="220" text-anchor="middle" fill="#6e7681" font-size="10">S3 / Azure / GDrive</text>
+      <!-- DB cylinder icon -->
+      <ellipse cx="545" cy="252" rx="28" ry="8" fill="#1e2732" stroke="#ffa657" stroke-width="1"/>
+      <rect x="517" y="252" width="56" height="20" fill="#1e2732" stroke="none"/>
+      <line x1="517" y1="252" x2="517" y2="272" stroke="#ffa657" stroke-width="1"/>
+      <line x1="573" y1="252" x2="573" y2="272" stroke="#ffa657" stroke-width="1"/>
+      <ellipse cx="545" cy="272" rx="28" ry="8" fill="#1e2732" stroke="#ffa657" stroke-width="1"/>
+      <text x="545" y="268" text-anchor="middle" fill="#ffa657" font-size="10" font-weight="bold">DATA</text>
+      <text x="545" y="298" text-anchor="middle" fill="#6e7681" font-size="10">dvc push / dvc pull</text>
+
+      <!-- ARROWS -->
+      <!-- Workspace <-> Cache (reflink) -->
+      <line x1="185" y1="235" x2="218" y2="235" stroke="#6e7681" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrowO)"/>
+      <text x="200" y="228" text-anchor="middle" fill="#6e7681" font-size="9">reflink</text>
+
+      <!-- Git staging -> GitHub -->
+      <line x1="393" y1="315" x2="448" y2="90" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arrowB)"/>
+      <text x="440" y="200" fill="#58a6ff" font-size="10" transform="rotate(-70,440,200)">git push</text>
+
+      <!-- Cache -> Remote Data -->
+      <line x1="393" y1="235" x2="448" y2="235" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arrowO)"/>
+      <text x="415" y="225" text-anchor="middle" fill="#ffa657" font-size="10">dvc push</text>
+
+      <!-- pointer file label inside local machine box -->
+      <text x="105" y="165" text-anchor="middle" fill="#d2a8ff" font-size="11">📄 model.pkl.dvc</text>
+      <text x="105" y="180" text-anchor="middle" fill="#6e7681" font-size="10">(মাত্র 1KB — Git এ থাকে)</text>
+    </svg>
+  </div>
+
+  <h3>সহজ ভাষায় কীভাবে কাজ করে</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">১</div>
+      <div class="step-content">
+        <div class="step-title">আপনি ডেটা যোগ করেন (<code>dvc add</code>)</div>
+        <p>DVC বড় ফাইলটিকে একটি <strong>fingerprint (MD5 hash)</strong> দিয়ে চিহ্নিত করে। আসল ফাইলটি cache এ রাখে। একটি ছোট <code>.dvc</code> ফাইল তৈরি করে যেটা pointer হিসেবে কাজ করে।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">২</div>
+      <div class="step-content">
+        <div class="step-title">Git এ <code>.dvc</code> ফাইল commit করেন</div>
+        <p>Git এ শুধু ছোট pointer ফাইলটি যায়। আসল বড় ডেটা যায় না। তাই রেপো ছোটই থাকে।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৩</div>
+      <div class="step-content">
+        <div class="step-title">Remote এ push করেন (<code>dvc push</code>)</div>
+        <p>আসল বড় ডেটা S3/GDrive/DagsHub এ আপলোড হয়। এখন যে কেউ এটা পেতে পারে।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৪</div>
+      <div class="step-content">
+        <div class="step-title">অন্য কেউ download করেন (<code>dvc pull</code>)</div>
+        <p>Git clone করলে শুধু <code>.dvc</code> ফাইল আসে। তারপর <code>dvc pull</code> করলে আসল ডেটা remote থেকে নামে।</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="important-box">
+    <p><strong>🔑 সবচেয়ে গুরুত্বপূর্ণ কথা:</strong> DVC হলো Git এর সাথে parallel চলা একটি সিস্টেম। Code → Git। Data → DVC। দুটো একসাথে ব্যবহার করতে হয়।</p>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title"><span class="callout-icon">ℹ️</span>DVC কি একা ব্যবহার করা যায়?</div>
+    <p>হ্যাঁ, কিন্তু Git এর সাথে ব্যবহার করাটাই recommended। DVC একটি <strong>free, open-source, platform-agnostic</strong> টুল — অর্থাৎ Windows, Mac, Linux সব জায়গায় চলে এবং যেকোনো ML library এর সাথে কাজ করে।</p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 3: Setup
+═══════════════════════════════════════════════ -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <div class="section-num">৩</div>
+    <div class="section-title">সেটআপ ও প্রথম পদক্ষেপ</div>
+  </div>
+
+  <p>এখন আমরা হাতে-কলমে শিখব। আমরা একটি road accident prediction প্রজেক্ট ব্যবহার করব উদাহরণ হিসেবে।</p>
+
+  <div id="s3-install"></div>
+  <h3>📦 পদক্ষেপ ১: Repository Fork ও Clone করা</h3>
+
+  <div class="callout info">
+    <div class="callout-title"><span class="callout-icon">💡</span>Fork মানে কী?</div>
+    <p><strong>Fork</strong> মানে অন্য কারো GitHub repository এর একটি কপি নিজের GitHub account এ নেওয়া। এটা ফটোকপির মতো — original এর পরিবর্তন না করে নিজে কাজ করা যায়।</p>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">১</div>
+      <div class="step-content">
+        <div class="step-title">GitHub এ গিয়ে Template_MLOps_accidents repository Fork করুন</div>
+        <p>"Fork" বাটনে ক্লিক করুন। গুরুত্বপূর্ণ: <strong>"Copy the master branch only"</strong> চেকবক্সটি deselect করুন — কারণ আমাদের সব branch দরকার।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">২</div>
+      <div class="step-content">
+        <div class="step-title">accidents ফোল্ডার তৈরি করে সেখানে navigate করুন</div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>Terminal</span>
+            <div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div>
+          </div>
+          <div class="code-content">
+<span class="cmd">mkdir</span> accidents<br>
+<span class="cmd">cd</span> accidents</div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৩</div>
+      <div class="step-content">
+        <div class="step-title">শুধু accidents_v2 branch clone করুন</div>
+        <div class="code-block">
+          <div class="code-header"><span>Terminal</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+          <div class="code-content">
+<span class="comment"># আপনার GitHub username দিয়ে replace করুন</span><br>
+<span class="cmd">git</span> clone -b accidents_v2 <span class="flag">--single-branch</span> \<br>
+  https://github.com/<span class="str">your_username</span>/Template_MLOps_accidents.git</div>
+        </div>
+        <div class="callout info" style="margin-top:8px">
+          <div class="callout-title"><span class="callout-icon">💡</span>--single-branch মানে কী?</div>
+          <p>শুধু একটি branch clone করবে (accidents_v2)। বাকি branches নামবে না — ফলে কম জায়গা লাগবে।</p>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৪</div>
+      <div class="step-content">
+        <div class="step-title">ফোল্ডারে ঢুকুন ও virtual environment তৈরি করুন</div>
+        <div class="code-block">
+          <div class="code-header"><span>Terminal</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+          <div class="code-content">
+<span class="cmd">cd</span> Template_MLOps_accidents<br><br>
+<span class="comment"># Virtual environment তৈরি করা</span><br>
+<span class="cmd">virtualenv</span> env<br><br>
+<span class="comment"># Activate করা (Linux/Mac)</span><br>
+<span class="cmd">source</span> env/bin/activate<br><br>
+<span class="comment"># DVC ইনস্টল করা</span><br>
+<span class="cmd">pip install</span> dvc</div>
+        </div>
+        <div class="callout info" style="margin-top:8px">
+          <div class="callout-title"><span class="callout-icon">💡</span>Virtual Environment কী?</div>
+          <p>এটি একটি isolated Python পরিবেশ। আপনার কম্পিউটারের মূল Python এর সাথে মিশে না। প্রতিটি প্রজেক্টের আলাদা environment থাকে — যেমন প্রতিটি রান্নার আলাদা কিচেন।</p>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৫</div>
+      <div class="step-content">
+        <div class="step-title">Dependencies ইনস্টল ও raw data download করুন</div>
+        <div class="code-block">
+          <div class="code-header"><span>Terminal</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+          <div class="code-content">
+<span class="comment"># requirements.txt থেকে সব লাইব্রেরি ইনস্টল</span><br>
+<span class="cmd">pip install</span> -r ./requirements.txt<br><br>
+<span class="comment"># Raw data download করুন</span><br>
+<span class="cmd">python</span> ./src/data/import_raw_data.py<br><br>
+<span class="comment"># 'raw doesn't exist. Do you want to create it. (y/n):' আসলে 'y' টাইপ করুন</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p>সব ঠিকঠাক হলে ফোল্ডার স্ট্রাকচার এরকম দেখাবে:</p>
+  <div class="file-tree">
+    <span class="dir">├── Template_MLOps_accidents/</span><br>
+    <span class="dir">│   ├── data/</span><br>
+    <span class="dir">│   │   └── raw/</span>  <span class="meta">← এখানে আসল CSV ফাইল</span><br>
+    <span class="file">│   │       ├── caracteristiques-2021.csv</span><br>
+    <span class="file">│   │       ├── lieux-2021.csv</span><br>
+    <span class="file">│   │       ├── usagers-2021.csv</span><br>
+    <span class="file">│   │       └── vehicules.csv</span><br>
+    <span class="dir">│   ├── src/</span><br>
+    <span class="file">│   ├── .gitignore</span><br>
+    <span class="file">│   └── requirements.txt</span>
+  </div>
+
+  <div id="s3-init"></div>
+  <h3>🚀 পদক্ষেপ ২: DVC Initialize করা</h3>
+
+  <p>Git এ কাজ শুরুর আগে যেমন <code>git init</code> করতে হয়, DVC এর জন্যও তেমনি করতে হয়:</p>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — DVC Init</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="cmd">dvc init</span><br><br>
+<span class="comment"># Optional: DVC এর usage data collection বন্ধ করুন</span><br>
+<span class="cmd">dvc config</span> core.analytics <span class="kw">false</span></div>
+  </div>
+
+  <p><code>dvc init</code> করার পর দুটো নতুন জিনিস তৈরি হবে:</p>
+
+  <div class="diagram-container">
+    <div class="diagram-title">চিত্র ৩: dvc init এর পরে কী তৈরি হয়</div>
+    <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" font-family="monospace, sans-serif">
+      <!-- .dvc folder -->
+      <rect x="50" y="40" width="220" height="130" rx="10" fill="#1e2732" stroke="#ffa657" stroke-width="2"/>
+      <text x="160" y="65" text-anchor="middle" fill="#ffa657" font-size="14" font-weight="bold">📁 .dvc/</text>
+      <text x="160" y="90" text-anchor="middle" fill="#e6edf3" font-size="12" font-family="monospace">config</text>
+      <text x="160" y="108" text-anchor="middle" fill="#6e7681" font-size="11">Remote storage এর</text>
+      <text x="160" y="124" text-anchor="middle" fill="#6e7681" font-size="11">তথ্য এখানে থাকবে</text>
+      <text x="160" y="142" text-anchor="middle" fill="#6e7681" font-size="11">.gitignore</text>
+      <text x="160" y="160" text-anchor="middle" fill="#6e7681" font-size="11">cache/files/md5/</text>
+
+      <!-- .dvcignore -->
+      <rect x="330" y="40" width="220" height="130" rx="10" fill="#1e2732" stroke="#3fb950" stroke-width="2"/>
+      <text x="440" y="65" text-anchor="middle" fill="#3fb950" font-size="14" font-weight="bold">📄 .dvcignore</text>
+      <text x="440" y="95" text-anchor="middle" fill="#6e7681" font-size="11" font-family="'Hind Siliguri',sans-serif">Git এর .gitignore</text>
+      <text x="440" y="112" text-anchor="middle" fill="#6e7681" font-size="11" font-family="'Hind Siliguri',sans-serif">এর মতো, কিন্তু</text>
+      <text x="440" y="129" text-anchor="middle" fill="#6e7681" font-size="11" font-family="'Hind Siliguri',sans-serif">DVC এর জন্য।</text>
+      <text x="440" y="150" text-anchor="middle" fill="#6e7681" font-size="11" font-family="'Hind Siliguri',sans-serif">কোন ফাইল ট্র্যাক</text>
+      <text x="440" y="167" text-anchor="middle" fill="#6e7681" font-size="11" font-family="'Hind Siliguri',sans-serif">করবে না তা বলে।</text>
+    </svg>
+  </div>
+
+  <div id="s3-remote"></div>
+  <h3>☁️ পদক্ষেপ ৩: Remote Storage সেট করা</h3>
+
+  <p>DVC কে বলতে হবে ডেটা কোথায় রাখবে। দুটো উপায় দেখব:</p>
+
+  <h4>উপায় ১: Local Storage (নিজের কম্পিউটারে)</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — Local Remote Setup</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># accidents ফোল্ডারে (Template_MLOps_accidents এর বাইরে) একটি ফোল্ডার তৈরি</span><br>
+<span class="cmd">mkdir</span> ../dvc_remote<br><br>
+<span class="comment"># এই ফোল্ডারকে DVC এর default remote storage হিসেবে সেট করুন</span><br>
+<span class="comment"># -d মানে default, remote_storage হলো এই location এর label</span><br>
+<span class="cmd">dvc remote add</span> <span class="flag">-d</span> remote_storage ../dvc_remote</div>
+  </div>
+
+  <p>এখন <code>.dvc/config</code> ফাইলটি দেখতে এরকম হবে:</p>
+
+  <div class="code-block">
+    <div class="code-header"><span>.dvc/config</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="yaml-key">[core]</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-key">remote</span> = <span class="yaml-val">remote_storage</span>  <span class="yaml-comment"># default remote এর নাম</span><br>
+<span class="yaml-key">['remote "remote_storage"']</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-key">url</span> = <span class="yaml-val">../../dvc_remote</span>  <span class="yaml-comment"># আমাদের local ফোল্ডারের path</span></div>
+  </div>
+
+  <div class="callout success">
+    <div class="callout-title"><span class="callout-icon">✅</span>এখন সব প্রস্তুত!</div>
+    <p>DVC initialize হয়েছে এবং remote storage সেট হয়েছে। এখন ডেটা ট্র্যাক করা শুরু করতে পারি।</p>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-title">🏦 ব্যাংক লকার দিয়ে বুঝি</div>
+    <p><code>dvc remote add</code> মানে হলো — আপনি ব্যাংকে (remote storage) একটি লকার খুলছেন। <code>dvc push</code> মানে লকারে টাকা (ডেটা) রাখা। <code>dvc pull</code> মানে লকার থেকে টাকা বের করা। <code>.dvc</code> ফাইল হলো লকারের চাবি।</p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 4: Tracking Data
+═══════════════════════════════════════════════ -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <div class="section-num">৪</div>
+    <div class="section-title">ডেটা ট্র্যাক করা — DVC এর মূল কাজ</div>
+  </div>
+
+  <div id="s4-add"></div>
+  <h3>📌 dvc add — ডেটা ট্র্যাকিং শুরু করা</h3>
+
+  <div class="callout warning">
+    <div class="callout-title"><span class="callout-icon">⚠️</span>আগে এটা করুন!</div>
+    <p><code>dvc add</code> করার আগে <code>.gitignore</code> ফাইলে <code>/data/</code> লাইনটি comment out করুন (সামনে # দিন)। না করলে error আসবে।</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — dvc add</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># data/raw ফোল্ডারটিকে DVC tracking এ যোগ করুন</span><br>
+<span class="cmd">dvc add</span> data/raw</div>
+  </div>
+
+  <p>এই একটি কমান্ডে <strong>৩টি জিনিস</strong> একসাথে হয়:</p>
+
+  <!-- SVG: What dvc add does -->
+  <div class="diagram-container">
+    <div class="diagram-title">চিত্র ৪: dvc add করলে কী কী হয়</div>
+    <svg viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg" font-family="'Hind Siliguri',sans-serif">
+      <!-- raw folder (input) -->
+      <rect x="20" y="110" width="110" height="80" rx="8" fill="#1e2732" stroke="#6e7681" stroke-width="1.5"/>
+      <text x="75" y="145" text-anchor="middle" fill="#e6edf3" font-size="13">📁 raw/</text>
+      <text x="75" y="165" text-anchor="middle" fill="#6e7681" font-size="11">data.csv (5GB)</text>
+
+      <!-- dvc add box -->
+      <rect x="155" y="120" width="90" height="60" rx="8" fill="#1f6feb" stroke="#58a6ff" stroke-width="2"/>
+      <text x="200" y="148" text-anchor="middle" fill="white" font-size="13" font-weight="bold">dvc add</text>
+      <text x="200" y="168" text-anchor="middle" fill="#a5d6ff" font-size="11">data/raw</text>
+
+      <!-- Arrow -->
+      <line x1="130" y1="150" x2="153" y2="150" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrowB)"/>
+
+      <!-- Result 1: .gitignore -->
+      <rect x="265" y="20" width="175" height="75" rx="8" fill="#162318" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="352" y="42" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="bold">① data/.gitignore</text>
+      <text x="352" y="62" text-anchor="middle" fill="#6e7681" font-size="11">raw/ ← এই লাইন যোগ হয়</text>
+      <text x="352" y="79" text-anchor="middle" fill="#6e7681" font-size="11" font-family="'Hind Siliguri',sans-serif">Git এখন raw/ ignore করবে</text>
+
+      <!-- Result 2: raw.dvc -->
+      <rect x="265" y="112" width="175" height="75" rx="8" fill="#1b2038" stroke="#d2a8ff" stroke-width="1.5"/>
+      <text x="352" y="134" text-anchor="middle" fill="#d2a8ff" font-size="12" font-weight="bold">② data/raw.dvc</text>
+      <text x="352" y="154" text-anchor="middle" fill="#6e7681" font-size="11" font-family="monospace">md5: 90c3e04bb...</text>
+      <text x="352" y="172" text-anchor="middle" fill="#6e7681" font-size="11" font-family="'Hind Siliguri',sans-serif">Pointer file (মাত্র 1KB!)</text>
+
+      <!-- Result 3: cache -->
+      <rect x="265" y="204" width="175" height="75" rx="8" fill="#2d1b0a" stroke="#ffa657" stroke-width="1.5"/>
+      <text x="352" y="226" text-anchor="middle" fill="#ffa657" font-size="12" font-weight="bold">③ .dvc/cache/</text>
+      <text x="352" y="246" text-anchor="middle" fill="#6e7681" font-size="11" font-family="monospace">files/md5/90/c3e0...</text>
+      <text x="352" y="264" text-anchor="middle" fill="#6e7681" font-size="11" font-family="'Hind Siliguri',sans-serif">Local copy সংরক্ষিত</text>
+
+      <!-- Arrows from dvc add to results -->
+      <line x1="248" y1="140" x2="263" y2="57" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="248" y1="150" x2="263" y2="149" stroke="#d2a8ff" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="248" y1="160" x2="263" y2="241" stroke="#ffa657" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+      <!-- Summary labels -->
+      <text x="460" y="57" fill="#3fb950" font-size="12" font-family="'Hind Siliguri',sans-serif">→ Git এ যায়</text>
+      <text x="460" y="149" fill="#d2a8ff" font-size="12" font-family="'Hind Siliguri',sans-serif">→ Git এ যায়</text>
+      <text x="460" y="241" fill="#ffa657" font-size="12" font-family="'Hind Siliguri',sans-serif">→ Local only</text>
+    </svg>
+  </div>
+
+  <p>এখন <code>raw.dvc</code> ফাইলটি খুললে এরকম দেখাবে:</p>
+
+  <div class="code-block">
+    <div class="code-header"><span>data/raw.dvc</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="yaml-key">outs</span>:<br>
+<span class="yaml-dash">-</span> <span class="yaml-key">md5</span>: <span class="yaml-val">90c3e04bb8fa1558eb70f9096b5b6010.dir</span><br>
+&nbsp;&nbsp;<span class="yaml-key">size</span>: <span class="num">31082914</span><br>
+&nbsp;&nbsp;<span class="yaml-key">nfiles</span>: <span class="num">4</span><br>
+&nbsp;&nbsp;<span class="yaml-key">path</span>: <span class="yaml-val">raw</span></div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title"><span class="callout-icon">💡</span>MD5 কী?</div>
+    <p>MD5 হলো একটি hashing function। যেকোনো ফাইলকে একটি unique "fingerprint" এ রূপান্তর করে। ফাইল পরিবর্তন হলে MD5ও পরিবর্তন হয়। DVC এটা দিয়ে বোঝে কোন ভার্সন কোনটা।</p>
+  </div>
+
+  <h3>📤 Git এ Commit ও DVC এ Push</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — Git add ও commit</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># ছোট pointer ফাইলগুলো Git এ যোগ করুন</span><br>
+<span class="cmd">git add</span> data/.gitignore data/raw.dvc<br>
+<span class="cmd">git commit</span> -m <span class="str">"First commit with setup and DVC files"</span><br><br>
+<span class="comment"># বড় আসল ডেটা DVC remote এ push করুন</span><br>
+<span class="cmd">dvc push</span><br><br>
+<span class="comment"># pointer ফাইল GitHub এ push করুন</span><br>
+<span class="cmd">git push</span></div>
+  </div>
+
+  <!-- SVG: Full workflow -->
+  <div class="diagram-container">
+    <div class="diagram-title">চিত্র ৫: Git ও DVC এর সমান্তরাল workflow</div>
+    <svg viewBox="0 0 640 320" xmlns="http://www.w3.org/2000/svg" font-family="'Hind Siliguri',sans-serif">
+      <defs>
+        <marker id="arrowW" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L8,3.5 L0,7Z" fill="#8b949e"/>
+        </marker>
+      </defs>
+      <!-- Left column labels -->
+      <text x="10" y="65" fill="#6e7681" font-size="11" font-weight="bold">Local</text>
+      <text x="10" y="165" fill="#6e7681" font-size="11" font-weight="bold">Cache</text>
+      <text x="10" y="265" fill="#6e7681" font-size="11" font-weight="bold">Remote</text>
+
+      <!-- Row 1: Local DVC Control & Local Git Control -->
+      <rect x="60" y="40" width="200" height="80" rx="8" fill="#1e2732" stroke="#ffa657" stroke-width="1.5"/>
+      <text x="160" y="62" text-anchor="middle" fill="#ffa657" font-size="12" font-weight="bold">Local DVC Control</text>
+      <text x="160" y="85" text-anchor="middle" fill="#e6edf3" font-size="12" font-family="monospace">📁 raw/</text>
+      <text x="160" y="105" text-anchor="middle" fill="#6e7681" font-size="10">(আসল বড় ফাইল)</text>
+
+      <rect x="290" y="40" width="200" height="80" rx="8" fill="#1e2732" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="390" y="62" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">Local Git Control</text>
+      <text x="390" y="85" text-anchor="middle" fill="#e6edf3" font-size="12" font-family="monospace">📄 raw.dvc (1KB)</text>
+      <text x="390" y="105" text-anchor="middle" fill="#6e7681" font-size="10">code.py · .gitignore</text>
+
+      <!-- Row 2: DVC cache & Git staging -->
+      <rect x="60" y="145" width="200" height="80" rx="8" fill="#1e2732" stroke="#ffa657" stroke-width="1.5"/>
+      <text x="160" y="167" text-anchor="middle" fill="#ffa657" font-size="12" font-weight="bold">DVC Cache</text>
+      <text x="160" y="190" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">.dvc/cache/files/</text>
+      <text x="160" y="208" text-anchor="middle" fill="#6e7681" font-size="10">md5 hash দিয়ে সংরক্ষিত</text>
+
+      <rect x="290" y="145" width="200" height="80" rx="8" fill="#1e2732" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="390" y="167" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">Git Staging Area</text>
+      <text x="390" y="190" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">raw.dvc · code.py</text>
+      <text x="390" y="208" text-anchor="middle" fill="#6e7681" font-size="10">git add করা ফাইল</text>
+
+      <!-- Row 3: DVC Remote & GitHub -->
+      <rect x="60" y="245" width="200" height="60" rx="8" fill="#1e2732" stroke="#ffa657" stroke-width="1.5"/>
+      <text x="160" y="272" text-anchor="middle" fill="#ffa657" font-size="12" font-weight="bold">DVC Remote</text>
+      <text x="160" y="292" text-anchor="middle" fill="#6e7681" font-size="10">S3/GDrive/local folder</text>
+
+      <rect x="290" y="245" width="200" height="60" rx="8" fill="#1e2732" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="390" y="272" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">GitHub</text>
+      <text x="390" y="292" text-anchor="middle" fill="#6e7681" font-size="10">git push করার পর</text>
+
+      <!-- Arrows: dvc add -->
+      <line x1="160" y1="120" x2="160" y2="143" stroke="#ffa657" stroke-width="2" marker-end="url(#arrowO)"/>
+      <text x="170" y="136" fill="#ffa657" font-size="10">dvc add</text>
+
+      <line x1="390" y1="120" x2="390" y2="143" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrowB)"/>
+      <text x="400" y="136" fill="#58a6ff" font-size="10">git add</text>
+
+      <!-- Arrows: push -->
+      <line x1="160" y1="225" x2="160" y2="243" stroke="#ffa657" stroke-width="2" marker-end="url(#arrowO)"/>
+      <text x="170" y="239" fill="#ffa657" font-size="10">dvc push</text>
+
+      <line x1="390" y1="225" x2="390" y2="243" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrowB)"/>
+      <text x="400" y="239" fill="#58a6ff" font-size="10">git push</text>
+
+      <!-- Cross-link between DVC and Git (the pointer) -->
+      <line x1="262" y1="85" x2="288" y2="85" stroke="#d2a8ff" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="275" y="78" text-anchor="middle" fill="#d2a8ff" font-size="9">link</text>
+    </svg>
+  </div>
+
+  <div id="s4-push"></div>
+  <h3>📥 ডেটা Download করা</h3>
+
+  <p>দুটো পরিস্থিতিতে ডেটা download করতে হয়:</p>
+  <p><span class="key-pill">১</span> ডেটা remote এ আছে, local এ দরকার।  <span class="key-pill">২</span> আগের ভার্সনে ফিরে যেতে চাই।</p>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — Download করা</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># ধরুন আমরা local ডেটা delete করে ফেলেছি</span><br>
+<span class="cmd">rm</span> -rf data/raw<br>
+<span class="cmd">rm</span> -rf .dvc/cache<br><br>
+<span class="comment">━━━━━ পদ্ধতি ১: fetch + checkout (আলাদাভাবে) ━━━━━</span><br>
+<span class="comment"># Remote থেকে cache এ আনুন</span><br>
+<span class="cmd">dvc fetch</span> data/raw.dvc<br><br>
+<span class="comment"># Cache থেকে workspace এ কপি করুন</span><br>
+<span class="cmd">dvc checkout</span><br><br>
+<span class="comment">━━━━━ পদ্ধতি ২: pull (একসাথে করে) ━━━━━</span><br>
+<span class="cmd">dvc pull</span>  <span class="comment"># fetch + checkout একসাথে করে</span></div>
+  </div>
+
+  <!-- SVG: fetch vs pull -->
+  <div class="diagram-container">
+    <div class="diagram-title">চিত্র ৬: dvc fetch, checkout, pull এর পার্থক্য</div>
+    <svg viewBox="0 0 620 185" xmlns="http://www.w3.org/2000/svg" font-family="'Hind Siliguri',sans-serif">
+      <defs>
+        <marker id="arrowG2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L8,3.5 L0,7Z" fill="#3fb950"/>
+        </marker>
+      </defs>
+      <!-- Remote -->
+      <rect x="20" y="80" width="130" height="50" rx="8" fill="#1e2732" stroke="#ffa657" stroke-width="1.5"/>
+      <text x="85" y="108" text-anchor="middle" fill="#ffa657" font-size="12">☁️ DVC Remote</text>
+
+      <!-- Cache -->
+      <rect x="230" y="80" width="130" height="50" rx="8" fill="#1e2732" stroke="#ffa657" stroke-width="1.5"/>
+      <text x="295" y="108" text-anchor="middle" fill="#ffa657" font-size="12">💾 DVC Cache</text>
+
+      <!-- Workspace -->
+      <rect x="440" y="80" width="140" height="50" rx="8" fill="#1e2732" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="510" y="108" text-anchor="middle" fill="#3fb950" font-size="12">📁 Workspace</text>
+
+      <!-- fetch arrow -->
+      <line x1="152" y1="100" x2="228" y2="100" stroke="#3fb950" stroke-width="2" marker-end="url(#arrowG2)"/>
+      <text x="190" y="93" text-anchor="middle" fill="#3fb950" font-size="11">dvc fetch</text>
+
+      <!-- checkout arrow -->
+      <line x1="362" y1="100" x2="438" y2="100" stroke="#3fb950" stroke-width="2" marker-end="url(#arrowG2)"/>
+      <text x="400" y="93" text-anchor="middle" fill="#3fb950" font-size="11">dvc checkout</text>
+
+      <!-- pull bracket and label -->
+      <line x1="14" y1="150" x2="605" y2="150" stroke="#58a6ff" stroke-width="2"/>
+      <line x1="14" y1="111" x2="14" y2="151" stroke="#58a6ff" stroke-width="1.5"/>
+      <line x1="605" y1="111" x2="605" y2="150" stroke="#58a6ff" stroke-width="1.5"/>
+      <polygon points="601,143 607,150 601,157" fill="#58a6ff"/>
+      <text x="308" y="176" text-anchor="middle" fill="#58a6ff" font-size="13" font-weight="bold">dvc pull = dvc fetch + dvc checkout</text>
+    </svg>
+  </div>
+
+  <div id="s4-version"></div>
+  <h3>🕰️ ডেটার ভার্সন ব্যবস্থাপনা — Time Travel!</h3>
+
+  <p>এটাই DVC এর সবচেয়ে শক্তিশালী দিক। একাধিক ভার্সন তৈরি করুন, যেকোনো সময় যেকোনো ভার্সনে ফিরে যান।</p>
+
+  <h4>একটি নতুন ভার্সন তৈরির workflow:</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — Dataset এর প্রথম ভার্সন তৈরি</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># ধাপ ১: Script চালিয়ে preprocessed data তৈরি করুন</span><br>
+<span class="cmd">python</span> ./src/data/make_dataset.py<br>
+<span class="comment"># Input: ./data/raw  |  Output: ./data/preprocessed</span><br><br>
+<span class="comment"># ধাপ ২: নতুন ফোল্ডার DVC tracking এ যোগ করুন</span><br>
+<span class="cmd">dvc add</span> data/preprocessed<br><br>
+<span class="comment"># ধাপ ৩: Git এ commit করুন</span><br>
+<span class="cmd">git add</span> data/preprocessed.dvc data/.gitignore src/data/make_dataset.py<br>
+<span class="cmd">git commit</span> -m <span class="str">"First preprocessing of the data"</span><br><br>
+<span class="comment"># ধাপ ৪: Tag যোগ করুন (optional কিন্তু খুবই useful!)</span><br>
+<span class="cmd">git tag</span> -a first_preprocess -m <span class="str">"Initial preprocessing"</span><br>
+<span class="cmd">git push</span> origin <span class="flag">--tags</span><br><br>
+<span class="comment"># ধাপ ৫: Push করুন</span><br>
+<span class="cmd">dvc push</span><br>
+<span class="cmd">git push</span></div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title"><span class="callout-icon">💡</span>Tag কী?</div>
+    <p>Tag হলো একটি commit এর উপর দেওয়া নাম। যেমন <code>first_preprocess</code> নামের tag দিলে পরে সহজে সেই commit এ ফিরে যেতে পারবেন, লম্বা hash code মনে না রেখেও।</p>
+  </div>
+
+  <h4>dvc commit — Git commit থেকে আলাদা!</h4>
+
+  <div class="callout warning">
+    <div class="callout-title"><span class="callout-icon">⚠️</span>গুরুত্বপূর্ণ পার্থক্য</div>
+    <p><strong>git commit</strong>: একটি নির্দিষ্ট সময়ে directory এর snapshot নেয়।<br>
+    <strong>dvc commit</strong>: শুধু metadata (.dvc ফাইল) update করে, remote location এ কী আছে তা আপডেট করে। আগে থেকে tracked ফাইল পরিবর্তন হলে <code>dvc commit</code> ব্যবহার করুন।</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — দ্বিতীয় ভার্সন (data পরিবর্তন করার পর)</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># make_dataset.py এ পরিবর্তন করে আবার চালান</span><br>
+<span class="cmd">python</span> ./src/data/make_dataset.py<br><br>
+<span class="comment"># preprocessed ফোল্ডার আগে থেকেই tracked, তাই dvc commit</span><br>
+<span class="cmd">dvc commit</span>  <span class="comment"># 'y' টাইপ করে confirm করুন</span><br><br>
+<span class="cmd">git add</span> data/preprocessed.dvc src/data/make_dataset.py<br>
+<span class="cmd">git commit</span> -m <span class="str">"Added new columns to dataset"</span><br>
+<span class="cmd">dvc push</span><br>
+<span class="cmd">git push</span></div>
+  </div>
+
+  <h4>আগের ভার্সনে ফিরে যাওয়া (Time Travel):</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — পুরনো ভার্সনে ফিরে যাওয়া</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># সব commit এর ইতিহাস দেখুন (একটি নির্দিষ্ট তারিখের পর থেকে)</span><br>
+<span class="cmd">git log</span> --since=<span class="str">"2024-05-25"</span> <span class="flag">--all</span><br><br>
+<span class="comment"># "First preprocessing of the data" commit এর hash code নোট করুন</span><br>
+<span class="comment"># যেমন: abc1234def5678...</span><br><br>
+<span class="comment"># সেই ভার্সনে যান</span><br>
+<span class="cmd">git checkout</span> &lt;HASH_CODE&gt;<br>
+<span class="cmd">dvc pull</span>  <span class="comment"># সেই সময়ের ডেটা নামাবে</span></div>
+  </div>
+
+  <div class="summary-box">
+    <div class="summary-title">✅ এই অধ্যায়ের সারসংক্ষেপ</div>
+    <p>ডেটা ট্র্যাকিং এর মূল workflow: <code>dvc add</code> → <code>git add .dvc file</code> → <code>git commit</code> → <code>dvc push</code> → <code>git push</code></p>
+    <p>ডেটা ফিরে পাওয়া: <code>git checkout &lt;version&gt;</code> → <code>dvc pull</code></p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 5: Tracking Models
+═══════════════════════════════════════════════ -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <div class="section-num">৫</div>
+    <div class="section-title">ML মডেল ট্র্যাক করা</div>
+  </div>
+
+  <p>DVC শুধু ডেটা নয় — trained ML মডেলও ট্র্যাক করতে পারে। মডেল ফাইল (যেমন <code>.pkl</code>, <code>.joblib</code>) অনেক বড় হতে পারে, তাই Git এ রাখা ঠিক না।</p>
+
+  <div id="s5-train"></div>
+  <h3>🤖 মডেল Training ও Tracking</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — মডেল ট্রেন ও ট্র্যাক করা</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># প্রথমে সর্বশেষ ডেটা নামান</span><br>
+<span class="cmd">git checkout</span> &lt;LATEST_HASH&gt;<br>
+<span class="cmd">dvc pull</span><br><br>
+<span class="comment"># মডেল ট্রেন করুন</span><br>
+<span class="cmd">python</span> ./src/models/train_model.py<br>
+<span class="comment"># → ./models/trained_model.joblib তৈরি হবে</span><br><br>
+<span class="comment"># মডেল evaluate করুন</span><br>
+<span class="cmd">python</span> ./src/models/evaluate_model.py<br>
+<span class="comment"># → ./metrics/accuracy.json তৈরি হবে</span><br><br>
+<span class="comment"># মডেল DVC tracking এ যোগ করুন</span><br>
+<span class="cmd">dvc add</span> models/trained_model.joblib<br><br>
+<span class="comment"># Git এ lightweight ফাইলগুলো যোগ করুন</span><br>
+<span class="cmd">git add</span> metrics/accuracy.json models/trained_model.joblib.dvc<br>
+<span class="cmd">git commit</span> -m <span class="str">"Trained first Random Forest Classifier"</span><br><br>
+<span class="cmd">dvc push</span><br>
+<span class="cmd">git push</span></div>
+  </div>
+
+  <p>এই কাজের পরে directory structure:</p>
+
+  <div class="file-tree">
+    <span class="dir">├── Template_MLOps_accidents/</span><br>
+    <span class="dir">│   ├── data/</span><br>
+    <span class="dir">│   │   ├── raw/</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dvc-file">← raw.dvc (Git এ)</span><br>
+    <span class="dir">│   │   └── preprocessed/</span> <span class="dvc-file">← preprocessed.dvc (Git এ)</span><br>
+    <span class="dir">│   ├── metrics/</span><br>
+    <span class="file">│   │   └── accuracy.json</span> &nbsp;<span class="meta">{"accuracy": 0.7776...}</span><br>
+    <span class="dir">│   ├── models/</span><br>
+    <span class="file">│   │   └── trained_model.joblib</span> <span class="dvc-file">← joblib.dvc (Git এ)</span><br>
+  </div>
+
+  <h3>নতুন মডেল ভার্সন (parameter পরিবর্তন করে)</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — মডেলের দ্বিতীয় ভার্সন</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># train_model.py এ n_estimators=200, criterion="entropy" সেট করুন</span><br>
+<span class="cmd">python</span> ./src/models/train_model.py<br>
+<span class="cmd">python</span> ./src/models/evaluate_model.py<br><br>
+<span class="comment"># মডেল আগে থেকেই tracked → dvc commit</span><br>
+<span class="cmd">dvc commit</span><br><br>
+<span class="cmd">git add</span> src/models/train_model.py metrics/accuracy.json \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;models/trained_model.joblib.dvc<br>
+<span class="cmd">git commit</span> -m <span class="str">"RF with n_estimators=200, criterion=entropy"</span><br><br>
+<span class="cmd">dvc push</span><br>
+<span class="cmd">git push</span> origin HEAD:accidents_v2</div>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title"><span class="callout-icon">⚠️</span>"not currently on a branch" error</div>
+    <p>যদি এই error আসে, মানে আপনি detached HEAD state এ আছেন (কোনো branch এ নেই)। তখন: <code>git push origin HEAD:accidents_v2</code> দিন।</p>
+  </div>
+
+  <div id="s5-gdrive"></div>
+  <h3>☁️ Google Drive Remote Storage</h3>
+
+  <p>এখন পর্যন্ত local remote ব্যবহার করেছি। এবার Google Drive এ ডেটা রাখব।</p>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — Google Drive Remote যোগ করা</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># Google Drive dependency ইনস্টল করুন</span><br>
+<span class="cmd">pip install</span> <span class="str">"dvc[gdrive]"</span><br><br>
+<span class="comment"># অথবা সব remote এর dependency একসাথে:</span><br>
+<span class="cmd">pip install</span> <span class="str">"dvc[all]"</span><br><br>
+<span class="comment"># Google Drive এ একটি folder তৈরি করুন</span><br>
+<span class="comment"># Folder URL থেকে শেষের string নিন:</span><br>
+<span class="comment"># https://drive.google.com/drive/folders/&lt;THIS_IS_THE_ID&gt;</span><br><br>
+<span class="comment"># Remote যোগ করুন (-d ছাড়া, কারণ এটা default নয়)</span><br>
+<span class="cmd">dvc remote add</span> remote_gdrive gdrive://<span class="str">FOLDER_ID_HERE</span><br><br>
+<span class="comment"># এটাকে default করুন</span><br>
+<span class="cmd">dvc remote default</span> remote_gdrive</div>
+  </div>
+
+  <h4>Google Cloud OAuth Setup (একবারের কাজ):</h4>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">১</div>
+      <div class="step-content">
+        <div class="step-title">Google API Console এ নতুন project তৈরি করুন</div>
+        <p><a href="https://console.cloud.google.com" style="color:var(--accent)">console.cloud.google.com</a> এ যান → "Create a Project" → নাম দিন "dvc-remote"</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">২</div>
+      <div class="step-content">
+        <div class="step-title">Google Drive API enable করুন</div>
+        <p>"Enable APIs and Services" → "Google Drive API" খুঁজুন → Enable করুন</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৩</div>
+      <div class="step-content">
+        <div class="step-title">OAuth credentials তৈরি করুন</div>
+        <p>"OAuth consent screen" → External → Application name দিন<br>
+        "Credentials" → "Create credentials" → "OAuth client ID" → "Desktop app"<br>
+        Client ID ও Client Secret নোট করুন</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৪</div>
+      <div class="step-content">
+        <div class="step-title">DVC তে credentials যোগ করুন</div>
+        <div class="code-block">
+          <div class="code-header"><span>Terminal</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+          <div class="code-content">
+<span class="cmd">dvc remote modify</span> remote_gdrive gdrive_client_id <span class="str">'your-client-id'</span><br>
+<span class="cmd">dvc remote modify</span> remote_gdrive gdrive_client_secret <span class="str">'your-secret'</span><br><br>
+<span class="comment"># প্রথমবার push করলে browser এ login করতে বলবে</span><br>
+<span class="cmd">dvc push</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title"><span class="callout-icon">💡</span>Service Account — আরেকটি পদ্ধতি</div>
+    <p>Interactive login ছাড়া CI/CD pipeline এ কাজ করার জন্য Service Account ব্যবহার করা যায়। Google IAM → Service Accounts → JSON key তৈরি করে DVC কে দিন। এটি automatically কাজ করে।</p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 6: DVC Pipeline
+═══════════════════════════════════════════════ -->
+<section class="section" id="s6">
+  <div class="section-header">
+    <div class="section-num">৬</div>
+    <div class="section-title">DVC Pipeline — সব ধাপ একসাথে চালান</div>
+  </div>
+
+  <p>এখন পর্যন্ত প্রতিটি ধাপ আলাদাভাবে চালাতে হয়েছে। DVC Pipeline দিয়ে পুরো ML workflow কে একটি automated chain এ পরিণত করা যায়।</p>
+
+  <div class="analogy">
+    <div class="analogy-title">🏭 কারখানার Assembly Line দিয়ে বুঝি</div>
+    <p>একটি গাড়ি তৈরিতে অনেক ধাপ আছে: কাঁচামাল → ফ্রেম তৈরি → ইঞ্জিন বসানো → রং করা → পরীক্ষা করা। প্রতিটি ধাপের output পরবর্তী ধাপের input। DVC Pipeline ঠিক এরকম একটি assembly line তৈরি করে।</p>
+  </div>
+
+  <p>আমাদের pipeline এ তিনটি ধাপ থাকবে:</p>
+
+  <div class="pipeline-flow">
+    <div class="pipe-step">
+      <div class="pipe-step-name">prepare</div>
+      <div class="pipe-step-desc">raw → preprocessed</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="pipe-step-name">train</div>
+      <div class="pipe-step-desc">preprocessed → model</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-step">
+      <div class="pipe-step-name">evaluate</div>
+      <div class="pipe-step-desc">model → metrics</div>
+    </div>
+  </div>
+
+  <h3>🧹 আগে পুরনো DVC ফাইল সরান</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — পুরনো files সরানো</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># পুরনো individual .dvc ফাইল এবং output মুছুন</span><br>
+<span class="cmd">dvc remove</span> data/preprocessed.dvc models/trained_model.joblib.dvc <span class="flag">--outs</span><br>
+<span class="cmd">rm</span> metrics/accuracy.json</div>
+  </div>
+
+  <div id="s6-stage"></div>
+  <h3>📋 Stage তৈরি করা — dvc stage add</h3>
+
+  <p>প্রতিটি stage সংজ্ঞায়িত করতে ৩টি জিনিস বলতে হয়: <span class="key-pill">Dependencies (-d)</span> <span class="key-pill">Outputs (-o)</span> <span class="key-pill">Command</span></p>
+
+  <h4>Stage ১: prepare (ডেটা প্রস্তুত করা)</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — prepare stage</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="cmd">dvc stage add</span> <span class="flag">-n</span> prepare \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="flag">-d</span> src/data/make_dataset.py <span class="flag">-d</span> data/raw \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="flag">-o</span> data/preprocessed \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;python src/data/make_dataset.py<br><br>
+<span class="comment"># -n prepare    → এই stage এর নাম 'prepare'</span><br>
+<span class="comment"># -d script.py  → dependency: script পরিবর্তন হলে পুনরায় চালাবে</span><br>
+<span class="comment"># -d data/raw   → dependency: raw data পরিবর্তন হলে পুনরায় চালাবে</span><br>
+<span class="comment"># -o data/preprocessed → output: এই folder DVC track করবে</span></div>
+  </div>
+
+  <h4>Stage ২: train (মডেল ট্রেন করা)</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — train stage</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="cmd">dvc stage add</span> <span class="flag">-n</span> train \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="flag">-d</span> src/models/train_model.py <span class="flag">-d</span> data/preprocessed \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="flag">-o</span> models/trained_model.joblib \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;python src/models/train_model.py</div>
+  </div>
+
+  <h4>Stage ৩: evaluation (মডেল মূল্যায়ন)</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — evaluation stage</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="cmd">dvc stage add</span> <span class="flag">-n</span> evaluation \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="flag">-d</span> src/models/evaluate_model.py <span class="flag">-d</span> models/trained_model.joblib \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="flag">-M</span> metrics/accuracy.json \<br>
+&nbsp;&nbsp;&nbsp;&nbsp;python src/models/evaluate_model.py<br><br>
+<span class="comment"># -M (বড় M) মানে এটি Metric ফাইল</span><br>
+<span class="comment"># dvc metrics show দিয়ে দেখা যাবে</span><br>
+<span class="comment"># -o এর মতো কিন্তু DVC জানে এটা metric</span></div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title"><span class="callout-icon">💡</span>-o বনাম -M এর পার্থক্য</div>
+    <p><code>-o</code>: সাধারণ output, DVC remote এ push হয়<br>
+    <code>-M</code>: Metrics output, <code>dvc metrics show</code> দিয়ে সহজে দেখা যায়, Git এ tracked থাকে (cache: false)</p>
+  </div>
+
+  <p>সব stage যোগ করার পর <code>dvc.yaml</code> ফাইলটি এরকম দেখাবে:</p>
+
+  <div class="code-block">
+    <div class="code-header"><span>dvc.yaml — পূর্ণ pipeline definition</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="yaml-key">stages</span>:<br>
+&nbsp;&nbsp;<span class="yaml-key">prepare</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-key">cmd</span>: <span class="yaml-val">python src/data/make_dataset.py</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-key">deps</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-dash">-</span> <span class="yaml-val">data/raw</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-dash">-</span> <span class="yaml-val">src/data/make_dataset.py</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-key">outs</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-dash">-</span> <span class="yaml-val">data/preprocessed</span><br>
+<br>
+&nbsp;&nbsp;<span class="yaml-key">train</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-key">cmd</span>: <span class="yaml-val">python src/models/train_model.py</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-key">deps</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-dash">-</span> <span class="yaml-val">data/preprocessed</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-dash">-</span> <span class="yaml-val">src/models/train_model.py</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-key">outs</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-dash">-</span> <span class="yaml-val">models/trained_model.joblib</span><br>
+<br>
+&nbsp;&nbsp;<span class="yaml-key">evaluation</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-key">cmd</span>: <span class="yaml-val">python src/models/evaluate_model.py</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-key">deps</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-dash">-</span> <span class="yaml-val">models/trained_model.joblib</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-dash">-</span> <span class="yaml-val">src/models/evaluate_model.py</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-key">metrics</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-dash">-</span> <span class="yaml-key">metrics/accuracy.json</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="yaml-key">cache</span>: <span class="kw">false</span></div>
+  </div>
+
+  <div id="s6-repro"></div>
+  <h3>▶️ dvc repro — Pipeline চালানো</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — Pipeline চালানো</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># পুরো pipeline চালান</span><br>
+<span class="cmd">dvc repro</span><br><br>
+<span class="comment"># শুধু একটি নির্দিষ্ট stage চালান</span><br>
+<span class="cmd">dvc repro</span> prepare<br><br>
+<span class="comment"># Metrics দেখুন</span><br>
+<span class="cmd">dvc metrics show</span></div>
+  </div>
+
+  <div class="callout success">
+    <div class="callout-title"><span class="callout-icon">✅</span>dvc repro এর স্মার্ট feature</div>
+    <p>দ্বিতীয়বার <code>dvc repro</code> চালালে, যে stage গুলোর dependencies পরিবর্তন হয়নি সেগুলো skip করবে। শুধু পরিবর্তিত অংশ পুনরায় চালাবে — সময় ও resources বাঁচায়।</p>
+  </div>
+
+  <div id="s6-dag"></div>
+  <h3>🌐 DAG ও dvc dag কমান্ড</h3>
+
+  <div class="callout info">
+    <div class="callout-title"><span class="callout-icon">💡</span>DAG কী?</div>
+    <p><strong>DAG</strong> = Directed Acyclic Graph। মানে একটি graph যেখানে arrows একদিকে যায় এবং কোনো cycle নেই। আমাদের pipeline এর প্রতিটি stage node, এবং তাদের সংযোগ edges।</p>
+  </div>
+
+  <!-- SVG: DAG -->
+  <div class="diagram-container">
+    <div class="diagram-title">চিত্র ৭: আমাদের Pipeline এর DAG (dvc dag command এ যা দেখা যায়)</div>
+    <svg viewBox="0 0 660 330" xmlns="http://www.w3.org/2000/svg" font-family="'Hind Siliguri',sans-serif">
+      <defs>
+        <marker id="dag-arrow" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto"><path d="M0,0 L8,3.5 L0,7Z" fill="#58a6ff"/></marker>
+        <marker id="dag-green" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto"><path d="M0,0 L8,3.5 L0,7Z" fill="#3fb950"/></marker>
+      </defs>
+
+      <!-- data/raw.dvc -->
+      <rect x="210" y="10" width="200" height="45" rx="6" fill="#1e2732" stroke="#ffa657" stroke-width="1.5"/>
+      <text x="310" y="30" text-anchor="middle" fill="#ffa657" font-size="13" font-family="monospace">data/raw.dvc</text>
+      <text x="310" y="47" text-anchor="middle" fill="#6e7681" font-size="10" font-family="'Hind Siliguri',sans-serif">(DVC tracked raw data)</text>
+
+      <!-- make_dataset.py -->
+      <rect x="30" y="10" width="160" height="45" rx="6" fill="#1e2732" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="110" y="38" text-anchor="middle" fill="#3fb950" font-size="12" font-family="monospace">make_dataset.py</text>
+
+      <!-- prepare stage -->
+      <rect x="160" y="100" width="120" height="45" rx="8" fill="#1f6feb" stroke="#58a6ff" stroke-width="2"/>
+      <text x="220" y="128" text-anchor="middle" fill="white" font-size="14" font-weight="bold">prepare</text>
+
+      <!-- train_model.py -->
+      <rect x="430" y="10" width="160" height="45" rx="6" fill="#1e2732" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="510" y="38" text-anchor="middle" fill="#3fb950" font-size="12" font-family="monospace">train_model.py</text>
+
+      <!-- preprocessed/ -->
+      <rect x="160" y="195" width="120" height="40" rx="6" fill="#1e2732" stroke="#ffa657" stroke-width="1.5"/>
+      <text x="220" y="220" text-anchor="middle" fill="#ffa657" font-size="12" font-family="monospace">preprocessed/</text>
+
+      <!-- train stage -->
+      <rect x="270" y="195" width="120" height="45" rx="8" fill="#1f6feb" stroke="#58a6ff" stroke-width="2"/>
+      <text x="330" y="223" text-anchor="middle" fill="white" font-size="14" font-weight="bold">train</text>
+
+      <!-- trained_model.joblib -->
+      <rect x="240" y="290" width="175" height="40" rx="6" fill="#1e2732" stroke="#ffa657" stroke-width="1.5"/>
+      <text x="327" y="315" text-anchor="middle" fill="#ffa657" font-size="11" font-family="monospace">trained_model.joblib</text>
+
+      <!-- evaluate_model.py -->
+      <rect x="430" y="195" width="160" height="45" rx="6" fill="#1e2732" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="510" y="223" text-anchor="middle" fill="#3fb950" font-size="12" font-family="monospace">evaluate_model.py</text>
+
+      <!-- evaluate stage -->
+      <rect x="390" y="290" width="120" height="45" rx="8" fill="#1f6feb" stroke="#58a6ff" stroke-width="2"/>
+      <text x="450" y="318" text-anchor="middle" fill="white" font-size="14" font-weight="bold">evaluate</text>
+
+      <!-- accuracy.json -->
+      <rect x="530" y="290" width="80" height="45" rx="6" fill="#1e2732" stroke="#d2a8ff" stroke-width="1.5"/>
+      <text x="570" y="310" text-anchor="middle" fill="#d2a8ff" font-size="11" font-family="monospace">accuracy</text>
+      <text x="570" y="327" text-anchor="middle" fill="#d2a8ff" font-size="11" font-family="monospace">.json</text>
+
+      <!-- ARROWS -->
+      <!-- raw.dvc → prepare -->
+      <line x1="310" y1="55" x2="250" y2="98" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#dag-arrow)"/>
+      <!-- make_dataset.py → prepare -->
+      <line x1="110" y1="55" x2="185" y2="98" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#dag-arrow)"/>
+      <!-- prepare → preprocessed -->
+      <line x1="220" y1="145" x2="220" y2="193" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#dag-arrow)"/>
+      <!-- preprocessed → train -->
+      <line x1="282" y1="215" x2="268" y2="215" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#dag-arrow)"/>
+      <!-- train_model.py → train -->
+      <line x1="430" y1="55" x2="380" y2="193" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#dag-arrow)"/>
+      <!-- train → trained_model -->
+      <line x1="330" y1="240" x2="330" y2="288" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#dag-arrow)"/>
+      <!-- trained_model → evaluate -->
+      <line x1="415" y1="310" x2="388" y2="312" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#dag-arrow)"/>
+      <!-- evaluate_model.py → evaluate -->
+      <line x1="510" y1="240" x2="490" y2="288" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#dag-arrow)"/>
+      <!-- evaluate → accuracy.json -->
+      <line x1="510" y1="312" x2="528" y2="312" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#dag-arrow)"/>
+    </svg>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — Terminal এ DAG দেখুন</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="cmd">dvc dag</span><br><br>
+<span class="comment"># Output এরকম দেখাবে:</span><br>
++---------------+<br>
+| data/raw.dvc  |<br>
++---------------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
++----------+<br>
+| prepare  |<br>
++----------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
++-------+<br>
+| train |<br>
++-------+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
++------------+<br>
+| evaluation |<br>
++------------+</div>
+  </div>
+
+  <p>সব শেষে পুরো কাজ push করুন:</p>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — সব push করা</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="cmd">git add</span> metrics/accuracy.json dvc.lock dvc.yaml .gitignore<br>
+<span class="cmd">git commit</span> -m <span class="str">"Pipeline: RF n_estimators=200, accuracy=0.779"</span><br>
+<span class="cmd">dvc commit</span><br>
+<span class="cmd">dvc push</span><br>
+<span class="cmd">git push</span> origin HEAD:accidents_v2</div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title"><span class="callout-icon">💡</span>dvc.lock কী?</div>
+    <p><code>dvc.lock</code> হলো pipeline এর বর্তমান state এর snapshot। এটি প্রতিটি stage এর input ও output এর MD5 hash রাখে। এই ফাইল দেখে DVC বোঝে কোন stage পুনরায় চালাতে হবে।</p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 7: DagsHub
+═══════════════════════════════════════════════ -->
+<section class="section" id="s7">
+  <div class="section-header">
+    <div class="section-num">৭</div>
+    <div class="section-title">DagsHub — Data Science এর জন্য GitHub</div>
+  </div>
+
+  <div id="s7-what"></div>
+  <h3>🐕 DagsHub কী?</h3>
+
+  <div class="analogy">
+    <div class="analogy-title">🏢 Office Building দিয়ে বুঝি</div>
+    <p>GitHub যদি হয় সাধারণ কর্মীদের office, তাহলে DagsHub হলো Data Scientists এর জন্য specially designed office — যেখানে সব ML tools এক জায়গায় আছে।</p>
+  </div>
+
+  <p>DagsHub এর বৈশিষ্ট্য:</p>
+
+  <div class="tool-grid">
+    <div class="tool-card">
+      <div class="tool-name">📊 Experiments Tab</div>
+      <div class="tool-desc">বিভিন্ন মডেলের metrics (accuracy, loss) এক জায়গায় তুলনা করা যায়।</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">📁 Data Tab</div>
+      <div class="tool-desc">DVC tracked ফাইল সরাসরি browser এ দেখা যায়, CSV preview করা যায়।</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">🔀 Pipeline Diagram</div>
+      <div class="tool-desc">dvc.yaml থেকে automatically pipeline graph তৈরি হয়।</div>
+    </div>
+    <div class="tool-card">
+      <div class="tool-name">🤝 GitHub সংযুক্ত</div>
+      <div class="tool-desc">আপনার GitHub repo এর সাথে sync থাকে। দুটো আলাদাভাবে manage করতে হয় না।</div>
+    </div>
+  </div>
+
+  <p>DagsHub যেসব tool এর সাথে কাজ করে: <span class="key-pill">Git</span> <span class="key-pill">DVC</span> <span class="key-pill">MLFlow</span> <span class="key-pill">Google Colab</span> <span class="key-pill">Jenkins</span> <span class="key-pill">Label Studio</span> <span class="key-pill">AWS</span> <span class="key-pill">GCP</span></p>
+
+  <div id="s7-setup"></div>
+  <h3>🔗 DagsHub এ Account ও Repository তৈরি</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">১</div>
+      <div class="step-content">
+        <div class="step-title">Account তৈরি করুন</div>
+        <p><a href="https://dagshub.com" style="color:var(--accent)">dagshub.com</a> এ যান → "Start Free" → GitHub account দিয়ে sign up করুন (সহজ হবে)।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">২</div>
+      <div class="step-content">
+        <div class="step-title">নতুন Repository তৈরি করুন</div>
+        <p>"Create" → "New repository" → "Connect a repository" → GitHub নির্বাচন করুন।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৩</div>
+      <div class="step-content">
+        <div class="step-title">GitHub Repository সংযুক্ত করুন</div>
+        <p>DagsHub কে GitHub access দিন → Template_MLOps_accidents repository নির্বাচন করুন → "Connect Repository"</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৪</div>
+      <div class="step-content">
+        <div class="step-title">accidents_v2 branch এ switch করুন</div>
+        <p>DagsHub এর UI তে branch selector থেকে accidents_v2 নির্বাচন করুন।</p>
+      </div>
+    </div>
+  </div>
+
+  <p>এখন DagsHub এ আপনার repository দেখতে পাবেন এবং:</p>
+  <ul style="margin: 12px 0 12px 24px; color: var(--text-muted);">
+    <li>Experiments tab এ বিভিন্ন model run এর metrics দেখতে পাবেন</li>
+    <li>DVC tab এ কোন ফাইল DVC track করছে দেখতে পাবেন</li>
+    <li>পুরো pipeline এর diagram automatically দেখাবে</li>
+  </ul>
+
+  <div id="s7-remote"></div>
+  <h3>☁️ DagsHub Remote Storage হিসেবে ব্যবহার</h3>
+
+  <p>DagsHub নিজেই DVC remote storage হিসেবে কাজ করতে পারে (AWS S3 compatible)।</p>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — DagsHub Remote Setup</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># S3 dependency ইনস্টল করুন</span><br>
+<span class="cmd">pip install</span> <span class="str">"dvc[s3]"</span><br><br>
+<span class="comment"># DagsHub এ Remote বাটন → DVC ক্লিক করলে এই commands পাবেন</span><br>
+<span class="cmd">dvc remote add</span> origin s3://dvc<br>
+<span class="cmd">dvc remote modify</span> origin endpointurl \<br>
+&nbsp;&nbsp;https://dagshub.com/<span class="str">your_username</span>/Template_MLOps_accidents.s3<br><br>
+<span class="comment"># Credentials (DagsHub Profile থেকে token পাবেন)</span><br>
+<span class="cmd">dvc remote modify</span> origin <span class="flag">--local</span> access_key_id <span class="str">'your_token'</span><br>
+<span class="cmd">dvc remote modify</span> origin <span class="flag">--local</span> secret_access_key <span class="str">'your_token'</span><br><br>
+<span class="comment"># Default remote সেট করুন</span><br>
+<span class="cmd">dvc remote default</span> origin<br><br>
+<span class="comment"># Push করুন</span><br>
+<span class="cmd">dvc push</span></div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title"><span class="callout-icon">💡</span>fastDS — একটি সুবিধাজনক টুল</div>
+    <p>DAGsHub এর তৈরি <strong>fastDS</strong> দিয়ে Git ও DVC command একসাথে চালানো যায়:<br>
+    <code>pip install fastds</code><br>
+    <code>fds init</code>, <code>fds add .</code>, <code>fds commit -m "msg"</code> — এই একটি কমান্ড git add + dvc add + git commit + dvc commit সব করে!<br>
+    <strong>তবে সতর্কতা:</strong> DVC ও Git ভালোভাবে বুঝলেই fastDS ব্যবহার করুন।</p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 8: Exam Guide
+═══════════════════════════════════════════════ -->
+<section class="section" id="s8">
+  <div class="section-header">
+    <div class="section-num">৮</div>
+    <div class="section-title">পরীক্ষা (Exam) — সম্পূর্ণ গাইড</div>
+  </div>
+
+  <p>পরীক্ষায় একটি mineral processing dataset নিয়ে কাজ করতে হবে। লক্ষ্য: flotation process এ silica concentration predict করা।</p>
+
+  <h3>📊 Dataset তথ্য</h3>
+
+  <table class="compare-table">
+    <tr><th>Column</th><th>বাংলায় অর্থ</th></tr>
+    <tr><td>ave_flot_air_flow</td><td>Flotation process এ গড় বায়ু প্রবাহ</td></tr>
+    <tr><td>ave_flot_level</td><td>Flotation cell এর গড় স্তর</td></tr>
+    <tr><td>iron_feed</td><td>Flotation এ প্রবেশ করা আয়রনের পরিমাণ</td></tr>
+    <tr><td>starch_flow</td><td>Starch (reagent) এর প্রবাহ হার</td></tr>
+    <tr><td>amina_flow</td><td>Amine (collector) এর প্রবাহ হার</td></tr>
+    <tr><td>ore_pulp_flow</td><td>Ore pulp এর প্রবাহ হার</td></tr>
+    <tr><td>ore_pulp_pH</td><td>Ore pulp এর pH</td></tr>
+    <tr><td>ore_pulp_density</td><td>Ore pulp এর ঘনত্ব</td></tr>
+    <tr><td><strong>silica_concentrate</strong></td><td><strong>🎯 Target variable — predict করতে হবে</strong></td></tr>
+  </table>
+
+  <h3>📋 যা যা করতে হবে</h3>
+
+  <h4>ধাপ ১: Repository Fork ও Setup</h4>
+  <div class="code-block">
+    <div class="code-header"><span>Terminal</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># https://github.com/DataScientest-Studio/examen-dvc fork করুন</span><br>
+<span class="cmd">git clone</span> https://github.com/<span class="str">YOUR_USERNAME</span>/examen-dvc.git<br>
+<span class="cmd">cd</span> examen-dvc<br>
+<span class="cmd">virtualenv</span> env<br>
+<span class="cmd">source</span> env/bin/activate<br>
+<span class="cmd">pip install</span> dvc pandas scikit-learn joblib<br><br>
+<span class="comment"># DVC initialize</span><br>
+<span class="cmd">dvc init</span></div>
+  </div>
+
+  <h4>ধাপ ২: ৫টি Script তৈরি করুন</h4>
+
+  <p>এই ৫টি script তৈরি করতে হবে (নাম সাজেশন দেওয়া হলো):</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">১</div>
+      <div class="step-content">
+        <div class="step-title">src/data/data_split.py — Data Splitting</div>
+        <div class="code-block">
+          <div class="code-header"><span>Python — data_split.py এর structure</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+          <div class="code-content">
+<span class="kw">import</span> pandas <span class="kw">as</span> pd<br>
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split<br><br>
+<span class="comment"># Download data</span><br>
+url = <span class="str">"https://datascientest-mlops.s3.eu-west-1.amazonaws.com/mlops_dvc_fr/raw.csv"</span><br>
+df = pd.read_csv(url)<br><br>
+<span class="comment"># Split features and target</span><br>
+X = df.drop(<span class="str">'silica_concentrate'</span>, axis=<span class="num">1</span>)<br>
+y = df[<span class="str">'silica_concentrate'</span>]<br><br>
+<span class="comment"># Train/test split</span><br>
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="num">0.2</span>)<br><br>
+<span class="comment"># Save to data/processed/</span><br>
+X_train.to_csv(<span class="str">'data/processed/X_train.csv'</span>, index=<span class="kw">False</span>)<br>
+X_test.to_csv(<span class="str">'data/processed/X_test.csv'</span>, index=<span class="kw">False</span>)<br>
+y_train.to_csv(<span class="str">'data/processed/y_train.csv'</span>, index=<span class="kw">False</span>)<br>
+y_test.to_csv(<span class="str">'data/processed/y_test.csv'</span>, index=<span class="kw">False</span>)</div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">২</div>
+      <div class="step-content">
+        <div class="step-title">src/data/normalize.py — Data Normalization</div>
+        <p>StandardScaler বা MinMaxScaler দিয়ে X_train ও X_test scale করুন। X_train_scaled.csv ও X_test_scaled.csv হিসেবে save করুন।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৩</div>
+      <div class="step-content">
+        <div class="step-title">src/models/grid_search.py — Best Parameters খোঁজা</div>
+        <p>GridSearchCV দিয়ে model parameters optimize করুন। Best params best_params.pkl হিসেবে models/ এ save করুন।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৪</div>
+      <div class="step-content">
+        <div class="step-title">src/models/training.py — Model Training</div>
+        <p>best_params.pkl ব্যবহার করে final model train করুন। gbr_model.pkl হিসেবে models/ এ save করুন।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৫</div>
+      <div class="step-content">
+        <div class="step-title">src/models/evaluate.py — Model Evaluation</div>
+        <p>Test data তে predict করুন। Predictions save করুন। MSE, R2 calculate করে scores.json এ save করুন।</p>
+        <div class="code-block">
+          <div class="code-header"><span>Python — scores.json format</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+          <div class="code-content">
+<span class="comment"># scores.json এরকম হবে:</span><br>
+{<br>
+&nbsp;&nbsp;<span class="str">"MSE"</span>: <span class="num">0.1234</span>,<br>
+&nbsp;&nbsp;<span class="str">"R2"</span>: <span class="num">0.8765</span><br>
+}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h4>ধাপ ৩: DVC Pipeline সেটআপ</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span>Terminal — Exam Pipeline</span><div class="code-dots"><div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div></div></div>
+    <div class="code-content">
+<span class="comment"># split stage</span><br>
+<span class="cmd">dvc stage add</span> -n split -d src/data/data_split.py \<br>
+&nbsp;&nbsp;-o data/processed/X_train.csv -o data/processed/X_test.csv \<br>
+&nbsp;&nbsp;-o data/processed/y_train.csv -o data/processed/y_test.csv \<br>
+&nbsp;&nbsp;python src/data/data_split.py<br><br>
+<span class="comment"># normalize stage</span><br>
+<span class="cmd">dvc stage add</span> -n normalize \<br>
+&nbsp;&nbsp;-d src/data/normalize.py \<br>
+&nbsp;&nbsp;-d data/processed/X_train.csv -d data/processed/X_test.csv \<br>
+&nbsp;&nbsp;-o data/processed/X_train_scaled.csv \<br>
+&nbsp;&nbsp;-o data/processed/X_test_scaled.csv \<br>
+&nbsp;&nbsp;python src/data/normalize.py<br><br>
+<span class="comment"># gridsearch stage</span><br>
+<span class="cmd">dvc stage add</span> -n gridsearch \<br>
+&nbsp;&nbsp;-d src/models/grid_search.py \<br>
+&nbsp;&nbsp;-d data/processed/X_train_scaled.csv \<br>
+&nbsp;&nbsp;-d data/processed/y_train.csv \<br>
+&nbsp;&nbsp;-o models/best_params.pkl \<br>
+&nbsp;&nbsp;python src/models/grid_search.py<br><br>
+<span class="comment"># training stage</span><br>
+<span class="cmd">dvc stage add</span> -n training \<br>
+&nbsp;&nbsp;-d src/models/training.py \<br>
+&nbsp;&nbsp;-d models/best_params.pkl \<br>
+&nbsp;&nbsp;-d data/processed/X_train_scaled.csv \<br>
+&nbsp;&nbsp;-d data/processed/y_train.csv \<br>
+&nbsp;&nbsp;-o models/gbr_model.pkl \<br>
+&nbsp;&nbsp;python src/models/training.py<br><br>
+<span class="comment"># evaluate stage</span><br>
+<span class="cmd">dvc stage add</span> -n evaluate \<br>
+&nbsp;&nbsp;-d src/models/evaluate.py \<br>
+&nbsp;&nbsp;-d models/gbr_model.pkl \<br>
+&nbsp;&nbsp;-d data/processed/X_test_scaled.csv \<br>
+&nbsp;&nbsp;-d data/processed/y_test.csv \<br>
+&nbsp;&nbsp;-o data/processed/prediction.csv \<br>
+&nbsp;&nbsp;-M metrics/scores.json \<br>
+&nbsp;&nbsp;python src/models/evaluate.py<br><br>
+<span class="comment"># পুরো pipeline চালান</span><br>
+<span class="cmd">dvc repro</span></div>
+  </div>
+
+  <h4>ধাপ ৪: DagsHub এ Submit করুন</h4>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">১</div>
+      <div class="step-content">
+        <div class="step-title">DagsHub এ GitHub repo connect করুন</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">২</div>
+      <div class="step-content">
+        <div class="step-title">DagsHub remote storage সেটআপ করুন ও dvc push করুন</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৩</div>
+      <div class="step-content">
+        <div class="step-title">dagshub.com/licence.pedago কে collaborator হিসেবে যোগ করুন (read-only)</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৪</div>
+      <div class="step-content">
+        <div class="step-title">.zip ফাইল জমা দিন</div>
+        <p>zip এ একটি .md ফাইল থাকবে যাতে: নাম,苗 নাম, email, DagsHub repository লিংক।</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout success">
+    <div class="callout-title"><span class="callout-icon">✅</span>Examiner যা চেক করবেন</div>
+    <p>✓ ৫টি script (data splitting, normalization, gridsearch, training, evaluation)<br>
+    ✓ .dvc/config ফাইলে remote location তথ্য<br>
+    ✓ models/ tab এ .pkl ফাইল<br>
+    ✓ metrics/ এ scores.json<br>
+    ✓ dvc.yaml pipeline ও dvc.lock<br>
+    ✓ Data tab সঠিকভাবে দেখাচ্ছে<br>
+    ✓ Pipeline diagram সঠিক আকারে</p>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 9: Cheat Sheet
+═══════════════════════════════════════════════ -->
+<section class="section" id="s9">
+  <div class="section-header">
+    <div class="section-num">৯</div>
+    <div class="section-title">চিটশিট ও দ্রুত রেফারেন্স</div>
+  </div>
+
+  <h3>🚀 DVC কমান্ড রেফারেন্স</h3>
+
+  <div class="cmd-ref">
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc init</div>
+      <div class="cmd-desc">নতুন DVC project শুরু করুন। .dvc/ folder ও .dvcignore তৈরি হয়।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc remote add -d &lt;name&gt; &lt;url&gt;</div>
+      <div class="cmd-desc">Remote storage যোগ করুন। -d মানে default।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc add &lt;file/folder&gt;</div>
+      <div class="cmd-desc">ফাইল/ফোল্ডার DVC tracking এ যোগ করুন। .dvc ফাইল তৈরি হয়।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc commit</div>
+      <div class="cmd-desc">আগে থেকে tracked ফাইলের পরিবর্তন record করুন।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc push</div>
+      <div class="cmd-desc">Cache থেকে remote storage এ আপলোড করুন।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc pull</div>
+      <div class="cmd-desc">Remote থেকে ডেটা নামান (fetch + checkout)।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc fetch &lt;file.dvc&gt;</div>
+      <div class="cmd-desc">Remote থেকে cache এ আনুন। Workspace এ কপি করে না।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc checkout</div>
+      <div class="cmd-desc">Cache থেকে workspace এ কপি করুন।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc stage add</div>
+      <div class="cmd-desc">Pipeline এ নতুন stage যোগ করুন।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc repro</div>
+      <div class="cmd-desc">Pipeline reproduce করুন (পরিবর্তিত stages পুনরায় চালায়)।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc dag</div>
+      <div class="cmd-desc">Pipeline এর DAG (dependency graph) দেখুন।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc metrics show</div>
+      <div class="cmd-desc">সব metrics ফাইলের মান দেখুন।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc status</div>
+      <div class="cmd-desc">কোন ফাইল পরিবর্তন হয়েছে দেখুন।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc remove &lt;file.dvc&gt;</div>
+      <div class="cmd-desc">DVC tracking থেকে ফাইল সরান।</div>
+    </div>
+    <div class="cmd-ref-row">
+      <div class="cmd-code">dvc config core.analytics false</div>
+      <div class="cmd-desc">DVC usage analytics বন্ধ করুন।</div>
+    </div>
+  </div>
+
+  <h3>🔄 পূর্ণ Workflow চিটশিট</h3>
+
+  <div class="diagram-container">
+    <div class="diagram-title">চিত্র ৮: DVC + Git এর সম্পূর্ণ Workflow</div>
+    <svg viewBox="0 0 640 500" xmlns="http://www.w3.org/2000/svg" font-family="'Hind Siliguri',sans-serif">
+      <defs>
+        <marker id="wf-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L8,3.5 L0,7Z" fill="#58a6ff"/>
+        </marker>
+        <marker id="wf-arrowO" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L8,3.5 L0,7Z" fill="#ffa657"/>
+        </marker>
+        <marker id="wf-arrowG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L8,3.5 L0,7Z" fill="#3fb950"/>
+        </marker>
+      </defs>
+
+      <!-- Step boxes -->
+      <!-- 1. Setup -->
+      <rect x="220" y="10" width="200" height="50" rx="8" fill="#1e2732" stroke="#d2a8ff" stroke-width="2"/>
+      <text x="320" y="31" text-anchor="middle" fill="#d2a8ff" font-size="12" font-weight="bold">① সেটআপ</text>
+      <text x="320" y="51" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">git init · dvc init · dvc remote add</text>
+
+      <!-- 2. Add data -->
+      <rect x="60" y="110" width="200" height="50" rx="8" fill="#1e2732" stroke="#ffa657" stroke-width="2"/>
+      <text x="160" y="131" text-anchor="middle" fill="#ffa657" font-size="12" font-weight="bold">② ডেটা যোগ</text>
+      <text x="160" y="151" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">dvc add data/</text>
+
+      <!-- 3. Git add -->
+      <rect x="380" y="110" width="200" height="50" rx="8" fill="#1e2732" stroke="#58a6ff" stroke-width="2"/>
+      <text x="480" y="131" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">③ Git এ যোগ</text>
+      <text x="480" y="151" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">git add *.dvc .gitignore</text>
+
+      <!-- 4. Commit -->
+      <rect x="220" y="210" width="200" height="50" rx="8" fill="#1e2732" stroke="#58a6ff" stroke-width="2"/>
+      <text x="320" y="231" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">④ Commit</text>
+      <text x="320" y="251" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">git commit -m "message"</text>
+
+      <!-- 5. Push both -->
+      <rect x="60" y="310" width="200" height="50" rx="8" fill="#1e2732" stroke="#ffa657" stroke-width="2"/>
+      <text x="160" y="331" text-anchor="middle" fill="#ffa657" font-size="12" font-weight="bold">⑤ DVC Push</text>
+      <text x="160" y="351" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">dvc push</text>
+
+      <rect x="380" y="310" width="200" height="50" rx="8" fill="#1e2732" stroke="#58a6ff" stroke-width="2"/>
+      <text x="480" y="331" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">⑥ Git Push</text>
+      <text x="480" y="351" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">git push</text>
+
+      <!-- 7. Download -->
+      <rect x="220" y="410" width="200" height="70" rx="8" fill="#162318" stroke="#3fb950" stroke-width="2"/>
+      <text x="320" y="432" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="bold">⑦ ডাউনলোড (অন্য কেউ)</text>
+      <text x="320" y="452" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">git clone → dvc pull</text>
+      <text x="320" y="470" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="monospace">বা পুরনো ভার্সনে ফিরতে:</text>
+      <text x="320" y="488" text-anchor="middle" fill="#6e7681" font-size="10" font-family="monospace">git checkout &lt;hash&gt; → dvc pull</text>
+
+      <!-- Arrows -->
+      <line x1="320" y1="60" x2="160" y2="108" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#wf-arrow)"/>
+      <line x1="320" y1="60" x2="480" y2="108" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#wf-arrow)"/>
+      <line x1="160" y1="160" x2="260" y2="208" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#wf-arrow)"/>
+      <line x1="480" y1="160" x2="380" y2="208" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#wf-arrow)"/>
+      <line x1="260" y1="260" x2="160" y2="308" stroke="#ffa657" stroke-width="1.5" marker-end="url(#wf-arrowO)"/>
+      <line x1="380" y1="260" x2="480" y2="308" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#wf-arrow)"/>
+      <line x1="160" y1="361" x2="230" y2="409" stroke="#3fb950" stroke-width="1.5" marker-end="url(#wf-arrowG)"/>
+      <line x1="480" y1="361" x2="390" y2="409" stroke="#3fb950" stroke-width="1.5" marker-end="url(#wf-arrowG)"/>
+    </svg>
+  </div>
+
+  <h3>🆚 Git বনাম DVC — সাথে যোগসূত্র</h3>
+
+  <table class="compare-table">
+    <tr>
+      <th>Git কমান্ড</th>
+      <th>DVC সমতুল্য</th>
+      <th>উদ্দেশ্য</th>
+    </tr>
+    <tr>
+      <td><code>git init</code></td>
+      <td><code>dvc init</code></td>
+      <td>Project শুরু করা</td>
+    </tr>
+    <tr>
+      <td><code>git add file</code></td>
+      <td><code>dvc add file</code></td>
+      <td>ট্র্যাকিং এ যোগ করা</td>
+    </tr>
+    <tr>
+      <td><code>git commit</code></td>
+      <td><code>dvc commit</code></td>
+      <td>পরিবর্তন record করা</td>
+    </tr>
+    <tr>
+      <td><code>git push</code></td>
+      <td><code>dvc push</code></td>
+      <td>Remote এ আপলোড</td>
+    </tr>
+    <tr>
+      <td><code>git pull</code></td>
+      <td><code>dvc pull</code></td>
+      <td>Remote থেকে ডাউনলোড</td>
+    </tr>
+    <tr>
+      <td><code>git clone</code></td>
+      <td><code>dvc fetch + dvc checkout</code></td>
+      <td>সম্পূর্ণ কপি</td>
+    </tr>
+    <tr>
+      <td><code>git status</code></td>
+      <td><code>dvc status</code></td>
+      <td>পরিবর্তন দেখা</td>
+    </tr>
+    <tr>
+      <td><code>git log</code></td>
+      <td>—</td>
+      <td>ইতিহাস দেখা (Git ই দেখায়)</td>
+    </tr>
+  </table>
+
+  <h3>❓ সাধারণ সমস্যা ও সমাধান</h3>
+
+  <div class="callout danger">
+    <div class="callout-title"><span class="callout-icon">🔴</span>সমস্যা: "not currently on a branch"</div>
+    <p><strong>কারণ:</strong> আপনি একটি পুরনো commit এ checkout করেছেন (detached HEAD state)।<br>
+    <strong>সমাধান:</strong> <code>git push origin HEAD:accidents_v2</code></p>
+  </div>
+
+  <div class="callout danger">
+    <div class="callout-title"><span class="callout-icon">🔴</span>সমস্যা: dvc add এ error</div>
+    <p><strong>কারণ:</strong> .gitignore এ /data/ আছে।<br>
+    <strong>সমাধান:</strong> .gitignore এ /data/ লাইনের আগে # দিয়ে comment করুন।</p>
+  </div>
+
+  <div class="callout danger">
+    <div class="callout-title"><span class="callout-icon">🔴</span>সমস্যা: dvc push authenticate করছে না</div>
+    <p><strong>কারণ:</strong> credentials ঠিক নেই।<br>
+    <strong>সমাধান:</strong> Google Drive এর জন্য browser এ login করুন। প্রথমবার authentication দরকার।</p>
+  </div>
+
+  <div class="summary-box">
+    <div class="summary-title">🎓 পুরো কোর্সের সারসংক্ষেপ</div>
+    <p>আপনি শিখেছেন:</p>
+    <p>✅ <strong>Data Version Control কী</strong> — ডেটার পরিবর্তন ট্র্যাক করার প্রয়োজনীয়তা ও সুবিধা<br>
+    ✅ <strong>DVC কীভাবে কাজ করে</strong> — বড় ফাইল remote এ, pointer file Git এ<br>
+    ✅ <strong>DVC সেটআপ</strong> — init, remote add, virtualenv<br>
+    ✅ <strong>ডেটা ট্র্যাকিং</strong> — dvc add, commit, push, pull ও ভার্সন time travel<br>
+    ✅ <strong>Model ট্র্যাকিং</strong> — train, evaluate, Google Drive remote<br>
+    ✅ <strong>Pipeline</strong> — dvc stage add, dvc repro, dvc dag<br>
+    ✅ <strong>DagsHub</strong> — GitHub এর ML version, experiments, data visualization</p>
+  </div>
+
+</section>
+
+</main>
+</div>
+
+<script>
+// Reading progress bar
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrollTop = doc.scrollTop || document.body.scrollTop;
+  const scrollHeight = doc.scrollHeight - doc.clientHeight;
+  const progress = (scrollTop / scrollHeight) * 100;
+  document.getElementById('progressBar').style.width = progress + '%';
+});
+
+// Highlight active TOC item
+const sections = document.querySelectorAll('.section');
+const tocItems = document.querySelectorAll('.toc-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      tocItems.forEach(item => {
+        item.style.borderLeftColor = 'transparent';
+        item.style.color = '';
+        if (item.getAttribute('href') === '#' + id) {
+          item.style.borderLeftColor = 'var(--accent)';
+          item.style.color = 'var(--accent)';
+        }
+      });
+    }
+  });
+}, { threshold: 0.2 });
+
+sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

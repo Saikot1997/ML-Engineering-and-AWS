@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API ও FastAPI — সম্পূর্ণ বাংলা গাইড (Fixed)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+:root{--bg:#0a0f1e;--bg2:#111827;--bg3:#1e2533;--border:#2d3748;--text:#e2e8f0;--text2:#718096;--teal:#38b2ac;--blue:#63b3ed;--purple:#b794f4;--orange:#ed8936;--green:#48bb78;--red:#fc8181;--yellow:#f6e05e}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hind Siliguri',sans-serif;background:var(--bg);color:var(--text);line-height:1.85;font-size:16px}
+.hero{background:linear-gradient(135deg,#0a0f1e,#111827,#0d1f2d);padding:60px 40px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 60%,rgba(56,178,172,.09),transparent 55%),radial-gradient(ellipse at 80% 30%,rgba(99,179,237,.09),transparent 55%);pointer-events:none}
+.hero-emoji{font-size:68px;margin-bottom:14px;position:relative;z-index:1}
+.hero h1{font-size:2.6em;font-weight:700;color:var(--text);margin-bottom:12px;position:relative;z-index:1}
+.hero h1 span{color:var(--teal)}
+.hero .sub{color:var(--text2);font-size:1.05em;max-width:620px;margin:0 auto 24px;position:relative;z-index:1}
+.badge-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.badge{border-radius:20px;padding:5px 14px;font-size:.82em;border:1px solid}
+.badge.teal{border-color:var(--teal);color:var(--teal)}
+.badge.blue{border-color:var(--blue);color:var(--blue)}
+.badge.purple{border-color:var(--purple);color:var(--purple)}
+.container{max-width:980px;margin:0 auto;padding:0 24px}
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:28px 32px;margin:40px 0}
+.toc-title{color:var(--teal);font-size:1.15em;font-weight:600;margin-bottom:18px}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px}
+.toc-grid a{color:var(--text2);text-decoration:none;font-size:.93em;padding:4px 0;transition:color .2s;display:block}
+.toc-grid a:hover{color:var(--teal)}
+.section{margin:48px 0;background:var(--bg2);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.sec-header{padding:20px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;background:var(--bg3)}
+.sec-num{width:38px;height:38px;background:var(--teal);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9em;flex-shrink:0}
+.sec-header h2{font-size:1.38em;color:var(--text)}
+.sec-body{padding:28px 32px}
+p{margin-bottom:16px}
+h3{color:var(--teal);font-size:1.18em;margin:28px 0 14px;padding-left:12px;border-left:3px solid var(--teal)}
+h4{color:var(--orange);font-size:1.04em;margin:20px 0 10px}
+.analogy{background:linear-gradient(135deg,rgba(56,178,172,.08),rgba(99,179,237,.05));border:1px solid rgba(56,178,172,.3);border-radius:10px;padding:20px 24px;margin:20px 0}
+.analogy::before{content:'💡 উপমা / উদাহরণ';display:block;font-size:.75em;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.note{background:rgba(246,224,94,.08);border-left:4px solid var(--yellow);border-radius:0 8px 8px 0;padding:16px 20px;margin:16px 0}
+.note::before{content:'📌 মনে রাখো: ';font-weight:600;color:var(--yellow)}
+.tip{background:rgba(72,187,120,.08);border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:16px 20px;margin:16px 0}
+.tip::before{content:'✅ ভালো পদ্ধতি: ';font-weight:600;color:var(--green)}
+.warn{background:rgba(252,129,74,.08);border-left:4px solid var(--orange);border-radius:0 8px 8px 0;padding:16px 20px;margin:16px 0}
+.warn::before{content:'⚠️ সাবধান: ';font-weight:600;color:var(--orange)}
+.exbox{background:rgba(183,148,244,.08);border:1px solid rgba(183,148,244,.25);border-radius:10px;padding:18px 22px;margin:16px 0}
+.exbox::before{content:'🔍 এটা কী? ';font-weight:600;color:var(--purple);display:block;margin-bottom:8px;font-size:.82em;text-transform:uppercase;letter-spacing:1px}
+.code-block{background:#020817;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:16px 0}
+.code-hdr{background:var(--bg3);padding:8px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+.lbl{margin-left:8px;font-size:.78em;color:var(--text2);font-family:'Fira Code',monospace}
+.code-body{padding:20px;font-family:'Fira Code',monospace;font-size:.875em;color:#cbd5e1;overflow-x:auto;line-height:1.75;white-space:pre}
+.kw{color:#b794f4}.fn{color:#63b3ed}.st{color:#f6ad55}.cm{color:#4a5568;font-style:italic}.num{color:#68d391}.dec{color:#f687b3}.out{color:#a0aec0}.hl{color:#38b2ac}
+code{background:var(--bg3);padding:2px 7px;border-radius:4px;font-family:'Fira Code',monospace;font-size:.87em;color:var(--teal)}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:20px 0}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:18px 20px;transition:border-color .2s,transform .2s}
+.card:hover{border-color:var(--teal);transform:translateY(-2px)}
+.card-title{font-weight:600;margin-bottom:8px;font-size:.95em}
+.card-desc{color:var(--text2);font-size:.88em;line-height:1.6}
+.tbl-wrap{overflow-x:auto;margin:20px 0}
+table{width:100%;border-collapse:collapse;font-size:.9em}
+th{background:var(--bg3);padding:12px 16px;text-align:left;color:var(--teal);border-bottom:2px solid var(--border);font-weight:600}
+td{padding:11px 16px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:hover td{background:rgba(255,255,255,.015)}
+.diagram-wrap{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px;margin:24px 0;text-align:center;overflow-x:auto}
+.diagram-title{font-size:.83em;color:var(--text2);margin-bottom:16px;text-transform:uppercase;letter-spacing:1px}
+.steps{margin:20px 0}
+.step{display:flex;gap:16px;margin-bottom:22px;align-items:flex-start}
+.step-n{width:32px;height:32px;background:var(--teal);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85em;flex-shrink:0}
+.step-c{flex:1;padding-top:4px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.cmp-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:20px}
+.method{display:inline-block;padding:3px 10px;border-radius:5px;font-family:'Fira Code',monospace;font-size:.82em;font-weight:600;margin-right:6px}
+.get{background:rgba(72,187,120,.2);color:#48bb78;border:1px solid #48bb78}
+.post{background:rgba(246,173,85,.2);color:#f6ad55;border:1px solid #f6ad55}
+.put{background:rgba(99,179,237,.2);color:#63b3ed;border:1px solid #63b3ed}
+.delete{background:rgba(252,129,129,.2);color:#fc8181;border:1px solid #fc8181}
+.patch{background:rgba(183,148,244,.2);color:#b794f4;border:1px solid #b794f4}
+.status-row{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+.status-badge{padding:8px 16px;border-radius:8px;font-family:'Fira Code',monospace;font-size:.88em;font-weight:600}
+.s2xx{background:rgba(72,187,120,.15);color:#48bb78;border:1px solid rgba(72,187,120,.4)}
+.s3xx{background:rgba(99,179,237,.15);color:#63b3ed;border:1px solid rgba(99,179,237,.4)}
+.s4xx{background:rgba(246,173,85,.15);color:#f6ad55;border:1px solid rgba(246,173,85,.4)}
+.s5xx{background:rgba(252,129,129,.15);color:#fc8181;border:1px solid rgba(252,129,129,.4)}
+.hl-t{color:var(--teal);font-weight:600}.hl-b{color:var(--blue);font-weight:600}.hl-o{color:var(--orange);font-weight:600}.hl-p{color:var(--purple);font-weight:600}.hl-g{color:var(--green);font-weight:600}
+.quiz-sec{background:linear-gradient(135deg,var(--bg2),#0a1628);border:1px solid var(--teal);border-radius:18px;padding:36px;margin:48px 0}
+.quiz-sec h2{color:var(--teal);margin-bottom:20px}
+.quiz-item{margin-bottom:28px}
+.quiz-q{font-weight:600;margin-bottom:12px}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.quiz-opt{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 16px;cursor:pointer;transition:all .2s;font-size:.95em}
+.quiz-opt:hover{border-color:var(--teal);background:rgba(56,178,172,.05)}
+.quiz-opt.correct{border-color:var(--green);background:rgba(72,187,120,.1);color:var(--green)}
+.quiz-opt.wrong{border-color:var(--red);background:rgba(252,129,129,.1);color:var(--red)}
+footer{text-align:center;padding:44px 24px;color:var(--text2);border-top:1px solid var(--border);margin-top:60px}
+@media(max-width:640px){.hero h1{font-size:1.8em}.sec-body{padding:20px 18px}.cmp{grid-template-columns:1fr}.toc-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-emoji">🔌</div>
+  <h1>API ও <span>FastAPI</span> — সম্পূর্ণ বাংলা গাইড</h1>
+  <p class="sub">HTTP থেকে শুরু করে FastAPI দিয়ে production-ready API বানানো পর্যন্ত — সব কিছু সহজ বাংলায়, ডায়াগ্রাম ও উদাহরণ সহ</p>
+  <div class="badge-row">
+    <span class="badge teal">✔ HTTP ও REST</span>
+    <span class="badge blue">✔ FastAPI A-Z</span>
+    <span class="badge purple">✔ Dummy Dataset সহ</span>
+  </div>
+</div>
+
+<div class="container">
+<div class="toc">
+  <div class="toc-title">📋 বিষয়সূচি</div>
+  <div class="toc-grid">
+    <a href="#s1">১. API কী এবং কেন দরকার?</a>
+    <a href="#s2">২. Microservices Architecture</a>
+    <a href="#s3">৩. HTTP Request-এর উপাদান</a>
+    <a href="#s4">৪. HTTP Methods ও Status Codes</a>
+    <a href="#s5">৫. HTTP Client টুলস (cURL, Python)</a>
+    <a href="#s6">৬. REST Standard</a>
+    <a href="#s7">৭. FastAPI — প্রথম পরিচয়</a>
+    <a href="#s8">৮. প্রথম FastAPI তৈরি</a>
+    <a href="#s9">৯. Dynamic Routing</a>
+    <a href="#s10">১০. Query String</a>
+    <a href="#s11">১১. Request Body (Pydantic)</a>
+    <a href="#s12">১২. Headers</a>
+    <a href="#s13">১৩. Documentation উন্নত করা</a>
+    <a href="#s14">১৪. Error Handling</a>
+    <a href="#s15">১৫. Performance ও Async</a>
+    <a href="#s16">১৬. সম্পূর্ণ API প্রজেক্ট (Dummy Dataset)</a>
+  </div>
+</div>
+
+<!-- ===== S1 ===== -->
+<div class="section" id="s1">
+  <div class="sec-header"><div class="sec-num">১</div><h2>API কী এবং কেন দরকার?</h2></div>
+  <div class="sec-body">
+    <p><span class="hl-t">API</span> মানে <strong>Application Programming Interface</strong>। সহজ কথায়, API হলো দুটো software-এর মধ্যে কথা বলার নিয়ম-কানুন। একটা application অন্যটাকে বলে "এই data দাও" বা "এই কাজটা করো" — এই যোগাযোগটাই API।</p>
+
+    <div class="analogy">
+      তুমি রেস্তোরাঁয় গেছ। রান্নাঘরে সরাসরি ঢুকতে পারবে না। একজন <strong>ওয়েটার</strong> আছেন — তুমি তাকে বলো "বিরিয়ানি চাই", সে রান্নাঘরে গিয়ে order দেয় এবং খাবার নিয়ে আসে। API হলো এই ওয়েটারের মতো — তুমি সরাসরি server-এর ভেতরে না গিয়ে API-কে request করো, সে কাজ করে result দেয়।
+    </div>
+
+    <h3>API-এর বাস্তব উদাহরণ</h3>
+    <div class="card-grid">
+      <div class="card"><div class="card-title" style="color:var(--teal)">🌤️ OpenWeatherMap API</div><div class="card-desc">HTTP request পাঠালে আবহাওয়ার data পাওয়া যায়। কীভাবে data সংগ্রহ হয় জানতে হয় না।</div></div>
+      <div class="card"><div class="card-title" style="color:var(--blue)">🌐 Google Translate API</div><div class="card-desc">Text পাঠাও, অনুবাদ পাও। Translation algorithm লুকানো।</div></div>
+      <div class="card"><div class="card-title" style="color:var(--purple)">🐼 Pandas Library</div><div class="card-desc">Pandas-ও API! <code>df.mean()</code> call করো — ভেতরে কী হয় জানতে হয় না।</div></div>
+      <div class="card"><div class="card-title" style="color:var(--orange)">💳 bKash/Stripe API</div><div class="card-desc">তাদের API দিয়ে payment নাও — নিজে payment system বানাতে হয় না।</div></div>
+    </div>
+
+    <h3>API কেন গুরুত্বপূর্ণ? — চিত্র দিয়ে বোঝো</h3>
+    <!-- FIX: defs FIRST, then all elements. Arrows properly connected. -->
+    <div class="diagram-wrap">
+      <div class="diagram-title">API ছাড়া (জটিল) বনাম API সহ (পরিষ্কার)</div>
+      <svg viewBox="0 0 720 230" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:720px">
+        <defs>
+          <marker id="aT" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4a5568"/></marker>
+          <marker id="aG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#38b2ac"/></marker>
+        </defs>
+        <rect width="720" height="230" fill="#020817" rx="8"/>
+        <!-- LEFT: without API -->
+        <text x="178" y="22" text-anchor="middle" fill="#fc8181" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="600">❌ API ছাড়া — জটিল</text>
+        <rect x="18"  y="36" width="72" height="26" rx="5" fill="#1e2533" stroke="#4a5568" stroke-width="1"/><text x="54"  y="53" text-anchor="middle" fill="#a0aec0" font-size="10">Website</text>
+        <rect x="100" y="36" width="72" height="26" rx="5" fill="#1e2533" stroke="#4a5568" stroke-width="1"/><text x="136" y="53" text-anchor="middle" fill="#a0aec0" font-size="10">Mobile</text>
+        <rect x="182" y="36" width="72" height="26" rx="5" fill="#1e2533" stroke="#4a5568" stroke-width="1"/><text x="218" y="53" text-anchor="middle" fill="#a0aec0" font-size="10">Terminal</text>
+        <rect x="264" y="36" width="72" height="26" rx="5" fill="#1e2533" stroke="#4a5568" stroke-width="1"/><text x="300" y="53" text-anchor="middle" fill="#a0aec0" font-size="10">Dashboard</text>
+        <rect x="143" y="150" width="80" height="38" rx="6" fill="#1e2533" stroke="#4a5568" stroke-width="1.5"/>
+        <text x="183" y="168" text-anchor="middle" fill="#a0aec0" font-size="12">🗄️</text>
+        <text x="183" y="183" text-anchor="middle" fill="#a0aec0" font-size="10">Database</text>
+        <line x1="54"  y1="62" x2="158" y2="150" stroke="#4a5568" stroke-width="1" stroke-dasharray="3" marker-end="url(#aT)"/>
+        <line x1="136" y1="62" x2="174" y2="150" stroke="#4a5568" stroke-width="1" stroke-dasharray="3" marker-end="url(#aT)"/>
+        <line x1="218" y1="62" x2="196" y2="150" stroke="#4a5568" stroke-width="1" stroke-dasharray="3" marker-end="url(#aT)"/>
+        <line x1="300" y1="62" x2="213" y2="150" stroke="#4a5568" stroke-width="1" stroke-dasharray="3" marker-end="url(#aT)"/>
+        <rect x="25"  y="198" width="305" height="22" rx="4" fill="rgba(252,129,129,.1)" stroke="#fc8181" stroke-width="1"/>
+        <text x="178" y="213" text-anchor="middle" fill="#fc8181" font-family="Hind Siliguri,sans-serif" font-size="10">⚠ Database বদলালে সব client update করতে হয়!</text>
+        <!-- Divider -->
+        <line x1="368" y1="10" x2="368" y2="225" stroke="#2d3748" stroke-width="1.5" stroke-dasharray="6"/>
+        <!-- RIGHT: with API -->
+        <text x="548" y="22" text-anchor="middle" fill="#38b2ac" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="600">✅ API সহ — পরিষ্কার</text>
+        <rect x="380" y="36" width="66" height="26" rx="5" fill="#1e2533" stroke="#2d3748" stroke-width="1"/><text x="413" y="53" text-anchor="middle" fill="#a0aec0" font-size="10">Website</text>
+        <rect x="454" y="36" width="66" height="26" rx="5" fill="#1e2533" stroke="#2d3748" stroke-width="1"/><text x="487" y="53" text-anchor="middle" fill="#a0aec0" font-size="10">Mobile</text>
+        <rect x="528" y="36" width="66" height="26" rx="5" fill="#1e2533" stroke="#2d3748" stroke-width="1"/><text x="561" y="53" text-anchor="middle" fill="#a0aec0" font-size="10">Terminal</text>
+        <rect x="602" y="36" width="74" height="26" rx="5" fill="#1e2533" stroke="#2d3748" stroke-width="1"/><text x="639" y="53" text-anchor="middle" fill="#a0aec0" font-size="10">Dashboard</text>
+        <rect x="487" y="98" width="110" height="42" rx="8" fill="#1e2533" stroke="#38b2ac" stroke-width="2.5"/>
+        <text x="542" y="124" text-anchor="middle" fill="#38b2ac" font-family="Fira Code,monospace" font-size="14" font-weight="600">🔌 API</text>
+        <rect x="502" y="155" width="80" height="38" rx="6" fill="#1e2533" stroke="#4a5568" stroke-width="1.5"/>
+        <text x="542" y="173" text-anchor="middle" fill="#a0aec0" font-size="12">🗄️</text>
+        <text x="542" y="187" text-anchor="middle" fill="#a0aec0" font-size="10">Database</text>
+        <line x1="413" y1="62" x2="498" y2="98"  stroke="#38b2ac" stroke-width="1.5" marker-end="url(#aG)"/>
+        <line x1="487" y1="62" x2="520" y2="98"  stroke="#38b2ac" stroke-width="1.5" marker-end="url(#aG)"/>
+        <line x1="561" y1="62" x2="548" y2="98"  stroke="#38b2ac" stroke-width="1.5" marker-end="url(#aG)"/>
+        <line x1="639" y1="62" x2="578" y2="98"  stroke="#38b2ac" stroke-width="1.5" marker-end="url(#aG)"/>
+        <line x1="542" y1="140" x2="542" y2="155" stroke="#38b2ac" stroke-width="1.5" marker-end="url(#aG)"/>
+        <rect x="374" y="198" width="338" height="22" rx="4" fill="rgba(56,178,172,.08)" stroke="#38b2ac" stroke-width="1"/>
+        <text x="543" y="213" text-anchor="middle" fill="#38b2ac" font-family="Hind Siliguri,sans-serif" font-size="10">✅ শুধু API update — client কিছু জানে না</text>
+      </svg>
+    </div>
+    <div class="tip">API-এর সবচেয়ে বড় সুবিধা: Backend বদলালেও Client কিছু জানতে পারে না — শুধু API contract মেনে চলতে হয়।</div>
+  </div>
+</div>
+
+<!-- ===== S2 ===== -->
+<div class="section" id="s2">
+  <div class="sec-header"><div class="sec-num">২</div><h2>Microservices Architecture</h2></div>
+  <div class="sec-body">
+    <div class="cmp">
+      <div class="cmp-card">
+        <h4 style="color:var(--red)">🧱 Monolithic — একটাই বিশাল</h4>
+        <p style="color:var(--text2);font-size:.9em">সব কিছু একটা বড় program-এ। Login, message, payment সব এক জায়গায়।</p>
+        <p style="color:var(--red);font-size:.88em;margin-top:10px">❌ একটায় সমস্যা হলে সব বন্ধ<br>❌ Update কঠিন<br>❌ দলের সবাই একই code-এ কাজ</p>
+      </div>
+      <div class="cmp-card">
+        <h4 style="color:var(--green)">🧩 Microservices — ছোট ছোট অংশ</h4>
+        <p style="color:var(--text2);font-size:.9em">প্রতিটা কাজ আলাদা service। তারা API দিয়ে কথা বলে।</p>
+        <p style="color:var(--green);font-size:.88em;margin-top:10px">✅ একটা বন্ধ হলেও বাকি চলে<br>✅ আলাদা টিম আলাদা language-এ<br>✅ সহজে scale করা যায়</p>
+      </div>
+    </div>
+
+    <!-- FIX: NEW Microservices diagram — was missing -->
+    <div class="diagram-wrap">
+      <div class="diagram-title">Monolithic (বাম) vs Microservices (ডান) — ভিজ্যুয়াল</div>
+      <svg viewBox="0 0 720 210" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:720px">
+        <defs>
+          <marker id="msA" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#38b2ac"/></marker>
+        </defs>
+        <rect width="720" height="210" fill="#020817" rx="8"/>
+        <!-- Monolithic -->
+        <text x="163" y="22" text-anchor="middle" fill="#fc8181" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="600">❌ Monolithic</text>
+        <rect x="20" y="32" width="285" height="148" rx="10" fill="#1a1030" stroke="#fc8181" stroke-width="2"/>
+        <text x="162" y="58" text-anchor="middle" fill="#fc8181" font-family="Hind Siliguri,sans-serif" font-size="11">একটাই বিশাল Application</text>
+        <rect x="40"  y="68" width="78" height="28" rx="5" fill="#2d1f40" stroke="#b794f4" stroke-width="1"/><text x="79"  y="86" text-anchor="middle" fill="#b794f4" font-size="10">Login</text>
+        <rect x="132" y="68" width="78" height="28" rx="5" fill="#2d1f40" stroke="#b794f4" stroke-width="1"/><text x="171" y="86" text-anchor="middle" fill="#b794f4" font-size="10">Payment</text>
+        <rect x="224" y="68" width="62" height="28" rx="5" fill="#2d1f40" stroke="#b794f4" stroke-width="1"/><text x="255" y="86" text-anchor="middle" fill="#b794f4" font-size="10">Chat</text>
+        <rect x="40"  y="108" width="78" height="28" rx="5" fill="#2d1f40" stroke="#b794f4" stroke-width="1"/><text x="79"  y="126" text-anchor="middle" fill="#b794f4" font-size="10">Notify</text>
+        <rect x="132" y="108" width="78" height="28" rx="5" fill="#2d1f40" stroke="#b794f4" stroke-width="1"/><text x="171" y="126" text-anchor="middle" fill="#b794f4" font-size="10">Search</text>
+        <rect x="224" y="108" width="62" height="28" rx="5" fill="#2d1f40" stroke="#b794f4" stroke-width="1"/><text x="255" y="126" text-anchor="middle" fill="#b794f4" font-size="10">Reports</text>
+        <text x="162" y="165" text-anchor="middle" fill="#fc8181" font-family="Hind Siliguri,sans-serif" font-size="10">Chat-এ bug → সব বন্ধ 💀</text>
+        <!-- Divider -->
+        <line x1="365" y1="10" x2="365" y2="200" stroke="#2d3748" stroke-width="1" stroke-dasharray="6"/>
+        <!-- Microservices -->
+        <text x="543" y="22" text-anchor="middle" fill="#38b2ac" font-family="Hind Siliguri,sans-serif" font-size="13" font-weight="600">✅ Microservices</text>
+        <rect x="378" y="35" width="82" height="36" rx="7" fill="#1e2533" stroke="#38b2ac" stroke-width="1.5"/><text x="419" y="57" text-anchor="middle" fill="#38b2ac" font-size="10">Login Svc</text>
+        <rect x="470" y="35" width="82" height="36" rx="7" fill="#1e2533" stroke="#48bb78" stroke-width="1.5"/><text x="511" y="57" text-anchor="middle" fill="#48bb78" font-size="10">Payment Svc</text>
+        <rect x="562" y="35" width="82" height="36" rx="7" fill="#1e2533" stroke="#63b3ed" stroke-width="1.5"/><text x="603" y="57" text-anchor="middle" fill="#63b3ed" font-size="10">Chat Svc</text>
+        <rect x="378" y="90" width="82" height="36" rx="7" fill="#1e2533" stroke="#b794f4" stroke-width="1.5"/><text x="419" y="112" text-anchor="middle" fill="#b794f4" font-size="10">Notify Svc</text>
+        <rect x="470" y="90" width="82" height="36" rx="7" fill="#1e2533" stroke="#f6ad55" stroke-width="1.5"/><text x="511" y="112" text-anchor="middle" fill="#f6ad55" font-size="10">Search Svc</text>
+        <rect x="562" y="90" width="82" height="36" rx="7" fill="#1e2533" stroke="#fc8181" stroke-width="1.5"/><text x="603" y="112" text-anchor="middle" fill="#fc8181" font-size="10">Reports Svc</text>
+        <!-- Gateway -->
+        <rect x="468" y="147" width="128" height="36" rx="8" fill="#1e2533" stroke="#38b2ac" stroke-width="2"/>
+        <text x="532" y="169" text-anchor="middle" fill="#38b2ac" font-family="Fira Code,monospace" font-size="11" font-weight="600">API Gateway</text>
+        <line x1="419" y1="126" x2="482" y2="147" stroke="#38b2ac" stroke-width="1" marker-end="url(#msA)"/>
+        <line x1="511" y1="126" x2="511" y2="147" stroke="#38b2ac" stroke-width="1" marker-end="url(#msA)"/>
+        <line x1="603" y1="126" x2="562" y2="147" stroke="#38b2ac" stroke-width="1" marker-end="url(#msA)"/>
+        <text x="532" y="200" text-anchor="middle" fill="#38b2ac" font-family="Hind Siliguri,sans-serif" font-size="10">প্রতিটা service স্বাধীন — Chat বন্ধ হলেও Payment চলে ✅</text>
+      </svg>
+    </div>
+    <div class="analogy">Microservices হলো যেন একটা বড় হাসপাতাল। আলাদা বিভাগ — জরুরি, অস্ত্রোপচার, X-ray। প্রতিটা স্বাধীন কিন্তু API দিয়ে তথ্য শেয়ার করে।</div>
+  </div>
+</div>
+
+<!-- ===== S3 ===== -->
+<div class="section" id="s3">
+  <div class="sec-header"><div class="sec-num">৩</div><h2>HTTP Request-এর উপাদান</h2></div>
+  <div class="sec-body">
+    <p><span class="hl-t">HTTP</span> (HyperText Transfer Protocol) হলো ইন্টারনেটের ভাষা। এটা দিয়ে browser server-কে "কথা" বলে। HTTPS হলো এর encrypted নিরাপদ version।</p>
+
+    <!-- FIX: defs FIRST, arrow from request to response box added -->
+    <div class="diagram-wrap">
+      <div class="diagram-title">HTTP Request ও Response-এর সম্পূর্ণ গঠন</div>
+      <svg viewBox="0 0 700 290" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:700px">
+        <defs>
+          <marker id="httpA" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#38b2ac"/></marker>
+        </defs>
+        <rect width="700" height="290" fill="#020817" rx="8"/>
+        <!-- Request box -->
+        <rect x="22" y="18" width="298" height="252" rx="10" fill="#111827" stroke="#38b2ac" stroke-width="2"/>
+        <text x="171" y="44" text-anchor="middle" fill="#38b2ac" font-family="Hind Siliguri,sans-serif" font-size="14" font-weight="600">📤 HTTP Request</text>
+        <rect x="42" y="56" width="258" height="36" rx="6" fill="#1e2533" stroke="#63b3ed" stroke-width="1.5"/>
+        <text x="72" y="70" fill="#63b3ed" font-family="Fira Code,monospace" font-size="9.5">URI (ঠিকানা):</text>
+        <text x="72" y="85" fill="#a0aec0" font-family="Fira Code,monospace" font-size="9">https://api.example.com/users</text>
+        <rect x="42" y="102" width="125" height="36" rx="6" fill="#1e2533" stroke="#f6ad55" stroke-width="1.5"/>
+        <text x="72" y="116" fill="#f6ad55" font-family="Fira Code,monospace" font-size="9.5">Method:</text>
+        <text x="72" y="131" fill="#a0aec0" font-family="Fira Code,monospace" font-size="9.5">GET / POST / PUT</text>
+        <rect x="42" y="148" width="258" height="52" rx="6" fill="#1e2533" stroke="#b794f4" stroke-width="1.5"/>
+        <text x="72" y="163" fill="#b794f4" font-family="Fira Code,monospace" font-size="9.5">Headers (metadata):</text>
+        <text x="72" y="180" fill="#a0aec0" font-family="Fira Code,monospace" font-size="9">Content-Type: application/json</text>
+        <text x="72" y="194" fill="#a0aec0" font-family="Fira Code,monospace" font-size="9">Authorization: Bearer token123</text>
+        <rect x="42" y="210" width="258" height="48" rx="6" fill="#1e2533" stroke="#68d391" stroke-width="1.5"/>
+        <text x="72" y="225" fill="#68d391" font-family="Fira Code,monospace" font-size="9.5">Body (POST/PUT-এ data):</text>
+        <text x="72" y="243" fill="#a0aec0" font-family="Fira Code,monospace" font-size="9">{"name": "Alice", "age": 25}</text>
+        <!-- Arrow -->
+        <line x1="322" y1="143" x2="375" y2="143" stroke="#38b2ac" stroke-width="2.5" marker-end="url(#httpA)"/>
+        <text x="348" y="133" text-anchor="middle" fill="#38b2ac" font-family="Hind Siliguri,sans-serif" font-size="10">পাঠায়</text>
+        <text x="348" y="157" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="9">ফেরত আসে</text>
+        <!-- Response box -->
+        <rect x="378" y="18" width="300" height="252" rx="10" fill="#111827" stroke="#f6ad55" stroke-width="2"/>
+        <text x="528" y="44" text-anchor="middle" fill="#f6ad55" font-family="Hind Siliguri,sans-serif" font-size="14" font-weight="600">📥 HTTP Response</text>
+        <rect x="398" y="56" width="260" height="36" rx="6" fill="#1e2533" stroke="#68d391" stroke-width="1.5"/>
+        <text x="428" y="70" fill="#68d391" font-family="Fira Code,monospace" font-size="9.5">Status Code (ফলাফল):</text>
+        <text x="428" y="85" fill="#a0aec0" font-family="Fira Code,monospace" font-size="9">200 OK / 404 Not Found / 422</text>
+        <rect x="398" y="102" width="260" height="52" rx="6" fill="#1e2533" stroke="#b794f4" stroke-width="1.5"/>
+        <text x="428" y="118" fill="#b794f4" font-family="Fira Code,monospace" font-size="9.5">Headers:</text>
+        <text x="428" y="135" fill="#a0aec0" font-family="Fira Code,monospace" font-size="9">Content-Type: application/json</text>
+        <text x="428" y="149" fill="#a0aec0" font-family="Fira Code,monospace" font-size="9">Server: uvicorn</text>
+        <rect x="398" y="164" width="260" height="96" rx="6" fill="#1e2533" stroke="#63b3ed" stroke-width="1.5"/>
+        <text x="428" y="180" fill="#63b3ed" font-family="Fira Code,monospace" font-size="9.5">Body (JSON data):</text>
+        <text x="428" y="197" fill="#a0aec0" font-family="Fira Code,monospace" font-size="9">{"id": 1,</text>
+        <text x="428" y="213" fill="#a0aec0" font-family="Fira Code,monospace" font-size="9"> "name": "Alice",</text>
+        <text x="428" y="229" fill="#a0aec0" font-family="Fira Code,monospace" font-size="9"> "age": 25,</text>
+        <text x="428" y="245" fill="#a0aec0" font-family="Fira Code,monospace" font-size="9"> "active": true}</text>
+      </svg>
+    </div>
+
+    <div class="exbox">
+      <strong>URI কী?</strong> Uniform Resource Identifier — ইন্টারনেটে কোনো কিছুর ঠিকানা। যেমন <code>https://api.example.com/users</code><br>
+      <strong>https কী?</strong> Protocol — যোগাযোগের নিয়ম। http = সাধারণ, https = encrypted নিরাপদ।<br>
+      <strong>Headers কী?</strong> Request-এর metadata — মূল data না, কিন্তু গুরুত্বপূর্ণ। যেমন কে পাঠাচ্ছে, কী ধরনের data।<br>
+      <strong>Body কী?</strong> Request-এর মূল data — POST/PUT-এ পাঠানো হয়। GET-এ body থাকে না।<br>
+      <strong>JSON কী?</strong> JavaScript Object Notation — data লেখার format। <code>{"key": "value"}</code> আকারে। Python-এর dict-এর মতোই দেখতে।
+    </div>
+
+    <h3>URI-এর অংশগুলো</h3>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">URI বিশ্লেষণ</span></div>
+      <div class="code-body"><span class="hl">https://</span><span class="fn">api.example.com</span><span class="st">/users</span><span class="kw">?age=25&city=dhaka</span>
+   ↑              ↑                ↑            ↑
+Protocol       Domain          Endpoint    Query Parameters
+
+<span class="cm"># ? দিয়ে Query Parameters শুরু, & দিয়ে আলাদা করা</span>
+<span class="kw">?age=25</span>       <span class="cm"># key=value</span>
+<span class="kw">&city=dhaka</span>   <span class="cm"># আরেকটা parameter</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S4 ===== -->
+<div class="section" id="s4">
+  <div class="sec-header"><div class="sec-num">৪</div><h2>HTTP Methods ও Status Codes</h2></div>
+  <div class="sec-body">
+    <h3>HTTP Methods — কী করতে চাইছ?</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Method</th><th>অর্থ</th><th>উদাহরণ</th></tr>
+        <tr><td><span class="method get">GET</span></td><td>Data পড়া / খোঁজা</td><td>সব user-এর list দেখাও</td></tr>
+        <tr><td><span class="method post">POST</span></td><td>নতুন data যোগ</td><td>নতুন user তৈরি করো</td></tr>
+        <tr><td><span class="method put">PUT</span></td><td>পুরো data replace</td><td>user-এর সব তথ্য বদলাও</td></tr>
+        <tr><td><span class="method patch">PATCH</span></td><td>আংশিক update</td><td>শুধু user-এর নাম বদলাও</td></tr>
+        <tr><td><span class="method delete">DELETE</span></td><td>Data মুছে ফেলা</td><td>user মুছে দাও</td></tr>
+      </table>
+    </div>
+    <div class="analogy">
+      Library-র সাথে তুলনা:<br>
+      <span class="method get">GET</span> = বই পড়া &nbsp;
+      <span class="method post">POST</span> = নতুন বই যোগ &nbsp;
+      <span class="method put">PUT</span> = পুরো বই বদলানো &nbsp;
+      <span class="method patch">PATCH</span> = কয়েক পাতা সংশোধন &nbsp;
+      <span class="method delete">DELETE</span> = বই সরানো
+    </div>
+
+    <h3>HTTP Status Codes — কী হলো?</h3>
+    <div class="status-row">
+      <div class="status-badge s2xx">2xx — সফল ✅</div>
+      <div class="status-badge s3xx">3xx — Redirect ↗</div>
+      <div class="status-badge s4xx">4xx — তোমার ভুল ❌</div>
+      <div class="status-badge s5xx">5xx — Server-এর ভুল 💥</div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Code</th><th>নাম</th><th>মানে</th></tr>
+        <tr><td><code>200</code></td><td>OK</td><td>সব ঠিকঠাক ✅</td></tr>
+        <tr><td><code>201</code></td><td>Created</td><td>নতুন data তৈরি হয়েছে (POST-এর পর)</td></tr>
+        <tr><td><code>400</code></td><td>Bad Request</td><td>তোমার request-এ ভুল আছে</td></tr>
+        <tr><td><code>401</code></td><td>Unauthorized</td><td>Login করোনি — কে তুমি জানি না</td></tr>
+        <tr><td><code>403</code></td><td>Forbidden</td><td>Login করেছ কিন্তু permission নেই</td></tr>
+        <tr><td><code>404</code></td><td>Not Found</td><td>ভুল address — এই resource নেই</td></tr>
+        <tr><td><code>422</code></td><td>Unprocessable Entity</td><td>Data format ভুল (FastAPI-তে common)</td></tr>
+        <tr><td><code>500</code></td><td>Internal Server Error</td><td>Server-এ bug আছে</td></tr>
+      </table>
+    </div>
+    <div class="note">401 vs 403 পার্থক্য: 401 = "কে তুমি জানি না" (login করোনি), 403 = "জানি তুমি কে, কিন্তু দেওয়া যাবে না" (permission নেই)।</div>
+  </div>
+</div>
+
+<!-- ===== S5 ===== -->
+<div class="section" id="s5">
+  <div class="sec-header"><div class="sec-num">৫</div><h2>HTTP Client টুলস — API test করার পদ্ধতি</h2></div>
+  <div class="sec-body">
+    <h3>cURL — Terminal থেকে সরাসরি</h3>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">cURL উদাহরণ</span></div>
+      <div class="code-body"><span class="cm"># GET request</span>
+<span class="hl">curl -X GET</span> https://jsonplaceholder.typicode.com/posts/1
+
+<span class="cm"># Headers সহ দেখো (-i = include headers)</span>
+<span class="hl">curl -X GET -i</span> https://jsonplaceholder.typicode.com/posts/1
+
+<span class="cm"># POST request — body পাঠাও</span>
+<span class="hl">curl -X POST</span> \
+  <span class="kw">-H</span> <span class="st">"Content-Type: application/json"</span> \
+  <span class="kw">-d</span> <span class="st">'{"title": "test post", "body": "বিষয়বস্তু"}'</span> \
+  https://jsonplaceholder.typicode.com/posts</div>
+    </div>
+    <div class="exbox">
+      <strong>-X কী?</strong> Method specify করে — GET, POST, PUT ইত্যাদি<br>
+      <strong>-H কী?</strong> Header যোগ করো (যেমন Content-Type বলছে body-তে JSON আছে)<br>
+      <strong>-d কী?</strong> Data/Body — যা পাঠাতে চাও<br>
+      <strong>\ (backslash) কী?</strong> Line continuation — একটা লম্বা command কয়েক লাইনে ভেঙে পড়তে সুবিধা। Terminal মনে করে সব একটাই command।
+    </div>
+
+    <h3>Python requests library</h3>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">Python দিয়ে API call</span></div>
+      <div class="code-body"><span class="cm"># প্রথমে install করো: pip install requests</span>
+<span class="kw">import</span> requests
+
+<span class="cm"># GET request</span>
+r = requests.<span class="fn">get</span>(<span class="st">'https://jsonplaceholder.typicode.com/posts/1'</span>)
+
+<span class="cm"># Response-এর বিভিন্ন অংশ</span>
+data    = r.<span class="fn">json</span>()      <span class="cm"># ← json() — brackets লাগবে! এটা একটা function call</span>
+headers = r.headers    <span class="cm"># Response headers dict</span>
+status  = r.status_code <span class="cm"># 200, 404 ইত্যাদি integer</span>
+
+<span class="fn">print</span>(status)   <span class="cm"># 200</span>
+<span class="fn">print</span>(data)     <span class="cm"># {'userId': 1, 'id': 1, 'title': '...'}</span>
+
+<span class="cm"># POST request</span>
+r = requests.<span class="fn">post</span>(
+    url=<span class="st">'https://jsonplaceholder.typicode.com/posts'</span>,
+    json={<span class="st">"title"</span>: <span class="st">"test"</span>, <span class="st">"body"</span>: <span class="st">"লেখা"</span>}  <span class="cm"># json= দিলে Content-Type auto set হয়</span>
+)
+<span class="fn">print</span>(r.status_code)  <span class="cm"># 201 Created</span></div>
+    </div>
+    <div class="tip">শেখার সময় cURL ব্যবহার করো। Production project-এ Postman দিয়ে team-এর সাথে share করো।</div>
+  </div>
+</div>
+
+<!-- ===== S6 ===== -->
+<div class="section" id="s6">
+  <div class="sec-header"><div class="sec-num">৬</div><h2>REST Standard — API-এর নিয়মকানুন</h2></div>
+  <div class="sec-body">
+    <p><span class="hl-t">REST</span> (Representational State Transfer) হলো API তৈরির একটা জনপ্রিয় architecture।</p>
+    <div class="card-grid">
+      <div class="card"><div class="card-title" style="color:var(--teal)">Client-Server</div><div class="card-desc">Client আর Server আলাদা। একটা বদলালে অন্যটায় কোনো প্রভাব নেই।</div></div>
+      <div class="card"><div class="card-title" style="color:var(--blue)">Stateless</div><div class="card-desc">প্রতিটা request স্বাধীন। Server আগের request মনে রাখে না — প্রতিবার নতুন।</div></div>
+      <div class="card"><div class="card-title" style="color:var(--purple)">Uniform Interface</div><div class="card-desc">Endpoint = object, Method = কাজ। <code>GET /users</code> = সব user পড়া।</div></div>
+      <div class="card"><div class="card-title" style="color:var(--orange)">Cacheable</div><div class="card-desc">Response cache করা যায় — বারবার একই request না পাঠিয়ে saved data ব্যবহার।</div></div>
+    </div>
+
+    <!-- FIX: REST endpoint visual — was missing -->
+    <div class="diagram-wrap">
+      <div class="diagram-title">REST Endpoint Naming Convention — উদাহরণ</div>
+      <svg viewBox="0 0 700 195" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:700px">
+        <rect width="700" height="195" fill="#020817" rx="8"/>
+        <rect x="10" y="10" width="680" height="28" rx="5" fill="#1e2533"/>
+        <text x="80"  y="29" text-anchor="middle" fill="#38b2ac" font-family="Fira Code,monospace" font-size="12" font-weight="600">Method</text>
+        <text x="260" y="29" text-anchor="middle" fill="#38b2ac" font-family="Fira Code,monospace" font-size="12" font-weight="600">Endpoint</text>
+        <text x="530" y="29" text-anchor="middle" fill="#38b2ac" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="600">কী করে</text>
+        <rect x="10" y="42" width="680" height="26" rx="3" fill="rgba(72,187,120,.06)"/>
+        <text x="80"  y="60" text-anchor="middle" fill="#48bb78" font-family="Fira Code,monospace" font-size="11">GET</text>
+        <text x="260" y="60" text-anchor="middle" fill="#f6ad55" font-family="Fira Code,monospace" font-size="11">/users</text>
+        <text x="530" y="60" text-anchor="middle" fill="#a0aec0" font-family="Hind Siliguri,sans-serif" font-size="11">সব user-এর list</text>
+        <rect x="10" y="72" width="680" height="26" rx="3"/>
+        <text x="80"  y="90" text-anchor="middle" fill="#48bb78" font-family="Fira Code,monospace" font-size="11">GET</text>
+        <text x="260" y="90" text-anchor="middle" fill="#f6ad55" font-family="Fira Code,monospace" font-size="11">/users/5</text>
+        <text x="530" y="90" text-anchor="middle" fill="#a0aec0" font-family="Hind Siliguri,sans-serif" font-size="11">ID=5 এর user</text>
+        <rect x="10" y="102" width="680" height="26" rx="3" fill="rgba(246,173,85,.06)"/>
+        <text x="80"  y="120" text-anchor="middle" fill="#f6ad55" font-family="Fira Code,monospace" font-size="11">POST</text>
+        <text x="260" y="120" text-anchor="middle" fill="#f6ad55" font-family="Fira Code,monospace" font-size="11">/users</text>
+        <text x="530" y="120" text-anchor="middle" fill="#a0aec0" font-family="Hind Siliguri,sans-serif" font-size="11">নতুন user তৈরি</text>
+        <rect x="10" y="132" width="680" height="26" rx="3" fill="rgba(99,179,237,.06)"/>
+        <text x="80"  y="150" text-anchor="middle" fill="#63b3ed" font-family="Fira Code,monospace" font-size="11">PUT</text>
+        <text x="260" y="150" text-anchor="middle" fill="#f6ad55" font-family="Fira Code,monospace" font-size="11">/users/5</text>
+        <text x="530" y="150" text-anchor="middle" fill="#a0aec0" font-family="Hind Siliguri,sans-serif" font-size="11">ID=5 এর user সম্পূর্ণ update</text>
+        <rect x="10" y="162" width="680" height="26" rx="3" fill="rgba(252,129,129,.06)"/>
+        <text x="80"  y="180" text-anchor="middle" fill="#fc8181" font-family="Fira Code,monospace" font-size="11">DELETE</text>
+        <text x="260" y="180" text-anchor="middle" fill="#f6ad55" font-family="Fira Code,monospace" font-size="11">/users/5</text>
+        <text x="530" y="180" text-anchor="middle" fill="#a0aec0" font-family="Hind Siliguri,sans-serif" font-size="11">ID=5 এর user মুছো</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S7 ===== -->
+<div class="section" id="s7">
+  <div class="sec-header"><div class="sec-num">৭</div><h2>FastAPI — প্রথম পরিচয়</h2></div>
+  <div class="sec-body">
+    <p><span class="hl-t">FastAPI</span> হলো Python দিয়ে API তৈরির আধুনিক framework। Flask-এর চেয়ে দ্রুত, সহজ, এবং automatic documentation।</p>
+    <div class="card-grid">
+      <div class="card"><div class="card-title" style="color:var(--teal)">⚡ দ্রুত</div><div class="card-desc">Python framework-গুলোর মধ্যে সবচেয়ে দ্রুততর একটি।</div></div>
+      <div class="card"><div class="card-title" style="color:var(--blue)">📖 Auto Docs</div><div class="card-desc">Code লেখার সাথে সাথে Swagger UI ও ReDoc documentation তৈরি হয়।</div></div>
+      <div class="card"><div class="card-title" style="color:var(--purple)">🔒 Type Safety</div><div class="card-desc">Python type hints দিয়ে data validate করে। ভুল data এলে error ধরে।</div></div>
+      <div class="card"><div class="card-title" style="color:var(--orange)">🔄 Async</div><div class="card-desc">async/await সরাসরি support — একসাথে অনেক request handle।</div></div>
+    </div>
+    <h3>ইন্সটলেশন</h3>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">Terminal</span></div>
+      <div class="code-body">pip install fastapi uvicorn</div>
+    </div>
+    <div class="exbox">
+      <strong>pip কী?</strong> Python-এর package manager — বাইরের library ইন্সটল করার টুল। যেমন apt Linux-এর package manager।<br>
+      <strong>fastapi</strong> — মূল framework। API-এর rules ও logic লিখবে এখানে।<br>
+      <strong>uvicorn কী?</strong> ASGI server। FastAPI-এর code চালায়। FastAPI নিজে server না — uvicorn server, FastAPI সেই server-এর উপর চলে। রান্নাঘর (uvicorn) ছাড়া recipe (FastAPI) কাজ করে না।
+    </div>
+  </div>
+</div>
+
+<!-- ===== S8 ===== -->
+<div class="section" id="s8">
+  <div class="sec-header"><div class="sec-num">৮</div><h2>প্রথম FastAPI — ধাপে ধাপে</h2></div>
+  <div class="sec-body">
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">১</div>
+        <div class="step-c">
+          <strong>main.py তৈরি করো:</strong>
+          <div class="code-block">
+            <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">main.py</span></div>
+            <div class="code-body"><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+
+<span class="cm"># FastAPI class থেকে object তৈরি করো — এটাই আমাদের API</span>
+api = <span class="fn">FastAPI</span>()
+
+<span class="cm"># Decorator: / endpoint-এ GET request আসলে এই function চালাও</span>
+<span class="dec">@api.get</span>(<span class="st">'/'</span>)
+<span class="kw">def</span> <span class="fn">get_index</span>():
+    <span class="kw">return</span> {<span class="st">'data'</span>: <span class="st">'hello world'</span>}
+    <span class="cm"># dict return করলে FastAPI automatically JSON-এ convert করে</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">২</div>
+        <div class="step-c">
+          <strong>API চালু করো:</strong>
+          <div class="code-block">
+            <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">Terminal</span></div>
+            <div class="code-body">uvicorn main:api --reload
+<span class="cm"># main   = main.py ফাইলের নাম (.py ছাড়া)
+# api    = সেই ফাইলে FastAPI object-এর নাম
+# --reload = code বদলালে auto restart (development-এ ব্যবহার করো)</span>
+<span class="out">INFO: Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)</span>
+<span class="cm"># 127.0.0.1 = localhost = তোমার নিজের কম্পিউটার
+# 8000 = port number</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">৩</div>
+        <div class="step-c">
+          <strong>Test করো (নতুন terminal-এ):</strong>
+          <div class="code-block">
+            <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">Terminal</span></div>
+            <div class="code-body">curl -X GET http://127.0.0.1:8000/
+<span class="out">{"data":"hello world"}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exbox">
+      <strong>Decorator (@) কী?</strong> Python-এ @ দিয়ে শুরু হওয়া line হলো decorator। এটা পরের function-কে "wrap" করে বাড়তি কাজ করে। <code>@api.get('/')</code> মানে: "GET request আসলে / endpoint-এ এই function চালাও।" Decorator ছাড়া FastAPI বুঝবে না কোন URL-এ কোন function চালাতে হবে।<br><br>
+      <strong>localhost / 127.0.0.1 কী?</strong> তোমার নিজের কম্পিউটারকে বোঝায়। এই API শুধু তুমিই access করতে পারবে — internet-এ নয়।
+    </div>
+
+    <h3>Auto Documentation</h3>
+    <div class="card-grid">
+      <div class="card"><div class="card-title" style="color:var(--teal)">📄 Swagger UI</div><div class="card-desc"><code>http://localhost:8000/docs</code> — browser থেকেই API test করো।</div></div>
+      <div class="card"><div class="card-title" style="color:var(--blue)">📋 ReDoc</div><div class="card-desc"><code>http://localhost:8000/redoc</code> — সুন্দর format-এ documentation।</div></div>
+      <div class="card"><div class="card-title" style="color:var(--purple)">📦 OpenAPI JSON</div><div class="card-desc"><code>http://localhost:8000/openapi.json</code> — machine-readable spec।</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S9 ===== -->
+<div class="section" id="s9">
+  <div class="sec-header"><div class="sec-num">৯</div><h2>Dynamic Routing — URL-এ variable</h2></div>
+  <div class="sec-body">
+    <p><code>/users/5</code> মানে ID=5 এর user। এই <code>5</code> টা variable — এটাই Dynamic Routing।</p>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">Dynamic Routing</span></div>
+      <div class="code-body"><span class="cm"># {itemid} curly braces-এ যা লিখবে সেটা function parameter হবে</span>
+<span class="dec">@api.get</span>(<span class="st">'/item/{itemid}'</span>)
+<span class="kw">def</span> <span class="fn">get_item</span>(itemid):
+    <span class="kw">return</span> {<span class="st">'itemid'</span>: itemid}
+
+<span class="cm"># Type annotation দিয়ে — শুধু integer accept করবে</span>
+<span class="dec">@api.get</span>(<span class="st">'/product/{pid}'</span>)
+<span class="kw">def</span> <span class="fn">get_product</span>(pid: <span class="kw">int</span>):  <span class="cm"># ← : int মানে integer হতে হবে</span>
+    <span class="kw">return</span> {<span class="st">'pid'</span>: pid, <span class="st">'type'</span>: <span class="st">'integer'</span>}
+
+<span class="cm"># curl /product/1234  → {"pid": 1234, "type": "integer"}
+# curl /product/abc   → 422 Error — "abc" integer না!</span>
+
+<span class="cm"># একাধিক variable</span>
+<span class="dec">@api.get</span>(<span class="st">'/item/{itemid}/desc/{lang}'</span>)
+<span class="kw">def</span> <span class="fn">get_item_lang</span>(itemid: <span class="kw">int</span>, lang: <span class="kw">str</span>):
+    <span class="kw">if</span> lang == <span class="st">'bn'</span>:
+        <span class="kw">return</span> {<span class="st">'desc'</span>: <span class="st">'একটি বস্তু'</span>}
+    <span class="kw">return</span> {<span class="st">'desc'</span>: <span class="st">'an object'</span>}</div>
+    </div>
+
+    <h3>User API উদাহরণ</h3>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">users_api.py</span></div>
+      <div class="code-body"><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+
+api = <span class="fn">FastAPI</span>(title=<span class="st">'User API'</span>)
+
+users_db = [
+    {<span class="st">'user_id'</span>: <span class="num">1</span>, <span class="st">'name'</span>: <span class="st">'Alice'</span>,  <span class="st">'subscription'</span>: <span class="st">'free'</span>},
+    {<span class="st">'user_id'</span>: <span class="num">2</span>, <span class="st">'name'</span>: <span class="st">'Bob'</span>,    <span class="st">'subscription'</span>: <span class="st">'premium'</span>},
+    {<span class="st">'user_id'</span>: <span class="num">3</span>, <span class="st">'name'</span>: <span class="st">'রহিম'</span>,  <span class="st">'subscription'</span>: <span class="st">'free'</span>},
+]
+
+<span class="dec">@api.get</span>(<span class="st">'/'</span>)
+<span class="kw">def</span> <span class="fn">index</span>(): <span class="kw">return</span> {<span class="st">'message'</span>: <span class="st">'স্বাগতম!'</span>}
+
+<span class="dec">@api.get</span>(<span class="st">'/users'</span>)
+<span class="kw">def</span> <span class="fn">get_users</span>(): <span class="kw">return</span> users_db
+
+<span class="dec">@api.get</span>(<span class="st">'/users/{userid}'</span>)
+<span class="kw">def</span> <span class="fn">get_user</span>(userid: <span class="kw">int</span>):
+    result = [u <span class="kw">for</span> u <span class="kw">in</span> users_db <span class="kw">if</span> u[<span class="st">'user_id'</span>] == userid]
+    <span class="kw">return</span> result[<span class="num">0</span>] <span class="kw">if</span> result <span class="kw">else</span> {}
+    <span class="cm"># পাওয়া গেলে → প্রথম result, না পেলে → খালি dict {}</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S10 ===== -->
+<div class="section" id="s10">
+  <div class="sec-header"><div class="sec-num">১০</div><h2>Query String — URL-এ filter করা</h2></div>
+  <div class="sec-body">
+    <p>URL-এর <code>?</code> চিহ্নের পরে যা থাকে তাই Query String। যেমন: <code>/search?keyword=python&limit=10</code></p>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">Query String</span></div>
+      <div class="code-body"><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+api = <span class="fn">FastAPI</span>()
+
+<span class="cm"># URL path-এ না থাকা parameter → query string হয় automatically</span>
+<span class="dec">@api.get</span>(<span class="st">'/'</span>)
+<span class="kw">def</span> <span class="fn">get_index</span>(argument1: <span class="kw">str</span>):  <span class="cm"># required</span>
+    <span class="kw">return</span> {<span class="st">'data'</span>: argument1}
+<span class="cm"># curl /?argument1=hello  → {"data": "hello"}
+# curl /               → 422 Error — argument1 দিতেই হবে!</span>
+
+<span class="cm"># Optional[int] = None মানে দেওয়া নাও দেওয়া যায়, default None</span>
+<span class="dec">@api.get</span>(<span class="st">'/search'</span>)
+<span class="kw">def</span> <span class="fn">search</span>(keyword: <span class="kw">str</span>, limit: Optional[<span class="kw">int</span>] = <span class="num">10</span>):
+    <span class="kw">return</span> {<span class="st">'keyword'</span>: keyword, <span class="st">'limit'</span>: limit}
+<span class="cm"># curl /search?keyword=python        → limit=10 (default)
+# curl /search?keyword=python&limit=5 → limit=5</span></div>
+    </div>
+    <div class="analogy">Query string হলো যেন Google-এ search: <code>google.com/search?q=python</code> — এখানে <code>q=python</code> হলো query parameter।</div>
+    <div class="cmp">
+      <div class="cmp-card"><h4 style="color:var(--teal)">Dynamic Route</h4><code>/users/5</code><p style="color:var(--text2);font-size:.88em;margin-top:8px">Specific resource — ID দিয়ে।</p></div>
+      <div class="cmp-card"><h4 style="color:var(--orange)">Query String</h4><code>/users?age=25</code><p style="color:var(--text2);font-size:.88em;margin-top:8px">Filter, search — একাধিক condition।</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S11 ===== -->
+<div class="section" id="s11">
+  <div class="sec-header"><div class="sec-num">১১</div><h2>Request Body — Pydantic BaseModel</h2></div>
+  <div class="sec-body">
+    <p>নতুন user তৈরি করতে অনেক data দরকার — URL-এ দেওয়া সম্ভব না। তাই <span class="hl-t">Request Body</span> ব্যবহার হয়। FastAPI-তে Body-র জন্য <span class="hl-p">Pydantic</span>-এর <code>BaseModel</code> ব্যবহার করতে হয়।</p>
+    <div class="exbox">
+      <strong>Pydantic কী?</strong> Python-এর data validation library। <code>class User(BaseModel)</code> লিখলে FastAPI বুঝতে পারে এটা body — query parameter না।<br>
+      <strong>BaseModel থেকে inherit মানে?</strong> User class-টা BaseModel-এর সব feature নিয়ে নিল। এটা OOP-এর ধারণা — parent class-এর সব কিছু child-এ চলে আসে।
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">Request Body</span></div>
+      <div class="code-body"><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+api = <span class="fn">FastAPI</span>()
+
+<span class="kw">class</span> <span class="fn">User</span>(BaseModel):
+    name: <span class="kw">str</span>                      <span class="cm"># required, string</span>
+    age: <span class="kw">int</span>                       <span class="cm"># required, integer</span>
+    email: Optional[<span class="kw">str</span>] = <span class="kw">None</span>   <span class="cm"># optional, default None</span>
+    is_active: <span class="kw">bool</span> = <span class="kw">True</span>         <span class="cm"># optional, default True</span>
+
+<span class="dec">@api.post</span>(<span class="st">'/users'</span>)
+<span class="kw">def</span> <span class="fn">create_user</span>(user: User):  <span class="cm"># ← annotation User → FastAPI জানে এটা body</span>
+    <span class="kw">return</span> {<span class="st">'message'</span>: <span class="st">f'{user.name} তৈরি হয়েছে'</span>, <span class="st">'user'</span>: user}</div>
+    </div>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">cURL দিয়ে POST test</span></div>
+      <div class="code-body"><span class="cm"># সঠিক request</span>
+curl -X POST http://127.0.0.1:8000/users \
+  -H <span class="st">"Content-Type: application/json"</span> \
+  -d <span class="st">'{"name": "করিম", "age": 25}'</span>
+<span class="out">{"message":"করিম তৈরি হয়েছে","user":{"name":"করিম","age":25,"email":null,"is_active":true}}</span>
+
+<span class="cm"># ভুল — age নেই</span>
+curl -X POST http://127.0.0.1:8000/users -d <span class="st">'{"name": "করিম"}'</span>
+<span class="out">{"detail":[{"loc":["body","age"],"msg":"field required"}]}</span>
+<span class="cm"># 422 — age field missing!</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S12 ===== -->
+<div class="section" id="s12">
+  <div class="sec-header"><div class="sec-num">১২</div><h2>Headers — Request-এ metadata পাঠানো</h2></div>
+  <div class="sec-body">
+    <p>Headers হলো request-এর metadata। Authentication token, content type ইত্যাদি এখানে পাঠানো হয়।</p>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">Header পড়া</span></div>
+      <div class="code-body"><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Header
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+api = <span class="fn">FastAPI</span>()
+
+<span class="dec">@api.get</span>(<span class="st">'/headers'</span>)
+<span class="kw">def</span> <span class="fn">get_headers</span>(user_agent: Optional[<span class="kw">str</span>] = <span class="fn">Header</span>(<span class="kw">None</span>)):
+    <span class="cm"># Header(None) মানে এই header optional</span>
+    <span class="kw">return</span> {<span class="st">'User-Agent'</span>: user_agent}
+
+<span class="cm"># curl -X GET http://127.0.0.1:8000/headers
+# → {"User-Agent": "curl/7.68.0"}</span>
+
+<span class="cm"># Authentication-এর জন্য header:</span>
+<span class="dec">@api.get</span>(<span class="st">'/protected'</span>)
+<span class="kw">def</span> <span class="fn">protected</span>(authorization: Optional[<span class="kw">str</span>] = <span class="fn">Header</span>(<span class="kw">None</span>)):
+    <span class="kw">if</span> authorization == <span class="st">"Bearer my_secret_token"</span>:
+        <span class="kw">return</span> {<span class="st">"message"</span>: <span class="st">"স্বাগতম!"</span>}
+    <span class="kw">return</span> {<span class="st">"error"</span>: <span class="st">"অনুমতি নেই"</span>}</div>
+    </div>
+
+    <h3>চারটি উপায়ে data পাঠানো — সারসংক্ষেপ</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>উপায়</th><th>কোথায়</th><th>কখন ব্যবহার</th><th>উদাহরণ</th></tr>
+        <tr><td><strong>Dynamic Route</strong></td><td>URL path-এ</td><td>নির্দিষ্ট resource</td><td><code>/users/5</code></td></tr>
+        <tr><td><strong>Query String</strong></td><td>URL-এ ? এর পরে</td><td>Filter, search</td><td><code>/users?age=25</code></td></tr>
+        <tr><td><strong>Request Body</strong></td><td>Request-এর ভেতরে</td><td>POST/PUT-এ বড় data</td><td><code>{"name": "Alice"}</code></td></tr>
+        <tr><td><strong>Headers</strong></td><td>Request metadata</td><td>Auth token, content type</td><td><code>Authorization: Bearer xxx</code></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S13 ===== -->
+<div class="section" id="s13">
+  <div class="sec-header"><div class="sec-num">১৩</div><h2>Documentation উন্নত করা</h2></div>
+  <div class="sec-body">
+    <h3>API-কে নাম, description ও version দাও</h3>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">main.py</span></div>
+      <div class="code-body">api = <span class="fn">FastAPI</span>(
+    title=<span class="st">"আমার User API"</span>,
+    description=<span class="st">"ব্যবহারকারী পরিচালনার API — FastAPI দিয়ে তৈরি।"</span>,
+    version=<span class="st">"1.0.0"</span>
+)</div>
+    </div>
+
+    <h3>Docstring দিয়ে function describe করো</h3>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">Docstring → Swagger Documentation</span></div>
+      <div class="code-body"><span class="dec">@api.get</span>(<span class="st">'/users'</span>, name=<span class="st">'সব ব্যবহারকারী দেখাও'</span>)
+<span class="kw">def</span> <span class="fn">get_users</span>():
+    <span class="st">"""সব registered ব্যবহারকারীর list দেখাও।
+
+    এই endpoint-এ কোনো parameter লাগে না।
+    সব user-এর data JSON array হিসেবে ফেরত আসে।
+    """</span>
+    <span class="kw">return</span> users_db</div>
+    </div>
+
+    <h3>Tags দিয়ে group করো</h3>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">Tags</span></div>
+      <div class="code-body">api = <span class="fn">FastAPI</span>(openapi_tags=[
+    {<span class="st">'name'</span>: <span class="st">'home'</span>,  <span class="st">'description'</span>: <span class="st">'মূল endpoints'</span>},
+    {<span class="st">'name'</span>: <span class="st">'users'</span>, <span class="st">'description'</span>: <span class="st">'ব্যবহারকারী পরিচালনা'</span>},
+])
+
+<span class="dec">@api.get</span>(<span class="st">'/'</span>, tags=[<span class="st">'home'</span>])
+<span class="kw">def</span> <span class="fn">index</span>(): ...
+
+<span class="dec">@api.get</span>(<span class="st">'/users'</span>, tags=[<span class="st">'users'</span>])
+<span class="kw">def</span> <span class="fn">get_users</span>(): ...</div>
+    </div>
+    <div class="tip">Tags ব্যবহার করলে Swagger UI-তে সুন্দর groups তৈরি হয়। বড় API-তে এটা খুবই জরুরি।</div>
+  </div>
+</div>
+
+<!-- ===== S14 ===== -->
+<div class="section" id="s14">
+  <div class="sec-header"><div class="sec-num">১৪</div><h2>Error Handling — ভুল সামলানো</h2></div>
+  <div class="sec-body">
+    <p>Production API-তে ভুল হবেই। <code>HTTPException</code> দিয়ে সুন্দর error response তৈরি করা যায়।</p>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">HTTPException</span></div>
+      <div class="code-body"><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, HTTPException
+
+api = <span class="fn">FastAPI</span>()
+data = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>]  <span class="cm"># index 0-4</span>
+
+<span class="dec">@api.get</span>(<span class="st">'/data'</span>)
+<span class="kw">def</span> <span class="fn">get_data</span>(index: <span class="kw">int</span>):
+    <span class="kw">try</span>:
+        <span class="kw">return</span> {<span class="st">'data'</span>: data[index]}
+    <span class="kw">except</span> IndexError:
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(
+            status_code=<span class="num">404</span>,
+            detail=<span class="st">f'index {index} পাওয়া যায়নি। 0-4 এর মধ্যে দাও।'</span>
+        )
+
+<span class="cm"># curl /data?index=2  → {"data": 30}
+# curl /data?index=99 → 404 {"detail": "index 99 পাওয়া যায়নি..."}</span></div>
+    </div>
+
+    <h3>Custom Exception</h3>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">নিজের Error class</span></div>
+      <div class="code-body"><span class="kw">from</span> fastapi <span class="kw">import</span> Request
+<span class="kw">from</span> fastapi.responses <span class="kw">import</span> JSONResponse
+<span class="kw">import</span> datetime
+
+<span class="kw">class</span> <span class="fn">AuthError</span>(Exception):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, username: <span class="kw">str</span>):
+        self.username = username
+
+<span class="dec">@api.exception_handler</span>(AuthError)
+<span class="kw">def</span> <span class="fn">auth_handler</span>(request: Request, exc: AuthError):
+    <span class="kw">return</span> <span class="fn">JSONResponse</span>(
+        status_code=<span class="num">401</span>,
+        content={
+            <span class="st">'error'</span>: <span class="st">'Authentication failed'</span>,
+            <span class="st">'user'</span>: exc.username,
+            <span class="st">'time'</span>: <span class="kw">str</span>(datetime.datetime.now())
+        }
+    )
+
+<span class="dec">@api.get</span>(<span class="st">'/login'</span>)
+<span class="kw">def</span> <span class="fn">login</span>(username: <span class="kw">str</span>, password: <span class="kw">str</span>):
+    <span class="kw">if</span> password != <span class="st">"secret"</span>:
+        <span class="kw">raise</span> <span class="fn">AuthError</span>(username=username)
+    <span class="kw">return</span> {<span class="st">"status"</span>: <span class="st">"login সফল"</span>}</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== S15 ===== -->
+<div class="section" id="s15">
+  <div class="sec-header"><div class="sec-num">১৫</div><h2>Performance ও Async — দ্রুততা</h2></div>
+  <div class="sec-body">
+    <!-- FIX: defs FIRST, timeline-style async diagram showing true parallel execution -->
+    <div class="diagram-wrap">
+      <div class="diagram-title">Sync vs Async — Timeline দিয়ে পার্থক্য (প্রতিটা request ১০ সেকেন্ড নেয়)</div>
+      <svg viewBox="0 0 700 210" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:700px">
+        <defs>
+          <marker id="tA" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#8b949e"/></marker>
+        </defs>
+        <rect width="700" height="210" fill="#020817" rx="8"/>
+
+        <!-- Title rows -->
+        <text x="350" y="20" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri,sans-serif" font-size="11">সময় (→)</text>
+        <line x1="90" y1="25" x2="670" y2="25" stroke="#2d3748" stroke-width="1" marker-end="url(#tA)"/>
+
+        <!-- Time labels -->
+        <text x="90"  y="40" text-anchor="middle" fill="#4a5568" font-family="Fira Code,monospace" font-size="9">0s</text>
+        <text x="280" y="40" text-anchor="middle" fill="#4a5568" font-family="Fira Code,monospace" font-size="9">10s</text>
+        <text x="470" y="40" text-anchor="middle" fill="#4a5568" font-family="Fira Code,monospace" font-size="9">20s</text>
+        <text x="660" y="40" text-anchor="middle" fill="#4a5568" font-family="Fira Code,monospace" font-size="9">30s</text>
+
+        <!-- SYNC section -->
+        <text x="30" y="65" fill="#fc8181" font-family="Hind Siliguri,sans-serif" font-size="11" font-weight="600">❌ Sync</text>
+        <!-- R1 starts at 0, ends at 10s -->
+        <rect x="90"  y="52" width="190" height="22" rx="4" fill="#3d1515" stroke="#fc8181" stroke-width="1.5"/>
+        <text x="185" y="67" text-anchor="middle" fill="#fc8181" font-family="Hind Siliguri,sans-serif" font-size="10">Request 1 (চলছে...)</text>
+        <!-- R2 blocked until R1 done -->
+        <rect x="282" y="52" width="190" height="22" rx="4" fill="#3d1515" stroke="#fc8181" stroke-width="1.5"/>
+        <text x="377" y="67" text-anchor="middle" fill="#fc8181" font-family="Hind Siliguri,sans-serif" font-size="10">Request 2 (অপেক্ষা করে চলছে)</text>
+        <!-- R3 blocked until R2 done -->
+        <rect x="474" y="52" width="190" height="22" rx="4" fill="#3d1515" stroke="#fc8181" stroke-width="1.5"/>
+        <text x="569" y="67" text-anchor="middle" fill="#fc8181" font-family="Hind Siliguri,sans-serif" font-size="10">Request 3 (আরো অপেক্ষা)</text>
+
+        <text x="90" y="90" fill="#fc8181" font-family="Hind Siliguri,sans-serif" font-size="11">মোট সময়: ৩০ সেকেন্ড!</text>
+
+        <!-- ASYNC section -->
+        <text x="30" y="125" fill="#38b2ac" font-family="Hind Siliguri,sans-serif" font-size="11" font-weight="600">✅ Async</text>
+        <!-- All three start at same time -->
+        <rect x="90"  y="112" width="190" height="22" rx="4" fill="#0d2020" stroke="#38b2ac" stroke-width="1.5"/>
+        <text x="185" y="127" text-anchor="middle" fill="#38b2ac" font-family="Hind Siliguri,sans-serif" font-size="10">Request 1 (চলছে)</text>
+        <rect x="90"  y="138" width="190" height="22" rx="4" fill="#0d2020" stroke="#48bb78" stroke-width="1.5"/>
+        <text x="185" y="153" text-anchor="middle" fill="#48bb78" font-family="Hind Siliguri,sans-serif" font-size="10">Request 2 (একসাথে)</text>
+        <rect x="90"  y="164" width="190" height="22" rx="4" fill="#0d2020" stroke="#63b3ed" stroke-width="1.5"/>
+        <text x="185" y="179" text-anchor="middle" fill="#63b3ed" font-family="Hind Siliguri,sans-serif" font-size="10">Request 3 (একসাথে)</text>
+
+        <!-- Done marker -->
+        <line x1="282" y1="108" x2="282" y2="190" stroke="#38b2ac" stroke-width="1" stroke-dasharray="4"/>
+        <text x="284" y="200" fill="#38b2ac" font-family="Fira Code,monospace" font-size="10">সব শেষ ~10s!</text>
+
+        <text x="460" y="150" fill="#38b2ac" font-family="Hind Siliguri,sans-serif" font-size="12" font-weight="600">সাশ্রয়: ২০ সেকেন্ড 🚀</text>
+      </svg>
+    </div>
+
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">async/await উদাহরণ</span></div>
+      <div class="code-body"><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">import</span> asyncio, time
+
+api = <span class="fn">FastAPI</span>()
+
+<span class="cm"># Synchronous — একটা শেষ না হলে পরেরটা আটকে থাকে</span>
+<span class="dec">@api.get</span>(<span class="st">'/sync'</span>)
+<span class="kw">def</span> <span class="fn">get_sync</span>():
+    time.<span class="fn">sleep</span>(<span class="num">5</span>)   <span class="cm"># পুরো server ৫ সেকেন্ড আটকে থাকে!</span>
+    <span class="kw">return</span> {<span class="st">'type'</span>: <span class="st">'sync'</span>}
+
+<span class="cm"># Asynchronous — অপেক্ষার সময় অন্য request চলতে পারে</span>
+<span class="dec">@api.get</span>(<span class="st">'/async'</span>)
+<span class="kw">async def</span> <span class="fn">get_async</span>():  <span class="cm"># ← async def লিখতে হবে</span>
+    <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(<span class="num">5</span>)  <span class="cm"># ← await = "অপেক্ষা করো, কিন্তু block করো না"</span>
+    <span class="kw">return</span> {<span class="st">'type'</span>: <span class="st">'async'</span>}</div>
+    </div>
+
+    <div class="analogy">
+      Sync = একজন cashier যে একজনের transaction শেষ না হওয়া পর্যন্ত পরের জনকে দেখে না। সবাই queue-তে।<br><br>
+      Async = একজন cashier যে card machine-এ process হওয়ার অপেক্ষায় না থেকে পরের customer-এর order নেওয়া শুরু করে।
+    </div>
+
+    <div class="exbox">
+      <strong>async def কী?</strong> এই function asynchronous — অপেক্ষার সময় অন্য কাজ করতে পারে।<br>
+      <strong>await কী?</strong> "এখানে অপেক্ষা করো, কিন্তু server-কে block করো না।" await শুধু async function-এর ভেতরে ব্যবহার করা যায়।<br>
+      <strong>asyncio.sleep কী?</strong> async version-এর sleep। সাধারণ time.sleep পুরো server block করে দেয়, কিন্তু asyncio.sleep শুধু এই function-কে wait করায়।
+    </div>
+    <div class="tip">FastAPI-তে যেখানে database query, file read, network call আছে — সেখানে সবসময় <code>async def</code> ও <code>await</code> ব্যবহার করো।</div>
+  </div>
+</div>
+
+<!-- ===== S16 ===== -->
+<div class="section" id="s16">
+  <div class="sec-header"><div class="sec-num">১৬</div><h2>সম্পূর্ণ API প্রজেক্ট — Dummy Dataset সহ</h2></div>
+  <div class="sec-body">
+    <p>এখন পর্যন্ত শেখা সব কিছু একটা real API-তে। এটা একটা <strong>Question Bank API</strong> — quiz questions manage করার জন্য। Dataset আমাদের নিজেরই তৈরি (dummy) — কোনো download লাগবে না।</p>
+
+    <div class="note">নিচের API-তে authentication, dummy database, error handling, tags, docstring — সব কিছু আছে। প্রতিটা অংশ comment-এ বাংলায় ব্যাখ্যা করা আছে।</div>
+
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">question_api.py — সম্পূর্ণ উদাহরণ</span></div>
+      <div class="code-body"><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, HTTPException, Header
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> typing <span class="kw">import</span> Optional, List
+<span class="kw">import</span> random
+
+<span class="cm"># ===== API SETUP =====</span>
+api = <span class="fn">FastAPI</span>(
+    title=<span class="st">"Question Bank API"</span>,
+    description=<span class="st">"Quiz প্রশ্ন পরিচালনার API — Dummy Dataset সহ"</span>,
+    version=<span class="st">"1.0.0"</span>,
+    openapi_tags=[
+        {<span class="st">"name"</span>: <span class="st">"health"</span>,    <span class="st">"description"</span>: <span class="st">"API status চেক"</span>},
+        {<span class="st">"name"</span>: <span class="st">"questions"</span>, <span class="st">"description"</span>: <span class="st">"প্রশ্ন পরিচালনা"</span>},
+    ]
+)
+
+<span class="cm"># ===== DATA MODEL =====</span>
+<span class="kw">class</span> <span class="fn">Question</span>(BaseModel):
+    question: <span class="kw">str</span>
+    subject: <span class="kw">str</span>
+    answer_a: <span class="kw">str</span>
+    answer_b: <span class="kw">str</span>
+    answer_c: <span class="kw">str</span>
+    answer_d: Optional[<span class="kw">str</span>] = <span class="kw">None</span>
+    correct: <span class="kw">str</span>   <span class="cm"># "A", "B", "C", বা "D"</span>
+    use: <span class="kw">str</span> = <span class="st">"general"</span>  <span class="cm"># কোন MCQ-তে ব্যবহার হবে</span>
+
+<span class="cm"># ===== DUMMY DATABASE (download লাগবে না) =====</span>
+users = {<span class="st">"alice"</span>: <span class="st">"wonderland"</span>, <span class="st">"bob"</span>: <span class="st">"builder"</span>, <span class="st">"clementine"</span>: <span class="st">"mandarine"</span>}
+
+questions_db = [
+    {<span class="st">"id"</span>: <span class="num">1</span>, <span class="st">"question"</span>: <span class="st">"Python কে তৈরি করেন?"</span>, <span class="st">"subject"</span>: <span class="st">"Python"</span>,
+     <span class="st">"correct"</span>: <span class="st">"A"</span>, <span class="st">"use"</span>: <span class="st">"test"</span>,
+     <span class="st">"answer_a"</span>: <span class="st">"Guido van Rossum"</span>, <span class="st">"answer_b"</span>: <span class="st">"Linus Torvalds"</span>,
+     <span class="st">"answer_c"</span>: <span class="st">"Dennis Ritchie"</span>, <span class="st">"answer_d"</span>: <span class="st">"James Gosling"</span>},
+
+    {<span class="st">"id"</span>: <span class="num">2</span>, <span class="st">"question"</span>: <span class="st">"Git init কী করে?"</span>, <span class="st">"subject"</span>: <span class="st">"Git"</span>,
+     <span class="st">"correct"</span>: <span class="st">"B"</span>, <span class="st">"use"</span>: <span class="st">"test"</span>,
+     <span class="st">"answer_a"</span>: <span class="st">"Remote-এ push করে"</span>, <span class="st">"answer_b"</span>: <span class="st">"নতুন repo শুরু করে"</span>,
+     <span class="st">"answer_c"</span>: <span class="st">"Branch তৈরি করে"</span>, <span class="st">"answer_d"</span>: <span class="st">"Commit করে"</span>},
+
+    {<span class="st">"id"</span>: <span class="num">3</span>, <span class="st">"question"</span>: <span class="st">"FastAPI-তে auto docs কোথায়?"</span>, <span class="st">"subject"</span>: <span class="st">"FastAPI"</span>,
+     <span class="st">"correct"</span>: <span class="st">"C"</span>, <span class="st">"use"</span>: <span class="st">"test"</span>,
+     <span class="st">"answer_a"</span>: <span class="st">"/api"</span>, <span class="st">"answer_b"</span>: <span class="st">"/help"</span>,
+     <span class="st">"answer_c"</span>: <span class="st">"/docs"</span>, <span class="st">"answer_d"</span>: <span class="st">"/manual"</span>},
+
+    {<span class="st">"id"</span>: <span class="num">4</span>, <span class="st">"question"</span>: <span class="st">"HTTP 404 মানে কী?"</span>, <span class="st">"subject"</span>: <span class="st">"HTTP"</span>,
+     <span class="st">"correct"</span>: <span class="st">"A"</span>, <span class="st">"use"</span>: <span class="st">"test"</span>,
+     <span class="st">"answer_a"</span>: <span class="st">"Resource পাওয়া যায়নি"</span>, <span class="st">"answer_b"</span>: <span class="st">"Server error"</span>,
+     <span class="st">"answer_c"</span>: <span class="st">"সফল"</span>, <span class="st">"answer_d"</span>: <span class="st">"Permission নেই"</span>},
+
+    {<span class="st">"id"</span>: <span class="num">5</span>, <span class="st">"question"</span>: <span class="st">"git commit -m -এ -m মানে কী?"</span>, <span class="st">"subject"</span>: <span class="st">"Git"</span>,
+     <span class="st">"correct"</span>: <span class="st">"D"</span>, <span class="st">"use"</span>: <span class="st">"test"</span>,
+     <span class="st">"answer_a"</span>: <span class="st">"merge"</span>, <span class="st">"answer_b"</span>: <span class="st">"master"</span>,
+     <span class="st">"answer_c"</span>: <span class="st">"move"</span>, <span class="st">"answer_d"</span>: <span class="st">"message"</span>},
+
+    {<span class="st">"id"</span>: <span class="num">6</span>, <span class="st">"question"</span>: <span class="st">"Pydantic কীসের জন্য ব্যবহার হয়?"</span>, <span class="st">"subject"</span>: <span class="st">"FastAPI"</span>,
+     <span class="st">"correct"</span>: <span class="st">"B"</span>, <span class="st">"use"</span>: <span class="st">"test"</span>,
+     <span class="st">"answer_a"</span>: <span class="st">"Database connection"</span>, <span class="st">"answer_b"</span>: <span class="st">"Data validation"</span>,
+     <span class="st">"answer_c"</span>: <span class="st">"HTML rendering"</span>, <span class="st">"answer_d"</span>: <span class="st">"File upload"</span>},
+
+    {<span class="st">"id"</span>: <span class="num">7</span>, <span class="st">"question"</span>: <span class="st">"async def কী করে?"</span>, <span class="st">"subject"</span>: <span class="st">"Python"</span>,
+     <span class="st">"correct"</span>: <span class="st">"A"</span>, <span class="st">"use"</span>: <span class="st">"test"</span>,
+     <span class="st">"answer_a"</span>: <span class="st">"Asynchronous function তৈরি করে"</span>, <span class="st">"answer_b"</span>: <span class="st">"Class তৈরি করে"</span>,
+     <span class="st">"answer_c"</span>: <span class="st">"Loop চালায়"</span>, <span class="st">"answer_d"</span>: <span class="st">"Import করে"</span>},
+
+    {<span class="st">"id"</span>: <span class="num">8</span>, <span class="st">"question"</span>: <span class="st">"REST-এ GET method কী করে?"</span>, <span class="st">"subject"</span>: <span class="st">"HTTP"</span>,
+     <span class="st">"correct"</span>: <span class="st">"C"</span>, <span class="st">"use"</span>: <span class="st">"general"</span>,
+     <span class="st">"answer_a"</span>: <span class="st">"Data মুছে"</span>, <span class="st">"answer_b"</span>: <span class="st">"Data পাঠায়"</span>,
+     <span class="st">"answer_c"</span>: <span class="st">"Data পড়ে"</span>, <span class="st">"answer_d"</span>: <span class="st">"Data update করে"</span>},
+]
+
+<span class="cm"># ===== HELPER: authentication =====</span>
+<span class="kw">def</span> <span class="fn">authenticate</span>(authorization: Optional[<span class="kw">str</span>]) -> <span class="kw">str</span>:
+    <span class="kw">if not</span> authorization:
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(<span class="num">401</span>, detail=<span class="st">"Authorization header দাও"</span>)
+    parts = authorization.split()   <span class="cm"># "Basic alice:wonderland" → ["Basic", "alice:wonderland"]</span>
+    <span class="kw">if</span> <span class="fn">len</span>(parts) != <span class="num">2</span> <span class="kw">or</span> <span class="st">':'</span> <span class="kw">not in</span> parts[<span class="num">1</span>]:
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(<span class="num">401</span>, detail=<span class="st">"Format: 'Basic username:password'"</span>)
+    user, pwd = parts[<span class="num">1</span>].split(<span class="st">':'</span>, <span class="num">1</span>)  <span class="cm"># maxsplit=1 — password-এ : থাকতে পারে</span>
+    <span class="kw">if</span> users.get(user) != pwd:
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(<span class="num">401</span>, detail=<span class="st">"ভুল username বা password"</span>)
+    <span class="kw">return</span> user
+
+<span class="cm"># ===== ENDPOINTS =====</span>
+
+<span class="dec">@api.get</span>(<span class="st">"/"</span>, tags=[<span class="st">"health"</span>])
+<span class="kw">async def</span> <span class="fn">health_check</span>():
+    <span class="st">"""API সচল আছে কিনা দেখো। Authentication লাগে না।"""</span>
+    <span class="kw">return</span> {<span class="st">"status"</span>: <span class="st">"API চলছে ✅"</span>, <span class="st">"version"</span>: <span class="st">"1.0.0"</span>}
+
+<span class="dec">@api.get</span>(<span class="st">"/questions"</span>, tags=[<span class="st">"questions"</span>])
+<span class="kw">async def</span> <span class="fn">get_questions</span>(
+    subject: Optional[<span class="kw">str</span>] = <span class="kw">None</span>,         <span class="cm"># filter by subject</span>
+    count: Optional[<span class="kw">int</span>] = <span class="num">5</span>,              <span class="cm"># কতটা প্রশ্ন চাও</span>
+    use: Optional[<span class="kw">str</span>] = <span class="kw">None</span>,             <span class="cm"># filter by use type</span>
+    authorization: Optional[<span class="kw">str</span>] = <span class="fn">Header</span>(<span class="kw">None</span>)
+):
+    <span class="st">"""নির্দিষ্ট subject ও সংখ্যার প্রশ্ন ফেরত দাও (random order)।
+    
+    Authorization header লাগবে: Basic username:password
+    """</span>
+    <span class="fn">authenticate</span>(authorization)   <span class="cm"># authentication check</span>
+
+    filtered = questions_db
+    <span class="kw">if</span> subject:
+        filtered = [q <span class="kw">for</span> q <span class="kw">in</span> filtered <span class="kw">if</span> q[<span class="st">"subject"</span>] == subject]
+    <span class="kw">if</span> use:
+        filtered = [q <span class="kw">for</span> q <span class="kw">in</span> filtered <span class="kw">if</span> q[<span class="st">"use"</span>] == use]
+
+    count = <span class="fn">min</span>(count, <span class="fn">len</span>(filtered))  <span class="cm"># available-এর বেশি চাইলে সব দাও</span>
+    <span class="kw">if</span> count == <span class="num">0</span>:
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(<span class="num">404</span>, detail=<span class="st">"কোনো প্রশ্ন পাওয়া যায়নি"</span>)
+    <span class="kw">return</span> random.<span class="fn">sample</span>(filtered, count)  <span class="cm"># random order-এ return</span>
+
+<span class="dec">@api.post</span>(<span class="st">"/questions"</span>, tags=[<span class="st">"questions"</span>])
+<span class="kw">async def</span> <span class="fn">add_question</span>(
+    question: Question,
+    authorization: Optional[<span class="kw">str</span>] = <span class="fn">Header</span>(<span class="kw">None</span>)
+):
+    <span class="st">"""নতুন প্রশ্ন যোগ করো (admin only — password: 4dm1N)"""</span>
+    <span class="cm"># FIX: authorization None check আগেই করি</span>
+    <span class="kw">if not</span> authorization:
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(<span class="num">401</span>, detail=<span class="st">"Authorization header দাও"</span>)
+    parts = authorization.split()
+    <span class="kw">if</span> <span class="fn">len</span>(parts) != <span class="num">2</span> <span class="kw">or</span> <span class="st">':'</span> <span class="kw">not in</span> parts[<span class="num">1</span>]:
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(<span class="num">401</span>, detail=<span class="st">"Format ভুল"</span>)
+    user, pwd = parts[<span class="num">1</span>].split(<span class="st">':'</span>, <span class="num">1</span>)
+    <span class="kw">if</span> pwd != <span class="st">"4dm1N"</span>:
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(<span class="num">403</span>, detail=<span class="st">"Admin শুধু নতুন প্রশ্ন যোগ করতে পারে"</span>)
+
+    new_q = question.<span class="fn">dict</span>()
+    new_q[<span class="st">"id"</span>] = <span class="fn">len</span>(questions_db) + <span class="num">1</span>
+    questions_db.<span class="fn">append</span>(new_q)
+    <span class="kw">return</span> {<span class="st">"message"</span>: <span class="st">"প্রশ্ন যোগ হয়েছে"</span>, <span class="st">"id"</span>: new_q[<span class="st">"id"</span>]}</div>
+    </div>
+
+    <h3>API Test করার কমান্ড</h3>
+    <div class="code-block">
+      <div class="code-hdr"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="lbl">cURL test commands</span></div>
+      <div class="code-body"><span class="cm"># ১. Health check (auth লাগে না)</span>
+curl -X GET http://127.0.0.1:8000/
+
+<span class="cm"># ২. সব প্রশ্ন নামাও</span>
+curl -X GET "http://127.0.0.1:8000/questions?count=5" \
+  -H "Authorization: Basic alice:wonderland"
+
+<span class="cm"># ৩. Subject filter করো</span>
+curl -X GET "http://127.0.0.1:8000/questions?subject=Git&count=2" \
+  -H "Authorization: Basic bob:builder"
+
+<span class="cm"># ৪. নতুন প্রশ্ন যোগ করো (admin)</span>
+curl -X POST http://127.0.0.1:8000/questions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Basic admin:4dm1N" \
+  -d '{
+    "question": "uvicorn কীসের জন্য?",
+    "subject": "FastAPI",
+    "answer_a": "Database",
+    "answer_b": "ASGI Server",
+    "answer_c": "Testing",
+    "answer_d": "Deployment",
+    "correct": "B",
+    "use": "test"
+  }'
+
+<span class="cm"># ৫. ভুল password → 401 error</span>
+curl -X GET "http://127.0.0.1:8000/questions" \
+  -H "Authorization: Basic alice:wrongpassword"</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div class="quiz-sec">
+  <h2>🧠 জ্ঞান যাচাই — MCQ</h2>
+  <p style="color:var(--text2);margin-bottom:24px">উত্তর জানতে option-এ click করো।</p>
+
+  <div class="quiz-item">
+    <div class="quiz-q">১. API-এর পূর্ণ অর্থ কী?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="ans(this,false)">Automatic Programming Interface</div>
+      <div class="quiz-opt" onclick="ans(this,true)">Application Programming Interface</div>
+      <div class="quiz-opt" onclick="ans(this,false)">Advanced Processing Interface</div>
+    </div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">২. HTTP 404 মানে কী?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="ans(this,false)">Server crash করেছে</div>
+      <div class="quiz-opt" onclick="ans(this,false)">Request সফল হয়েছে</div>
+      <div class="quiz-opt" onclick="ans(this,true)">Client ভুল address দিয়েছে — resource নেই</div>
+    </div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">৩. FastAPI API চালু করার কমান্ড?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="ans(this,false)">python main.py</div>
+      <div class="quiz-opt" onclick="ans(this,true)">uvicorn main:api --reload</div>
+      <div class="quiz-opt" onclick="ans(this,false)">flask run</div>
+    </div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">৪. Pydantic BaseModel কীসের জন্য?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="ans(this,false)">Database connection-এর জন্য</div>
+      <div class="quiz-opt" onclick="ans(this,true)">Request body-র data validate করতে</div>
+      <div class="quiz-opt" onclick="ans(this,false)">HTML template render করতে</div>
+    </div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">৫. GET আর POST-এর মূল পার্থক্য?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="ans(this,false)">GET দ্রুত, POST ধীর</div>
+      <div class="quiz-opt" onclick="ans(this,true)">GET data পড়ে, POST নতুন data তৈরি করে</div>
+      <div class="quiz-opt" onclick="ans(this,false)">GET শুধু server-এ কাজ করে</div>
+    </div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">৬. FastAPI-তে auto documentation কোথায়?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="ans(this,false)">/help</div>
+      <div class="quiz-opt" onclick="ans(this,true)">/docs এবং /redoc</div>
+      <div class="quiz-opt" onclick="ans(this,false)">/api-docs</div>
+    </div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">৭. async/await কেন ব্যবহার করা হয়?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="ans(this,false)">Code সুন্দর দেখানোর জন্য</div>
+      <div class="quiz-opt" onclick="ans(this,false)">Error ধরার জন্য</div>
+      <div class="quiz-opt" onclick="ans(this,true)">একসাথে অনেক request handle করতে — performance বাড়াতে</div>
+    </div>
+  </div>
+
+  <div class="quiz-item">
+    <div class="quiz-q">৮. HTTP 401 আর 403-এর পার্থক্য কী?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="ans(this,false)">কোনো পার্থক্য নেই</div>
+      <div class="quiz-opt" onclick="ans(this,true)">401 = login করোনি; 403 = login করেছ কিন্তু permission নেই</div>
+      <div class="quiz-opt" onclick="ans(this,false)">401 = server error; 403 = client error</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<footer>
+  <p>🔌 API ও FastAPI সম্পূর্ণ বাংলা গাইড (সংশোধিত) | DataScientest কোর্স অবলম্বনে</p>
+  <p style="margin-top:8px;font-size:.85em">তৈরি করা হয়েছে শিক্ষার্থীদের জন্য — সম্পূর্ণ বাংলায় 🇧🇩</p>
+</footer>
+
+<script>
+function ans(el, correct) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.quiz-opt').forEach(o => o.style.pointerEvents = 'none');
+  if (correct) {
+    el.classList.add('correct');
+    el.innerHTML += ' ✅ সঠিক!';
+  } else {
+    el.classList.add('wrong');
+    el.innerHTML += ' ❌ ভুল';
+    parent.querySelectorAll('.quiz-opt').forEach(o => {
+      if (o.getAttribute('onclick') && o.getAttribute('onclick').includes('true')) {
+        o.classList.add('correct');
+        o.innerHTML += ' ← সঠিক উত্তর';
+      }
+    });
+  }
+}
+</script>
+</body>
+</html>

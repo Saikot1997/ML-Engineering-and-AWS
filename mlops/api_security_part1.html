@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="API নিরাপত্তার মূল ধারণা">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API নিরাপত্তা - পর্ব ১: পরিচিতি ও মূল ধারণা</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #7c3aed;
+    --green: #10b981;
+    --red: #ef4444;
+    --yellow: #f59e0b;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --border: #2d3748;
+    --glow: 0 0 20px rgba(0,212,255,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    line-height: 1.8;
+    font-size: 16px;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0a0e1a 0%, #1a0a2e 50%, #0a1a2e 100%);
+    padding: 60px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 2px solid var(--accent);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(0,212,255,0.05) 0%, transparent 60%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 1; }
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 700;
+    background: linear-gradient(135deg, #00d4ff, #7c3aed, #ff6b35);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero p {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* CONTAINER */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 20px; }
+
+  /* SECTION */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: linear-gradient(to bottom, var(--accent), var(--accent3));
+  }
+
+  .section-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .icon {
+    width: 36px; height: 36px;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  h2 { font-size: 20px; color: var(--accent2); margin: 24px 0 12px; }
+  h3 { font-size: 17px; color: var(--yellow); margin: 20px 0 10px; }
+  p { margin-bottom: 14px; color: var(--text); }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    background: linear-gradient(135deg, rgba(0,212,255,0.05), rgba(124,58,237,0.05));
+    border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .highlight.warning {
+    border-color: rgba(245,158,11,0.4);
+    background: rgba(245,158,11,0.05);
+  }
+  .highlight.success {
+    border-color: rgba(16,185,129,0.4);
+    background: rgba(16,185,129,0.05);
+  }
+  .highlight.danger {
+    border-color: rgba(239,68,68,0.4);
+    background: rgba(239,68,68,0.05);
+  }
+
+  /* CODE */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    color: #7dd3fc;
+    overflow-x: auto;
+    margin: 16px 0;
+    line-height: 1.7;
+  }
+  .code-block .comment { color: #6b7280; }
+  .code-block .keyword { color: #c084fc; }
+  .code-block .string { color: #86efac; }
+  .code-block .number { color: #fb923c; }
+
+  /* STEP BOX */
+  .steps { display: flex; flex-direction: column; gap: 16px; margin: 20px 0; }
+  .step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+  }
+  .step-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px; color: #000;
+    flex-shrink: 0;
+  }
+  .step-content { flex: 1; }
+  .step-content strong { color: var(--accent); display: block; margin-bottom: 4px; font-size: 16px; }
+
+  /* CARD GRID */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 20px 0; }
+  .card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: border-color 0.3s, transform 0.2s;
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card .card-icon { font-size: 28px; margin-bottom: 10px; }
+  .card h4 { color: var(--accent); margin-bottom: 8px; font-size: 16px; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  th { background: rgba(0,212,255,0.1); color: var(--accent); padding: 12px; text-align: left; font-size: 14px; border-bottom: 2px solid var(--accent); }
+  td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  tr:hover td { background: var(--surface2); }
+
+  /* TAG */
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .tag-green { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid var(--green); }
+  .tag-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid var(--red); }
+  .tag-blue { background: rgba(0,212,255,0.15); color: var(--accent); border: 1px solid var(--accent); }
+  .tag-yellow { background: rgba(245,158,11,0.15); color: var(--yellow); border: 1px solid var(--yellow); }
+
+  /* SVG DIAGRAM STYLES */
+  .diagram-wrap {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    text-align: center;
+  }
+  .diagram-wrap p.caption {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 12px;
+  }
+
+  /* STATUS BOX */
+  .status-row { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+  .status-item {
+    flex: 1; min-width: 150px;
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 14px 18px;
+    border-left: 4px solid;
+  }
+  .status-item.ok { border-color: var(--green); }
+  .status-item.warn { border-color: var(--yellow); }
+  .status-item.err { border-color: var(--red); }
+  .status-item .code { font-family: 'Fira Code', monospace; font-size: 22px; font-weight: 700; }
+  .status-item.ok .code { color: var(--green); }
+  .status-item.warn .code { color: var(--yellow); }
+  .status-item.err .code { color: var(--red); }
+  .status-item .label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* TOC */
+  .toc {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+  .toc h3 { color: var(--accent2); margin-bottom: 14px; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin-bottom: 8px; color: var(--text-muted); }
+  .toc li a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+  .toc li a:hover { color: var(--accent2); }
+
+  /* ANALOGY BOX */
+  .analogy {
+    background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(0,212,255,0.05));
+    border: 1px solid rgba(124,58,237,0.4);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .analogy strong { color: #a78bfa; }
+
+  /* QUIZ */
+  .quiz {
+    background: linear-gradient(135deg, rgba(16,185,129,0.05), rgba(0,212,255,0.05));
+    border: 1px solid rgba(16,185,129,0.3);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+  .quiz h4 { color: var(--green); margin-bottom: 12px; font-size: 16px; }
+
+  /* FOOTER */
+  .nav-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .nav-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    color: #000;
+    padding: 10px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    transition: opacity 0.2s;
+  }
+  .nav-btn:hover { opacity: 0.85; }
+  .progress-bar {
+    display: flex; gap: 8px;
+  }
+  .progress-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+  .progress-dot.active { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+
+  em { color: var(--yellow); font-style: normal; }
+  strong { color: #fff; }
+  ul, ol { padding-left: 24px; margin-bottom: 14px; }
+  ul li, ol li { margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">পর্ব ১ • শিক্ষানবিসদের জন্য</div>
+  <h1>🔐 API নিরাপত্তা</h1>
+  <p>একদম শুরু থেকে বাংলায় শিখুন — API কী, নিরাপত্তা কেন দরকার, Authentication, Authorization ও Traceability</p>
+</div>
+
+<div class="container">
+
+  <div class="toc">
+    <h3>📋 এই পর্বে যা শিখবেন</h3>
+    <ol>
+      <li><a href="#api-ki">API কী জিনিস?</a></li>
+      <li><a href="#security-keno">নিরাপত্তা কেন দরকার?</a></li>
+      <li><a href="#public-private">Public vs Private Resources</a></li>
+      <li><a href="#auth-autho">Authentication বনাম Authorization</a></li>
+      <li><a href="#traceability">Traceability (ট্র্যাকিং)</a></li>
+      <li><a href="#analogy">বর্ডার চেকপোস্টের উদাহরণ</a></li>
+      <li><a href="#http-codes">HTTP Status কোড</a></li>
+      <li><a href="#rate-limit">Rate Limiting কী?</a></li>
+      <li><a href="#openweather">OpenWeatherMap উদাহরণ</a></li>
+    </ol>
+  </div>
+
+  <!-- ======= SECTION 1: API কী ======= -->
+  <div class="section" id="api-ki">
+    <div class="section-title"><span class="icon">🌐</span> API কী জিনিস? (একদম শুরু থেকে)</div>
+
+    <p><strong>API</strong> মানে হলো <em>Application Programming Interface</em>। এই কথাটা শুনতে ভারী মনে হলেও ব্যাপারটা খুব সহজ।</p>
+
+    <div class="analogy">
+      <strong>🍽️ রেস্তোরাঁর উদাহরণ:</strong>
+      <p>কল্পনা করুন আপনি একটি রেস্তোরাঁয় গিয়েছেন। আপনি রান্নাঘরে গিয়ে সরাসরি রাঁধুনিকে বলছেন না। বরং <strong>ওয়েটার</strong> (service staff) আপনার অর্ডার নিয়ে রান্নাঘরে যায়, খাবার নিয়ে আসে। এই <strong>ওয়েটার-ই হলো API</strong>।</p>
+      <p>আপনার অ্যাপ → API → সার্ভার (ডেটাবেস বা সার্ভিস)</p>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg width="600" height="180" viewBox="0 0 600 180" style="max-width:100%">
+        <!-- App Box -->
+        <rect x="20" y="60" width="130" height="60" rx="10" fill="#1a2235" stroke="#00d4ff" stroke-width="2"/>
+        <text x="85" y="88" text-anchor="middle" fill="#00d4ff" font-size="13" font-family="Hind Siliguri">আপনার</text>
+        <text x="85" y="108" text-anchor="middle" fill="#00d4ff" font-size="13" font-family="Hind Siliguri">অ্যাপ্লিকেশন</text>
+        <!-- Arrow 1 -->
+        <line x1="152" y1="90" x2="218" y2="90" stroke="#7c3aed" stroke-width="2" marker-end="url(#arrow)"/>
+        <text x="185" y="82" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri, sans-serif">Request</text>
+        <!-- API Box -->
+        <rect x="220" y="55" width="160" height="70" rx="10" fill="#2d1a4a" stroke="#7c3aed" stroke-width="2"/>
+        <text x="300" y="82" text-anchor="middle" fill="#a78bfa" font-size="14" font-family="Hind Siliguri" font-weight="bold">API</text>
+        <text x="300" y="104" text-anchor="middle" fill="#a78bfa" font-size="11" font-family="Hind Siliguri">(Interface/মধ্যস্থতাকারী)</text>
+        <!-- Arrow 2 -->
+        <line x1="382" y1="90" x2="448" y2="90" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrow2)"/>
+        <text x="415" y="82" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri, sans-serif">Query</text>
+        <!-- Server Box -->
+        <rect x="450" y="60" width="130" height="60" rx="10" fill="#1a2235" stroke="#10b981" stroke-width="2"/>
+        <text x="515" y="88" text-anchor="middle" fill="#10b981" font-size="13" font-family="Hind Siliguri">সার্ভার /</text>
+        <text x="515" y="108" text-anchor="middle" fill="#10b981" font-size="13" font-family="Hind Siliguri">ডেটাবেস</text>
+        <!-- Return arrows -->
+        <line x1="448" y1="100" x2="382" y2="100" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow3)"/>
+        <line x1="218" y1="100" x2="152" y2="100" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow4)"/>
+        <text x="185" y="118" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri, sans-serif">Response</text>
+        <text x="415" y="118" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri, sans-serif">Data</text>
+        <!-- Arrowheads -->
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#7c3aed" stroke-width="1.5"/>
+          </marker>
+          <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+          </marker>
+          <marker id="arrow3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#10b981" stroke-width="1.5"/>
+          </marker>
+          <marker id="arrow4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#10b981" stroke-width="1.5"/>
+          </marker>
+        </defs>
+      </svg>
+      <p class="caption">অ্যাপ → API → সার্ভার: অনুরোধ পাঠানো ও উত্তর পাওয়া</p>
+    </div>
+
+    <p>আধুনিক সফটওয়্যারে হাজারো ছোট ছোট সার্ভিস (microservices) একসাথে কাজ করে। প্রতিটি সার্ভিস API-এর মাধ্যমে একে অপরের সাথে কথা বলে। এজন্যই API নিরাপত্তা এত গুরুত্বপূর্ণ।</p>
+  </div>
+
+  <!-- ======= SECTION 2: নিরাপত্তা কেন দরকার ======= -->
+  <div class="section" id="security-keno">
+    <div class="section-title"><span class="icon">⚠️</span> নিরাপত্তা কেন দরকার?</div>
+
+    <p>ধরুন আপনার একটি ব্যাংক অ্যাপ আছে। এই অ্যাপ API-এর মাধ্যমে ব্যালেন্স দেখায়, টাকা পাঠায়। এখন যদি কোনো হ্যাকার এই API-এ সরাসরি ঢুকতে পারে, তাহলে কী হবে? 😱</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">💸</div>
+        <h4>আর্থিক ক্ষতি</h4>
+        <p>কেউ আপনার অ্যাকাউন্ট থেকে টাকা চুরি করতে পারবে</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔓</div>
+        <h4>ডেটা চুরি</h4>
+        <p>লাখো ব্যবহারকারীর ব্যক্তিগত তথ্য হাতিয়ে নেওয়া সম্ভব</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚫</div>
+        <h4>সার্ভিস বন্ধ</h4>
+        <p>হ্যাকার বারবার রিকোয়েস্ট করে সার্ভার বন্ধ করে দিতে পারে</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">😤</div>
+        <h4>অপব্যবহার</h4>
+        <p>বিনামূল্যে সার্ভিস ব্যবহার করে আপনার খরচ বাড়িয়ে দিতে পারে</p>
+      </div>
+    </div>
+
+    <div class="highlight danger">
+      <strong>বাস্তব উদাহরণ:</strong> ২০১৯ সালে Facebook-এর একটি API দুর্বলতার কারণে ৫৩ কোটি ব্যবহারকারীর ফোন নম্বর ও ব্যক্তিগত তথ্য ফাঁস হয়ে গিয়েছিল!
+    </div>
+  </div>
+
+  <!-- ======= SECTION 3: Public vs Private ======= -->
+  <div class="section" id="public-private">
+    <div class="section-title"><span class="icon">🔒</span> Public vs Private Resources</div>
+
+    <p>API দুই ধরনের রিসোর্স পরিচালনা করে:</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🌍</div>
+        <h4>Public Resources (সর্বজনীন)</h4>
+        <p>যেকেউ এই ডেটা দেখতে পারে। যেমন: আবহাওয়ার তথ্য, নিউজ ফিড, ব্লগ পোস্ট।</p>
+        <p style="margin-top:8px"><em>তবুও একটা API Key লাগতে পারে</em> — কে কতটুকু ব্যবহার করছে সেটা ট্র্যাক করতে।</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏢</div>
+        <h4>Private Resources (গোপনীয়)</h4>
+        <p>শুধু অনুমোদিত ব্যক্তি/সার্ভিস দেখতে পারবে। যেমন: ব্যাংক তথ্য, মেডিকেল রেকর্ড, কর্মীর বেতন।</p>
+        <p style="margin-top:8px"><em>কঠোর নিরাপত্তা প্রয়োজন।</em></p>
+      </div>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg width="560" height="220" viewBox="0 0 560 220" style="max-width:100%">
+        <!-- Public side -->
+        <rect x="10" y="10" width="250" height="200" rx="12" fill="rgba(16,185,129,0.05)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="135" y="40" text-anchor="middle" fill="#10b981" font-size="14" font-family="Hind Siliguri" font-weight="bold">🌍 Public API</text>
+        <circle cx="60" cy="90" r="20" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="60" y="95" text-anchor="middle" fill="#10b981" font-size="11" font-family="Hind Siliguri, sans-serif">👤</text>
+        <circle cx="135" cy="90" r="20" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="135" y="95" text-anchor="middle" fill="#10b981" font-size="11" font-family="Hind Siliguri, sans-serif">👤</text>
+        <circle cx="210" cy="90" r="20" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="210" y="95" text-anchor="middle" fill="#10b981" font-size="11" font-family="Hind Siliguri, sans-serif">👤</text>
+        <text x="135" y="130" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri">যে কেউ অ্যাক্সেস করতে পারে</text>
+        <text x="135" y="155" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri">(তবে API Key দিয়ে)</text>
+        <rect x="55" y="170" width="160" height="28" rx="6" fill="rgba(16,185,129,0.1)"/>
+        <text x="135" y="189" text-anchor="middle" fill="#10b981" font-size="12" font-family="Hind Siliguri">OpenWeatherMap 🌤️</text>
+
+        <!-- Private side -->
+        <rect x="300" y="10" width="250" height="200" rx="12" fill="rgba(239,68,68,0.05)" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="425" y="40" text-anchor="middle" fill="#ef4444" font-size="14" font-family="Hind Siliguri" font-weight="bold">🏢 Private API</text>
+        <circle cx="360" cy="90" r="20" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="360" y="95" text-anchor="middle" fill="#ef4444" font-size="11" font-family="Hind Siliguri, sans-serif">👤</text>
+        <text x="425" y="88" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">শুধু</text>
+        <text x="425" y="103" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">অনুমোদিত</text>
+        <circle cx="490" cy="90" r="20" fill="rgba(100,100,100,0.1)" stroke="#4b5563" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="490" y="95" text-anchor="middle" fill="#4b5563" font-size="11" font-family="Hind Siliguri, sans-serif">🚫</text>
+        <text x="425" y="130" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri">সীমিত অ্যাক্সেস</text>
+        <text x="425" y="155" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri">(Username/Password/Token)</text>
+        <rect x="345" y="170" width="160" height="28" rx="6" fill="rgba(239,68,68,0.1)"/>
+        <text x="425" y="189" text-anchor="middle" fill="#ef4444" font-size="12" font-family="Hind Siliguri">HR সিস্টেম 🏦</text>
+      </svg>
+      <p class="caption">Public API — সবার জন্য | Private API — শুধু অনুমোদিতদের জন্য</p>
+    </div>
+  </div>
+
+  <!-- ======= SECTION 4: Authentication vs Authorization ======= -->
+  <div class="section" id="auth-autho">
+    <div class="section-title"><span class="icon">🔑</span> Authentication বনাম Authorization</div>
+
+    <p>এই দুটি শব্দ প্রায়ই গুলিয়ে ফেলা হয়। কিন্তু এরা সম্পূর্ণ আলাদা জিনিস!</p>
+
+    <div class="card-grid">
+      <div class="card" style="border-color: rgba(0,212,255,0.5);">
+        <div class="card-icon">🪪</div>
+        <h4>Authentication (প্রমাণীকরণ)</h4>
+        <p><strong>"তুমি কে?"</strong> — এটি যাচাই করে ব্যবহারকারী আসলেই সে যে পরিচয় দিচ্ছে কিনা।</p>
+        <p style="margin-top:8px; color: var(--text-muted);">উদাহরণ: পাসপোর্ট দেখানো, পাসওয়ার্ড দেওয়া, ফিঙ্গারপ্রিন্ট স্ক্যান</p>
+      </div>
+      <div class="card" style="border-color: rgba(255,107,53,0.5);">
+        <div class="card-icon">🚪</div>
+        <h4>Authorization (অনুমোদন)</h4>
+        <p><strong>"তোমার কী করার অনুমতি আছে?"</strong> — পরিচয় জানার পরে, সে কোন কাজ করতে পারবে তা নির্ধারণ করে।</p>
+        <p style="margin-top:8px; color: var(--text-muted);">উদাহরণ: Admin সব দেখতে পারবে, User শুধু নিজেরটা</p>
+      </div>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg width="580" height="260" viewBox="0 0 580 260" style="max-width:100%">
+        <!-- User -->
+        <circle cx="50" cy="130" r="30" fill="rgba(0,212,255,0.1)" stroke="#00d4ff" stroke-width="2"/>
+        <text x="50" y="125" text-anchor="middle" font-size="20" font-family="Hind Siliguri, sans-serif">👤</text>
+        <text x="50" y="148" text-anchor="middle" fill="#00d4ff" font-size="11" font-family="Hind Siliguri">ব্যবহারকারী</text>
+
+        <!-- Step 1: Auth -->
+        <rect x="120" y="95" width="140" height="70" rx="10" fill="#1a2235" stroke="#00d4ff" stroke-width="2"/>
+        <text x="190" y="122" text-anchor="middle" fill="#00d4ff" font-size="13" font-family="Hind Siliguri" font-weight="bold">Authentication</text>
+        <text x="190" y="142" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">তুমি কে? পরিচয়</text>
+        <text x="190" y="157" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">যাচাই করা হচ্ছে</text>
+
+        <!-- Arrow 1 -->
+        <line x1="82" y1="130" x2="118" y2="130" stroke="#00d4ff" stroke-width="2" marker-end="url(#a1)"/>
+        <defs>
+          <marker id="a1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#00d4ff" stroke-width="1.5"/>
+          </marker>
+          <marker id="a2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#ff6b35" stroke-width="1.5"/>
+          </marker>
+          <marker id="a3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#10b981" stroke-width="1.5"/>
+          </marker>
+        </defs>
+
+        <!-- Arrow 2 -->
+        <line x1="262" y1="130" x2="298" y2="130" stroke="#ff6b35" stroke-width="2" marker-end="url(#a2)"/>
+
+        <!-- Step 2: Authz -->
+        <rect x="300" y="95" width="140" height="70" rx="10" fill="#1a2235" stroke="#ff6b35" stroke-width="2"/>
+        <text x="370" y="122" text-anchor="middle" fill="#ff6b35" font-size="13" font-family="Hind Siliguri" font-weight="bold">Authorization</text>
+        <text x="370" y="142" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">তোমার কী অনুমতি</text>
+        <text x="370" y="157" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">আছে? চেক করা হচ্ছে</text>
+
+        <!-- Arrow 3 -->
+        <line x1="442" y1="130" x2="478" y2="130" stroke="#10b981" stroke-width="2" marker-end="url(#a3)"/>
+
+        <!-- Resource -->
+        <rect x="480" y="95" width="90" height="70" rx="10" fill="#1a2235" stroke="#10b981" stroke-width="2"/>
+        <text x="525" y="128" text-anchor="middle" font-size="24" font-family="Hind Siliguri, sans-serif">🗄️</text>
+        <text x="525" y="152" text-anchor="middle" fill="#10b981" font-size="11" font-family="Hind Siliguri">রিসোর্স</text>
+
+        <!-- Reject paths -->
+        <path d="M190 167 Q190 220 80 220 Q50 220 50 165" stroke="#ef4444" stroke-width="1.5" fill="none" stroke-dasharray="6,3" marker-end="url(#a_rej1)"/>
+        <text x="115" y="238" text-anchor="middle" fill="#ef4444" font-size="11" font-family="Hind Siliguri">❌ পরিচয় ভুল → 401 Error</text>
+        <defs>
+          <marker id="a_rej1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#ef4444" stroke-width="1.5"/>
+          </marker>
+          <marker id="a_rej2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+          </marker>
+        </defs>
+        <path d="M370 167 Q370 200 430 200 Q480 200 480 165" stroke="#f59e0b" stroke-width="1.5" fill="none" stroke-dasharray="6,3" marker-end="url(#a_rej2)"/>
+        <text x="415" y="218" text-anchor="middle" fill="#f59e0b" font-size="11" font-family="Hind Siliguri">⚠️ অনুমতি নেই → 403 Error</text>
+      </svg>
+      <p class="caption">Authentication → Authorization → Resource Access</p>
+    </div>
+
+    <div class="highlight">
+      <strong>সহজ মনে রাখার উপায়:</strong>
+      <ul style="margin-top: 8px;">
+        <li>🪪 <strong>Authentication</strong> = "আমি রাহুল" — পরিচয় প্রমাণ করা (<em>Who are you?</em>)</li>
+        <li>🚪 <strong>Authorization</strong> = "রাহুলের Admin প্যানেলে যাওয়ার অনুমতি আছে কি?" (<em>What can you do?</em>)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ======= SECTION 5: Traceability ======= -->
+  <div class="section" id="traceability">
+    <div class="section-title"><span class="icon">📊</span> Traceability — ট্র্যাকিং ও লগিং</div>
+
+    <p><strong>Traceability</strong> মানে API-তে কে, কখন, কী করেছে — সেটা রেকর্ড রাখা। এটাকে <em>লগ</em> (Log) বলে।</p>
+
+    <p>প্রতিটি API রিকোয়েস্টে তিনটি তথ্য রেকর্ড করা হয়:</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">❓</div>
+        <h4>What (কী করা হলো)</h4>
+        <ul>
+          <li>কোন endpoint ব্যবহার হলো</li>
+          <li>কোন HTTP method — GET, POST, DELETE</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-icon">👤</div>
+        <h4>Who (কে করলো)</h4>
+        <ul>
+          <li>কোন ব্যবহারকারী</li>
+          <li>কোন ডিভাইস (মোবাইল/ব্রাউজার)</li>
+          <li>কোন IP address থেকে</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏰</div>
+        <h4>When (কখন হলো)</h4>
+        <ul>
+          <li>তারিখ ও সময়</li>
+          <li>কতক্ষণ লাগলো</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-block">
+<span class="comment"># একটি সাধারণ লগ এন্ট্রির উদাহরণ</span>
+<span class="string">"2024-03-15 14:32:07"</span> | <span class="keyword">GET</span> /api/weather | User: <span class="string">rahul_123</span> | IP: <span class="number">192.168.1.50</span> | Status: <span class="number">200</span> OK
+<span class="string">"2024-03-15 14:33:02"</span> | <span class="keyword">DELETE</span> /api/user/5 | User: <span class="string">unknown</span> | IP: <span class="number">45.23.11.99</span> | Status: <span class="number">403</span> Forbidden
+<span class="string">"2024-03-15 14:33:45"</span> | <span class="keyword">POST</span> /api/login | User: <span class="string">admin</span> | IP: <span class="number">45.23.11.99</span> | Status: <span class="number">401</span> Unauthorized</div>
+
+    <div class="highlight warning">
+      <strong>🛡️ IP Restriction (IP সীমাবদ্ধতা):</strong>
+      <p style="margin-top: 8px;">যদি আপনার API শুধু বাংলাদেশি ব্যবহারকারীদের জন্য হয়, তাহলে অন্য দেশের IP থেকে রিকোয়েস্ট আসলে সেটা সন্দেহজনক। আপনি নির্দিষ্ট IP বা দেশ ব্লক করতে পারেন।</p>
+    </div>
+  </div>
+
+  <!-- ======= SECTION 6: বর্ডার চেকপোস্টের উদাহরণ ======= -->
+  <div class="section" id="analogy">
+    <div class="section-title"><span class="icon">🛂</span> বর্ডার চেকপোস্টের সাথে তুলনা</div>
+
+    <p>API নিরাপত্তার তিনটি স্তর বুঝতে বর্ডার পার হওয়ার উদাহরণটি সবচেয়ে ভালো:</p>
+
+    <div class="diagram-wrap">
+      <svg width="560" height="300" viewBox="0 0 560 300" style="max-width:100%">
+        <!-- Person -->
+        <circle cx="50" cy="150" r="25" fill="rgba(0,212,255,0.1)" stroke="#00d4ff" stroke-width="2"/>
+        <text x="50" y="143" text-anchor="middle" font-size="18" font-family="Hind Siliguri, sans-serif">🧑</text>
+        <text x="50" y="165" text-anchor="middle" fill="#00d4ff" font-size="10" font-family="Hind Siliguri">আপনি</text>
+
+        <!-- Step 1 -->
+        <rect x="110" y="110" width="120" height="80" rx="10" fill="#1a2235" stroke="#00d4ff" stroke-width="2"/>
+        <text x="170" y="138" text-anchor="middle" font-size="18" font-family="Hind Siliguri, sans-serif">🪪</text>
+        <text x="170" y="158" text-anchor="middle" fill="#00d4ff" font-size="11" font-family="Hind Siliguri">পাসপোর্ট চেক</text>
+        <text x="170" y="174" text-anchor="middle" fill="#6b7280" font-size="10" font-family="Hind Siliguri">Authentication</text>
+        <text x="170" y="188" text-anchor="middle" fill="#10b981" font-size="10" font-family="Hind Siliguri">"তুমি কে?"</text>
+
+        <!-- Arrow 1 -->
+        <line x1="78" y1="150" x2="108" y2="150" stroke="#00d4ff" stroke-width="2" marker-end="url(#ba1)"/>
+        <defs>
+          <marker id="ba1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#00d4ff" stroke-width="1.5"/></marker>
+          <marker id="ba2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#ff6b35" stroke-width="1.5"/></marker>
+          <marker id="ba3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#10b981" stroke-width="1.5"/></marker>
+        </defs>
+
+        <!-- Arrow 2 -->
+        <line x1="232" y1="150" x2="252" y2="150" stroke="#ff6b35" stroke-width="2" marker-end="url(#ba2)"/>
+
+        <!-- Step 2 -->
+        <rect x="254" y="110" width="120" height="80" rx="10" fill="#1a2235" stroke="#ff6b35" stroke-width="2"/>
+        <text x="314" y="138" text-anchor="middle" font-size="18" font-family="Hind Siliguri, sans-serif">💻</text>
+        <text x="314" y="158" text-anchor="middle" fill="#ff6b35" font-size="11" font-family="Hind Siliguri">কম্পিউটারে চেক</text>
+        <text x="314" y="174" text-anchor="middle" fill="#6b7280" font-size="10" font-family="Hind Siliguri">Authorization</text>
+        <text x="314" y="188" text-anchor="middle" fill="#f59e0b" font-size="10" font-family="Hind Siliguri">"নিষিদ্ধ নও?"</text>
+
+        <!-- Arrow 3 -->
+        <line x1="376" y1="150" x2="396" y2="150" stroke="#10b981" stroke-width="2" marker-end="url(#ba3)"/>
+
+        <!-- Step 3 -->
+        <rect x="398" y="110" width="120" height="80" rx="10" fill="#1a2235" stroke="#10b981" stroke-width="2"/>
+        <text x="458" y="138" text-anchor="middle" font-size="18" font-family="Hind Siliguri, sans-serif">📝</text>
+        <text x="458" y="158" text-anchor="middle" fill="#10b981" font-size="11" font-family="Hind Siliguri">রেজিস্ট্রিতে</text>
+        <text x="458" y="172" text-anchor="middle" fill="#10b981" font-size="11" font-family="Hind Siliguri">নাম লেখা</text>
+        <text x="458" y="188" text-anchor="middle" fill="#6b7280" font-size="10" font-family="Hind Siliguri">Traceability</text>
+
+        <!-- Labels -->
+        <text x="170" y="215" text-anchor="middle" fill="#4b5563" font-size="11" font-family="Hind Siliguri">পাসপোর্ট বৈধ?</text>
+        <text x="314" y="215" text-anchor="middle" fill="#4b5563" font-size="11" font-family="Hind Siliguri">দেশে ঢুকতে পারবে?</text>
+        <text x="458" y="215" text-anchor="middle" fill="#4b5563" font-size="11" font-family="Hind Siliguri">প্রবেশ রেকর্ড</text>
+
+        <!-- Checkmarks -->
+        <text x="170" y="260" text-anchor="middle" fill="#10b981" font-size="22" font-family="Hind Siliguri, sans-serif">✅</text>
+        <text x="314" y="260" text-anchor="middle" fill="#10b981" font-size="22" font-family="Hind Siliguri, sans-serif">✅</text>
+        <text x="458" y="260" text-anchor="middle" fill="#10b981" font-size="22" font-family="Hind Siliguri, sans-serif">✅</text>
+      </svg>
+      <p class="caption">বর্ডার পার = API নিরাপত্তার তিন স্তর</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">১</div>
+        <div class="step-content">
+          <strong>পাসপোর্ট দেখানো = Authentication</strong>
+          কাস্টম অফিসার পাসপোর্ট দেখে বলেন — "হ্যাঁ, এটি আসল পাসপোর্ট, এই মানুষটি আসলেই Ahmed"।
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">২</div>
+        <div class="step-content">
+          <strong>কম্পিউটারে তথ্য যাচাই = Authorization</strong>
+          কম্পিউটারে চেক করা হয় — "Ahmed কি এই দেশে প্রবেশের নিষিদ্ধ তালিকায় আছে?" যদি না থাকে, ঢুকতে পারবে।
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">৩</div>
+        <div class="step-content">
+          <strong>রেজিস্ট্রিতে নাম লেখা = Traceability</strong>
+          Ahmed কখন প্রবেশ করলো, কোন পোর্ট দিয়ে — এই তথ্য সিস্টেমে সংরক্ষিত হলো।
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= SECTION 7: HTTP Status Codes ======= -->
+  <div class="section" id="http-codes">
+    <div class="section-title"><span class="icon">📡</span> HTTP Status Codes — সার্ভার কী বলছে?</div>
+
+    <p>API রিকোয়েস্ট পাঠালে সার্ভার একটি <strong>নম্বর কোড</strong> দিয়ে জানায় — কী হলো। এই কোডগুলো জানা খুব জরুরি!</p>
+
+    <div class="status-row">
+      <div class="status-item ok">
+        <div class="code">200</div>
+        <div class="label">OK — সবকিছু ঠিক আছে ✅</div>
+      </div>
+      <div class="status-item ok">
+        <div class="code">201</div>
+        <div class="label">Created — নতুন কিছু তৈরি হয়েছে ✨</div>
+      </div>
+      <div class="status-item warn">
+        <div class="code">401</div>
+        <div class="label">Unauthorized — পরিচয় দেওনি / ভুল পাসওয়ার্ড ❌</div>
+      </div>
+      <div class="status-item err">
+        <div class="code">403</div>
+        <div class="label">Forbidden — পরিচয় আছে কিন্তু অনুমতি নেই 🚫</div>
+      </div>
+      <div class="status-item err">
+        <div class="code">404</div>
+        <div class="label">Not Found — জিনিসটা খুঁজে পাওয়া গেলো না 🔍</div>
+      </div>
+      <div class="status-item err">
+        <div class="code">429</div>
+        <div class="label">Too Many Requests — অনেক বেশি রিকোয়েস্ট ⚡</div>
+      </div>
+      <div class="status-item err">
+        <div class="code">500</div>
+        <div class="label">Server Error — সার্ভারে সমস্যা 💥</div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <strong>401 বনাম 403 — এই দুটির পার্থক্য:</strong>
+      <ul style="margin-top: 8px;">
+        <li><span class="tag tag-yellow">401</span> = "তুমি কে সেটাই জানি না" — Login করোনি বা ভুল credentials দিয়েছ</li>
+        <li><span class="tag tag-red">403</span> = "তুমি কে জানি, কিন্তু তোমার এই কাজের অনুমতি নেই" — Logged in কিন্তু unauthorized</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ======= SECTION 8: Rate Limiting ======= -->
+  <div class="section" id="rate-limit">
+    <div class="section-title"><span class="icon">⚡</span> Rate Limiting — রিকোয়েস্ট সীমাবদ্ধতা</div>
+
+    <p><strong>Rate Limiting</strong> মানে একটি নির্দিষ্ট সময়ের মধ্যে কতটি রিকোয়েস্ট করা যাবে তার সীমা নির্ধারণ করা।</p>
+
+    <div class="analogy">
+      <strong>🚰 পানির ট্যাপের উদাহরণ:</strong>
+      <p>ভাবুন একটি পাইপলাইনে প্রতি মিনিটে সর্বোচ্চ ১০ বালতি পানি দেওয়া যায়। একসাথে ১০০ বালতি নিতে চাইলে পাইপ ফেটে যাবে। Rate Limiting এই সীমা নিশ্চিত করে।</p>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg width="540" height="180" viewBox="0 0 540 180" style="max-width:100%">
+        <!-- Timeline -->
+        <line x1="30" y1="90" x2="510" y2="90" stroke="#2d3748" stroke-width="2"/>
+        <!-- Minute label -->
+        <text x="270" y="170" text-anchor="middle" fill="#6b7280" font-size="12" font-family="Hind Siliguri">← ১ মিনিট →</text>
+        <line x1="30" y1="80" x2="30" y2="100" stroke="#4b5563" stroke-width="2"/>
+        <line x1="510" y1="80" x2="510" y2="100" stroke="#4b5563" stroke-width="2"/>
+
+        <!-- OK requests (first 60) -->
+        <g fill="#10b981">
+          <rect x="40" y="70" width="6" height="20" rx="2"/>
+          <rect x="50" y="70" width="6" height="20" rx="2"/>
+          <rect x="60" y="70" width="6" height="20" rx="2"/>
+          <rect x="70" y="70" width="6" height="20" rx="2"/>
+          <rect x="80" y="70" width="6" height="20" rx="2"/>
+          <rect x="90" y="70" width="6" height="20" rx="2"/>
+          <rect x="100" y="70" width="6" height="20" rx="2"/>
+          <rect x="110" y="70" width="6" height="20" rx="2"/>
+          <rect x="120" y="70" width="6" height="20" rx="2"/>
+          <rect x="130" y="70" width="6" height="20" rx="2"/>
+        </g>
+        <text x="87" y="55" text-anchor="middle" fill="#10b981" font-size="11" font-family="Hind Siliguri">✅ প্রথম ৬০টি OK</text>
+
+        <!-- Limit marker -->
+        <line x1="145" y1="40" x2="145" y2="140" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="145" y="35" text-anchor="middle" fill="#f59e0b" font-size="11" font-family="Hind Siliguri">সীমা</text>
+
+        <!-- Blocked requests -->
+        <g fill="#ef4444">
+          <rect x="150" y="70" width="6" height="20" rx="2"/>
+          <rect x="160" y="70" width="6" height="20" rx="2"/>
+          <rect x="170" y="70" width="6" height="20" rx="2"/>
+          <rect x="180" y="70" width="6" height="20" rx="2"/>
+          <rect x="190" y="70" width="6" height="20" rx="2"/>
+        </g>
+        <text x="170" y="55" text-anchor="middle" fill="#ef4444" font-size="11" font-family="Hind Siliguri">❌ Block → 429 Error</text>
+
+        <!-- New minute -->
+        <line x1="300" y1="40" x2="300" y2="140" stroke="#00d4ff" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="300" y="35" text-anchor="middle" fill="#00d4ff" font-size="11" font-family="Hind Siliguri">নতুন মিনিট</text>
+        <g fill="#10b981">
+          <rect x="310" y="70" width="6" height="20" rx="2"/>
+          <rect x="320" y="70" width="6" height="20" rx="2"/>
+          <rect x="330" y="70" width="6" height="20" rx="2"/>
+        </g>
+        <text x="340" y="55" text-anchor="middle" fill="#10b981" font-size="11" font-family="Hind Siliguri">✅ আবার শুরু</text>
+      </svg>
+      <p class="caption">Rate Limiting: প্রতি মিনিটে ৬০টি রিকোয়েস্টের পর ব্লক</p>
+    </div>
+
+    <p>Rate Limiting কেন দরকার?</p>
+    <ul>
+      <li>🛡️ DDoS আক্রমণ থেকে সুরক্ষা</li>
+      <li>💰 অতিরিক্ত ব্যবহার রোধ করা</li>
+      <li>⚖️ সব ব্যবহারকারীর মধ্যে সম্পদ ভাগ করা</li>
+      <li>📊 API ব্যবহার পরিমাপ করা</li>
+    </ul>
+  </div>
+
+  <!-- ======= SECTION 9: OpenWeatherMap Example ======= -->
+  <div class="section" id="openweather">
+    <div class="section-title"><span class="icon">🌤️</span> বাস্তব উদাহরণ: OpenWeatherMap API</div>
+
+    <p>OpenWeatherMap একটি জনপ্রিয় আবহাওয়া API। এটি দিয়ে আমরা authentication ও authorization ব্যবহারিকভাবে বুঝতে পারি।</p>
+
+    <h3>API Key দিয়ে রিকোয়েস্ট</h3>
+    <div class="code-block">
+<span class="comment"># URL structure: প্রশ্নচিহ্নের পরে দুটি parameter</span>
+<span class="comment"># q = শহরের নাম, appid = আপনার API Key</span>
+https://api.openweathermap.org/data/2.5/weather?<span class="keyword">q</span>=<span class="string">Dhaka</span>&<span class="keyword">appid</span>=<span class="string">XXXXXXXXXXXXXX</span>
+
+<span class="comment"># Python দিয়ে একই কাজ:</span>
+<span class="keyword">import</span> requests
+response = requests.get(
+    url=<span class="string">"https://api.openweathermap.org/data/2.5/weather"</span>,
+    params={
+        <span class="string">"q"</span>: <span class="string">"Dhaka"</span>,
+        <span class="string">"appid"</span>: <span class="string">"আপনার_API_KEY_এখানে"</span>
+    }
+)
+<span class="keyword">print</span>(response.status_code)  <span class="comment"># 200 মানে সফল</span>
+<span class="keyword">print</span>(response.json())      <span class="comment"># আবহাওয়ার ডেটা</span></div>
+
+    <h3>ভুল API Key দিলে কী হয়?</h3>
+    <div class="code-block">
+<span class="comment"># ভুল key বা key ছাড়া রিকোয়েস্ট:</span>
+https://api.openweathermap.org/data/2.5/weather?q=Dhaka
+
+<span class="comment"># সার্ভারের উত্তর:</span>
+Status: <span class="number">401</span> Unauthorized
+{
+  <span class="string">"cod"</span>: <span class="number">401</span>,
+  <span class="string">"message"</span>: <span class="string">"Invalid API key. Please see https://openweathermap.org/faq"</span>
+}
+<span class="comment"># মানে: Authentication ব্যর্থ হয়েছে — পরিচয় প্রমাণ হয়নি</span></div>
+
+    <h3>Free Plan-এ Premium Endpoint ব্যবহার করলে?</h3>
+    <div class="code-block">
+<span class="comment"># এই endpoint শুধু paid plan-এর জন্য:</span>
+https://pro.openweathermap.org/data/2.5/forecast/climate?lat=<span class="number">23</span>&lon=<span class="number">90</span>&appid=<span class="string">XXXXX</span>
+
+<span class="comment"># সার্ভারের উত্তর:</span>
+Status: <span class="number">401</span> (বা <span class="number">403</span> হওয়া উচিত)
+<span class="comment"># মানে: Authorization ব্যর্থ হয়েছে — free plan-এ এই সুবিধা নেই</span></div>
+
+    <div class="highlight">
+      <strong>💡 মজার বিষয়:</strong> কখনও কখনও API সঠিক error কোড না দিলেও (403 দেওয়ার বদলে 401 দেয়), ব্যবহারিক উদ্দেশ্যটা একই — আপনার request ব্লক করা হচ্ছে।
+    </div>
+
+    <h3>Rate Limit অতিক্রম করলে?</h3>
+    <div class="code-block">
+<span class="comment"># Free plan: প্রতি মিনিটে সর্বোচ্চ ৬০টি রিকোয়েস্ট</span>
+<span class="comment"># এর বেশি হলে আপনার API key block হয়ে যাবে!</span>
+<span class="comment"># OpenWeatherMap আপনাকে email করবে সতর্ক করতে</span>
+
+<span class="keyword">import</span> requests
+API_KEY = <span class="string">"XXXX"</span>
+url = <span class="string">"https://api.openweathermap.org/data/2.5/weather"</span>
+
+<span class="keyword">try</span>:
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(-<span class="number">90</span>, <span class="number">90</span>, <span class="number">5</span>):   <span class="comment"># ৩৬টি latitude</span>
+        <span class="keyword">for</span> j <span class="keyword">in</span> range(-<span class="number">180</span>, <span class="number">180</span>, <span class="number">10</span>): <span class="comment"># ৩৬টি longitude</span>
+            response = requests.get(url=url, params={<span class="string">"lat"</span>: i, <span class="string">"lon"</span>: j, <span class="string">"appid"</span>: API_KEY})
+            response.raise_for_status()  <span class="comment"># error হলে exception</span>
+<span class="keyword">except</span> requests.HTTPError:
+    <span class="keyword">print</span>(response.status_code)  <span class="comment"># 429 দেখাবে!</span></div>
+  </div>
+
+  <!-- ======= SUMMARY TABLE ======= -->
+  <div class="section">
+    <div class="section-title"><span class="icon">📋</span> সংক্ষিপ্ত সারসংক্ষেপ</div>
+
+    <table>
+      <tr>
+        <th>ধারণা</th>
+        <th>বাংলায় অর্থ</th>
+        <th>উদাহরণ</th>
+        <th>Error Code</th>
+      </tr>
+      <tr>
+        <td><strong>Authentication</strong></td>
+        <td>পরিচয় যাচাই</td>
+        <td>পাসপোর্ট দেখানো, পাসওয়ার্ড দেওয়া</td>
+        <td><span class="tag tag-yellow">401</span></td>
+      </tr>
+      <tr>
+        <td><strong>Authorization</strong></td>
+        <td>অনুমতি যাচাই</td>
+        <td>Admin কিনা চেক করা</td>
+        <td><span class="tag tag-red">403</span></td>
+      </tr>
+      <tr>
+        <td><strong>Traceability</strong></td>
+        <td>লগ রাখা</td>
+        <td>কে কখন কী করলো রেকর্ড</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>Rate Limiting</strong></td>
+        <td>রিকোয়েস্ট সীমা</td>
+        <td>প্রতি মিনিটে ৬০টি</td>
+        <td><span class="tag tag-red">429</span></td>
+      </tr>
+      <tr>
+        <td><strong>Public API</strong></td>
+        <td>সর্বজনীন</td>
+        <td>আবহাওয়া, নিউজ</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td><strong>Private API</strong></td>
+        <td>গোপনীয়</td>
+        <td>ব্যাংক, মেডিকেল</td>
+        <td>—</td>
+      </tr>
+    </table>
+
+    <div class="quiz">
+      <h4>🧪 নিজেকে পরীক্ষা করুন:</h4>
+      <p>১. আপনি সঠিক পাসওয়ার্ড দিলেন, কিন্তু আপনার অ্যাকাউন্টে Admin প্যানেল খোলার অনুমতি নেই — কোন error কোড পাবেন?</p>
+      <p>২. API Key না দিয়ে রিকোয়েস্ট করলে কোন error কোড পাবেন?</p>
+      <p>৩. Traceability কী কারণে দরকার?</p>
+      <details style="margin-top: 12px;">
+        <summary style="cursor: pointer; color: var(--accent); font-weight: 600;">উত্তর দেখুন</summary>
+        <div style="margin-top: 10px; padding: 12px; background: var(--surface2); border-radius: 8px;">
+          <p>১. <span class="tag tag-red">403</span> Forbidden — Authentication সফল, Authorization ব্যর্থ</p>
+          <p>২. <span class="tag tag-yellow">401</span> Unauthorized — Authentication-ই সম্পন্ন হয়নি</p>
+          <p>৩. নিরাপত্তা লঙ্ঘন ধরার জন্য, অডিট করার জন্য, অপব্যবহার চিহ্নিত করার জন্য</p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="nav-footer">
+    <div class="progress-bar">
+      <div class="progress-dot active"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+    </div>
+    <span style="color: var(--text-muted); font-size: 14px;">পর্ব ১ সম্পন্ন — পরবর্তী: Authentication পদ্ধতি</span>
+    <a href="api_security_part2_bengali.html" class="nav-btn">পর্ব ২ →</a>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,2218 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BentoML সম্পূর্ণ গাইড — বাংলায়</title>
+<!-- Google Fonts — internet থাকলে load হবে, না থাকলে fallback font ব্যবহার হবে -->
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Offline fallback: নিজস্ব Bengali-capable system fonts */
+  @font-face {
+    font-family: 'Hind Siliguri';
+    src: local('Hind Siliguri'), local('NotoSansBengali'), local('Vrinda'), local('Kalpurush');
+    unicode-range: U+0980-09FF;
+  }
+</style>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --border: #30363d;
+    --accent: #f78166;
+    --accent2: #79c0ff;
+    --accent3: #56d364;
+    --accent4: #ffa657;
+    --accent5: #d2a8ff;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --code-bg: #161b22;
+    --yellow: #e3b341;
+    --red: #f85149;
+    --teal: #39d353;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 17px;
+    line-height: 1.9;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 40%, #1c2333 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 40%, rgba(247,129,102,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 60%, rgba(121,192,255,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(247,129,102,0.15);
+    border: 1px solid rgba(247,129,102,0.3);
+    color: var(--accent);
+    font-size: 13px;
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--text) 0%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto 30px;
+  }
+  .bento-ascii {
+    font-family: 'Fira Code', monospace;
+    font-size: 10px;
+    color: var(--accent3);
+    opacity: 0.6;
+    line-height: 1.3;
+    margin-top: 30px;
+    display: inline-block;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px 35px;
+    max-width: 860px;
+    margin: 40px auto;
+  }
+  .toc h2 {
+    color: var(--accent4);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .toc ol {
+    list-style: none;
+    counter-reset: toc-counter;
+    column-count: 2;
+    column-gap: 30px;
+  }
+  .toc li {
+    counter-increment: toc-counter;
+    margin-bottom: 8px;
+  }
+  .toc li::before {
+    content: counter(toc-counter, decimal-leading-zero) ". ";
+    color: var(--accent);
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .toc a {
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.2s;
+  }
+  .toc a:hover { color: var(--accent); }
+
+  /* MAIN LAYOUT */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 30px 80px;
+  }
+
+  /* SECTIONS */
+  .section {
+    margin-bottom: 70px;
+    padding-top: 20px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 30px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    background: rgba(247,129,102,0.1);
+    border: 1px solid rgba(247,129,102,0.25);
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .section h2 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* SUBSECTIONS */
+  .subsection {
+    margin: 35px 0;
+  }
+  .subsection h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent2);
+    margin-bottom: 14px;
+    padding-left: 14px;
+    border-left: 3px solid var(--accent2);
+  }
+  .subsection h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent4);
+    margin: 18px 0 8px;
+  }
+
+  /* TEXT */
+  p { margin-bottom: 14px; color: var(--text); }
+  strong { color: var(--accent4); font-weight: 600; }
+  em { color: var(--accent5); font-style: normal; font-weight: 500; }
+
+  /* CALLOUT BOXES */
+  .callout {
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    border-left: 4px solid;
+    position: relative;
+  }
+  .callout.info { background: rgba(121,192,255,0.06); border-color: var(--accent2); }
+  .callout.warning { background: rgba(255,166,87,0.06); border-color: var(--accent4); }
+  .callout.success { background: rgba(86,211,100,0.06); border-color: var(--accent3); }
+  .callout.danger { background: rgba(248,81,73,0.07); border-color: var(--red); }
+  .callout.tip { background: rgba(210,168,255,0.06); border-color: var(--accent5); }
+  .callout-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .callout.info .callout-title { color: var(--accent2); }
+  .callout.warning .callout-title { color: var(--accent4); }
+  .callout.success .callout-title { color: var(--accent3); }
+  .callout.danger .callout-title { color: var(--red); }
+  .callout.tip .callout-title { color: var(--accent5); }
+  .callout p { margin: 0; font-size: 15.5px; }
+
+  /* CODE BLOCKS */
+  pre {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 16px 0;
+    position: relative;
+  }
+  pre .lang-label {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  code {
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    color: var(--accent3);
+    line-height: 1.7;
+  }
+  p code, li code {
+    background: rgba(86,211,100,0.1);
+    color: var(--accent3);
+    border: 1px solid rgba(86,211,100,0.2);
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 13.5px;
+  }
+  .kw { color: var(--accent5); }
+  .fn { color: var(--accent2); }
+  .str { color: var(--yellow); }
+  .cm { color: var(--text-dim); font-style: italic; }
+  .num { color: var(--accent4); }
+  .op { color: var(--accent); }
+
+  /* DIAGRAM CONTAINERS */
+  .diagram-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px;
+    margin: 25px 0;
+    overflow: hidden;
+  }
+  .diagram-title {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  /* STEP CARDS */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 20px 0;
+  }
+  .step {
+    display: flex;
+    gap: 0;
+    position: relative;
+  }
+  .step-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50px;
+    flex-shrink: 0;
+  }
+  .step-num-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #0d1117;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+    z-index: 1;
+    font-family: 'Fira Code', monospace;
+  }
+  .step-line {
+    width: 2px;
+    flex: 1;
+    background: linear-gradient(to bottom, var(--accent), var(--border));
+    margin: 4px 0;
+    min-height: 30px;
+  }
+  .step:last-child .step-line { display: none; }
+  .step-content {
+    padding: 6px 0 28px 20px;
+    flex: 1;
+  }
+  .step-content h4 {
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .step-content p {
+    color: var(--text-muted);
+    font-size: 15px;
+    margin: 0;
+  }
+
+  /* COMPARISON TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 15px;
+  }
+  th {
+    background: var(--surface2);
+    color: var(--accent2);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* HIGHLIGHT PILL */
+  .pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Fira Code', monospace;
+  }
+  .pill.green { background: rgba(86,211,100,0.15); color: var(--accent3); border: 1px solid rgba(86,211,100,0.3); }
+  .pill.blue { background: rgba(121,192,255,0.15); color: var(--accent2); border: 1px solid rgba(121,192,255,0.3); }
+  .pill.orange { background: rgba(255,166,87,0.15); color: var(--accent4); border: 1px solid rgba(255,166,87,0.3); }
+  .pill.red { background: rgba(248,81,73,0.15); color: var(--red); border: 1px solid rgba(248,81,73,0.3); }
+  .pill.purple { background: rgba(210,168,255,0.15); color: var(--accent5); border: 1px solid rgba(210,168,255,0.3); }
+
+  /* CARDS GRID */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent2); }
+  .card-icon { font-size: 1.8rem; margin-bottom: 10px; }
+  .card h4 { color: var(--text); font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  .card p { color: var(--text-muted); font-size: 14px; margin: 0; line-height: 1.6; }
+
+  /* EXAM DELIVERABLE */
+  .deliverable {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin: 16px 0;
+  }
+  .deliverable-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .deliverable-num {
+    background: var(--accent5);
+    color: #0d1117;
+    font-weight: 700;
+    font-size: 13px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fira Code', monospace;
+    flex-shrink: 0;
+  }
+  .deliverable h4 { color: var(--text); font-size: 16px; font-weight: 600; margin: 0; }
+  .deliverable ul { color: var(--text-muted); font-size: 15px; padding-left: 20px; }
+  .deliverable ul li { margin-bottom: 5px; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+  footer span { color: var(--accent); }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 50px 0; }
+
+  /* SVG styles */
+  svg text { font-family: 'Hind Siliguri', 'Fira Code', sans-serif; }
+
+  @media (max-width: 600px) {
+    .toc ol { column-count: 1; }
+    .hero { padding: 50px 20px 40px; }
+    .container { padding: 0 16px 60px; }
+    pre { padding: 14px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">📚 সম্পূর্ণ বাংলা গাইড</div>
+  <h1>BentoML শিখুন বাংলায় 🍱</h1>
+  <p>Machine Learning মডেল Deploy করা থেকে শুরু করে Docker পর্যন্ত — সব কিছু একটি ফাইলে, নবীনদের জন্য</p>
+  <div class="bento-ascii">
+██████╗ ███████╗███╗   ██╗████████╗ ██████╗ ███╗   ███╗██╗<br>
+██╔══██╗██╔════╝████╗  ██║╚══██╔══╝██╔═══██╗████╗ ████║██║<br>
+██████╔╝█████╗  ██╔██╗ ██║   ██║   ██║   ██║██╔████╔██║██║<br>
+██╔══██╗██╔══╝  ██║╚██╗██║   ██║   ██║   ██║██║╚██╔╝██║██║<br>
+██████╔╝███████╗██║ ╚████║   ██║   ╚██████╔╝██║ ╚═╝ ██║███████╗
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="container">
+<div class="toc">
+  <h2>📋 বিষয়সূচি</h2>
+  <ol>
+    <li><a href="#s1">ML Production কী?</a></li>
+    <li><a href="#s2">Deploy করার ধাপসমূহ</a></li>
+    <li><a href="#s3">BentoML কী?</a></li>
+    <li><a href="#s4">Installation ও Setup</a></li>
+    <li><a href="#s5">Model Store</a></li>
+    <li><a href="#s6">প্রথম Model তৈরি</a></li>
+    <li><a href="#s7">API ও Serving</a></li>
+    <li><a href="#s8">API Security (JWT)</a></li>
+    <li><a href="#s9">Bento Build করা</a></li>
+    <li><a href="#s10">Docker ও Container</a></li>
+    <li><a href="#s11">AWS-এ Deploy</a></li>
+    <li><a href="#s12">পরীক্ষা (Exam)</a></li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: ML Production -->
+<!-- ============================================================ -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2>ML Production কী এবং কেন দরকার?</h2>
+  </div>
+
+  <p>ধরো, তুমি একটি ML model তৈরি করলে যে ছবি দেখে রোগ বলতে পারে। তুমি Python-এ চমৎকারভাবে তৈরি করলে। কিন্তু এটা শুধু তোমার কম্পিউটারে চলে। <strong>অন্য কেউ এটা ব্যবহার করতে পারছে না।</strong> এটাই মূল সমস্যা।</p>
+
+  <p><strong>Production মানে হলো</strong> — তোমার model-কে এমন একটি জায়গায় রাখা যেখানে যে কেউ, যেকোনো সময়, ইন্টারনেটের মাধ্যমে এটা ব্যবহার করতে পারবে। ঠিক যেমন Google বা Facebook তাদের AI features সবার জন্য উপলব্ধ রাখে।</p>
+
+  <div class="callout info">
+    <div class="callout-title">💡 সহজ উপমা</div>
+    <p>তুমি রান্না করতে পারো — এটা তোমার "Model তৈরি"। কিন্তু রেস্তোরাঁ খুললে সবাই তোমার রান্না খেতে পারবে — এটা "Production Deployment"।</p>
+  </div>
+
+  <!-- SVG: What is Production -->
+  <div class="diagram-box">
+    <div class="diagram-title">Development থেকে Production — যাত্রা</div>
+    <svg viewBox="0 0 820 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+      <defs>
+        <marker id="arr1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#79c0ff"/>
+        </marker>
+      </defs>
+      <!-- Dev Box -->
+      <rect x="20" y="50" width="160" height="100" rx="12" fill="#1c2333" stroke="#30363d" stroke-width="1.5"/>
+      <text x="100" y="85" text-anchor="middle" fill="#f78166" font-size="28">🧑‍💻</text>
+      <text x="100" y="115" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="600">তুমি Model তৈরি করো</text>
+      <text x="100" y="133" text-anchor="middle" fill="#8b949e" font-size="11">(Jupyter Notebook)</text>
+      <!-- Arrow 1 -->
+      <line x1="185" y1="100" x2="245" y2="100" stroke="#79c0ff" stroke-width="2" marker-end="url(#arr1)"/>
+      <text x="215" y="92" text-anchor="middle" fill="#8b949e" font-size="10">BentoML</text>
+      <!-- BentoML Box -->
+      <rect x="248" y="50" width="160" height="100" rx="12" fill="#1c2333" stroke="#30363d" stroke-width="1.5"/>
+      <text x="328" y="85" text-anchor="middle" fill="#ffa657" font-size="28">🍱</text>
+      <text x="328" y="115" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="600">Bento Package করে</text>
+      <text x="328" y="133" text-anchor="middle" fill="#8b949e" font-size="11">(সব কিছু এক জায়গায়)</text>
+      <!-- Arrow 2 -->
+      <line x1="412" y1="100" x2="472" y2="100" stroke="#79c0ff" stroke-width="2" marker-end="url(#arr1)"/>
+      <text x="442" y="92" text-anchor="middle" fill="#8b949e" font-size="10">Docker</text>
+      <!-- Docker Box -->
+      <rect x="475" y="50" width="160" height="100" rx="12" fill="#1c2333" stroke="#30363d" stroke-width="1.5"/>
+      <text x="555" y="85" text-anchor="middle" fill="#79c0ff" font-size="28">🐳</text>
+      <text x="555" y="115" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="600">Container বানায়</text>
+      <text x="555" y="133" text-anchor="middle" fill="#8b949e" font-size="11">(যেকোনো জায়গায় চলে)</text>
+      <!-- Arrow 3 -->
+      <line x1="639" y1="100" x2="699" y2="100" stroke="#79c0ff" stroke-width="2" marker-end="url(#arr1)"/>
+      <text x="669" y="92" text-anchor="middle" fill="#8b949e" font-size="10">Cloud</text>
+      <!-- Cloud Box -->
+      <rect x="702" y="50" width="100" height="100" rx="12" fill="#1c2333" stroke="#56d364" stroke-width="1.5"/>
+      <text x="752" y="85" text-anchor="middle" fill="#56d364" font-size="28">☁️</text>
+      <text x="752" y="115" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="600">সবার কাছে</text>
+      <text x="752" y="133" text-anchor="middle" fill="#56d364" font-size="11">Live! ✓</text>
+    </svg>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🎯</div>
+      <h4>Real-time Prediction</h4>
+      <p>Live data দিলে সাথে সাথে ফলাফল পাওয়া যায়। কোনো delay নেই।</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌍</div>
+      <h4>সবার জন্য Access</h4>
+      <p>যেকোনো ডিভাইস থেকে, যেকোনো মানুষ API call করে ব্যবহার করতে পারে।</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">💼</div>
+      <h4>ব্যবসায়িক মূল্য</h4>
+      <p>শুধু Jupyter Notebook-এ থাকলে কোনো লাভ নেই — Production-এ গেলেই আসল মূল্য।</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔄</div>
+      <h4>Automation</h4>
+      <p>মানুষের হাত ছাড়াই স্বয়ংক্রিয়ভাবে নতুন data process করে সিদ্ধান্ত নেয়।</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: Deployment Steps -->
+<!-- ============================================================ -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2>ML Model Deploy করার ধাপসমূহ</h2>
+  </div>
+
+  <p>একটি ML model তৈরি করা থেকে Production পর্যন্ত যাওয়া মানে হলো একটি দীর্ঘ যাত্রা। নিচে প্রতিটি ধাপ বিস্তারিত দেওয়া হলো:</p>
+
+  <!-- SVG: ML Lifecycle -->
+  <div class="diagram-box">
+    <div class="diagram-title">ML Model-এর পূর্ণ জীবনচক্র</div>
+    <svg viewBox="0 0 820 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+      <defs>
+        <marker id="arr2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#30363d"/>
+        </marker>
+      </defs>
+      <!-- Row 1 -->
+      <!-- Step 1 -->
+      <rect x="20" y="20" width="145" height="90" rx="10" fill="#1c2333" stroke="#30363d" stroke-width="1.5"/>
+      <circle cx="50" cy="45" r="14" fill="#f78166" opacity="0.9"/>
+      <text x="50" y="50" text-anchor="middle" fill="#0d1117" font-size="13" font-weight="700">১</text>
+      <text x="95" y="44" fill="#e6edf3" font-size="13" font-weight="600">Data Collection</text>
+      <text x="25" y="70" fill="#8b949e" font-size="11">Data সংগ্রহ করা —</text>
+      <text x="25" y="84" fill="#8b949e" font-size="11">raw data ফাইল, database</text>
+      <text x="25" y="98" fill="#8b949e" font-size="11">থেকে নেওয়া হয়</text>
+      <!-- Arrow -->
+      <line x1="168" y1="65" x2="198" y2="65" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <!-- Step 2 -->
+      <rect x="200" y="20" width="145" height="90" rx="10" fill="#1c2333" stroke="#30363d" stroke-width="1.5"/>
+      <circle cx="230" cy="45" r="14" fill="#ffa657" opacity="0.9"/>
+      <text x="230" y="50" text-anchor="middle" fill="#0d1117" font-size="13" font-weight="700">২</text>
+      <text x="272" y="44" fill="#e6edf3" font-size="13" font-weight="600">Data Prep</text>
+      <text x="205" y="70" fill="#8b949e" font-size="11">Cleaning, Normalization,</text>
+      <text x="205" y="84" fill="#8b949e" font-size="11">Train/Test split করা,</text>
+      <text x="205" y="98" fill="#8b949e" font-size="11">missing values ঠিক করা</text>
+      <!-- Arrow -->
+      <line x1="348" y1="65" x2="378" y2="65" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <!-- Step 3 -->
+      <rect x="380" y="20" width="145" height="90" rx="10" fill="#1c2333" stroke="#30363d" stroke-width="1.5"/>
+      <circle cx="410" cy="45" r="14" fill="#79c0ff" opacity="0.9"/>
+      <text x="410" y="50" text-anchor="middle" fill="#0d1117" font-size="13" font-weight="700">৩</text>
+      <text x="452" y="44" fill="#e6edf3" font-size="13" font-weight="600">Model Training</text>
+      <text x="385" y="70" fill="#8b949e" font-size="11">Algorithm বেছে নেওয়া,</text>
+      <text x="385" y="84" fill="#8b949e" font-size="11">model train করা,</text>
+      <text x="385" y="98" fill="#8b949e" font-size="11">accuracy মাপা</text>
+      <!-- Arrow -->
+      <line x1="528" y1="65" x2="558" y2="65" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <!-- Step 4 -->
+      <rect x="560" y="20" width="145" height="90" rx="10" fill="#1c2333" stroke="#30363d" stroke-width="1.5"/>
+      <circle cx="590" cy="45" r="14" fill="#56d364" opacity="0.9"/>
+      <text x="590" y="50" text-anchor="middle" fill="#0d1117" font-size="13" font-weight="700">৪</text>
+      <text x="633" y="44" fill="#e6edf3" font-size="13" font-weight="600">Validation</text>
+      <text x="565" y="70" fill="#8b949e" font-size="11">Test data দিয়ে model</text>
+      <text x="565" y="84" fill="#8b949e" font-size="11">যাচাই করা, performance</text>
+      <text x="565" y="98" fill="#8b949e" font-size="11">metrics দেখা</text>
+
+      <!-- Row 2 (goes right to left) -->
+      <!-- Down arrow from step 4 -->
+      <line x1="632" y1="113" x2="632" y2="160" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <!-- Step 5 -->
+      <rect x="560" y="163" width="145" height="90" rx="10" fill="#1c2333" stroke="#30363d" stroke-width="1.5"/>
+      <circle cx="590" cy="188" r="14" fill="#d2a8ff" opacity="0.9"/>
+      <text x="590" y="193" text-anchor="middle" fill="#0d1117" font-size="13" font-weight="700">৫</text>
+      <text x="633" y="187" fill="#e6edf3" font-size="13" font-weight="600">BentoML Save</text>
+      <text x="565" y="213" fill="#8b949e" font-size="11">Model Store-এ save,</text>
+      <text x="565" y="227" fill="#8b949e" font-size="11">version tracking,</text>
+      <text x="565" y="241" fill="#8b949e" font-size="11">API service বানানো</text>
+      <!-- Arrow left -->
+      <line x1="557" y1="208" x2="527" y2="208" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <!-- Step 6 -->
+      <rect x="380" y="163" width="145" height="90" rx="10" fill="#1c2333" stroke="#30363d" stroke-width="1.5"/>
+      <circle cx="410" cy="188" r="14" fill="#f78166" opacity="0.9"/>
+      <text x="410" y="193" text-anchor="middle" fill="#0d1117" font-size="13" font-weight="700">৬</text>
+      <text x="455" y="187" fill="#e6edf3" font-size="13" font-weight="600">Containerize</text>
+      <text x="385" y="213" fill="#8b949e" font-size="11">Docker image তৈরি,</text>
+      <text x="385" y="227" fill="#8b949e" font-size="11">সব dependency pack,</text>
+      <text x="385" y="241" fill="#8b949e" font-size="11">যেকোনো জায়গায় চলে</text>
+      <!-- Arrow left -->
+      <line x1="377" y1="208" x2="347" y2="208" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <!-- Step 7 -->
+      <rect x="200" y="163" width="145" height="90" rx="10" fill="#1c2333" stroke="#30363d" stroke-width="1.5"/>
+      <circle cx="230" cy="188" r="14" fill="#ffa657" opacity="0.9"/>
+      <text x="230" y="193" text-anchor="middle" fill="#0d1117" font-size="13" font-weight="700">৭</text>
+      <text x="273" y="187" fill="#e6edf3" font-size="13" font-weight="600">Cloud Deploy</text>
+      <text x="205" y="213" fill="#8b949e" font-size="11">AWS/GCP/Azure-এ</text>
+      <text x="205" y="227" fill="#8b949e" font-size="11">upload করা, public</text>
+      <text x="205" y="241" fill="#8b949e" font-size="11">URL পাওয়া</text>
+      <!-- Arrow left -->
+      <line x1="197" y1="208" x2="167" y2="208" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <!-- Step 8 -->
+      <rect x="20" y="163" width="145" height="90" rx="10" fill="#1c2333" stroke="#56d364" stroke-width="2"/>
+      <circle cx="50" cy="188" r="14" fill="#56d364" opacity="0.9"/>
+      <text x="50" y="193" text-anchor="middle" fill="#0d1117" font-size="13" font-weight="700">৮</text>
+      <text x="95" y="187" fill="#56d364" font-size="13" font-weight="600">Monitoring</text>
+      <text x="25" y="213" fill="#8b949e" font-size="11">Logs দেখা, alerts,</text>
+      <text x="25" y="227" fill="#8b949e" font-size="11">performance track,</text>
+      <text x="25" y="241" fill="#56d364" font-size="11">✓ Production Live!</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: What is BentoML -->
+<!-- ============================================================ -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2>BentoML কী? — বিস্তারিত ব্যাখ্যা</h2>
+  </div>
+
+  <p><strong>BentoML</strong> হলো একটি open-source Python library যা ML model deploy করাকে অনেক সহজ করে দেয়। এটি framework-agnostic — মানে তুমি <em>scikit-learn, TensorFlow, PyTorch, XGBoost</em> — যেকোনো library দিয়ে তৈরি model ব্যবহার করতে পারবে।</p>
+
+  <div class="callout tip">
+    <div class="callout-title">🍱 "Bento" নামটা কোথা থেকে?</div>
+    <p>জাপানে "Bento" মানে হলো একটি বাক্স যাতে একসাথে পুরো খাবার থাকে — ভাত, তরকারি, সব কিছু। BentoML-এ "Bento" মানে একটি প্যাকেজ যাতে তোমার ML model, code, dependencies — সব কিছু একসাথে থাকে।</p>
+  </div>
+
+  <!-- SVG: What's inside a Bento -->
+  <div class="diagram-box">
+    <div class="diagram-title">একটি Bento-এর ভেতরে কী থাকে?</div>
+    <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+      <defs>
+        <marker id="arr3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#30363d"/>
+        </marker>
+        <marker id="arr3r" markerWidth="8" markerHeight="6" refX="1" refY="3" orient="auto">
+          <polygon points="8 0, 0 3, 8 6" fill="#30363d"/>
+        </marker>
+      </defs>
+      <!-- Central Bento box -->
+      <rect x="295" y="95" width="170" height="110" rx="14" fill="#1c2333" stroke="#ffa657" stroke-width="2"/>
+      <text x="380" y="138" text-anchor="middle" fill="#ffa657" font-size="32">🍱</text>
+      <text x="380" y="166" text-anchor="middle" fill="#ffa657" font-size="14" font-weight="700">A Bento</text>
+      <text x="380" y="185" text-anchor="middle" fill="#8b949e" font-size="11">(Deployment Unit)</text>
+
+      <!-- Input items (left side) -->
+      <!-- ML Model -->
+      <rect x="10" y="20" width="140" height="50" rx="8" fill="#1c2333" stroke="#30363d"/>
+      <text x="80" y="42" text-anchor="middle" fill="#d2a8ff" font-size="11" font-weight="600">🤖 ML Model</text>
+      <text x="80" y="58" text-anchor="middle" fill="#8b949e" font-size="10">(trained .pkl file)</text>
+      <line x1="153" y1="45" x2="292" y2="130" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <!-- Source Code -->
+      <rect x="10" y="90" width="140" height="50" rx="8" fill="#1c2333" stroke="#30363d"/>
+      <text x="80" y="112" text-anchor="middle" fill="#79c0ff" font-size="11" font-weight="600">📝 Source Code</text>
+      <text x="80" y="128" text-anchor="middle" fill="#8b949e" font-size="10">(service.py ইত্যাদি)</text>
+      <line x1="153" y1="115" x2="292" y2="148" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <!-- Requirements -->
+      <rect x="10" y="160" width="140" height="50" rx="8" fill="#1c2333" stroke="#30363d"/>
+      <text x="80" y="182" text-anchor="middle" fill="#56d364" font-size="11" font-weight="600">📦 Requirements</text>
+      <text x="80" y="198" text-anchor="middle" fill="#8b949e" font-size="10">(numpy, pandas...)</text>
+      <line x1="153" y1="185" x2="292" y2="178" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <!-- API Definition -->
+      <rect x="10" y="230" width="140" height="50" rx="8" fill="#1c2333" stroke="#30363d"/>
+      <text x="80" y="252" text-anchor="middle" fill="#f78166" font-size="11" font-weight="600">🔌 API Endpoints</text>
+      <text x="80" y="268" text-anchor="middle" fill="#8b949e" font-size="10">(predict, login...)</text>
+      <line x1="153" y1="255" x2="292" y2="195" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <!-- Output items (right side) -->
+      <!-- Docker Image -->
+      <rect x="610" y="20" width="140" height="50" rx="8" fill="#1c2333" stroke="#79c0ff"/>
+      <text x="680" y="42" text-anchor="middle" fill="#79c0ff" font-size="11" font-weight="600">🐳 Docker Image</text>
+      <text x="680" y="58" text-anchor="middle" fill="#8b949e" font-size="10">(যেকোনো server-এ চলে)</text>
+      <line x1="468" y1="130" x2="607" y2="45" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <!-- REST API -->
+      <rect x="610" y="90" width="140" height="50" rx="8" fill="#1c2333" stroke="#56d364"/>
+      <text x="680" y="112" text-anchor="middle" fill="#56d364" font-size="11" font-weight="600">🌐 REST API</text>
+      <text x="680" y="128" text-anchor="middle" fill="#8b949e" font-size="10">(HTTP endpoint)</text>
+      <line x1="468" y1="148" x2="607" y2="115" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <!-- Swagger UI -->
+      <rect x="610" y="160" width="140" height="50" rx="8" fill="#1c2333" stroke="#ffa657"/>
+      <text x="680" y="182" text-anchor="middle" fill="#ffa657" font-size="11" font-weight="600">📊 Swagger UI</text>
+      <text x="680" y="198" text-anchor="middle" fill="#8b949e" font-size="10">(browser-এ test)</text>
+      <line x1="468" y1="178" x2="607" y2="185" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <!-- Cloud Deploy -->
+      <rect x="610" y="230" width="140" height="50" rx="8" fill="#1c2333" stroke="#f78166"/>
+      <text x="680" y="252" text-anchor="middle" fill="#f78166" font-size="11" font-weight="600">☁️ Cloud Deploy</text>
+      <text x="680" y="268" text-anchor="middle" fill="#8b949e" font-size="10">(AWS, GCP, Azure)</text>
+      <line x1="468" y1="195" x2="607" y2="255" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr3)"/>
+    </svg>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🔧</div>
+      <h4>Framework Agnostic</h4>
+      <p>scikit-learn, PyTorch, TensorFlow, XGBoost — যেকোনো ML framework-এ তৈরি model ব্যবহার করা যায়।</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🚀</div>
+      <h4>Auto Dockerization</h4>
+      <p>নিজে থেকেই Dockerfile তৈরি করে। তুমি Docker বিশেষজ্ঞ না হলেও চলবে।</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📋</div>
+      <h4>Swagger UI</h4>
+      <p>Browser-এই API test করা যায়। কোনো extra tool লাগে না।</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">☁️</div>
+      <h4>Multi-Cloud Support</h4>
+      <p>AWS, GCP, Azure, Kubernetes — সব জায়গায় deploy করা সহজ।</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: Installation -->
+<!-- ============================================================ -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2>Installation ও প্রাথমিক Setup</h2>
+  </div>
+
+  <p>BentoML install করার আগে একটি <strong>virtual environment</strong> বানানো উচিত। এটা কেন? কারণ বিভিন্ন project-এ বিভিন্ন version-এর library লাগে। Virtual environment আলাদা "বাক্স" তৈরি করে — একটা project অন্যটাকে নষ্ট করতে পারে না।</p>
+
+  <div class="callout info">
+    <div class="callout-title">💡 Virtual Environment কী?</div>
+    <p>ধরো তোমার একটা project-এ numpy 1.23 লাগে, আরেকটাতে numpy 2.0 লাগে। দুটো একসাথে install করলে conflict হবে। Virtual environment প্রতিটা project-এর জন্য আলাদা Python environment তৈরি করে — সমস্যা নেই।</p>
+  </div>
+
+  <div class="subsection">
+    <h3>ধাপ ১: Python চেক করো</h3>
+    <pre><code><span class="cm"># Terminal-এ এই command চালাও:</span>
+python3 --version
+
+<span class="cm"># Output হবে যেমন:</span>
+Python 3.11.5</code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>ধাপ ২: Virtual Environment তৈরি করো (uv দিয়ে)</h3>
+    <p><code>uv</code> হলো Python-এর একটি নতুন, খুব দ্রুত package manager। এটা <code>pip</code>-এর চেয়ে অনেক দ্রুত কাজ করে।</p>
+    <pre><code><span class="cm"># Virtual environment তৈরি করো</span>
+uv venv
+
+<span class="cm"># Dependencies install করো (requirements.txt থেকে)</span>
+uv sync
+
+<span class="cm"># Virtual environment activate করো (Linux/Mac)</span>
+source .venv/bin/activate
+
+<span class="cm"># এখন তুমি virtual env-এ আছো। Terminal-এ দেখবে:</span>
+<span class="str">(.venv) $ </span></code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>ধাপ ৩: BentoML install করো</h3>
+    <pre><code><span class="cm"># pip দিয়ে install</span>
+pip install bentoml
+
+<span class="cm"># সঠিকভাবে install হয়েছে কিনা দেখো</span>
+bentoml --version
+
+<span class="cm"># Output:</span>
+bentoml, version 1.4.26</code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">⚠️ মনে রাখো</div>
+    <p>প্রতিবার নতুন terminal খুললে <code>source .venv/bin/activate</code> চালাতে হবে। না হলে তোমার install করা packages পাওয়া যাবে না।</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: Model Store -->
+<!-- ============================================================ -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2>Model Store — মডেল সংরক্ষণ ব্যবস্থা</h2>
+  </div>
+
+  <p>সাধারণত মানুষ তাদের trained model <code>model.pkl</code> নামের ফাইলে save করে। কিন্তু এর সমস্যা হলো — কোন version কোনটা? কখন train হয়েছিল? BentoML এর সমাধান দিয়েছে <strong>Model Store</strong> দিয়ে।</p>
+
+  <div class="callout info">
+    <div class="callout-title">📦 Model Store কী?</div>
+    <p>এটা হলো তোমার হার্ড ডিস্কে একটি বিশেষ folder (সাধারণত <code>~/bentoml/models/</code>) যেখানে BentoML তোমার সব model automatically সংরক্ষণ করে — প্রতিটা version-এর জন্য আলাদা unique tag সহ।</p>
+  </div>
+
+  <!-- SVG: Model Store Structure -->
+  <div class="diagram-box">
+    <div class="diagram-title">Model Store-এর ভেতরের ফাইল কাঠামো</div>
+    <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+      <!-- Folder tree -->
+      <text x="30" y="35" fill="#ffa657" font-size="14" font-family="Fira Code, monospace">~/bentoml/models/</text>
+      <!-- Line down from root -->
+      <line x1="40" y1="45" x2="40" y2="240" stroke="#30363d" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <!-- accidents_rf folder -->
+      <line x1="40" y1="75" x2="65" y2="75" stroke="#30363d" stroke-width="1.5"/>
+      <text x="70" y="80" fill="#79c0ff" font-size="13" font-family="Fira Code, monospace">📁 accidents_rf/</text>
+      <!-- latest -->
+      <line x1="90" y1="80" x2="90" y2="200" stroke="#30363d" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="90" y1="110" x2="115" y2="110" stroke="#30363d" stroke-width="1.5"/>
+      <text x="120" y="115" fill="#56d364" font-size="13" font-family="Fira Code, monospace">📄 latest</text>
+      <text x="320" y="115" fill="#8b949e" font-size="11" font-family="Fira Code, monospace">← সবচেয়ে নতুন version-এর pointer</text>
+      <!-- version 1 -->
+      <line x1="90" y1="145" x2="115" y2="145" stroke="#30363d" stroke-width="1.5"/>
+      <text x="120" y="150" fill="#d2a8ff" font-size="13" font-family="Fira Code, monospace">📁 y22glzfi3om7jinx/</text>
+      <text x="320" y="150" fill="#8b949e" font-size="11" font-family="Fira Code, monospace">← unique tag (version 1)</text>
+      <!-- inside version 1 -->
+      <line x1="140" y1="155" x2="140" y2="200" stroke="#30363d" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="140" y1="172" x2="165" y2="172" stroke="#30363d" stroke-width="1.5"/>
+      <text x="170" y="177" fill="#e6edf3" font-size="12" font-family="Fira Code, monospace">📄 model.yaml</text>
+      <text x="340" y="177" fill="#8b949e" font-size="10" font-family="Fira Code, monospace">← metadata (কখন, কোন framework)</text>
+      <line x1="140" y1="190" x2="165" y2="190" stroke="#30363d" stroke-width="1.5"/>
+      <text x="170" y="195" fill="#e6edf3" font-size="12" font-family="Fira Code, monospace">📄 saved_model.pkl</text>
+      <text x="340" y="195" fill="#8b949e" font-size="10" font-family="Fira Code, monospace">← actual trained model binary</text>
+      <!-- another model -->
+      <line x1="40" y1="225" x2="65" y2="225" stroke="#30363d" stroke-width="1.5"/>
+      <text x="70" y="230" fill="#79c0ff" font-size="13" font-family="Fira Code, monospace">📁 other_model/</text>
+      <text x="220" y="230" fill="#8b949e" font-size="11" font-family="Fira Code, monospace">← অন্য model-এর জন্য আলাদা folder</text>
+    </svg>
+  </div>
+
+  <div class="subsection">
+    <h3>Model Save করার Command</h3>
+    <pre><code><span class="kw">import</span> bentoml
+<span class="kw">from</span> sklearn <span class="kw">import</span> ensemble
+
+<span class="cm"># Model train করলাম (ধরে নিলাম)</span>
+rf_classifier = ensemble.<span class="fn">RandomForestClassifier</span>(n_jobs=-<span class="num">1</span>)
+rf_classifier.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="cm"># এখন BentoML-এ save করো</span>
+<span class="cm"># "accidents_rf" হলো model-এর নাম — তুমি যেকোনো নাম দিতে পারো</span>
+model_ref = bentoml.sklearn.<span class="fn">save_model</span>(<span class="str">"accidents_rf"</span>, rf_classifier)
+
+<span class="fn">print</span>(<span class="str">f"Model saved as: {model_ref}"</span>)
+<span class="cm"># Output: Model saved as: accidents_rf:y22glzfi3om7jinx</span></code><span class="lang-label">python</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>Model দেখার ও মুছার Commands</h3>
+    <pre><code><span class="cm"># সব saved model-এর list দেখো</span>
+bentoml models list
+
+<span class="cm"># Output এরকম দেখাবে:</span>
+<span class="cm"># Tag                          Module          Size       Creation Time</span>
+<span class="cm"># accidents_rf:y22glzfi3om7j   bentoml.sklearn  102.23 MiB  2024-05-29 11:24:10</span>
+
+<span class="cm"># একটি model load করো (Python script-এ)</span>
+model = bentoml.sklearn.<span class="fn">load_model</span>(<span class="str">"accidents_rf:latest"</span>)
+
+<span class="cm"># একটি model মুছো (tag দিয়ে)</span>
+bentoml models delete accidents_rf:y22glzfi3om7jinx</code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <div class="callout success">
+    <div class="callout-title">✅ "latest" এর সুবিধা</div>
+    <p>তুমি model-এর tag মনে না রাখলেও <code>accidents_rf:latest</code> দিলেই সবচেয়ে নতুন version load হবে। BentoML নিজেই track করে কোনটা latest।</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: First Model -->
+<!-- ============================================================ -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2>প্রথম Model তৈরি — হাতে-কলমে</h2>
+  </div>
+
+  <p>এই section-এ আমরা একটি Road Accident dataset দিয়ে model তৈরি করবো। এটা দেখাবে কিভাবে পুরো ML workflow কাজ করে।</p>
+
+  <div class="subsection">
+    <h3>ধাপ ০: Repository Clone করো</h3>
+    <pre><code><span class="cm"># একটি নতুন folder তৈরি করো ও সেখানে যাও</span>
+mkdir accidents &amp;&amp; cd accidents
+
+<span class="cm"># GitHub থেকে project clone করো</span>
+git clone https://github.com/DataScientest-Studio/Template_MLOps_accidents.git
+cd Template_MLOps_accidents
+
+<span class="cm"># bentoml branch-এ switch করো — এটা গুরুত্বপূর্ণ!</span>
+git checkout bentoml</code><span class="lang-label">bash</span></pre>
+
+    <p>Clone করার পর project-এর folder structure এরকম:</p>
+    <div class="diagram-box">
+      <div class="diagram-title">Project Folder Structure</div>
+      <svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+        <text x="30" y="28" fill="#ffa657" font-size="13" font-family="Fira Code, monospace">Template_MLOps_accidents/</text>
+        <line x1="40" y1="38" x2="40" y2="248" stroke="#30363d" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="40" y1="55" x2="65" y2="55" stroke="#30363d" stroke-width="1.5"/>
+        <text x="70" y="60" fill="#79c0ff" font-size="12" font-family="Fira Code, monospace">📁 src/</text>
+        <text x="200" y="60" fill="#56d364" font-size="11">← তোমার সব Python code এখানে</text>
+        <line x1="90" y1="65" x2="90" y2="120" stroke="#30363d" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="90" y1="80" x2="115" y2="80" stroke="#30363d" stroke-width="1.5"/>
+        <text x="120" y="85" fill="#e6edf3" font-size="11" font-family="Fira Code, monospace">📁 data/ → import_raw_data.py, make_dataset.py</text>
+        <line x1="90" y1="102" x2="115" y2="102" stroke="#30363d" stroke-width="1.5"/>
+        <text x="120" y="107" fill="#e6edf3" font-size="11" font-family="Fira Code, monospace">📁 models/ → train_model.py, service.py</text>
+        <line x1="40" y1="130" x2="65" y2="130" stroke="#30363d" stroke-width="1.5"/>
+        <text x="70" y="135" fill="#79c0ff" font-size="12" font-family="Fira Code, monospace">📁 data/</text>
+        <text x="200" y="135" fill="#8b949e" font-size="11">← raw ও preprocessed data রাখার জায়গা</text>
+        <line x1="40" y1="158" x2="65" y2="158" stroke="#30363d" stroke-width="1.5"/>
+        <text x="70" y="163" fill="#d2a8ff" font-size="12" font-family="Fira Code, monospace">📁 models/</text>
+        <text x="200" y="163" fill="#8b949e" font-size="11">← locally saved model files</text>
+        <line x1="40" y1="186" x2="65" y2="186" stroke="#30363d" stroke-width="1.5"/>
+        <text x="70" y="191" fill="#56d364" font-size="12" font-family="Fira Code, monospace">📄 requirements.txt</text>
+        <text x="280" y="191" fill="#8b949e" font-size="11">← pip dependencies list</text>
+        <line x1="40" y1="214" x2="65" y2="214" stroke="#30363d" stroke-width="1.5"/>
+        <text x="70" y="219" fill="#56d364" font-size="12" font-family="Fira Code, monospace">📄 setup.py</text>
+        <text x="280" y="219" fill="#8b949e" font-size="11">← package configuration</text>
+        <line x1="40" y1="242" x2="65" y2="242" stroke="#30363d" stroke-width="1.5"/>
+        <text x="70" y="247" fill="#56d364" font-size="12" font-family="Fira Code, monospace">📄 README.md</text>
+        <text x="280" y="247" fill="#8b949e" font-size="11">← project documentation</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num-circle">১</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <h4>Repository Clone করো</h4>
+        <p>উপরের commands চালাও। <code>git checkout bentoml</code> ভুললে চলবে না — ভুল branch-এ code থাকবে।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num-circle">২</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <h4>Raw Data Import করো</h4>
+        <p><code>python3 src/data/import_raw_data.py</code> চালাও। জিজ্ঞেস করবে folder তৈরি করবে কিনা — <strong>y</strong> দাও।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num-circle">৩</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <h4>Data Preprocess করো</h4>
+        <p><code>python3 src/data/make_dataset.py</code> চালাও। এটা raw data থেকে model-এর উপযোগী data তৈরি করবে।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num-circle">৪</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-content">
+        <h4>Model Train ও Save করো</h4>
+        <p><code>python3 src/models/train_model.py</code> চালাও। Model train হবে ও BentoML-এ save হবে।</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>train_model.py ফাইলটি বিস্তারিত</h3>
+    <pre><code><span class="kw">import</span> sklearn
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn <span class="kw">import</span> ensemble
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> bentoml
+
+<span class="cm"># ধাপ ১: Preprocessed data load করো</span>
+X_train = pd.<span class="fn">read_csv</span>(<span class="str">'data/preprocessed/X_train.csv'</span>)
+X_test  = pd.<span class="fn">read_csv</span>(<span class="str">'data/preprocessed/X_test.csv'</span>)
+y_train = pd.<span class="fn">read_csv</span>(<span class="str">'data/preprocessed/y_train.csv'</span>)
+y_test  = pd.<span class="fn">read_csv</span>(<span class="str">'data/preprocessed/y_test.csv'</span>)
+
+<span class="cm"># y_train 2D array — 1D করো</span>
+y_train = np.<span class="fn">ravel</span>(y_train)
+y_test  = np.<span class="fn">ravel</span>(y_test)
+
+<span class="cm"># ধাপ ২: Random Forest model তৈরি ও train</span>
+<span class="cm"># n_jobs=-1 মানে সব CPU core ব্যবহার করো (দ্রুত train হবে)</span>
+rf_classifier = ensemble.<span class="fn">RandomForestClassifier</span>(n_jobs=<span class="op">-</span><span class="num">1</span>)
+rf_classifier.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="cm"># ধাপ ৩: Accuracy পরীক্ষা করো</span>
+accuracy = rf_classifier.<span class="fn">score</span>(X_test, y_test)
+<span class="fn">print</span>(<span class="str">f"Model accuracy: {accuracy}"</span>)
+<span class="cm"># Output: Model accuracy: 0.776  (77.6% ✓)</span>
+
+<span class="cm"># ধাপ ৪: BentoML Model Store-এ save করো</span>
+<span class="cm"># প্রথম argument: model-এর নাম</span>
+<span class="cm"># দ্বিতীয় argument: actual model object</span>
+model_ref = bentoml.sklearn.<span class="fn">save_model</span>(<span class="str">"accidents_rf"</span>, rf_classifier)
+<span class="fn">print</span>(<span class="str">f"Model saved: {model_ref}"</span>)</code><span class="lang-label">python</span></pre>
+
+    <div class="callout success">
+      <div class="callout-title">✅ এই output দেখলে সফল</div>
+      <p>Model accuracy: 0.7762949421084705 — মানে model 77% ক্ষেত্রে সঠিক prediction করতে পারে।</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: API & Serving -->
+<!-- ============================================================ -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2>API ও Serving — মডেলকে সার্ভিস বানানো</h2>
+  </div>
+
+  <div class="subsection">
+    <h3>API কী? — সহজ ভাষায়</h3>
+    <p>API (Application Programming Interface) হলো দুটো software-এর মধ্যে কথা বলার নিয়ম। ধরো তোমার model একটি "রেস্তোরাঁ"। API হলো "মেনু কার্ড" — customer বলে কী চায়, রেস্তোরাঁ দেয়।</p>
+  </div>
+
+  <!-- SVG: API Flow -->
+  <div class="diagram-box">
+    <div class="diagram-title">ML API-এর কাজের ধারা</div>
+    <svg viewBox="0 0 760 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+      <defs>
+        <marker id="arr4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#79c0ff"/>
+        </marker>
+        <marker id="arr4g" markerWidth="8" markerHeight="6" refX="1" refY="3" orient="auto">
+          <polygon points="8 0, 0 3, 8 6" fill="#56d364"/>
+        </marker>
+      </defs>
+      <!-- Client -->
+      <rect x="10" y="50" width="120" height="80" rx="10" fill="#1c2333" stroke="#30363d"/>
+      <text x="70" y="85" text-anchor="middle" fill="#e6edf3" font-size="24">📱</text>
+      <text x="70" y="110" text-anchor="middle" fill="#8b949e" font-size="11">Client App</text>
+      <text x="70" y="124" text-anchor="middle" fill="#8b949e" font-size="11">(User/Mobile)</text>
+      <!-- Arrow: Request -->
+      <line x1="133" y1="82" x2="200" y2="82" stroke="#79c0ff" stroke-width="2" marker-end="url(#arr4)"/>
+      <text x="167" y="72" text-anchor="middle" fill="#79c0ff" font-size="10">① Request</text>
+      <text x="167" y="95" text-anchor="middle" fill="#8b949e" font-size="9">(POST /predict)</text>
+      <!-- API Box -->
+      <rect x="203" y="30" width="130" height="120" rx="10" fill="#1c2333" stroke="#ffa657" stroke-width="1.5"/>
+      <text x="268" y="65" text-anchor="middle" fill="#ffa657" font-size="11" font-weight="700">🌐 BentoML API</text>
+      <text x="268" y="85" text-anchor="middle" fill="#8b949e" font-size="10">② Data Validate</text>
+      <text x="268" y="102" text-anchor="middle" fill="#8b949e" font-size="10">③ Preprocess</text>
+      <text x="268" y="119" text-anchor="middle" fill="#8b949e" font-size="10">⑤ Format Response</text>
+      <!-- Arrow: to model -->
+      <line x1="336" y1="85" x2="403" y2="85" stroke="#79c0ff" stroke-width="2" marker-end="url(#arr4)"/>
+      <text x="370" y="75" text-anchor="middle" fill="#79c0ff" font-size="10">④ Input Data</text>
+      <!-- Model Box -->
+      <rect x="406" y="45" width="130" height="80" rx="10" fill="#1c2333" stroke="#d2a8ff" stroke-width="1.5"/>
+      <text x="471" y="78" text-anchor="middle" fill="#d2a8ff" font-size="24">🤖</text>
+      <text x="471" y="105" text-anchor="middle" fill="#d2a8ff" font-size="11" font-weight="600">ML Model</text>
+      <!-- Arrow: prediction -->
+      <line x1="539" y1="85" x2="606" y2="85" stroke="#56d364" stroke-width="2" marker-end="url(#arr4)"/>
+      <text x="573" y="75" text-anchor="middle" fill="#56d364" font-size="10">⑥ Prediction</text>
+      <!-- Response Box -->
+      <rect x="609" y="50" width="130" height="80" rx="10" fill="#1c2333" stroke="#56d364" stroke-width="1.5"/>
+      <text x="674" y="82" text-anchor="middle" fill="#56d364" font-size="22">✅</text>
+      <text x="674" y="104" text-anchor="middle" fill="#e6edf3" font-size="11">{"prediction":</text>
+      <text x="674" y="120" text-anchor="middle" fill="#56d364" font-size="11"> [1]}</text>
+      <!-- Return arrow -->
+      <path d="M 609 120 Q 380 165 133 118" fill="none" stroke="#56d364" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr4g)"/>
+      <text x="380" y="160" text-anchor="middle" fill="#56d364" font-size="10">⑦ Response ফেরত</text>
+    </svg>
+  </div>
+
+  <div class="subsection">
+    <h3>সহজ API Service তৈরি (simple_service.py)</h3>
+    <pre><code><span class="kw">import</span> bentoml
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">from</span> bentoml.io <span class="kw">import</span> JSON
+
+<span class="cm"># ধাপ ১: Model Store থেকে model load করো</span>
+<span class="cm"># "latest" মানে সবচেয়ে নতুন version</span>
+model_runner = bentoml.sklearn.<span class="fn">get</span>(<span class="str">"accidents_rf:latest"</span>).<span class="fn">to_runner</span>()
+
+<span class="cm"># ধাপ ২: Input data-এর সব fields define করো (Pydantic model)</span>
+<span class="cm"># Pydantic মানে — ভুল type দিলে API নিজেই error ফেরত দেবে</span>
+<span class="kw">class</span> <span class="fn">InputModel</span>(BaseModel):
+    place: <span class="fn">int</span>           <span class="cm"># দুর্ঘটনার স্থান code</span>
+    catu: <span class="fn">int</span>            <span class="cm"># ব্যক্তির category (1=চালক, 2=যাত্রী...)</span>
+    sexe: <span class="fn">int</span>            <span class="cm"># লিঙ্গ (1=পুরুষ, 2=মহিলা)</span>
+    secu1: <span class="fn">float</span>         <span class="cm"># নিরাপত্তা সরঞ্জাম</span>
+    year_acc: <span class="fn">int</span>        <span class="cm"># দুর্ঘটনার বছর</span>
+    victim_age: <span class="fn">int</span>      <span class="cm"># আহত ব্যক্তির বয়স</span>
+    catv: <span class="fn">int</span>            <span class="cm"># যানবাহনের category</span>
+    obsm: <span class="fn">int</span>            <span class="cm"># চলমান বাধা</span>
+    motor: <span class="fn">int</span>           <span class="cm"># engine type</span>
+    catr: <span class="fn">int</span>            <span class="cm"># রাস্তার category</span>
+    circ: <span class="fn">int</span>            <span class="cm"># traffic direction</span>
+    surf: <span class="fn">int</span>            <span class="cm"># রাস্তার surface অবস্থা</span>
+    situ: <span class="fn">int</span>            <span class="cm"># দুর্ঘটনার স্থান পরিস্থিতি</span>
+    vma: <span class="fn">int</span>             <span class="cm"># সর্বোচ্চ অনুমোদিত গতি</span>
+    jour: <span class="fn">int</span>            <span class="cm"># সপ্তাহের দিন</span>
+    mois: <span class="fn">int</span>            <span class="cm"># মাস</span>
+    lum: <span class="fn">int</span>             <span class="cm"># আলোর পরিস্থিতি</span>
+    dep: <span class="fn">int</span>             <span class="cm"># department code</span>
+    com: <span class="fn">int</span>             <span class="cm"># commune code</span>
+    agg_: <span class="fn">int</span>            <span class="cm"># শহর এলাকা কিনা</span>
+    <span class="fn">int</span>: <span class="fn">int</span>             <span class="cm"># intersection type</span>
+    atm: <span class="fn">int</span>             <span class="cm"># আবহাওয়া</span>
+    col: <span class="fn">int</span>             <span class="cm"># collision type</span>
+    lat: <span class="fn">float</span>           <span class="cm"># latitude (GPS)</span>
+    long: <span class="fn">float</span>          <span class="cm"># longitude (GPS)</span>
+    hour: <span class="fn">int</span>            <span class="cm"># ঘণ্টা</span>
+    nb_victim: <span class="fn">int</span>       <span class="cm"># আহতের সংখ্যা</span>
+    nb_vehicules: <span class="fn">int</span>    <span class="cm"># যানবাহনের সংখ্যা</span>
+
+<span class="cm"># ধাপ ৩: Service তৈরি করো — নামটা গুরুত্বপূর্ণ, এটাই Bento-র নাম হবে</span>
+svc = bentoml.<span class="fn">Service</span>(<span class="str">"rf_clf_service"</span>, runners=[model_runner])
+
+<span class="cm"># ধাপ ৪: Endpoint define করো</span>
+<span class="cm"># POST /classify → এই function চলবে</span>
+@svc.<span class="fn">api</span>(<span class="fn">input</span>=<span class="fn">JSON</span>(pydantic_model=InputModel), output=<span class="fn">JSON</span>())
+<span class="kw">async def</span> <span class="fn">classify</span>(input_data: InputModel):
+    <span class="cm"># Pydantic model → list of values → model-এ দাও</span>
+    data = [[
+        input_data.place, input_data.catu, input_data.sexe,
+        input_data.secu1, input_data.year_acc, input_data.victim_age,
+        <span class="cm"># ... বাকি সব fields</span>
+    ]]
+    prediction = <span class="kw">await</span> model_runner.<span class="fn">predict</span>.<span class="fn">async_run</span>(data)
+    <span class="kw">return</span> {<span class="str">"prediction"</span>: prediction.<span class="fn">tolist</span>()}</code><span class="lang-label">python</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>Service চালু করো</h3>
+    <pre><code><span class="cm"># project root থেকে চালালে এই format:</span>
+<span class="cm"># "src.simple_service" মানে src/ folder-এর simple_service.py ফাইল</span>
+<span class="cm"># ":svc" মানে ওই ফাইলে "svc" নামের variable</span>
+bentoml serve src.simple_service:svc --port <span class="num">3001</span> --reload
+
+<span class="cm"># অথবা src/ folder-এর ভেতরে থেকে চালালে:</span>
+bentoml serve simple_service:svc --port <span class="num">3001</span> --reload
+
+<span class="cm"># --reload মানে: code change হলে auto restart করবে (development-এ কাজের)</span>
+<span class="cm"># service চললে terminal-এ দেখবে:</span>
+<span class="cm"># Starting production HTTP BentoServer from "service:rf" listening on http://0.0.0.0:3001</span></code><span class="lang-label">bash</span></pre>
+
+    <div class="callout success">
+      <div class="callout-title">🌐 Swagger UI — Browser-এ API Test</div>
+      <p>Service চালু হলে browser-এ <code>http://localhost:3001</code> যাও। স্বয়ংক্রিয়ভাবে তৈরি Swagger UI দেখবে — সেখানে input দিয়ে সরাসরি API test করা যায়, কোনো extra tool ছাড়াই। প্রতিটা endpoint-এর documentation ও example দেখা যায়।</p>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-title">💡 দুটো Terminal লাগবে</div>
+      <p>প্রথম terminal-এ service চালু রাখো (এটা বন্ধ করলে API বন্ধ হবে)। দ্বিতীয় terminal খুলে সেখান থেকে curl বা test script চালাও।</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>curl দিয়ে API Test করো</h3>
+    <pre><code><span class="cm"># Terminal থেকে API test করা</span>
+curl -X POST http://127.0.0.1:<span class="num">3001</span>/classify \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"place": 10, "catu": 3, "sexe": 1, "victim_age": 60}'</span>
+
+<span class="cm"># Response পাবে:</span>
+{<span class="str">"prediction"</span>: [<span class="num">1</span>]}</code><span class="lang-label">bash</span></pre>
+
+    <div class="callout info">
+      <div class="callout-title">💡 curl কী?</div>
+      <p>curl হলো command line থেকে HTTP request পাঠানোর tool। Postman-এর মতো, কিন্তু terminal-এ। -X মানে HTTP method (POST), -H মানে Header, -d মানে Data।</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Prometheus Metrics — Performance Monitor করো</h3>
+    <p>BentoML service চালু হলে আরেকটি bonus পাবে — <strong>Prometheus metrics endpoint</strong>। এটা দিয়ে কতটা request আসছে, কতক্ষণ লাগছে — সব monitor করা যায়।</p>
+    <pre><code><span class="cm"># Service চালু হলে metrics দেখতে যাও:</span>
+http://localhost:3001/metrics
+
+<span class="cm"># বা terminal থেকে:</span>
+curl http://localhost:3001/metrics
+
+<span class="cm"># Output-এ দেখবে:</span>
+<span class="cm"># bentoml_api_server_request_total{...} 42</span>
+<span class="cm"># bentoml_api_server_request_duration_seconds{...} 0.023</span></code><span class="lang-label">bash</span></pre>
+
+    <div class="callout tip">
+      <div class="callout-title">📊 REST API vs gRPC</div>
+      <p>BentoML দুটো protocol support করে। <strong>REST API</strong> (HTTP/JSON) — সহজ, browser থেকে test করা যায়, সব জায়গায় কাজ করে। <strong>gRPC</strong> — দ্রুততর, binary format, কিন্তু বেশি complex। নতুনদের জন্য REST API-ই যথেষ্ট।</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: JWT Security -->
+<!-- ============================================================ -->
+<div class="section" id="s8">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2>API Security — JWT Authentication</h2>
+  </div>
+
+  <p>সমস্যা হলো যে কেউ তোমার API call করতে পারছে। এটা নিরাপদ না। সমাধান হলো <strong>JWT (JSON Web Token)</strong> দিয়ে authentication।</p>
+
+  <div class="callout info">
+    <div class="callout-title">🔑 JWT কী?</div>
+    <p>ধরো তুমি concert-এ ঢুকলে — gate-এ ticket দেখালে, তারা তোমাকে wristband দিলো। এরপর ভেতরে যেখানেই যাও, wristband দেখালেই ঢুকতে দেবে — আবার ticket দেখাতে হবে না। JWT ঠিক এরকম। Login করলে একটা "token" পাবে — সেটা দিয়েই সব API call করতে পারবে।</p>
+  </div>
+
+  <!-- SVG: JWT Flow -->
+  <div class="diagram-box">
+    <div class="diagram-title">JWT Authentication Flow</div>
+    <svg viewBox="0 0 720 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+      <defs>
+        <marker id="arr5" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#79c0ff"/>
+        </marker>
+        <marker id="arr5g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#56d364"/>
+        </marker>
+        <marker id="arr5r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#f78166"/>
+        </marker>
+      </defs>
+      <!-- Client column -->
+      <rect x="20" y="10" width="100" height="320" rx="10" fill="#1c2333" stroke="#30363d" stroke-width="1.5"/>
+      <text x="70" y="35" text-anchor="middle" fill="#e6edf3" font-size="12" font-weight="600">Client</text>
+      <text x="70" y="50" text-anchor="middle" fill="#e6edf3" font-size="20">👤</text>
+      <!-- Server column -->
+      <rect x="300" y="10" width="130" height="320" rx="10" fill="#1c2333" stroke="#ffa657" stroke-width="1.5"/>
+      <text x="365" y="35" text-anchor="middle" fill="#ffa657" font-size="12" font-weight="600">BentoML Service</text>
+      <!-- Step 1: Login request -->
+      <line x1="123" y1="80" x2="297" y2="80" stroke="#79c0ff" stroke-width="1.5" marker-end="url(#arr5)"/>
+      <text x="210" y="70" text-anchor="middle" fill="#79c0ff" font-size="10">① POST /login</text>
+      <text x="210" y="93" text-anchor="middle" fill="#8b949e" font-size="9">username + password</text>
+      <!-- Server processing -->
+      <rect x="315" y="100" width="100" height="40" rx="6" fill="#0d1117" stroke="#30363d"/>
+      <text x="365" y="116" text-anchor="middle" fill="#8b949e" font-size="10">Credentials</text>
+      <text x="365" y="130" text-anchor="middle" fill="#8b949e" font-size="10">যাচাই করে</text>
+      <!-- Token return -->
+      <line x1="297" y1="155" x2="123" y2="155" stroke="#56d364" stroke-width="1.5" marker-end="url(#arr5g)"/>
+      <text x="210" y="145" text-anchor="middle" fill="#56d364" font-size="10">② JWT Token দেয়</text>
+      <text x="210" y="168" text-anchor="middle" fill="#8b949e" font-size="9">eyJhbGc... (1 ঘণ্টা valid)</text>
+      <!-- Client stores token -->
+      <rect x="25" y="175" width="90" height="30" rx="5" fill="#0d1117" stroke="#30363d"/>
+      <text x="70" y="187" text-anchor="middle" fill="#8b949e" font-size="9">Token store করে</text>
+      <text x="70" y="198" text-anchor="middle" fill="#56d364" font-size="9">🔑 wristband!</text>
+      <!-- Predict request with token -->
+      <line x1="123" y1="225" x2="297" y2="225" stroke="#79c0ff" stroke-width="1.5" marker-end="url(#arr5)"/>
+      <text x="210" y="215" text-anchor="middle" fill="#79c0ff" font-size="10">③ POST /predict</text>
+      <text x="210" y="238" text-anchor="middle" fill="#8b949e" font-size="9">Header: Bearer eyJhbGc...</text>
+      <!-- Server verifies -->
+      <rect x="315" y="245" width="100" height="40" rx="6" fill="#0d1117" stroke="#30363d"/>
+      <text x="365" y="261" text-anchor="middle" fill="#8b949e" font-size="10">Token verify,</text>
+      <text x="365" y="275" text-anchor="middle" fill="#8b949e" font-size="10">Model predict</text>
+      <!-- Prediction return -->
+      <line x1="297" y1="300" x2="123" y2="300" stroke="#56d364" stroke-width="1.5" marker-end="url(#arr5g)"/>
+      <text x="210" y="290" text-anchor="middle" fill="#56d364" font-size="10">④ {"prediction": [1]}</text>
+      <!-- Invalid path -->
+      <rect x="470" y="205" width="140" height="60" rx="8" fill="#1c2333" stroke="#f85149" stroke-width="1.5"/>
+      <text x="540" y="228" text-anchor="middle" fill="#f85149" font-size="11" font-weight="600">❌ Token ছাড়া</text>
+      <text x="540" y="248" text-anchor="middle" fill="#8b949e" font-size="10">401 Unauthorized</text>
+      <text x="540" y="262" text-anchor="middle" fill="#8b949e" font-size="10">Access Denied</text>
+      <line x1="433" y1="235" x2="467" y2="235" stroke="#f85149" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#arr5r)"/>
+    </svg>
+  </div>
+
+  <div class="subsection">
+    <h3>Middleware কী এবং কেন দরকার?</h3>
+    <p><strong>Middleware</strong> হলো একটি "দারোয়ান" যে প্রতিটা request আসার আগেই সেটা চেক করে। BentoML নিজে কোনো security দেয় না — তাই আমাদের নিজেই এই দারোয়ান বসাতে হয়।</p>
+
+    <table>
+      <thead>
+        <tr><th>কারণ</th><th>ব্যাখ্যা</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Authentication</strong></td><td>শুধু valid user-রাই API ব্যবহার করতে পারবে</td></tr>
+        <tr><td><strong>Logging</strong></td><td>কে কখন request করেছে তার record রাখা</td></tr>
+        <tr><td><strong>Rate Limiting</strong></td><td>একজন user বেশি বার request করতে পারবে না</td></tr>
+        <tr><td><strong>Security</strong></td><td>Suspicious activity detect করা</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>JWT Authentication-সহ Service (service.py)</h3>
+    <pre><code><span class="kw">import</span> jwt
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+<span class="kw">from</span> starlette.middleware.base <span class="kw">import</span> BaseHTTPMiddleware
+<span class="kw">from</span> starlette.responses <span class="kw">import</span> JSONResponse
+
+<span class="cm"># User database (real project-এ database থেকে আসবে)</span>
+USERS = {
+    <span class="str">"user123"</span>: <span class="str">"password123"</span>,
+    <span class="str">"admin"</span>: <span class="str">"admin123"</span>
+}
+SECRET_KEY = <span class="str">"my-secret-key"</span>  <span class="cm"># Real project-এ .env file-এ রাখো</span>
+
+<span class="cm"># JWT Middleware — দারোয়ান</span>
+<span class="kw">class</span> <span class="fn">JWTAuthMiddleware</span>(BaseHTTPMiddleware):
+    <span class="kw">async def</span> <span class="fn">dispatch</span>(self, request, call_next):
+        <span class="cm"># Login endpoint-এ token লাগে না</span>
+        <span class="kw">if</span> request.url.path == <span class="str">"/login"</span>:
+            <span class="kw">return await</span> <span class="fn">call_next</span>(request)
+        
+        <span class="cm"># Authorization header থেকে token নাও</span>
+        token = request.headers.<span class="fn">get</span>(<span class="str">"Authorization"</span>, <span class="str">""</span>).<span class="fn">replace</span>(<span class="str">"Bearer "</span>, <span class="str">""</span>)
+        
+        <span class="kw">try</span>:
+            <span class="cm"># Token verify করো</span>
+            payload = jwt.<span class="fn">decode</span>(token, SECRET_KEY, algorithms=[<span class="str">"HS256"</span>])
+            request.state.user = payload[<span class="str">"sub"</span>]
+        <span class="kw">except</span> jwt.ExpiredSignatureError:
+            <span class="kw">return</span> <span class="fn">JSONResponse</span>({<span class="str">"error"</span>: <span class="str">"Token expired"</span>}, status_code=<span class="num">401</span>)
+        <span class="kw">except</span> jwt.InvalidTokenError:
+            <span class="kw">return</span> <span class="fn">JSONResponse</span>({<span class="str">"error"</span>: <span class="str">"Invalid token"</span>}, status_code=<span class="num">401</span>)
+        
+        <span class="kw">return await</span> <span class="fn">call_next</span>(request)
+
+<span class="cm"># Service তৈরি করো</span>
+svc = bentoml.<span class="fn">Service</span>(<span class="str">"rf_clf_service"</span>, runners=[model_runner])
+svc.add_asgi_middleware(<span class="fn">JWTAuthMiddleware</span>)
+
+<span class="cm"># Login endpoint</span>
+@svc.<span class="fn">api</span>(<span class="fn">input</span>=<span class="fn">JSON</span>(), output=<span class="fn">JSON</span>())
+<span class="kw">async def</span> <span class="fn">login</span>(credentials: dict):
+    username = credentials.<span class="fn">get</span>(<span class="str">"username"</span>)
+    password = credentials.<span class="fn">get</span>(<span class="str">"password"</span>)
+    
+    <span class="kw">if</span> USERS.<span class="fn">get</span>(username) == password:
+        <span class="cm"># Token তৈরি করো — 1 ঘণ্টা valid</span>
+        token = jwt.<span class="fn">encode</span>({
+            <span class="str">"sub"</span>: username,
+            <span class="str">"exp"</span>: datetime.<span class="fn">utcnow</span>() + timedelta(hours=<span class="num">1</span>)
+        }, SECRET_KEY, algorithm=<span class="str">"HS256"</span>)
+        <span class="kw">return</span> {<span class="str">"token"</span>: token}
+    <span class="kw">return</span> <span class="fn">JSONResponse</span>({<span class="str">"error"</span>: <span class="str">"Invalid credentials"</span>}, status_code=<span class="num">401</span>)</code><span class="lang-label">python</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>Secured API Test করো (curl দিয়ে)</h3>
+    <pre><code><span class="cm"># ধাপ ১: Login করো, token নাও</span>
+token=$(curl -s -X POST http://127.0.0.1:<span class="num">3001</span>/login \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"username": "user123", "password": "password123"}'</span> | jq -r <span class="str">'.token'</span>)
+
+<span class="cm"># ধাপ ২: Token ব্যবহার করে prediction করো</span>
+curl -X POST http://127.0.0.1:<span class="num">3001</span>/v1/models/rf_classifier/predict \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -H <span class="str">"Authorization: Bearer $token"</span> \
+  -d <span class="str">'{"place": 10, "catu": 3, "sexe": 1, "victim_age": 60, ...}'</span>
+
+<span class="cm"># Response:</span>
+{<span class="str">"prediction"</span>: [<span class="num">1</span>], <span class="str">"user"</span>: <span class="str">"user123"</span>}</code><span class="lang-label">bash</span></pre>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 9: Build Bento -->
+<!-- ============================================================ -->
+<div class="section" id="s9">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <h2>Bento Build করা — সব কিছু একসাথে প্যাক করো</h2>
+  </div>
+
+  <p>এখন আমাদের model ও API তৈরি। কিন্তু এটা শুধু আমার machine-এ চলে। অন্য কোনো server-এ পাঠাতে হলে সব কিছু একসাথে "প্যাক" করতে হবে। এটাই হলো <strong>Bento Build</strong>।</p>
+
+  <div class="subsection">
+    <h3>bentofile.yaml তৈরি করো</h3>
+    <p>এই ফাইলে আমরা বলি — Bento-তে কী কী থাকবে।</p>
+    <pre><code><span class="cm"># bentofile.yaml (project-এর root-এ রাখো)</span>
+
+<span class="cm"># কোন service class ব্যবহার করবো?</span>
+<span class="cm"># format: "folder.filename:ClassName"</span>
+service: <span class="str">"src.service:RFClassifierService"</span>
+
+<span class="cm"># বর্ণনা</span>
+description: <span class="str">"Road Accident Prediction Service"</span>
+
+<span class="cm"># Labels — organize করার জন্য</span>
+labels:
+  owner: <span class="str">"MyTeam"</span>
+  project: <span class="str">"accident_prediction"</span>
+
+<span class="cm"># কোন folder/file Bento-তে include করবো?</span>
+include:
+  - src/    <span class="cm"># source code</span>
+  - data/   <span class="cm"># data files</span>
+
+<span class="cm"># কোন saved model ব্যবহার করবো?</span>
+models:
+  - accidents_rf:latest
+
+<span class="cm"># Python packages (dependencies)</span>
+python:
+  packages:
+    - numpy==1.26.4
+    - pandas==2.3.3
+    - scikit-learn==1.3.2
+    - bentoml==1.4.26
+    - pydantic==2.12.1
+    - pyjwt==2.10.1</code><span class="lang-label">yaml</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>Bento Build করার Command</h3>
+    <pre><code><span class="cm"># project root folder-এ থেকে চালাও</span>
+bentoml build
+
+<span class="cm"># সফল হলে এরকম দেখাবে:</span>
+<span class="cm"># Successfully built Bento(tag="rf_classifier_service:gzsw76vjb2wl4k4k")</span>
+
+<span class="cm"># Build হওয়া Bento-র list দেখো</span>
+bentoml list
+
+<span class="cm"># একটি Bento মুছো</span>
+bentoml delete rf_classifier_service:gzsw76vjb2wl4k4k</code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <!-- SVG: Bento Architecture -->
+  <div class="diagram-box">
+    <div class="diagram-title">Bento-র ভেতরের ফাইল structure</div>
+    <svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+      <text x="30" y="30" fill="#ffa657" font-size="13" font-family="Fira Code, monospace">~/bentoml/bentos/rf_classifier_service/gzsw76.../</text>
+      <line x1="40" y1="40" x2="40" y2="240" stroke="#30363d" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <!-- bento.yaml -->
+      <line x1="40" y1="65" x2="65" y2="65" stroke="#30363d" stroke-width="1.5"/>
+      <text x="70" y="70" fill="#56d364" font-size="12" font-family="Fira Code, monospace">📄 bento.yaml</text>
+      <text x="270" y="70" fill="#8b949e" font-size="11">← Bento-র সব configuration info</text>
+      <!-- Dockerfile -->
+      <line x1="40" y1="95" x2="65" y2="95" stroke="#30363d" stroke-width="1.5"/>
+      <text x="70" y="100" fill="#79c0ff" font-size="12" font-family="Fira Code, monospace">📄 Dockerfile</text>
+      <text x="270" y="100" fill="#8b949e" font-size="11">← Auto-generated! Docker image-এর recipe</text>
+      <!-- openapi.yaml -->
+      <line x1="40" y1="125" x2="65" y2="125" stroke="#30363d" stroke-width="1.5"/>
+      <text x="70" y="130" fill="#d2a8ff" font-size="12" font-family="Fira Code, monospace">📄 openapi.yaml</text>
+      <text x="270" y="130" fill="#8b949e" font-size="11">← API documentation (Swagger format)</text>
+      <!-- src folder -->
+      <line x1="40" y1="155" x2="65" y2="155" stroke="#30363d" stroke-width="1.5"/>
+      <text x="70" y="160" fill="#ffa657" font-size="12" font-family="Fira Code, monospace">📁 src/</text>
+      <text x="270" y="160" fill="#8b949e" font-size="11">← তোমার code (service.py ইত্যাদি)</text>
+      <!-- models folder -->
+      <line x1="40" y1="185" x2="65" y2="185" stroke="#30363d" stroke-width="1.5"/>
+      <text x="70" y="190" fill="#ffa657" font-size="12" font-family="Fira Code, monospace">📁 models/</text>
+      <text x="270" y="190" fill="#8b949e" font-size="11">← Trained model binary files</text>
+      <!-- requirements -->
+      <line x1="40" y1="215" x2="65" y2="215" stroke="#30363d" stroke-width="1.5"/>
+      <text x="70" y="220" fill="#56d364" font-size="12" font-family="Fira Code, monospace">📄 requirements.txt</text>
+      <text x="270" y="220" fill="#8b949e" font-size="11">← Python packages list</text>
+    </svg>
+  </div>
+
+  <div class="callout success">
+    <div class="callout-title">🎯 মূল বিষয়</div>
+    <p>Bento build করলে BentoML নিজে থেকেই <code>Dockerfile</code> তৈরি করে দেয়। তোমাকে Docker জানতে হবে না — BentoML সব করে দেয়।</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 10: Docker -->
+<!-- ============================================================ -->
+<div class="section" id="s10">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <h2>Docker ও Containerization</h2>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">🐳 Docker কী?</div>
+    <p>ধরো তোমার বাসায় রান্না হলো। রেস্তোরাঁয় নিয়ে যেতে হবে। কিন্তু রাস্তায় ঝরে পড়তে পারে, গরম থাকবে না। Container মানে একটি বিশেষ "tiffin box" — তাপমাত্রা ঠিক থাকে, নষ্ট হয় না, যেকোনো রেস্তোরাঁয় নিয়ে যাও, একই রকম থাকবে। Docker হলো সেই tiffin box তৈরির সরঞ্জাম।</p>
+  </div>
+
+  <!-- SVG: Docker Concept -->
+  <div class="diagram-box">
+    <div class="diagram-title">Container vs সরাসরি Install — পার্থক্য</div>
+    <svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+      <!-- Without Docker -->
+      <rect x="10" y="10" width="320" height="200" rx="12" fill="#1c2333" stroke="#f85149" stroke-width="1.5"/>
+      <text x="170" y="35" text-anchor="middle" fill="#f85149" font-size="12" font-weight="700">❌ Docker ছাড়া (সমস্যা)</text>
+      <rect x="25" y="50" width="135" height="60" rx="8" fill="#0d1117" stroke="#30363d"/>
+      <text x="92" y="75" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="600">তোমার PC</text>
+      <text x="92" y="92" text-anchor="middle" fill="#56d364" font-size="10">Python 3.11 ✓</text>
+      <text x="92" y="106" text-anchor="middle" fill="#56d364" font-size="10">scikit-learn 1.3 ✓</text>
+      <rect x="175" y="50" width="135" height="60" rx="8" fill="#0d1117" stroke="#30363d"/>
+      <text x="243" y="75" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="600">Server</text>
+      <text x="243" y="92" text-anchor="middle" fill="#f85149" font-size="10">Python 3.8 ✗</text>
+      <text x="243" y="106" text-anchor="middle" fill="#f85149" font-size="10">scikit-learn 0.24 ✗</text>
+      <text x="170" y="145" text-anchor="middle" fill="#f85149" font-size="11">তোমার machine-এ কাজ করে,</text>
+      <text x="170" y="162" text-anchor="middle" fill="#f85149" font-size="11">server-এ কাজ করে না!</text>
+      <text x="170" y="179" text-anchor="middle" fill="#8b949e" font-size="10">"Works on my machine" 😭</text>
+
+      <!-- With Docker -->
+      <rect x="390" y="10" width="320" height="200" rx="12" fill="#1c2333" stroke="#56d364" stroke-width="1.5"/>
+      <text x="550" y="35" text-anchor="middle" fill="#56d364" font-size="12" font-weight="700">✅ Docker সহ (সমাধান)</text>
+      <rect x="405" y="50" width="130" height="70" rx="8" fill="#0d1117" stroke="#79c0ff"/>
+      <text x="470" y="70" text-anchor="middle" fill="#79c0ff" font-size="10" font-weight="600">Docker Container</text>
+      <text x="470" y="85" text-anchor="middle" fill="#e6edf3" font-size="10">Python 3.11</text>
+      <text x="470" y="99" text-anchor="middle" fill="#e6edf3" font-size="10">scikit-learn 1.3</text>
+      <text x="470" y="113" text-anchor="middle" fill="#e6edf3" font-size="10">সব dependencies</text>
+      <rect x="555" y="55" width="130" height="60" rx="8" fill="#0d1117" stroke="#30363d"/>
+      <text x="620" y="75" text-anchor="middle" fill="#e6edf3" font-size="11" font-weight="600">যেকোনো Server</text>
+      <text x="620" y="93" text-anchor="middle" fill="#56d364" font-size="10">Container চলে ✓</text>
+      <text x="620" y="107" text-anchor="middle" fill="#56d364" font-size="10">সবসময় একই ✓</text>
+      <text x="550" y="145" text-anchor="middle" fill="#56d364" font-size="11">Container-এ সব কিছু আছে।</text>
+      <text x="550" y="162" text-anchor="middle" fill="#56d364" font-size="11">যেকোনো machine-এ চলবে!</text>
+      <text x="550" y="179" text-anchor="middle" fill="#8b949e" font-size="10">একবার build, সবখানে run 🚀</text>
+    </svg>
+  </div>
+
+  <div class="subsection">
+    <h3>Docker Image তৈরির Command</h3>
+    <pre><code><span class="cm"># প্রথমে Docker চলছে কিনা check করো</span>
+docker --version
+<span class="cm"># Docker Desktop চালু থাকতে হবে</span>
+
+<span class="cm"># Bento থেকে Docker Image তৈরি করো</span>
+<span class="cm"># এটা bentoml build-এর পরে করতে হবে</span>
+bentoml containerize rf_classifier_service:latest
+
+<span class="cm"># সফল হলে:</span>
+<span class="cm"># Successfully built Bento container for "rf_classifier_service:gzsw76vjb2wl4k4k"</span>
+<span class="cm"># docker run --rm -p 3000:3000 rf_classifier_service:gzsw76vjb2wl4k4k</span></code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>⚠️ UV Installation Error — সমাধান</h3>
+    <div class="callout danger">
+      <div class="callout-title">🔧 এই error দেখলে ঘাবড়াবে না</div>
+      <p><code>mv: cannot stat '/root/.cargo/bin/uv': No such file or directory</code> — এটা UV-এর installation process পরিবর্তনের কারণে হয়।</p>
+    </div>
+
+    <p><strong>সমাধান:</strong> Custom Dockerfile.template তৈরি করো:</p>
+    <pre><code><span class="cm"># Dockerfile.template (bentofile.yaml-এর পাশে রাখো)</span>
+{% extends bento_base_template %}
+{% block SETUP_PYTHON_ENV %}
+ENV UV_SYSTEM_PYTHON=<span class="num">1</span>
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    ln -s /root/.local/bin/uv /usr/local/bin/uv && \
+    uv --version
+COPY requirements.txt requirements.txt
+RUN uv pip install --no-cache -r requirements.txt
+RUN rm requirements.txt
+{% endblock %}</code><span class="lang-label">dockerfile</span></pre>
+
+    <p>এরপর আবার build করো:</p>
+    <pre><code><span class="cm"># আগের Bento মুছো</span>
+bentoml delete rf_clf_service:latest -y
+<span class="cm"># নতুন করে build করো</span>
+bentoml build
+<span class="cm"># Container তৈরি করো</span>
+bentoml containerize rf_clf_service:latest</code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>Docker Container চালানো ও Test করা</h3>
+    <pre><code><span class="cm"># Container চালাও</span>
+<span class="cm"># --rm: container বন্ধ হলে auto delete</span>
+<span class="cm"># -p 3001:3000: তোমার PC-র 3001 port → Container-র 3000 port</span>
+docker run --rm -p <span class="num">3001</span>:<span class="num">3000</span> rf_classifier_service:gzsw76vjb2wl4k4k
+
+<span class="cm"># অন্য terminal-এ test করো (JWT সহ)</span>
+<span class="cm"># test_api.py চালাও যেটা আগে বানিয়েছিলে</span>
+python3 tests/test_api.py
+
+<span class="cm"># Docker containers দেখো</span>
+docker ps -a
+
+<span class="cm"># Docker images দেখো</span>
+docker images
+
+<span class="cm"># একটি image মুছো</span>
+docker rmi IMAGE_ID
+
+<span class="cm"># সব stopped containers মুছো</span>
+docker container prune</code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>Docker Hub-এ Image Push করো</h3>
+    <p>Docker Hub হলো GitHub-এর মতো — কিন্তু Docker image-এর জন্য। এখানে push করলে যেকোনো server থেকে pull করা যাবে।</p>
+    <pre><code><span class="cm"># Docker Hub-এ login করো</span>
+docker login
+<span class="cm"># Username ও password দাও</span>
+
+<span class="cm"># Image push করো</span>
+docker push YOUR_USERNAME/rf_classifier_service:latest
+
+<span class="cm"># অন্য server থেকে pull করো</span>
+docker pull YOUR_USERNAME/rf_classifier_service:latest</code><span class="lang-label">bash</span></pre>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 11: AWS Deploy -->
+<!-- ============================================================ -->
+<div class="section" id="s11">
+  <div class="section-header">
+    <span class="section-num">11</span>
+    <h2>AWS-এ Deploy করা (Optional কিন্তু গুরুত্বপূর্ণ)</h2>
+  </div>
+
+  <p>Docker image তৈরি হয়ে গেলে সেটা Cloud-এ deploy করতে হবে। AWS (Amazon Web Services) সবচেয়ে জনপ্রিয় cloud platform। আমরা <strong>AWS ECS (Elastic Container Service)</strong> ব্যবহার করবো।</p>
+
+  <!-- SVG: AWS Architecture -->
+  <div class="diagram-box">
+    <div class="diagram-title">AWS-এ BentoML Deployment Architecture</div>
+    <svg viewBox="0 0 740 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+      <defs>
+        <marker id="arr6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#ffa657"/>
+        </marker>
+      </defs>
+      <!-- User -->
+      <rect x="10" y="70" width="90" height="60" rx="10" fill="#1c2333" stroke="#30363d"/>
+      <text x="55" y="95" text-anchor="middle" fill="#e6edf3" font-size="22">👤</text>
+      <text x="55" y="118" text-anchor="middle" fill="#8b949e" font-size="10">Internet User</text>
+      <!-- Arrow -->
+      <line x1="103" y1="100" x2="143" y2="100" stroke="#ffa657" stroke-width="2" marker-end="url(#arr6)"/>
+      <!-- ECR -->
+      <rect x="146" y="50" width="110" height="100" rx="10" fill="#1c2333" stroke="#ffa657"/>
+      <text x="201" y="85" text-anchor="middle" fill="#ffa657" font-size="20">📦</text>
+      <text x="201" y="108" text-anchor="middle" fill="#ffa657" font-size="11" font-weight="600">AWS ECR</text>
+      <text x="201" y="124" text-anchor="middle" fill="#8b949e" font-size="10">Docker Image</text>
+      <text x="201" y="138" text-anchor="middle" fill="#8b949e" font-size="10">Registry</text>
+      <!-- Arrow -->
+      <line x1="259" y1="100" x2="299" y2="100" stroke="#ffa657" stroke-width="2" marker-end="url(#arr6)"/>
+      <!-- ECS Cluster -->
+      <rect x="302" y="30" width="160" height="140" rx="10" fill="#1c2333" stroke="#79c0ff"/>
+      <text x="382" y="55" text-anchor="middle" fill="#79c0ff" font-size="11" font-weight="700">AWS ECS Cluster</text>
+      <!-- Task -->
+      <rect x="317" y="65" width="130" height="90" rx="8" fill="#0d1117" stroke="#30363d"/>
+      <text x="382" y="88" text-anchor="middle" fill="#56d364" font-size="10" font-weight="600">🐳 Fargate Task</text>
+      <text x="382" y="104" text-anchor="middle" fill="#8b949e" font-size="10">BentoML Container</text>
+      <text x="382" y="120" text-anchor="middle" fill="#8b949e" font-size="10">Port: 3000</text>
+      <text x="382" y="136" text-anchor="middle" fill="#56d364" font-size="10">Running ✓</text>
+      <text x="382" y="148" text-anchor="middle" fill="#8b949e" font-size="10">CPU: 256 / RAM: 512MB</text>
+      <!-- Arrow -->
+      <line x1="465" y1="100" x2="505" y2="100" stroke="#ffa657" stroke-width="2" marker-end="url(#arr6)"/>
+      <!-- Response -->
+      <rect x="508" y="60" width="130" height="80" rx="10" fill="#1c2333" stroke="#56d364"/>
+      <text x="573" y="88" text-anchor="middle" fill="#56d364" font-size="20">✅</text>
+      <text x="573" y="112" text-anchor="middle" fill="#56d364" font-size="11" font-weight="600">Live API!</text>
+      <text x="573" y="130" text-anchor="middle" fill="#8b949e" font-size="10">Public URL পাবে</text>
+      <!-- Scale note -->
+      <rect x="508" y="155" width="130" height="35" rx="8" fill="#1c2333" stroke="#30363d" stroke-dasharray="4,2"/>
+      <text x="573" y="170" text-anchor="middle" fill="#8b949e" font-size="10">Auto-scaling সম্ভব</text>
+      <text x="573" y="183" text-anchor="middle" fill="#8b949e" font-size="10">(load বাড়লে নতুন instance)</text>
+    </svg>
+  </div>
+
+  <div class="subsection">
+    <h3>AWS Deployment-এর ধাপসমূহ</h3>
+    <pre><code><span class="cm"># ধাপ ১: ECR Repository তৈরি করো (Docker image রাখার জায়গা)</span>
+aws ecr create-repository --repository-name rf_clf_service
+
+<span class="cm"># ধাপ ২: ECR-এ Login করো</span>
+aws ecr get-login-password --region us-east-1 | \
+  docker login --username AWS --password-stdin \
+  123456789.dkr.ecr.us-east-1.amazonaws.com
+
+<span class="cm"># ধাপ ৩: Docker image-কে ECR format-এ tag করো</span>
+docker tag rf_clf_service:latest \
+  123456789.dkr.ecr.us-east-1.amazonaws.com/rf_clf_service:latest
+
+<span class="cm"># ধাপ ৪: ECR-এ Push করো</span>
+docker push 123456789.dkr.ecr.us-east-1.amazonaws.com/rf_clf_service:latest
+
+<span class="cm"># ধাপ ৫: ECS Cluster তৈরি করো</span>
+aws ecs create-cluster --cluster-name rf-cluster
+
+<span class="cm"># ধাপ ৬: Task Definition register করো (task-definition.json থেকে)</span>
+aws ecs register-task-definition --cli-input-json task-definition.json
+
+<span class="cm"># ধাপ ৭: ECS Service তৈরি করো (সবসময় running রাখবে)</span>
+aws ecs create-service \
+  --cluster rf-cluster \
+  --service-name rf-service \
+  --task-definition rf-task \
+  --desired-count <span class="num">1</span> \
+  --launch-type FARGATE \
+  --network-configuration <span class="str">"awsvpcConfiguration={...}"</span></code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">⚠️ AWS Credentials দরকার</div>
+    <p>AWS-এ deploy করতে হলে প্রথমে AWS account লাগবে এবং <code>aws configure</code> দিয়ে credentials setup করতে হবে। Free tier-এ সীমিত সময়ের জন্য বিনামূল্যে ব্যবহার করা যায়।</p>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 12: DUMMY DATASET -->
+<!-- ============================================================ -->
+<div class="section" id="s12">
+  <div class="section-header">
+    <span class="section-num">12</span>
+    <h2>Dummy Dataset — Download Fail হলে কী করবে?</h2>
+  </div>
+
+  <p>পরীক্ষায় dataset একটি URL থেকে download করতে হয়। কিন্তু যদি internet না থাকে, server down থাকে, বা offline কাজ করতে হয়? তখন <strong>dummy dataset</strong> কাজে লাগে — real data-র মতো structure, কিন্তু synthetic/fake values।</p>
+
+  <div class="callout info">
+    <div class="callout-title">💡 Dummy Dataset কেন কাজ করে?</div>
+    <p>Model আসলে data-র <em>structure</em> দেখে শেখে — column names, data types, value range। Dummy data-তে এগুলো same থাকলে model train হবে, API কাজ করবে, Docker build হবে। পরীক্ষায় জমাও দেওয়া যাবে।</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Admission Dataset — Dummy Generator (পরীক্ষার জন্য)</h3>
+    <pre><code><span class="cm"># create_dummy_admission.py — project root-এ রাখো</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> os
+
+<span class="cm"># random seed মানে প্রতিবার একই "random" পাবে — reproducible</span>
+np.random.<span class="fn">seed</span>(<span class="num">42</span>)
+n = <span class="num">400</span>  <span class="cm"># 400 student-এর data</span>
+
+gre   = np.random.<span class="fn">randint</span>(<span class="num">290</span>, <span class="num">341</span>, n)          <span class="cm"># 290–340</span>
+toefl = np.random.<span class="fn">randint</span>(<span class="num">92</span>, <span class="num">121</span>, n)           <span class="cm"># 92–120</span>
+uni_r = np.random.<span class="fn">randint</span>(<span class="num">1</span>, <span class="num">6</span>, n)              <span class="cm"># 1–5</span>
+sop   = np.round(np.random.<span class="fn">uniform</span>(<span class="num">1.0</span>,<span class="num">5.0</span>,n),<span class="num">1</span>)  <span class="cm"># 1.0–5.0</span>
+lor   = np.round(np.random.<span class="fn">uniform</span>(<span class="num">1.0</span>,<span class="num">5.0</span>,n),<span class="num">1</span>)  <span class="cm"># 1.0–5.0</span>
+cgpa  = np.round(np.random.<span class="fn">uniform</span>(<span class="num">6.8</span>,<span class="num">9.9</span>,n),<span class="num">2</span>)  <span class="cm"># 6.8–9.9</span>
+res   = np.random.<span class="fn">randint</span>(<span class="num">0</span>, <span class="num">2</span>, n)              <span class="cm"># 0 বা 1</span>
+
+<span class="cm"># Realistic formula: ভালো GRE/TOEFL/CGPA = বেশি chance</span>
+raw = ((gre-<span class="num">290</span>)/<span class="num">50</span>*<span class="num">0.30</span> + (toefl-<span class="num">92</span>)/<span class="num">28</span>*<span class="num">0.20</span> +
+       (cgpa-<span class="num">6.8</span>)/<span class="num">3.1</span>*<span class="num">0.35</span> + res*<span class="num">0.10</span> + sop/<span class="num">5</span>*<span class="num">0.05</span>)
+chance = np.<span class="fn">clip</span>(np.round(raw, <span class="num">2</span>), <span class="num">0.34</span>, <span class="num">0.95</span>)
+
+df = pd.<span class="fn">DataFrame</span>({
+    <span class="str">'Serial No.'</span>:        range(<span class="num">1</span>, n+<span class="num">1</span>),
+    <span class="str">'GRE Score'</span>:         gre,
+    <span class="str">'TOEFL Score'</span>:        toefl,
+    <span class="str">'University Rating'</span>:  uni_r,
+    <span class="str">'SOP'</span>:                sop,
+    <span class="str">'LOR '</span>:               lor,     <span class="cm"># ⚠️ original-এ trailing space আছে!</span>
+    <span class="str">'CGPA'</span>:               cgpa,
+    <span class="str">'Research'</span>:           res,
+    <span class="str">'Chance of Admit '</span>:   chance   <span class="cm"># ⚠️ এখানেও trailing space!</span>
+})
+
+os.<span class="fn">makedirs</span>(<span class="str">'data/raw'</span>, exist_ok=<span class="num">True</span>)
+df.<span class="fn">to_csv</span>(<span class="str">'data/raw/admission.csv'</span>, index=<span class="num">False</span>)
+<span class="fn">print</span>(<span class="str">f"✅ {len(df)} rows → data/raw/admission.csv"</span>)
+<span class="fn">print</span>(df.<span class="fn">head</span>(<span class="num">3</span>))</code><span class="lang-label">python</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>Smart Download Script — Auto Fallback</h3>
+    <pre><code><span class="cm"># download_or_dummy.py — প্রথমে real data চেষ্টা, fail হলে dummy</span>
+<span class="kw">import</span> requests, os
+
+URL  = <span class="str">"https://assets-datascientest.s3.eu-west-1.amazonaws.com/MLOPS/bentoml/admission.csv"</span>
+DEST = <span class="str">"data/raw/admission.csv"</span>
+os.<span class="fn">makedirs</span>(<span class="str">"data/raw"</span>, exist_ok=<span class="num">True</span>)
+
+<span class="kw">try</span>:
+    <span class="fn">print</span>(<span class="str">"📥 Real data download করছি..."</span>)
+    r = requests.<span class="fn">get</span>(URL, timeout=<span class="num">10</span>)
+    r.<span class="fn">raise_for_status</span>()  <span class="cm"># 404/500 হলে exception</span>
+    <span class="kw">with</span> <span class="fn">open</span>(DEST, <span class="str">'wb'</span>) <span class="kw">as</span> f: f.<span class="fn">write</span>(r.content)
+    <span class="fn">print</span>(<span class="str">f"✅ Downloaded! → {DEST}"</span>)
+<span class="kw">except Exception as</span> e:
+    <span class="fn">print</span>(<span class="str">f"⚠️ Download failed ({e}). Dummy data তৈরি করছি..."</span>)
+    <span class="kw">import</span> create_dummy_admission   <span class="cm"># উপরের script import করো</span>
+    <span class="fn">print</span>(<span class="str">"✅ Dummy data ready — এগিয়ে যাও!"</span>)</code><span class="lang-label">python</span></pre>
+    <div class="callout success">
+      <div class="callout-title">✅ চালানোর command</div>
+      <p><code>python3 download_or_dummy.py</code> — এটা নিজেই বুঝে নেবে real download করবে না dummy বানাবে।</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 12: Exam -->
+<!-- ============================================================ -->
+<div class="section" id="s12">
+  <div class="section-header">
+    <span class="section-num">12</span>
+    <h2>পরীক্ষা (Final Exam) — কী করতে হবে</h2>
+  </div>
+
+  <p>পরীক্ষায় একটি <strong>University Admission Prediction</strong> model বানাতে হবে। এই dataset-এ student-এর তথ্য দিলে সে university-তে ভর্তি হতে পারবে কিনা তার সম্ভাবনা বলবে।</p>
+
+  <div class="subsection">
+    <h3>Dataset-এর Variables</h3>
+    <table>
+      <thead>
+        <tr><th>Variable</th><th>বাংলা অর্থ</th><th>Range</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="pill blue">GRE Score</span></td><td>Graduate Record Examination-এর নম্বর</td><td>0 – 340</td></tr>
+        <tr><td><span class="pill blue">TOEFL Score</span></td><td>ইংরেজি দক্ষতার পরীক্ষার নম্বর</td><td>0 – 120</td></tr>
+        <tr><td><span class="pill orange">University Rating</span></td><td>যে university-তে আবেদন করছো তার মান</td><td>1 – 5</td></tr>
+        <tr><td><span class="pill orange">SOP</span></td><td>Statement of Purpose (উদ্দেশ্যপত্র) মান</td><td>0 – 5</td></tr>
+        <tr><td><span class="pill orange">LOR</span></td><td>Letter of Recommendation (সুপারিশপত্র) মান</td><td>0 – 5</td></tr>
+        <tr><td><span class="pill green">CGPA</span></td><td>Cumulative Grade Point Average (GPA)</td><td>0 – 10</td></tr>
+        <tr><td><span class="pill purple">Research</span></td><td>গবেষণার অভিজ্ঞতা আছে কিনা</td><td>0 বা 1</td></tr>
+        <tr><td><span class="pill red">Chance of Admit</span></td><td>ভর্তির সম্ভাবনা (Target variable)</td><td>0 – 1</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>Part 1: বাধ্যতামূলক কাজের ধাপ</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num-circle">১</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <h4>Environment Setup করো</h4>
+          <p>GitHub থেকে repository fork ও clone করো। Virtual environment তৈরি করো। Dataset download করো।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num-circle">২</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <h4>prepare_data.py তৈরি করো</h4>
+          <p>Data load করো, clean করো, X_train/X_test/y_train/y_test ভাগ করো, <code>data/processed/</code> folder-এ save করো।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num-circle">৩</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <h4>train_model.py তৈরি করো</h4>
+          <p>Regression model train করো, performance মাপো (R2/RMSE/MAE), BentoML Model Store-এ save করো।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num-circle">৪</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <h4>service.py তৈরি করো</h4>
+          <p>JWT authentication সহ API তৈরি করো। /login ও /predict endpoint বানাও।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num-circle">৫</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <h4>bentofile.yaml ও Docker Image</h4>
+          <p>bentofile.yaml তৈরি করো, <code>bentoml build</code> চালাও, Docker image বানাও ও test করো।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left">
+          <div class="step-num-circle">৬</div>
+          <div class="step-line"></div>
+        </div>
+        <div class="step-content">
+          <h4>Unit Tests (pytest)</h4>
+          <p>JWT test, Login API test, Prediction API test — সব PASSED হতে হবে।</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>prepare_data.py — Sample Code</h3>
+    <pre><code><span class="cm"># src/prepare_data.py</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">import</span> os
+
+<span class="cm"># ধাপ ১: Data load করো</span>
+df = pd.<span class="fn">read_csv</span>(<span class="str">'data/raw/admission.csv'</span>)
+<span class="fn">print</span>(<span class="str">f"Data loaded: {df.shape}"</span>)  <span class="cm"># (500, 8) এরকম দেখাবে</span>
+
+<span class="cm"># ধাপ ২: Unnecessary column সরাও</span>
+<span class="cm"># "Serial No." column দরকার নেই — index মাত্র</span>
+<span class="kw">if</span> <span class="str">'Serial No.'</span> <span class="kw">in</span> df.columns:
+    df = df.<span class="fn">drop</span>(columns=[<span class="str">'Serial No.'</span>])
+
+<span class="cm"># ধাপ ৩: Missing values check করো</span>
+<span class="fn">print</span>(df.<span class="fn">isnull</span>().<span class="fn">sum</span>())  <span class="cm"># সব 0 হলে ভালো</span>
+
+<span class="cm"># ধাপ ৪: Features (X) এবং Target (y) আলাদা করো</span>
+<span class="cm"># "Chance of Admit " — নামে trailing space আছে, সাবধান!</span>
+X = df.<span class="fn">drop</span>(columns=[<span class="str">'Chance of Admit '</span>])
+y = df[<span class="str">'Chance of Admit '</span>]
+
+<span class="cm"># ধাপ ৫: Normalization (optional কিন্তু ভালো practice)</span>
+<span class="cm"># LinearRegression-এর জন্য scale করলে better performance</span>
+scaler = <span class="fn">StandardScaler</span>()
+X_scaled = scaler.<span class="fn">fit_transform</span>(X)
+
+<span class="cm"># ধাপ ৬: Train/Test split করো</span>
+<span class="cm"># test_size=0.2 মানে 20% test, 80% train</span>
+<span class="cm"># random_state=42 মানে প্রতিবার একই split (reproducible)</span>
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X_scaled, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>
+)
+
+<span class="cm"># ধাপ ৭: Processed folder তৈরি করো (না থাকলে)</span>
+os.makedirs(<span class="str">'data/processed'</span>, exist_ok=<span class="kw">True</span>)
+
+<span class="cm"># ধাপ ৮: CSV-তে save করো</span>
+pd.<span class="fn">DataFrame</span>(X_train).<span class="fn">to_csv</span>(<span class="str">'data/processed/X_train.csv'</span>, index=<span class="kw">False</span>)
+pd.<span class="fn">DataFrame</span>(X_test).<span class="fn">to_csv</span>(<span class="str">'data/processed/X_test.csv'</span>, index=<span class="kw">False</span>)
+pd.<span class="fn">DataFrame</span>(y_train).<span class="fn">to_csv</span>(<span class="str">'data/processed/y_train.csv'</span>, index=<span class="kw">False</span>)
+pd.<span class="fn">DataFrame</span>(y_test).<span class="fn">to_csv</span>(<span class="str">'data/processed/y_test.csv'</span>, index=<span class="kw">False</span>)
+<span class="fn">print</span>(<span class="str">"Data saved successfully!"</span>)</code><span class="lang-label">python</span></pre>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ Column নামে Trailing Space</div>
+      <p>Dataset-এ <code>'Chance of Admit '</code> — শেষে একটি space আছে। <code>df.columns.tolist()</code> দিয়ে আগে দেখো exact নাম কী। না হলে <code>KeyError</code> হবে।</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Unit Test কীভাবে লিখবে (pytest)</h3>
+    <pre><code><span class="cm"># tests/test_api.py</span>
+<span class="kw">import</span> pytest
+<span class="kw">import</span> requests
+
+BASE_URL = <span class="str">"http://localhost:3001"</span>
+
+<span class="cm"># ১. সঠিক credentials দিলে token পাওয়া যায়</span>
+<span class="kw">def</span> <span class="fn">test_login_success</span>():
+    response = requests.<span class="fn">post</span>(<span class="str">f"{BASE_URL}/login"</span>, json={
+        <span class="str">"username"</span>: <span class="str">"user123"</span>,
+        <span class="str">"password"</span>: <span class="str">"password123"</span>
+    })
+    <span class="kw">assert</span> response.status_code == <span class="num">200</span>
+    <span class="kw">assert</span> <span class="str">"token"</span> <span class="kw">in</span> response.<span class="fn">json</span>()
+
+<span class="cm"># ২. ভুল credentials দিলে 401 error আসে</span>
+<span class="kw">def</span> <span class="fn">test_login_failure</span>():
+    response = requests.<span class="fn">post</span>(<span class="str">f"{BASE_URL}/login"</span>, json={
+        <span class="str">"username"</span>: <span class="str">"wrong"</span>,
+        <span class="str">"password"</span>: <span class="str">"wrong"</span>
+    })
+    <span class="kw">assert</span> response.status_code == <span class="num">401</span>
+
+<span class="cm"># ৩. Token ছাড়া predict করলে 401 আসে</span>
+<span class="kw">def</span> <span class="fn">test_predict_without_token</span>():
+    response = requests.<span class="fn">post</span>(<span class="str">f"{BASE_URL}/predict"</span>, json={<span class="str">"GRE Score"</span>: <span class="num">320</span>})
+    <span class="kw">assert</span> response.status_code == <span class="num">401</span>
+
+<span class="cm"># ৪. Token দিয়ে predict করলে সঠিক ফলাফল আসে</span>
+<span class="kw">def</span> <span class="fn">test_predict_success</span>():
+    <span class="cm"># আগে login করো</span>
+    login_res = requests.<span class="fn">post</span>(<span class="str">f"{BASE_URL}/login"</span>, json={
+        <span class="str">"username"</span>: <span class="str">"user123"</span>, <span class="str">"password"</span>: <span class="str">"password123"</span>
+    })
+    token = login_res.<span class="fn">json</span>()[<span class="str">"token"</span>]
+    
+    <span class="cm"># তারপর predict করো</span>
+    response = requests.<span class="fn">post</span>(
+        <span class="str">f"{BASE_URL}/predict"</span>,
+        json={<span class="str">"GRE Score"</span>: <span class="num">320</span>, <span class="str">"TOEFL Score"</span>: <span class="num">110</span>, <span class="str">"CGPA"</span>: <span class="num">8.5</span>},
+        headers={<span class="str">"Authorization"</span>: <span class="str">f"Bearer {token}"</span>}
+    )
+    <span class="kw">assert</span> response.status_code == <span class="num">200</span>
+    <span class="kw">assert</span> <span class="str">"prediction"</span> <span class="kw">in</span> response.<span class="fn">json</span>()
+
+<span class="cm"># Test চালাও:</span>
+<span class="cm"># pytest tests/test_api.py -v</span></code><span class="lang-label">python</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>Deliverables — কী জমা দিতে হবে</h3>
+    <div class="deliverable">
+      <div class="deliverable-header">
+        <div class="deliverable-num">১</div>
+        <h4>README.md ফাইল</h4>
+      </div>
+      <ul>
+        <li>Docker image কীভাবে load করতে হবে সব command লিখতে হবে</li>
+        <li>API কীভাবে চালু করতে হবে লিখতে হবে</li>
+        <li>Unit tests কীভাবে চালাতে হবে লিখতে হবে</li>
+      </ul>
+    </div>
+    <div class="deliverable">
+      <div class="deliverable-header">
+        <div class="deliverable-num">২</div>
+        <h4>Docker Image Archive (bento_image.tar)</h4>
+      </div>
+      <ul>
+        <li>Naming convention: <code>yourname_imagename</code></li>
+        <li>Command: <code>docker save -o bento_image.tar yourname_imagename</code></li>
+        <li>এটা Docker image-কে একটা ফাইলে compress করে</li>
+      </ul>
+    </div>
+    <div class="deliverable">
+      <div class="deliverable-header">
+        <div class="deliverable-num">৩</div>
+        <h4>pytest Test File</h4>
+      </div>
+      <ul>
+        <li>JWT test, Login test, Prediction test সব থাকতে হবে</li>
+        <li>সব test PASSED হতে হবে</li>
+        <li>Command: <code>pytest tests/test_api.py -v</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">⚠️ Image Naming — গুরুত্বপূর্ণ</div>
+    <p>Docker image-এর নাম <code>yourname_imagename</code> format-এ হতে হবে। ভুল নাম হলে evaluation fail হবে। bentoml service-এর নাম এই format-এ দিতে হবে।</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- QUICK REFERENCE -->
+<!-- ============================================================ -->
+<hr class="divider">
+
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">📋</span>
+    <h2>Quick Reference — সব Commands এক জায়গায়</h2>
+  </div>
+
+  <div class="subsection">
+    <h3>🌱 Environment</h3>
+    <pre><code>uv venv                     <span class="cm"># virtual env তৈরি</span>
+source .venv/bin/activate   <span class="cm"># activate</span>
+uv sync                     <span class="cm"># dependencies install</span></code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>🤖 Model</h3>
+    <pre><code>bentoml.sklearn.save_model("name", model)  <span class="cm"># Python: save</span>
+bentoml models list                         <span class="cm"># সব model দেখো</span>
+bentoml models delete MODEL_TAG             <span class="cm"># model মুছো</span></code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>🌐 Serving</h3>
+    <pre><code>bentoml serve service:svc --port 3001 --reload  <span class="cm"># API চালাও</span></code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>📦 Build & Deploy</h3>
+    <pre><code>bentoml build                           <span class="cm"># Bento তৈরি করো</span>
+bentoml list                            <span class="cm"># সব Bento দেখো</span>
+bentoml containerize BENTO_TAG          <span class="cm"># Docker image তৈরি</span>
+bentoml delete BENTO_TAG               <span class="cm"># Bento মুছো</span></code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>🐳 Docker</h3>
+    <pre><code>docker run --rm -p 3001:3000 IMAGE_TAG  <span class="cm"># container চালাও</span>
+docker ps -a                            <span class="cm"># চলমান containers</span>
+docker images                           <span class="cm"># সব images</span>
+docker container prune                  <span class="cm"># পুরনো containers মুছো</span>
+docker save -o file.tar IMAGE           <span class="cm"># image export</span>
+docker load -i file.tar                 <span class="cm"># image import</span></code><span class="lang-label">bash</span></pre>
+  </div>
+
+  <div class="subsection">
+    <h3>🧪 Testing</h3>
+    <pre><code>pytest tests/test_api.py -v             <span class="cm"># সব tests চালাও</span></code><span class="lang-label">bash</span></pre>
+  </div>
+</div>
+
+<!-- FINAL SUMMARY -->
+<div class="diagram-box" style="margin-top:20px;">
+  <div class="diagram-title">সম্পূর্ণ BentoML Workflow — একনজরে</div>
+  <svg viewBox="0 0 760 120" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+    <defs>
+      <marker id="arrF" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#30363d"/>
+      </marker>
+    </defs>
+    <rect x="5" y="20" width="100" height="80" rx="8" fill="#1c2333" stroke="#d2a8ff"/>
+    <text x="55" y="50" text-anchor="middle" fill="#d2a8ff" font-size="18">🧠</text>
+    <text x="55" y="72" text-anchor="middle" fill="#e6edf3" font-size="10" font-weight="600">Train</text>
+    <text x="55" y="86" text-anchor="middle" fill="#8b949e" font-size="9">Model তৈরি</text>
+
+    <line x1="108" y1="60" x2="128" y2="60" stroke="#30363d" stroke-width="1.5" marker-end="url(#arrF)"/>
+
+    <rect x="131" y="20" width="100" height="80" rx="8" fill="#1c2333" stroke="#56d364"/>
+    <text x="181" y="50" text-anchor="middle" fill="#56d364" font-size="18">💾</text>
+    <text x="181" y="72" text-anchor="middle" fill="#e6edf3" font-size="10" font-weight="600">Save</text>
+    <text x="181" y="86" text-anchor="middle" fill="#8b949e" font-size="9">Model Store-এ</text>
+
+    <line x1="234" y1="60" x2="254" y2="60" stroke="#30363d" stroke-width="1.5" marker-end="url(#arrF)"/>
+
+    <rect x="257" y="20" width="100" height="80" rx="8" fill="#1c2333" stroke="#ffa657"/>
+    <text x="307" y="50" text-anchor="middle" fill="#ffa657" font-size="18">🌐</text>
+    <text x="307" y="72" text-anchor="middle" fill="#e6edf3" font-size="10" font-weight="600">API</text>
+    <text x="307" y="86" text-anchor="middle" fill="#8b949e" font-size="9">service.py তৈরি</text>
+
+    <line x1="360" y1="60" x2="380" y2="60" stroke="#30363d" stroke-width="1.5" marker-end="url(#arrF)"/>
+
+    <rect x="383" y="20" width="100" height="80" rx="8" fill="#1c2333" stroke="#f78166"/>
+    <text x="433" y="50" text-anchor="middle" fill="#f78166" font-size="18">🍱</text>
+    <text x="433" y="72" text-anchor="middle" fill="#e6edf3" font-size="10" font-weight="600">Build</text>
+    <text x="433" y="86" text-anchor="middle" fill="#8b949e" font-size="9">bentoml build</text>
+
+    <line x1="486" y1="60" x2="506" y2="60" stroke="#30363d" stroke-width="1.5" marker-end="url(#arrF)"/>
+
+    <rect x="509" y="20" width="100" height="80" rx="8" fill="#1c2333" stroke="#79c0ff"/>
+    <text x="559" y="50" text-anchor="middle" fill="#79c0ff" font-size="18">🐳</text>
+    <text x="559" y="72" text-anchor="middle" fill="#e6edf3" font-size="10" font-weight="600">Containerize</text>
+    <text x="559" y="86" text-anchor="middle" fill="#8b949e" font-size="9">Docker image</text>
+
+    <line x1="612" y1="60" x2="632" y2="60" stroke="#30363d" stroke-width="1.5" marker-end="url(#arrF)"/>
+
+    <rect x="635" y="20" width="115" height="80" rx="8" fill="#1c2333" stroke="#56d364" stroke-width="2"/>
+    <text x="693" y="50" text-anchor="middle" fill="#56d364" font-size="18">☁️</text>
+    <text x="693" y="72" text-anchor="middle" fill="#56d364" font-size="10" font-weight="700">Deploy!</text>
+    <text x="693" y="86" text-anchor="middle" fill="#56d364" font-size="9">AWS/GCP live ✓</text>
+  </svg>
+</div>
+
+</div><!-- end container -->
+
+<footer>
+  <p>📚 তৈরি করা হয়েছে BentoML Course Materials থেকে — DataScientest</p>
+  <p style="margin-top:8px;">এই গাইড পড়ে কোনো প্রশ্ন থাকলে <span>Claude-কে জিজ্ঞেস করো</span> 🤖</p>
+  <p style="margin-top:8px; font-size:12px; color:#3d444d;">সব কিছু এক ফাইলে · বাংলা ফন্টের জন্য internet লাগতে পারে · নবীনদের জন্য তৈরি</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker — বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg-primary:#0d1117;--bg-secondary:#161b22;--bg-tertiary:#21262d;--bg-code:#1e2329;
+  --border:#30363d;--border-muted:#21262d;--text-primary:#e6edf3;--text-secondary:#8b949e;
+  --text-muted:#6e7681;--accent-blue:#58a6ff;--accent-green:#3fb950;--accent-orange:#f0883e;
+  --accent-purple:#bc8cff;--accent-red:#ff7b72;--accent-yellow:#e3b341;--accent-teal:#39d353;
+  --accent-docker:#2496ed;--sidebar-w:280px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans Bengali',sans-serif;background:var(--bg-primary);color:var(--text-primary);display:flex;min-height:100vh;font-size:16px;line-height:1.8;}
+.sidebar{width:var(--sidebar-w);background:var(--bg-secondary);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;padding:0 0 40px 0;}
+.sidebar-header{padding:20px 20px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg-secondary);z-index:1;}
+.sidebar-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--accent-docker);letter-spacing:0.5px;}
+.sidebar-sub{font-size:11px;color:var(--text-muted);margin-top:3px;}
+.nav-section{padding:12px 0 4px 20px;font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;}
+.nav-link{display:block;padding:7px 20px;font-size:13px;color:var(--text-secondary);text-decoration:none;transition:all 0.15s;border-left:2px solid transparent;}
+.nav-link:hover{color:var(--text-primary);background:var(--bg-tertiary);border-left-color:var(--accent-docker);}
+.nav-link.active{color:var(--accent-docker);border-left-color:var(--accent-docker);background:rgba(36,150,237,0.08);}
+.main{margin-left:var(--sidebar-w);flex:1;max-width:900px;padding:48px 52px;}
+.hero{background:linear-gradient(135deg,#0d1117 0%,#0d1e2d 50%,#0d1117 100%);border:1px solid var(--border);border-radius:16px;padding:48px;margin-bottom:56px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 60% 40%,rgba(36,150,237,0.1) 0%,transparent 60%);pointer-events:none;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(36,150,237,0.1);border:1px solid rgba(36,150,237,0.3);border-radius:100px;padding:4px 14px;font-size:12px;color:var(--accent-docker);margin-bottom:20px;}
+.hero h1{font-family:'Syne',sans-serif;font-size:42px;font-weight:800;line-height:1.15;margin-bottom:16px;}
+.hero h1 span{color:var(--accent-docker);}
+.hero p{font-size:17px;color:var(--text-secondary);max-width:580px;line-height:1.75;}
+.hero-stats{display:flex;gap:32px;margin-top:32px;}
+.stat{text-align:center;}
+.stat-num{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600;color:var(--accent-docker);}
+.stat-label{font-size:12px;color:var(--text-muted);margin-top:2px;}
+.section{margin-bottom:72px;}
+.section-header{display:flex;align-items:center;gap:16px;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.section-num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;background:rgba(36,150,237,0.15);color:var(--accent-docker);border:1px solid rgba(36,150,237,0.3);border-radius:8px;padding:4px 10px;}
+.section-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;}
+h3{font-size:20px;font-weight:600;color:var(--accent-docker);margin:32px 0 14px;font-family:'Syne',sans-serif;}
+p{margin-bottom:14px;color:var(--text-primary);line-height:1.85;}
+.callout{border-radius:10px;padding:18px 20px;margin:20px 0;border-left:3px solid;display:flex;gap:14px;}
+.callout-icon{font-size:20px;flex-shrink:0;margin-top:1px;}
+.callout-title{font-weight:600;font-size:14px;margin-bottom:5px;}
+.callout-text{font-size:14px;line-height:1.75;}
+.callout.info{background:rgba(36,150,237,0.08);border-color:var(--accent-docker);}.callout.info .callout-title{color:var(--accent-docker);}
+.callout.tip{background:rgba(63,185,80,0.08);border-color:var(--accent-green);}.callout.tip .callout-title{color:var(--accent-green);}
+.callout.warn{background:rgba(240,136,62,0.08);border-color:var(--accent-orange);}.callout.warn .callout-title{color:var(--accent-orange);}
+.callout.danger{background:rgba(255,123,114,0.08);border-color:var(--accent-red);}.callout.danger .callout-title{color:var(--accent-red);}
+.code-block{background:var(--bg-code);border:1px solid var(--border);border-radius:10px;margin:16px 0;overflow:hidden;}
+.code-header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--bg-tertiary);border-bottom:1px solid var(--border);font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;}
+.code-body{padding:18px 20px;overflow-x:auto;}
+pre{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.75;color:#e6edf3;}
+.cmd{color:var(--accent-docker);}
+.cmt{color:var(--text-muted);}
+.str{color:var(--accent-green);}
+.num{color:var(--accent-orange);}
+.kw{color:var(--accent-purple);}
+.out{color:var(--accent-teal);}
+.flag{color:var(--accent-yellow);}
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--bg-tertiary);color:var(--accent-docker);padding:2px 7px;border-radius:5px;border:1px solid var(--border);}
+.table-wrap{overflow-x:auto;margin:20px 0;}
+table{width:100%;border-collapse:collapse;font-size:14px;}
+th{background:var(--bg-tertiary);color:var(--text-secondary);font-weight:600;padding:11px 16px;text-align:left;border:1px solid var(--border);font-size:13px;}
+td{padding:10px 16px;border:1px solid var(--border-muted);vertical-align:top;line-height:1.6;}
+tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+td code{font-size:12px;}
+.diagram{background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:24px;margin:24px 0;text-align:center;}
+.diagram-title{font-size:13px;color:var(--text-muted);margin-bottom:16px;font-family:'JetBrains Mono',monospace;}
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0;}
+.card{background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.card-icon{font-size:28px;margin-bottom:10px;}
+.card-title{font-weight:600;font-size:14px;color:var(--accent-docker);margin-bottom:6px;}
+.card-desc{font-size:12px;color:var(--text-secondary);line-height:1.55;}
+.steps{display:flex;flex-direction:column;gap:0;}
+.step{display:flex;gap:20px;position:relative;padding-bottom:28px;}
+.step:last-child{padding-bottom:0;}
+.step:not(:last-child)::after{content:'';position:absolute;left:17px;top:36px;bottom:0;width:2px;background:var(--border);}
+.step-num{width:36px;height:36px;border-radius:50%;background:rgba(36,150,237,0.15);border:2px solid var(--accent-docker);color:var(--accent-docker);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;flex-shrink:0;}
+.step-content{padding-top:4px;flex:1;}
+.step-title{font-weight:600;color:var(--text-primary);margin-bottom:8px;font-size:15px;}
+.cheat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+.cheat-item{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+.cheat-cmd{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent-docker);margin-bottom:4px;}
+.cheat-desc{font-size:12px;color:var(--text-secondary);}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--bg-primary);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+@media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;padding:24px 20px;}.card-grid{grid-template-columns:1fr;}.cheat-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">🐳 Docker</div>
+    <div class="sidebar-sub">সম্পূর্ণ বাংলা গাইড</div>
+  </div>
+  <div class="nav-section">ভিত্তি</div>
+  <a class="nav-link" href="#s1">১. Isolation ও Virtualization</a>
+  <a class="nav-link" href="#s2">২. Docker তত্ত্ব</a>
+  <div class="nav-section">মূল কাজ</div>
+  <a class="nav-link" href="#s3">৩. Container ও Image</a>
+  <a class="nav-link" href="#s4">৪. Container যোগাযোগ</a>
+  <a class="nav-link" href="#s5">৫. Data Persistence</a>
+  <div class="nav-section">উন্নত</div>
+  <a class="nav-link" href="#s6">৬. Dockerfile</a>
+  <a class="nav-link" href="#s7">৭. Docker Compose</a>
+  <a class="nav-link" href="#s8">৮. Docker Clients</a>
+  <div class="nav-section">সারসংক্ষেপ</div>
+  <a class="nav-link" href="#s9">৯. পরীক্ষা গাইড</a>
+  <a class="nav-link" href="#cheatsheet">🗒️ চিটশিট</a>
+</nav>
+
+<main class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🐳 Docker সম্পূর্ণ গাইড</div>
+  <h1><span>Docker</span><br>বাংলা শিক্ষার গাইড</h1>
+  <p>Container, Image, Volume, Network, Dockerfile এবং Docker Compose — সবকিছু বাংলায়, একদম শুরু থেকে শেষ পর্যন্ত।</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">৮</div><div class="stat-label">অধ্যায়</div></div>
+    <div class="stat"><div class="stat-num">৫০+</div><div class="stat-label">কমান্ড</div></div>
+    <div class="stat"><div class="stat-num">৩</div><div class="stat-label">পরীক্ষার ধাপ</div></div>
+  </div>
+</div>
+
+<!-- ===== SECTION 1 ===== -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০১</span>
+    <h2 class="section-title">Isolation ও Virtualization — কেন দরকার?</h2>
+  </div>
+
+  <p>কল্পনা করো একটি কোম্পানির production server আছে। সেখানে একই সময়ে অনেকগুলো অ্যাপ চলে। কিন্তু প্রতিটি অ্যাপের আলাদা environment দরকার। এখানেই <strong>Isolation</strong>-এর প্রয়োজন।</p>
+
+  <h3>দুটো বাস্তব সমস্যা</h3>
+  <div class="diagram">
+    <div class="diagram-title">// যে সমস্যার সমাধান করে Isolation</div>
+    <svg viewBox="0 0 620 210" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <rect x="10" y="10" width="285" height="190" rx="10" fill="#0d1117" stroke="#ff7b72" stroke-width="1.5"/>
+      <text x="152" y="38" text-anchor="middle" fill="#ff7b72" font-size="13" font-family="Noto Sans Bengali" font-weight="bold">❌ সমস্যা ১: পরিবেশের পার্থক্য</text>
+      <rect x="30" y="55" width="112" height="40" rx="6" fill="#21262d" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="86" y="72" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">Developer PC</text>
+      <text x="86" y="87" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">numpy 1.16 ✅</text>
+      <rect x="158" y="55" width="112" height="40" rx="6" fill="#21262d" stroke="#ff7b72" stroke-width="1.5"/>
+      <text x="214" y="72" text-anchor="middle" fill="#ff7b72" font-size="11" font-family="JetBrains Mono">Production</text>
+      <text x="214" y="87" text-anchor="middle" fill="#ff7b72" font-size="10" font-family="Noto Sans Bengali">numpy 2.0 ❌</text>
+      <text x="152" y="120" text-anchor="middle" fill="#ff7b72" font-size="20">✗</text>
+      <text x="152" y="148" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">Dev-এ চলে, Prod-এ চলে না!</text>
+      <text x="152" y="170" text-anchor="middle" fill="#e3b341" font-size="10" font-family="Noto Sans Bengali">সমাধান: পরিবেশটাকে সাথে নাও</text>
+      <text x="152" y="190" text-anchor="middle" fill="#e3b341" font-size="10" font-family="Noto Sans Bengali">= Container ব্যবহার করো</text>
+
+      <rect x="325" y="10" width="285" height="190" rx="10" fill="#0d1117" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="467" y="38" text-anchor="middle" fill="#f0883e" font-size="13" font-family="Noto Sans Bengali" font-weight="bold">❌ সমস্যা ২: Library Conflict</text>
+      <rect x="345" y="55" width="120" height="40" rx="6" fill="#21262d" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="405" y="70" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">App A</text>
+      <text x="405" y="87" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">numpy 1.16 চাই</text>
+      <rect x="475" y="55" width="120" height="40" rx="6" fill="#21262d" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="535" y="70" text-anchor="middle" fill="#f0883e" font-size="11" font-family="JetBrains Mono">App B</text>
+      <text x="535" y="87" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">numpy 2.0 চাই</text>
+      <text x="467" y="128" text-anchor="middle" fill="#ff7b72" font-size="22">⚡ Conflict!</text>
+      <text x="467" y="155" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">একসাথে চলা সম্ভব না</text>
+      <text x="467" y="175" text-anchor="middle" fill="#e3b341" font-size="10" font-family="Noto Sans Bengali">সমাধান: প্রতিটি App-কে</text>
+      <text x="467" y="192" text-anchor="middle" fill="#e3b341" font-size="10" font-family="Noto Sans Bengali">আলাদা বাক্সে রাখো = Container</text>
+    </svg>
+  </div>
+
+  <h3>তিন ধরনের Virtualization তুলনা</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">💻</div>
+      <div class="card-title">Virtual Machine (VM)</div>
+      <div class="card-desc">পুরো OS নকল করে। অনেক বেশি storage ও RAM লাগে। Hypervisor ব্যবহার করে। চালু হতে মিনিট লাগে।</div>
+    </div>
+    <div class="card" style="border-color:var(--accent-docker);">
+      <div class="card-icon">🐳</div>
+      <div class="card-title">Container (Docker) ⭐</div>
+      <div class="card-desc">Host OS-এর kernel ভাগ করে। হালকা, দ্রুত (সেকেন্ডে চালু)। কম resource লাগে। আমরা এটা শিখব।</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🐍</div>
+      <div class="card-title">Virtual Environment</div>
+      <div class="card-desc">শুধু Python-এর জন্য। Library আলাদা করে রাখে। OS level isolation করে না। venv, conda।</div>
+    </div>
+  </div>
+
+  <h3>VM বনাম Container — মূল পার্থক্য</h3>
+  <div class="diagram">
+    <div class="diagram-title">// স্তর কাঠামোর পার্থক্য</div>
+    <svg viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <!-- VM -->
+      <text x="150" y="22" text-anchor="middle" fill="#8b949e" font-size="13" font-family="Noto Sans Bengali" font-weight="bold">Virtual Machine</text>
+      <rect x="20" y="32" width="100" height="30" rx="5" fill="#21262d" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="70" y="51" text-anchor="middle" fill="#bc8cff" font-size="11" font-family="Noto Sans Bengali">App A</text>
+      <rect x="130" y="32" width="100" height="30" rx="5" fill="#21262d" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="180" y="51" text-anchor="middle" fill="#bc8cff" font-size="11" font-family="Noto Sans Bengali">App B</text>
+      <rect x="20" y="68" width="100" height="24" rx="4" fill="rgba(255,123,114,0.2)" stroke="#ff7b72" stroke-width="1.2"/>
+      <text x="70" y="84" text-anchor="middle" fill="#ff7b72" font-size="10" font-family="JetBrains Mono">Guest OS</text>
+      <rect x="130" y="68" width="100" height="24" rx="4" fill="rgba(255,123,114,0.2)" stroke="#ff7b72" stroke-width="1.2"/>
+      <text x="180" y="84" text-anchor="middle" fill="#ff7b72" font-size="10" font-family="JetBrains Mono">Guest OS</text>
+      <rect x="20" y="98" width="210" height="24" rx="4" fill="rgba(240,136,62,0.2)" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="125" y="114" text-anchor="middle" fill="#f0883e" font-size="11" font-family="JetBrains Mono">Hypervisor</text>
+      <rect x="20" y="128" width="210" height="24" rx="4" fill="rgba(63,185,80,0.15)" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="125" y="144" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">Host OS</text>
+      <rect x="20" y="158" width="210" height="24" rx="4" fill="rgba(88,166,255,0.15)" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="125" y="174" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="JetBrains Mono">Hardware</text>
+      <text x="125" y="210" text-anchor="middle" fill="#ff7b72" font-size="11" font-family="Noto Sans Bengali">⚠️ প্রতিটি VM-এ আলাদা OS</text>
+      <text x="125" y="228" text-anchor="middle" fill="#ff7b72" font-size="11" font-family="Noto Sans Bengali">অনেক বেশি resource লাগে</text>
+      <text x="125" y="248" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">চালু হতে ১–৫ মিনিট লাগে</text>
+
+      <line x1="310" y1="20" x2="310" y2="255" stroke="#30363d" stroke-width="1.5" stroke-dasharray="6,4"/>
+
+      <!-- Container -->
+      <text x="465" y="22" text-anchor="middle" fill="#2496ed" font-size="13" font-family="Noto Sans Bengali" font-weight="bold">Container (Docker)</text>
+      <rect x="325" y="32" width="100" height="30" rx="5" fill="#21262d" stroke="#2496ed" stroke-width="1.5"/>
+      <text x="375" y="51" text-anchor="middle" fill="#2496ed" font-size="11" font-family="Noto Sans Bengali">App A</text>
+      <rect x="435" y="32" width="100" height="30" rx="5" fill="#21262d" stroke="#2496ed" stroke-width="1.5"/>
+      <text x="485" y="51" text-anchor="middle" fill="#2496ed" font-size="11" font-family="Noto Sans Bengali">App B</text>
+      <rect x="325" y="68" width="210" height="24" rx="4" fill="rgba(36,150,237,0.2)" stroke="#2496ed" stroke-width="2"/>
+      <text x="430" y="84" text-anchor="middle" fill="#2496ed" font-size="11" font-family="JetBrains Mono">Docker Engine</text>
+      <rect x="325" y="98" width="210" height="24" rx="4" fill="rgba(63,185,80,0.15)" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="430" y="114" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">Host OS (shared)</text>
+      <rect x="325" y="128" width="210" height="24" rx="4" fill="rgba(88,166,255,0.15)" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="430" y="144" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="JetBrains Mono">Hardware</text>
+      <text x="430" y="185" text-anchor="middle" fill="#3fb950" font-size="11" font-family="Noto Sans Bengali">✅ Host OS একসাথে ব্যবহার</text>
+      <text x="430" y="205" text-anchor="middle" fill="#3fb950" font-size="11" font-family="Noto Sans Bengali">✅ অনেক কম resource</text>
+      <text x="430" y="225" text-anchor="middle" fill="#3fb950" font-size="11" font-family="Noto Sans Bengali">✅ সেকেন্ডে চালু হয়</text>
+      <text x="430" y="248" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">Linux-এ সবচেয়ে ভালো কাজ করে</text>
+    </svg>
+  </div>
+
+  <h3>Image = Class, Container = Object</h3>
+  <div class="callout info">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body">
+      <div class="callout-title">Programming-এর ভাষায় বোঝো</div>
+      <div class="callout-text">
+        <strong>Image</strong> হলো একটি <em>blueprint</em> বা ছাঁচ — যেমন OOP-তে <strong>Class</strong>।<br>
+        <strong>Container</strong> হলো সেই ছাঁচ থেকে তৈরি চলমান কপি — যেমন <strong>Object/Instance</strong>।<br><br>
+        একটি Image থেকে অনেকগুলো Container চালানো যায়, ঠিক যেমন একটি Class থেকে অনেক Object তৈরি করা যায়।<br><br>
+        Cloud provider-এ এটিকে বলে <strong>AMI</strong> (AWS), Dockerfile-ই Image তৈরির নির্দেশিকা।
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 2 ===== -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০২</span>
+    <h2 class="section-title">Docker তত্ত্ব — Docker কী এবং কীভাবে কাজ করে?</h2>
+  </div>
+
+  <p>Docker একটি টুল যা container তৈরি ও পরিচালনা করা সহজ করে তোলে। ২০১৩ সালে ফ্রান্সের <em>dotCloud</em> কোম্পানি এটি open source হিসেবে মুক্ত করে।</p>
+
+  <h3>Docker-এর Client-Server Architecture</h3>
+  <div class="diagram">
+    <div class="diagram-title">// Docker-এর তিনটি মূল অংশ</div>
+    <svg viewBox="0 0 620 180" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <!-- Client -->
+      <rect x="10" y="60" width="135" height="60" rx="10" fill="#21262d" stroke="#2496ed" stroke-width="2"/>
+      <text x="78" y="84" text-anchor="middle" fill="#2496ed" font-size="13" font-family="JetBrains Mono" font-weight="bold">docker-cli</text>
+      <text x="78" y="103" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">তুমি কমান্ড দাও</text>
+      <text x="78" y="145" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">① Client</text>
+
+      <!-- REST API arrow -->
+      <path d="M 147 90 L 210 90" stroke="#58a6ff" stroke-width="2.5"/>
+      <polygon points="210,86 218,90 210,94" fill="#58a6ff"/>
+      <text x="180" y="80" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="JetBrains Mono">REST API</text>
+
+      <!-- Daemon -->
+      <rect x="220" y="40" width="185" height="100" rx="10" fill="#21262d" stroke="#f0883e" stroke-width="2"/>
+      <text x="312" y="68" text-anchor="middle" fill="#f0883e" font-size="13" font-family="JetBrains Mono" font-weight="bold">Docker Daemon</text>
+      <text x="312" y="88" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">পেছনে চলে (dockerd)</text>
+      <text x="312" y="106" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">Image ও Container</text>
+      <text x="312" y="122" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">পরিচালনা করে</text>
+      <text x="312" y="158" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">② Daemon</text>
+
+      <!-- pull arrow -->
+      <path d="M 407 90 L 465 90" stroke="#3fb950" stroke-width="2.5"/>
+      <polygon points="465,86 473,90 465,94" fill="#3fb950"/>
+      <text x="437" y="80" text-anchor="middle" fill="#3fb950" font-size="10" font-family="JetBrains Mono">pull / push</text>
+
+      <!-- Registry -->
+      <rect x="475" y="55" width="135" height="70" rx="10" fill="#21262d" stroke="#3fb950" stroke-width="2"/>
+      <text x="542" y="82" text-anchor="middle" fill="#3fb950" font-size="13" font-family="JetBrains Mono" font-weight="bold">DockerHub</text>
+      <text x="542" y="100" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">Image সংরক্ষণ</text>
+      <text x="542" y="117" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">৫+ মিলিয়ন Image</text>
+      <text x="542" y="145" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">③ Registry</text>
+    </svg>
+  </div>
+
+  <h3>Image-এর Layer (স্তর) System</h3>
+  <p>প্রতিটি Docker Image অনেকগুলো layer দিয়ে তৈরি। নিচের layer গুলো ভাগ করে নেওয়া যায়, তাই storage সাশ্রয় হয়।</p>
+  <div class="diagram">
+    <div class="diagram-title">// Image Layer কাঠামো</div>
+    <svg viewBox="0 0 500 230" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <rect x="30" y="170" width="440" height="30" rx="5" fill="rgba(88,166,255,0.2)" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="250" y="190" text-anchor="middle" fill="#58a6ff" font-size="12" font-family="JetBrains Mono">Layer 1: Linux Kernel (উভয় Image-এ share হয়)</text>
+
+      <rect x="30" y="132" width="440" height="30" rx="5" fill="rgba(63,185,80,0.15)" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="250" y="152" text-anchor="middle" fill="#3fb950" font-size="12" font-family="JetBrains Mono">Layer 2: Ubuntu 20.04 (share হয়)</text>
+
+      <rect x="30" y="94" width="200" height="30" rx="5" fill="rgba(240,136,62,0.15)" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="130" y="114" text-anchor="middle" fill="#f0883e" font-size="11" font-family="JetBrains Mono">Layer 3A: Python 3.10</text>
+
+      <rect x="240" y="94" width="230" height="30" rx="5" fill="rgba(188,140,255,0.15)" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="355" y="114" text-anchor="middle" fill="#bc8cff" font-size="11" font-family="JetBrains Mono">Layer 3B: Node.js 18</text>
+
+      <rect x="30" y="56" width="200" height="30" rx="5" fill="rgba(36,150,237,0.2)" stroke="#2496ed" stroke-width="2"/>
+      <text x="130" y="76" text-anchor="middle" fill="#2496ed" font-size="11" font-family="JetBrains Mono">Layer 4A: Flask App</text>
+
+      <rect x="240" y="56" width="230" height="30" rx="5" fill="rgba(36,150,237,0.2)" stroke="#2496ed" stroke-width="2"/>
+      <text x="355" y="76" text-anchor="middle" fill="#2496ed" font-size="11" font-family="JetBrains Mono">Layer 4B: Express App</text>
+
+      <rect x="30" y="18" width="200" height="30" rx="5" fill="rgba(36,150,237,0.35)" stroke="#2496ed" stroke-width="2"/>
+      <text x="130" y="38" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="Noto Sans Bengali">✍️ Writable (Container)</text>
+
+      <rect x="240" y="18" width="230" height="30" rx="5" fill="rgba(36,150,237,0.35)" stroke="#2496ed" stroke-width="2"/>
+      <text x="355" y="38" text-anchor="middle" fill="#e6edf3" font-size="11" font-family="Noto Sans Bengali">✍️ Writable (Container)</text>
+
+      <text x="250" y="220" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">নিচের shared layer গুলো একবারই download হয় → ডিস্ক সাশ্রয়</text>
+    </svg>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-icon">🌐</div>
+    <div class="callout-body">
+      <div class="callout-title">DockerHub-এ কী আছে?</div>
+      <div class="callout-text">
+        Database: <code>mysql</code>, <code>postgres</code>, <code>mongodb</code>, <code>redis</code>, <code>elasticsearch</code><br>
+        OS: <code>ubuntu</code>, <code>debian</code>, <code>alpine</code>, <code>centos</code><br>
+        Dev Tools: <code>python</code>, <code>node</code>, <code>jupyter/minimal-notebook</code><br>
+        Web: <code>nginx</code>, <code>apache</code><br><br>
+        Account তৈরি করো: <strong>hub.docker.com</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 3 ===== -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৩</span>
+    <h2 class="section-title">Container ও Image ব্যবস্থাপনা — মূল কমান্ড</h2>
+  </div>
+
+  <h3>Docker চালু করা ও প্রথম Container</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># Docker daemon চালু করো</span>
+<span class="cmd">sudo service docker start</span>
+
+<span class="cmt"># প্রথম Container চালাও</span>
+<span class="cmd">docker container run hello-world</span>
+<span class="out">Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+...
+Hello from Docker!
+This message shows that your installation appears to be working correctly.</span></pre></div>
+  </div>
+
+  <h3>Image কমান্ড</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>Image ব্যবস্থাপনা</span></div>
+    <div class="code-body"><pre><span class="cmt"># Image নামাও (download করো)</span>
+<span class="cmd">docker image pull ubuntu:latest</span>
+<span class="cmd">docker image pull ubuntu:20.04</span>   <span class="cmt"># নির্দিষ্ট version (tag)</span>
+
+<span class="cmt"># Local-এ থাকা Image দেখো</span>
+<span class="cmd">docker image ls</span>
+<span class="out">REPOSITORY    TAG       IMAGE ID       CREATED       SIZE
+ubuntu        latest    174c8c134b2a   3 weeks ago   77.9MB
+hello-world   latest    d2c94e258dcb   8 months ago  13.3kB</span>
+<span class="cmt"># REPOSITORY = image-এর নাম</span>
+<span class="cmt"># TAG = version (default = "latest")</span>
+<span class="cmt"># IMAGE ID = অনন্য পরিচয় সংখ্যা</span>
+
+<span class="cmt"># Image বিস্তারিত দেখো</span>
+<span class="cmd">docker image inspect hello-world</span>
+
+<span class="cmt"># Image মুছো</span>
+<span class="cmd">docker image rm hello-world</span>
+<span class="cmd">docker image rm -f hello-world</span>   <span class="cmt"># জোর করে মুছো</span>
+
+<span class="cmt"># ব্যবহারহীন image মুছো</span>
+<span class="cmd">docker image prune</span></pre></div>
+  </div>
+
+  <h3>Container চালানো — সব গুরুত্বপূর্ণ Flag</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>docker container run — সব উপায়</span></div>
+    <div class="code-body"><pre><span class="cmt"># সাধারণভাবে চালাও</span>
+<span class="cmd">docker container run ubuntu:latest</span>
+<span class="cmt"># কোনো command না দিলে default command চলে, তারপর বন্ধ হয়</span>
+
+<span class="cmt"># Interactive mode — ভেতরে ঢুকে কাজ করো</span>
+<span class="cmd">docker container run</span> <span class="flag">-it</span> ubuntu:latest bash
+<span class="cmt"># -it = --interactive --tty (keyboard input + terminal)</span>
+<span class="cmt"># bash = container-এর ভেতরে bash shell চালাও</span>
+
+<span class="cmt"># Background (detached) mode</span>
+<span class="cmd">docker container run</span> <span class="flag">-d</span> ubuntu:latest bash
+<span class="cmt"># terminal দখল করে না, পেছনে চলে</span>
+
+<span class="cmt"># নাম দিয়ে চালাও</span>
+<span class="cmd">docker container run</span> <span class="flag">-d --name my_ubuntu</span> ubuntu:latest bash
+
+<span class="cmt"># বন্ধ হলে স্বয়ংক্রিয়ভাবে মুছে ফেলো</span>
+<span class="cmd">docker container run</span> <span class="flag">--rm</span> ubuntu:latest echo "hello"
+
+<span class="cmt"># Environment variable দিয়ে চালাও</span>
+<span class="cmd">docker container run</span> <span class="flag">-it --rm -e "MY_VAR=hello"</span> ubuntu:latest bash
+<span class="cmt"># container-এর ভেতরে: echo $MY_VAR → hello</span>
+
+<span class="cmt"># Port forward করে চালাও (host:container)</span>
+<span class="cmd">docker container run</span> <span class="flag">-p 8080:80</span> nginx
+<span class="cmt"># host-এর 8080 port → container-এর 80 port</span>
+
+<span class="cmt"># সব একসাথে</span>
+<span class="cmd">docker container run</span> \
+    <span class="flag">-d</span> \
+    <span class="flag">--rm</span> \
+    <span class="flag">--name my_web</span> \
+    <span class="flag">-p 8080:80</span> \
+    <span class="flag">-e "ENV=production"</span> \
+    nginx:latest</pre></div>
+  </div>
+
+  <h3>Container ব্যবস্থাপনা কমান্ড</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># চলমান container দেখো</span>
+<span class="cmd">docker container ls</span>
+
+<span class="cmt"># সব container দেখো (বন্ধ সহ)</span>
+<span class="cmd">docker container ls --all</span>
+<span class="out">CONTAINER ID   IMAGE           COMMAND      STATUS          NAMES
+a1b2c3d4e5f6   ubuntu:latest   "bash"       Up 5 minutes    my_ubuntu
+f6e5d4c3b2a1   hello-world     "/hello"     Exited (0)      sweet_hopper</span>
+
+<span class="cmt"># Container বন্ধ করো</span>
+<span class="cmd">docker container stop my_ubuntu</span>
+
+<span class="cmt"># বন্ধ container আবার চালু করো</span>
+<span class="cmd">docker container start my_ubuntu</span>
+<span class="cmd">docker container start -a my_ubuntu</span>  <span class="cmt"># output দেখতে -a (attach)</span>
+
+<span class="cmt"># চলমান container-এ command চালাও</span>
+<span class="cmd">docker container exec -it my_ubuntu bash</span>
+
+<span class="cmt"># Container মুছো</span>
+<span class="cmd">docker container rm my_ubuntu</span>
+
+<span class="cmt"># Container বিস্তারিত দেখো (JSON format)</span>
+<span class="cmd">docker container inspect my_ubuntu</span></pre></div>
+  </div>
+
+  <h3>Flags সারসংক্ষেপ টেবিল</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Flag</th><th>মানে</th><th>কখন ব্যবহার</th></tr>
+      <tr><td><code>-it</code></td><td>Interactive Terminal</td><td>container-এর ভেতরে bash ব্যবহার করতে</td></tr>
+      <tr><td><code>-d</code></td><td>Detached (background)</td><td>server বা database চালাতে</td></tr>
+      <tr><td><code>--name</code></td><td>নাম দাও</td><td>সহজে চেনার জন্য, সবসময় দাও</td></tr>
+      <tr><td><code>--rm</code></td><td>বন্ধে স্বয়ংক্রিয় মুছে ফেলো</td><td>temporary container-এর জন্য</td></tr>
+      <tr><td><code>-e</code></td><td>Environment Variable</td><td>password, config পাঠাতে</td></tr>
+      <tr><td><code>-p host:cont</code></td><td>Port Forward</td><td>বাইরে থেকে API/web access করতে</td></tr>
+      <tr><td><code>-v</code></td><td>Volume Mount</td><td>ডেটা রাখতে, ফাইল ভাগ করতে</td></tr>
+      <tr><td><code>--network</code></td><td>Network নির্বাচন</td><td>container গুলোকে connect করতে</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ===== SECTION 4 ===== -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৪</span>
+    <h2 class="section-title">Container যোগাযোগ — Network ও Port</h2>
+  </div>
+
+  <p>প্রতিটি Container-এর নিজের IP address থাকে। Host machine-এর <code>localhost</code> দিয়ে সরাসরি container-এ পৌঁছানো যায় না — port forward করতে হয়।</p>
+
+  <h3>নেটওয়ার্কের ধারণা</h3>
+  <div class="diagram">
+    <div class="diagram-title">// Container Network — কে কার সাথে কথা বলতে পারে?</div>
+    <svg viewBox="0 0 620 230" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <!-- Host box -->
+      <rect x="5" y="5" width="608" height="220" rx="12" fill="#0a0d13" stroke="#30363d" stroke-width="2"/>
+      <text x="310" y="28" text-anchor="middle" fill="#8b949e" font-size="12" font-family="Noto Sans Bengali">Host Machine (তোমার computer বা server)</text>
+
+      <!-- Bridge Network -->
+      <rect x="20" y="38" width="580" height="140" rx="10" fill="#0d1117" stroke="#2496ed" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text x="60" y="58" fill="#2496ed" font-size="11" font-family="JetBrains Mono">Bridge Network: 172.17.0.0/16</text>
+
+      <!-- Gateway -->
+      <rect x="35" y="65" width="100" height="34" rx="6" fill="#21262d" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="85" y="80" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="JetBrains Mono">Gateway</text>
+      <text x="85" y="93" text-anchor="middle" fill="#8b949e" font-size="9" font-family="JetBrains Mono">172.17.0.1</text>
+
+      <!-- Container 1: ES -->
+      <rect x="155" y="65" width="155" height="80" rx="8" fill="#21262d" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="232" y="86" text-anchor="middle" fill="#f0883e" font-size="11" font-family="JetBrains Mono">ElasticSearch</text>
+      <text x="232" y="103" text-anchor="middle" fill="#8b949e" font-size="10" font-family="JetBrains Mono">172.17.0.2</text>
+      <text x="232" y="120" text-anchor="middle" fill="#e3b341" font-size="9" font-family="Noto Sans Bengali">port 9200 expose</text>
+      <text x="232" y="136" text-anchor="middle" fill="#3fb950" font-size="9" font-family="JetBrains Mono">→ host:9201 forward</text>
+
+      <!-- Container 2: App -->
+      <rect x="330" y="65" width="130" height="80" rx="8" fill="#21262d" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="395" y="86" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">My App</text>
+      <text x="395" y="103" text-anchor="middle" fill="#8b949e" font-size="10" font-family="JetBrains Mono">172.17.0.3</text>
+      <text x="395" y="128" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Noto Sans Bengali">ES-কে নাম দিয়ে</text>
+      <text x="395" y="142" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Noto Sans Bengali">ডাকতে পারে</text>
+
+      <!-- Container 3: Jupyter -->
+      <rect x="480" y="65" width="105" height="80" rx="8" fill="#21262d" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="532" y="86" text-anchor="middle" fill="#bc8cff" font-size="11" font-family="JetBrains Mono">Jupyter</text>
+      <text x="532" y="103" text-anchor="middle" fill="#8b949e" font-size="10" font-family="JetBrains Mono">172.17.0.4</text>
+
+      <!-- Labels at bottom -->
+      <text x="310" y="200" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">Host → Container: IP বা port forward দিয়ে</text>
+      <text x="310" y="218" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">Container → Container (একই network): IP বা নাম দিয়ে</text>
+    </svg>
+  </div>
+
+  <h3>Container-এর IP খোঁজা ও Port Forward</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># ElasticSearch container চালাও (port forward সহ)</span>
+<span class="cmd">docker container run</span> <span class="flag">-d --rm</span> \
+    <span class="flag">-e "discovery.type=single-node"</span> \
+    <span class="flag">-p 9201:9200</span> \
+    <span class="flag">-p 9301:9300</span> \
+    <span class="flag">--name my_es</span> \
+    elasticsearch:7.2.0
+
+<span class="cmt"># Container-এর IP খোঁজো</span>
+<span class="cmd">docker container inspect my_es</span> | <span class="cmd">grep IPAddress</span>
+<span class="out">            "IPAddress": "172.17.0.2"</span>
+
+<span class="cmt"># Host-এর port 9201 দিয়ে access করো</span>
+<span class="cmd">curl -X GET http://127.0.0.1:9201</span>
+<span class="out">HTTP/1.1 200 OK
+{
+  "name" : "abc123",
+  "cluster_name" : "docker-cluster",
+  "version": { "number": "7.2.0", ... },
+  "tagline" : "You Know, for Search"
+}</span></pre></div>
+  </div>
+
+  <h3>Network তৈরি ও ব্যবহার</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># নতুন network তৈরি</span>
+<span class="cmd">docker network create</span> \
+    <span class="flag">--subnet 172.50.0.0/16</span> \
+    <span class="flag">--gateway 172.50.0.1</span> \
+    my_network
+
+<span class="cmt"># সব network দেখো</span>
+<span class="cmd">docker network ls</span>
+<span class="out">NETWORK ID     NAME         DRIVER
+a1b2c3d4e5f6   bridge       bridge   ← default
+b2c3d4e5f6a1   host         host
+c3d4e5f6a1b2   none         null
+d4e5f6a1b2c3   my_network   bridge</span>
+
+<span class="cmt"># নির্দিষ্ট network-এ container চালাও</span>
+<span class="cmd">docker container run</span> <span class="flag">-d --rm</span> \
+    <span class="flag">-e "discovery.type=single-node"</span> \
+    <span class="flag">--network my_network</span> \
+    <span class="flag">--name my_es2</span> \
+    elasticsearch:7.2.0
+
+<span class="cmt"># একই network-এ container নাম দিয়ে ডাকো (IP দরকার নেই!)</span>
+<span class="cmd">docker container run --network my_network datascientest/curl:latest</span> \
+    http://my_es2:9200
+
+<span class="cmt"># Network মুছো</span>
+<span class="cmd">docker network rm my_network</span>
+
+<span class="cmt"># Network inspect করো</span>
+<span class="cmd">docker network inspect bridge</span></pre></div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-icon">⚠️</div>
+    <div class="callout-body">
+      <div class="callout-title">IP address স্থায়ী নয়!</div>
+      <div class="callout-text">Container বন্ধ হলে তার IP address পরিবর্তন হতে পারে। তাই IP-র বদলে container-এর <strong>নাম</strong> ব্যবহার করো। একই network-এ থাকলে নাম domain-এর মতো কাজ করে।</div>
+    </div>
+  </div>
+
+  <h3>তিন ধরনের Network</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Network</th><th>বৈশিষ্ট্য</th><th>কখন ব্যবহার</th></tr>
+      <tr><td><code>bridge</code></td><td>Default। Container গুলো নিজস্ব subnet-এ থাকে। Container গুলো পরস্পর কথা বলতে পারে।</td><td>বেশিরভাগ সময়</td></tr>
+      <tr><td><code>host</code></td><td>Container সরাসরি host-এর network ব্যবহার করে। কোনো isolation নেই। শুধু Linux-এ কাজ করে।</td><td>সর্বোচ্চ performance দরকার হলে</td></tr>
+      <tr><td><code>none</code></td><td>কোনো network নেই। সম্পূর্ণ বিচ্ছিন্ন।</td><td>Network লাগে না এমন কাজে</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ===== SECTION 5 ===== -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৫</span>
+    <h2 class="section-title">Data Persistence — ডেটা স্থায়িত্ব</h2>
+  </div>
+
+  <p>Docker container বন্ধ হলে তার ভেতরের সব ডেটা <strong>মুছে যায়</strong>। ডেটা ধরে রাখতে <strong>Volume</strong> ব্যবহার করতে হয়।</p>
+
+  <div class="callout danger">
+    <div class="callout-icon">🚨</div>
+    <div class="callout-body">
+      <div class="callout-title">সতর্কতা! Container মুছলে ডেটা যায়!</div>
+      <div class="callout-text">
+        Container-এ ফাইল তৈরি করলে → Container বন্ধ ও মুছে ফেললে → নতুন Container-এ সেই ফাইল নেই।<br>
+        Database-এ data রাখলে → Container মুছলে সব data চলে যাবে।<br>
+        <strong>সমাধান: Volume ব্যবহার করো।</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="diagram">
+    <div class="diagram-title">// Volume কীভাবে কাজ করে</div>
+    <svg viewBox="0 0 600 175" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <!-- Container 1 (stopped) -->
+      <rect x="10" y="15" width="155" height="95" rx="8" fill="#21262d" stroke="#ff7b72" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="87" y="36" text-anchor="middle" fill="#ff7b72" font-size="11" font-family="Noto Sans Bengali">Container A (বন্ধ)</text>
+      <rect x="22" y="48" width="130" height="28" rx="5" fill="#0d1117" stroke="#3fb950" stroke-width="1"/>
+      <text x="87" y="66" text-anchor="middle" fill="#3fb950" font-size="10" font-family="JetBrains Mono">/home/folder → volume</text>
+      <text x="87" y="100" text-anchor="middle" fill="#ff7b72" font-size="9" font-family="Noto Sans Bengali">মুছে ফেলা হয়েছে</text>
+
+      <!-- Arrow -->
+      <path d="M 165 62 L 215 62" stroke="#e3b341" stroke-width="2"/>
+      <polygon points="215,58 223,62 215,66" fill="#e3b341"/>
+
+      <!-- Volume -->
+      <rect x="223" y="30" width="148" height="65" rx="8" fill="rgba(227,179,65,0.12)" stroke="#e3b341" stroke-width="2"/>
+      <text x="297" y="55" text-anchor="middle" fill="#e3b341" font-size="14" font-family="JetBrains Mono">📦 Volume</text>
+      <text x="297" y="73" text-anchor="middle" fill="#8b949e" font-size="10" font-family="JetBrains Mono">my_volume</text>
+      <text x="297" y="88" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Noto Sans Bengali">Host-এ নিরাপদ</text>
+
+      <!-- Arrow -->
+      <path d="M 372 62 L 422 62" stroke="#e3b341" stroke-width="2"/>
+      <polygon points="422,58 430,62 422,66" fill="#e3b341"/>
+
+      <!-- Container 2 (new) -->
+      <rect x="430" y="15" width="155" height="95" rx="8" fill="#21262d" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="507" y="36" text-anchor="middle" fill="#3fb950" font-size="11" font-family="Noto Sans Bengali">Container B (নতুন)</text>
+      <rect x="442" y="48" width="130" height="28" rx="5" fill="#0d1117" stroke="#3fb950" stroke-width="1"/>
+      <text x="507" y="66" text-anchor="middle" fill="#3fb950" font-size="10" font-family="JetBrains Mono">/home/folder2 → volume</text>
+      <text x="507" y="100" text-anchor="middle" fill="#3fb950" font-size="9" font-family="Noto Sans Bengali">পুরোনো ডেটা পাচ্ছে ✅</text>
+
+      <text x="297" y="150" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">Volume host machine-এ থাকে, container মুছলেও ডেটা থাকে</text>
+      <text x="297" y="168" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">অবস্থান: /var/lib/docker/volumes/my_volume/_data</text>
+    </svg>
+  </div>
+
+  <h3>Volume তৈরি ও ব্যবহার</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># Volume তৈরি করো</span>
+<span class="cmd">docker volume create my_volume</span>
+
+<span class="cmt"># Volume তালিকা দেখো</span>
+<span class="cmd">docker volume ls</span>
+
+<span class="cmt"># Volume কোথায় আছে ও বিস্তারিত দেখো</span>
+<span class="cmd">docker volume inspect my_volume</span>
+<span class="out">[{
+    "Name": "my_volume",
+    "Driver": "local",
+    "Mountpoint": "/var/lib/docker/volumes/my_volume/_data",
+    ...
+}]</span>
+
+<span class="cmt"># Volume সহ container চালাও</span>
+<span class="cmt"># --mount type=volume,src=volume_নাম,dst=container_এর_path</span>
+<span class="cmd">docker container run</span> <span class="flag">-it --rm --name my_ubuntu</span> \
+    <span class="flag">--mount type=volume,src=my_volume,dst=/home/my_folder</span> \
+    ubuntu:latest bash
+
+<span class="cmt"># ভেতরে ফাইল তৈরি করো</span>
+<span class="out">root@container:/# </span><span class="cmd">echo "hello from Docker" > /home/my_folder/test.txt</span>
+<span class="out">root@container:/# </span><span class="cmd">exit</span>
+
+<span class="cmt"># নতুন container-এও ডেটা থাকবে!</span>
+<span class="cmd">docker container run</span> <span class="flag">-it --rm</span> \
+    <span class="flag">--mount type=volume,src=my_volume,dst=/home/data</span> \
+    ubuntu:latest bash
+<span class="out">root@container:/# </span><span class="cmd">cat /home/data/test.txt</span>
+<span class="out">hello from Docker   ← ডেটা আছে! ✅</span>
+
+<span class="cmt"># Volume মুছো (ডেটাও মুছে যাবে!)</span>
+<span class="cmd">docker volume rm my_volume</span></pre></div>
+  </div>
+
+  <h3>Host Folder Mount — সহজ পদ্ধতি</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># --volume host_path:container_path</span>
+<span class="cmt"># $HOME = /home/ubuntu (তোমার home folder)</span>
+<span class="cmd">docker container run</span> <span class="flag">-it --rm --name my_ubuntu</span> \
+    <span class="flag">--volume $HOME:/home/my_folder</span> \
+    ubuntu:latest bash
+
+<span class="cmt"># container-এর ভেতরে তোমার home folder দেখতে পাবে!</span>
+<span class="out">root@container:/# </span><span class="cmd">ls /home/my_folder</span>
+<span class="cmt"># তোমার host machine-এর home folder-এর সব ফাইল দেখাবে</span>
+
+<span class="cmt"># পার্থক্য:
+# Volume: Docker পরিচালনা করে, নিরাপদ, root access লাগে host থেকে
+# --volume: সরাসরি host folder, সহজ, কম নিরাপদ</span></pre></div>
+  </div>
+</section>
+
+<!-- ===== SECTION 6 ===== -->
+<section class="section" id="s6">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৬</span>
+    <h2 class="section-title">Image তৈরি — Dockerfile লেখা</h2>
+  </div>
+
+  <p>নিজের অ্যাপ Container-এ রাখতে <strong>Dockerfile</strong> লিখতে হয়। এটি step-by-step নির্দেশনার ফাইল।</p>
+
+  <h3>Dockerfile Keyword সমূহ</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>Keyword</th><th>কাজ</th><th>উদাহরণ</th></tr>
+      <tr><td><code>FROM</code></td><td>Base image বেছে নাও (সবার আগে)</td><td><code>FROM ubuntu:20.04</code></td></tr>
+      <tr><td><code>RUN</code></td><td>Image build করার সময় command চালাও</td><td><code>RUN apt-get update &amp;&amp; apt-get install -y python3</code></td></tr>
+      <tr><td><code>ADD</code></td><td>Host থেকে Image-এ ফাইল কপি করো (URL ও tar support)</td><td><code>ADD app.py /app/app.py</code></td></tr>
+      <tr><td><code>COPY</code></td><td>Host থেকে Image-এ ফাইল কপি করো (simple)</td><td><code>COPY . /app/</code></td></tr>
+      <tr><td><code>WORKDIR</code></td><td>Container-এর কাজের directory পরিবর্তন করো</td><td><code>WORKDIR /app/</code></td></tr>
+      <tr><td><code>EXPOSE</code></td><td>কোন port বাইরে থেকে দেখা যাবে ঘোষণা করো</td><td><code>EXPOSE 5000</code></td></tr>
+      <tr><td><code>CMD</code></td><td>Container চালু হলে default command</td><td><code>CMD python3 server.py</code></td></tr>
+      <tr><td><code>ENTRYPOINT</code></td><td>CMD-এর মতো, কিন্তু override করা যায় না</td><td><code>ENTRYPOINT ["python3"]</code></td></tr>
+      <tr><td><code>ENV</code></td><td>Environment Variable সেট করো</td><td><code>ENV PORT=5000</code></td></tr>
+      <tr><td><code>VOLUME</code></td><td>Mount point তৈরি করো</td><td><code>VOLUME ["/data"]</code></td></tr>
+      <tr><td><code>LABEL</code></td><td>Metadata যোগ করো</td><td><code>LABEL version="1.0"</code></td></tr>
+    </table>
+  </div>
+
+  <h3>Flask Server সহ Image — Step by Step</h3>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">১</div>
+      <div class="step-content">
+        <div class="step-title">Folder ও ফাইল তৈরি করো</div>
+        <div class="code-block"><div class="code-body"><pre><span class="cmd">mkdir my_docker_image && cd my_docker_image</span></pre></div></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">২</div>
+      <div class="step-content">
+        <div class="step-title">server.py তৈরি করো</div>
+        <div class="code-block">
+          <div class="code-header"><span>python</span><span>server.py</span></div>
+          <div class="code-body"><pre><span class="kw">from</span> flask <span class="kw">import</span> Flask
+
+server = Flask(<span class="str">'my_server'</span>)
+
+@server.route(<span class="str">'/'</span>)
+<span class="kw">def</span> index():
+    <span class="kw">return</span> <span class="str">'Hello World from a containerized server'</span>
+
+<span class="kw">if</span> __name__ == <span class="str">'__main__'</span>:
+    server.run(host=<span class="str">'0.0.0.0'</span>, port=<span class="num">5000</span>)
+<span class="cmt"># host='0.0.0.0' গুরুত্বপূর্ণ — container বাইরে থেকে access-এর জন্য</span></pre></div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৩</div>
+      <div class="step-content">
+        <div class="step-title">Dockerfile লেখো</div>
+        <div class="code-block">
+          <div class="code-header"><span>dockerfile</span><span>Dockerfile</span></div>
+          <div class="code-body"><pre><span class="cmt"># Step 1: কোন base image ব্যবহার করব?</span>
+<span class="kw">FROM</span> ubuntu:18.04
+
+<span class="cmt"># Step 2: Python ও Flask ইনস্টল করো</span>
+<span class="cmt"># && দিয়ে chain করা হয়েছে → একটি RUN layer = ছোট image</span>
+<span class="kw">RUN</span> apt-get update \
+    && apt-get install python3-pip -y \
+    && pip3 install flask==2.0.0
+
+<span class="cmt"># Step 3: আমাদের Python ফাইল image-এ কপি করো</span>
+<span class="cmt"># ADD local_file image_এর_path</span>
+<span class="kw">ADD</span> server.py /my_server/server.py
+
+<span class="cmt"># Step 4: কাজের directory পরিবর্তন করো (cd এর মতো)</span>
+<span class="kw">WORKDIR</span> /my_server/
+
+<span class="cmt"># Step 5: port 5000 বাইরে থেকে accessible ঘোষণা করো</span>
+<span class="kw">EXPOSE</span> 5000
+
+<span class="cmt"># Step 6: Container চালু হলে এই command চলবে</span>
+<span class="kw">CMD</span> python3 server.py</pre></div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৪</div>
+      <div class="step-content">
+        <div class="step-title">Image build করো</div>
+        <div class="code-block"><div class="code-body"><pre><span class="cmt"># . = Dockerfile-এর অবস্থান (বর্তমান folder)
+# -t = image-এর নাম:tag</span>
+<span class="cmd">docker image build . -t my_image:latest</span>
+<span class="out">Sending build context to Docker daemon  3.072kB
+Step 1/6 : FROM ubuntu:18.04
+ ---> 71eaf13299f4
+Step 2/6 : RUN apt-get update ...
+ ...
+Successfully built a1b2c3d4e5f6
+Successfully tagged my_image:latest</span></pre></div></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৫</div>
+      <div class="step-content">
+        <div class="step-title">Container চালাও ও পরীক্ষা করো</div>
+        <div class="code-block"><div class="code-body"><pre><span class="cmd">docker container run</span> <span class="flag">-p 5000:5000 -d</span> my_image:latest
+
+<span class="cmd">curl -X GET http://localhost:5000</span>
+<span class="out">Hello World from a containerized server  ✅</span></pre></div></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Image ভাগ করার পদ্ধতি</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>Image save/load ও DockerHub push</span></div>
+    <div class="code-body"><pre><span class="cmt"># পদ্ধতি ১: .tar ফাইলে সংরক্ষণ ও পাঠানো</span>
+<span class="cmd">docker image save --output my_image.tar my_image</span>
+
+<span class="cmt"># .tar থেকে image পুনরুদ্ধার</span>
+<span class="cmd">docker image load --input my_image.tar</span>
+
+<span class="cmt"># Image মুছো</span>
+<span class="cmd">docker image rm my_image</span>
+<span class="cmd">docker image rm -f my_image</span>   <span class="cmt"># জোর করে (চলমান container থাকলেও)</span>
+
+<span class="cmt"># পদ্ধতি ২: DockerHub-এ push করো</span>
+<span class="cmt"># আগে login করো</span>
+<span class="cmd">docker login</span>
+
+<span class="cmt"># Image-এর নাম হতে হবে: username/imagename:tag</span>
+<span class="cmd">docker image build . -t myusername/my_flask_app:1.0</span>
+<span class="cmd">docker image push myusername/my_flask_app:1.0</span>
+
+<span class="cmt"># যেকেউ pull করতে পারবে</span>
+<span class="cmd">docker image pull myusername/my_flask_app:1.0</span></pre></div>
+  </div>
+</section>
+
+<!-- ===== SECTION 7 ===== -->
+<section class="section" id="s7">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৭</span>
+    <h2 class="section-title">Docker Compose — একসাথে অনেক Container</h2>
+  </div>
+
+  <p>Docker Compose দিয়ে একটি YAML ফাইলে সব container-এর configuration লিখে একটি কমান্ডে সব চালানো যায়।</p>
+
+  <div class="callout info">
+    <div class="callout-icon">📄</div>
+    <div class="callout-body">
+      <div class="callout-title">YAML ফাইল কী?</div>
+      <div class="callout-text">YAML = "YAML Ain't Markup Language"। একটি সহজ text format যা configuration লিখতে ব্যবহার হয়। Indentation (ফাঁকা জায়গা) দিয়ে কাঠামো বোঝানো হয়। ফাইলের নাম হয় <code>docker-compose.yml</code>।</div>
+    </div>
+  </div>
+
+  <h3>সহজতম docker-compose.yml</h3>
+  <div class="code-block">
+    <div class="code-header"><span>yaml</span><span>docker-compose.yml — শুধু দুটো service</span></div>
+    <div class="code-body"><pre><span class="kw">version</span>: <span class="str">'3.9'</span>
+
+<span class="kw">services</span>:
+  <span class="kw">jupyter</span>:
+    <span class="kw">image</span>: jupyter/minimal-notebook:ubuntu-18.04
+
+  <span class="kw">elasticsearch</span>:
+    <span class="kw">image</span>: elasticsearch:7.2.0
+    <span class="kw">environment</span>:
+      discovery.type: single-node</pre></div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>Docker Compose চালানো</span></div>
+    <div class="code-body"><pre><span class="cmt"># সব service চালাও (foreground)</span>
+<span class="cmd">docker-compose up</span>
+
+<span class="cmt"># Background-এ চালাও</span>
+<span class="cmd">docker-compose up -d</span>
+
+<span class="cmt"># সব service বন্ধ করো</span>
+<span class="cmd">docker-compose down</span>
+
+<span class="cmt"># বা terminal-এ Ctrl+C চাপো</span></pre></div>
+  </div>
+
+  <h3>পূর্ণ docker-compose.yml — সব features সহ</h3>
+  <div class="code-block">
+    <div class="code-header"><span>yaml</span><span>docker-compose.yml — পূর্ণ উদাহরণ</span></div>
+    <div class="code-body"><pre><span class="kw">version</span>: <span class="str">'3.9'</span>
+
+<span class="kw">services</span>:
+  <span class="cmt"># ── Service 1: Jupyter Notebook ──</span>
+  <span class="kw">jupyter</span>:
+    <span class="kw">image</span>: jupyter/minimal-notebook:ubuntu-18.04
+    <span class="kw">container_name</span>: my_jupyter     <span class="cmt"># container-এর নাম</span>
+    <span class="kw">networks</span>:
+      - my_network                   <span class="cmt"># কোন network-এ থাকবে</span>
+    <span class="kw">volumes</span>:
+      - .:/home/jovyan/work          <span class="cmt"># বর্তমান folder mount করো</span>
+    <span class="kw">ports</span>:
+      - target: 8888                 <span class="cmt"># container-এর port</span>
+        published: 4444              <span class="cmt"># host-এর port</span>
+        protocol: tcp
+        mode: host
+    <span class="kw">environment</span>:
+      JUPYTER_TOKEN: <span class="str">'hello'</span>        <span class="cmt"># Jupyter-এর password</span>
+
+  <span class="cmt"># ── Service 2: ElasticSearch ──</span>
+  <span class="kw">elasticsearch</span>:
+    <span class="kw">image</span>: elasticsearch:7.2.0
+    <span class="kw">container_name</span>: my_es
+    <span class="kw">networks</span>:
+      - my_network
+    <span class="kw">ports</span>:
+      - <span class="str">"9200:9200"</span>                  <span class="cmt"># সহজ পদ্ধতি</span>
+      - <span class="str">"9300:9300"</span>
+    <span class="kw">environment</span>:
+      discovery.type: single-node
+
+<span class="cmt"># ── Network সংজ্ঞায়িত করো ──</span>
+<span class="kw">networks</span>:
+  <span class="kw">my_network</span>:                        <span class="cmt"># compose নিজেই তৈরি করবে</span></pre></div>
+  </div>
+
+  <h3>Compose ব্যবহার করে Service-এর মধ্যে যোগাযোগ</h3>
+  <div class="code-block">
+    <div class="code-header"><span>python</span><span>Jupyter Notebook-এ ElasticSearch-এ request পাঠাও</span></div>
+    <div class="code-body"><pre><span class="kw">import</span> requests, json, pprint
+
+<span class="cmt"># container-এর নাম দিয়ে address করো — IP দরকার নেই!</span>
+content = json.loads(requests.get(<span class="str">'http://my_es:9200'</span>).content)
+pprint.pprint(content)
+<span class="cmt"># {cluster_name: 'docker-cluster', version: {number: '7.2.0'}, ...}</span></pre></div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-icon">✅</div>
+    <div class="callout-body">
+      <div class="callout-title">Docker Compose কখন ব্যবহার করবে?</div>
+      <div class="callout-text">
+        • একসাথে database + backend + frontend চালাতে<br>
+        • CI/CD pipeline-এ automatic testing-এর জন্য<br>
+        • Local development environment সহজ করতে<br>
+        • একটি command-এ পুরো system চালু/বন্ধ করতে<br><br>
+        ⚠️ Docker Compose একটি machine-এ। একাধিক machine-এ চালাতে <strong>Docker Swarm</strong> বা <strong>Kubernetes</strong> ব্যবহার করো।
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 8 ===== -->
+<section class="section" id="s8">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৮</span>
+    <h2 class="section-title">Docker Clients — Docker ব্যবহারের বিভিন্ন উপায়</h2>
+  </div>
+
+  <p>Docker-এ command-line ছাড়াও GUI ও programming library দিয়ে কাজ করা যায়।</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">🖥️</div>
+      <div class="card-title">Docker Desktop</div>
+      <div class="card-desc">Windows ও macOS-এর জন্য graphical interface। Docker-এর সব কিছু visually দেখা যায়। Beginners-দের জন্য ভালো।</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔧</div>
+      <div class="card-title">Portainer</div>
+      <div class="card-desc">Open source Docker GUI যেটা নিজেই একটি container-এ চলে। Web browser থেকে পরিচালনা করা যায়।</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🐍</div>
+      <div class="card-title">Python Client</div>
+      <div class="card-desc">Python code থেকে Docker পরিচালনা করো। Data Science workflow-এ অনেক কাজের।</div>
+    </div>
+  </div>
+
+  <h3>Portainer ইনস্টল ও ব্যবহার</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># Portainer Volume তৈরি করো</span>
+<span class="cmd">docker volume create portainer_data</span>
+
+<span class="cmt"># Portainer চালাও</span>
+<span class="cmd">docker run</span> <span class="flag">-d</span> \
+    <span class="flag">-p 8000:8000 -p 9000:9000</span> \
+    <span class="flag">--name portainer</span> \
+    <span class="flag">--restart=always</span> \
+    <span class="flag">-v /var/run/docker.sock:/var/run/docker.sock</span> \
+    <span class="flag">-v portainer_data:/data</span> \
+    portainer/portainer-ce
+
+<span class="cmt"># Browser-এ http://localhost:9000 খোলো</span>
+<span class="cmt"># সুন্দর dashboard-এ সব container, image, volume দেখাবে</span></pre></div>
+  </div>
+
+  <h3>Python Docker Client</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>ইনস্টল</span></div>
+    <div class="code-body"><pre><span class="cmd">pip3 install docker</span></pre></div>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><span>python</span><span>Python দিয়ে Container পরিচালনা</span></div>
+    <div class="code-body"><pre><span class="kw">from</span> docker <span class="kw">import</span> DockerClient
+
+<span class="cmt"># Docker daemon-এর সাথে connection তৈরি করো</span>
+client = DockerClient()
+
+<span class="cmt"># Container চালাও</span>
+client.containers.run(
+    image=<span class="str">'ubuntu:latest'</span>,
+    name=<span class="str">'my_ubuntu_py'</span>,
+    detach=<span class="kw">True</span>,
+    auto_remove=<span class="kw">True</span>,
+    ports={<span class="str">'80/tcp'</span>: <span class="num">8080</span>},
+    network=<span class="str">'bridge'</span>
+)
+
+<span class="cmt"># সব চলমান container-এর নাম দেখাও</span>
+<span class="kw">for</span> c <span class="kw">in</span> client.containers.list():
+    print(c.name, c.image)
+
+<span class="cmt"># Image pull করো</span>
+client.images.pull(<span class="str">'nginx:latest'</span>)
+
+<span class="cmt"># Container বন্ধ করো</span>
+container = client.containers.get(<span class="str">'my_ubuntu_py'</span>)
+container.stop()</pre></div>
+  </div>
+</section>
+
+<!-- ===== SECTION 9 ===== -->
+<section class="section" id="s9">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৯</span>
+    <h2 class="section-title">পরীক্ষা গাইড — CI/CD Pipeline</h2>
+  </div>
+
+  <p>পরীক্ষায় একটি Sentiment Analysis API পরীক্ষা করার CI/CD pipeline তৈরি করতে হবে।</p>
+
+  <div class="callout info">
+    <div class="callout-icon">🎯</div>
+    <div class="callout-body">
+      <div class="callout-title">পরীক্ষার লক্ষ্য</div>
+      <div class="callout-text">
+        API image: <code>datascientest/fastapi:1.0.0</code><br>
+        Entry points:<br>
+        &nbsp;&nbsp;• <code>/status</code> — API চলছে কিনা চেক করো (200 আসে কিনা)<br>
+        &nbsp;&nbsp;• <code>/permissions</code> — user-এর অনুমতি দেখো<br>
+        &nbsp;&nbsp;• <code>/v1/sentiment</code> — পুরনো model দিয়ে sentiment বিশ্লেষণ<br>
+        &nbsp;&nbsp;• <code>/v2/sentiment</code> — নতুন model দিয়ে sentiment বিশ্লেষণ<br>
+        Users: alice (wonderland), bob (builder)
+      </div>
+    </div>
+  </div>
+
+  <h3>তিনটি Test Container তৈরি করতে হবে</h3>
+  <div class="code-block">
+    <div class="code-header"><span>python</span><span>test_auth.py — Authentication Test</span></div>
+    <div class="code-body"><pre><span class="kw">import</span> os, requests
+
+api_address = <span class="str">'api'</span>     <span class="cmt"># compose-এ api container-এর নাম</span>
+api_port = <span class="num">8000</span>
+
+<span class="cmt"># Test ১: alice — সঠিক password (200 আসা উচিত)</span>
+r1 = requests.get(
+    url=<span class="str">f'http://{api_address}:{api_port}/permissions'</span>,
+    params={<span class="str">'username'</span>: <span class="str">'alice'</span>, <span class="str">'password'</span>: <span class="str">'wonderland'</span>}
+)
+<span class="cmt"># Test ২: bob — সঠিক password (200 আসা উচিত)</span>
+r2 = requests.get(
+    url=<span class="str">f'http://{api_address}:{api_port}/permissions'</span>,
+    params={<span class="str">'username'</span>: <span class="str">'bob'</span>, <span class="str">'password'</span>: <span class="str">'builder'</span>}
+)
+<span class="cmt"># Test ৩: ভুল password (403 আসা উচিত)</span>
+r3 = requests.get(
+    url=<span class="str">f'http://{api_address}:{api_port}/permissions'</span>,
+    params={<span class="str">'username'</span>: <span class="str">'clementine'</span>, <span class="str">'password'</span>: <span class="str">'mandarine'</span>}
+)
+
+output = <span class="str">f"""
+============================
+ Authentication Test
+============================
+alice/wonderland → {r1.status_code} ({'✅ SUCCESS' if r1.status_code==200 else '❌ FAILURE'})
+bob/builder      → {r2.status_code} ({'✅ SUCCESS' if r2.status_code==200 else '❌ FAILURE'})
+wrong/password   → {r3.status_code} ({'✅ SUCCESS' if r3.status_code==403 else '❌ FAILURE'})
+"""</span>
+print(output)
+
+<span class="cmt"># LOG=1 হলে ফাইলে লেখো</span>
+<span class="kw">if</span> os.environ.get(<span class="str">'LOG'</span>) == <span class="str">'1'</span>:
+    <span class="kw">with</span> open(<span class="str">'api_test.log'</span>, <span class="str">'a'</span>) <span class="kw">as</span> f:
+        f.write(output)</pre></div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span>dockerfile</span><span>Dockerfile — test image-এর জন্য</span></div>
+    <div class="code-body"><pre><span class="kw">FROM</span> python:3.9-slim
+
+<span class="kw">RUN</span> pip install requests
+
+<span class="kw">ADD</span> test_auth.py /tests/test_auth.py
+
+<span class="kw">WORKDIR</span> /tests/
+
+<span class="kw">CMD</span> python3 test_auth.py</pre></div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span>yaml</span><span>docker-compose.yml — পুরো pipeline</span></div>
+    <div class="code-body"><pre><span class="kw">version</span>: <span class="str">'3.9'</span>
+
+<span class="kw">services</span>:
+
+  <span class="cmt"># ── Main API ──</span>
+  <span class="kw">api</span>:
+    <span class="kw">image</span>: datascientest/fastapi:1.0.0
+    <span class="kw">container_name</span>: api
+    <span class="kw">networks</span>:
+      - test_network
+    <span class="kw">ports</span>:
+      - <span class="str">"8000:8000"</span>
+
+  <span class="cmt"># ── Test 1: Authentication ──</span>
+  <span class="kw">test_auth</span>:
+    <span class="kw">build</span>: ./test_auth    <span class="cmt"># Dockerfile আছে এই folder-এ</span>
+    <span class="kw">container_name</span>: test_auth
+    <span class="kw">networks</span>:
+      - test_network
+    <span class="kw">volumes</span>:
+      - ./logs:/tests     <span class="cmt"># log file host-এ সংরক্ষণ করো</span>
+    <span class="kw">environment</span>:
+      LOG: <span class="str">'1'</span>
+    <span class="kw">depends_on</span>:
+      - api               <span class="cmt"># api চালু হলে তারপর test চালাও</span>
+
+  <span class="cmt"># ── Test 2: Authorization ──</span>
+  <span class="kw">test_auth_level</span>:
+    <span class="kw">build</span>: ./test_authorization
+    <span class="kw">container_name</span>: test_authorization
+    <span class="kw">networks</span>:
+      - test_network
+    <span class="kw">volumes</span>:
+      - ./logs:/tests
+    <span class="kw">environment</span>:
+      LOG: <span class="str">'1'</span>
+    <span class="kw">depends_on</span>:
+      - api
+
+  <span class="cmt"># ── Test 3: Content ──</span>
+  <span class="kw">test_content</span>:
+    <span class="kw">build</span>: ./test_content
+    <span class="kw">container_name</span>: test_content
+    <span class="kw">networks</span>:
+      - test_network
+    <span class="kw">volumes</span>:
+      - ./logs:/tests
+    <span class="kw">environment</span>:
+      LOG: <span class="str">'1'</span>
+    <span class="kw">depends_on</span>:
+      - api
+
+<span class="kw">networks</span>:
+  <span class="kw">test_network</span>:</pre></div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>setup.sh — সব একসাথে চালানো</span></div>
+    <div class="code-body"><pre><span class="cmt">#!/bin/bash</span>
+
+<span class="cmt"># Images build করো</span>
+<span class="cmd">docker image build ./test_auth -t test_auth:latest</span>
+<span class="cmd">docker image build ./test_authorization -t test_auth_level:latest</span>
+<span class="cmd">docker image build ./test_content -t test_content:latest</span>
+
+<span class="cmt"># Pipeline চালাও</span>
+<span class="cmd">docker-compose up</span>
+
+<span class="cmt"># log দেখো</span>
+<span class="cmd">cat ./logs/api_test.log</span></pre></div>
+  </div>
+
+  <h3>পরীক্ষার Rendering</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>ফোল্ডার কাঠামো</span></div>
+    <div class="code-body"><pre>project/
+├── docker-compose.yml        <span class="cmt"># Compose file</span>
+├── setup.sh                  <span class="cmt"># build + run script</span>
+├── logs/
+│   └── api_test.log          <span class="cmt"># সব test-এর log</span>
+├── test_auth/
+│   ├── Dockerfile
+│   └── test_auth.py
+├── test_authorization/
+│   ├── Dockerfile
+│   └── test_authorization.py
+└── test_content/
+    ├── Dockerfile
+    └── test_content.py</pre></div>
+  </div>
+</section>
+
+<!-- ===== CHEATSHEET ===== -->
+<section class="section" id="cheatsheet">
+  <div class="section-header">
+    <span class="section-num">সারসংক্ষেপ</span>
+    <h2 class="section-title">🗒️ Docker চিটশিট</h2>
+  </div>
+
+  <h3>Image কমান্ড</h3>
+  <div class="cheat-grid">
+    <div class="cheat-item"><div class="cheat-cmd">docker image pull nginx</div><div class="cheat-desc">DockerHub থেকে নামাও</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker image ls</div><div class="cheat-desc">local image তালিকা</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker image rm nginx</div><div class="cheat-desc">image মুছো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker image build . -t name:tag</div><div class="cheat-desc">Dockerfile থেকে image তৈরি</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker image inspect nginx</div><div class="cheat-desc">বিস্তারিত দেখো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker image prune</div><div class="cheat-desc">ব্যবহারহীন image মুছো</div></div>
+  </div>
+
+  <h3>Container কমান্ড</h3>
+  <div class="cheat-grid">
+    <div class="cheat-item"><div class="cheat-cmd">docker container run -it ubuntu bash</div><div class="cheat-desc">interactive চালাও</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker container run -d --name web nginx</div><div class="cheat-desc">background-এ চালাও</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker container ls</div><div class="cheat-desc">চলমান container দেখো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker container ls -a</div><div class="cheat-desc">সব container দেখো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker container stop web</div><div class="cheat-desc">বন্ধ করো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker container start web</div><div class="cheat-desc">আবার চালাও</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker container rm web</div><div class="cheat-desc">মুছো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker container exec -it web bash</div><div class="cheat-desc">চলমান container-এ ঢুকো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker container inspect web</div><div class="cheat-desc">বিস্তারিত দেখো (JSON)</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker container logs web</div><div class="cheat-desc">container-এর log দেখো</div></div>
+  </div>
+
+  <h3>Network কমান্ড</h3>
+  <div class="cheat-grid">
+    <div class="cheat-item"><div class="cheat-cmd">docker network ls</div><div class="cheat-desc">সব network দেখো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker network create mynet</div><div class="cheat-desc">network তৈরি করো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker network inspect bridge</div><div class="cheat-desc">network বিস্তারিত</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker network rm mynet</div><div class="cheat-desc">network মুছো</div></div>
+  </div>
+
+  <h3>Volume কমান্ড</h3>
+  <div class="cheat-grid">
+    <div class="cheat-item"><div class="cheat-cmd">docker volume create myvol</div><div class="cheat-desc">volume তৈরি</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker volume ls</div><div class="cheat-desc">সব volume দেখো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker volume inspect myvol</div><div class="cheat-desc">বিস্তারিত দেখো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker volume rm myvol</div><div class="cheat-desc">volume মুছো</div></div>
+  </div>
+
+  <h3>Docker Compose কমান্ড</h3>
+  <div class="cheat-grid">
+    <div class="cheat-item"><div class="cheat-cmd">docker-compose up</div><div class="cheat-desc">সব service চালাও</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker-compose up -d</div><div class="cheat-desc">background-এ চালাও</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker-compose down</div><div class="cheat-desc">সব বন্ধ করো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker-compose ps</div><div class="cheat-desc">service-এর status দেখো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker-compose logs</div><div class="cheat-desc">সব service-এর log</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">docker-compose build</div><div class="cheat-desc">image build করো</div></div>
+  </div>
+
+  <h3>Dockerfile Quick Reference</h3>
+  <div class="cheat-grid">
+    <div class="cheat-item"><div class="cheat-cmd">FROM ubuntu:20.04</div><div class="cheat-desc">base image নির্বাচন</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">RUN apt-get install -y python3</div><div class="cheat-desc">build সময় command</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">COPY app.py /app/</div><div class="cheat-desc">host থেকে image-এ কপি</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">WORKDIR /app</div><div class="cheat-desc">কাজের directory</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">EXPOSE 8080</div><div class="cheat-desc">port ঘোষণা</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">CMD python3 app.py</div><div class="cheat-desc">startup command</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">ENV DEBUG=false</div><div class="cheat-desc">environment variable</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">VOLUME ["/data"]</div><div class="cheat-desc">mount point তৈরি</div></div>
+  </div>
+</section>
+
+<div style="text-align:center;padding:40px 0;color:var(--text-muted);font-size:13px;border-top:1px solid var(--border);">
+  🐳 Docker সম্পূর্ণ বাংলা গাইড | DataScientest পাঠ্যক্রম অবলম্বনে
+</div>
+
+</main>
+
+<script>
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.25 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI সম্পূর্ণ গাইড — থিওরি + ৪টা Project | বাংলায়</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Tiro+Bangla:ital@0;1&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════════ */
+:root{
+  --bg:#06060f; --s1:#0e0e1c; --s2:#141422; --s3:#1a1a2c;
+  --b:#232338; --b2:#2e2e4a;
+  --brain:#f59e0b; --rag:#10b981; --agent:#818cf8; --mcp:#f472b6;
+  --txt:#e0e0ee; --mt:#8888aa; --mt2:#b0b0cc;
+  --ok:#4ade80; --err:#f87171; --warn:#fbbf24; --info:#60a5fa;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'Hind Siliguri',sans-serif;font-size:16px;line-height:1.85;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
+
+/* ═══ PROGRESS BAR ═══ */
+#bar{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--brain),var(--agent),var(--mcp));z-index:9999;transition:width .1s;width:0}
+
+/* ═══ TOP NAV ═══ */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:600;background:rgba(6,6,15,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--b);height:50px;display:flex;align-items:center;overflow-x:auto;padding:0 16px;gap:0}
+.topnav a{padding:0 14px;height:50px;display:flex;align-items:center;font-size:.78rem;color:var(--mt);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;flex-shrink:0}
+.topnav a:hover{color:var(--txt)}
+.topnav a.t-llm:hover,.topnav a.t-llm.on{color:var(--brain);border-bottom-color:var(--brain)}
+.topnav a.t-rag:hover,.topnav a.t-rag.on{color:var(--rag);border-bottom-color:var(--rag)}
+.topnav a.t-ag:hover,.topnav a.t-ag.on{color:var(--agent);border-bottom-color:var(--agent)}
+.topnav a.t-mcp:hover,.topnav a.t-mcp.on{color:var(--mcp);border-bottom-color:var(--mcp)}
+.topnav a.t-p:hover,.topnav a.t-p.on{color:#94a3b8;border-bottom-color:#94a3b8}
+.topnav .sep{width:1px;height:20px;background:var(--b);margin:0 4px;flex-shrink:0}
+
+/* ═══ SIDE TOC ═══ */
+.sidetoc{position:fixed;left:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:9px;z-index:100}
+.stoc{width:7px;height:7px;border-radius:50%;border:1.5px solid var(--b2);background:transparent;cursor:pointer;transition:all .25s;position:relative}
+.stoc:hover::after,.stoc.on::after{content:attr(data-label);position:absolute;left:16px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:10px;color:var(--mt2);background:var(--s2);padding:2px 8px;border-radius:4px;border:1px solid var(--b)}
+.stoc.on{background:var(--brain);border-color:var(--brain)}
+@media(max-width:860px){.sidetoc{display:none}}
+
+/* ═══ HERO ═══ */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 20px 60px;position:relative;overflow:hidden}
+.orbs{position:absolute;inset:0;pointer-events:none}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.18;animation:fl 12s ease-in-out infinite}
+.o1{width:580px;height:580px;background:var(--brain);top:-120px;left:-100px}
+.o2{width:460px;height:460px;background:var(--agent);bottom:-80px;right:-80px;animation-delay:5s}
+.o3{width:320px;height:320px;background:var(--mcp);top:45%;left:38%;animation-delay:9s}
+@keyframes fl{0%,100%{transform:scale(1)}50%{transform:scale(1.12) translate(12px,-12px)}}
+.hero-c{position:relative;z-index:1;max-width:760px}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:5px 16px;border-radius:50px;font-size:11px;letter-spacing:1.5px;color:var(--mt);margin-bottom:22px;text-transform:uppercase}
+h1.htitle{font-family:'Tiro Bangla',serif;font-size:clamp(2rem,5vw,4.2rem);font-weight:400;line-height:1.15;margin-bottom:14px}
+.gr{background:linear-gradient(135deg,var(--brain),var(--agent),var(--mcp));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--mt2);font-size:1rem;max-width:560px;margin:0 auto 32px}
+.hero-pills{display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
+.pill{padding:8px 18px;border-radius:50px;border:1px solid var(--b);background:var(--s1);color:var(--txt);text-decoration:none;font-size:.82rem;transition:all .22s}
+.pill:hover{transform:translateY(-2px)}
+.pill.pb:hover{border-color:var(--brain);color:var(--brain)}
+.pill.pr:hover{border-color:var(--rag);color:var(--rag)}
+.pill.pa:hover{border-color:var(--agent);color:var(--agent)}
+.pill.pm:hover{border-color:var(--mcp);color:var(--mcp)}
+.pill.pp:hover{border-color:#94a3b8;color:#94a3b8}
+
+/* ═══ SECTION DIVIDER ═══ */
+.sec-divider{display:flex;align-items:center;gap:16px;padding:70px 0 0;margin-bottom:40px}
+.sec-divider-line{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--b))}
+.sec-divider-text{font-size:.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--mt);white-space:nowrap}
+
+/* ═══ WRAP ═══ */
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+
+/* ═══ CHAPTER HEADER ═══ */
+.ch{display:flex;align-items:center;gap:16px;padding-top:80px;margin-bottom:36px;scroll-margin-top:60px}
+.ch-icon{width:66px;height:66px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0}
+.ib{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25)}
+.ir{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25)}
+.ia{background:rgba(129,140,248,.1);border:1px solid rgba(129,140,248,.25)}
+.im{background:rgba(244,114,182,.1);border:1px solid rgba(244,114,182,.25)}
+.ig{background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.2)}
+.ch-num{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+.nb{color:var(--brain)}.nr{color:var(--rag)}.na{color:var(--agent)}.nm{color:var(--mcp)}
+.ch h2{font-family:'Tiro Bangla',serif;font-size:1.75rem;font-weight:400}
+
+/* ═══ CARDS ═══ */
+.card{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:22px 26px;margin-bottom:16px}
+.card h3{font-size:1rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card p,.card li{color:var(--mt2);line-height:1.88;font-size:.95rem}
+.card ul,.card ol{padding-left:22px}
+.card li{margin-bottom:6px}
+.card.bl{border-left:3px solid var(--brain)}
+.card.rl{border-left:3px solid var(--rag)}
+.card.al{border-left:3px solid var(--agent)}
+.card.ml{border-left:3px solid var(--mcp)}
+
+/* ═══ ANALOGY BOX ═══ */
+.abox{background:var(--s2);border:1px dashed var(--b2);border-radius:9px;padding:16px 20px;margin:14px 0;color:#9898c8;font-size:.92rem;position:relative}
+.abox-lbl{position:absolute;top:-10px;left:13px;background:var(--s2);padding:2px 9px;font-size:10px;border:1px solid var(--b2);border-radius:20px;color:var(--mt)}
+
+/* ═══ CODE BLOCKS ═══ */
+.code{background:#03030a;border:1px solid var(--b);border-radius:10px;overflow:hidden;margin:14px 0}
+.code-top{background:#090915;padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--mt);display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--b)}
+.dd{width:8px;height:8px;border-radius:50%}
+.dr{background:#ff5f57}.dy{background:#febc2e}.dg{background:#28c840}
+.code pre{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.72;color:#8888b0;padding:15px 18px;overflow-x:auto;white-space:pre}
+.kw{color:#c792ea}.str{color:#c3e88d}.fn{color:#82aaff}.cm{color:#404060}.num{color:#f78c6c}.var{color:#eeffff}.dec{color:#f59e0b}
+
+/* ═══ CMD BLOCKS (terminal) ═══ */
+.cmd{background:#02020a;border:1px solid var(--b);border-radius:10px;overflow:hidden;margin:10px 0}
+.cmd-top{background:#07071a;padding:8px 14px;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--mt);display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--b)}
+.cmd pre{font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.72;color:#7a9e7a;padding:15px 18px;overflow-x:auto;white-space:pre}
+.cmd pre .c{color:#404060}
+.cmd pre .out{color:#9090b8}
+
+/* ═══ STEP HEADERS ═══ */
+.step-h{display:flex;align-items:center;gap:11px;margin:26px 0 8px}
+.snum{width:33px;height:33px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;flex-shrink:0}
+.sn1{background:rgba(245,158,11,.12);border:1.5px solid var(--brain);color:var(--brain)}
+.sn2{background:rgba(16,185,129,.12);border:1.5px solid var(--rag);color:var(--rag)}
+.sn3{background:rgba(129,140,248,.12);border:1.5px solid var(--agent);color:var(--agent)}
+.sn4{background:rgba(244,114,182,.12);border:1.5px solid var(--mcp);color:var(--mcp)}
+.snx{background:rgba(148,163,184,.1);border:1.5px solid #94a3b8;color:#94a3b8}
+.step-h h4{font-size:.97rem;color:var(--txt)}
+.step-h .sub{font-size:.78rem;color:var(--mt);margin-left:auto;white-space:nowrap}
+
+/* ═══ GRID ═══ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+@media(max-width:660px){.g2,.g3,.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.mc{padding:14px;background:var(--s2);border-radius:9px;border:1px solid var(--b)}
+.mc .ic{font-size:1.4rem;margin-bottom:6px}
+.mc strong{color:var(--txt);font-size:.9rem}
+.mc p{font-size:.82rem;color:var(--mt);margin-top:4px}
+
+/* ═══ TABLE ═══ */
+.tbl{overflow-x:auto;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{background:var(--s2);padding:11px 15px;text-align:left;border-bottom:2px solid var(--b);color:var(--mt);font-weight:500}
+td{padding:11px 15px;border-bottom:1px solid var(--b);color:var(--mt2);vertical-align:top}
+tr:hover td{background:rgba(255,255,255,.012)}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.tb{background:rgba(245,158,11,.12);color:var(--brain)}
+.tr2{background:rgba(16,185,129,.12);color:var(--rag)}
+.ta2{background:rgba(129,140,248,.12);color:var(--agent)}
+.tm2{background:rgba(244,114,182,.12);color:var(--mcp)}
+
+/* ═══ INFO BOXES ═══ */
+.bx{border-radius:9px;padding:12px 16px;margin:10px 0;font-size:.88rem;line-height:1.7}
+.bx-w{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);color:#fcd34d}
+.bx-w::before{content:'⚠️  '}
+.bx-ok{background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);color:#86efac}
+.bx-ok::before{content:'✅  '}
+.bx-tip{background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.2);color:#93c5fd}
+.bx-tip::before{content:'💡  '}
+.bx-info{background:rgba(129,140,248,.06);border:1px solid rgba(129,140,248,.2);color:#a5b4fc}
+.bx-info::before{content:'📌  '}
+.bx-link{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);color:#6ee7b7;display:flex;align-items:flex-start;gap:10px}
+.bx-link::before{content:'🔗  '}
+.bx-link a{color:#34d399;text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:.82rem;word-break:break-all}
+.bx-link a:hover{text-decoration:underline}
+
+/* ═══ STEPS FLOW ═══ */
+.flow{display:flex;flex-direction:column;gap:0;position:relative;margin:18px 0}
+.flow::before{content:'';position:absolute;left:18px;top:20px;bottom:20px;width:1px;background:linear-gradient(to bottom,var(--rag),transparent)}
+.fstep{display:flex;gap:14px;padding:9px 0}
+.fn2{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;z-index:1}
+.fc{padding-top:8px;color:var(--mt2);font-size:.92rem}
+.fc strong{color:var(--txt)}
+
+/* ═══ DIAGRAM ═══ */
+.diag{background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:20px;margin:14px 0;overflow-x:auto}
+
+/* ═══ FILE TREE ═══ */
+.tree{background:#02020a;border:1px solid var(--b);border-radius:10px;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.9;color:#606080;margin:10px 0}
+.tree .td{color:#818cf8}
+.tree .tf{color:#c3e88d}
+.tree .tm2{color:#f59e0b;font-weight:700}
+
+/* ═══ TERMINAL OUTPUT ═══ */
+.term{background:#02020a;border:1px solid var(--b);border-radius:10px;overflow:hidden;margin:10px 0}
+.term-top{background:#070714;padding:7px 13px;font-size:10px;color:var(--mt);display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--b)}
+.term-body{padding:13px 17px;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.7;color:#5a7a5a}
+.term-body .tp{color:#818cf8}
+.term-body .tr2{color:#c3e88d}
+.term-body .te{color:#f87171}
+
+/* ═══ QUIZ ═══ */
+.quiz{background:var(--s2);border:1px solid var(--b2);border-radius:11px;padding:20px 24px;margin:18px 0}
+.quiz h4{font-size:.97rem;margin-bottom:12px;color:var(--txt)}
+.quiz-opts{display:flex;flex-direction:column;gap:7px}
+.qo{padding:9px 15px;background:var(--s3);border:1px solid var(--b);border-radius:7px;cursor:pointer;transition:all .2s;font-size:.88rem;color:var(--mt2)}
+.qo:hover{border-color:var(--agent);color:var(--txt)}
+.qo.correct{background:rgba(74,222,128,.1);border-color:var(--ok);color:var(--ok)}
+.qo.wrong{background:rgba(248,113,113,.1);border-color:var(--err);color:var(--err)}
+.qfb{margin-top:10px;font-size:.88rem;display:none;padding:9px 13px;border-radius:7px}
+
+/* ═══ ROADMAP ═══ */
+.rm-item{display:flex;align-items:flex-start;gap:12px;padding:14px 17px;background:var(--s1);border:1px solid var(--b);border-radius:9px;margin-bottom:10px}
+.rm-badge{min-width:84px;text-align:center;padding:3px 7px;border-radius:6px;font-size:10px;font-weight:700;white-space:nowrap}
+.rm1{background:rgba(245,158,11,.12);color:var(--brain)}
+.rm2{background:rgba(16,185,129,.12);color:var(--rag)}
+.rm3{background:rgba(129,140,248,.12);color:var(--agent)}
+.rm4{background:rgba(244,114,182,.12);color:var(--mcp)}
+.rm-item p{color:var(--mt);font-size:.88rem;margin-top:3px}
+.rm-item strong{color:var(--txt)}
+
+/* ═══ PROJECT HERO CARDS ═══ */
+.proj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;max-width:580px;margin:28px auto}
+@media(max-width:480px){.proj-grid{grid-template-columns:1fr}}
+.proj-card{padding:15px 19px;border-radius:11px;border:1px solid var(--b);background:var(--s1);text-align:left;text-decoration:none;transition:all .22s;display:block}
+.proj-card:hover{transform:translateY(-3px)}
+.proj-card.c1{border-left:3px solid var(--brain)}
+.proj-card.c2{border-left:3px solid var(--rag)}
+.proj-card.c3{border-left:3px solid var(--agent)}
+.proj-card.c4{border-left:3px solid var(--mcp)}
+.pnum{font-size:.7rem;letter-spacing:1px;margin-bottom:3px}
+.c1 .pnum{color:var(--brain)} .c2 .pnum{color:var(--rag)}
+.c3 .pnum{color:var(--agent)} .c4 .pnum{color:var(--mcp)}
+.pname{font-size:.93rem;color:var(--txt);font-weight:600}
+.pdesc{font-size:.78rem;color:var(--mt);margin-top:3px}
+
+/* ═══ HIGHLIGHT TEXT ═══ */
+.hb{color:var(--brain);font-weight:600}
+.hr{color:var(--rag);font-weight:600}
+.ha{color:var(--agent);font-weight:600}
+.hm{color:var(--mcp);font-weight:600}
+
+/* ═══ DIVIDER ═══ */
+hr.div{border:none;height:1px;background:linear-gradient(to right,transparent,var(--b),transparent);margin:60px 0}
+
+/* ═══ QUOTE ═══ */
+.bigq{text-align:center;padding:46px 20px;font-family:'Tiro Bangla',serif;font-size:1.3rem;color:var(--mt);line-height:2}
+.bigq span{background:linear-gradient(135deg,var(--brain),var(--agent),var(--mcp));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ═══ FADE IN ═══ */
+.fi{opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.fi.on{opacity:1;transform:translateY(0)}
+
+/* ═══ FOOTER ═══ */
+footer{text-align:center;padding:48px 20px;color:var(--mt);font-size:.82rem;border-top:1px solid var(--b);margin-top:80px}
+</style>
+</head>
+<body>
+
+<div id="bar"></div>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <a href="#hero">🏠 শুরু</a>
+  <div class="sep"></div>
+  <a href="#llm" class="t-llm">🧠 LLM</a>
+  <a href="#rag" class="t-rag">📚 RAG</a>
+  <a href="#agents" class="t-ag">🤖 Agents</a>
+  <a href="#mcp" class="t-mcp">🔗 MCP</a>
+  <a href="#compare" class="t-p">📊 তুলনা</a>
+  <a href="#roadmap" class="t-p">🗺️ রোডম্যাপ</a>
+  <div class="sep"></div>
+  <a href="#setup" class="t-p">⚙️ Setup</a>
+  <a href="#p1" class="t-llm">Project 1</a>
+  <a href="#p2" class="t-rag">Project 2</a>
+  <a href="#p3" class="t-ag">Project 3</a>
+  <a href="#p4" class="t-mcp">Project 4</a>
+</nav>
+
+<!-- SIDE TOC -->
+<nav class="sidetoc">
+  <div class="stoc on" data-section="hero" data-label="শুরু" onclick="goTo('hero')"></div>
+  <div class="stoc" data-section="llm" data-label="LLM" onclick="goTo('llm')"></div>
+  <div class="stoc" data-section="rag" data-label="RAG" onclick="goTo('rag')"></div>
+  <div class="stoc" data-section="agents" data-label="Agents" onclick="goTo('agents')"></div>
+  <div class="stoc" data-section="mcp" data-label="MCP" onclick="goTo('mcp')"></div>
+  <div class="stoc" data-section="compare" data-label="তুলনা" onclick="goTo('compare')"></div>
+  <div class="stoc" data-section="roadmap" data-label="রোডম্যাপ" onclick="goTo('roadmap')"></div>
+  <div class="stoc" data-section="setup" data-label="Setup" onclick="goTo('setup')"></div>
+  <div class="stoc" data-section="p1" data-label="Project 1" onclick="goTo('p1')"></div>
+  <div class="stoc" data-section="p2" data-label="Project 2" onclick="goTo('p2')"></div>
+  <div class="stoc" data-section="p3" data-label="Project 3" onclick="goTo('p3')"></div>
+  <div class="stoc" data-section="p4" data-label="Project 4" onclick="goTo('p4')"></div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="orbs">
+    <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+  </div>
+  <div class="hero-c">
+    <div class="badge">🇧🇩 সম্পূর্ণ বাংলায় • থিওরি + ৪টা Real Project • WSL Linux</div>
+    <h1 class="htitle">AI শেখার <span class="gr">সম্পূর্ণ গাইড</span></h1>
+    <p class="hero-sub">LLM, RAG, AI Agents ও MCP — সহজ গল্প থেকে শুরু করে থিওরি, তারপর হাতে-কলমে ৪টা project। একদম গোড়া থেকে, বাংলায়।</p>
+    <div class="hero-pills">
+      <a class="pill pb" href="#llm">🧠 LLM</a>
+      <a class="pill pr" href="#rag">📚 RAG</a>
+      <a class="pill pa" href="#agents">🤖 Agents</a>
+      <a class="pill pm" href="#mcp">🔗 MCP</a>
+      <a class="pill pp" href="#setup">⚙️ Projects</a>
+    </div>
+    <div class="proj-grid">
+      <a href="#p1" class="proj-card c1"><div class="pnum">PROJECT 01 • LLM</div><div class="pname">🧠 বাংলা Chatbot</div><div class="pdesc">SentNoB dataset — sentiment-aware</div></a>
+      <a href="#p2" class="proj-card c2"><div class="pnum">PROJECT 02 • RAG</div><div class="pname">📚 News Q&amp;A</div><div class="pdesc">Bangla News dataset — FAISS search</div></a>
+      <a href="#p3" class="proj-card c3"><div class="pnum">PROJECT 03 • AGENT</div><div class="pname">🤖 Research Agent</div><div class="pdesc">Web search + tools + report</div></a>
+      <a href="#p4" class="proj-card c4"><div class="pnum">PROJECT 04 • MCP</div><div class="pname">🔗 File Manager</div><div class="pdesc">Claude Desktop MCP Server</div></a>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+
+<!-- ══════════════════════════════════════════
+     PART 1 — CONCEPTS
+══════════════════════════════════════════ -->
+<div class="card fi" style="margin-top:16px">
+  <h3>🙏 এই গাইড কীভাবে পড়বে?</h3>
+  <p>প্রতিটা কনসেপ্ট ৩ স্তরে — <strong>সহজ গল্প</strong> → <strong>থিওরি</strong> → <strong>কোড</strong>। তারপর শেষে ৪টা সম্পূর্ণ project যেগুলো WSL Linux এ চালাতে পারবে।</p>
+  <div class="g3" style="margin-top:14px">
+    <div class="mc"><div class="ic">🧒</div><strong>স্তর ১</strong><p>সহজ গল্প ও উদাহরণ</p></div>
+    <div class="mc"><div class="ic">🔬</div><strong>স্তর ২</strong><p>আসলে কীভাবে কাজ করে</p></div>
+    <div class="mc"><div class="ic">💻</div><strong>স্তর ৩</strong><p>Python কোড</p></div>
+  </div>
+</div>
+
+<!-- ════════ LLM ════════ -->
+<div id="llm" class="ch fi">
+  <div class="ch-icon ib">🧠</div>
+  <div><div class="ch-num nb">অধ্যায় ০১ — THE BRAIN</div><h2>LLM (Large Language Model)</h2></div>
+</div>
+
+<div class="card bl fi">
+  <h3>🧒 স্তর ১ — সহজ গল্প</h3>
+  <p>কল্পনা করো তুমি জন্মের পর থেকে প্রতিদিন ১ লক্ষ বই পড়ছ — পত্রিকা, উপন্যাস, বিজ্ঞান, রেসিপি, ইতিহাস, কোড, সব। ১০ বছর পর তোমার মাথায় কোটি কোটি প্যাটার্ন জমে গেছে।</p>
+  <br><p><span class="hb">LLM ঠিক এটাই।</span> ইন্টারনেটের কোটি পাতা পড়ে শেখা AI — যেটা ভাষা বোঝে এবং উত্তর তৈরি করে।</p>
+  <div class="abox"><span class="abox-lbl">💡 সহজ উদাহরণ</span>তুমি যখন ChatGPT বা Claude এর সাথে কথা বলো — সেটাই LLM। আমি প্রশ্ন পেলে কোটি প্যাটার্ন থেকে সেরা উত্তর বানাই।</div>
+</div>
+
+<div class="card bl fi">
+  <h3>🔬 স্তর ২ — থিওরি</h3>
+  <p><strong>Token ও Next Token Prediction:</strong></p><br>
+  <p>LLM ভাষাকে <span class="hb">Token</span> এ ভাগ করে — শব্দের টুকরো। তারপর পরের token কী হবে তা predict করে।</p>
+  <div class="diag">
+    <svg viewBox="0 0 700 110" xmlns="http://www.w3.org/2000/svg">
+      <text x="20" y="28" fill="#606080" font-size="12" font-family="sans-serif">ইনপুট:</text>
+      <text x="80" y="28" fill="#e0e0ee" font-size="13" font-family="sans-serif">"আমি ভাত খাই কারণ আমি..."</text>
+      <text x="20" y="62" fill="#f59e0b" font-size="12" font-family="sans-serif">→ পরের token: "ক্ষুধার্ত" (৭৮%)  বা  "বাঙালি" (১৫%)  বা  "ভালোবাসি" (৭%)</text>
+      <text x="20" y="92" fill="#606080" font-size="11" font-family="sans-serif">LLM সবচেয়ে সম্ভাব্য পরের শব্দটা বেছে নেয় — কোটি উদাহরণ দেখে শেখা pattern থেকে।</text>
+    </svg>
+  </div>
+  <br><p><strong>Transformer Architecture (Google, ২০১৭):</strong></p><br>
+  <div class="g2">
+    <div class="mc"><div class="ic">👁️</div><strong>Self-Attention</strong><p>পুরো বাক্যের সব শব্দ একসাথে দেখে। "সে গান গাইল কারণ সে খুশি" — দুটো "সে" আলাদা করে বোঝে।</p></div>
+    <div class="mc"><div class="ic">🔢</div><strong>Parameters</strong><p>মডেলের "জ্ঞান" সংরক্ষণের জায়গা। GPT-3 = ১৭৫ বিলিয়ন numbers। এই numbers মিলেই মস্তিষ্ক।</p></div>
+  </div>
+  <br><p><strong>Temperature ও Max Tokens:</strong></p>
+  <div class="g2" style="margin-top:10px">
+    <div class="mc" style="border:1px solid rgba(245,158,11,.2)"><strong>Temperature (0–2)</strong><p style="margin-top:6px"><strong style="color:var(--brain)">0</strong> = সবসময় একই উত্তর &nbsp;·&nbsp; <strong style="color:var(--brain)">1</strong> = ভারসাম্য &nbsp;·&nbsp; <strong style="color:var(--brain)">2</strong> = অনেক creative</p></div>
+    <div class="mc" style="border:1px solid rgba(129,140,248,.2)"><strong>Max Tokens</strong><p style="margin-top:6px">উত্তরের দৈর্ঘ্য। ১ token ≈ ০.৭৫ শব্দ। কোড লিখলে temperature=0, গল্প লিখলে =0.9।</p></div>
+  </div>
+  <br><p><strong>Training — ৩টা ধাপ:</strong></p>
+  <div class="flow" style="margin-top:10px">
+    <div class="fstep"><div class="fn2 sn1">১</div><div class="fc"><strong>Pre-training:</strong> Wikipedia, বই, কোড সহ ~১ trillion শব্দ। মাসের পর মাস GPU তে।</div></div>
+    <div class="fstep"><div class="fn2 sn1">২</div><div class="fc"><strong>Supervised Fine-tuning (SFT):</strong> মানুষের লেখা "ভালো উত্তর" এর উদাহরণ দিয়ে সমন্বয়।</div></div>
+    <div class="fstep"><div class="fn2 sn1">৩</div><div class="fc"><strong>RLHF:</strong> মানুষ দুটো উত্তরের মধ্যে ভালোটা বেছে দেয়, মডেল শেখে। ChatGPT, Claude এভাবেই তৈরি।</div></div>
+  </div>
+</div>
+
+<div class="card bl fi">
+  <h3>⚠️ Hallucination — সবচেয়ে বড় সমস্যা</h3>
+  <p>LLM মাঝে মাঝে ভুল তথ্য অনেক আত্মবিশ্বাসের সাথে দেয়। কারণ সে "সত্যি বলতে" শেখেনি — শুধু "কোন শব্দের পরে কোন শব্দ আসে" শিখেছে।</p>
+  <div class="bx bx-w" style="margin-top:10px">Hallucination কমাতে RAG ব্যবহার করো — পরের অধ্যায়ে শেখাবো।</div>
+</div>
+
+<div class="card bl fi">
+  <h3>💻 স্তর ৩ — প্রথম API Call</h3>
+  <div class="code">
+    <div class="code-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> first_llm_call.py</div>
+    <pre><span class="cm"># pip install openai anthropic</span>
+
+<span class="cm">## ── OpenAI ──</span>
+<span class="kw">from</span> <span class="var">openai</span> <span class="kw">import</span> <span class="var">OpenAI</span>
+<span class="var">client</span> = <span class="fn">OpenAI</span>(<span class="var">api_key</span>=<span class="str">"sk-..."</span>)
+
+<span class="var">response</span> = <span class="var">client</span>.<span class="var">chat</span>.<span class="var">completions</span>.<span class="fn">create</span>(
+    <span class="var">model</span>=<span class="str">"gpt-4o-mini"</span>,
+    <span class="var">temperature</span>=<span class="num">0.7</span>,
+    <span class="var">max_tokens</span>=<span class="num">500</span>,
+    <span class="var">messages</span>=[
+        {<span class="str">"role"</span>: <span class="str">"system"</span>, <span class="str">"content"</span>: <span class="str">"তুমি একজন বাংলা ভাষার সহকারী।"</span>},
+        {<span class="str">"role"</span>: <span class="str">"user"</span>,   <span class="str">"content"</span>: <span class="str">"বাংলাদেশের ৩টা বিখ্যাত খাবার বলো।"</span>}
+    ]
+)
+<span class="fn">print</span>(<span class="var">response</span>.<span class="var">choices</span>[<span class="num">0</span>].<span class="var">message</span>.<span class="var">content</span>)
+<span class="fn">print</span>(<span class="str">f"Token ব্যবহার: {response.usage.total_tokens}"</span>)
+
+<span class="cm">## ── Anthropic Claude ──</span>
+<span class="kw">import</span> <span class="var">anthropic</span>
+<span class="var">c</span> = <span class="var">anthropic</span>.<span class="fn">Anthropic</span>(<span class="var">api_key</span>=<span class="str">"sk-ant-..."</span>)
+<span class="var">msg</span> = <span class="var">c</span>.<span class="var">messages</span>.<span class="fn">create</span>(
+    <span class="var">model</span>=<span class="str">"claude-haiku-4-5-20251001"</span>,  <span class="cm"># সবচেয়ে সস্তা</span>
+    <span class="var">max_tokens</span>=<span class="num">500</span>,
+    <span class="var">system</span>=<span class="str">"তুমি একজন বাংলা ভাষার সহকারী।"</span>,
+    <span class="var">messages</span>=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Python কী?"</span>}]
+)
+<span class="fn">print</span>(<span class="var">msg</span>.<span class="var">content</span>[<span class="num">0</span>].<span class="var">text</span>)</pre>
+  </div>
+</div>
+
+<div class="quiz fi">
+  <h4>🧪 Quiz — LLM</h4>
+  <p style="color:var(--mt);font-size:.88rem;margin-bottom:12px">LLM Hallucination কেন করে?</p>
+  <div class="quiz-opts" id="q1">
+    <div class="qo" onclick="ans('q1',this,false,'❌ ইন্টারনেট নেই বলে Hallucination হয় না।')">ক) ইন্টারনেট সংযোগ না থাকায়</div>
+    <div class="qo" onclick="ans('q1',this,true,'✅ ঠিক! LLM শিখেছে শব্দের pattern — সত্যি বলতে নয়। তাই বিশ্বাসযোগ্য কিন্তু ভুল তথ্য তৈরি করে।')">খ) সে "সত্যি" শেখেনি, শুধু pattern শিখেছে</div>
+    <div class="qo" onclick="ans('q1',this,false,'❌ বেশি training এ Hallucination কমে।')">গ) বেশি training এর কারণে</div>
+  </div>
+  <div class="qfb" id="q1-fb"></div>
+</div>
+
+<hr class="div">
+
+<!-- ════════ RAG ════════ -->
+<div id="rag" class="ch fi">
+  <div class="ch-icon ir">📚</div>
+  <div><div class="ch-num nr">অধ্যায় ০২ — BRAIN + BOOKS</div><h2>RAG (Retrieval-Augmented Generation)</h2></div>
+</div>
+
+<div class="card rl fi">
+  <h3>🧒 স্তর ১ — সহজ গল্প</h3>
+  <p>তোমার একজন বুদ্ধিমান বন্ধু (LLM) অনেক কিছু জানে। কিন্তু সে তোমার অফিসের নতুন নীতি বা আজকের খবর জানে না।</p><br>
+  <p>তুমি তাকে সব document দিয়ে বললে: <em>"এগুলো পড়ে আমার প্রশ্নের উত্তর দাও।"</em></p><br>
+  <p><span class="hr">এটাই RAG!</span> LLM এর বুদ্ধি + তোমার তথ্য = কম hallucination, সঠিক উত্তর।</p>
+  <div class="abox"><span class="abox-lbl">💡 উদাহরণ</span>Open book পরীক্ষা মনে আছে? RAG হলো LLM এর open book পরীক্ষা।</div>
+</div>
+
+<div class="card rl fi">
+  <h3>🔬 স্তর ২ — RAG Pipeline (৬ ধাপ)</h3>
+  <div class="flow">
+    <div class="fstep"><div class="fn2 sn2">১</div><div class="fc"><strong>Document Loading:</strong> PDF, Word, web page — সব লোড করো।</div></div>
+    <div class="fstep"><div class="fn2 sn2">২</div><div class="fc"><strong>Chunking:</strong> বড় document কে ছোট ছোট টুকরোয় ভাগ করো (৩০০–৬০০ অক্ষর)।</div></div>
+    <div class="fstep"><div class="fn2 sn2">৩</div><div class="fc"><strong>Embedding:</strong> প্রতিটা টুকরোকে সংখ্যার vector এ বদলাও। কাছাকাছি অর্থ = গণিতেও কাছাকাছি।</div></div>
+    <div class="fstep"><div class="fn2 sn2">৪</div><div class="fc"><strong>Vector Store:</strong> FAISS / ChromaDB তে index করো।</div></div>
+    <div class="fstep"><div class="fn2 sn2">৫</div><div class="fc"><strong>Retrieval:</strong> প্রশ্ন এলে সবচেয়ে সংশ্লিষ্ট K টা chunk খুঁজে বের করো।</div></div>
+    <div class="fstep"><div class="fn2 sn2">৬</div><div class="fc"><strong>Generation:</strong> LLM সেই chunks দিয়ে উত্তর তৈরি করে।</div></div>
+  </div>
+  <br>
+  <p><strong>Embedding কী?</strong> — "রাজা" − "পুরুষ" + "নারী" ≈ "রানী" এই গণিত embedding দিয়ে কাজ করে।</p>
+  <br>
+  <p><strong>Vector DB তুলনা:</strong></p>
+  <div class="tbl" style="margin-top:10px">
+    <table>
+      <thead><tr><th>DB</th><th>কখন ব্যবহার করবে</th><th>Cost</th></tr></thead>
+      <tbody>
+        <tr><td><strong>FAISS</strong></td><td>শুরু করতে, local project</td><td>বিনামূল্যে</td></tr>
+        <tr><td><strong>ChromaDB</strong></td><td>সহজ setup, LangChain</td><td>বিনামূল্যে</td></tr>
+        <tr><td><strong>Pinecone</strong></td><td>Production, cloud</td><td>Free tier আছে</td></tr>
+        <tr><td><strong>Qdrant</strong></td><td>Advanced, দ্রুত</td><td>Open-source</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="bx bx-tip">শুরুতে FAISS ব্যবহার করো — সহজ ও বিনামূল্যে।</div>
+</div>
+
+<div class="card rl fi">
+  <h3>💻 স্তর ৩ — RAG কোড</h3>
+  <div class="code">
+    <div class="code-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> rag_example.py</div>
+    <pre><span class="cm"># pip install langchain langchain-openai faiss-cpu sentence-transformers pypdf</span>
+
+<span class="kw">from</span> <span class="var">langchain_community.document_loaders</span> <span class="kw">import</span> <span class="var">PyPDFLoader</span>
+<span class="kw">from</span> <span class="var">langchain.text_splitter</span> <span class="kw">import</span> <span class="var">RecursiveCharacterTextSplitter</span>
+<span class="kw">from</span> <span class="var">langchain_openai</span> <span class="kw">import</span> <span class="var">OpenAIEmbeddings</span>, <span class="var">ChatOpenAI</span>
+<span class="kw">from</span> <span class="var">langchain_community.vectorstores</span> <span class="kw">import</span> <span class="var">FAISS</span>
+<span class="kw">from</span> <span class="var">langchain.chains</span> <span class="kw">import</span> <span class="var">RetrievalQA</span>
+
+<span class="cm"># ধাপ ১: PDF লোড</span>
+<span class="var">docs</span> = <span class="fn">PyPDFLoader</span>(<span class="str">"document.pdf"</span>).<span class="fn">load</span>()
+
+<span class="cm"># ধাপ ২: Chunk করো</span>
+<span class="var">chunks</span> = <span class="fn">RecursiveCharacterTextSplitter</span>(
+    <span class="var">chunk_size</span>=<span class="num">500</span>, <span class="var">chunk_overlap</span>=<span class="num">60</span>,
+    <span class="var">separators</span>=[<span class="str">"\n\n"</span>, <span class="str">"\n"</span>, <span class="str">"।"</span>, <span class="str">" "</span>]  <span class="cm"># বাংলার জন্য "।" যোগ করো</span>
+).<span class="fn">split_documents</span>(<span class="var">docs</span>)
+
+<span class="cm"># ধাপ ৩+৪: Embed ও Index করো</span>
+<span class="var">db</span> = <span class="var">FAISS</span>.<span class="fn">from_documents</span>(<span class="var">chunks</span>, <span class="fn">OpenAIEmbeddings</span>())
+<span class="var">db</span>.<span class="fn">save_local</span>(<span class="str">"my_index"</span>)  <span class="cm"># disk এ save</span>
+
+<span class="cm"># ধাপ ৫+৬: QA Chain</span>
+<span class="var">qa</span> = <span class="var">RetrievalQA</span>.<span class="fn">from_chain_type</span>(
+    <span class="var">llm</span>=<span class="fn">ChatOpenAI</span>(<span class="var">temperature</span>=<span class="num">0</span>),
+    <span class="var">retriever</span>=<span class="var">db</span>.<span class="fn">as_retriever</span>(<span class="var">search_kwargs</span>={<span class="str">"k"</span>: <span class="num">4</span>})
+)
+<span class="fn">print</span>(<span class="var">qa</span>.<span class="fn">invoke</span>(<span class="str">"এই নথিতে মূল বিষয় কী?"</span>)[<span class="str">"result"</span>])</pre>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ════════ AGENTS ════════ -->
+<div id="agents" class="ch fi">
+  <div class="ch-icon ia">🤖</div>
+  <div><div class="ch-num na">অধ্যায় ০৩ — BRAIN + HANDS</div><h2>AI Agents</h2></div>
+</div>
+
+<div class="card al fi">
+  <h3>🧒 স্তর ১ — সহজ গল্প</h3>
+  <p>LLM = <strong>পরামর্শদাতা</strong> — বলে কী করতে হবে।<br>RAG = <strong>গবেষক</strong> — জেনে বলে।<br><span class="ha">Agent = কর্মী</span> — নিজেই করে ফেলে।</p><br>
+  <p>তুমি বললে: <em>"বাংলাদেশের আবহাওয়া জানো, ফাইলে লিখে রাখো।"</em> — Agent web থেকে data আনবে, ফাইল বানাবে — সব নিজে।</p>
+</div>
+
+<div class="card al fi">
+  <h3>🔬 স্তর ২ — থিওরি</h3>
+  <p><strong>Agent এর ৪টা অংশ:</strong></p>
+  <div class="g2" style="margin-top:10px">
+    <div class="mc" style="border:1px solid rgba(129,140,248,.2)"><div class="ic">🧠</div><strong>LLM (মস্তিষ্ক)</strong><p>সিদ্ধান্ত নেয়, কোন tool কখন ব্যবহার করবে বলে।</p></div>
+    <div class="mc" style="border:1px solid rgba(129,140,248,.2)"><div class="ic">🔧</div><strong>Tools (হাত)</strong><p>Web search, calculator, file I/O, API call।</p></div>
+    <div class="mc" style="border:1px solid rgba(129,140,248,.2)"><div class="ic">💾</div><strong>Memory (স্মৃতি)</strong><p>Short-term (এই conversation) + Long-term (database)।</p></div>
+    <div class="mc" style="border:1px solid rgba(129,140,248,.2)"><div class="ic">🎯</div><strong>Planning</strong><p>বড় কাজ ছোট ধাপে ভাগ করে।</p></div>
+  </div>
+  <br><p><strong>ReAct Loop — Think → Act → Observe:</strong></p>
+  <div class="flow" style="margin-top:10px">
+    <div class="fstep"><div class="fn2 sn3">💭</div><div class="fc"><strong>Thought:</strong> "আবহাওয়া জানতে হবে। weather_tool call করি।"</div></div>
+    <div class="fstep"><div class="fn2 sn3">⚡</div><div class="fc"><strong>Action:</strong> weather_tool("Dhaka") — API call।</div></div>
+    <div class="fstep"><div class="fn2 sn3">👁️</div><div class="fc"><strong>Observation:</strong> "ঢাকায় ৩২°C, আর্দ্রতা ৮০%"।</div></div>
+    <div class="fstep"><div class="fn2 sn3">✅</div><div class="fc"><strong>Answer:</strong> তথ্য দিয়ে সুন্দর উত্তর তৈরি করে।</div></div>
+  </div>
+</div>
+
+<div class="card al fi">
+  <h3>💻 স্তর ৩ — Agent কোড (OpenAI Function Calling)</h3>
+  <div class="code">
+    <div class="code-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> agent_basic.py</div>
+    <pre><span class="cm"># pip install openai duckduckgo-search</span>
+<span class="kw">import</span> <span class="var">os</span>, <span class="var">json</span>
+<span class="kw">from</span> <span class="var">openai</span> <span class="kw">import</span> <span class="var">OpenAI</span>
+<span class="kw">from</span> <span class="var">duckduckgo_search</span> <span class="kw">import</span> <span class="var">DDGS</span>
+
+<span class="var">client</span> = <span class="fn">OpenAI</span>(<span class="var">api_key</span>=<span class="var">os</span>.<span class="var">environ</span>[<span class="str">"OPENAI_API_KEY"</span>])
+
+<span class="kw">def</span> <span class="fn">web_search</span>(<span class="var">query</span>):
+    <span class="kw">with</span> <span class="fn">DDGS</span>() <span class="kw">as</span> <span class="var">d</span>:
+        <span class="kw">return</span> <span class="fn">str</span>([<span class="var">r</span>[<span class="str">"body"</span>][:<span class="num">200</span>] <span class="kw">for</span> <span class="var">r</span> <span class="kw">in</span> <span class="var">d</span>.<span class="fn">text</span>(<span class="var">query</span>, <span class="var">max_results</span>=<span class="num">3</span>)])
+
+<span class="kw">def</span> <span class="fn">calculator</span>(<span class="var">expr</span>):
+    <span class="kw">return</span> <span class="fn">str</span>(<span class="fn">eval</span>(<span class="var">expr</span>))
+
+<span class="var">TOOLS</span> = [
+    {<span class="str">"type"</span>: <span class="str">"function"</span>, <span class="str">"function"</span>: {
+        <span class="str">"name"</span>: <span class="str">"web_search"</span>,
+        <span class="str">"description"</span>: <span class="str">"ওয়েবে তথ্য খোঁজে"</span>,
+        <span class="str">"parameters"</span>: {<span class="str">"type"</span>: <span class="str">"object"</span>,
+          <span class="str">"properties"</span>: {<span class="str">"query"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>}},
+          <span class="str">"required"</span>: [<span class="str">"query"</span>]}}},
+    {<span class="str">"type"</span>: <span class="str">"function"</span>, <span class="str">"function"</span>: {
+        <span class="str">"name"</span>: <span class="str">"calculator"</span>,
+        <span class="str">"description"</span>: <span class="str">"গণিত হিসাব করে"</span>,
+        <span class="str">"parameters"</span>: {<span class="str">"type"</span>: <span class="str">"object"</span>,
+          <span class="str">"properties"</span>: {<span class="str">"expr"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>}},
+          <span class="str">"required"</span>: [<span class="str">"expr"</span>]}}}
+]
+<span class="var">TOOL_MAP</span> = {<span class="str">"web_search"</span>: <span class="var">web_search</span>, <span class="str">"calculator"</span>: <span class="var">calculator</span>}
+<span class="var">msgs</span> = [{<span class="str">"role"</span>: <span class="str">"system"</span>, <span class="str">"content"</span>: <span class="str">"তুমি একজন Research Agent।"</span>}]
+
+<span class="kw">def</span> <span class="fn">run</span>(<span class="var">task</span>):
+    <span class="var">msgs</span>.<span class="fn">append</span>({<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="var">task</span>})
+    <span class="kw">for</span> <span class="var">_</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">8</span>):
+        <span class="var">r</span> = <span class="var">client</span>.<span class="var">chat</span>.<span class="var">completions</span>.<span class="fn">create</span>(<span class="var">model</span>=<span class="str">"gpt-4o"</span>, <span class="var">messages</span>=<span class="var">msgs</span>, <span class="var">tools</span>=<span class="var">TOOLS</span>)
+        <span class="var">m</span> = <span class="var">r</span>.<span class="var">choices</span>[<span class="num">0</span>].<span class="var">message</span>
+        <span class="var">msgs</span>.<span class="fn">append</span>(<span class="var">m</span>)
+        <span class="kw">if</span> <span class="kw">not</span> <span class="var">m</span>.<span class="var">tool_calls</span>: <span class="kw">return</span> <span class="var">m</span>.<span class="var">content</span>
+        <span class="kw">for</span> <span class="var">tc</span> <span class="kw">in</span> <span class="var">m</span>.<span class="var">tool_calls</span>:
+            <span class="var">result</span> = <span class="var">TOOL_MAP</span>[<span class="var">tc</span>.<span class="var">function</span>.<span class="var">name</span>](**<span class="var">json</span>.<span class="fn">loads</span>(<span class="var">tc</span>.<span class="var">function</span>.<span class="var">arguments</span>))
+            <span class="var">msgs</span>.<span class="fn">append</span>({<span class="str">"role"</span>: <span class="str">"tool"</span>, <span class="str">"tool_call_id"</span>: <span class="var">tc</span>.<span class="var">id</span>, <span class="str">"content"</span>: <span class="var">result</span>})
+
+<span class="fn">print</span>(<span class="fn">run</span>(<span class="str">"বাংলাদেশের জনসংখ্যা খোঁজো এবং সেটার ৭৫% হিসাব করো।"</span>))</pre>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ════════ MCP ════════ -->
+<div id="mcp" class="ch fi">
+  <div class="ch-icon im">🔗</div>
+  <div><div class="ch-num nm">অধ্যায় ০৪ — THE NERVOUS SYSTEM</div><h2>MCP (Model Context Protocol)</h2></div>
+</div>
+
+<div class="card ml fi">
+  <h3>🧒 স্তর ১ — সহজ গল্প</h3>
+  <p>১০ বছর আগে প্রতিটা ফোনের আলাদা charger ছিল। তারপর এলো USB-C — সব এক port এ।</p><br>
+  <p>AI এর ক্ষেত্রেও তাই ছিল। GitHub connect করতে আলাদা কোড, Slack আলাদা, Database আলাদা।</p><br>
+  <p>Anthropic ২০২৪ এ <span class="hm">MCP</span> বানালো — AI এর USB-C। একটা standard দিয়ে সব কিছুর সাথে connect।</p>
+</div>
+
+<div class="card ml fi">
+  <h3>🔬 স্তর ২ — MCP Architecture</h3>
+  <div class="g3">
+    <div class="mc" style="border:1px solid rgba(244,114,182,.2)"><div class="ic">🖥️</div><strong>MCP Host</strong><p>Claude Desktop, Cursor — যে AI ব্যবহার করছ।</p></div>
+    <div class="mc" style="border:1px solid rgba(244,114,182,.2)"><div class="ic">🔌</div><strong>MCP Client</strong><p>Host ও Server এর মধ্যে সংযোগকারী।</p></div>
+    <div class="mc" style="border:1px solid rgba(244,114,182,.2)"><div class="ic">⚙️</div><strong>MCP Server</strong><p>তোমার তৈরি server — tools ও data expose করে।</p></div>
+  </div>
+  <br><p><strong>Server ৩ ধরনের জিনিস দেয়:</strong> Tools (functions), Resources (data), Prompts (templates)।</p>
+</div>
+
+<div class="card ml fi">
+  <h3>💻 স্তর ৩ — MCP Server কোড</h3>
+  <div class="code">
+    <div class="code-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> simple_mcp_server.py</div>
+    <pre><span class="cm"># pip install mcp[cli]</span>
+<span class="kw">from</span> <span class="var">mcp.server.fastmcp</span> <span class="kw">import</span> <span class="var">FastMCP</span>
+<span class="kw">import</span> <span class="var">datetime</span>
+
+<span class="var">mcp</span> = <span class="fn">FastMCP</span>(<span class="str">"আমার প্রথম MCP Server"</span>)
+
+<span class="kw">@mcp.tool()</span>
+<span class="kw">def</span> <span class="fn">get_time</span>() -> <span class="var">str</span>:
+    <span class="str">"""বর্তমান সময় ও তারিখ দেয়"""</span>
+    <span class="kw">return</span> <span class="var">datetime</span>.<span class="var">datetime</span>.<span class="fn">now</span>().<span class="fn">strftime</span>(<span class="str">"%Y-%m-%d %H:%M:%S"</span>)
+
+<span class="kw">@mcp.tool()</span>
+<span class="kw">def</span> <span class="fn">add</span>(<span class="var">a</span>: <span class="var">float</span>, <span class="var">b</span>: <span class="var">float</span>) -> <span class="var">str</span>:
+    <span class="str">"""দুটো সংখ্যা যোগ করে"""</span>
+    <span class="kw">return</span> <span class="str">f"{a} + {b} = {a + b}"</span>
+
+<span class="kw">if</span> <span class="var">__name__</span> == <span class="str">"__main__"</span>:
+    <span class="var">mcp</span>.<span class="fn">run</span>()  <span class="cm"># python simple_mcp_server.py</span></pre>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ════════ COMPARE ════════ -->
+<div id="compare" class="ch fi">
+  <div class="ch-icon ig">📊</div>
+  <div><div class="ch-num" style="color:#94a3b8">তুলনামূলক বিশ্লেষণ</div><h2>চারটা কনসেপ্ট পাশাপাশি</h2></div>
+</div>
+
+<div class="card fi">
+  <div class="tbl">
+    <table>
+      <thead><tr><th>প্রশ্ন</th><th><span class="tag tb">🧠 LLM</span></th><th><span class="tag tr2">📚 RAG</span></th><th><span class="tag ta2">🤖 Agent</span></th><th><span class="tag tm2">🔗 MCP</span></th></tr></thead>
+      <tbody>
+        <tr><td>মূল কাজ</td><td>ভাবা ও লেখা</td><td>খুঁজে বলা</td><td>সিদ্ধান্ত ও কাজ</td><td>সংযুক্ত করা</td></tr>
+        <tr><td>বাইরের তথ্য</td><td>❌</td><td>✅ Documents</td><td>✅ Tools</td><td>✅ যেকোনো</td></tr>
+        <tr><td>Action নিতে পারে?</td><td>❌</td><td>❌</td><td>✅</td><td>✅ মাধ্যম</td></tr>
+        <tr><td>Hallucination</td><td>⚠️ বেশি</td><td>✅ কম</td><td>✅ কম</td><td>✅ কম</td></tr>
+        <tr><td>বাস্তবে</td><td>Demo</td><td>Usable</td><td>Powerful</td><td>Scalable</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="div">
+
+<!-- ════════ ROADMAP ════════ -->
+<div id="roadmap" class="ch fi">
+  <div class="ch-icon ib">🗺️</div>
+  <div><div class="ch-num nb">শেখার পথ</div><h2>শূন্য থেকে বিশেষজ্ঞ রোডম্যাপ</h2></div>
+</div>
+
+<div class="fi">
+  <div class="rm-item"><div class="rm-badge rm1">সপ্তাহ ১-২</div><div><strong>🐍 Python ভিত্তি</strong><p>Variables, Functions, List, Dict, OOP। → Anisul Islam (YouTube)</p></div></div>
+  <div class="rm-item"><div class="rm-badge rm1">সপ্তাহ ৩-৪</div><div><strong>🔑 প্রথম API Call + Prompting</strong><p>OpenAI / Anthropic account। Chatbot বানাও। Temperature, few-shot শেখো।</p></div></div>
+  <div class="rm-item"><div class="rm-badge rm2">সপ্তাহ ৫-৬</div><div><strong>📚 প্রথম RAG Project</strong><p>LangChain শেখো। FAISS দিয়ে PDF Q&amp;A বানাও।</p></div></div>
+  <div class="rm-item"><div class="rm-badge rm3">সপ্তাহ ৭-৮</div><div><strong>🤖 AI Agent</strong><p>Custom tools। LangGraph বা OpenAI function calling।</p></div></div>
+  <div class="rm-item"><div class="rm-badge rm4">সপ্তাহ ৯-১০</div><div><strong>🔗 MCP ও Production</strong><p>MCP server। Claude Desktop এ connect। Docker deploy।</p></div></div>
+  <div class="rm-item"><div class="rm-badge rm4">সপ্তাহ ১১+</div><div><strong>🚀 সব মিলিয়ে একটা Project</strong><p>GitHub এ দাও — এটাই সেরা CV।</p></div></div>
+</div>
+
+<div class="quiz fi" style="margin-top:24px">
+  <h4>🎯 চূড়ান্ত Quiz</h4>
+  <p style="color:var(--mt);font-size:.88rem;margin-bottom:12px">Company এর PDF পড়ে প্রশ্নের উত্তর দেবে এবং ইমেইলও পাঠাবে — কী লাগবে?</p>
+  <div class="quiz-opts" id="q2">
+    <div class="qo" onclick="ans('q2',this,false,'❌ শুধু LLM Private data জানে না, ইমেইলও পাঠাতে পারে না।')">ক) শুধু LLM</div>
+    <div class="qo" onclick="ans('q2',this,false,'❌ RAG document পড়তে পারে কিন্তু ইমেইল পাঠাতে পারে না।')">খ) শুধু RAG</div>
+    <div class="qo" onclick="ans('q2',this,true,'✅ দারুণ! LLM (বুদ্ধি) + RAG (document) + Agent (ইমেইল পাঠানো) + MCP (সব connect) — একসাথে।')">গ) LLM + RAG + Agent + MCP সব একসাথে</div>
+    <div class="qo" onclick="ans('q2',this,false,'❌ শুধু MCP দিয়ে intelligence আসে না।')">ঘ) শুধু MCP</div>
+  </div>
+  <div class="qfb" id="q2-fb"></div>
+</div>
+
+<div class="bigq fi">
+  মনে রেখো —<br>
+  <span>🧠 LLM ভাবে &nbsp;·&nbsp; 📚 RAG জানে &nbsp;·&nbsp; 🤖 Agent করে &nbsp;·&nbsp; 🔗 MCP জোড়া দেয়</span>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PART 2 — PROJECTS
+══════════════════════════════════════════ -->
+<div class="sec-divider fi">
+  <div class="sec-divider-line"></div>
+  <div class="sec-divider-text">PART 2 — হাতে-কলমে ৪টা Project</div>
+  <div class="sec-divider-line" style="background:linear-gradient(to left,transparent,var(--b))"></div>
+</div>
+
+<!-- ════════ WSL SETUP ════════ -->
+<div id="setup" class="ch fi">
+  <div class="ch-icon ig">⚙️</div>
+  <div><div class="ch-num" style="color:#94a3b8">একবার করো</div><h2>WSL Setup — সব Project এর আগে</h2></div>
+</div>
+
+<div class="card fi">
+  <h3>🖥️ WSL এ Python Environment তৈরি করো</h3>
+  <p>এই setup একবার করলেই সব project কাজ করবে।</p>
+</div>
+
+<div class="step-h fi"><div class="snum snx">01</div><h4>Python ও pip চেক করো</h4></div>
+<div class="cmd fi">
+  <div class="cmd-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> WSL Terminal</div>
+  <pre><span class="c"># Python version চেক</span>
+python3 --version
+
+<span class="c"># pip চেক</span>
+pip3 --version
+
+<span class="c"># না থাকলে install করো:</span>
+sudo apt update && sudo apt install -y python3 python3-pip python3-venv
+
+<span class="c"># সব project folder তৈরি করো</span>
+mkdir -p ~/ai-projects/{project1-llm,project2-rag,project3-agent,project4-mcp}
+ls ~/ai-projects/</pre>
+</div>
+
+<div class="step-h fi"><div class="snum snx">02</div><h4>API Keys সংরক্ষণ করো</h4></div>
+<div class="card fi">
+  <div class="g2">
+    <div class="mc" style="border:1px solid rgba(245,158,11,.2)"><div class="ic">🔑</div><strong>OpenAI API Key</strong><p><a href="https://platform.openai.com/api-keys" target="_blank" style="color:#34d399">platform.openai.com/api-keys</a><br>→ Create new secret key<br>প্রথম $5 free।</p></div>
+    <div class="mc" style="border:1px solid rgba(244,114,182,.2)"><div class="ic">🔑</div><strong>Anthropic API Key</strong><p><a href="https://console.anthropic.com" target="_blank" style="color:#34d399">console.anthropic.com</a><br>→ API Keys → Create Key<br>প্রথম $5 credit free।</p></div>
+  </div>
+</div>
+<div class="cmd fi">
+  <div class="cmd-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> WSL Terminal — Key সংরক্ষণ করো</div>
+  <pre><span class="c"># ~/.ai_keys ফাইলে লেখো</span>
+cat > ~/.ai_keys << 'EOF'
+export OPENAI_API_KEY="sk-তোমার-openai-key"
+export ANTHROPIC_API_KEY="sk-ant-তোমার-anthropic-key"
+EOF
+
+<span class="c"># auto-load হবে প্রতি terminal এ</span>
+echo 'source ~/.ai_keys' >> ~/.bashrc
+source ~/.bashrc
+
+<span class="c"># চেক করো (আংশিক দেখাবে)</span>
+echo "${OPENAI_API_KEY:0:8}..."</pre>
+</div>
+<div class="bx bx-w fi">Key কখনো GitHub এ push করবে না! .gitignore এ লেখো: <code style="font-family:monospace">echo ".env" >> .gitignore</code></div>
+
+<hr class="div">
+
+<!-- ════════ PROJECT 1 ════════ -->
+<div id="p1" class="ch fi">
+  <div class="ch-icon ib">🧠</div>
+  <div><div class="ch-num nb">PROJECT 01 — LLM</div><h2>বাংলা Sentiment-Aware Chatbot</h2></div>
+</div>
+<p class="fi" style="color:var(--mt2);margin-bottom:20px">SentNoB dataset (Kaggle, ১৫,০০০+ বাংলা sentence) দিয়ে chatbot বানাবো যেটা তোমার আবেগ বুঝে সেই অনুযায়ী উত্তর দেবে।</p>
+
+<div class="step-h fi"><div class="snum sn1">১</div><h4>Dataset Download করো</h4><span class="sub">SentNoB — Kaggle, বিনামূল্যে</span></div>
+<div class="bx bx-link fi"><span><strong>Dataset Link:</strong><br><a href="https://www.kaggle.com/datasets/cryptexcode/sentnob-sentiment-analysis-in-noisy-bangla-texts" target="_blank">kaggle.com/datasets/cryptexcode/sentnob-sentiment-analysis-in-noisy-bangla-texts</a><br><br>১. Kaggle account করো (free) → kaggle.com<br>২. Account → Settings → API → Create New Token → kaggle.json ডাউনলোড হবে</span></div>
+<div class="cmd fi">
+  <div class="cmd-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> WSL Terminal</div>
+  <pre>cd ~/ai-projects/project1-llm
+python3 -m venv venv
+source venv/bin/activate
+
+pip install kaggle openai pandas rich
+
+<span class="c"># Kaggle JSON setup (Windows Downloads থেকে WSL এ copy করো)</span>
+mkdir -p ~/.kaggle
+cp /mnt/c/Users/তোমার-username/Downloads/kaggle.json ~/.kaggle/
+chmod 600 ~/.kaggle/kaggle.json
+
+<span class="c"># Dataset download করো</span>
+kaggle datasets download -d cryptexcode/sentnob-sentiment-analysis-in-noisy-bangla-texts
+
+unzip sentnob-sentiment-analysis-in-noisy-bangla-texts.zip -d data/
+ls data/
+<span class="out"># SentNoB_dataset.csv দেখাবে</span></pre>
+</div>
+
+<div class="step-h fi"><div class="snum sn1">২</div><h4>Project Structure</h4></div>
+<div class="tree fi">
+<span class="td">project1-llm/</span>
+├── <span class="td">venv/</span>
+├── <span class="td">data/</span>
+│   └── <span class="tf">SentNoB_dataset.csv</span>
+├── <span class="tm2">chatbot.py</span>       ← মূল ফাইল
+└── <span class="tf">loader.py</span>        ← dataset loader
+</div>
+
+<div class="step-h fi"><div class="snum sn1">৩</div><h4>loader.py — Dataset পড়ো</h4></div>
+<div class="code fi">
+  <div class="code-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> loader.py</div>
+  <pre><span class="kw">import</span> <span class="var">pandas</span> <span class="kw">as</span> <span class="var">pd</span>
+
+<span class="kw">def</span> <span class="fn">load_examples</span>(<span class="var">path</span>=<span class="str">"data/SentNoB_dataset.csv"</span>, <span class="var">n</span>=<span class="num">3</span>) -> <span class="var">str</span>:
+    <span class="str">"""
+    CSV থেকে few-shot examples বানাও।
+    প্রতি sentiment class থেকে n টা নমুনা নেবে।
+    """</span>
+    <span class="kw">try</span>:
+        <span class="var">df</span> = <span class="var">pd</span>.<span class="fn">read_csv</span>(<span class="var">path</span>)
+        <span class="fn">print</span>(<span class="str">f"✅ Dataset: {len(df)} rows | columns: {list(df.columns)}"</span>)
+        <span class="cm"># column নাম খুঁজে বের করো</span>
+        <span class="var">tc</span> = <span class="kw">next</span>((c <span class="kw">for</span> c <span class="kw">in</span> [<span class="str">'text'</span>,<span class="str">'sentence'</span>,<span class="str">'Text'</span>] <span class="kw">if</span> c <span class="kw">in</span> <span class="var">df</span>.<span class="var">columns</span>), <span class="var">df</span>.<span class="var">columns</span>[<span class="num">0</span>])
+        <span class="var">lc</span> = <span class="kw">next</span>((c <span class="kw">for</span> c <span class="kw">in</span> [<span class="str">'sentiment'</span>,<span class="str">'label'</span>,<span class="str">'Sentiment'</span>] <span class="kw">if</span> c <span class="kw">in</span> <span class="var">df</span>.<span class="var">columns</span>), <span class="var">df</span>.<span class="var">columns</span>[<span class="num">1</span>])
+        <span class="var">rows</span> = []
+        <span class="kw">for</span> <span class="var">lbl</span> <span class="kw">in</span> [<span class="str">'Positive'</span>,<span class="str">'Negative'</span>,<span class="str">'Neutral'</span>]:
+            <span class="var">sub</span> = <span class="var">df</span>[<span class="var">df</span>[<span class="var">lc</span>].<span class="fn">str.lower</span>()==<span class="var">lbl</span>.<span class="fn">lower</span>()].<span class="fn">sample</span>(<span class="fn">min</span>(<span class="var">n</span>,<span class="fn">len</span>(<span class="var">sub</span>)) <span class="kw">if</span> <span class="fn">len</span>(<span class="var">sub</span>)>0 <span class="kw">else</span> <span class="num">0</span>)
+            <span class="kw">for</span> <span class="var">_</span>,<span class="var">r</span> <span class="kw">in</span> <span class="var">sub</span>.<span class="fn">iterrows</span>():
+                <span class="var">rows</span>.<span class="fn">append</span>(<span class="str">f"বাক্য: {r[tc]}\nঅনুভূতি: {lbl}"</span>)
+        <span class="kw">return</span> <span class="str">"\n\n"</span>.<span class="fn">join</span>(<span class="var">rows</span>)
+    <span class="kw">except</span> <span class="var">FileNotFoundError</span>:
+        <span class="fn">print</span>(<span class="str">"⚠️  Dataset নেই — sample data ব্যবহার হচ্ছে"</span>)
+        <span class="kw">return</span> <span class="str">"""বাক্য: আজকের দিনটা অসাধারণ ছিল!
+অনুভূতি: Positive
+
+বাক্য: এই সিনেমাটা একদম বাজে।
+অনুভূতি: Negative
+
+বাক্য: আগামীকাল বৃষ্টি হতে পারে।
+অনুভূতি: Neutral"""</span></pre>
+</div>
+
+<div class="step-h fi"><div class="snum sn1">৪</div><h4>chatbot.py — মূল Chatbot</h4></div>
+<div class="code fi">
+  <div class="code-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> chatbot.py</div>
+  <pre><span class="kw">import</span> <span class="var">os</span>
+<span class="kw">from</span> <span class="var">openai</span> <span class="kw">import</span> <span class="var">OpenAI</span>
+<span class="kw">from</span> <span class="var">loader</span> <span class="kw">import</span> <span class="fn">load_examples</span>
+<span class="kw">from</span> <span class="var">rich.console</span> <span class="kw">import</span> <span class="var">Console</span>
+<span class="kw">from</span> <span class="var">rich.panel</span> <span class="kw">import</span> <span class="var">Panel</span>
+
+<span class="var">console</span> = <span class="fn">Console</span>()
+<span class="var">client</span>  = <span class="fn">OpenAI</span>(<span class="var">api_key</span>=<span class="var">os</span>.<span class="var">environ</span>[<span class="str">"OPENAI_API_KEY"</span>])
+<span class="var">SHOTS</span>   = <span class="fn">load_examples</span>()
+
+<span class="var">SYSTEM</span> = <span class="str">f"""তুমি একজন সহানুভূতিশীল বাংলা chatbot।
+প্রতিটা উত্তরের শুরুতে [SENTIMENT: Positive/Negative/Neutral] লেখো।
+তারপর সেই sentiment অনুযায়ী উত্তর দাও।
+
+Examples:
+{SHOTS}"""</span>
+
+<span class="var">history</span> = [{<span class="str">"role"</span>: <span class="str">"system"</span>, <span class="str">"content"</span>: <span class="var">SYSTEM</span>}]
+
+<span class="kw">def</span> <span class="fn">chat</span>(<span class="var">msg</span>):
+    <span class="var">history</span>.<span class="fn">append</span>({<span class="str">"role"</span>:<span class="str">"user"</span>,<span class="str">"content"</span>:<span class="var">msg</span>})
+    <span class="var">r</span> = <span class="var">client</span>.<span class="var">chat</span>.<span class="var">completions</span>.<span class="fn">create</span>(
+        <span class="var">model</span>=<span class="str">"gpt-4o-mini"</span>, <span class="var">messages</span>=<span class="var">history</span>,
+        <span class="var">temperature</span>=<span class="num">0.7</span>, <span class="var">max_tokens</span>=<span class="num">300</span>)
+    <span class="var">reply</span> = <span class="var">r</span>.<span class="var">choices</span>[<span class="num">0</span>].<span class="var">message</span>.<span class="var">content</span>
+    <span class="var">history</span>.<span class="fn">append</span>({<span class="str">"role"</span>:<span class="str">"assistant"</span>,<span class="str">"content"</span>:<span class="var">reply</span>})
+    <span class="kw">return</span> <span class="var">reply</span>
+
+<span class="kw">def</span> <span class="fn">parse</span>(<span class="var">reply</span>):
+    <span class="var">colors</span> = {<span class="str">"Positive"</span>:<span class="str">"green"</span>,<span class="str">"Negative"</span>:<span class="str">"red"</span>,<span class="str">"Neutral"</span>:<span class="str">"yellow"</span>}
+    <span class="kw">for</span> <span class="var">s</span>,<span class="var">c</span> <span class="kw">in</span> <span class="var">colors</span>.<span class="fn">items</span>():
+        <span class="var">tag</span> = <span class="str">f"[SENTIMENT: {s}]"</span>
+        <span class="kw">if</span> <span class="var">tag</span> <span class="kw">in</span> <span class="var">reply</span>:
+            <span class="kw">return</span> <span class="var">reply</span>.<span class="fn">replace</span>(<span class="var">tag</span>,<span class="str">""</span>).<span class="fn">strip</span>(), <span class="str">f"😊 {s}"</span> <span class="kw">if</span> <span class="var">s</span>==<span class="str">"Positive"</span> <span class="kw">else</span> <span class="str">f"😔 {s}"</span> <span class="kw">if</span> <span class="var">s</span>==<span class="str">"Negative"</span> <span class="kw">else</span> <span class="str">f"😐 {s}"</span>, <span class="var">c</span>
+    <span class="kw">return</span> <span class="var">reply</span>, <span class="str">"Unknown"</span>, <span class="str">"white"</span>
+
+<span class="kw">if</span> <span class="var">__name__</span>==<span class="str">"__main__"</span>:
+    <span class="var">console</span>.<span class="fn">print</span>(<span class="fn">Panel</span>(<span class="str">"[bold yellow]🧠 বাংলা Sentiment Chatbot[/]\n[dim]exit লিখলে বন্ধ হবে[/]"</span>,<span class="var">border_style</span>=<span class="str">"yellow"</span>))
+    <span class="kw">while</span> <span class="kw">True</span>:
+        <span class="var">u</span> = <span class="fn">input</span>(<span class="str">"\n[তুমি]: "</span>).<span class="fn">strip</span>()
+        <span class="kw">if</span> <span class="var">u</span>.<span class="fn">lower</span>() <span class="kw">in</span> [<span class="str">"exit"</span>,<span class="str">"quit"</span>]: <span class="kw">break</span>
+        <span class="kw">if</span> <span class="kw">not</span> <span class="var">u</span>: <span class="kw">continue</span>
+        <span class="kw">with</span> <span class="var">console</span>.<span class="fn">status</span>(<span class="str">"[dim]ভাবছি...[/]"</span>):
+            <span class="var">reply</span> = <span class="fn">chat</span>(<span class="var">u</span>)
+        <span class="var">text</span>,<span class="var">label</span>,<span class="var">color</span> = <span class="fn">parse</span>(<span class="var">reply</span>)
+        <span class="var">console</span>.<span class="fn">print</span>(<span class="str">f"\n[{color}]{label}[/]"</span>)
+        <span class="var">console</span>.<span class="fn">print</span>(<span class="fn">Panel</span>(<span class="var">text</span>,<span class="var">border_style</span>=<span class="var">color</span>))</pre>
+</div>
+
+<div class="step-h fi"><div class="snum sn1">৫</div><h4>চালাও!</h4></div>
+<div class="cmd fi">
+  <div class="cmd-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> WSL Terminal</div>
+  <pre>cd ~/ai-projects/project1-llm
+source venv/bin/activate
+python3 chatbot.py</pre>
+</div>
+<div class="bx bx-ok fi">Project 1 সম্পন্ন! বাংলা Sentiment Chatbot চলছে।</div>
+
+<hr class="div">
+
+<!-- ════════ PROJECT 2 ════════ -->
+<div id="p2" class="ch fi">
+  <div class="ch-icon ir">📚</div>
+  <div><div class="ch-num nr">PROJECT 02 — RAG</div><h2>বাংলা News Q&amp;A System</h2></div>
+</div>
+<p class="fi" style="color:var(--mt2);margin-bottom:20px">Bangla News dataset (Kaggle, ১১,৫০০+ সংবাদ) দিয়ে FAISS-based Q&A system বানাবো।</p>
+
+<div class="step-h fi"><div class="snum sn2">১</div><h4>Dataset Download করো</h4><span class="sub">Bangla News — Kaggle, বিনামূল্যে</span></div>
+<div class="bx bx-link fi"><span><strong>Dataset Link:</strong><br><a href="https://www.kaggle.com/datasets/durjoychandrapaul/over-11500-bangla-news-for-nlp" target="_blank">kaggle.com/datasets/durjoychandrapaul/over-11500-bangla-news-for-nlp</a><br><br>১১,৫০০+ বাংলা সংবাদ — NLP এর জন্য তৈরি</span></div>
+<div class="cmd fi">
+  <div class="cmd-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> WSL Terminal</div>
+  <pre>cd ~/ai-projects/project2-rag
+python3 -m venv venv
+source venv/bin/activate
+
+pip install kaggle openai faiss-cpu pandas numpy sentence-transformers rich tqdm
+
+<span class="c"># Dataset download করো</span>
+kaggle datasets download -d durjoychandrapaul/over-11500-bangla-news-for-nlp
+
+unzip over-11500-bangla-news-for-nlp.zip -d data/
+ls data/
+<span class="out"># bangla_news.csv দেখাবে</span>
+
+<span class="c"># folder তৈরি করো</span>
+mkdir -p vectorstore</pre>
+</div>
+
+<div class="step-h fi"><div class="snum sn2">২</div><h4>Project Structure</h4></div>
+<div class="tree fi">
+<span class="td">project2-rag/</span>
+├── <span class="td">venv/</span>
+├── <span class="td">data/</span>
+│   └── <span class="tf">bangla_news.csv</span>
+├── <span class="td">vectorstore/</span>       ← FAISS index save হবে
+├── <span class="tm2">build_index.py</span>     ← একবার চালাও
+└── <span class="tm2">rag_qa.py</span>          ← Q&amp;A system
+</div>
+
+<div class="step-h fi"><div class="snum sn2">৩</div><h4>build_index.py — Vector Index তৈরি করো (একবার)</h4></div>
+<div class="code fi">
+  <div class="code-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> build_index.py</div>
+  <pre><span class="cm">"""
+Dataset লোড → Chunk → Embed → FAISS index তৈরি করে disk এ save।
+একবার চালালেই হবে। তারপর rag_qa.py লোড করবে।
+"""</span>
+<span class="kw">import</span> <span class="var">os</span>, <span class="var">pickle</span>
+<span class="kw">import</span> <span class="var">pandas</span> <span class="kw">as</span> <span class="var">pd</span>
+<span class="kw">import</span> <span class="var">numpy</span> <span class="kw">as</span> <span class="var">np</span>
+<span class="kw">import</span> <span class="var">faiss</span>
+<span class="kw">from</span> <span class="var">sentence_transformers</span> <span class="kw">import</span> <span class="var">SentenceTransformer</span>
+<span class="kw">from</span> <span class="var">tqdm</span> <span class="kw">import</span> <span class="var">tqdm</span>
+
+<span class="var">IDX_DIR</span> = <span class="str">"vectorstore"</span>
+<span class="var">os</span>.<span class="fn">makedirs</span>(<span class="var">IDX_DIR</span>, <span class="var">exist_ok</span>=<span class="kw">True</span>)
+
+<span class="fn">print</span>(<span class="str">"📰 Dataset লোড হচ্ছে..."</span>)
+<span class="var">df</span> = <span class="var">pd</span>.<span class="fn">read_csv</span>(<span class="str">"data/bangla_news.csv"</span>)
+<span class="fn">print</span>(<span class="str">f"   Columns: {list(df.columns)}"</span>)
+
+<span class="cm"># text column খুঁজো</span>
+<span class="var">tc</span> = <span class="kw">next</span>((c <span class="kw">for</span> c <span class="kw">in</span> [<span class="str">'content'</span>,<span class="str">'text'</span>,<span class="str">'article'</span>,<span class="str">'news'</span>,<span class="str">'body'</span>] <span class="kw">if</span> c <span class="kw">in</span> <span class="var">df</span>.<span class="var">columns</span>), <span class="var">df</span>.<span class="var">columns</span>[<span class="num">0</span>])
+<span class="fn">print</span>(<span class="str">f"   Text column: {tc}"</span>)
+
+<span class="var">df</span> = <span class="var">df</span>.<span class="fn">dropna</span>(<span class="var">subset</span>=[<span class="var">tc</span>])
+<span class="var">df</span>[<span class="var">tc</span>] = <span class="var">df</span>[<span class="var">tc</span>].<span class="fn">astype</span>(<span class="var">str</span>).<span class="fn">str.strip</span>()
+<span class="var">texts</span> = <span class="var">df</span>[<span class="var">df</span>[<span class="var">tc</span>].<span class="fn">str.len</span>()><span class="num">50</span>][<span class="var">tc</span>].<span class="fn">tolist</span>()
+<span class="fn">print</span>(<span class="str">f"   পরিষ্কার সংবাদ: {len(texts)}"</span>)
+
+<span class="fn">print</span>(<span class="str">"\n✂️  Chunking হচ্ছে..."</span>)
+<span class="var">chunks</span> = []
+<span class="kw">for</span> <span class="var">i</span>,<span class="var">t</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">texts</span>):
+    <span class="kw">for</span> <span class="var">j</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>,<span class="fn">len</span>(<span class="var">t</span>),<span class="num">280</span>):
+        <span class="var">c</span>=<span class="var">t</span>[<span class="var">j</span>:<span class="var">j</span>+<span class="num">300</span>].<span class="fn">strip</span>()
+        <span class="kw">if</span> <span class="fn">len</span>(<span class="var">c</span>)><span class="num">30</span>: <span class="var">chunks</span>.<span class="fn">append</span>({<span class="str">"text"</span>:<span class="var">c</span>,<span class="str">"src"</span>:<span class="var">i</span>})
+<span class="fn">print</span>(<span class="str">f"   মোট chunks: {len(chunks)}"</span>)
+
+<span class="fn">print</span>(<span class="str">"\n🤖 Embedding model লোড হচ্ছে (প্রথমবার ~400MB download)..."</span>)
+<span class="var">model</span> = <span class="fn">SentenceTransformer</span>(<span class="str">"sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"</span>)
+
+<span class="fn">print</span>(<span class="str">"\n🔢 Embeddings তৈরি হচ্ছে..."</span>)
+<span class="var">vecs</span> = <span class="var">model</span>.<span class="fn">encode</span>(
+    [<span class="var">c</span>[<span class="str">"text"</span>] <span class="kw">for</span> <span class="var">c</span> <span class="kw">in</span> <span class="var">chunks</span>],
+    <span class="var">batch_size</span>=<span class="num">64</span>, <span class="var">show_progress_bar</span>=<span class="kw">True</span>, <span class="var">convert_to_numpy</span>=<span class="kw">True</span>
+).<span class="fn">astype</span>(<span class="str">"float32"</span>)
+
+<span class="fn">print</span>(<span class="str">"\n📦 FAISS index তৈরি হচ্ছে..."</span>)
+<span class="var">idx</span> = <span class="var">faiss</span>.<span class="fn">IndexFlatIP</span>(<span class="var">vecs</span>.<span class="var">shape</span>[<span class="num">1</span>])
+<span class="var">faiss</span>.<span class="fn">normalize_L2</span>(<span class="var">vecs</span>)
+<span class="var">idx</span>.<span class="fn">add</span>(<span class="var">vecs</span>)
+<span class="var">faiss</span>.<span class="fn">write_index</span>(<span class="var">idx</span>, <span class="str">f"{IDX_DIR}/news.index"</span>)
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">f"{IDX_DIR}/chunks.pkl"</span>,<span class="str">"wb"</span>) <span class="kw">as</span> <span class="var">f</span>: <span class="var">pickle</span>.<span class="fn">dump</span>(<span class="var">chunks</span>,<span class="var">f</span>)
+<span class="fn">print</span>(<span class="str">f"✅ Done! Index: {idx.ntotal} vectors → vectorstore/ এ save।"</span>)
+<span class="fn">print</span>(<span class="str">"এখন python3 rag_qa.py চালাও!"</span>)</pre>
+</div>
+
+<div class="step-h fi"><div class="snum sn2">৪</div><h4>rag_qa.py — Q&A System</h4></div>
+<div class="code fi">
+  <div class="code-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> rag_qa.py</div>
+  <pre><span class="kw">import</span> <span class="var">os</span>, <span class="var">pickle</span>
+<span class="kw">import</span> <span class="var">numpy</span> <span class="kw">as</span> <span class="var">np</span>
+<span class="kw">import</span> <span class="var">faiss</span>
+<span class="kw">from</span> <span class="var">openai</span> <span class="kw">import</span> <span class="var">OpenAI</span>
+<span class="kw">from</span> <span class="var">sentence_transformers</span> <span class="kw">import</span> <span class="var">SentenceTransformer</span>
+<span class="kw">from</span> <span class="var">rich.console</span> <span class="kw">import</span> <span class="var">Console</span>
+<span class="kw">from</span> <span class="var">rich.panel</span> <span class="kw">import</span> <span class="var">Panel</span>
+<span class="kw">from</span> <span class="var">rich.table</span> <span class="kw">import</span> <span class="var">Table</span>
+
+<span class="var">console</span> = <span class="fn">Console</span>()
+<span class="var">client</span>  = <span class="fn">OpenAI</span>(<span class="var">api_key</span>=<span class="var">os</span>.<span class="var">environ</span>[<span class="str">"OPENAI_API_KEY"</span>])
+
+<span class="fn">print</span>(<span class="str">"📦 Index লোড হচ্ছে..."</span>)
+<span class="var">idx</span>    = <span class="var">faiss</span>.<span class="fn">read_index</span>(<span class="str">"vectorstore/news.index"</span>)
+<span class="var">chunks</span> = <span class="var">pickle</span>.<span class="fn">load</span>(<span class="fn">open</span>(<span class="str">"vectorstore/chunks.pkl"</span>,<span class="str">"rb"</span>))
+<span class="var">embed</span>  = <span class="fn">SentenceTransformer</span>(<span class="str">"sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"</span>)
+<span class="fn">print</span>(<span class="str">f"✅ Ready — {idx.ntotal} chunks"</span>)
+
+<span class="kw">def</span> <span class="fn">retrieve</span>(<span class="var">q</span>, <span class="var">k</span>=<span class="num">4</span>):
+    <span class="var">v</span> = <span class="var">embed</span>.<span class="fn">encode</span>([<span class="var">q</span>], <span class="var">convert_to_numpy</span>=<span class="kw">True</span>).<span class="fn">astype</span>(<span class="str">"float32"</span>)
+    <span class="var">faiss</span>.<span class="fn">normalize_L2</span>(<span class="var">v</span>)
+    <span class="var">sc</span>,<span class="var">ids</span> = <span class="var">idx</span>.<span class="fn">search</span>(<span class="var">v</span>,<span class="var">k</span>)
+    <span class="kw">return</span> [{<span class="str">"text"</span>:<span class="var">chunks</span>[<span class="var">i</span>][<span class="str">"text"</span>],<span class="str">"score"</span>:<span class="fn">float</span>(<span class="var">sc</span>[<span class="num">0</span>][<span class="var">j</span>])} <span class="kw">for</span> <span class="var">j</span>,<span class="var">i</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">ids</span>[<span class="num">0</span>]) <span class="kw">if</span> <span class="var">i</span>&lt;<span class="fn">len</span>(<span class="var">chunks</span>)]
+
+<span class="kw">def</span> <span class="fn">answer</span>(<span class="var">q</span>, <span class="var">hits</span>):
+    <span class="var">ctx</span> = <span class="str">"\n\n"</span>.<span class="fn">join</span>(<span class="str">f"[সংবাদ {i+1}]: {h['text']}"</span> <span class="kw">for</span> <span class="var">i</span>,<span class="var">h</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">hits</span>))
+    <span class="var">r</span> = <span class="var">client</span>.<span class="var">chat</span>.<span class="var">completions</span>.<span class="fn">create</span>(
+        <span class="var">model</span>=<span class="str">"gpt-4o-mini"</span>, <span class="var">temperature</span>=<span class="num">0</span>, <span class="var">max_tokens</span>=<span class="num">400</span>,
+        <span class="var">messages</span>=[{<span class="str">"role"</span>:<span class="str">"user"</span>,<span class="str">"content"</span>:<span class="str">f"""নিচের সংবাদ থেকে উত্তর দাও। Context এ না থাকলে বলো "এই তথ্য সংবাদে নেই।"
+
+Context:
+{ctx}
+
+প্রশ্ন: {q}
+উত্তর (বাংলায়):"""</span>}])
+    <span class="kw">return</span> <span class="var">r</span>.<span class="var">choices</span>[<span class="num">0</span>].<span class="var">message</span>.<span class="var">content</span>
+
+<span class="kw">if</span> <span class="var">__name__</span>==<span class="str">"__main__"</span>:
+    <span class="var">console</span>.<span class="fn">print</span>(<span class="fn">Panel</span>(<span class="str">"[bold green]📚 বাংলা News Q&amp;A[/]\n[dim]exit দিয়ে বন্ধ[/]"</span>,<span class="var">border_style</span>=<span class="str">"green"</span>))
+    <span class="kw">while</span> <span class="kw">True</span>:
+        <span class="var">q</span> = <span class="fn">input</span>(<span class="str">"\n❓ প্রশ্ন: "</span>).<span class="fn">strip</span>()
+        <span class="kw">if</span> <span class="var">q</span>.<span class="fn">lower</span>()==<span class="str">"exit"</span>: <span class="kw">break</span>
+        <span class="kw">if</span> <span class="kw">not</span> <span class="var">q</span>: <span class="kw">continue</span>
+        <span class="kw">with</span> <span class="var">console</span>.<span class="fn">status</span>(<span class="str">"[dim]খোঁজা হচ্ছে...[/]"</span>): <span class="var">hits</span>=<span class="fn">retrieve</span>(<span class="var">q</span>)
+        <span class="var">t</span>=<span class="fn">Table</span>(<span class="var">title</span>=<span class="str">"সংশ্লিষ্ট সংবাদ"</span>)
+        <span class="var">t</span>.<span class="fn">add_column</span>(<span class="str">"#"</span>,<span class="var">width</span>=<span class="num">3</span>); <span class="var">t</span>.<span class="fn">add_column</span>(<span class="str">"Score"</span>,<span class="var">width</span>=<span class="num">6</span>); <span class="var">t</span>.<span class="fn">add_column</span>(<span class="str">"সংবাদ"</span>)
+        [<span class="var">t</span>.<span class="fn">add_row</span>(<span class="fn">str</span>(<span class="var">i</span>+<span class="num">1</span>),<span class="str">f"{h['score']:.2f}"</span>,<span class="var">h</span>[<span class="str">"text"</span>][:<span class="num">100</span>]+<span class="str">"..."</span>) <span class="kw">for</span> <span class="var">i</span>,<span class="var">h</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">hits</span>)]
+        <span class="var">console</span>.<span class="fn">print</span>(<span class="var">t</span>)
+        <span class="kw">with</span> <span class="var">console</span>.<span class="fn">status</span>(<span class="str">"[dim]উত্তর তৈরি হচ্ছে...[/]"</span>): <span class="var">a</span>=<span class="fn">answer</span>(<span class="var">q</span>,<span class="var">hits</span>)
+        <span class="var">console</span>.<span class="fn">print</span>(<span class="fn">Panel</span>(<span class="var">a</span>,<span class="var">title</span>=<span class="str">"[bold green]উত্তর[/]"</span>,<span class="var">border_style</span>=<span class="str">"green"</span>))</pre>
+</div>
+
+<div class="step-h fi"><div class="snum sn2">৫</div><h4>চালাও!</h4></div>
+<div class="cmd fi">
+  <div class="cmd-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> WSL Terminal</div>
+  <pre>cd ~/ai-projects/project2-rag
+source venv/bin/activate
+
+<span class="c"># প্রথমে index তৈরি করো (১০-২০ মিনিট, একবারই)</span>
+python3 build_index.py
+
+<span class="c"># তারপর Q&A চালাও</span>
+python3 rag_qa.py</pre>
+</div>
+<div class="bx bx-ok fi">Project 2 সম্পন্ন! বাংলা সংবাদের উপর intelligent Q&A system তৈরি।</div>
+
+<hr class="div">
+
+<!-- ════════ PROJECT 3 ════════ -->
+<div id="p3" class="ch fi">
+  <div class="ch-icon ia">🤖</div>
+  <div><div class="ch-num na">PROJECT 03 — AI AGENT</div><h2>বাংলাদেশ Research Agent</h2></div>
+</div>
+<p class="fi" style="color:var(--mt2);margin-bottom:20px">একটা Agent বানাবো যেটা ওয়েব সার্চ করে, গণিত হিসাব করে, Wikipedia পড়ে, এবং বাংলায় রিপোর্ট তৈরি করে — সব নিজে নিজে।</p>
+<div class="bx bx-tip fi">এই project এ Kaggle dataset লাগে না। Agent নিজেই real-time web থেকে data আনে।</div>
+
+<div class="step-h fi"><div class="snum sn3">১</div><h4>Setup ও Install</h4></div>
+<div class="cmd fi">
+  <div class="cmd-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> WSL Terminal</div>
+  <pre>cd ~/ai-projects/project3-agent
+python3 -m venv venv
+source venv/bin/activate
+
+pip install openai duckduckgo-search wikipedia-api requests rich
+
+mkdir -p reports</pre>
+</div>
+
+<div class="step-h fi"><div class="snum sn3">২</div><h4>Project Structure</h4></div>
+<div class="tree fi">
+<span class="td">project3-agent/</span>
+├── <span class="td">venv/</span>
+├── <span class="td">reports/</span>        ← Agent এখানে রিপোর্ট save করবে
+└── <span class="tm2">agent.py</span>        ← সম্পূর্ণ agent
+</div>
+
+<div class="step-h fi"><div class="snum sn3">৩</div><h4>agent.py — সম্পূর্ণ Research Agent</h4></div>
+<div class="code fi">
+  <div class="code-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> agent.py</div>
+  <pre><span class="cm">"""
+বাংলাদেশ Research Agent — OpenAI Function Calling
+Tools: web_search, calculator, get_wikipedia, save_report
+"""</span>
+<span class="kw">import</span> <span class="var">os</span>, <span class="var">json</span>, <span class="var">math</span>
+<span class="kw">from</span> <span class="var">datetime</span> <span class="kw">import</span> <span class="var">datetime</span>
+<span class="kw">from</span> <span class="var">openai</span> <span class="kw">import</span> <span class="var">OpenAI</span>
+<span class="kw">from</span> <span class="var">duckduckgo_search</span> <span class="kw">import</span> <span class="var">DDGS</span>
+<span class="kw">import</span> <span class="var">wikipediaapi</span>
+<span class="kw">from</span> <span class="var">rich.console</span> <span class="kw">import</span> <span class="var">Console</span>
+<span class="kw">from</span> <span class="var">rich.panel</span> <span class="kw">import</span> <span class="var">Panel</span>
+
+<span class="var">console</span> = <span class="fn">Console</span>()
+<span class="var">client</span>  = <span class="fn">OpenAI</span>(<span class="var">api_key</span>=<span class="var">os</span>.<span class="var">environ</span>[<span class="str">"OPENAI_API_KEY"</span>])
+<span class="var">wiki</span>    = <span class="fn">wikipediaapi.Wikipedia</span>(<span class="str">"ResearchAgent/1.0"</span>, <span class="str">"bn"</span>)
+<span class="var">os</span>.<span class="fn">makedirs</span>(<span class="str">"reports"</span>, <span class="var">exist_ok</span>=<span class="kw">True</span>)
+
+<span class="cm"># ── Tool Functions ──</span>
+<span class="kw">def</span> <span class="fn">web_search</span>(<span class="var">query</span>: <span class="var">str</span>, <span class="var">max_results</span>: <span class="var">int</span> = <span class="num">4</span>) -> <span class="var">str</span>:
+    <span class="var">console</span>.<span class="fn">print</span>(<span class="str">f"  🔍 [dim]{query}[/]"</span>)
+    <span class="kw">try</span>:
+        <span class="kw">with</span> <span class="fn">DDGS</span>() <span class="kw">as</span> <span class="var">d</span>:
+            <span class="var">res</span> = <span class="fn">list</span>(<span class="var">d</span>.<span class="fn">text</span>(<span class="var">query</span>, <span class="var">max_results</span>=<span class="var">max_results</span>))
+        <span class="kw">return</span> <span class="var">json</span>.<span class="fn">dumps</span>([{<span class="str">"title"</span>:<span class="var">r</span>[<span class="str">"title"</span>],<span class="str">"snippet"</span>:<span class="var">r</span>[<span class="str">"body"</span>][:<span class="num">250</span>]} <span class="kw">for</span> <span class="var">r</span> <span class="kw">in</span> <span class="var">res</span>], <span class="var">ensure_ascii</span>=<span class="kw">False</span>)
+    <span class="kw">except</span> <span class="var">Exception</span> <span class="kw">as</span> <span class="var">e</span>: <span class="kw">return</span> <span class="str">f"Error: {e}"</span>
+
+<span class="kw">def</span> <span class="fn">calculator</span>(<span class="var">expression</span>: <span class="var">str</span>) -> <span class="var">str</span>:
+    <span class="var">console</span>.<span class="fn">print</span>(<span class="str">f"  🔢 [dim]{expression}[/]"</span>)
+    <span class="kw">try</span>: <span class="kw">return</span> <span class="str">f"ফলাফল: {eval(expression, {}, {'math': math}):,}"</span>
+    <span class="kw">except</span> <span class="var">Exception</span> <span class="kw">as</span> <span class="var">e</span>: <span class="kw">return</span> <span class="str">f"Error: {e}"</span>
+
+<span class="kw">def</span> <span class="fn">get_wikipedia</span>(<span class="var">topic</span>: <span class="var">str</span>) -> <span class="var">str</span>:
+    <span class="var">console</span>.<span class="fn">print</span>(<span class="str">f"  📖 Wikipedia: [dim]{topic}[/]"</span>)
+    <span class="var">p</span> = <span class="var">wiki</span>.<span class="fn">page</span>(<span class="var">topic</span>)
+    <span class="kw">if</span> <span class="var">p</span>.<span class="var">exists</span>(): <span class="kw">return</span> <span class="var">p</span>.<span class="var">summary</span>[:<span class="num">1000</span>]
+    <span class="var">wiki_en</span> = <span class="fn">wikipediaapi.Wikipedia</span>(<span class="str">"ResearchAgent/1.0"</span>,<span class="str">"en"</span>)
+    <span class="var">pe</span> = <span class="var">wiki_en</span>.<span class="fn">page</span>(<span class="var">topic</span>)
+    <span class="kw">return</span> <span class="var">pe</span>.<span class="var">summary</span>[:<span class="num">1000</span>] <span class="kw">if</span> <span class="var">pe</span>.<span class="var">exists</span>() <span class="kw">else</span> <span class="str">f"'{topic}' পাওয়া গেল না।"</span>
+
+<span class="kw">def</span> <span class="fn">save_report</span>(<span class="var">filename</span>: <span class="var">str</span>, <span class="var">content</span>: <span class="var">str</span>) -> <span class="var">str</span>:
+    <span class="var">console</span>.<span class="fn">print</span>(<span class="str">f"  💾 Save: [dim]{filename}[/]"</span>)
+    <span class="var">path</span> = <span class="str">f"reports/{filename}"</span>
+    <span class="kw">with</span> <span class="fn">open</span>(<span class="var">path</span>,<span class="str">"w"</span>,<span class="var">encoding</span>=<span class="str">"utf-8"</span>) <span class="kw">as</span> <span class="var">f</span>:
+        <span class="var">f</span>.<span class="fn">write</span>(<span class="str">f"# {filename}\nতৈরি: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n{content}"</span>)
+    <span class="kw">return</span> <span class="str">f"✅ '{path}' এ save হয়েছে।"</span>
+
+<span class="cm"># ── OpenAI Tool Definitions ──</span>
+<span class="var">TOOLS</span> = [
+    {<span class="str">"type"</span>:<span class="str">"function"</span>,<span class="str">"function"</span>:{<span class="str">"name"</span>:<span class="str">"web_search"</span>,<span class="str">"description"</span>:<span class="str">"ওয়েবে তথ্য খোঁজে। সাম্প্রতিক ঘটনা বা statistics এর জন্য।"</span>,<span class="str">"parameters"</span>:{<span class="str">"type"</span>:<span class="str">"object"</span>,<span class="str">"properties"</span>:{<span class="str">"query"</span>:{<span class="str">"type"</span>:<span class="str">"string"</span>},<span class="str">"max_results"</span>:{<span class="str">"type"</span>:<span class="str">"integer"</span>,<span class="str">"default"</span>:<span class="num">4</span>}},<span class="str">"required"</span>:[<span class="str">"query"</span>]}}},
+    {<span class="str">"type"</span>:<span class="str">"function"</span>,<span class="str">"function"</span>:{<span class="str">"name"</span>:<span class="str">"calculator"</span>,<span class="str">"description"</span>:<span class="str">"গণিত হিসাব করে।"</span>,<span class="str">"parameters"</span>:{<span class="str">"type"</span>:<span class="str">"object"</span>,<span class="str">"properties"</span>:{<span class="str">"expression"</span>:{<span class="str">"type"</span>:<span class="str">"string"</span>}},<span class="str">"required"</span>:[<span class="str">"expression"</span>]}}},
+    {<span class="str">"type"</span>:<span class="str">"function"</span>,<span class="str">"function"</span>:{<span class="str">"name"</span>:<span class="str">"get_wikipedia"</span>,<span class="str">"description"</span>:<span class="str">"Wikipedia থেকে বিস্তারিত তথ্য আনে।"</span>,<span class="str">"parameters"</span>:{<span class="str">"type"</span>:<span class="str">"object"</span>,<span class="str">"properties"</span>:{<span class="str">"topic"</span>:{<span class="str">"type"</span>:<span class="str">"string"</span>}},<span class="str">"required"</span>:[<span class="str">"topic"</span>]}}},
+    {<span class="str">"type"</span>:<span class="str">"function"</span>,<span class="str">"function"</span>:{<span class="str">"name"</span>:<span class="str">"save_report"</span>,<span class="str">"description"</span>:<span class="str">"রিপোর্ট ফাইলে save করে।"</span>,<span class="str">"parameters"</span>:{<span class="str">"type"</span>:<span class="str">"object"</span>,<span class="str">"properties"</span>:{<span class="str">"filename"</span>:{<span class="str">"type"</span>:<span class="str">"string"</span>},<span class="str">"content"</span>:{<span class="str">"type"</span>:<span class="str">"string"</span>}},<span class="str">"required"</span>:[<span class="str">"filename"</span>,<span class="str">"content"</span>]}}}
+]
+<span class="var">TOOL_MAP</span> = {<span class="str">"web_search"</span>:<span class="var">web_search</span>,<span class="str">"calculator"</span>:<span class="var">calculator</span>,<span class="str">"get_wikipedia"</span>:<span class="var">get_wikipedia</span>,<span class="str">"save_report"</span>:<span class="var">save_report</span>}
+
+<span class="cm"># ── Agent Loop ──</span>
+<span class="kw">def</span> <span class="fn">run_agent</span>(<span class="var">task</span>: <span class="var">str</span>, <span class="var">max_steps</span>=<span class="num">10</span>):
+    <span class="var">console</span>.<span class="fn">print</span>(<span class="fn">Panel</span>(<span class="str">f"[bold]Task:[/] {task}"</span>,<span class="var">border_style</span>=<span class="str">"blue"</span>))
+    <span class="var">msgs</span> = [
+        {<span class="str">"role"</span>:<span class="str">"system"</span>,<span class="str">"content"</span>:<span class="str">"তুমি একজন বাংলাদেশ বিশেষজ্ঞ Research Agent। প্রয়োজনীয় tools ব্যবহার করো। সব কাজ শেষে বাংলায় রিপোর্ট save করো।"</span>},
+        {<span class="str">"role"</span>:<span class="str">"user"</span>,<span class="str">"content"</span>:<span class="var">task</span>}
+    ]
+    <span class="kw">for</span> <span class="var">step</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">max_steps</span>):
+        <span class="var">console</span>.<span class="fn">print</span>(<span class="str">f"\n[blue]── ধাপ {step+1} ──[/]"</span>)
+        <span class="var">r</span> = <span class="var">client</span>.<span class="var">chat</span>.<span class="var">completions</span>.<span class="fn">create</span>(<span class="var">model</span>=<span class="str">"gpt-4o"</span>,<span class="var">messages</span>=<span class="var">msgs</span>,<span class="var">tools</span>=<span class="var">TOOLS</span>,<span class="var">tool_choice</span>=<span class="str">"auto"</span>)
+        <span class="var">m</span> = <span class="var">r</span>.<span class="var">choices</span>[<span class="num">0</span>].<span class="var">message</span>
+        <span class="var">msgs</span>.<span class="fn">append</span>(<span class="var">m</span>)
+        <span class="kw">if</span> <span class="kw">not</span> <span class="var">m</span>.<span class="var">tool_calls</span>:
+            <span class="var">console</span>.<span class="fn">print</span>(<span class="str">"\n[green]✅ Done![/]"</span>)
+            <span class="kw">return</span> <span class="var">m</span>.<span class="var">content</span>
+        <span class="kw">for</span> <span class="var">tc</span> <span class="kw">in</span> <span class="var">m</span>.<span class="var">tool_calls</span>:
+            <span class="var">console</span>.<span class="fn">print</span>(<span class="str">f"  [yellow]Tool: {tc.function.name}[/]"</span>)
+            <span class="var">res</span> = <span class="var">TOOL_MAP</span>[<span class="var">tc</span>.<span class="var">function</span>.<span class="var">name</span>](**<span class="var">json</span>.<span class="fn">loads</span>(<span class="var">tc</span>.<span class="var">function</span>.<span class="var">arguments</span>))
+            <span class="var">msgs</span>.<span class="fn">append</span>({<span class="str">"role"</span>:<span class="str">"tool"</span>,<span class="str">"tool_call_id"</span>:<span class="var">tc</span>.<span class="var">id</span>,<span class="str">"content"</span>:<span class="fn">str</span>(<span class="var">res</span>)})
+    <span class="kw">return</span> <span class="str">"সর্বোচ্চ ধাপে পৌঁছে গেছি।"</span>
+
+<span class="kw">if</span> <span class="var">__name__</span>==<span class="str">"__main__"</span>:
+    <span class="var">console</span>.<span class="fn">print</span>(<span class="fn">Panel</span>(<span class="str">"[bold blue]🤖 Bangladesh Research Agent[/]\n[dim]exit দিয়ে বন্ধ[/]\n\nউদাহরণ:\n→ বাংলাদেশের GDP ও জনসংখ্যা সম্পর্কে রিপোর্ট তৈরি করো।\n→ ঢাকার জনসংখ্যা জানো এবং বাংলাদেশের মোট জনসংখ্যার % হিসাব করো।"</span>,<span class="var">border_style</span>=<span class="str">"blue"</span>))
+    <span class="kw">while</span> <span class="kw">True</span>:
+        <span class="var">task</span>=<span class="fn">input</span>(<span class="str">"\n📋 Task: "</span>).<span class="fn">strip</span>()
+        <span class="kw">if</span> <span class="var">task</span>.<span class="fn">lower</span>()==<span class="str">"exit"</span>: <span class="kw">break</span>
+        <span class="kw">if</span> <span class="kw">not</span> <span class="var">task</span>: <span class="kw">continue</span>
+        <span class="fn">run_agent</span>(<span class="var">task</span>)</pre>
+</div>
+
+<div class="step-h fi"><div class="snum sn3">৪</div><h4>চালাও!</h4></div>
+<div class="cmd fi">
+  <div class="cmd-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> WSL Terminal</div>
+  <pre>cd ~/ai-projects/project3-agent
+source venv/bin/activate
+python3 agent.py
+
+<span class="c"># Task দাও, যেমন:</span>
+<span class="c"># বাংলাদেশের শীর্ষ ৫ export সম্পর্কে গবেষণা করো এবং report.md save করো।</span></pre>
+</div>
+<div class="bx bx-ok fi">Project 3 সম্পন্ন! Agent ওয়েব সার্চ করবে, হিসাব করবে, রিপোর্ট বানাবে।</div>
+
+<hr class="div">
+
+<!-- ════════ PROJECT 4 ════════ -->
+<div id="p4" class="ch fi">
+  <div class="ch-icon im">🔗</div>
+  <div><div class="ch-num nm">PROJECT 04 — MCP</div><h2>File Manager MCP Server</h2></div>
+</div>
+<p class="fi" style="color:var(--mt2);margin-bottom:20px">Claude Desktop এর সাথে connect হওয়া MCP Server বানাবো। Claude কে বলতে পারবে "আমার files দেখো" — সে নিজেই করবে।</p>
+<div class="bx bx-tip fi">এই project এ dataset লাগে না। Claude Desktop (free) লাগবে — <a href="https://claude.ai/download" target="_blank" style="color:#34d399">claude.ai/download</a> থেকে নামাও।</div>
+
+<div class="step-h fi"><div class="snum sn4">১</div><h4>Setup ও Install</h4></div>
+<div class="cmd fi">
+  <div class="cmd-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> WSL Terminal</div>
+  <pre>cd ~/ai-projects/project4-mcp
+python3 -m venv venv
+source venv/bin/activate
+
+pip install "mcp[cli]"
+
+mkdir -p workspace
+echo "আজকে শেখার তালিকা: Python, AI, MCP" > workspace/notes.txt
+echo "প্রজেক্ট আইডিয়া: বাংলা AI chatbot" > workspace/ideas.txt</pre>
+</div>
+
+<div class="step-h fi"><div class="snum sn4">২</div><h4>Project Structure</h4></div>
+<div class="tree fi">
+<span class="td">project4-mcp/</span>
+├── <span class="td">venv/</span>
+├── <span class="td">workspace/</span>          ← Claude এখানে read/write করবে
+│   ├── <span class="tf">notes.txt</span>
+│   └── <span class="tf">ideas.txt</span>
+└── <span class="tm2">file_server.py</span>      ← MCP Server
+</div>
+
+<div class="step-h fi"><div class="snum sn4">৩</div><h4>file_server.py — MCP Server</h4></div>
+<div class="code fi">
+  <div class="code-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> file_server.py</div>
+  <pre><span class="cm">"""
+File Manager MCP Server
+Claude Desktop এর সাথে connect হবে।
+Claude এই server এর tools দিয়ে files পড়তে/লিখতে/খুঁজতে পারবে।
+"""</span>
+<span class="kw">import</span> <span class="var">os</span>, <span class="var">json</span>
+<span class="kw">from</span> <span class="var">datetime</span> <span class="kw">import</span> <span class="var">datetime</span>
+<span class="kw">from</span> <span class="var">pathlib</span> <span class="kw">import</span> <span class="var">Path</span>
+<span class="kw">from</span> <span class="var">mcp.server.fastmcp</span> <span class="kw">import</span> <span class="var">FastMCP</span>
+
+<span class="var">WORKSPACE</span> = <span class="var">Path</span>(<span class="str">"workspace"</span>).<span class="fn">resolve</span>()
+<span class="var">WORKSPACE</span>.<span class="fn">mkdir</span>(<span class="var">exist_ok</span>=<span class="kw">True</span>)
+
+<span class="var">mcp</span> = <span class="fn">FastMCP</span>(<span class="str">"বাংলা ফাইল ম্যানেজার"</span>,
+    <span class="var">instructions</span>=<span class="str">f"Workspace: {WORKSPACE}. শুধু .txt .md .py .json এ কাজ করো।"</span>)
+
+<span class="kw">def</span> <span class="fn">_safe</span>(<span class="var">name</span>):
+    <span class="var">p</span> = (<span class="var">WORKSPACE</span>/<span class="var">name</span>).<span class="fn">resolve</span>()
+    <span class="kw">if</span> <span class="kw">not</span> <span class="fn">str</span>(<span class="var">p</span>).<span class="fn">startswith</span>(<span class="fn">str</span>(<span class="var">WORKSPACE</span>)): <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="str">"Access denied!"</span>)
+    <span class="kw">return</span> <span class="var">p</span>
+
+<span class="kw">@mcp.tool()</span>
+<span class="kw">def</span> <span class="fn">list_files</span>() -> <span class="var">str</span>:
+    <span class="str">"""Workspace এর সব files ও folders দেখায়"""</span>
+    <span class="var">items</span> = []
+    <span class="kw">for</span> <span class="var">p</span> <span class="kw">in</span> <span class="fn">sorted</span>(<span class="var">WORKSPACE</span>.<span class="fn">iterdir</span>()):
+        <span class="var">s</span> = <span class="var">p</span>.<span class="fn">stat</span>()
+        <span class="var">items</span>.<span class="fn">append</span>({
+            <span class="str">"নাম"</span>: <span class="var">p</span>.<span class="var">name</span>,
+            <span class="str">"ধরন"</span>: <span class="str">"📁 Folder"</span> <span class="kw">if</span> <span class="var">p</span>.<span class="var">is_dir</span>() <span class="kw">else</span> <span class="str">f"📄 File ({s.st_size}B)"</span>,
+            <span class="str">"পরিবর্তন"</span>: <span class="var">datetime</span>.<span class="fn">fromtimestamp</span>(<span class="var">s</span>.<span class="var">st_mtime</span>).<span class="fn">strftime</span>(<span class="str">"%Y-%m-%d %H:%M"</span>)
+        })
+    <span class="kw">return</span> <span class="var">json</span>.<span class="fn">dumps</span>(<span class="var">items</span>, <span class="var">ensure_ascii</span>=<span class="kw">False</span>, <span class="var">indent</span>=<span class="num">2</span>)
+
+<span class="kw">@mcp.tool()</span>
+<span class="kw">def</span> <span class="fn">read_file</span>(<span class="var">filename</span>: <span class="var">str</span>) -> <span class="var">str</span>:
+    <span class="str">"""File এর content পড়ে। filename: ফাইলের নাম যেমন notes.txt"""</span>
+    <span class="kw">try</span>:
+        <span class="var">p</span> = <span class="fn">_safe</span>(<span class="var">filename</span>)
+        <span class="kw">if</span> <span class="kw">not</span> <span class="var">p</span>.<span class="var">exists</span>(): <span class="kw">return</span> <span class="str">f"'{filename}' পাওয়া গেল না।"</span>
+        <span class="kw">return</span> <span class="var">p</span>.<span class="fn">read_text</span>(<span class="var">encoding</span>=<span class="str">"utf-8"</span>)
+    <span class="kw">except</span> <span class="var">Exception</span> <span class="kw">as</span> <span class="var">e</span>: <span class="kw">return</span> <span class="str">f"Error: {e}"</span>
+
+<span class="kw">@mcp.tool()</span>
+<span class="kw">def</span> <span class="fn">write_file</span>(<span class="var">filename</span>: <span class="var">str</span>, <span class="var">content</span>: <span class="var">str</span>, <span class="var">append</span>: <span class="var">bool</span> = <span class="kw">False</span>) -> <span class="var">str</span>:
+    <span class="str">"""File এ লেখে। append=True হলে পুরনো content এর পরে যোগ হয়।"""</span>
+    <span class="kw">try</span>:
+        <span class="var">p</span> = <span class="fn">_safe</span>(<span class="var">filename</span>)
+        <span class="var">mode</span> = <span class="str">"a"</span> <span class="kw">if</span> <span class="var">append</span> <span class="kw">else</span> <span class="str">"w"</span>
+        <span class="kw">with</span> <span class="fn">open</span>(<span class="var">p</span>, <span class="var">mode</span>, <span class="var">encoding</span>=<span class="str">"utf-8"</span>) <span class="kw">as</span> <span class="var">f</span>: <span class="var">f</span>.<span class="fn">write</span>(<span class="var">content</span>)
+        <span class="kw">return</span> <span class="str">f"✅ '{filename}' এ {'যোগ' if append else 'লেখা'} হয়েছে।"</span>
+    <span class="kw">except</span> <span class="var">Exception</span> <span class="kw">as</span> <span class="var">e</span>: <span class="kw">return</span> <span class="str">f"Error: {e}"</span>
+
+<span class="kw">@mcp.tool()</span>
+<span class="kw">def</span> <span class="fn">search_in_files</span>(<span class="var">keyword</span>: <span class="var">str</span>) -> <span class="var">str</span>:
+    <span class="str">"""সব text file এর ভেতরে keyword খোঁজে।"""</span>
+    <span class="var">found</span> = []
+    <span class="kw">for</span> <span class="var">p</span> <span class="kw">in</span> <span class="var">WORKSPACE</span>.<span class="fn">rglob</span>(<span class="str">"*.txt"</span>):
+        <span class="kw">try</span>:
+            <span class="var">txt</span> = <span class="var">p</span>.<span class="fn">read_text</span>(<span class="var">encoding</span>=<span class="str">"utf-8"</span>)
+            <span class="kw">if</span> <span class="var">keyword</span>.<span class="fn">lower</span>() <span class="kw">in</span> <span class="var">txt</span>.<span class="fn">lower</span>():
+                <span class="var">lines</span> = [<span class="var">l</span> <span class="kw">for</span> <span class="var">l</span> <span class="kw">in</span> <span class="var">txt</span>.<span class="fn">splitlines</span>() <span class="kw">if</span> <span class="var">keyword</span>.<span class="fn">lower</span>() <span class="kw">in</span> <span class="var">l</span>.<span class="fn">lower</span>()]
+                <span class="var">found</span>.<span class="fn">append</span>({<span class="str">"file"</span>:<span class="var">p</span>.<span class="var">name</span>,<span class="str">"lines"</span>:<span class="var">lines</span>[:<span class="num">3</span>]})
+        <span class="kw">except</span>: <span class="kw">pass</span>
+    <span class="kw">return</span> <span class="var">json</span>.<span class="fn">dumps</span>(<span class="var">found</span> <span class="kw">or</span> [{<span class="str">"result"</span>:f<span class="str">f"'{keyword}' পাওয়া গেল না।"</span>}], <span class="var">ensure_ascii</span>=<span class="kw">False</span>)
+
+<span class="kw">@mcp.tool()</span>
+<span class="kw">def</span> <span class="fn">create_note</span>(<span class="var">title</span>: <span class="var">str</span>, <span class="var">content</span>: <span class="var">str</span>) -> <span class="var">str</span>:
+    <span class="str">"""দ্রুত note তৈরি করো — title ও content দিলেই হবে।"""</span>
+    <span class="var">safe</span> = <span class="str">"_"</span>.<span class="fn">join</span>(<span class="var">c</span> <span class="kw">for</span> <span class="var">c</span> <span class="kw">in</span> <span class="var">title</span>.<span class="fn">split</span>() <span class="kw">if</span> <span class="var">c</span>.<span class="fn">isalnum</span>() <span class="kw">or</span> <span class="fn">ord</span>(<span class="var">c</span>)><span class="num">127</span>)
+    <span class="var">fname</span> = <span class="str">f"note_{datetime.now().strftime('%Y%m%d_%H%M')}_{safe[:20]}.txt"</span>
+    <span class="var">p</span> = <span class="fn">_safe</span>(<span class="var">fname</span>)
+    <span class="var">p</span>.<span class="fn">write_text</span>(<span class="str">f"# {title}\n{datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n{content}"</span>, <span class="var">encoding</span>=<span class="str">"utf-8"</span>)
+    <span class="kw">return</span> <span class="str">f"✅ Note তৈরি: {fname}"</span>
+
+<span class="kw">@mcp.resource("workspace://overview")</span>
+<span class="kw">def</span> <span class="fn">overview</span>() -> <span class="var">str</span>:
+    <span class="str">"""Workspace এর সংক্ষিপ্ত overview"""</span>
+    <span class="var">files</span> = [<span class="var">p</span>.<span class="var">name</span> <span class="kw">for</span> <span class="var">p</span> <span class="kw">in</span> <span class="var">WORKSPACE</span>.<span class="fn">iterdir</span>() <span class="kw">if</span> <span class="var">p</span>.<span class="var">is_file</span>()]
+    <span class="kw">return</span> <span class="str">f"Workspace: {WORKSPACE}\nFiles: {', '.join(files)}"</span>
+
+<span class="kw">if</span> <span class="var">__name__</span>==<span class="str">"__main__"</span>:
+    <span class="fn">print</span>(<span class="str">f"🚀 MCP Server চালু — Workspace: {WORKSPACE}"</span>)
+    <span class="var">mcp</span>.<span class="fn">run</span>()</pre>
+</div>
+
+<div class="step-h fi"><div class="snum sn4">৪</div><h4>Claude Desktop এ Connect করো</h4></div>
+<div class="cmd fi">
+  <div class="cmd-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> WSL Terminal — তোমার paths বের করো</div>
+  <pre><span class="c"># WSL username বের করো</span>
+whoami
+<span class="out"># output: তোমার-username (এটা নোট করো)</span>
+
+<span class="c"># Python path বের করো</span>
+which python3
+<span class="out"># output: /home/তোমার-username/ai-projects/project4-mcp/venv/bin/python3</span>
+
+<span class="c"># Script full path</span>
+realpath file_server.py
+<span class="out"># output: /home/তোমার-username/ai-projects/project4-mcp/file_server.py</span></pre>
+</div>
+
+<div class="card ml fi">
+  <h3>📝 Claude Desktop Config File — Windows এ এই ফাইল edit করো</h3>
+  <p style="font-size:.88rem;color:var(--mt2)">File location: <code style="font-family:monospace;color:#f59e0b;background:var(--s2);padding:2px 6px;border-radius:4px">C:\Users\তোমার-windows-username\AppData\Roaming\Claude\claude_desktop_config.json</code></p>
+</div>
+<div class="code fi">
+  <div class="code-top"><div class="dd dr"></div><div class="dd dy"></div><div class="dd dg"></div> claude_desktop_config.json (Windows Notepad এ edit করো)</div>
+  <pre>{
+  "mcpServers": {
+    "bangla-file-manager": {
+      "command": "wsl",
+      "args": [
+        "-e",
+        "/home/<span class="dec">তোমার-wsl-username</span>/ai-projects/project4-mcp/venv/bin/python3",
+        "/home/<span class="dec">তোমার-wsl-username</span>/ai-projects/project4-mcp/file_server.py"
+      ]
+    }
+  }
+}</pre>
+</div>
+<div class="bx bx-info fi"><strong>তোমার-wsl-username</strong> = <code style="font-family:monospace">whoami</code> command এর output।<br>Config save করার পর Claude Desktop সম্পূর্ণ বন্ধ করে আবার খোলো।</div>
+
+<div class="step-h fi"><div class="snum sn4">৫</div><h4>Claude Desktop এ Test করো</h4></div>
+<div class="card ml fi">
+  <p>Claude Desktop খুলে এই কথাগুলো বলো:</p>
+  <div class="g2" style="margin-top:12px">
+    <div class="mc"><strong>🗂️ Files দেখতে</strong><p>"আমার workspace এ কী কী file আছে?"</p></div>
+    <div class="mc"><strong>📖 File পড়তে</strong><p>"notes.txt পড়ে আমাকে বলো"</p></div>
+    <div class="mc"><strong>✍️ Note বানাতে</strong><p>"আজকের শেখা বিষয়গুলো note করো"</p></div>
+    <div class="mc"><strong>🔍 খুঁজতে</strong><p>"'AI' শব্দ কোন file এ আছে?"</p></div>
+  </div>
+</div>
+<div class="bx bx-ok fi">Project 4 সম্পন্ন! Claude Desktop এর সাথে নিজের MCP Server সংযুক্ত।</div>
+
+<hr class="div">
+
+<!-- ════════ FINAL SUMMARY ════════ -->
+<div class="card fi" style="border:1px solid rgba(129,140,248,.25);background:rgba(129,140,248,.03)">
+  <h3>🎓 চারটা Project সম্পন্ন — তুমি এখন কী কী পারো?</h3>
+  <div class="g2" style="margin-top:14px">
+    <div class="mc" style="border:1px solid rgba(245,158,11,.2)"><strong style="color:var(--brain)">🧠 Project 1 — LLM</strong><p>OpenAI API, multi-turn chat, few-shot prompting, sentiment analysis।</p></div>
+    <div class="mc" style="border:1px solid rgba(16,185,129,.2)"><strong style="color:var(--rag)">📚 Project 2 — RAG</strong><p>FAISS vector search, multilingual embedding, retrieval pipeline।</p></div>
+    <div class="mc" style="border:1px solid rgba(129,140,248,.2)"><strong style="color:var(--agent)">🤖 Project 3 — Agent</strong><p>Function calling, tool use, multi-step orchestration, web search।</p></div>
+    <div class="mc" style="border:1px solid rgba(244,114,182,.2)"><strong style="color:var(--mcp)">🔗 Project 4 — MCP</strong><p>MCP protocol, FastMCP server, Claude Desktop integration।</p></div>
+  </div>
+  <div class="bx bx-tip" style="margin-top:16px">এখন GitHub এ repository খোলো এবং সব push করো। <strong>এটাই তোমার সেরা CV।</strong></div>
+</div>
+
+<div class="bigq fi">
+  মনে রেখো —<br>
+  <span>🧠 LLM ভাবে &nbsp;·&nbsp; 📚 RAG জানে &nbsp;·&nbsp; 🤖 Agent করে &nbsp;·&nbsp; 🔗 MCP জোড়া দেয়</span><br>
+  <small style="font-size:.72rem;color:var(--mt);font-family:'Hind Siliguri'">আজ থেকেই শুরু করো। এক পদক্ষেপ যথেষ্ট। 🚀</small>
+</div>
+
+</div><!-- /wrap -->
+
+<footer>
+  <div>🇧🇩 সম্পূর্ণ বাংলায় • LLM · RAG · AI Agents · MCP · ৪টা Project • WSL Linux</div>
+  <div style="margin-top:8px;font-size:11px;opacity:.6">Datasets: SentNoB (Kaggle) · Bangla News (Kaggle) · Combined Edition v3.0</div>
+</footer>
+
+<script>
+// Progress bar
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('bar').style.width=(window.scrollY/h*100)+'%';
+});
+
+// Fade in on scroll
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')})
+},{threshold:.07});
+document.querySelectorAll('.fi').forEach(el=>io.observe(el));
+
+// Nav & TOC active tracking
+const SECS=['hero','llm','rag','agents','mcp','compare','roadmap','setup','p1','p2','p3','p4'];
+function getActive(){
+  let cur='hero';
+  SECS.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&window.scrollY>=el.offsetTop-80)cur=id;
+  });
+  return cur;
+}
+window.addEventListener('scroll',()=>{
+  const cur=getActive();
+  // topnav
+  document.querySelectorAll('.topnav a').forEach(a=>{
+    const href=a.getAttribute('href');
+    a.classList.toggle('on',href==='#'+cur);
+  });
+  // sidetoc
+  document.querySelectorAll('.stoc').forEach(d=>{
+    d.classList.toggle('on',d.dataset.section===cur);
+  });
+});
+
+// Smooth scroll
+function goTo(id){
+  document.getElementById(id)?.scrollIntoView({behavior:'smooth'});
+}
+
+// Quiz
+function ans(qid,el,correct,msg){
+  document.querySelectorAll('#'+qid+' .qo').forEach(o=>o.style.pointerEvents='none');
+  el.classList.add(correct?'correct':'wrong');
+  const fb=document.getElementById(qid+'-fb');
+  fb.style.display='block';
+  fb.style.background=correct?'rgba(74,222,128,.08)':'rgba(248,113,113,.08)';
+  fb.style.border='1px solid '+(correct?'rgba(74,222,128,.25)':'rgba(248,113,113,.25)');
+  fb.style.color=correct?'#86efac':'#fca5a5';
+  fb.textContent=msg;
+}
+</script>
+</body>
+</html>

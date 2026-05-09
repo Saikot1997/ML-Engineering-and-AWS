@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elasticsearch — সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #ffd600;
+    --yellow-dark: #f9a825;
+    --yellow-dim: #3e2800;
+    --bg: #0f0e08;
+    --bg2: #1a180a;
+    --bg3: #1f1c0c;
+    --card: #141200;
+    --border: #3a3200;
+    --text: #fff8e1;
+    --text-dim: #ffe082;
+    --text-muted: #ffc107;
+    --accent: #ffecb3;
+    --blue: #40c4ff;
+    --green: #69f0ae;
+    --red: #ff5252;
+    --purple: #e040fb;
+    --orange: #ff6d00;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 17px;
+    line-height: 1.85;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0f0d00 0%, #1f1700 50%, #0f0d00 100%);
+    border-bottom: 2px solid var(--yellow-dim);
+    padding: 60px 20px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,214,0,0.08) 0%, transparent 70%);
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(255,214,0,0.1);
+    border: 1px solid var(--yellow-dim);
+    color: var(--yellow);
+    font-size: 13px;
+    letter-spacing: 3px;
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  header h1 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: var(--yellow);
+    text-shadow: 0 0 40px rgba(255,214,0,0.4);
+    margin-bottom: 15px;
+    position: relative;
+  }
+  header p {
+    font-size: 18px;
+    color: var(--text-dim);
+    max-width: 620px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+    display: flex;
+    gap: 4px;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav a {
+    display: inline-block;
+    padding: 14px 18px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  nav a:hover { color: var(--yellow); border-bottom-color: var(--yellow); }
+
+  /* MAIN */
+  main { max-width: 900px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  /* SECTIONS */
+  section {
+    margin-bottom: 70px;
+    scroll-margin-top: 60px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.5s ease forwards;
+  }
+  section:nth-child(1) { animation-delay: 0.05s; }
+  section:nth-child(2) { animation-delay: 0.1s; }
+  section:nth-child(n+3) { animation-delay: 0.15s; }
+  @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--yellow);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    opacity: 0.7;
+  }
+  h2 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    color: var(--yellow);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 {
+    font-size: 1.25rem;
+    color: #ffecb3;
+    margin: 30px 0 14px;
+    font-weight: 600;
+  }
+  h4 {
+    font-size: 1.05rem;
+    color: var(--blue);
+    margin: 20px 0 10px;
+    font-weight: 600;
+  }
+  p { margin-bottom: 14px; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 20px 0;
+  }
+  .card-y  { border-left: 4px solid var(--yellow); }
+  .card-b  { border-left: 4px solid var(--blue); }
+  .card-g  { border-left: 4px solid var(--green); }
+  .card-r  { border-left: 4px solid var(--red); }
+  .card-p  { border-left: 4px solid var(--purple); }
+  .card-o  { border-left: 4px solid var(--orange); }
+
+  /* CODE */
+  pre, code { font-family: 'JetBrains Mono', monospace; }
+  code {
+    background: rgba(255,214,0,0.1);
+    color: var(--yellow);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  pre {
+    background: #070600;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 16px 0;
+  }
+  pre code { background: none; padding: 0; color: #ffe082; font-size: 14px; }
+  .kw { color: #ff79c6; }
+  .fn { color: #50fa7b; }
+  .st { color: #f1fa8c; }
+  .nm { color: #bd93f9; }
+  .cm { color: #6272a4; font-style: italic; }
+  .op { color: #ff79c6; }
+  .key { color: #8be9fd; }
+  .http-get { color: #69f0ae; font-weight: 700; }
+  .http-put { color: #ffb300; font-weight: 700; }
+  .http-post { color: #40c4ff; font-weight: 700; }
+  .http-del { color: #ff5252; font-weight: 700; }
+
+  .code-label {
+    background: #3e2800;
+    color: var(--yellow);
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 4px 10px;
+    border-radius: 4px 4px 0 0;
+    display: inline-block;
+    margin-bottom: -1px;
+    letter-spacing: 1px;
+  }
+
+  /* CALLOUTS */
+  .info   { background: rgba(64,196,255,0.07); border: 1px solid rgba(64,196,255,0.25); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+  .warn   { background: rgba(255,179,0,0.07);  border: 1px solid rgba(255,179,0,0.3);  border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+  .tip    { background: rgba(255,214,0,0.06);  border: 1px solid rgba(255,214,0,0.25); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+  .danger { background: rgba(255,82,82,0.07);  border: 1px solid rgba(255,82,82,0.25); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+
+  .info::before   { content: "ℹ️  "; }
+  .warn::before   { content: "⚠️  "; }
+  .tip::before    { content: "💡  "; }
+  .danger::before { content: "🚨  "; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 15px; }
+  th { background: #3e2800; color: var(--yellow); padding: 12px 16px; text-align: left; font-weight: 600; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  td { padding: 11px 16px; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: rgba(255,214,0,0.04); }
+
+  /* SVG */
+  .diagram-wrap {
+    background: #070600;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 30px 20px;
+    margin: 24px 0;
+    overflow-x: auto;
+    text-align: center;
+  }
+  .diagram-wrap svg { max-width: 100%; }
+
+  /* COMPARE */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  @media(max-width:600px) { .compare { grid-template-columns: 1fr; } }
+
+  /* STEPS */
+  .steps { counter-reset: step; padding: 0; list-style: none; }
+  .steps li {
+    counter-increment: step;
+    padding: 12px 16px 12px 56px;
+    margin: 8px 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    position: relative;
+  }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    background: #3e2800;
+    color: var(--yellow);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* TAGS */
+  .tag {
+    display: inline-block;
+    background: rgba(255,214,0,0.1);
+    color: var(--yellow);
+    border: 1px solid rgba(255,214,0,0.3);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 13px;
+    margin: 3px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tag-blue { background: rgba(64,196,255,0.1); color: #40c4ff; border-color: rgba(64,196,255,0.3); }
+  .tag-green { background: rgba(105,240,174,0.1); color: #69f0ae; border-color: rgba(105,240,174,0.3); }
+
+  /* ELK */
+  .elk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 20px 0; }
+  @media(max-width:550px) { .elk-grid { grid-template-columns: 1fr; } }
+  .elk-e { background: rgba(255,214,0,0.08); border: 2px solid var(--yellow); border-radius: 10px; padding: 18px; text-align: center; }
+  .elk-l { background: rgba(64,196,255,0.08); border: 2px solid #40c4ff; border-radius: 10px; padding: 18px; text-align: center; }
+  .elk-k { background: rgba(105,240,174,0.08); border: 2px solid #69f0ae; border-radius: 10px; padding: 18px; text-align: center; }
+  .elk-letter { font-size: 3rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+  /* REST */
+  .rest-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 20px 0; }
+  @media(max-width:500px) { .rest-grid { grid-template-columns: 1fr; } }
+  .rest-card { padding: 14px 16px; border-radius: 8px; }
+  .rest-get  { background: rgba(105,240,174,0.1); border: 1px solid rgba(105,240,174,0.3); }
+  .rest-put  { background: rgba(255,179,0,0.1);   border: 1px solid rgba(255,179,0,0.3); }
+  .rest-post { background: rgba(64,196,255,0.1);  border: 1px solid rgba(64,196,255,0.3); }
+  .rest-del  { background: rgba(255,82,82,0.1);   border: 1px solid rgba(255,82,82,0.3); }
+  .rest-method { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 700; }
+
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">ELASTICSEARCH · ELK STACK · বাংলা</div>
+  <h1>⚡ Elasticsearch — শূন্য থেকে সম্পূর্ণ</h1>
+  <p>Search Engine থেকে Statistical Analysis — সব কিছু বাংলায়, একেবারে নতুনদের জন্য</p>
+</header>
+
+<nav>
+  <a href="#intro">ES কী?</a>
+  <a href="#elk">ELK Stack</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#install">ইনস্টল</a>
+  <a href="#kibana">Kibana API</a>
+  <a href="#mapping">Mapping</a>
+  <a href="#analyzers">Analyzer</a>
+  <a href="#search">Search</a>
+  <a href="#aggregation">Aggregation</a>
+  <a href="#advanced">Advanced</a>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: INTRO -->
+<!-- ============================================================ -->
+<section id="intro">
+  <div class="section-num">// ০১</div>
+  <h2>Elasticsearch কী?</h2>
+
+  <p>ধরো তুমি একটা বিশাল অনলাইন শপে কাজ করছো — লাখো পণ্য আছে। কেউ search box-এ "লাল জামা" লিখলো। মাত্র ০.০১ সেকেন্ডে হাজারো ফলাফল আসলো। এই অসাধারণ দ্রুত খোঁজার কাজটা কীভাবে হয়? উত্তর: <strong>Elasticsearch</strong>।</p>
+
+  <div class="card card-y">
+    <h4>সহজ সংজ্ঞা</h4>
+    <p>Elasticsearch হলো একটা <strong>open source distributed search engine</strong> — অর্থাৎ এটা:</p>
+    <p>🔍 <strong>Search Engine</strong> — দ্রুত টেক্সট খোঁজে<br>
+    📊 <strong>Analytics Platform</strong> — সংখ্যার উপর বিশ্লেষণ করে<br>
+    🌐 <strong>Distributed</strong> — অনেক machine জুড়ে কাজ করে<br>
+    📖 <strong>Open Source</strong> — বিনামূল্যে ব্যবহার করা যায়</p>
+  </div>
+
+  <h3>Elasticsearch কী করতে পারে?</h3>
+
+  <div class="diagram-wrap">
+    <svg width="620" height="200" viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg">
+      <text x="310" y="22" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="15" font-weight="600">Elasticsearch-এর ক্ষমতা</text>
+
+      <!-- Box 1 -->
+      <rect x="10" y="38" width="138" height="145" rx="10" fill="#0f0e00" stroke="#ffd600" stroke-width="1.5"/>
+      <text x="79" y="68" text-anchor="middle" fill="#ffd600" font-family="JetBrains Mono" font-size="22">🔍</text>
+      <text x="79" y="92" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="13" font-weight="600">Full-text Search</text>
+      <text x="79" y="112" text-anchor="middle" fill="#ffecb3" font-family="Hind Siliguri" font-size="12">টাইপো ঠিক করা</text>
+      <text x="79" y="130" text-anchor="middle" fill="#ffecb3" font-family="Hind Siliguri" font-size="12">Auto-complete</text>
+      <text x="79" y="148" text-anchor="middle" fill="#ffecb3" font-family="Hind Siliguri" font-size="12">Synonym</text>
+      <text x="79" y="166" text-anchor="middle" fill="#ffecb3" font-family="Hind Siliguri" font-size="12">Highlighting</text>
+
+      <!-- Box 2 -->
+      <rect x="162" y="38" width="138" height="145" rx="10" fill="#00080f" stroke="#40c4ff" stroke-width="1.5"/>
+      <text x="231" y="68" text-anchor="middle" fill="#40c4ff" font-family="JetBrains Mono" font-size="22">📊</text>
+      <text x="231" y="92" text-anchor="middle" fill="#80d8ff" font-family="Hind Siliguri" font-size="13" font-weight="600">Analytics</text>
+      <text x="231" y="112" text-anchor="middle" fill="#b3e5fc" font-family="Hind Siliguri" font-size="12">সংখ্যা বিশ্লেষণ</text>
+      <text x="231" y="130" text-anchor="middle" fill="#b3e5fc" font-family="Hind Siliguri" font-size="12">Histogram</text>
+      <text x="231" y="148" text-anchor="middle" fill="#b3e5fc" font-family="Hind Siliguri" font-size="12">Aggregation</text>
+      <text x="231" y="166" text-anchor="middle" fill="#b3e5fc" font-family="Hind Siliguri" font-size="12">Statistics</text>
+
+      <!-- Box 3 -->
+      <rect x="314" y="38" width="138" height="145" rx="10" fill="#050020" stroke="#e040fb" stroke-width="1.5"/>
+      <text x="383" y="68" text-anchor="middle" fill="#e040fb" font-family="JetBrains Mono" font-size="22">🗺️</text>
+      <text x="383" y="92" text-anchor="middle" fill="#ea80fc" font-family="Hind Siliguri" font-size="13" font-weight="600">Geospatial</text>
+      <text x="383" y="112" text-anchor="middle" fill="#ce93d8" font-family="Hind Siliguri" font-size="12">Map search</text>
+      <text x="383" y="130" text-anchor="middle" fill="#ce93d8" font-family="Hind Siliguri" font-size="12">নিকটতম খোঁজা</text>
+      <text x="383" y="148" text-anchor="middle" fill="#ce93d8" font-family="Hind Siliguri" font-size="12">Location filter</text>
+
+      <!-- Box 4 -->
+      <rect x="466" y="38" width="144" height="145" rx="10" fill="#050f00" stroke="#69f0ae" stroke-width="1.5"/>
+      <text x="538" y="68" text-anchor="middle" fill="#69f0ae" font-family="JetBrains Mono" font-size="22">🔗</text>
+      <text x="538" y="92" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="13" font-weight="600">Data Pipeline</text>
+      <text x="538" y="112" text-anchor="middle" fill="#c8e6c9" font-family="Hind Siliguri" font-size="12">Data Warehouse</text>
+      <text x="538" y="130" text-anchor="middle" fill="#c8e6c9" font-family="Hind Siliguri" font-size="12">Log analysis</text>
+      <text x="538" y="148" text-anchor="middle" fill="#c8e6c9" font-family="Hind Siliguri" font-size="12">Real-time</text>
+      <text x="538" y="166" text-anchor="middle" fill="#c8e6c9" font-family="Hind Siliguri" font-size="12">monitoring</text>
+    </svg>
+  </div>
+
+  <h3>কেন এত জনপ্রিয়?</h3>
+  <p>Elasticsearch <strong>Java</strong>-তে লেখা এবং <strong>Apache Lucene</strong>-এর উপর তৈরি — যা একটা NoSQL technology। এটা জনপ্রিয় কারণ ব্যবহার করা সহজ এবং খুব active community আছে।</p>
+
+  <div class="info">
+    <strong>Elasticsearch vs MongoDB তুলনা:</strong><br>
+    MongoDB ভালো সাধারণ data storage-এ। Elasticsearch ভালো <em>text search</em> আর <em>analytics</em>-এ। অনেক system দুটোই একসাথে ব্যবহার করে!
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: ELK -->
+<!-- ============================================================ -->
+<section id="elk">
+  <div class="section-num">// ০২</div>
+  <h2>ELK Stack — তিন মিলিয়ে এক</h2>
+
+  <p>Elasticsearch সাধারণত তিনটা tool মিলিয়ে ব্যবহার হয় — একে <strong>ELK Stack</strong> বলে:</p>
+
+  <div class="elk-grid">
+    <div class="elk-e">
+      <div class="elk-letter" style="color: #ffd600;">E</div>
+      <strong style="color: #ffe082;">Elasticsearch</strong>
+      <p style="font-size:14px; margin-top:8px; color:#ffecb3;">Search + Analytics Engine। ডেটা সংরক্ষণ ও খোঁজার কাজ করে।</p>
+    </div>
+    <div class="elk-l">
+      <div class="elk-letter" style="color: #40c4ff;">L</div>
+      <strong style="color: #80d8ff;">Logstash</strong>
+      <p style="font-size:14px; margin-top:8px; color:#b3e5fc;">Data ingestion tool। বিভিন্ন source থেকে ডেটা সংগ্রহ করে রূপান্তরিত করে ES-এ পাঠায়।</p>
+    </div>
+    <div class="elk-k">
+      <div class="elk-letter" style="color: #69f0ae;">K</div>
+      <strong style="color: #a5d6a7;">Kibana</strong>
+      <p style="font-size:14px; margin-top:8px; color:#c8e6c9;">Visualization tool। ES-এর ডেটা সুন্দর গ্রাফ ও chart-এ দেখায়।</p>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg width="580" height="130" viewBox="0 0 580 130" xmlns="http://www.w3.org/2000/svg">
+      <text x="290" y="22" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="15" font-weight="600">ELK Stack-এর ডেটা প্রবাহ</text>
+
+      <!-- Source -->
+      <rect x="10" y="40" width="100" height="70" rx="8" fill="#0f0e00" stroke="#3a3200" stroke-width="1.5"/>
+      <text x="60" y="72" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="13">📋 LOG</text>
+      <text x="60" y="92" text-anchor="middle" fill="#ffc107" font-family="Hind Siliguri" font-size="12">ডেটা উৎস</text>
+
+      <!-- Arrow 1 -->
+      <line x1="112" y1="75" x2="148" y2="75" stroke="#ffd600" stroke-width="2"/>
+      <polygon points="145,69 158,75 145,81" fill="#ffd600"/>
+
+      <!-- Logstash -->
+      <rect x="158" y="40" width="120" height="70" rx="8" fill="#00080f" stroke="#40c4ff" stroke-width="2"/>
+      <text x="218" y="68" text-anchor="middle" fill="#40c4ff" font-family="Hind Siliguri" font-size="14" font-weight="600">Logstash</text>
+      <text x="218" y="88" text-anchor="middle" fill="#80d8ff" font-family="Hind Siliguri" font-size="12">Collect &amp; Transform</text>
+
+      <!-- Arrow 2 -->
+      <line x1="280" y1="75" x2="316" y2="75" stroke="#ffd600" stroke-width="2"/>
+      <polygon points="313,69 326,75 313,81" fill="#ffd600"/>
+
+      <!-- Elasticsearch -->
+      <rect x="326" y="30" width="130" height="90" rx="8" fill="#0f0e00" stroke="#ffd600" stroke-width="2.5"/>
+      <text x="391" y="62" text-anchor="middle" fill="#ffd600" font-family="Hind Siliguri" font-size="14" font-weight="600">Elasticsearch</text>
+      <text x="391" y="82" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="12">Search &amp; Analyze</text>
+      <text x="391" y="102" text-anchor="middle" fill="#ffc107" font-family="Hind Siliguri" font-size="11">⭐ মূল engine</text>
+
+      <!-- Arrow 3 -->
+      <line x1="458" y1="75" x2="494" y2="75" stroke="#ffd600" stroke-width="2"/>
+      <polygon points="491,69 504,75 491,81" fill="#ffd600"/>
+
+      <!-- Kibana -->
+      <rect x="504" y="40" width="70" height="70" rx="8" fill="#050f00" stroke="#69f0ae" stroke-width="2"/>
+      <text x="539" y="72" text-anchor="middle" fill="#69f0ae" font-family="Hind Siliguri" font-size="13" font-weight="600">Kibana</text>
+      <text x="539" y="90" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="11">Visualize</text>
+    </svg>
+  </div>
+
+  <h3>ডেটার কাঠামো — ES বনাম MongoDB</h3>
+  <table>
+    <tr><th>Elasticsearch</th><th>MongoDB</th><th>Relational DB</th></tr>
+    <tr><td><span class="tag">Index</span></td><td>Database</td><td>Database</td></tr>
+    <tr><td><span class="tag">Document</span></td><td>Document</td><td>Row</td></tr>
+    <tr><td><span class="tag">Field</span></td><td>Field</td><td>Column</td></tr>
+    <tr><td><span class="tag tag-blue">Shard</span></td><td>—</td><td>—</td></tr>
+  </table>
+
+  <div class="info">
+    <strong>Index কী?</strong> ES-এ Index হলো similar document-এর সমষ্টি — ঠিক যেমন MongoDB-তে Database বা Relational DB-তে Table। একটা Index-এ লক্ষ লক্ষ document থাকতে পারে।
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: ARCHITECTURE -->
+<!-- ============================================================ -->
+<section id="architecture">
+  <div class="section-num">// ০৩</div>
+  <h2>Architecture — Node, Shard, Replication</h2>
+
+  <p>Elasticsearch একটা <strong>distributed system</strong> — মানে অনেক machine মিলে কাজ করে। এই concept গুলো ঠিকমতো না বুঝলে production-এ সমস্যা হবে।</p>
+
+  <h3>Node — একটা ES Instance</h3>
+
+  <div class="card card-y">
+    <p><strong>Node</strong> হলো একটা Elasticsearch-এর instance — মানে একটা চলমান ES প্রোগ্রাম।</p>
+    <p>মনে রাখো: Node = ES instance, Machine নয়! একটা machine-এ অনেকগুলো Node চালানো যায়।</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg width="480" height="220" viewBox="0 0 480 220" xmlns="http://www.w3.org/2000/svg">
+      <text x="240" y="22" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="15" font-weight="600">Cluster — অনেক Node মিলে একটা দল</text>
+      <!-- Cluster border -->
+      <rect x="10" y="35" width="460" height="175" rx="14" fill="#0a0900" stroke="#3a3200" stroke-width="2" stroke-dasharray="6,3"/>
+      <text x="30" y="58" fill="#ffc107" font-family="Hind Siliguri" font-size="13">🌐 Cluster</text>
+      <!-- Node A -->
+      <circle cx="120" cy="130" r="65" fill="#0f0e00" stroke="#ffd600" stroke-width="2"/>
+      <text x="120" y="120" text-anchor="middle" fill="#ffd600" font-family="Hind Siliguri" font-size="14" font-weight="700">Node A</text>
+      <text x="120" y="140" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="12">⭐ Master</text>
+      <text x="120" y="158" text-anchor="middle" fill="#ffc107" font-family="Hind Siliguri" font-size="11">সিদ্ধান্ত নেয়</text>
+      <!-- Node B -->
+      <circle cx="280" cy="100" r="55" fill="#0f0e00" stroke="#40c4ff" stroke-width="2"/>
+      <text x="280" y="92" text-anchor="middle" fill="#40c4ff" font-family="Hind Siliguri" font-size="14" font-weight="700">Node B</text>
+      <text x="280" y="112" text-anchor="middle" fill="#80d8ff" font-family="Hind Siliguri" font-size="12">Data Node</text>
+      <!-- Node C -->
+      <circle cx="390" cy="150" r="50" fill="#0f0e00" stroke="#69f0ae" stroke-width="2"/>
+      <text x="390" y="142" text-anchor="middle" fill="#69f0ae" font-family="Hind Siliguri" font-size="14" font-weight="700">Node C</text>
+      <text x="390" y="162" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="12">Data Node</text>
+      <!-- Connection lines -->
+      <line x1="185" y1="130" x2="225" y2="110" stroke="#3a3200" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="335" y1="115" x2="345" y2="130" stroke="#3a3200" stroke-width="1.5" stroke-dasharray="4,3"/>
+    </svg>
+  </div>
+
+  <h3>Sharding — ডেটা ভাগ করা</h3>
+  <p>কল্পনা করো তোমার কাছে ১ TB ডেটা আছে কিন্তু প্রতিটা node-এ মাত্র ৫০০ GB জায়গা। সমস্যা!</p>
+  <p><strong>Sharding</strong> হলো সমাধান — Index-কে ছোট ছোট টুকরায় ভাগ করো, প্রতিটা টুকরা আলাদা node-এ রাখো।</p>
+
+  <div class="diagram-wrap">
+    <svg width="580" height="180" viewBox="0 0 580 180" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="shardArr" markerWidth="7" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 7 3, 0 6" fill="#69f0ae"/>
+        </marker>
+      </defs>
+      <text x="290" y="22" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="15" font-weight="600">Sharding — ১ TB Index চারটা Shard-এ ভাগ</text>
+
+      <!-- Index at top -->
+      <rect x="240" y="35" width="100" height="40" rx="8" fill="#0f0e00" stroke="#ffd600" stroke-width="2"/>
+      <text x="290" y="60" text-anchor="middle" fill="#ffd600" font-family="Hind Siliguri" font-size="13" font-weight="600">Index (1TB)</text>
+
+      <!-- Arrows from Index down to each Shard -->
+      <line x1="258" y1="75" x2="92" y2="108" stroke="#69f0ae" stroke-width="1.5" marker-end="url(#shardArr)"/>
+      <line x1="272" y1="75" x2="222" y2="108" stroke="#69f0ae" stroke-width="1.5" marker-end="url(#shardArr)"/>
+      <line x1="308" y1="75" x2="358" y2="108" stroke="#69f0ae" stroke-width="1.5" marker-end="url(#shardArr)"/>
+      <line x1="322" y1="75" x2="488" y2="108" stroke="#69f0ae" stroke-width="1.5" marker-end="url(#shardArr)"/>
+
+      <!-- Shard A -->
+      <rect x="30" y="108" width="120" height="55" rx="8" fill="#0a1a00" stroke="#69f0ae" stroke-width="1.5"/>
+      <text x="90" y="131" text-anchor="middle" fill="#69f0ae" font-family="JetBrains Mono" font-size="13" font-weight="600">Shard A</text>
+      <text x="90" y="149" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="12">256 GB</text>
+
+      <!-- Shard B -->
+      <rect x="163" y="108" width="120" height="55" rx="8" fill="#0a1a00" stroke="#69f0ae" stroke-width="1.5"/>
+      <text x="223" y="131" text-anchor="middle" fill="#69f0ae" font-family="JetBrains Mono" font-size="13" font-weight="600">Shard B</text>
+      <text x="223" y="149" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="12">256 GB</text>
+
+      <!-- Shard C -->
+      <rect x="296" y="108" width="120" height="55" rx="8" fill="#0a1a00" stroke="#69f0ae" stroke-width="1.5"/>
+      <text x="356" y="131" text-anchor="middle" fill="#69f0ae" font-family="JetBrains Mono" font-size="13" font-weight="600">Shard C</text>
+      <text x="356" y="149" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="12">256 GB</text>
+
+      <!-- Shard D -->
+      <rect x="429" y="108" width="120" height="55" rx="8" fill="#0a1a00" stroke="#69f0ae" stroke-width="1.5"/>
+      <text x="489" y="131" text-anchor="middle" fill="#69f0ae" font-family="JetBrains Mono" font-size="13" font-weight="600">Shard D</text>
+      <text x="489" y="149" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="12">256 GB</text>
+
+      <text x="290" y="175" text-anchor="middle" fill="#ffc107" font-family="Hind Siliguri" font-size="12">প্রতিটা Shard আলাদা Node-এ থাকে → মোট 1TB অনায়াসে রাখা গেলো!</text>
+    </svg>
+  </div>
+
+  <div class="tip">
+    <strong>Shard-এর সীমা:</strong> একটা Shard-এ সর্বোচ্চ প্রায় ২০০ কোটি Document রাখা যায়। Default-এ একটা Index একটাই Shard-এ থাকে — প্রয়োজনে Index তৈরির সময় বাড়ানো যায়।
+  </div>
+
+  <h3>Replication — Backup কপি রাখো</h3>
+  <p>Shard তৈরি করলেই কি নিরাপদ? না! কারণ যদি সেই node বন্ধ হয়ে যায় — ডেটা হারিয়ে যাবে। সমাধান: <strong>Replication</strong>।</p>
+
+  <div class="diagram-wrap">
+    <svg width="460" height="200" viewBox="0 0 460 200" xmlns="http://www.w3.org/2000/svg">
+      <text x="230" y="22" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="14" font-weight="600">Replication — Primary + Replica Shard</text>
+
+      <!-- Node A -->
+      <rect x="20" y="40" width="190" height="148" rx="10" fill="#0f0e00" stroke="#ffd600" stroke-width="2"/>
+      <text x="115" y="65" text-anchor="middle" fill="#ffd600" font-family="Hind Siliguri" font-size="14" font-weight="700">Node A</text>
+      <!-- Primary A -->
+      <rect x="40" y="76" width="150" height="38" rx="6" fill="#1a1500" stroke="#ffd600" stroke-width="1.5"/>
+      <text x="115" y="100" text-anchor="middle" fill="#ffd600" font-family="JetBrains Mono" font-size="13">Primary Shard A</text>
+      <!-- Replica B -->
+      <rect x="40" y="122" width="150" height="38" rx="6" fill="#0a150a" stroke="#69f0ae" stroke-width="1.5"/>
+      <text x="115" y="140" text-anchor="middle" fill="#69f0ae" font-family="JetBrains Mono" font-size="12">Replica B1</text>
+      <rect x="40" y="162" width="150" height="20" rx="4" fill="#0a150a" stroke="#69f0ae" stroke-width="1"/>
+      <text x="115" y="176" text-anchor="middle" fill="#69f0ae" font-family="JetBrains Mono" font-size="11">Replica B2</text>
+
+      <!-- Node B -->
+      <rect x="250" y="40" width="190" height="148" rx="10" fill="#0f0e00" stroke="#40c4ff" stroke-width="2"/>
+      <text x="345" y="65" text-anchor="middle" fill="#40c4ff" font-family="Hind Siliguri" font-size="14" font-weight="700">Node B</text>
+      <!-- Primary B -->
+      <rect x="270" y="76" width="150" height="38" rx="6" fill="#00080f" stroke="#40c4ff" stroke-width="1.5"/>
+      <text x="345" y="100" text-anchor="middle" fill="#40c4ff" font-family="JetBrains Mono" font-size="13">Primary Shard B</text>
+      <!-- Replica A -->
+      <rect x="270" y="122" width="150" height="38" rx="6" fill="#1a1500" stroke="#ffd600" stroke-width="1.5"/>
+      <text x="345" y="140" text-anchor="middle" fill="#ffd600" font-family="JetBrains Mono" font-size="12">Replica A1</text>
+      <rect x="270" y="162" width="150" height="20" rx="4" fill="#1a1500" stroke="#ffd600" stroke-width="1"/>
+      <text x="345" y="176" text-anchor="middle" fill="#ffd600" font-family="JetBrains Mono" font-size="11">Replica A2</text>
+    </svg>
+  </div>
+
+  <div class="tip">
+    <strong>গুরুত্বপূর্ণ নিয়ম:</strong> Replica Shard কখনো Primary-র same Node-এ থাকে না। তাই একটা Node মরলেও — অন্য Node-এ Replica আছে, ডেটা নিরাপদ!
+  </div>
+
+  <h3>Node-এর ভূমিকা (Roles)</h3>
+  <table>
+    <tr><th>চিহ্ন</th><th>Role</th><th>কাজ</th></tr>
+    <tr><td><code>m</code></td><td>Master-eligible</td><td>Cluster পরিচালনা — index তৈরি/মুছা, shard বরাদ্দ</td></tr>
+    <tr><td><code>d</code></td><td>Data node</td><td>ডেটা সংরক্ষণ ও query প্রসেস</td></tr>
+    <tr><td><code>i</code></td><td>Ingest node</td><td>ডেটা প্রসেস করে ES-এ পাঠায়</td></tr>
+    <tr><td><code>l</code></td><td>ML node</td><td>Machine Learning কাজ করে</td></tr>
+    <tr><td><code>r</code></td><td>Remote cluster client</td><td>অন্য cluster-এর সাথে যোগাযোগ</td></tr>
+  </table>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: INSTALLATION -->
+<!-- ============================================================ -->
+<section id="install">
+  <div class="section-num">// ০৪</div>
+  <h2>ইনস্টলেশন — Docker দিয়ে</h2>
+
+  <p>আমরা Docker দিয়ে ES চালাবো। দুটো পদ্ধতি আছে:</p>
+
+  <div class="compare">
+    <div class="card card-y">
+      <h4>১ Node (Development)</h4>
+      <p>• শেখার জন্য উপযুক্ত<br>• কম resource লাগে<br>• SSL নেই<br>• Production-এ ব্যবহার করো না</p>
+    </div>
+    <div class="card card-b">
+      <h4>৩ Node (Production-like)</h4>
+      <p>• কমপক্ষে ৮ GB RAM লাগে<br>• SSL certificate আছে<br>• Replication সম্পূর্ণ কাজ করে<br>• নিজের machine-এ test করো</p>
+    </div>
+  </div>
+
+  <h3>১ Node Setup</h3>
+  <div class="code-label">Terminal</div>
+  <pre><code><span class="cm"># ফোল্ডার তৈরি করো</span>
+mkdir elasticsearch
+cd elasticsearch
+
+<span class="cm"># docker-compose ফাইল ডাউনলোড করো</span>
+wget https://dst-de.s3.eu-west-3.amazonaws.com/elasticsearch_fr/compose_1_node/docker-compose.yml
+
+<span class="cm"># চালু করো background-এ</span>
+docker-compose up -d
+
+<span class="cm"># Cluster-এর স্বাস্থ্য পরীক্ষা করো</span>
+curl -X GET "http://localhost:9200/_cluster/health?pretty"
+
+<span class="cm"># কতটা Node আছে দেখো</span>
+curl -X GET "http://localhost:9200/_cat/nodes?pretty"
+
+<span class="cm"># কী কী Index আছে দেখো</span>
+curl -X GET "http://localhost:9200/_cat/indices?pretty"</code></pre>
+
+  <div class="info">
+    <strong>curl কী?</strong> curl হলো command line থেকে HTTP request পাঠানোর tool। Elasticsearch সম্পূর্ণ <strong>REST API</strong> দিয়ে কাজ করে — মানে HTTP request দিয়ে সব কিছু করা যায়।
+  </div>
+
+  <h3>REST API — এটা বুঝো আগে</h3>
+  <p>Elasticsearch HTTP request দিয়ে communicate করে। চারটা ধরনের request:</p>
+
+  <div class="rest-grid">
+    <div class="rest-card rest-get">
+      <div class="rest-method" style="color:#69f0ae;">GET</div>
+      <p style="font-size:14px; margin-top:6px;">ডেটা পড়া / দেখা<br><code style="font-size:12px;">GET /products/_search</code></p>
+    </div>
+    <div class="rest-card rest-put">
+      <div class="rest-method" style="color:#ffb300;">PUT</div>
+      <p style="font-size:14px; margin-top:6px;">তৈরি করা / পুরোটা replace<br><code style="font-size:12px;">PUT /products</code></p>
+    </div>
+    <div class="rest-card rest-post">
+      <div class="rest-method" style="color:#40c4ff;">POST</div>
+      <p style="font-size:14px; margin-top:6px;">তৈরি বা আপডেট<br><code style="font-size:12px;">POST /products/_doc/1</code></p>
+    </div>
+    <div class="rest-card rest-del">
+      <div class="rest-method" style="color:#ff5252;">DELETE</div>
+      <p style="font-size:14px; margin-top:6px;">মুছা<br><code style="font-size:12px;">DELETE /products</code></p>
+    </div>
+  </div>
+
+  <div class="tip">
+    <strong>?pretty কী?</strong> URL-এর শেষে <code>?pretty</code> যোগ করলে JSON ফলাফল সুন্দর formatted আকারে দেখায় — মানুষ পড়তে সুবিধা হয়। <code>?v</code> মানে verbose — বিস্তারিত দেখাও।
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: KIBANA API -->
+<!-- ============================================================ -->
+<section id="kibana">
+  <div class="section-num">// ০৫</div>
+  <h2>Kibana দিয়ে API ব্যবহার — Index ও Document</h2>
+
+  <p>Kibana-তে <strong>Dev Tools</strong> আছে — এখানে তুমি সরাসরি ES-এ query পাঠাতে পারো Browser থেকেই। Kibana চালু হয় <code>http://ip:5601</code> এ।</p>
+
+  <h3>প্রথম Index তৈরি</h3>
+  <div class="code-label">Kibana Dev Tools — PUT</div>
+  <pre><code><span class="cm"># "products" নামে একটা Index তৈরি করো</span>
+<span class="http-put">PUT</span> /products
+{
+  <span class="key">"settings"</span>: {
+    <span class="key">"number_of_shards"</span>: <span class="nm">2</span>,     <span class="cm">// কতটা Shard?</span>
+    <span class="key">"number_of_replicas"</span>: <span class="nm">2</span>  <span class="cm">// প্রতি Shard-এ কতটা Replica?</span>
+  }
+}</code></pre>
+
+  <h3>Document যোগ করা</h3>
+  <div class="code-label">POST — Document যোগ</div>
+  <pre><code><span class="cm"># products Index-এ id=1 Document যোগ করো</span>
+<span class="http-post">POST</span> /products/_doc/1
+{
+  <span class="key">"name"</span>: <span class="st">"pancake"</span>,
+  <span class="key">"price"</span>: <span class="nm">49</span>,
+  <span class="key">"in_stock"</span>: <span class="nm">4</span>
+}
+
+<span class="cm"># Response-এ যা পাবে:</span>
+<span class="cm">// "_id": "1"          → Document-এর ID</span>
+<span class="cm">// "_version": 1       → কতবার modify হয়েছে</span>
+<span class="cm">// "_seq_no": 0        → sequence number (concurrent control-এ কাজে লাগে)</span>
+<span class="cm">// "_primary_term": 1  → কোন Primary Shard-এ আছে</span></code></pre>
+
+  <h3>Document আপডেট</h3>
+  <div class="code-label">POST _update</div>
+  <pre><code><span class="cm"># price পরিবর্তন করো এবং tags যোগ করো</span>
+<span class="http-post">POST</span> /products/_update/1
+{
+  <span class="key">"doc"</span>: {
+    <span class="key">"price"</span>: <span class="nm">2.99</span>,
+    <span class="key">"tags"</span>: [<span class="st">"grocery"</span>]
+  }
+}
+
+<span class="cm"># Script দিয়ে আপডেট (Painless scripting language)</span>
+<span class="http-post">POST</span> /products/_update/2
+{
+  <span class="key">"script"</span>: {
+    <span class="key">"source"</span>: <span class="st">"ctx._source.stock--"</span>  <span class="cm">// stock 1 কমাও</span>
+  }
+}
+<span class="cm">// ctx = context, ctx._source = document-এর ডেটা</span></code></pre>
+
+  <h3>Bulk Update / Delete</h3>
+  <div class="code-label">Query দিয়ে অনেক Document একসাথে</div>
+  <pre><code><span class="cm"># "grocery" tag সব পণ্যের price 10 করো</span>
+<span class="http-post">POST</span> /products/_update_by_query
+{
+  <span class="key">"script"</span>: {
+    <span class="key">"source"</span>: <span class="st">"ctx._source.price = 10"</span>,
+    <span class="key">"lang"</span>: <span class="st">"painless"</span>
+  },
+  <span class="key">"query"</span>: {
+    <span class="key">"term"</span>: { <span class="key">"tags"</span>: <span class="st">"grocery"</span> }
+  }
+}
+
+<span class="cm"># "grocery" tag-এর সব document মুছো</span>
+<span class="http-post">POST</span> /products/_delete_by_query
+{
+  <span class="key">"query"</span>: {
+    <span class="key">"term"</span>: { <span class="key">"tags"</span>: <span class="st">"grocery"</span> }
+  }
+}</code></pre>
+
+  <h3>Optimistic Concurrency Control — সমান্তরাল নিরাপত্তা</h3>
+  <p>কল্পনা করো একসাথে দুজন user একই product কিনছে। দুজনেই stock কমাতে চায়। কিন্তু দ্বিতীয়জন প্রথমজনের update জানে না — তাই ভুল মান সেট হয়ে যায়!</p>
+
+  <div class="diagram-wrap">
+    <svg width="560" height="170" viewBox="0 0 560 170" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrR" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#ff5252"/>
+        </marker>
+        <marker id="arrL" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+          <polygon points="8 0, 0 3, 8 6" fill="#ff5252"/>
+        </marker>
+      </defs>
+      <text x="280" y="22" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="14" font-weight="600">সমস্যা: Race Condition</text>
+      <!-- Visitor A -->
+      <rect x="10" y="38" width="120" height="115" rx="8" fill="#1a0000" stroke="#ff5252" stroke-width="1.5"/>
+      <text x="70" y="58" text-anchor="middle" fill="#ff5252" font-family="Hind Siliguri" font-size="13" font-weight="600">Visitor A</text>
+      <text x="70" y="78" text-anchor="middle" fill="#ef9a9a" font-family="Hind Siliguri" font-size="11">stock=10 পড়লো</text>
+      <text x="70" y="96" text-anchor="middle" fill="#ef9a9a" font-family="Hind Siliguri" font-size="11">stock=9 করলো</text>
+      <!-- ES -->
+      <rect x="210" y="38" width="140" height="115" rx="8" fill="#0f0e00" stroke="#ffd600" stroke-width="2"/>
+      <text x="280" y="62" text-anchor="middle" fill="#ffd600" font-family="Hind Siliguri" font-size="13" font-weight="600">Elasticsearch</text>
+      <text x="280" y="86" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="12">stock শেষে = 9</text>
+      <text x="280" y="106" text-anchor="middle" fill="#ff5252" font-family="Hind Siliguri" font-size="12" font-weight="600">কিন্তু হওয়া উচিত = 8!</text>
+      <text x="280" y="130" text-anchor="middle" fill="#ef9a9a" font-family="Hind Siliguri" font-size="11">(দুজনেই কমাতে চেয়েছিল)</text>
+      <!-- Visitor B -->
+      <rect x="430" y="38" width="120" height="115" rx="8" fill="#1a0000" stroke="#ff5252" stroke-width="1.5"/>
+      <text x="490" y="58" text-anchor="middle" fill="#ff5252" font-family="Hind Siliguri" font-size="13" font-weight="600">Visitor B</text>
+      <text x="490" y="78" text-anchor="middle" fill="#ef9a9a" font-family="Hind Siliguri" font-size="11">stock=10 পড়লো</text>
+      <text x="490" y="96" text-anchor="middle" fill="#ef9a9a" font-family="Hind Siliguri" font-size="11">stock=9 করলো</text>
+      <!-- Arrow: A reads from ES (going left, ES→A) -->
+      <line x1="210" y1="82" x2="132" y2="82" stroke="#ff5252" stroke-width="1.5" marker-end="url(#arrR)" transform="scale(-1,1) translate(-560,0)"/>
+      <!-- Arrow: A writes to ES (going right, A→ES) -->
+      <line x1="130" y1="95" x2="209" y2="95" stroke="#ff5252" stroke-width="1.5" marker-end="url(#arrR)"/>
+      <!-- Arrow: B reads from ES (going right, ES→B) -->
+      <line x1="350" y1="82" x2="428" y2="82" stroke="#ff5252" stroke-width="1.5" marker-end="url(#arrR)"/>
+      <!-- Arrow: B writes to ES (going left, B→ES) -->
+      <line x1="430" y1="108" x2="352" y2="108" stroke="#ff5252" stroke-width="1.5" marker-end="url(#arrL)"/>
+    </svg>
+  </div>
+
+  <h4>সমাধান: _seq_no + _primary_term ব্যবহার করো</h4>
+  <div class="code-label">উদাহরণ</div>
+  <pre><code><span class="cm"># প্রথমে document পড়ো — seq_no আর primary_term নোট করো</span>
+<span class="http-get">GET</span> /products/_doc/2
+<span class="cm">// Response: { "_seq_no": 13, "_primary_term": 1, ... }</span>
+
+<span class="cm"># এই values দিয়ে update করো — যদি মিলে তবেই update হবে</span>
+<span class="http-post">POST</span> /products/_update/2?if_primary_term=<span class="nm">1</span>&amp;if_seq_no=<span class="nm">13</span>
+{
+  <span class="key">"doc"</span>: { <span class="key">"stock"</span>: <span class="nm">8</span> }
+}
+
+<span class="cm"># যদি কেউ এর মধ্যে update করে থাকে — Error আসবে:</span>
+<span class="cm">// "version_conflict_engine_exception"</span>
+<span class="cm">// এটা দেখেই বুঝবে — পুনরায় চেষ্টা করতে হবে নতুন seq_no দিয়ে</span></code></pre>
+
+  <h3>Cluster Monitoring</h3>
+  <div class="code-label">স্বাস্থ্য পরীক্ষার command</div>
+  <pre><code><span class="cm"># Cluster-এর সামগ্রিক স্বাস্থ্য</span>
+<span class="http-get">GET</span> /_cluster/health
+
+<span class="cm"># Node-গুলোর ভূমিকা ও তথ্য</span>
+<span class="http-get">GET</span> /_cat/nodes?v
+
+<span class="cm"># Shard-এর অবস্থা</span>
+<span class="http-get">GET</span> /_cat/shards?v
+
+<span class="cm"># সব Index-এর তালিকা</span>
+<span class="http-get">GET</span> /_cat/indices?v</code></pre>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: MAPPING -->
+<!-- ============================================================ -->
+<section id="mapping">
+  <div class="section-num">// ০৬</div>
+  <h2>Text Mapping — ডেটার ধরন নির্ধারণ</h2>
+
+  <p><strong>Mapping</strong> হলো ES-কে বলা — কোন field কী ধরনের ডেটা রাখবে। MongoDB-তে এটা flexible ছিল, কিন্তু ES-এ Mapping গুরুত্বপূর্ণ কারণ এটা search-এর performance নির্ধারণ করে।</p>
+
+  <div class="diagram-wrap">
+    <svg width="580" height="140" viewBox="0 0 580 140" xmlns="http://www.w3.org/2000/svg">
+      <text x="290" y="22" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="15" font-weight="600">Implicit Mapping (Coercion) — ES নিজেই ধরন অনুমান করে</text>
+      <!-- Input -->
+      <rect x="10" y="40" width="140" height="80" rx="8" fill="#0f0e00" stroke="#3a3200" stroke-width="1.5"/>
+      <text x="80" y="68" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="13">তুমি পাঠালে:</text>
+      <text x="80" y="88" text-anchor="middle" fill="#f1fa8c" font-family="JetBrains Mono" font-size="13">price: "7.4"</text>
+      <text x="80" y="106" text-anchor="middle" fill="#ffc107" font-family="Hind Siliguri" font-size="12">(string হিসেবে)</text>
+      <!-- arrow -->
+      <line x1="152" y1="80" x2="198" y2="80" stroke="#ffd600" stroke-width="2"/>
+      <polygon points="195,74 208,80 195,86" fill="#ffd600"/>
+      <!-- Coercion -->
+      <rect x="208" y="40" width="150" height="80" rx="8" fill="#1a1200" stroke="#ffd600" stroke-width="2"/>
+      <text x="283" y="65" text-anchor="middle" fill="#ffd600" font-family="Hind Siliguri" font-size="14" font-weight="600">Coercion</text>
+      <text x="283" y="85" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="12">Mapping দেখে</text>
+      <text x="283" y="103" text-anchor="middle" fill="#ffc107" font-family="Hind Siliguri" font-size="12">ধরন বদলায়</text>
+      <!-- arrow -->
+      <line x1="360" y1="80" x2="400" y2="80" stroke="#ffd600" stroke-width="2"/>
+      <polygon points="397,74 410,80 397,86" fill="#ffd600"/>
+      <!-- Storage -->
+      <rect x="410" y="40" width="155" height="80" rx="8" fill="#0a0900" stroke="#69f0ae" stroke-width="1.5"/>
+      <text x="487" y="65" text-anchor="middle" fill="#69f0ae" font-family="Hind Siliguri" font-size="13">Store হলো:</text>
+      <text x="487" y="85" text-anchor="middle" fill="#f1fa8c" font-family="JetBrains Mono" font-size="13">price: 7.4</text>
+      <text x="487" y="103" text-anchor="middle" fill="#a5d6a7" font-family="Hind Siliguri" font-size="12">(float হিসেবে)</text>
+    </svg>
+  </div>
+
+  <h3>Data Types — ডেটার ধরন</h3>
+  <table>
+    <tr><th>Type</th><th>কী রাখে</th><th>উদাহরণ</th></tr>
+    <tr><td><code>text</code></td><td>সাধারণ লেখা — analyzer দিয়ে প্রসেস হয়</td><td>product description, review</td></tr>
+    <tr><td><code>keyword</code></td><td>হুবহু মেলাতে হবে এমন — analyzer নেই</td><td>product ID, ইমেইল, ট্যাগ</td></tr>
+    <tr><td><code>integer</code></td><td>পূর্ণ সংখ্যা</td><td>stock count, age</td></tr>
+    <tr><td><code>float</code></td><td>দশমিক সংখ্যা</td><td>price, rating</td></tr>
+    <tr><td><code>date</code></td><td>তারিখ/সময়</td><td>published_date</td></tr>
+    <tr><td><code>boolean</code></td><td>true/false</td><td>is_available</td></tr>
+  </table>
+
+  <div class="warn">
+    <strong>text vs keyword পার্থক্য:</strong><br>
+    <code>text</code> = "The quick brown fox" → ["the", "quick", "brown", "fox"] — আলাদা শব্দে ভাগ হয়, search-এ প্রতিটা শব্দ খোঁজা যায়<br>
+    <code>keyword</code> = "The quick brown fox" → পুরোটাই একটা unit — শুধু exact match কাজ করে
+  </div>
+
+  <h3>Explicit Mapping তৈরি করো</h3>
+  <div class="code-label">Index তৈরির সময় Mapping দাও</div>
+  <pre><code><span class="http-put">PUT</span> /masterclass
+{
+  <span class="key">"mappings"</span>: {
+    <span class="key">"properties"</span>: {
+      <span class="key">"theme"</span>: { <span class="key">"type"</span>: <span class="st">"text"</span> },       <span class="cm">// সাধারণ লেখা</span>
+      <span class="key">"duration"</span>: { <span class="key">"type"</span>: <span class="st">"integer"</span> },  <span class="cm">// পূর্ণ সংখ্যা</span>
+      <span class="key">"level"</span>: { <span class="key">"type"</span>: <span class="st">"text"</span> },
+      <span class="key">"animator"</span>: {                      <span class="cm">// nested object</span>
+        <span class="key">"properties"</span>: {
+          <span class="key">"first_name"</span>: { <span class="key">"type"</span>: <span class="st">"text"</span> },
+          <span class="key">"last_name"</span>: { <span class="key">"type"</span>: <span class="st">"text"</span> },
+          <span class="key">"email"</span>: { <span class="key">"type"</span>: <span class="st">"keyword"</span> }  <span class="cm">// exact match</span>
+        }
+      }
+    }
+  }
+}</code></pre>
+
+  <h3>Reindexing — Mapping বদলাতে হলে</h3>
+  <p>ES-এ একবার Mapping দিলে পরে বদলানো যায় না (যেমন int থেকে text করা)। কারণ:</p>
+  <ol class="steps">
+    <li>সব ডেটা আবার re-index করতে হবে</li>
+    <li>Shard routing system নষ্ট হয়ে যায়</li>
+    <li>Production-এ সাময়িক অচলাবস্থা হয়</li>
+  </ol>
+  <p style="margin-top:12px;">সমাধান: নতুন mapping দিয়ে নতুন Index তৈরি করো, তারপর ডেটা সেখানে copy করো:</p>
+
+  <div class="code-label">Reindex Command</div>
+  <pre><code><span class="cm"># পুরনো "reviews" থেকে নতুন "new_reviews"-এ copy করো</span>
+<span class="http-post">POST</span> _reindex?wait_for_completion=false
+{
+  <span class="key">"source"</span>: { <span class="key">"index"</span>: <span class="st">"reviews"</span> },
+  <span class="key">"dest"</span>: { <span class="key">"index"</span>: <span class="st">"new_reviews"</span> }
+}
+
+<span class="cm"># Task-এর progress দেখো</span>
+<span class="http-get">GET</span> _tasks?actions=*reindex&amp;detailed
+
+<span class="cm"># পুরনো Index মুছো</span>
+<span class="http-del">DELETE</span> /reviews</code></pre>
+
+  <h3>Python দিয়ে Bulk Import</h3>
+  <div class="code-label">bulk_script.py</div>
+  <pre><code><span class="kw">from</span> elasticsearch <span class="kw">import</span> Elasticsearch, helpers
+<span class="kw">import</span> csv
+
+<span class="cm"># ES-এ connection করো</span>
+es = <span class="fn">Elasticsearch</span>(hosts=<span class="st">"http://@localhost:9200"</span>)
+
+<span class="cm"># CSV পড়ো এবং bulk-এ import করো</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">'EmployerReviews.csv'</span>, encoding=<span class="st">'utf-8'</span>) <span class="kw">as</span> f:
+  reader = csv.<span class="fn">DictReader</span>(f)         <span class="cm"># CSV-কে dictionary-র মতো পড়ো</span>
+  helpers.<span class="fn">bulk</span>(es, reader, index=<span class="st">'reviews'</span>)  <span class="cm"># bulk-এ পাঠাও</span>
+
+<span class="cm"># মাত্র কয়েক লাইনে ২ লাখ+ row import হয়ে গেলো!</span></code></pre>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: ANALYZERS -->
+<!-- ============================================================ -->
+<section id="analyzers">
+  <div class="section-num">// ০৭</div>
+  <h2>Analyzer — টেক্সট প্রসেস করার যন্ত্র</h2>
+
+  <p>Elasticsearch-এর সবচেয়ে শক্তিশালী দিক হলো text search। কিন্তু "Quick" আর "quick" কি এক? "পড়ছি" আর "পড়া" কি সম্পর্কিত? এই জটিলতা সামলায় <strong>Analyzer</strong>।</p>
+
+  <div class="diagram-wrap">
+    <svg width="620" height="130" viewBox="0 0 620 130" xmlns="http://www.w3.org/2000/svg">
+      <text x="310" y="22" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="15" font-weight="600">Analyzer Pipeline — টেক্সট কীভাবে প্রসেস হয়</text>
+
+      <!-- Source text -->
+      <rect x="10" y="40" width="100" height="70" rx="8" fill="#0f0e00" stroke="#3a3200" stroke-width="1.5"/>
+      <text x="60" y="68" text-anchor="middle" fill="#ffe082" font-family="Hind Siliguri" font-size="13">Source</text>
+      <text x="60" y="86" text-anchor="middle" fill="#ffc107" font-family="Hind Siliguri" font-size="12">মূল লেখা</text>
+
+      <line x1="112" y1="75" x2="142" y2="75" stroke="#ffd600" stroke-width="2"/>
+      <polygon points="139,69 152,75 139,81" fill="#ffd600"/>
+
+      <!-- Char filters -->
+      <rect x="152" y="40" width="120" height="70" rx="8" fill="#1a0a00" stroke="#ff6d00" stroke-width="1.5"/>
+      <text x="212" y="65" text-anchor="middle" fill="#ff6d00" font-family="Hind Siliguri" font-size="13" font-weight="600">Char Filters</text>
+      <text x="212" y="83" text-anchor="middle" fill="#ffccbc" font-family="Hind Siliguri" font-size="12">HTML tag সরাও</text>
+      <text x="212" y="99" text-anchor="middle" fill="#ffccbc" font-family="Hind Siliguri" font-size="11">character রূপান্তর</text>
+
+      <line x1="274" y1="75" x2="304" y2="75" stroke="#ffd600" stroke-width="2"/>
+      <polygon points="301,69 314,75 301,81" fill="#ffd600"/>
+
+      <!-- Tokenizer -->
+      <rect x="314" y="40" width="120" height="70" rx="8" fill="#0a0a1a" stroke="#40c4ff" stroke-width="2"/>
+      <text x="374" y="65" text-anchor="middle" fill="#40c4ff" font-family="Hind Siliguri" font-size="13" font-weight="600">Tokenizer</text>
+      <text x="374" y="83" text-anchor="middle" fill="#b3e5fc" font-family="Hind Siliguri" font-size="12">শব্দে ভাগ করো</text>
+      <text x="374" y="99" text-anchor="middle" fill="#b3e5fc" font-family="Hind Siliguri" font-size="11">Space-এ বিভক্ত</text>
+
+      <line x1="436" y1="75" x2="466" y2="75" stroke="#ffd600" stroke-width="2"/>
+      <polygon points="463,69 476,75 463,81" fill="#ffd600"/>
+
+      <!-- Token filters -->
+      <rect x="476" y="40" width="130" height="70" rx="8" fill="#0a1a00" stroke="#69f0ae" stroke-width="1.5"/>
+      <text x="541" y="62" text-anchor="middle" fill="#69f0ae" font-family="Hind Siliguri" font-size="13" font-weight="600">Token Filters</text>
+      <text x="541" y="80" text-anchor="middle" fill="#c8e6c9" font-family="Hind Siliguri" font-size="12">lowercase করো</text>
+      <text x="541" y="98" text-anchor="middle" fill="#c8e6c9" font-family="Hind Siliguri" font-size="11">stopword সরাও</text>
+    </svg>
+  </div>
+
+  <h3>তিনটি অংশ বিস্তারিত</h3>
+
+  <div class="card card-o">
+    <h4>🔤 Char Filters — অক্ষর পরিবর্তন</h4>
+    <p>টেক্সট ঢোকার আগেই অক্ষর পরিবর্তন করে। যেমন: HTML tag সরানো, বিশেষ চিহ্ন রূপান্তর।</p>
+    <div class="code-label" style="background: #2a1800;">উদাহরণ</div>
+    <pre><code><span class="st">"Hello &lt;b&gt;World&lt;/b&gt;"</span> → <span class="st">"Hello World"</span>  <span class="cm">(HTML strip)</span></code></pre>
+  </div>
+
+  <div class="card card-b">
+    <h4>✂️ Tokenizer — শব্দে ভাগ করো</h4>
+    <p>লেখাকে আলাদা শব্দে ভাগ করে। একটাই Tokenizer থাকে।</p>
+    <div class="code-label" style="background: #002a3a;">উদাহরণ</div>
+    <pre><code><span class="st">"Welcome to Datascientest!"</span>
+→ [<span class="st">"Welcome"</span>, <span class="st">"to"</span>, <span class="st">"Datascientest"</span>]  <span class="cm">(space tokenizer)</span></code></pre>
+  </div>
+
+  <div class="card card-g">
+    <h4>🔧 Token Filters — token পরিবর্তন</h4>
+    <p>Token-এ আরো পরিবর্তন। lowercase, stopword বাদ দেওয়া, synonym যোগ।</p>
+    <div class="code-label" style="background: #002a12;">উদাহরণ</div>
+    <pre><code>[<span class="st">"Welcome"</span>, <span class="st">"to"</span>, <span class="st">"Datascientest"</span>]
+→ [<span class="st">"welcome"</span>, <span class="st">"datascientest"</span>]  <span class="cm">("to" stopword বাদ গেলো, lowercase হলো)</span></code></pre>
+  </div>
+
+  <h3>Built-in Analyzer পরীক্ষা করো</h3>
+  <div class="code-label">Analyzer test করো</div>
+  <pre><code><span class="http-post">POST</span> /_analyze
+{
+  <span class="key">"text"</span>: [<span class="st">"Welcome to the GREAT world of Datascience!"</span>],
+  <span class="key">"analyzer"</span>: <span class="st">"standard"</span>
+}
+<span class="cm">// ফলাফল: ["welcome", "to", "the", "great", "world", "of", "datascience"]</span>
+<span class="cm">// Standard analyzer: lowercase করে, punctuation সরায়</span></code></pre>
+
+  <h3>Custom Analyzer তৈরি করো</h3>
+  <div class="code-label">সম্পূর্ণ কাস্টম analyzer</div>
+  <pre><code><span class="http-put">PUT</span> /custom_analyzer
+{
+  <span class="key">"settings"</span>: {
+    <span class="key">"analysis"</span>: {
+      <span class="key">"char_filter"</span>: {
+        <span class="key">"chinese_mapping"</span>: {
+          <span class="key">"type"</span>: <span class="st">"mapping"</span>,
+          <span class="key">"mappings"</span>: [<span class="st">"数据科学 => datascience"</span>]  <span class="cm">// চীনা → English</span>
+        }
+      },
+      <span class="key">"filter"</span>: {
+        <span class="key">"custom_stop"</span>: {
+          <span class="key">"type"</span>: <span class="st">"stop"</span>,
+          <span class="key">"stopwords"</span>: [<span class="st">"apprendre"</span>],   <span class="cm">// এই শব্দ সরিয়ে দাও</span>
+          <span class="key">"ignore_case"</span>: <span class="kw">true</span>
+        }
+      },
+      <span class="key">"analyzer"</span>: {
+        <span class="key">"my_custom_analyzer"</span>: {
+          <span class="key">"type"</span>: <span class="st">"custom"</span>,
+          <span class="key">"char_filter"</span>: [<span class="st">"html_strip"</span>, <span class="st">"chinese_mapping"</span>],
+          <span class="key">"tokenizer"</span>: <span class="st">"standard"</span>,
+          <span class="key">"filter"</span>: [<span class="st">"lowercase"</span>, <span class="st">"custom_stop"</span>, <span class="st">"asciifolding"</span>]
+        }
+      }
+    }
+  }
+}</code></pre>
+
+  <div class="info">
+    <strong>asciifolding কী?</strong> এটা non-ASCII character-কে ASCII-তে রূপান্তর করে। যেমন: é → e, ü → u। বিদেশী ভাষার অক্ষর normalize করতে কাজে লাগে।
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: SEARCH -->
+<!-- ============================================================ -->
+<section id="search">
+  <div class="section-num">// ০৮</div>
+  <h2>Search — ডেটা খোঁজা</h2>
+
+  <p>Elasticsearch-এর মূল কাজ search। এটা করা হয় <strong>DSL (Domain Specific Language)</strong> দিয়ে — JSON format-এ query লেখো।</p>
+
+  <h3>Index Alias — সহজ নাম দাও</h3>
+  <div class="code-label">Alias তৈরি করো</div>
+  <pre><code><span class="cm"># "new_reviews" কে "rev" নামে ডাকবো</span>
+<span class="http-post">POST</span> _aliases
+{
+  <span class="key">"actions"</span>: [{
+    <span class="key">"add"</span>: {
+      <span class="key">"index"</span>: <span class="st">"new_reviews"</span>,
+      <span class="key">"alias"</span>: <span class="st">"rev"</span>
+    }
+  }]
+}
+
+<span class="cm"># এখন এভাবে ব্যবহার করো</span>
+<span class="http-get">GET</span> /rev/_search { <span class="key">"query"</span>: { <span class="key">"match_all"</span>: {} } }</code></pre>
+
+  <h3>১. Text Search (match) — বিশ্লেষণ করে খোঁজে</h3>
+  <div class="code-label">match query</div>
+  <pre><code><span class="cm"># CompleteReview-এ "Great place to work" খোঁজো</span>
+<span class="http-get">GET</span> /rev/_search
+{
+  <span class="key">"query"</span>: {
+    <span class="key">"match"</span>: {
+      <span class="key">"CompleteReview"</span>: {
+        <span class="key">"query"</span>: <span class="st">"Great place to work"</span>
+        <span class="cm">// OR logic ডিফল্ট: Great OR place OR to OR work</span>
+      }
+    }
+  }
+}
+
+<span class="cm"># AND logic — সব শব্দই থাকতে হবে</span>
+<span class="http-get">GET</span> /rev/_search
+{
+  <span class="key">"query"</span>: {
+    <span class="key">"match"</span>: {
+      <span class="key">"CompleteReview"</span>: {
+        <span class="key">"query"</span>: <span class="st">"bad place or good place"</span>,
+        <span class="key">"operator"</span>: <span class="st">"and"</span>   <span class="cm">// সব শব্দ থাকা লাগবে</span>
+      }
+    }
+  }
+}
+
+<span class="cm"># match_phrase — পুরো বাক্য হুবহু খোঁজো</span>
+<span class="http-get">GET</span> /rev/_search
+{
+  <span class="key">"query"</span>: {
+    <span class="key">"match_phrase"</span>: {
+      <span class="key">"CompleteReview"</span>: <span class="st">"The best team ever"</span>
+    }
+  }
+}
+
+<span class="cm"># multi_match — একাধিক field-এ খোঁজো</span>
+<span class="http-get">GET</span> /rev/_search
+{
+  <span class="key">"query"</span>: {
+    <span class="key">"multi_match"</span>: {
+      <span class="key">"query"</span>: <span class="st">"great place"</span>,
+      <span class="key">"fields"</span>: [<span class="st">"CompleteReview"</span>, <span class="st">"ReviewTitle.keyword"</span>]
+    }
+  }
+}</code></pre>
+
+  <div class="warn">
+    <strong>match vs match_phrase:</strong><br>
+    <code>match</code>: শব্দগুলো যেকোনো জায়গায় থাকতে পারে — OR logic<br>
+    <code>match_phrase</code>: শব্দগুলো এই ক্রমেই পাশাপাশি থাকতে হবে
+  </div>
+
+  <h3>২. Term Search — Exact Match (analyzer ছাড়া)</h3>
+  <div class="code-label">term query</div>
+  <pre><code><span class="cm"># "good" শব্দ খোঁজো — analyzer দিয়ে process হবে না</span>
+<span class="http-get">GET</span> /rev/_search
+{
+  <span class="key">"query"</span>: {
+    <span class="key">"term"</span>: {
+      <span class="key">"ReviewTitle"</span>: <span class="st">"good"</span>
+    }
+  }
+}
+
+<span class="cm"># Range — নির্দিষ্ট মানের মধ্যে</span>
+<span class="http-get">GET</span> /rev/_search
+{
+  <span class="key">"query"</span>: {
+    <span class="key">"range"</span>: {
+      <span class="key">"Rating"</span>: { <span class="key">"gte"</span>: <span class="nm">4</span> }  <span class="cm">// Rating >= 4</span>
+    }
+  }
+}
+
+<span class="cm"># Wildcard — প্যাটার্ন দিয়ে খোঁজো</span>
+<span class="cm"># * = যেকোনো অক্ষর (অনেক), ? = ঠিক একটা অক্ষর</span>
+<span class="http-get">GET</span> /rev/_search
+{
+  <span class="key">"_source"</span>: [<span class="st">"ReviewTitle"</span>],
+  <span class="key">"query"</span>: {
+    <span class="key">"wildcard"</span>: {
+      <span class="key">"ReviewTitle"</span>: { <span class="key">"value"</span>: <span class="st">"gr*t"</span> }
+      <span class="cm">// gr*t → great, grant, graft সব মেলে</span>
+    }
+  }
+}</code></pre>
+
+  <h3>৩. Boolean Query — শর্ত মিলিয়ে খোঁজো</h3>
+  <p>সবচেয়ে শক্তিশালী search type — একাধিক শর্ত একসাথে ব্যবহার করো:</p>
+
+  <table>
+    <tr><th>Clause</th><th>কাজ</th><th>Score-এ প্রভাব</th></tr>
+    <tr><td><code>must</code></td><td>অবশ্যই থাকতে হবে</td><td>Score বাড়ায়</td></tr>
+    <tr><td><code>must_not</code></td><td>কখনো থাকবে না</td><td>বাদ দেয়</td></tr>
+    <tr><td><code>should</code></td><td>থাকলে ভালো, না থাকলেও চলে</td><td>Score বাড়ায়</td></tr>
+    <tr><td><code>filter</code></td><td>অবশ্যই থাকতে হবে</td><td>Score-এ প্রভাব নেই</td></tr>
+  </table>
+
+  <div class="code-label">bool query উদাহরণ</div>
+  <pre><code><span class="cm"># 2014 সালের horrible review — good/great শব্দ ছাড়া</span>
+<span class="http-get">GET</span> /rev/_search
+{
+  <span class="key">"query"</span>: {
+    <span class="key">"bool"</span>: {
+      <span class="key">"must"</span>: [{
+        <span class="key">"match"</span>: { <span class="key">"CompleteReview"</span>: <span class="st">"horrible"</span> }
+      }],
+      <span class="key">"must_not"</span>: [{
+        <span class="key">"terms"</span>: {
+          <span class="key">"CompleteReview"</span>: [<span class="st">"good"</span>, <span class="st">"great"</span>]
+        }
+      }],
+      <span class="key">"filter"</span>: [{
+        <span class="key">"range"</span>: {
+          <span class="key">"Date"</span>: {
+            <span class="key">"gte"</span>: <span class="st">"01-01-2014"</span>,
+            <span class="key">"lte"</span>: <span class="st">"31-12-2014"</span>
+          }
+        }
+      }]
+    }
+  }
+}</code></pre>
+
+  <h3>Score কী? — Relevance বোঝো</h3>
+  <div class="card card-y">
+    <p>ES প্রতিটা ফলাফলে একটা <code>_score</code> দেয়। এটা বলে — এই document কতটা "relevant"।</p>
+    <p>Score গণনা হয় <strong>TF/IDF</strong> দিয়ে:<br>
+    • <strong>TF (Term Frequency)</strong> = document-এ শব্দটা কতবার আছে (বেশি হলে বেশি relevant)<br>
+    • <strong>IDF (Inverse Document Frequency)</strong> = সব document-এ শব্দটা কতটা বিরল (বিরল হলে বেশি important)</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 9: AGGREGATION -->
+<!-- ============================================================ -->
+<section id="aggregation">
+  <div class="section-num">// ০৯</div>
+  <h2>Aggregation — পরিসংখ্যান বিশ্লেষণ</h2>
+
+  <p>Aggregation মানে ডেটা গ্রুপ করে summary বের করা — MongoDB-র <code>$group</code>-এর মতো কিন্তু আরো শক্তিশালী।</p>
+
+  <h3>Basic Statistics</h3>
+  <div class="code-label">sum, avg, min, max একসাথে</div>
+  <pre><code><span class="http-get">GET</span> /cars/_search
+{
+  <span class="key">"size"</span>: <span class="nm">0</span>,   <span class="cm">// document দেখাবে না, শুধু aggregation দেখাবে</span>
+  <span class="key">"aggs"</span>: {
+    <span class="key">"total_price"</span>: { <span class="key">"sum"</span>: { <span class="key">"field"</span>: <span class="st">"priceUSD"</span> } },
+    <span class="key">"avg_price"</span>:   { <span class="key">"avg"</span>: { <span class="key">"field"</span>: <span class="st">"priceUSD"</span> } },
+    <span class="key">"min_price"</span>:   { <span class="key">"min"</span>: { <span class="key">"field"</span>: <span class="st">"priceUSD"</span> } },
+    <span class="key">"max_price"</span>:   { <span class="key">"max"</span>: { <span class="key">"field"</span>: <span class="st">"priceUSD"</span> } }
+  }
+}
+
+<span class="cm"># সব statistics এক query-তে (stats / extended_stats)</span>
+<span class="http-get">GET</span> /cars/_search
+{
+  <span class="key">"size"</span>: <span class="nm">0</span>,
+  <span class="key">"aggs"</span>: {
+    <span class="key">"price_stats"</span>: {
+      <span class="key">"extended_stats"</span>: { <span class="key">"field"</span>: <span class="st">"priceUSD"</span> }
+      <span class="cm">// count, min, max, avg, sum, variance, std_deviation দেবে</span>
+    }
+  }
+}</code></pre>
+
+  <h3>Terms Aggregation — গ্রুপ করো</h3>
+  <div class="code-label">কোন রঙের গাড়ি কতটা?</div>
+  <pre><code><span class="http-get">GET</span> /cars/_search
+{
+  <span class="key">"size"</span>: <span class="nm">0</span>,
+  <span class="key">"aggs"</span>: {
+    <span class="key">"color_groups"</span>: {
+      <span class="key">"terms"</span>: {
+        <span class="key">"field"</span>: <span class="st">"color.keyword"</span>,  <span class="cm">// keyword field লাগবে!</span>
+        <span class="key">"size"</span>: <span class="nm">20</span>,               <span class="cm">// সর্বোচ্চ কয়টা group দেখাবে</span>
+        <span class="key">"order"</span>: { <span class="key">"_key"</span>: <span class="st">"asc"</span> }  <span class="cm">// alphabetically সাজাও</span>
+      }
+    }
+  }
+}
+
+<span class="cm"># Cardinality — unique values কতটা?</span>
+<span class="http-get">GET</span> /cars/_search
+{
+  <span class="key">"size"</span>: <span class="nm">0</span>,
+  <span class="key">"aggs"</span>: {
+    <span class="key">"unique_makes"</span>: {
+      <span class="key">"cardinality"</span>: { <span class="key">"field"</span>: <span class="st">"make.keyword"</span> }
+    }
+  }
+}</code></pre>
+
+  <div class="warn">
+    <strong>কেন .keyword?</strong> Aggregation-এ text field ব্যবহার করা যায় না — keyword field লাগে। Implicit mapping-এ প্রতিটা text field-এর সাথে একটা keyword sub-field তৈরি হয়: <code>"ReviewTitle.keyword"</code>।
+  </div>
+
+  <h3>Nested Aggregation — ভেতরে ভেতরে বিশ্লেষণ</h3>
+  <div class="code-label">Brand অনুযায়ী price range বিশ্লেষণ</div>
+  <pre><code><span class="http-get">GET</span> /cars/_search
+{
+  <span class="key">"size"</span>: <span class="nm">0</span>,
+  <span class="key">"query"</span>: {
+    <span class="key">"range"</span>: { <span class="key">"priceUSD"</span>: { <span class="key">"gte"</span>: <span class="nm">1000</span>, <span class="key">"lte"</span>: <span class="nm">5000</span> } }
+  },
+  <span class="key">"aggs"</span>: {
+    <span class="key">"make_agg"</span>: {
+      <span class="key">"terms"</span>: { <span class="key">"field"</span>: <span class="st">"make.keyword"</span>, <span class="key">"size"</span>: <span class="nm">55</span> }
+    },
+    <span class="key">"price_stats"</span>: {
+      <span class="key">"stats"</span>: { <span class="key">"field"</span>: <span class="st">"priceUSD"</span> }
+    }
+  }
+}
+
+<span class="cm"># min_doc_count — কমপক্ষে N টা document থাকলে দেখাও</span>
+<span class="http-get">GET</span> /cars/_search
+{
+  <span class="key">"size"</span>: <span class="nm">0</span>,
+  <span class="key">"aggs"</span>: {
+    <span class="key">"popular_makes"</span>: {
+      <span class="key">"terms"</span>: {
+        <span class="key">"field"</span>: <span class="st">"make.keyword"</span>,
+        <span class="key">"size"</span>: <span class="nm">30</span>,
+        <span class="key">"min_doc_count"</span>: <span class="nm">1000</span>  <span class="cm">// কমপক্ষে ১০০০ গাড়ি থাকতে হবে</span>
+      }
+    }
+  }
+}</code></pre>
+
+  <h3>Histogram — বিতরণ দেখো</h3>
+  <div class="code-label">মূল্য বিতরণ</div>
+  <pre><code><span class="http-get">GET</span> /cars/_search
+{
+  <span class="key">"size"</span>: <span class="nm">0</span>,
+  <span class="key">"aggs"</span>: {
+    <span class="key">"price_distribution"</span>: {
+      <span class="key">"histogram"</span>: {
+        <span class="key">"field"</span>: <span class="st">"priceUSD"</span>,
+        <span class="key">"interval"</span>: <span class="nm">5000</span>     <span class="cm">// ৫০০০ এর ধাপে গ্রুপ</span>
+      }
+    }
+  }
+}
+
+<span class="cm"># Date Histogram — বছর অনুযায়ী</span>
+<span class="http-post">POST</span> /cars/_search?size=0
+{
+  <span class="key">"aggs"</span>: {
+    <span class="key">"cars_per_year"</span>: {
+      <span class="key">"date_histogram"</span>: {
+        <span class="key">"field"</span>: <span class="st">"year"</span>,
+        <span class="key">"fixed_interval"</span>: <span class="st">"365d"</span>
+      }
+    }
+  }
+}</code></pre>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 10: ADVANCED -->
+<!-- ============================================================ -->
+<section id="advanced">
+  <div class="section-num">// ১০</div>
+  <h2>Advanced — Missing Values ও Concurrency</h2>
+
+  <h3>Null Values পরিচালনা</h3>
+  <div class="code-label">Null সেট করো</div>
+  <pre><code><span class="cm"># mazda-র make field null করো (স্ক্রিপ্ট দিয়ে)</span>
+<span class="http-post">POST</span> cars/_update_by_query
+{
+  <span class="key">"script"</span>: {
+    <span class="key">"source"</span>: <span class="st">"ctx._source.make = null"</span>,
+    <span class="key">"lang"</span>: <span class="st">"painless"</span>
+  },
+  <span class="key">"query"</span>: {
+    <span class="key">"bool"</span>: {
+      <span class="key">"must"</span>: [{ <span class="key">"term"</span>: { <span class="key">"make.keyword"</span>: { <span class="key">"value"</span>: <span class="st">"mazda"</span> } } }]
+    }
+  }
+}
+
+<span class="cm"># Null নেই এমন document খোঁজো</span>
+<span class="http-get">GET</span> cars/_search
+{
+  <span class="key">"query"</span>: { <span class="key">"exists"</span>: { <span class="key">"field"</span>: <span class="st">"make"</span> } }
+}
+
+<span class="cm"># Null আছে এমন document-এর statistics</span>
+<span class="http-get">GET</span> /cars/_search
+{
+  <span class="key">"size"</span>: <span class="nm">0</span>,
+  <span class="key">"aggs"</span>: {
+    <span class="key">"null_makes"</span>: {
+      <span class="key">"missing"</span>: { <span class="key">"field"</span>: <span class="st">"make.keyword"</span> },
+      <span class="key">"aggs"</span>: {
+        <span class="key">"color_breakdown"</span>: {
+          <span class="key">"terms"</span>: { <span class="key">"field"</span>: <span class="st">"color.keyword"</span>, <span class="key">"size"</span>: <span class="nm">30</span> }
+        }
+      }
+    }
+  }
+}</code></pre>
+
+  <h3>Python দিয়ে ES ব্যবহার</h3>
+  <div class="code-label">eval_elastic.py কাঠামো</div>
+  <pre><code><span class="kw">from</span> elasticsearch <span class="kw">import</span> Elasticsearch
+<span class="kw">import</span> json
+
+<span class="cm"># Connection করো</span>
+client = <span class="fn">Elasticsearch</span>(hosts=<span class="st">"http://@localhost:9200"</span>)
+
+<span class="cm"># Query লেখো (Kibana-র মতোই, GET statement ছাড়া)</span>
+query = {
+  <span class="st">"query"</span>: { <span class="st">"match_all"</span>: {} }
+}
+
+<span class="cm"># Search করো</span>
+response = client.<span class="fn">search</span>(index=<span class="st">"eval"</span>, body=query)
+
+<span class="cm"># ফলাফল JSON ফাইলে save করো</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"result.json"</span>, <span class="st">"w"</span>) <span class="kw">as</span> f:
+  json.<span class="fn">dump</span>(<span class="fn">dict</span>(response), f, indent=<span class="nm">2</span>)
+
+<span class="cm"># Mapping দেখো</span>
+mapping = client.indices.<span class="fn">get_mapping</span>(index=<span class="st">"eval"</span>)
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"mapping.json"</span>, <span class="st">"w"</span>) <span class="kw">as</span> f:
+  json.<span class="fn">dump</span>(<span class="fn">dict</span>(mapping), f, indent=<span class="nm">2</span>)</code></pre>
+
+  <h3>Exam-এর জন্য দরকারি query গুলো</h3>
+
+  <div class="code-label">Unique values গণনা (cardinality)</div>
+  <pre><code><span class="cm"># Division Name-এর unique মান কতটা?</span>
+<span class="http-get">GET</span> /eval/_search
+{
+  <span class="key">"size"</span>: <span class="nm">0</span>,
+  <span class="key">"aggs"</span>: {
+    <span class="key">"unique_divisions"</span>: {
+      <span class="key">"cardinality"</span>: { <span class="key">"field"</span>: <span class="st">"Division Name.keyword"</span> }
+    }
+  }
+}</code></pre>
+
+  <div class="code-label">Null check</div>
+  <pre><code><span class="cm"># কোথায় null আছে?</span>
+<span class="http-get">GET</span> /eval/_search
+{
+  <span class="key">"size"</span>: <span class="nm">0</span>,
+  <span class="key">"aggs"</span>: {
+    <span class="key">"missing_reviews"</span>: { <span class="key">"missing"</span>: { <span class="key">"field"</span>: <span class="st">"Review Text.keyword"</span> } },
+    <span class="key">"missing_titles"</span>:  { <span class="key">"missing"</span>: { <span class="key">"field"</span>: <span class="st">"Title.keyword"</span> } }
+  }
+}</code></pre>
+
+  <div class="code-label">Age histogram + Class Name bucket</div>
+  <pre><code><span class="http-get">GET</span> /eval/_search
+{
+  <span class="key">"size"</span>: <span class="nm">0</span>,
+  <span class="key">"aggs"</span>: {
+    <span class="key">"age_groups"</span>: {
+      <span class="key">"histogram"</span>: {
+        <span class="key">"field"</span>: <span class="st">"Age"</span>,
+        <span class="key">"interval"</span>: <span class="nm">20</span>    <span class="cm">// ২০ বছরের ধাপে ভাগ</span>
+      },
+      <span class="key">"aggs"</span>: {
+        <span class="key">"class_breakdown"</span>: {
+          <span class="key">"terms"</span>: {
+            <span class="key">"field"</span>: <span class="st">"Class Name.keyword"</span>,
+            <span class="key">"size"</span>: <span class="nm">10</span>
+          }
+        }
+      }
+    }
+  }
+}</code></pre>
+
+  <div class="code-label">Rating statistics + Median</div>
+  <pre><code><span class="http-get">GET</span> /eval/_search
+{
+  <span class="key">"size"</span>: <span class="nm">0</span>,
+  <span class="key">"aggs"</span>: {
+    <span class="key">"rating_stats"</span>: {
+      <span class="key">"extended_stats"</span>: { <span class="key">"field"</span>: <span class="st">"Rating"</span> }
+    },
+    <span class="key">"rating_percentiles"</span>: {
+      <span class="key">"percentiles"</span>: {
+        <span class="key">"field"</span>: <span class="st">"Rating"</span>,
+        <span class="key">"percents"</span>: [<span class="nm">50</span>]   <span class="cm">// 50th percentile = median</span>
+      }
+    }
+  }
+}</code></pre>
+
+  <div class="code-label">Best rated articles-এ সবচেয়ে বেশি ব্যবহৃত শব্দ</div>
+  <pre><code><span class="cm"># Rating >= 5 এর review-এ most frequent terms</span>
+<span class="http-get">GET</span> /eval/_search
+{
+  <span class="key">"size"</span>: <span class="nm">0</span>,
+  <span class="key">"query"</span>: {
+    <span class="key">"range"</span>: { <span class="key">"Rating"</span>: { <span class="key">"gte"</span>: <span class="nm">5</span> } }
+  },
+  <span class="key">"aggs"</span>: {
+    <span class="key">"top_terms"</span>: {
+      <span class="key">"terms"</span>: {
+        <span class="key">"field"</span>: <span class="st">"Review Text.keyword"</span>,
+        <span class="key">"size"</span>: <span class="nm">20</span>
+      }
+    }
+  }
+}</code></pre>
+</section>
+
+<!-- SUMMARY CARD -->
+<div class="card card-y" style="margin-top:40px;">
+  <h3 style="margin-top:0; color: var(--yellow);">📚 সারসংক্ষেপ — যা শিখলাম</h3>
+  <p>✅ <strong>Elasticsearch</strong> — open source search + analytics engine, Java + Apache Lucene<br>
+     ✅ <strong>ELK Stack</strong> — Elasticsearch + Logstash + Kibana — তিনের সমন্বয়<br>
+     ✅ <strong>Architecture</strong> — Node → Cluster, Index → Shard → Replica<br>
+     ✅ <strong>REST API</strong> — GET (পড়া), PUT (তৈরি), POST (আপডেট), DELETE (মুছা)<br>
+     ✅ <strong>Kibana Dev Tools</strong> — Browser থেকে query, auto-complete সহ<br>
+     ✅ <strong>Mapping</strong> — text, keyword, integer, date, boolean — ঠিক ধরন দাও<br>
+     ✅ <strong>Reindexing</strong> — Mapping বদলাতে নতুন Index + copy<br>
+     ✅ <strong>Analyzer</strong> — Char Filter → Tokenizer → Token Filter → Inverted Index<br>
+     ✅ <strong>Search Types</strong> — match, match_phrase, multi_match, term, range, wildcard, bool<br>
+     ✅ <strong>Aggregation</strong> — stats, extended_stats, terms, cardinality, histogram, missing<br>
+     ✅ <strong>Concurrency</strong> — _seq_no + _primary_term দিয়ে race condition ঠেকাও<br>
+     ✅ <strong>Python</strong> — elasticsearch library দিয়ে bulk import ও query</p>
+</div>
+
+<!-- FINAL COMPARISON -->
+<div style="margin-top:40px;">
+  <h3 style="color: var(--yellow);">🔄 MongoDB vs Elasticsearch — কখন কোনটা?</h3>
+  <table>
+    <tr><th>বিষয়</th><th>MongoDB</th><th>Elasticsearch</th></tr>
+    <tr><td>মূল কাজ</td><td>Data storage, CRUD</td><td>Full-text search, Analytics</td></tr>
+    <tr><td>Schema</td><td>নমনীয়</td><td>Mapping দরকার</td></tr>
+    <tr><td>Text search</td><td>সীমিত</td><td>অত্যন্ত শক্তিশালী</td></tr>
+    <tr><td>Real-time update</td><td>ভালো</td><td>সামান্য বিলম্ব</td></tr>
+    <tr><td>Analytics</td><td>Aggregation Framework</td><td>Aggs + Kibana Visualization</td></tr>
+    <tr><td>শিখতে সহজ?</td><td>তুলনামূলক সহজ</td><td>কিছুটা জটিল</td></tr>
+  </table>
+</div>
+
+</main>
+
+<footer>
+  <p>⚡ Elasticsearch বাংলা গাইড · DataScientest Course Material</p>
+  <p style="margin-top:8px; opacity:0.5;">Saikot-এর জন্য তৈরি · সম্পূর্ণ নতুনদের জন্য</p>
+</footer>
+
+</body>
+</html>
