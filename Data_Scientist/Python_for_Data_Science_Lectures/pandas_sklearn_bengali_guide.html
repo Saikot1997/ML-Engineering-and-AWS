@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pandas ও Scikit-Learn: সম্পূর্ণ বাংলা গাইড</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--bgc:#21262d;--blue:#58a6ff;--green:#3fb950;--orange:#f0883e;--purple:#bc8cff;--pink:#f778ba;--yellow:#e3b341;--cyan:#39d353;--text:#e6edf3;--muted:#8b949e;--border:#30363d;--r:12px;--rs:8px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Hind Siliguri",sans-serif;background:var(--bg);color:var(--text);line-height:1.8;font-size:16px;}
+.sidebar{position:fixed;left:0;top:0;width:270px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;z-index:100;}
+.sidebar::-webkit-scrollbar{width:4px}.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sh{padding:18px;background:linear-gradient(135deg,#1a2332,#0d1117);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}
+.sh h2{font-size:13px;color:var(--blue);font-weight:600;}.sh p{font-size:11px;color:var(--muted);margin-top:3px;}
+.ns{padding:6px 0;}.nst{padding:6px 18px 3px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.ni{display:block;padding:6px 18px;font-size:13px;color:var(--muted);text-decoration:none;transition:all .2s;border-left:2px solid transparent;cursor:pointer;}
+.ni:hover,.ni.active{color:var(--blue);background:rgba(88,166,255,.08);border-left-color:var(--blue);}
+.ni.sub{padding-left:30px;font-size:12px;}
+.main{margin-left:270px;min-height:100vh;}
+.hero{background:linear-gradient(135deg,#0d1117 0%,#1a2332 40%,#0d1f35 100%);padding:55px 55px 45px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-50%;left:-20%;width:500px;height:500px;background:radial-gradient(circle,rgba(88,166,255,.07) 0%,transparent 70%);pointer-events:none;}
+.hbadge{display:inline-block;padding:4px 12px;background:rgba(88,166,255,.15);border:1px solid rgba(88,166,255,.3);border-radius:20px;font-size:12px;color:var(--blue);margin-bottom:14px;}
+.hero h1{font-size:36px;font-weight:700;line-height:1.3;background:linear-gradient(135deg,#e6edf3,#58a6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:14px;}
+.hero p{font-size:16px;color:var(--muted);max-width:580px;line-height:1.7;}
+.htags{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap;}
+.tag{padding:4px 12px;border-radius:6px;font-size:12px;font-weight:600;}
+.tb{background:rgba(88,166,255,.15);color:var(--blue);border:1px solid rgba(88,166,255,.25);}
+.tg{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.25);}
+.to{background:rgba(240,136,62,.15);color:var(--orange);border:1px solid rgba(240,136,62,.25);}
+.tp{background:rgba(188,140,255,.15);color:var(--purple);border:1px solid rgba(188,140,255,.25);}
+.content{padding:48px 55px;max-width:980px;}
+.section{margin-bottom:65px;animation:fi .4s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.shead{display:flex;align-items:center;gap:12px;margin-bottom:26px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.snum{width:38px;height:38px;background:linear-gradient(135deg,var(--blue),#1f6feb);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:white;flex-shrink:0;}
+.stitle{font-size:24px;font-weight:700;color:var(--text);}
+.ssub{font-size:12px;color:var(--muted);margin-top:2px;}
+h2.sub{font-size:19px;font-weight:600;color:var(--blue);margin:32px 0 14px;display:flex;align-items:center;gap:8px;}
+h2.sub::before{content:"▶";font-size:11px;color:var(--blue);}
+h3.mini{font-size:15px;font-weight:600;color:var(--orange);margin:20px 0 10px;}
+p{margin-bottom:13px;color:var(--text);}
+.card{background:var(--bgc);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:18px;}
+.cb{border-left:3px solid var(--blue)}.cg{border-left:3px solid var(--green)}.co{border-left:3px solid var(--orange)}.cp{border-left:3px solid var(--purple)}.cy{border-left:3px solid var(--yellow)}
+.ctitle{font-size:14px;font-weight:700;margin-bottom:9px;display:flex;align-items:center;gap:7px;}
+.ib{background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.25);border-radius:var(--rs);padding:14px 18px;margin:14px 0;font-size:15px;}
+.ib.warn{background:rgba(240,136,62,.08);border-color:rgba(240,136,62,.25);}
+.ib.ok{background:rgba(63,185,80,.08);border-color:rgba(63,185,80,.25);}
+.ib.tip{background:rgba(188,140,255,.08);border-color:rgba(188,140,255,.25);}
+.il{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+.il.b{color:var(--blue)}.il.o{color:var(--orange)}.il.g{color:var(--green)}.il.p{color:var(--purple)}
+.cb2{background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);padding:18px;margin:14px 0;overflow-x:auto;position:relative;}
+.cb2 pre{font-family:"JetBrains Mono",monospace;font-size:13px;line-height:1.7;color:#e6edf3;}
+.clbl{position:absolute;top:7px;right:10px;font-size:10px;color:var(--muted);font-family:"JetBrains Mono",monospace;text-transform:uppercase;}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.str{color:#a5d6ff}.num{color:#79c0ff}.cm{color:#8b949e;font-style:italic}.cls{color:#f0883e}.op{color:#ff7b72}
+.tc{overflow-x:auto;margin:14px 0;border-radius:var(--rs);border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:14px;}
+th{background:var(--bg3);color:var(--blue);padding:11px 15px;text-align:left;font-weight:600;font-size:13px;border-bottom:1px solid var(--border);}
+td{padding:9px 15px;border-bottom:1px solid var(--border);color:var(--muted);}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(88,166,255,.04)}
+.ex{background:linear-gradient(135deg,rgba(63,185,80,.06),rgba(63,185,80,.02));border:1px solid rgba(63,185,80,.2);border-radius:var(--r);padding:26px;margin:28px 0;}
+.exh{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid rgba(63,185,80,.2);}
+.exbadge{background:var(--green);color:#0d1117;padding:3px 10px;border-radius:18px;font-size:12px;font-weight:700;}
+.extitle{font-size:17px;font-weight:700;color:var(--green);}
+.exi{background:var(--bgc);border:1px solid var(--border);border-radius:var(--rs);padding:14px 18px;margin-bottom:12px;}
+.exn{font-size:12px;color:var(--green);font-weight:700;margin-bottom:5px;}
+.diff{display:inline-block;font-size:11px;padding:2px 7px;border-radius:4px;margin-left:7px;}
+.easy{background:rgba(63,185,80,.15);color:var(--green)}.medium{background:rgba(240,136,62,.15);color:var(--orange)}.hard{background:rgba(247,120,186,.15);color:var(--pink)}
+.stog{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:5px;cursor:pointer;font-size:12px;margin-top:9px;font-family:"Hind Siliguri",sans-serif;transition:all .2s;}
+.stog:hover{border-color:var(--blue);color:var(--blue);}
+.sc{display:none;margin-top:10px;}.sc.open{display:block;}
+.iv{background:linear-gradient(135deg,rgba(188,140,255,.06),rgba(188,140,255,.02));border:1px solid rgba(188,140,255,.2);border-radius:var(--r);padding:26px;margin:28px 0;}
+.ivh{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid rgba(188,140,255,.2);}
+.ivbadge{background:var(--purple);color:#0d1117;padding:3px 10px;border-radius:18px;font-size:12px;font-weight:700;}
+.ivtitle{font-size:17px;font-weight:700;color:var(--purple);}
+.ivq{background:var(--bgc);border:1px solid var(--border);border-radius:var(--rs);padding:14px 18px;margin-bottom:12px;}
+.ql{font-size:11px;color:var(--purple);font-weight:700;margin-bottom:5px;}
+.ac{background:var(--bgc);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:22px;transition:border-color .2s;}
+.ac:hover{border-color:var(--blue);}
+.an{font-size:19px;font-weight:700;color:var(--blue);margin-bottom:7px;}
+.at{font-size:13px;color:var(--green);margin-bottom:12px;font-style:italic;}
+.ci{background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.2);color:var(--blue);padding:1px 5px;border-radius:4px;font-family:"JetBrains Mono",monospace;font-size:13px;}
+.hb{color:var(--blue);font-weight:600}.hg{color:var(--green);font-weight:600}.ho{color:var(--orange);font-weight:600}.hp{color:var(--purple);font-weight:600}.hy{color:var(--yellow);font-weight:600}
+.dc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:22px 0;text-align:center;}
+.dt{font-size:12px;color:var(--muted);margin-bottom:14px;text-align:center;}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0;}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0;}
+.mt{menu-toggle:hidden;position:fixed;top:14px;left:14px;z-index:200;background:var(--bgc);border:1px solid var(--border);color:var(--text);width:38px;height:38px;border-radius:7px;cursor:pointer;font-size:17px;align-items:center;justify-content:center;}
+hr.div{border:none;height:1px;background:var(--border);margin:36px 0;}
+@media(max-width:900px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.hero{padding:55px 18px 38px}.hero h1{font-size:24px}.content{padding:26px 18px}.two{grid-template-columns:1fr}.three{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<button style="display:none;position:fixed;top:14px;left:14px;z-index:200;background:#21262d;border:1px solid #30363d;color:#e6edf3;width:38px;height:38px;border-radius:7px;cursor:pointer;font-size:17px;align-items:center;justify-content:center;" id="mtog" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<nav class="sidebar">
+  <div class="sh"><h2>📚 Pandas & ML বাংলা গাইড</h2><p>Data Science থেকে Machine Learning</p></div>
+  <div class="ns">
+    <div class="nst">ভূমিকা</div>
+    <a class="ni" href="#intro">শুরুর কথা</a>
+  </div>
+  <div class="ns">
+    <div class="nst">অধ্যায় ১ — ডেটা ক্লিনিং</div>
+    <a class="ni" href="#dup">ডুপ্লিকেট ম্যানেজমেন্ট</a>
+    <a class="ni sub" href="#dup-method">duplicated() মেথড</a>
+    <a class="ni sub" href="#drop-dup">drop_duplicates()</a>
+    <a class="ni" href="#modify">উপাদান পরিবর্তন</a>
+    <a class="ni sub" href="#replace">replace()</a>
+    <a class="ni sub" href="#rename">rename()</a>
+    <a class="ni sub" href="#astype">astype()</a>
+    <a class="ni" href="#apply">apply() ও lambda</a>
+  </div>
+  <div class="ns">
+    <div class="nst">অধ্যায় ২ — Missing Values</div>
+    <a class="ni" href="#nan">NaN কী?</a>
+    <a class="ni sub" href="#isna">isna() / isnull()</a>
+    <a class="ni sub" href="#fillna">fillna()</a>
+    <a class="ni sub" href="#dropna">dropna()</a>
+  </div>
+  <div class="ns">
+    <div class="nst">অধ্যায় ৩ — ডেটা প্রসেসিং</div>
+    <a class="ni" href="#filter">Filtering</a>
+    <a class="ni" href="#concat">concat()</a>
+    <a class="ni" href="#merge">merge() / Join</a>
+    <a class="ni sub" href="#setidx">set_index()</a>
+    <a class="ni" href="#sort">sort_values()</a>
+    <a class="ni" href="#groupby">GroupBy ও agg()</a>
+    <a class="ni sub" href="#crosstab">crosstab()</a>
+  </div>
+  <div class="ns">
+    <div class="nst">অধ্যায় ৪ — Machine Learning</div>
+    <a class="ni" href="#ml">ML কী?</a>
+    <a class="ni" href="#linreg">Linear Regression</a>
+    <a class="ni sub" href="#ttsplit">Train/Test Split</a>
+    <a class="ni sub" href="#workflow">Sklearn Workflow</a>
+    <a class="ni sub" href="#metrics">MSE ও MAE</a>
+  </div>
+  <div class="ns">
+    <div class="nst">অধ্যায় ৫ — Algorithms</div>
+    <a class="ni" href="#algos">সব অ্যালগরিদম</a>
+    <a class="ni sub" href="#a-lr">Linear Regression</a>
+    <a class="ni sub" href="#a-dt">Decision Tree</a>
+    <a class="ni sub" href="#a-rf">Random Forest</a>
+    <a class="ni sub" href="#a-knn">KNN</a>
+    <a class="ni sub" href="#a-svm">SVM</a>
+    <a class="ni sub" href="#a-km">K-Means</a>
+    <a class="ni sub" href="#a-logit">Logistic Regression</a>
+    <a class="ni" href="#qref">Quick Reference</a>
+  </div>
+</nav>
+
+<main class="main">
+<div class="hero">
+  <div class="hbadge">🇧🇩 সম্পূর্ণ বাংলায়</div>
+  <h1>Pandas ও Machine Learning<br>সম্পূর্ণ বাংলা গাইড</h1>
+  <p>একদম শূন্য থেকে শুরু করে ML Engineering পর্যন্ত — প্রতিটি concept বাংলায় বিস্তারিত ব্যাখ্যা, SVG diagram, interview প্রশ্ন ও ML-level exercise সহ।</p>
+  <div class="htags">
+    <span class="tag tb">📊 Pandas</span>
+    <span class="tag tg">🤖 Scikit-Learn</span>
+    <span class="tag to">🔢 NumPy</span>
+    <span class="tag tp">🧠 ML Algorithms</span>
+  </div>
+</div>
+<div class="content">
+
+<!-- INTRO -->
+<section class="section" id="intro">
+<div class="shead"><div class="snum">০</div><div><div class="stitle">শুরুর কথা — এই গাইড কার জন্য?</div><div class="ssub">Introduction</div></div></div>
+<p>তুমি যদি Python জানো এবং <span class="hb">Data Science</span> বা <span class="hb">Machine Learning</span> শিখতে চাও — এই গাইড তোমার জন্যই।</p>
+<div class="ib"><div class="il b">💡 মূল ধারণা</div>Data Science = ডেটা থেকে তথ্য বের করা। Machine Learning = কম্পিউটারকে নিজে নিজে শিখতে দেওয়া।</div>
+<div class="two">
+  <div class="card cb"><div class="ctitle" style="color:var(--blue)">📦 এই গাইডে কী আছে?</div><ul style="color:var(--muted);font-size:14px;padding-left:16px;"><li>Pandas দিয়ে ডেটা পরিষ্কার</li><li>Missing value handle করা</li><li>ডেটা filter, merge, sort</li><li>GroupBy দিয়ে বিশ্লেষণ</li><li>Scikit-learn দিয়ে ML</li><li>সব ML Algorithm ব্যাখ্যা</li></ul></div>
+  <div class="card cg"><div class="ctitle" style="color:var(--green)">🎯 শেখার পরে তুমি পারবে</div><ul style="color:var(--muted);font-size:14px;padding-left:16px;"><li>Real dataset clean করতে</li><li>Data explore করতে</li><li>ML model train করতে</li><li>Model evaluate করতে</li><li>Interview আত্মবিশ্বাসের সাথে দিতে</li></ul></div>
+</div>
+</section>
+
+<!-- CHAPTER 1: DUPLICATES -->
+<section class="section" id="dup">
+<div class="shead"><div class="snum">১</div><div><div class="stitle">ডেটা ক্লিনিং — ডুপ্লিকেট</div><div class="ssub">Data Cleaning — Duplicates</div></div></div>
+<p>ডেটা নিয়ে কাজ শুরুর আগে প্রথম কাজ হলো <span class="hy">পরিষ্কার</span> করা। ঠিক যেমন রান্নার আগে সবজি ধোয়া দরকার, analysis-এর আগে ডেটা পরিষ্কার করা দরকার।</p>
+<div class="ib"><div class="il b">📖 ডুপ্লিকেট কী?</div>একই তথ্য একাধিকবার থাকলে সেটি ডুপ্লিকেট। যেমন একই ব্যক্তির নাম-বয়স দুইবার লেখা। এতে statistics-এ ভুল হয়।</div>
+
+<div class="dc" id="dup-method">
+<div class="dt">চিত্র: DataFrame-এ ডুপ্লিকেট — duplicated() কীভাবে কাজ করে</div>
+<svg viewBox="0 0 660 270" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%">
+<defs><linearGradient id="hg1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#1f6feb"/><stop offset="100%" style="stop-color:#388bfd"/></linearGradient>
+<marker id="a1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#58a6ff"/></marker></defs>
+<!-- Left table -->
+<text x="155" y="13" fill="#8b949e" font-size="11" text-anchor="middle" font-family="monospace">df (আসল)</text>
+<rect x="20" y="20" width="270" height="235" rx="8" fill="#161b22" stroke="#30363d"/>
+<rect x="20" y="20" width="270" height="34" rx="8" fill="url(#hg1)"/><rect x="20" y="38" width="270" height="16" fill="url(#hg1)"/>
+<text x="70" y="42" fill="white" font-size="11" font-family="monospace" font-weight="bold">নাম</text>
+<text x="155" y="42" fill="white" font-size="11" font-family="monospace" font-weight="bold">বয়স</text>
+<text x="240" y="42" fill="white" font-size="11" font-family="monospace" font-weight="bold">লিঙ্গ</text>
+<rect x="20" y="54" width="270" height="38" fill="rgba(88,166,255,.05)"/>
+<text x="45" y="78" fill="#8b949e" font-size="10" font-family="monospace">0</text>
+<text x="65" y="78" fill="#e6edf3" font-size="12" font-family="monospace">Robert</text>
+<text x="155" y="78" fill="#e6edf3" font-size="12" font-family="monospace">56</text>
+<text x="240" y="78" fill="#e6edf3" font-size="12" font-family="monospace">M</text>
+<rect x="20" y="92" width="270" height="38" fill="transparent"/>
+<text x="45" y="116" fill="#8b949e" font-size="10" font-family="monospace">1</text>
+<text x="65" y="116" fill="#e6edf3" font-size="12" font-family="monospace">Mark</text>
+<text x="155" y="116" fill="#e6edf3" font-size="12" font-family="monospace">23</text>
+<text x="240" y="116" fill="#e6edf3" font-size="12" font-family="monospace">M</text>
+<rect x="20" y="130" width="270" height="38" fill="rgba(88,166,255,.05)"/>
+<text x="45" y="154" fill="#8b949e" font-size="10" font-family="monospace">2</text>
+<text x="65" y="154" fill="#e6edf3" font-size="12" font-family="monospace">Alina</text>
+<text x="155" y="154" fill="#e6edf3" font-size="12" font-family="monospace">32</text>
+<text x="240" y="154" fill="#e6edf3" font-size="12" font-family="monospace">F</text>
+<rect x="20" y="168" width="270" height="38" fill="rgba(247,120,186,.12)"/>
+<rect x="20" y="168" width="3" height="38" fill="#f778ba"/>
+<text x="45" y="192" fill="#8b949e" font-size="10" font-family="monospace">3</text>
+<text x="65" y="192" fill="#f778ba" font-size="12" font-family="monospace">Mark</text>
+<text x="155" y="192" fill="#f778ba" font-size="12" font-family="monospace">23</text>
+<text x="240" y="192" fill="#f778ba" font-size="12" font-family="monospace">M</text>
+<text x="155" y="220" fill="#f778ba" font-size="11" text-anchor="middle" font-family="monospace">⚠ ডুপ্লিকেট! Row 1-এর copy</text>
+<line x1="20" y1="92" x2="290" y2="92" stroke="#30363d"/><line x1="20" y1="130" x2="290" y2="130" stroke="#30363d"/>
+<line x1="20" y1="168" x2="290" y2="168" stroke="#30363d"/><line x1="20" y1="206" x2="290" y2="206" stroke="#30363d"/>
+<line x1="140" y1="20" x2="140" y2="255" stroke="#30363d"/><line x1="220" y1="20" x2="220" y2="255" stroke="#30363d"/>
+<!-- Arrow -->
+<path d="M 300 130 L 340 130" stroke="#58a6ff" stroke-width="2" fill="none" marker-end="url(#a1)"/>
+<text x="310" y="122" fill="#8b949e" font-size="9" font-family="monospace">.duplicated()</text>
+<!-- Right table -->
+<text x="495" y="13" fill="#8b949e" font-size="11" text-anchor="middle" font-family="monospace">ফলাফল</text>
+<rect x="350" y="20" width="290" height="235" rx="8" fill="#161b22" stroke="#30363d"/>
+<rect x="350" y="20" width="290" height="34" rx="8" fill="url(#hg1)"/><rect x="350" y="38" width="290" height="16" fill="url(#hg1)"/>
+<text x="400" y="42" fill="white" font-size="11" font-family="monospace" font-weight="bold">index</text>
+<text x="490" y="42" fill="white" font-size="11" font-family="monospace" font-weight="bold">ডুপ্লিকেট?</text>
+<text x="400" y="78" fill="#e6edf3" font-size="12" font-family="monospace">0</text><text x="490" y="78" fill="#3fb950" font-size="12" font-family="monospace" font-weight="bold">False</text>
+<text x="400" y="116" fill="#e6edf3" font-size="12" font-family="monospace">1</text><text x="490" y="116" fill="#3fb950" font-size="12" font-family="monospace" font-weight="bold">False</text>
+<text x="400" y="154" fill="#e6edf3" font-size="12" font-family="monospace">2</text><text x="490" y="154" fill="#3fb950" font-size="12" font-family="monospace" font-weight="bold">False</text>
+<rect x="350" y="168" width="290" height="38" fill="rgba(247,120,186,.12)"/>
+<text x="400" y="192" fill="#f778ba" font-size="12" font-family="monospace">3</text><text x="490" y="192" fill="#f778ba" font-size="12" font-family="monospace" font-weight="bold">True ← ডুপ্লিকেট</text>
+<line x1="350" y1="92" x2="640" y2="92" stroke="#30363d"/><line x1="350" y1="130" x2="640" y2="130" stroke="#30363d"/>
+<line x1="350" y1="168" x2="640" y2="168" stroke="#30363d"/><line x1="350" y1="206" x2="640" y2="206" stroke="#30363d"/>
+<line x1="460" y1="20" x2="460" y2="255" stroke="#30363d"/>
+</svg>
+</div>
+
+<div class="cb2"><span class="clbl">python</span><pre><span class="cm"># ডুপ্লিকেট খোঁজো</span>
+df.<span class="fn">duplicated</span>()         <span class="cm"># Series: True/False</span>
+df.<span class="fn">duplicated</span>().<span class="fn">sum</span>()  <span class="cm"># মোট সংখ্যা (True=1, False=0)</span>
+
+<span class="cm"># transactions ডেটাসেটে</span>
+transactions.<span class="fn">duplicated</span>().<span class="fn">sum</span>()  <span class="cm"># → 112</span></pre></div>
+
+<div class="ib tip"><div class="il p">🧠 মনে রাখো</div>Python-এ <strong>True = 1</strong> এবং <strong>False = 0</strong>। তাই <code class="ci">.sum()</code> করলে সব True গুলো যোগ হয়ে মোট ডুপ্লিকেট সংখ্যা পাওয়া যায়।</div>
+
+<h2 class="sub" id="drop-dup">drop_duplicates() মেথড</h2>
+<p>ডুপ্লিকেট মুছে ফেলতে <span class="ci">drop_duplicates()</span> ব্যবহার হয়।</p>
+<div class="tc"><table>
+<tr><th>Parameter</th><th>মানে</th><th>Default</th></tr>
+<tr><td><code>subset</code></td><td>কোন column দেখে ডুপ্লিকেট বিচার করবে</td><td>None (সব column)</td></tr>
+<tr><td><code>keep</code></td><td>'first': প্রথমটি রাখো | 'last': শেষেরটি | False: কোনোটি না</td><td>'first'</td></tr>
+<tr><td><code>inplace</code></td><td>True: সরাসরি পরিবর্তন | False: নতুন copy</td><td>False</td></tr>
+</table></div>
+
+<div class="ib warn"><div class="il o">⚠️ সতর্কতা</div><strong>inplace=True</strong> ব্যবহারে সাবধান — একবার করলে আর আগের অবস্থায় ফেরানো যাবে না। সবসময় নতুন variable-এ রাখো: <code class="ci">df_clean = df.drop_duplicates()</code></div>
+
+<div class="cb2"><span class="clbl">python</span><pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+transactions = pd.<span class="fn">read_csv</span>(<span class="str">"transactions.csv"</span>, sep=<span class="str">","</span>, index_col=<span class="str">"transaction_id"</span>)
+
+<span class="cm"># প্রথম occurrence রেখে বাকি মুছো (সবচেয়ে recent রাখো)</span>
+transactions = transactions.<span class="fn">drop_duplicates</span>(keep=<span class="str">'first'</span>)
+
+<span class="cm"># শুধু prod_cat_code দেখে ডুপ্লিকেট মুছো</span>
+transactions.<span class="fn">drop_duplicates</span>(subset=[<span class="str">'prod_cat_code'</span>], keep=<span class="str">'first'</span>)</pre></div>
+
+<!-- Exercise 1 -->
+<div class="ex">
+<div class="exh"><span class="exbadge">EXERCISE</span><span class="extitle">অনুশীলন — Data Cleaning</span></div>
+<div class="exi">
+<div class="exn">প্রশ্ন ১ <span class="diff easy">সহজ</span></div>
+<p>তুমি একটি e-commerce company-তে Data Engineer। <code class="ci">orders.csv</code> লোড করো এবং মোট ডুপ্লিকেট সংখ্যা প্রিন্ট করো।</p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><div class="cb2"><pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+orders = pd.<span class="fn">read_csv</span>(<span class="str">'orders.csv'</span>)
+<span class="fn">print</span>(<span class="str">f"মোট ডুপ্লিকেট: {orders.duplicated().sum()}"</span>)</pre></div></div>
+</div>
+<div class="exi">
+<div class="exn">প্রশ্ন ২ <span class="diff medium">মধ্যম</span></div>
+<p><code class="ci">customer_id</code> দেখে ডুপ্লিকেট বাদ দাও এবং সবচেয়ে সাম্প্রতিক entry রাখো।</p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><div class="cb2"><pre>clean = customers.<span class="fn">drop_duplicates</span>(subset=[<span class="str">'customer_id'</span>], keep=<span class="str">'last'</span>)
+<span class="fn">print</span>(<span class="str">f"আগে: {len(customers)}, পরে: {len(clean)}"</span>)</pre></div></div>
+</div>
+<div class="exi">
+<div class="exn">প্রশ্ন ৩ <span class="diff hard">কঠিন</span></div>
+<p><code class="ci">apply()</code> ও <code class="ci">lambda</code> দিয়ে <code class="ci">price_category</code> column তৈরি করো: &lt;100='cheap', 100-500='medium', &gt;500='expensive'</p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><div class="cb2"><pre>products[<span class="str">'price_category'</span>] = products[<span class="str">'price'</span>].<span class="fn">apply</span>(
+    <span class="kw">lambda</span> p: <span class="str">'cheap'</span> <span class="kw">if</span> p&lt;<span class="num">100</span> <span class="kw">else</span> (<span class="str">'medium'</span> <span class="kw">if</span> p&lt;=<span class="num">500</span> <span class="kw">else</span> <span class="str">'expensive'</span>)
+)</pre></div></div>
+</div>
+</div>
+
+<div class="iv">
+<div class="ivh"><span class="ivbadge">INTERVIEW</span><span class="ivtitle">Interview প্রশ্ন — Data Cleaning</span></div>
+<div class="ivq"><div class="ql">প্রশ্ন ১</div>
+<p><strong>inplace=True এবং নতুন variable-এ assign করার পার্থক্য? Production-এ কোনটি ব্যবহার করা উচিত?</strong></p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><p><strong>inplace=True:</strong> original DataFrame সরাসরি পরিবর্তন হয়, debug কঠিন। <strong>নতুন variable:</strong> original অক্ষত থাকে, debug সহজ। Production-এ সবসময় নতুন variable ব্যবহার করো।</p></div></div>
+<div class="ivq"><div class="ql">প্রশ্ন ২</div>
+<p><strong>কোনো column-এর unique value গুলো দেখতে এবং গণনা করতে কী ব্যবহার করবে?</strong></p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><div class="cb2"><pre>df[<span class="str">'col'</span>].<span class="fn">unique</span>()      <span class="cm"># সব unique value</span>
+df[<span class="str">'col'</span>].<span class="fn">nunique</span>()     <span class="cm"># unique value-এর সংখ্যা</span>
+df[<span class="str">'col'</span>].<span class="fn">value_counts</span>() <span class="cm"># প্রতিটির frequency</span></pre></div></div></div>
+</div>
+</section>
+
+<!-- MODIFY ELEMENTS -->
+<section class="section" id="modify">
+<div class="shead"><div class="snum">২</div><div><div class="stitle">DataFrame-এর উপাদান পরিবর্তন</div><div class="ssub">replace, rename, astype</div></div></div>
+
+<h2 class="sub" id="replace">replace() — মান পরিবর্তন</h2>
+<p><span class="ci">replace()</span> দিয়ে column-এর নির্দিষ্ট value পরিবর্তন করা যায়।</p>
+
+<div class="dc">
+<div class="dt">চিত্র: replace() — দেশের নাম সংক্ষিপ্ত করা</div>
+<svg viewBox="0 0 660 145" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%">
+<defs><marker id="a2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#58a6ff"/></marker></defs>
+<rect x="15" y="15" width="240" height="120" rx="7" fill="#161b22" stroke="#30363d"/>
+<rect x="15" y="15" width="240" height="26" rx="7" fill="#1f6feb"/><rect x="15" y="29" width="240" height="12" fill="#1f6feb"/>
+<text x="75" y="32" fill="white" font-size="10" font-family="monospace" font-weight="bold">নাম</text>
+<text x="155" y="32" fill="white" font-size="10" font-family="monospace" font-weight="bold">দেশ</text>
+<text x="60" y="60" fill="#e6edf3" font-size="11" font-family="monospace">Brown</text><text x="145" y="60" fill="#f0883e" font-size="11" font-family="monospace">Australia</text>
+<text x="60" y="85" fill="#e6edf3" font-size="11" font-family="monospace">Duchamp</text><text x="145" y="85" fill="#f0883e" font-size="11" font-family="monospace">France</text>
+<text x="60" y="110" fill="#e6edf3" font-size="11" font-family="monospace">Hana</text><text x="145" y="110" fill="#f0883e" font-size="11" font-family="monospace">Japan</text>
+<line x1="15" y1="68" x2="255" y2="68" stroke="#30363d"/><line x1="15" y1="93" x2="255" y2="93" stroke="#30363d"/><line x1="120" y1="15" x2="120" y2="135" stroke="#30363d"/>
+<text x="330" y="75" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">df.replace(</text>
+<text x="330" y="87" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">  ['Australia','France','Japan'],</text>
+<text x="330" y="99" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">  ['AUS','FRA','JPN'])</text>
+<path d="M 260 75 L 405 75" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+<rect x="415" y="15" width="230" height="120" rx="7" fill="#161b22" stroke="#30363d"/>
+<rect x="415" y="15" width="230" height="26" rx="7" fill="#1f6feb"/><rect x="415" y="29" width="230" height="12" fill="#1f6feb"/>
+<text x="468" y="32" fill="white" font-size="10" font-family="monospace" font-weight="bold">নাম</text>
+<text x="548" y="32" fill="white" font-size="10" font-family="monospace" font-weight="bold">দেশ</text>
+<text x="450" y="60" fill="#e6edf3" font-size="11" font-family="monospace">Brown</text><text x="540" y="60" fill="#3fb950" font-size="11" font-family="monospace">AUS</text>
+<text x="450" y="85" fill="#e6edf3" font-size="11" font-family="monospace">Duchamp</text><text x="540" y="85" fill="#3fb950" font-size="11" font-family="monospace">FRA</text>
+<text x="450" y="110" fill="#e6edf3" font-size="11" font-family="monospace">Hana</text><text x="540" y="110" fill="#3fb950" font-size="11" font-family="monospace">JPN</text>
+<line x1="415" y1="68" x2="645" y2="68" stroke="#30363d"/><line x1="415" y1="93" x2="645" y2="93" stroke="#30363d"/><line x1="515" y1="15" x2="515" y2="135" stroke="#30363d"/>
+</svg>
+</div>
+
+<div class="cb2"><span class="clbl">python</span><pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># store type text → number-এ বদলাও</span>
+transactions = transactions.<span class="fn">replace</span>(
+    to_replace=[<span class="str">'e-Shop'</span>, <span class="str">'TeleShop'</span>, <span class="str">'MBR'</span>, <span class="str">'Flagship store'</span>, np.nan],
+    value=[<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">0</span>]
+)
+<span class="cm"># np.nan = missing value — এটিও replace করা যায়</span></pre></div>
+
+<h2 class="sub" id="rename">rename() — Column নাম পরিবর্তন</h2>
+<div class="cb2"><span class="clbl">python</span><pre><span class="cm"># Dictionary: পুরনো নাম → নতুন নাম, axis=1 = columns</span>
+new_names = {<span class="str">'Store_type'</span>:<span class="str">'store_type'</span>, <span class="str">'Qty'</span>:<span class="str">'qty'</span>, <span class="str">'Rate'</span>:<span class="str">'rate'</span>, <span class="str">'Tax'</span>:<span class="str">'tax'</span>}
+transactions = transactions.<span class="fn">rename</span>(new_names, axis=<span class="num">1</span>)</pre></div>
+
+<h2 class="sub" id="astype">astype() — Data Type পরিবর্তন</h2>
+<p>কখনো pandas number column-কে string হিসেবে চিনে। <span class="ci">astype()</span> দিয়ে সঠিক type দেওয়া যায়।</p>
+<div class="tc"><table>
+<tr><th>Type</th><th>উদাহরণ</th><th>কখন?</th></tr>
+<tr><td><code>int</code></td><td>1, 2, 100</td><td>পূর্ণ সংখ্যা</td></tr>
+<tr><td><code>float</code></td><td>1.5, 3.14</td><td>দশমিক</td></tr>
+<tr><td><code>str</code></td><td>'hello'</td><td>লেখা</td></tr>
+<tr><td><code>bool</code></td><td>True/False</td><td>হ্যাঁ/না</td></tr>
+</table></div>
+<div class="cb2"><span class="clbl">python</span><pre><span class="cm"># Dictionary দিয়ে একসাথে অনেক column</span>
+transactions = transactions.<span class="fn">astype</span>({<span class="str">'Store_type'</span>:<span class="str">'int'</span>, <span class="str">'prod_subcat_code'</span>:<span class="str">'int'</span>})
+
+<span class="cm"># একটি column আলাদাভাবে</span>
+transactions[<span class="str">'Store_type'</span>] = transactions[<span class="str">'Store_type'</span>].<span class="fn">astype</span>(<span class="str">'int'</span>)</pre></div>
+</section>
+
+<!-- APPLY LAMBDA -->
+<section class="section" id="apply">
+<div class="shead"><div class="snum">৩</div><div><div class="stitle">apply() ও Lambda Function</div><div class="ssub">DataFrame-এ ফাংশন প্রয়োগ</div></div></div>
+<p><span class="ci">apply()</span> দিয়ে পুরো column বা row-এ একসাথে function প্রয়োগ করা যায়। Lambda হলো নামহীন ছোট function।</p>
+<div class="ib"><div class="il b">💡 Lambda কী?</div>
+সাধারণ: <code class="ci">def double(x): return x*2</code><br>
+Lambda: <code class="ci">double = lambda x: x*2</code><br>
+দুটো একই কাজ করে! Lambda-র সুবিধা — apply()-এর ভেতরেই লেখা যায়।</div>
+
+<div class="dc">
+<div class="dt">চিত্র: apply() — axis=0 (column-এ) বনাম axis=1 (row-এ)</div>
+<svg viewBox="0 0 640 210" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+<defs>
+<marker id="ag" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#3fb950"/></marker>
+<marker id="ab" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#58a6ff"/></marker>
+</defs>
+<!-- Grid -->
+<rect x="60" y="30" width="260" height="155" rx="5" fill="#161b22" stroke="#30363d"/>
+<rect x="60" y="30" width="260" height="28" rx="5" fill="#1f6feb"/><rect x="60" y="46" width="260" height="12" fill="#1f6feb"/>
+<text x="150" y="49" fill="white" font-size="10" text-anchor="middle" font-family="monospace">Year</text>
+<text x="230" y="49" fill="white" font-size="10" text-anchor="middle" font-family="monospace">Width</text>
+<text x="300" y="49" fill="white" font-size="10" text-anchor="middle" font-family="monospace">Height</text>
+<text x="150" y="80" fill="#e6edf3" font-size="12" text-anchor="middle" font-family="monospace">2010</text>
+<text x="230" y="80" fill="#e6edf3" font-size="12" text-anchor="middle" font-family="monospace">50</text>
+<text x="300" y="80" fill="#e6edf3" font-size="12" text-anchor="middle" font-family="monospace">20</text>
+<text x="150" y="125" fill="#e6edf3" font-size="12" text-anchor="middle" font-family="monospace">2020</text>
+<text x="230" y="125" fill="#e6edf3" font-size="12" text-anchor="middle" font-family="monospace">55</text>
+<text x="300" y="125" fill="#e6edf3" font-size="12" text-anchor="middle" font-family="monospace">22</text>
+<line x1="60" y1="97" x2="320" y2="97" stroke="#30363d"/>
+<line x1="60" y1="142" x2="320" y2="142" stroke="#30363d"/>
+<line x1="190" y1="30" x2="190" y2="185" stroke="#30363d"/>
+<line x1="265" y1="30" x2="265" y2="185" stroke="#30363d"/>
+<!-- axis=0 vertical arrows -->
+<path d="M 150 188 L 150 205" stroke="#3fb950" stroke-width="2" marker-end="url(#ag)"/>
+<path d="M 230 188 L 230 205" stroke="#3fb950" stroke-width="2" marker-end="url(#ag)"/>
+<path d="M 300 188 L 300 205" stroke="#3fb950" stroke-width="2" marker-end="url(#ag)"/>
+<!-- axis=1 right arrows -->
+<path d="M 325 80 L 375 80" stroke="#58a6ff" stroke-width="2" marker-end="url(#ab)"/>
+<path d="M 325 125 L 375 125" stroke="#58a6ff" stroke-width="2" marker-end="url(#ab)"/>
+<text x="395" y="84" fill="#58a6ff" font-size="11" font-family="monospace">2010+50+20 = 2080</text>
+<text x="395" y="129" fill="#58a6ff" font-size="11" font-family="monospace">2020+55+22 = 2097</text>
+<text x="190" y="208" fill="#3fb950" font-size="10" text-anchor="middle" font-family="monospace">axis=0: প্রতিটি column-এ sum</text>
+<text x="500" y="155" fill="#58a6ff" font-size="10" text-anchor="middle" font-family="monospace">axis=1: প্রতিটি row-এর sum</text>
+<text x="25" y="110" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">df</text>
+</svg>
+</div>
+
+<div class="cb2"><span class="clbl">python</span><pre><span class="cm"># তারিখ '28-02-2014' থেকে day, month, year আলাদা করো</span>
+
+<span class="cm"># পদ্ধতি ১: আলাদা function</span>
+<span class="kw">def</span> <span class="fn">get_day</span>(date):
+    <span class="kw">return</span> date.<span class="fn">split</span>(<span class="str">'-'</span>)[<span class="num">0</span>]  <span class="cm"># ['28','02','2014'][0] = '28'</span>
+
+days = transactions[<span class="str">'tran_date'</span>].<span class="fn">apply</span>(get_day)
+
+<span class="cm"># পদ্ধতি ২: Lambda (সংক্ষিপ্ত)</span>
+transactions[<span class="str">'day'</span>]   = transactions[<span class="str">'tran_date'</span>].<span class="fn">apply</span>(<span class="kw">lambda</span> d: d.<span class="fn">split</span>(<span class="str">'-'</span>)[<span class="num">0</span>])
+transactions[<span class="str">'month'</span>] = transactions[<span class="str">'tran_date'</span>].<span class="fn">apply</span>(<span class="kw">lambda</span> d: d.<span class="fn">split</span>(<span class="str">'-'</span>)[<span class="num">1</span>])
+transactions[<span class="str">'year'</span>]  = transactions[<span class="str">'tran_date'</span>].<span class="fn">apply</span>(<span class="kw">lambda</span> d: d.<span class="fn">split</span>(<span class="str">'-'</span>)[<span class="num">2</span>])
+
+<span class="cm"># পুরো row-এ (axis=1): prod_cat_code + '-' + prod_subcat_code</span>
+transactions[<span class="str">'prod_cat'</span>] = transactions.<span class="fn">astype</span>(<span class="str">'str'</span>).<span class="fn">apply</span>(
+    <span class="kw">lambda</span> row: row[<span class="str">'prod_cat_code'</span>] + <span class="str">'-'</span> + row[<span class="str">'prod_subcat_code'</span>], axis=<span class="num">1</span>
+)</pre></div>
+</section>
+
+<!-- CHAPTER 2: MISSING VALUES -->
+<section class="section" id="nan">
+<div class="shead"><div class="snum">৪</div><div><div class="stitle">Missing Values — NaN/NA</div><div class="ssub">অনুপস্থিত মান পরিচালনা</div></div></div>
+<p>বাস্তব ডেটায় সবসময় কিছু তথ্য থাকে না। এগুলোকে <span class="hy">NaN (Not a Number)</span> বা <span class="hy">NA</span> বলে।</p>
+<div class="ib warn"><div class="il o">⚠️ কেন বিপজ্জনক?</div>NaN থাকা column-এ calculation করলে ফলাফলও NaN হয়। তাই analysis-এর আগে handle করা আবশ্যক।</div>
+
+<div class="dc">
+<div class="dt">চিত্র: isna() — NaN খুঁজে বের করার পদ্ধতি</div>
+<svg viewBox="0 0 640 170" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+<defs><marker id="a3" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#58a6ff"/></marker></defs>
+<rect x="10" y="10" width="200" height="148" rx="6" fill="#161b22" stroke="#30363d"/>
+<rect x="10" y="10" width="200" height="26" rx="6" fill="#1f6feb"/><rect x="10" y="24" width="200" height="12" fill="#1f6feb"/>
+<text x="65" y="28" fill="white" font-size="10" font-family="monospace" font-weight="bold">নাম</text>
+<text x="145" y="28" fill="white" font-size="10" font-family="monospace" font-weight="bold">বয়স</text>
+<text x="50" y="60" fill="#f778ba" font-size="11" font-family="monospace">NaN</text>
+<text x="135" y="60" fill="#f778ba" font-size="11" font-family="monospace">NaN</text>
+<text x="50" y="95" fill="#e6edf3" font-size="11" font-family="monospace">Duchamp</text>
+<text x="140" y="95" fill="#e6edf3" font-size="11" font-family="monospace">25</text>
+<text x="50" y="130" fill="#e6edf3" font-size="11" font-family="monospace">Hana</text>
+<text x="140" y="130" fill="#e6edf3" font-size="11" font-family="monospace">54</text>
+<line x1="10" y1="72" x2="210" y2="72" stroke="#30363d"/><line x1="10" y1="107" x2="210" y2="107" stroke="#30363d"/>
+<line x1="118" y1="10" x2="118" y2="158" stroke="#30363d"/>
+<path d="M 215 85 L 255 85" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a3)"/>
+<text x="228" y="77" fill="#8b949e" font-size="9" font-family="monospace">.isna()</text>
+<rect x="265" y="10" width="220" height="148" rx="6" fill="#161b22" stroke="#30363d"/>
+<rect x="265" y="10" width="220" height="26" rx="6" fill="#1f6feb"/><rect x="265" y="24" width="220" height="12" fill="#1f6feb"/>
+<text x="320" y="28" fill="white" font-size="10" font-family="monospace" font-weight="bold">নাম</text>
+<text x="415" y="28" fill="white" font-size="10" font-family="monospace" font-weight="bold">বয়স</text>
+<rect x="265" y="36" width="220" height="36" fill="rgba(247,120,186,.1)"/>
+<text x="310" y="60" fill="#f778ba" font-size="12" font-family="monospace" font-weight="bold">True</text>
+<text x="410" y="60" fill="#f778ba" font-size="12" font-family="monospace" font-weight="bold">True</text>
+<text x="310" y="95" fill="#3fb950" font-size="12" font-family="monospace" font-weight="bold">False</text>
+<text x="410" y="95" fill="#3fb950" font-size="12" font-family="monospace" font-weight="bold">False</text>
+<text x="310" y="130" fill="#3fb950" font-size="12" font-family="monospace" font-weight="bold">False</text>
+<text x="410" y="130" fill="#3fb950" font-size="12" font-family="monospace" font-weight="bold">False</text>
+<line x1="265" y1="72" x2="485" y2="72" stroke="#30363d"/><line x1="265" y1="107" x2="485" y2="107" stroke="#30363d"/>
+<line x1="390" y1="10" x2="390" y2="158" stroke="#30363d"/>
+<text x="510" y="60" fill="#f778ba" font-size="10" font-family="monospace">← NaN</text>
+<text x="510" y="95" fill="#3fb950" font-size="10" font-family="monospace">← ঠিক আছে</text>
+<text x="510" y="130" fill="#3fb950" font-size="10" font-family="monospace">← ঠিক আছে</text>
+</svg>
+</div>
+
+<h2 class="sub" id="isna">isna() — Missing Value সনাক্ত করো</h2>
+<div class="cb2"><span class="clbl">python</span><pre><span class="cm"># কোন column-এ NaN আছে?</span>
+transactions.<span class="fn">isna</span>().<span class="fn">any</span>(axis=<span class="num">0</span>)   <span class="cm"># True/False per column</span>
+
+<span class="cm"># প্রতিটি column-এ কতটি NaN?</span>
+transactions.<span class="fn">isna</span>().<span class="fn">sum</span>(axis=<span class="num">0</span>)
+
+<span class="cm"># সবচেয়ে বেশি NaN কোন column-এ?</span>
+transactions.<span class="fn">isna</span>().<span class="fn">sum</span>().<span class="fn">idxmax</span>()  <span class="cm"># → 'store_type'</span>
+
+<span class="cm"># কতটি row-এ অন্তত একটি NaN?</span>
+transactions.<span class="fn">isna</span>().<span class="fn">any</span>(axis=<span class="num">1</span>).<span class="fn">sum</span>()  <span class="cm"># → 107</span>
+
+<span class="cm"># NaN আছে এমন row দেখাও</span>
+transactions[transactions.<span class="fn">isna</span>().<span class="fn">any</span>(axis=<span class="num">1</span>)]</pre></div>
+
+<h2 class="sub" id="fillna">fillna() — Missing Value পূরণ করো</h2>
+<div class="tc"><table>
+<tr><th>Column-এর ধরন</th><th>কী দিয়ে fill?</th><th>কারণ</th></tr>
+<tr><td>সংখ্যা (continuous)</td><td>mean() বা median()</td><td>outlier থাকলে median ভালো</td></tr>
+<tr><td>সংখ্যা (integer)</td><td>-1 বা 0</td><td>অজানা নির্দেশ করতে</td></tr>
+<tr><td>Category (text)</td><td>mode()[0]</td><td>সবচেয়ে সাধারণ মান</td></tr>
+<tr><td>Time series</td><td>ffill() / bfill()</td><td>আগের/পরের মান দিয়ে</td></tr>
+</table></div>
+
+<div class="cb2"><span class="clbl">python</span><pre><span class="cm"># -1 দিয়ে fill করো</span>
+transactions[<span class="str">'prod_subcat_code'</span>] = transactions[<span class="str">'prod_subcat_code'</span>].<span class="fn">fillna</span>(<span class="op">-</span><span class="num">1</span>)
+
+<span class="cm"># mode (সবচেয়ে common) দিয়ে fill করো — [0] কারণ mode() Series ফেরত দেয়</span>
+mode_val = transactions[<span class="str">'store_type'</span>].<span class="fn">mode</span>()[<span class="num">0</span>]  <span class="cm"># 'e-Shop'</span>
+transactions[<span class="str">'store_type'</span>] = transactions[<span class="str">'store_type'</span>].<span class="fn">fillna</span>(mode_val)
+
+<span class="cm"># mean দিয়ে fill করো</span>
+transactions[<span class="str">'rate'</span>] = transactions[<span class="str">'rate'</span>].<span class="fn">fillna</span>(transactions[<span class="str">'rate'</span>].<span class="fn">mean</span>())
+
+<span class="cm"># check: আর NaN নেই?</span>
+transactions[[<span class="str">'prod_subcat_code'</span>, <span class="str">'store_type'</span>]].<span class="fn">isna</span>().<span class="fn">sum</span>()  <span class="cm"># 0, 0</span></pre></div>
+
+<h2 class="sub" id="dropna">dropna() — Missing Value মুছে দাও</h2>
+<div class="cb2"><span class="clbl">python</span><pre><span class="cm"># rate, tax, total_amt তিনটিতেই NaN হলে সেই row মুছো</span>
+transactions = transactions.<span class="fn">dropna</span>(
+    axis=<span class="num">0</span>, how=<span class="str">'all'</span>,
+    subset=[<span class="str">'rate'</span>, <span class="str">'tax'</span>, <span class="str">'total_amt'</span>]
+)
+
+<span class="cm"># যেকোনো NaN থাকলেই মুছো</span>
+df_clean = df.<span class="fn">dropna</span>(axis=<span class="num">0</span>, how=<span class="str">'any'</span>)
+
+<span class="cm"># পুরোপুরি খালি column মুছো</span>
+df_clean = df.<span class="fn">dropna</span>(axis=<span class="num">1</span>, how=<span class="str">'all'</span>)</pre></div>
+
+<div class="ex">
+<div class="exh"><span class="exbadge">EXERCISE</span><span class="extitle">অনুশীলন — Missing Values (ML Level)</span></div>
+<div class="exi">
+<div class="exn">প্রশ্ন ১ <span class="diff medium">মধ্যম</span></div>
+<p>House price prediction project-এ: numerical column গুলোতে median দিয়ে, categorical column-এ mode দিয়ে NaN fill করো।</p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><div class="cb2"><pre><span class="cm"># Numerical: median</span>
+num_cols = df.<span class="fn">select_dtypes</span>(include=[<span class="str">'number'</span>]).columns
+<span class="kw">for</span> col <span class="kw">in</span> num_cols:
+    df[col] = df[col].<span class="fn">fillna</span>(df[col].<span class="fn">median</span>())
+<span class="cm"># Categorical: mode</span>
+cat_cols = df.<span class="fn">select_dtypes</span>(include=[<span class="str">'object'</span>]).columns
+<span class="kw">for</span> col <span class="kw">in</span> cat_cols:
+    df[col] = df[col].<span class="fn">fillna</span>(df[col].<span class="fn">mode</span>()[<span class="num">0</span>])</pre></div></div>
+</div>
+<div class="exi">
+<div class="exn">প্রশ্ন ২ <span class="diff hard">কঠিন</span></div>
+<p>Smart NaN handler লেখো: যদি ৫০%-এর বেশি NaN থাকে তাহলে column drop করো, না হলে fill করো।</p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><div class="cb2"><pre><span class="kw">def</span> <span class="fn">smart_nan_handler</span>(df, threshold=<span class="num">0.5</span>):
+    df = df.<span class="fn">copy</span>()
+    <span class="kw">for</span> col <span class="kw">in</span> df.columns:
+        nan_pct = df[col].<span class="fn">isna</span>().<span class="fn">mean</span>()
+        <span class="kw">if</span> nan_pct > threshold:
+            df = df.<span class="fn">drop</span>(columns=[col])
+            <span class="fn">print</span>(<span class="str">f"Drop: {col} ({nan_pct:.0%} NaN)"</span>)
+        <span class="kw">elif</span> nan_pct > <span class="num">0</span>:
+            <span class="kw">if</span> df[col].dtype == <span class="str">'object'</span>:
+                df[col] = df[col].<span class="fn">fillna</span>(df[col].<span class="fn">mode</span>()[<span class="num">0</span>])
+            <span class="kw">else</span>:
+                df[col] = df[col].<span class="fn">fillna</span>(df[col].<span class="fn">median</span>())
+    <span class="kw">return</span> df</pre></div></div>
+</div>
+</div>
+
+<div class="iv">
+<div class="ivh"><span class="ivbadge">INTERVIEW</span><span class="ivtitle">Interview — Missing Values</span></div>
+<div class="ivq"><div class="ql">প্রশ্ন ১ (Google/Amazon level)</div>
+<p><strong>ML pipeline-এ NaN imputation কোন stage-এ করা উচিত এবং কেন?</strong></p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><p><strong>Train/test split-এর পরে।</strong> শুধু training data থেকে mean/median calculate করো, তারপর সেই values দিয়ে test-এও fill করো। Split-এর আগে করলে test data-এর তথ্য train-এ "leak" হয় — এটি <strong>data leakage</strong>, যা validation-এ cheating।</p>
+<div class="cb2"><pre><span class="cm"># ✅ সঠিক পদ্ধতি</span>
+train_median = X_train[<span class="str">'age'</span>].<span class="fn">median</span>()
+X_train[<span class="str">'age'</span>] = X_train[<span class="str">'age'</span>].<span class="fn">fillna</span>(train_median)
+X_test[<span class="str">'age'</span>]  = X_test[<span class="str">'age'</span>].<span class="fn">fillna</span>(train_median)</pre></div></div></div>
+</div>
+</section>
+
+<!-- FILTERING -->
+<section class="section" id="filter">
+<div class="shead"><div class="snum">৫</div><div><div class="stitle">Filtering — শর্ত অনুযায়ী row বাছাই</div><div class="ssub">Binary Operators: &amp;, |, ~</div></div></div>
+<div class="ib warn"><div class="il o">⚠️ গুরুত্বপূর্ণ!</div>pandas-এ multiple condition filter-এ <code class="ci">and</code>/<code class="ci">or</code> কাজ করে না। ব্যবহার করতে হবে <code class="ci">&amp;</code> এবং <code class="ci">|</code>। প্রতিটি condition অবশ্যই <code class="ci">()</code> এর মধ্যে রাখতে হবে।</div>
+
+<div class="dc">
+<div class="dt">চিত্র: তিনটি Binary Operator</div>
+<svg viewBox="0 0 640 120" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+<rect x="15" y="15" width="190" height="90" rx="8" fill="#161b22" stroke="#3fb950" stroke-width="1.5"/>
+<text x="110" y="38" fill="#3fb950" font-size="13" text-anchor="middle" font-family="monospace" font-weight="bold">&amp; (AND)</text>
+<text x="110" y="57" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">দুটো শর্তই সত্য হতে হবে</text>
+<text x="110" y="75" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="monospace">A এবং B — দুটোই হ্যাঁ</text>
+<text x="110" y="93" fill="#58a6ff" font-size="10" text-anchor="middle" font-family="monospace">df[(c1) &amp; (c2)]</text>
+<rect x="225" y="15" width="190" height="90" rx="8" fill="#161b22" stroke="#58a6ff" stroke-width="1.5"/>
+<text x="320" y="38" fill="#58a6ff" font-size="13" text-anchor="middle" font-family="monospace" font-weight="bold">| (OR)</text>
+<text x="320" y="57" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">যেকোনো একটি সত্য হলেই</text>
+<text x="320" y="75" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="monospace">A অথবা B — একটি হ্যাঁ</text>
+<text x="320" y="93" fill="#58a6ff" font-size="10" text-anchor="middle" font-family="monospace">df[(c1) | (c2)]</text>
+<rect x="435" y="15" width="190" height="90" rx="8" fill="#161b22" stroke="#f778ba" stroke-width="1.5"/>
+<text x="530" y="38" fill="#f778ba" font-size="13" text-anchor="middle" font-family="monospace" font-weight="bold">~ (NOT)</text>
+<text x="530" y="57" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">শর্তের বিপরীত চাই</text>
+<text x="530" y="75" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="monospace">A না হলে দেখাও</text>
+<text x="530" y="93" fill="#58a6ff" font-size="10" text-anchor="middle" font-family="monospace">df[~(condition)]</text>
+</svg>
+</div>
+
+<div class="cb2"><span class="clbl">python</span><pre><span class="cm"># & — e-Shop এবং total_amt > 5000</span>
+e_shop = transactions[
+    (transactions[<span class="str">'store_type'</span>] == <span class="str">'e-Shop'</span>) &amp;
+    (transactions[<span class="str">'total_amt'</span>] &gt; <span class="num">5000</span>)
+]
+<span class="fn">print</span>(<span class="str">f"e-Shop &gt;5000: {len(e_shop)}"</span>)  <span class="cm"># 1185</span>
+
+<span class="cm"># | — e-Shop অথবা TeleShop</span>
+online = transactions[
+    (transactions[<span class="str">'store_type'</span>] == <span class="str">'e-Shop'</span>) |
+    (transactions[<span class="str">'store_type'</span>] == <span class="str">'TeleShop'</span>)
+]
+
+<span class="cm"># ~ — e-Shop নয়</span>
+not_eshop = transactions[~(transactions[<span class="str">'store_type'</span>] == <span class="str">'e-Shop'</span>)]</pre></div>
+
+<div class="iv"><div class="ivh"><span class="ivbadge">INTERVIEW</span><span class="ivtitle">Interview — Filtering</span></div>
+<div class="ivq"><div class="ql">প্রশ্ন</div>
+<p><strong>pandas-এ <code>and</code> ব্যবহার করলে কী error আসে এবং কেন?</strong></p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><p><code>ValueError: The truth value of a Series is ambiguous</code> — কারণ Python-এর <code>and</code> operator একটি single boolean প্রত্যাশা করে, কিন্তু pandas Series-এ অনেক boolean থাকে। <code>&amp;</code> bitwise operator element-wise কাজ করে, তাই pandas এটি সঠিকভাবে handle করতে পারে।</p></div></div>
+</div>
+</section>
+
+<!-- CONCAT & MERGE -->
+<section class="section" id="concat">
+<div class="shead"><div class="snum">৬</div><div><div class="stitle">concat() — DataFrame জোড়া লাগানো</div><div class="ssub">Concatenation</div></div></div>
+<p><span class="ci">pd.concat()</span> দিয়ে দুই বা তার বেশি DataFrame জোড়া লাগানো যায়।</p>
+
+<div class="dc">
+<div class="dt">চিত্র: axis=0 (উপর-নিচে) বনাম axis=1 (পাশাপাশি)</div>
+<svg viewBox="0 0 640 185" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+<defs><marker id="ac" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#58a6ff"/></marker></defs>
+<text x="130" y="13" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">axis=0 (উপর-নিচে)</text>
+<rect x="30" y="20" width="95" height="50" rx="4" fill="rgba(88,166,255,.1)" stroke="#58a6ff"/>
+<text x="77" y="42" fill="#58a6ff" font-size="10" text-anchor="middle" font-family="monospace">df1 (3 rows)</text>
+<text x="77" y="58" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">3 cols</text>
+<rect x="30" y="75" width="95" height="50" rx="4" fill="rgba(63,185,80,.1)" stroke="#3fb950"/>
+<text x="77" y="97" fill="#3fb950" font-size="10" text-anchor="middle" font-family="monospace">df2 (3 rows)</text>
+<text x="77" y="113" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">3 cols</text>
+<path d="M 130 95 L 160 95" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ac)"/>
+<rect x="168" y="20" width="95" height="105" rx="4" fill="rgba(188,140,255,.1)" stroke="#bc8cff"/>
+<text x="215" y="75" fill="#bc8cff" font-size="10" text-anchor="middle" font-family="monospace">union</text>
+<text x="215" y="92" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">6 rows, 3 cols</text>
+<text x="130" y="152" fill="#58a6ff" font-size="9" text-anchor="middle" font-family="monospace">pd.concat([df1,df2], axis=0)</text>
+<text x="450" y="13" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">axis=1 (পাশাপাশি)</text>
+<rect x="310" y="30" width="75" height="100" rx="4" fill="rgba(88,166,255,.1)" stroke="#58a6ff"/>
+<text x="347" y="82" fill="#58a6ff" font-size="10" text-anchor="middle" font-family="monospace">df1</text>
+<text x="347" y="97" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">3 cols</text>
+<rect x="390" y="30" width="75" height="100" rx="4" fill="rgba(63,185,80,.1)" stroke="#3fb950"/>
+<text x="427" y="82" fill="#3fb950" font-size="10" text-anchor="middle" font-family="monospace">df2</text>
+<text x="427" y="97" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">3 cols</text>
+<path d="M 470 80 L 495 80" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ac)"/>
+<rect x="503" y="30" width="110" height="100" rx="4" fill="rgba(188,140,255,.1)" stroke="#bc8cff"/>
+<text x="558" y="82" fill="#bc8cff" font-size="10" text-anchor="middle" font-family="monospace">union</text>
+<text x="558" y="97" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">3 rows, 6 cols</text>
+<text x="450" y="152" fill="#58a6ff" font-size="9" text-anchor="middle" font-family="monospace">pd.concat([df1,df2], axis=1)</text>
+</svg>
+</div>
+
+<div class="cb2"><span class="clbl">python</span><pre><span class="cm"># transactions-কে দুই ভাগে ভাগ করো</span>
+part_1 = transactions[transactions.columns[:<span class="num">4</span>]]
+part_2 = transactions[transactions.columns[<span class="num">4</span>:]]
+<span class="cm"># পাশাপাশি জোড়া লাগাও</span>
+union = pd.<span class="fn">concat</span>([part_1, part_2], axis=<span class="num">1</span>)</pre></div>
+</section>
+
+<section class="section" id="merge">
+<div class="shead"><div class="snum">৭</div><div><div class="stitle">merge() — Common Column দিয়ে মেলানো</div><div class="ssub">SQL-style JOIN</div></div></div>
+
+<div class="dc">
+<div class="dt">চিত্র: চার ধরনের JOIN</div>
+<svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+<text x="80" y="13" fill="#3fb950" font-size="11" text-anchor="middle" font-family="monospace" font-weight="bold">INNER JOIN</text>
+<ellipse cx="58" cy="65" rx="40" ry="30" fill="rgba(88,166,255,.1)" stroke="#58a6ff" stroke-width="1.5"/>
+<ellipse cx="93" cy="65" rx="40" ry="30" fill="rgba(63,185,80,.1)" stroke="#3fb950" stroke-width="1.5"/>
+<ellipse cx="76" cy="65" rx="18" ry="22" fill="rgba(63,185,80,.35)" stroke="none"/>
+<text x="76" y="68" fill="white" font-size="9" text-anchor="middle" font-family="monospace">match</text>
+<text x="76" y="110" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">শুধু মিলে যাওয়া</text>
+<text x="76" y="124" fill="#3fb950" font-size="9" text-anchor="middle" font-family="monospace">NaN নেই</text>
+
+<text x="240" y="13" fill="#58a6ff" font-size="11" text-anchor="middle" font-family="monospace" font-weight="bold">LEFT JOIN</text>
+<ellipse cx="218" cy="65" rx="40" ry="30" fill="rgba(88,166,255,.3)" stroke="#58a6ff" stroke-width="1.5"/>
+<ellipse cx="253" cy="65" rx="40" ry="30" fill="rgba(63,185,80,.1)" stroke="#3fb950" stroke-width="1.5"/>
+<ellipse cx="236" cy="65" rx="18" ry="22" fill="rgba(63,185,80,.3)" stroke="none"/>
+<text x="236" y="68" fill="white" font-size="9" text-anchor="middle" font-family="monospace">left সব</text>
+<text x="236" y="110" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">বাম DataFrame সব</text>
+<text x="236" y="124" fill="#58a6ff" font-size="9" text-anchor="middle" font-family="monospace">সবচেয়ে বেশি ব্যবহৃত</text>
+
+<text x="400" y="13" fill="#f0883e" font-size="11" text-anchor="middle" font-family="monospace" font-weight="bold">RIGHT JOIN</text>
+<ellipse cx="378" cy="65" rx="40" ry="30" fill="rgba(88,166,255,.1)" stroke="#58a6ff" stroke-width="1.5"/>
+<ellipse cx="413" cy="65" rx="40" ry="30" fill="rgba(63,185,80,.3)" stroke="#3fb950" stroke-width="1.5"/>
+<ellipse cx="396" cy="65" rx="18" ry="22" fill="rgba(63,185,80,.3)" stroke="none"/>
+<text x="396" y="68" fill="white" font-size="9" text-anchor="middle" font-family="monospace">right সব</text>
+<text x="396" y="110" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">ডান DataFrame সব</text>
+
+<text x="560" y="13" fill="#bc8cff" font-size="11" text-anchor="middle" font-family="monospace" font-weight="bold">OUTER JOIN</text>
+<ellipse cx="538" cy="65" rx="40" ry="30" fill="rgba(88,166,255,.25)" stroke="#58a6ff" stroke-width="1.5"/>
+<ellipse cx="578" cy="65" rx="40" ry="30" fill="rgba(63,185,80,.25)" stroke="#3fb950" stroke-width="1.5"/>
+<text x="558" y="68" fill="white" font-size="9" text-anchor="middle" font-family="monospace">সব rows</text>
+<text x="558" y="110" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">সব rows, অনেক NaN</text>
+
+<rect x="15" y="145" width="610" height="100" rx="8" fill="#0d1117" stroke="#30363d"/>
+<text x="35" y="170" fill="#8b949e" font-size="10" font-family="monospace"># inner</text>
+<text x="35" y="188" fill="#58a6ff" font-size="11" font-family="monospace">transactions.merge(customer, on='cust_id', how='inner')</text>
+<text x="35" y="212" fill="#8b949e" font-size="10" font-family="monospace"># left (সবচেয়ে বেশি ব্যবহৃত — base DF-এর সব row রাখো)</text>
+<text x="35" y="230" fill="#58a6ff" font-size="11" font-family="monospace">transactions.merge(customer, on='cust_id', how='left')</text>
+</svg>
+</div>
+
+<div class="cb2"><span class="clbl">python</span><pre><span class="cm"># common column তৈরি করো</span>
+customer = customer.<span class="fn">rename</span>(columns={<span class="str">'customer_Id'</span>: <span class="str">'cust_id'</span>})
+
+<span class="cm"># left join</span>
+fusion = transactions.<span class="fn">merge</span>(right=customer, on=<span class="str">'cust_id'</span>, how=<span class="str">'left'</span>)
+
+<span class="cm"># NaN check</span>
+fusion.<span class="fn">isna</span>().<span class="fn">sum</span>()</pre></div>
+
+<h2 class="sub" id="setidx">set_index() ও reset_index()</h2>
+<div class="cb2"><span class="clbl">python</span><pre><span class="cm"># merge-এর পরে index হারায় — পুনরায় সেট করো</span>
+fusion = fusion.<span class="fn">set_index</span>(transactions.index)
+
+<span class="cm"># column কে index বানাও</span>
+boats_clients = boats_clients.<span class="fn">set_index</span>(<span class="str">"boat_name"</span>)
+
+<span class="cm"># index দিয়ে row খুঁজো</span>
+boats_clients.<span class="fn">loc</span>[<span class="str">'Julia'</span>, <span class="str">'client_name'</span>]  <span class="cm"># → 'Anna'</span>
+
+<span class="cm"># default index-এ ফিরে যাও</span>
+df = df.<span class="fn">reset_index</span>()</pre></div>
+</section>
+
+<!-- SORTING -->
+<section class="section" id="sort">
+<div class="shead"><div class="snum">৮</div><div><div class="stitle">sort_values() — ক্রম অনুযায়ী সাজানো</div><div class="ssub">Sorting</div></div></div>
+<div class="cb2"><span class="clbl">python</span><pre><span class="cm"># ascending (ছোট থেকে বড়)</span>
+df.<span class="fn">sort_values</span>(by=<span class="str">'price'</span>, ascending=<span class="cls">True</span>)
+
+<span class="cm"># descending (বড় থেকে ছোট)</span>
+df.<span class="fn">sort_values</span>(by=<span class="str">'price'</span>, ascending=<span class="cls">False</span>)
+
+<span class="cm"># একাধিক column দিয়ে sort</span>
+df.<span class="fn">sort_values</span>(by=[<span class="str">'bonus_points'</span>, <span class="str">'grade'</span>], ascending=<span class="cls">True</span>)
+
+<span class="cm"># সবচেয়ে বেশি reservation আছে নীল নৌকা — ১ম row নাও</span>
+most_reserved_blue = boats_clients[
+    boats_clients[<span class="str">'color'</span>] == <span class="str">'blue'</span>
+].<span class="fn">sort_values</span>(<span class="str">'n_reservations'</span>, ascending=<span class="cls">False</span>).<span class="fn">iloc</span>[<span class="num">0</span>]
+
+<span class="cm"># index দিয়ে sort</span>
+df.<span class="fn">set_index</span>(<span class="str">'grade'</span>).<span class="fn">sort_index</span>()</pre></div>
+</section>
+
+<!-- GROUPBY -->
+<section class="section" id="groupby">
+<div class="shead"><div class="snum">৯</div><div><div class="stitle">GroupBy — গ্রুপ করে বিশ্লেষণ</div><div class="ssub">groupby, agg, crosstab</div></div></div>
+<p><span class="ci">groupby()</span> ডেটাকে গ্রুপে ভাগ করে এবং প্রতিটি গ্রুপে calculation করে — Excel Pivot Table-এর মতো।</p>
+
+<div class="ib"><div class="il b">💡 GroupBy-এর তিনটি ধাপ</div>
+<strong>Split:</strong> column-এর মান অনুযায়ী গ্রুপ করো → <strong>Apply:</strong> প্রতিটি গ্রুপে function চালাও → <strong>Combine:</strong> ফলাফল একসাথে দেখাও</div>
+
+<div class="dc">
+<div class="dt">চিত্র: boats.groupby("color").mean() — Split-Apply-Combine</div>
+<svg viewBox="0 0 640 190" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+<defs>
+<marker id="aGB" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#58a6ff"/></marker>
+<marker id="aGP" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#bc8cff"/></marker>
+</defs>
+<!-- Original -->
+<rect x="10" y="20" width="120" height="158" rx="4" fill="#161b22" stroke="#30363d"/>
+<rect x="10" y="20" width="120" height="24" rx="4" fill="#1f6feb"/><rect x="10" y="32" width="120" height="12" fill="#1f6feb"/>
+<text x="48" y="35" fill="white" font-size="9" font-family="monospace">color</text>
+<text x="90" y="35" fill="white" font-size="9" font-family="monospace">n_res</text>
+<text x="38" y="58" fill="#58a6ff" font-size="10" font-family="monospace">blue</text><text x="90" y="58" fill="#e6edf3" font-size="10" font-family="monospace">41</text>
+<text x="38" y="78" fill="#58a6ff" font-size="10" font-family="monospace">blue</text><text x="90" y="78" fill="#e6edf3" font-size="10" font-family="monospace">34</text>
+<text x="38" y="98" fill="#3fb950" font-size="10" font-family="monospace">red</text><text x="90" y="98" fill="#e6edf3" font-size="10" font-family="monospace">20</text>
+<text x="38" y="118" fill="#f0883e" font-size="10" font-family="monospace">green</text><text x="90" y="118" fill="#e6edf3" font-size="10" font-family="monospace">16</text>
+<text x="38" y="138" fill="#e3b341" font-size="10" font-family="monospace">yellow</text><text x="90" y="138" fill="#e6edf3" font-size="10" font-family="monospace">12</text>
+<text x="38" y="158" fill="#f0883e" font-size="10" font-family="monospace">green</text><text x="90" y="158" fill="#e6edf3" font-size="10" font-family="monospace">10</text>
+<line x1="10" y1="66" x2="130" y2="66" stroke="#30363d"/><line x1="10" y1="86" x2="130" y2="86" stroke="#30363d"/>
+<line x1="10" y1="106" x2="130" y2="106" stroke="#30363d"/><line x1="10" y1="126" x2="130" y2="126" stroke="#30363d"/>
+<line x1="10" y1="146" x2="130" y2="146" stroke="#30363d"/><line x1="72" y1="20" x2="72" y2="178" stroke="#30363d"/>
+<!-- SPLIT arrows -->
+<text x="155" y="85" fill="#58a6ff" font-size="9" font-family="monospace">SPLIT</text>
+<path d="M 132 65 L 180 50" stroke="#58a6ff" stroke-width="1" marker-end="url(#aGB)"/>
+<path d="M 132 115 L 180 115" stroke="#3fb950" stroke-width="1" marker-end="url(#aGB)"/>
+<path d="M 132 158 L 180 155" stroke="#f0883e" stroke-width="1" marker-end="url(#aGB)"/>
+<!-- Groups -->
+<rect x="188" y="25" width="110" height="42" rx="3" fill="rgba(88,166,255,.1)" stroke="#58a6ff"/>
+<text x="243" y="42" fill="#58a6ff" font-size="10" text-anchor="middle" font-family="monospace">blue: 41,34</text>
+<text x="243" y="56" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">→ mean=37.5</text>
+<rect x="188" y="95" width="110" height="42" rx="3" fill="rgba(63,185,80,.1)" stroke="#3fb950"/>
+<text x="243" y="112" fill="#3fb950" font-size="10" text-anchor="middle" font-family="monospace">red: 20</text>
+<text x="243" y="126" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">→ mean=20.0</text>
+<rect x="188" y="140" width="110" height="35" rx="3" fill="rgba(240,136,62,.1)" stroke="#f0883e"/>
+<text x="243" y="157" fill="#f0883e" font-size="10" text-anchor="middle" font-family="monospace">green: 16,10</text>
+<text x="243" y="169" fill="#8b949e" font-size="9" text-anchor="middle" font-family="monospace">→ mean=13.0</text>
+<!-- COMBINE arrows -->
+<text x="325" y="85" fill="#bc8cff" font-size="9" font-family="monospace">COMBINE</text>
+<path d="M 300 46 L 360 80" stroke="#bc8cff" stroke-width="1" marker-end="url(#aGP)"/>
+<path d="M 300 116 L 360 95" stroke="#bc8cff" stroke-width="1" marker-end="url(#aGP)"/>
+<path d="M 300 157 L 360 130" stroke="#bc8cff" stroke-width="1" marker-end="url(#aGP)"/>
+<!-- Result -->
+<rect x="368" y="30" width="170" height="128" rx="4" fill="#161b22" stroke="#bc8cff"/>
+<rect x="368" y="30" width="170" height="24" rx="4" fill="rgba(188,140,255,.3)"/><rect x="368" y="42" width="170" height="12" fill="rgba(188,140,255,.3)"/>
+<text x="428" y="45" fill="white" font-size="9" font-family="monospace">color</text>
+<text x="500" y="45" fill="white" font-size="9" font-family="monospace">mean</text>
+<text x="410" y="75" fill="#58a6ff" font-size="10" font-family="monospace">blue</text><text x="500" y="75" fill="#e6edf3" font-size="10" font-family="monospace">37.5</text>
+<text x="410" y="100" fill="#3fb950" font-size="10" font-family="monospace">red</text><text x="500" y="100" fill="#e6edf3" font-size="10" font-family="monospace">20.0</text>
+<text x="410" y="125" fill="#f0883e" font-size="10" font-family="monospace">green</text><text x="500" y="125" fill="#e6edf3" font-size="10" font-family="monospace">13.0</text>
+<text x="410" y="148" fill="#e3b341" font-size="10" font-family="monospace">yellow</text><text x="500" y="148" fill="#e6edf3" font-size="10" font-family="monospace">12.0</text>
+<line x1="368" y1="85" x2="538" y2="85" stroke="#30363d"/><line x1="368" y1="110" x2="538" y2="110" stroke="#30363d"/><line x1="368" y1="135" x2="538" y2="135" stroke="#30363d"/>
+<line x1="468" y1="30" x2="468" y2="158" stroke="#30363d"/>
+</svg>
+</div>
+
+<div class="cb2"><span class="clbl">python</span><pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># সহজ groupby</span>
+boats.<span class="fn">groupby</span>(<span class="str">"color"</span>).<span class="fn">mean</span>()
+
+<span class="cm"># agg দিয়ে custom functions প্রতিটি column-এ</span>
+n_cats = <span class="kw">lambda</span> s: <span class="fn">len</span>(np.<span class="fn">unique</span>(s))
+
+functions = {
+    <span class="str">'total_amt'</span>: [<span class="str">'min'</span>, <span class="str">'max'</span>, <span class="str">'sum'</span>],
+    <span class="str">'store_type'</span>: n_cats
+}
+transactions.<span class="fn">groupby</span>(<span class="str">'cust_id'</span>).<span class="fn">agg</span>(functions)
+
+<span class="cm"># শুধু positive qty-এর statistics</span>
+max_qty    = <span class="kw">lambda</span> qty: qty[qty&gt;<span class="num">0</span>].<span class="fn">max</span>()
+min_qty    = <span class="kw">lambda</span> qty: qty[qty&gt;<span class="num">0</span>].<span class="fn">min</span>()
+median_qty = <span class="kw">lambda</span> qty: qty[qty&gt;<span class="num">0</span>].<span class="fn">median</span>()
+
+transactions.<span class="fn">groupby</span>(<span class="str">'cust_id'</span>).<span class="fn">agg</span>({<span class="str">'qty'</span>: [max_qty, min_qty, median_qty]})</pre></div>
+
+<h2 class="sub" id="crosstab">pd.crosstab() — ক্রস-ট্যাবুলেশন</h2>
+<div class="cb2"><span class="clbl">python</span><pre><span class="cm"># category × subcategory frequency</span>
+pd.<span class="fn">crosstab</span>(transactions[<span class="str">'prod_cat_code'</span>], transactions[<span class="str">'prod_subcat_code'</span>])
+
+<span class="cm"># normalize=1: column-এর মধ্যে %  |  normalize=0: row-এর মধ্যে %</span>
+year_col  = transactions[<span class="str">'tran_date'</span>].<span class="fn">apply</span>(<span class="kw">lambda</span> x: x.<span class="fn">split</span>(<span class="str">'-'</span>)[<span class="num">2</span>]).<span class="fn">astype</span>(<span class="fn">int</span>)
+pd.<span class="fn">crosstab</span>(year_col, transactions[<span class="str">'store_type'</span>], normalize=<span class="num">1</span>)</pre></div>
+
+<div class="ex">
+<div class="exh"><span class="exbadge">EXERCISE</span><span class="extitle">অনুশীলন — Data Processing (ML Level)</span></div>
+<div class="exi"><div class="exn">প্রশ্ন ১ <span class="diff medium">মধ্যম</span></div>
+<p>Retail analytics project-এ <code class="ci">sales</code> DataFrame-এ প্রতিটি category-তে: মোট revenue, গড় units sold, এবং সর্বোচ্চ revenue বের করো।</p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><div class="cb2"><pre>result = sales.<span class="fn">groupby</span>(<span class="str">'category'</span>).<span class="fn">agg</span>({
+    <span class="str">'revenue'</span>: [<span class="str">'sum'</span>, <span class="str">'max'</span>],
+    <span class="str">'units_sold'</span>: <span class="str">'mean'</span>
+})
+<span class="fn">print</span>(result)</pre></div></div></div>
+<div class="exi"><div class="exn">প্রশ্ন ২ <span class="diff hard">কঠিন</span></div>
+<p>Fraud detection project-এ প্রতিটি user-এর গড় transaction amount-এর ৩ গুণের বেশি transactions flag করো।</p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><div class="cb2"><pre>user_avg = transactions.<span class="fn">groupby</span>(<span class="str">'user_id'</span>)[<span class="str">'amount'</span>].<span class="fn">mean</span>().<span class="fn">reset_index</span>()
+user_avg.columns = [<span class="str">'user_id'</span>, <span class="str">'avg_amount'</span>]
+df = transactions.<span class="fn">merge</span>(user_avg, on=<span class="str">'user_id'</span>, how=<span class="str">'left'</span>)
+df[<span class="str">'is_suspicious'</span>] = df[<span class="str">'amount'</span>] &gt; (df[<span class="str">'avg_amount'</span>] * <span class="num">3</span>)
+<span class="fn">print</span>(<span class="str">f"সন্দেহজনক: {df['is_suspicious'].sum()}"</span>)</pre></div></div></div>
+</div>
+</section>
+
+<!-- CHAPTER 4: ML -->
+<section class="section" id="ml">
+<div class="shead"><div class="snum">১০</div><div><div class="stitle">Machine Learning — ভূমিকা</div><div class="ssub">কম্পিউটারকে শেখানো</div></div></div>
+<div class="ib"><div class="il b">💡 সহজ উদাহরণ</div>তুমি একটি শিশুকে ১০০টি বিড়াল ও ১০০টি কুকুরের ছবি দেখালে সে নিজে নিজে পার্থক্য শিখে নেবে। ML-ও একইভাবে — শুধু শিশুর বদলে algorithm আর ছবির বদলে data।</div>
+
+<div class="dc">
+<div class="dt">চিত্র: Machine Learning-এর প্রধান ধরন</div>
+<svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+<rect x="245" y="8" width="150" height="38" rx="8" fill="rgba(88,166,255,.2)" stroke="#58a6ff" stroke-width="2"/>
+<text x="320" y="32" fill="#58a6ff" font-size="12" text-anchor="middle" font-weight="bold" font-family="monospace">Machine Learning</text>
+<line x1="210" y1="46" x2="210" y2="65" stroke="#30363d"/><line x1="320" y1="46" x2="320" y2="46" stroke="#30363d"/><line x1="430" y1="46" x2="430" y2="65" stroke="#30363d"/>
+<line x1="210" y1="46" x2="430" y2="46" stroke="#30363d"/><line x1="320" y1="46" x2="320" y2="32" stroke="#58a6ff"/>
+<rect x="95" y="65" width="230" height="120" rx="8" fill="rgba(63,185,80,.07)" stroke="#3fb950" stroke-width="1.5"/>
+<text x="210" y="88" fill="#3fb950" font-size="12" text-anchor="middle" font-weight="bold" font-family="monospace">Supervised Learning</text>
+<text x="210" y="106" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">তত্ত্বাবধায়িত শিক্ষণ</text>
+<text x="210" y="126" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="monospace">Regression: সংখ্যা predict</text>
+<text x="210" y="144" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="monospace">Classification: শ্রেণী predict</text>
+<text x="210" y="164" fill="#3fb950" font-size="9" text-anchor="middle" font-family="monospace">Label দেওয়া ডেটা থেকে শেখে</text>
+<rect x="340" y="65" width="230" height="120" rx="8" fill="rgba(188,140,255,.07)" stroke="#bc8cff" stroke-width="1.5"/>
+<text x="455" y="88" fill="#bc8cff" font-size="12" text-anchor="middle" font-weight="bold" font-family="monospace">Unsupervised Learning</text>
+<text x="455" y="106" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">অতত্ত্বাবধায়িত শিক্ষণ</text>
+<text x="455" y="126" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="monospace">Clustering: গুচ্ছ খোঁজা</text>
+<text x="455" y="144" fill="#e6edf3" font-size="10" text-anchor="middle" font-family="monospace">Dimensionality Reduction</text>
+<text x="455" y="164" fill="#bc8cff" font-size="9" text-anchor="middle" font-family="monospace">Label ছাড়া শেখে</text>
+</svg>
+</div>
+</section>
+
+<!-- LINEAR REGRESSION -->
+<section class="section" id="linreg">
+<div class="shead"><div class="snum">১১</div><div><div class="stitle">Linear Regression — সরলরেখায় predict করো</div><div class="ssub">Scikit-Learn দিয়ে ML Workflow</div></div></div>
+<div class="ib"><div class="il b">💡 সহজ ভাষায়</div>বাড়ির আকার বাড়লে দাম কতটা বাড়ে? Linear Regression এই সম্পর্কটি একটি সরলরেখা দিয়ে বের করে: <strong>y = β₀ + β₁x₁ + β₂x₂ + ...</strong></div>
+
+<div class="dc">
+<div class="dt">চিত্র: Linear Regression Formula ব্যাখ্যা</div>
+<svg viewBox="0 0 640 185" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+<rect x="90" y="18" width="460" height="60" rx="10" fill="rgba(88,166,255,.08)" stroke="#58a6ff" stroke-width="1.5"/>
+<text x="320" y="52" fill="#e6edf3" font-size="19" text-anchor="middle" font-family="monospace">y ≈ β₀ + β₁x₁ + β₂x₂ + ... + βₚxₚ</text>
+<text x="320" y="70" fill="#8b949e" font-size="11" text-anchor="middle" font-family="monospace">দাম ≈ মূল মান + ওজন × বৈশিষ্ট্য₁ + ওজন × বৈশিষ্ট্য₂ + ...</text>
+<text x="108" y="115" fill="#f778ba" font-size="11" font-family="monospace">y</text>
+<text x="100" y="132" fill="#8b949e" font-size="9" font-family="monospace">predict</text>
+<line x1="120" y1="80" x2="120" y2="105" stroke="#f778ba" stroke-width="1" stroke-dasharray="3"/>
+<text x="220" y="115" fill="#58a6ff" font-size="11" font-family="monospace">β₀</text>
+<text x="210" y="132" fill="#8b949e" font-size="9" font-family="monospace">intercept</text>
+<line x1="235" y1="80" x2="235" y2="105" stroke="#58a6ff" stroke-width="1" stroke-dasharray="3"/>
+<text x="340" y="115" fill="#3fb950" font-size="11" font-family="monospace">β₁...βₚ</text>
+<text x="338" y="132" fill="#8b949e" font-size="9" font-family="monospace">coefficients</text>
+<line x1="360" y1="80" x2="360" y2="105" stroke="#3fb950" stroke-width="1" stroke-dasharray="3"/>
+<text x="478" y="115" fill="#f0883e" font-size="11" font-family="monospace">x₁...xₚ</text>
+<text x="475" y="132" fill="#8b949e" font-size="9" font-family="monospace">features</text>
+<line x1="490" y1="80" x2="490" y2="105" stroke="#f0883e" stroke-width="1" stroke-dasharray="3"/>
+<text x="320" y="165" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">ML-এর লক্ষ্য: সেরা β values খুঁজে বের করা যাতে prediction সবচেয়ে accurate হয়</text>
+</svg>
+</div>
+
+<div class="dc" id="ttsplit">
+<div class="dt">চিত্র: ML Project-এর সম্পূর্ণ Workflow</div>
+<svg viewBox="0 0 640 105" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+<defs><marker id="wf" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#58a6ff"/></marker></defs>
+<rect x="8" y="22" width="80" height="52" rx="6" fill="rgba(88,166,255,.1)" stroke="#58a6ff" stroke-width="1.5"/>
+<text x="48" y="44" fill="#58a6ff" font-size="9" text-anchor="middle" font-family="monospace" font-weight="bold">ডেটা লোড</text>
+<text x="48" y="57" fill="#8b949e" font-size="8" text-anchor="middle" font-family="monospace">read_csv</text>
+<text x="48" y="85" fill="#58a6ff" font-size="11" text-anchor="middle">①</text>
+<path d="M 90 48 L 100 48" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#wf)"/>
+<rect x="102" y="22" width="80" height="52" rx="6" fill="rgba(240,136,62,.1)" stroke="#f0883e" stroke-width="1.5"/>
+<text x="142" y="44" fill="#f0883e" font-size="9" text-anchor="middle" font-family="monospace" font-weight="bold">পরিষ্কার</text>
+<text x="142" y="57" fill="#8b949e" font-size="8" text-anchor="middle" font-family="monospace">clean+fill</text>
+<text x="142" y="85" fill="#f0883e" font-size="11" text-anchor="middle">②</text>
+<path d="M 184 48 L 194 48" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#wf)"/>
+<rect x="196" y="22" width="80" height="52" rx="6" fill="rgba(63,185,80,.1)" stroke="#3fb950" stroke-width="1.5"/>
+<text x="236" y="44" fill="#3fb950" font-size="9" text-anchor="middle" font-family="monospace" font-weight="bold">X ও y</text>
+<text x="236" y="57" fill="#8b949e" font-size="8" text-anchor="middle" font-family="monospace">আলাদা</text>
+<text x="236" y="85" fill="#3fb950" font-size="11" text-anchor="middle">③</text>
+<path d="M 278 48 L 288 48" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#wf)"/>
+<rect x="290" y="22" width="80" height="52" rx="6" fill="rgba(188,140,255,.1)" stroke="#bc8cff" stroke-width="1.5"/>
+<text x="330" y="44" fill="#bc8cff" font-size="9" text-anchor="middle" font-family="monospace" font-weight="bold">Train/Test</text>
+<text x="330" y="57" fill="#8b949e" font-size="8" text-anchor="middle" font-family="monospace">80/20</text>
+<text x="330" y="85" fill="#bc8cff" font-size="11" text-anchor="middle">④</text>
+<path d="M 372 48 L 382 48" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#wf)"/>
+<rect x="384" y="22" width="80" height="52" rx="6" fill="rgba(247,120,186,.1)" stroke="#f778ba" stroke-width="1.5"/>
+<text x="424" y="44" fill="#f778ba" font-size="9" text-anchor="middle" font-family="monospace" font-weight="bold">Train</text>
+<text x="424" y="57" fill="#8b949e" font-size="8" text-anchor="middle" font-family="monospace">.fit()</text>
+<text x="424" y="85" fill="#f778ba" font-size="11" text-anchor="middle">⑤</text>
+<path d="M 466 48 L 476 48" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#wf)"/>
+<rect x="478" y="22" width="80" height="52" rx="6" fill="rgba(227,179,65,.1)" stroke="#e3b341" stroke-width="1.5"/>
+<text x="518" y="44" fill="#e3b341" font-size="9" text-anchor="middle" font-family="monospace" font-weight="bold">Evaluate</text>
+<text x="518" y="57" fill="#8b949e" font-size="8" text-anchor="middle" font-family="monospace">MSE/MAE</text>
+<text x="518" y="85" fill="#e3b341" font-size="11" text-anchor="middle">⑥</text>
+<path d="M 560 48 L 570 48" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#wf)"/>
+<rect x="572" y="22" width="60" height="52" rx="6" fill="rgba(57,211,83,.1)" stroke="#39d353" stroke-width="1.5"/>
+<text x="602" y="44" fill="#39d353" font-size="9" text-anchor="middle" font-family="monospace" font-weight="bold">Deploy</text>
+<text x="602" y="57" fill="#8b949e" font-size="8" text-anchor="middle" font-family="monospace">prod</text>
+<text x="602" y="85" fill="#39d353" font-size="11" text-anchor="middle">⑦</text>
+</svg>
+</div>
+
+<h2 class="sub" id="workflow">Scikit-Learn সম্পূর্ণ Workflow</h2>
+<div class="cb2"><span class="clbl">python</span><pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression
+
+<span class="cm"># ১. ডেটা লোড</span>
+df = pd.<span class="fn">read_csv</span>(<span class="str">"automobiles.csv"</span>)
+
+<span class="cm"># ২. X (features) ও y (target) আলাদা করো</span>
+X = df.<span class="fn">drop</span>([<span class="str">'price'</span>], axis=<span class="num">1</span>)  <span class="cm"># সব column, price বাদ</span>
+y = df[<span class="str">'price'</span>]                    <span class="cm"># শুধু price</span>
+
+<span class="cm"># ৩. Train/Test split (85% train, 15% test)</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=<span class="num">0.15</span>,   <span class="cm"># ১৫% test-এ যাবে</span>
+    random_state=<span class="num">42</span>  <span class="cm"># একই split পুনরায় পেতে — যেকোনো সংখ্যা দেওয়া যায়</span>
+)
+
+<span class="cm"># ৪. Model তৈরি (Instantiation)</span>
+lr = <span class="cls">LinearRegression</span>()
+
+<span class="cm"># ৫. Train (fit) — model সেরা β values শিখে নেয়</span>
+lr.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="cm"># ৬. Prediction</span>
+y_pred_train = lr.<span class="fn">predict</span>(X_train)
+y_pred_test  = lr.<span class="fn">predict</span>(X_test)</pre></div>
+
+<h2 class="sub" id="metrics">Model Evaluation — MSE ও MAE</h2>
+
+<div class="dc">
+<div class="dt">চিত্র: MSE বনাম MAE — কোনটি কখন ব্যবহার করবে?</div>
+<svg viewBox="0 0 640 160" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+<rect x="15" y="12" width="295" height="138" rx="8" fill="rgba(247,120,186,.05)" stroke="#f778ba" stroke-width="1.5"/>
+<text x="162" y="34" fill="#f778ba" font-size="12" text-anchor="middle" font-weight="bold" font-family="monospace">MSE (Mean Squared Error)</text>
+<text x="162" y="52" fill="#e6edf3" font-size="12" text-anchor="middle" font-family="monospace">Σ(y_true - y_pred)² / n</text>
+<text x="162" y="75" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">• পার্থক্যকে বর্গ করে (বড় error বেশি penalty)</text>
+<text x="162" y="93" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">• unit: original-এর বর্গ (interpret কঠিন)</text>
+<text x="162" y="111" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">• outlier-এ বেশি sensitive</text>
+<text x="162" y="138" fill="#f778ba" font-size="10" text-anchor="middle" font-family="monospace">উদা: ৫,০২৫,২৬১ → বোঝা কঠিন</text>
+<rect x="330" y="12" width="295" height="138" rx="8" fill="rgba(63,185,80,.05)" stroke="#3fb950" stroke-width="1.5"/>
+<text x="477" y="34" fill="#3fb950" font-size="12" text-anchor="middle" font-weight="bold" font-family="monospace">MAE (Mean Absolute Error)</text>
+<text x="477" y="52" fill="#e6edf3" font-size="12" text-anchor="middle" font-family="monospace">Σ|y_true - y_pred| / n</text>
+<text x="477" y="75" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">• absolute value (সহজ interpret)</text>
+<text x="477" y="93" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">• unit: original-এর মতো (টাকা → টাকায়)</text>
+<text x="477" y="111" fill="#8b949e" font-size="10" text-anchor="middle" font-family="monospace">• outlier-এ কম sensitive</text>
+<text x="477" y="138" fill="#3fb950" font-size="10" text-anchor="middle" font-family="monospace">উদা: ১,৯১৭ টাকা ত্রুটি → বোঝা সহজ</text>
+</svg>
+</div>
+
+<div class="cb2"><span class="clbl">python</span><pre><span class="kw">from</span> sklearn.metrics <span class="kw">import</span> mean_squared_error, mean_absolute_error, r2_score
+
+<span class="cm"># MSE</span>
+mse_train = <span class="fn">mean_squared_error</span>(y_train, y_pred_train)
+mse_test  = <span class="fn">mean_squared_error</span>(y_test,  y_pred_test)
+<span class="fn">print</span>(<span class="str">f"MSE train: {mse_train:,.0f}"</span>)  <span class="cm"># 5,025,261</span>
+<span class="fn">print</span>(<span class="str">f"MSE test:  {mse_test:,.0f}"</span>)   <span class="cm"># 6,976,108</span>
+
+<span class="cm"># MAE (interpret করা সহজ)</span>
+mae_train = <span class="fn">mean_absolute_error</span>(y_train, y_pred_train)
+mae_test  = <span class="fn">mean_absolute_error</span>(y_test,  y_pred_test)
+<span class="fn">print</span>(<span class="str">f"MAE train: {mae_train:,.0f}"</span>)  <span class="cm"># 1,664</span>
+<span class="fn">print</span>(<span class="str">f"MAE test:  {mae_test:,.0f}"</span>)   <span class="cm"># 1,918</span>
+
+<span class="cm"># Relative error: গড় দামের তুলনায় কত% ভুল?</span>
+mean_price = df[<span class="str">'price'</span>].<span class="fn">mean</span>()
+<span class="fn">print</span>(<span class="str">f"Relative error: {mae_test/mean_price:.1%}"</span>)  <span class="cm"># ~20%</span>
+
+<span class="cm"># R² score (1.0 = perfect, 0 = useless)</span>
+<span class="fn">print</span>(<span class="str">f"R²: {r2_score(y_test, y_pred_test):.3f}"</span>)</pre></div>
+
+<div class="ex">
+<div class="exh"><span class="exbadge">EXERCISE</span><span class="extitle">অনুশীলন — Machine Learning (Engineering Level)</span></div>
+<div class="exi"><div class="exn">প্রশ্ন ১ <span class="diff medium">মধ্যম</span></div>
+<p>Real estate startup-এ কাজ করছ। <code class="ci">housing.csv</code> দিয়ে সম্পূর্ণ ML pipeline তৈরি করো: load → clean → split → train → evaluate।</p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><div class="cb2"><pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> mean_absolute_error, r2_score
+
+df = pd.<span class="fn">read_csv</span>(<span class="str">'housing.csv'</span>)
+df = df.<span class="fn">drop_duplicates</span>()
+num_cols = df.<span class="fn">select_dtypes</span>(include=[<span class="str">'number'</span>]).columns
+df[num_cols] = df[num_cols].<span class="fn">fillna</span>(df[num_cols].<span class="fn">median</span>())
+
+X = df.<span class="fn">drop</span>([<span class="str">'price'</span>], axis=<span class="num">1</span>)
+y = df[<span class="str">'price'</span>]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>)
+
+model = <span class="cls">LinearRegression</span>()
+model.<span class="fn">fit</span>(X_train, y_train)
+y_pred = model.<span class="fn">predict</span>(X_test)
+
+<span class="fn">print</span>(<span class="str">f"MAE: {mean_absolute_error(y_test, y_pred):,.0f}"</span>)
+<span class="fn">print</span>(<span class="str">f"R²:  {r2_score(y_test, y_pred):.3f}"</span>)</pre></div></div></div>
+</div>
+
+<div class="iv"><div class="ivh"><span class="ivbadge">INTERVIEW</span><span class="ivtitle">Interview — Machine Learning</span></div>
+<div class="ivq"><div class="ql">প্রশ্ন ১</div>
+<p><strong>random_state=42 কেন দেওয়া হয়? ৪২ সংখ্যার কোনো বিশেষ অর্থ আছে?</strong></p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><p>৪২ সংখ্যার কোনো বিশেষ অর্থ নেই — এটি একটি programmer joke ("42 = answer to life"). মূল কথা: random_state যেকোনো সংখ্যা দিলে প্রতিবার একই ভাবে data split হবে। এটি experiment <strong>reproducibility</strong>-র জন্য গুরুত্বপূর্ণ।</p></div></div>
+<div class="ivq"><div class="ql">প্রশ্ন ২ (Senior level)</div>
+<p><strong>Overfitting কীভাবে চিনবে? Train ও Test MSE দেখে কীভাবে বুঝবে?</strong></p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc">
+<p><strong>Overfitting:</strong> Train MSE অনেক কম কিন্তু Test MSE অনেক বেশি — model training data মুখস্থ করেছে।</p>
+<p><strong>Underfitting:</strong> Train ও Test MSE দুটোই বেশি — model যথেষ্ট শেখেনি।</p>
+<p><strong>Good fit:</strong> Train MSE কম এবং Test MSE কাছাকাছি।</p></div></div>
+</div>
+</section>
+
+<!-- CHAPTER 5: ALGORITHMS -->
+<section class="section" id="algos">
+<div class="shead"><div class="snum">১২</div><div><div class="stitle">ML Algorithm গুলো — কিন্ডারগার্টেন ব্যাখ্যা</div><div class="ssub">সহজ ভাষায় + Python Implementation</div></div></div>
+
+<!-- LINEAR REGRESSION -->
+<div class="ac" id="a-lr">
+<div class="an">① Linear Regression</div>
+<div class="at">🎯 "একটি সরলরেখা দিয়ে ভবিষ্যৎ বলো"</div>
+<div class="ib"><div class="il b">🍎 কিন্ডারগার্টেন ব্যাখ্যা</div>তুমি প্রতিদিন লম্বা হচ্ছ — ১ বছরে ৫ সেমি, ২ বছরে ১০ সেমি। তুমি বলতে পারো "প্রতি বছরে ৫ সেমি বাড়ে।" Linear Regression ঠিক এই pattern খুঁজে বের করে।</div>
+<div class="two">
+<div class="ib ok"><div class="il g">✅ কখন ব্যবহার?</div>Output continuous number (দাম, তাপমাত্রা) | Linear সম্পর্ক | Simple baseline দরকার</div>
+<div class="ib warn"><div class="il o">⚠️ কখন না?</div>Non-linear data | Classification task | অনেক outlier থাকলে</div>
+</div>
+<div class="cb2"><span class="clbl">python</span><pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> mean_absolute_error, r2_score
+
+model = <span class="cls">LinearRegression</span>(fit_intercept=<span class="cls">True</span>)
+model.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="cm"># কোন feature কতটা গুরুত্বপূর্ণ?</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+coefs = pd.<span class="cls">Series</span>(model.coef_, index=X.columns).<span class="fn">sort_values</span>()
+<span class="fn">print</span>(coefs)
+
+y_pred = model.<span class="fn">predict</span>(X_test)
+<span class="fn">print</span>(<span class="str">f"MAE: {mean_absolute_error(y_test, y_pred):,.0f}"</span>)
+<span class="fn">print</span>(<span class="str">f"R²:  {r2_score(y_test, y_pred):.3f}"</span>)</pre></div>
+</div>
+
+<!-- DECISION TREE -->
+<div class="ac" id="a-dt">
+<div class="an">② Decision Tree</div>
+<div class="at">🌳 "হ্যাঁ/না প্রশ্ন করতে করতে উত্তরে পৌঁছাও"</div>
+<div class="ib"><div class="il b">🍎 কিন্ডারগার্টেন ব্যাখ্যা</div>২০ Questions গেম মনে আছে? "এটা কি জীবিত? হ্যাঁ। চার পা আছে? না। উড়তে পারে? হ্যাঁ। — পাখি!" Decision Tree ঠিক এভাবে একটার পর একটা প্রশ্ন করে data classify করে।</div>
+
+<div class="dc">
+<div class="dt">চিত্র: Decision Tree — Loan Approval</div>
+<svg viewBox="0 0 640 195" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%">
+<rect x="250" y="8" width="140" height="38" rx="6" fill="rgba(88,166,255,.15)" stroke="#58a6ff" stroke-width="1.5"/>
+<text x="320" y="32" fill="#58a6ff" font-size="11" text-anchor="middle" font-family="monospace">বয়স > ৩০?</text>
+<line x1="280" y1="46" x2="168" y2="88" stroke="#30363d" stroke-width="1.5"/>
+<text x="216" y="72" fill="#3fb950" font-size="10" font-family="monospace">হ্যাঁ</text>
+<rect x="105" y="88" width="126" height="38" rx="6" fill="rgba(63,185,80,.12)" stroke="#3fb950"/>
+<text x="168" y="112" fill="#3fb950" font-size="10" text-anchor="middle" font-family="monospace">আয় > ৫০ হাজার?</text>
+<line x1="135" y1="126" x2="95" y2="158" stroke="#30363d"/>
+<text x="107" y="148" fill="#3fb950" font-size="9" font-family="monospace">হ্যাঁ</text>
+<rect x="45" y="158" width="90" height="28" rx="4" fill="rgba(57,211,83,.15)" stroke="#39d353"/>
+<text x="90" y="176" fill="#39d353" font-size="10" text-anchor="middle" font-family="monospace">✓ Approved</text>
+<line x1="200" y1="126" x2="240" y2="158" stroke="#30363d"/>
+<text x="225" y="148" fill="#f778ba" font-size="9" font-family="monospace">না</text>
+<rect x="200" y="158" width="80" height="28" rx="4" fill="rgba(247,120,186,.15)" stroke="#f778ba"/>
+<text x="240" y="176" fill="#f778ba" font-size="10" text-anchor="middle" font-family="monospace">✗ Denied</text>
+<line x1="360" y1="46" x2="472" y2="88" stroke="#30363d" stroke-width="1.5"/>
+<text x="424" y="72" fill="#f778ba" font-size="10" font-family="monospace">না</text>
+<rect x="409" y="88" width="126" height="38" rx="6" fill="rgba(247,120,186,.12)" stroke="#f778ba"/>
+<text x="472" y="112" fill="#f778ba" font-size="10" text-anchor="middle" font-family="monospace">Credit > ৭০০?</text>
+<line x1="440" y1="126" x2="400" y2="158" stroke="#30363d"/>
+<text x="413" y="148" fill="#3fb950" font-size="9" font-family="monospace">হ্যাঁ</text>
+<rect x="358" y="158" width="80" height="28" rx="4" fill="rgba(57,211,83,.15)" stroke="#39d353"/>
+<text x="398" y="176" fill="#39d353" font-size="10" text-anchor="middle" font-family="monospace">✓ Approved</text>
+<line x1="505" y1="126" x2="545" y2="158" stroke="#30363d"/>
+<text x="530" y="148" fill="#f778ba" font-size="9" font-family="monospace">না</text>
+<rect x="505" y="158" width="80" height="28" rx="4" fill="rgba(247,120,186,.15)" stroke="#f778ba"/>
+<text x="545" y="176" fill="#f778ba" font-size="10" text-anchor="middle" font-family="monospace">✗ Denied</text>
+</svg>
+</div>
+
+<div class="cb2"><span class="clbl">python</span><pre><span class="kw">from</span> sklearn.tree <span class="kw">import</span> DecisionTreeClassifier, DecisionTreeRegressor
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, classification_report
+
+dt = <span class="cls">DecisionTreeClassifier</span>(
+    max_depth=<span class="num">5</span>,           <span class="cm"># গাছ কতটা গভীর (overfitting নিয়ন্ত্রণ)</span>
+    min_samples_split=<span class="num">10</span>, <span class="cm"># split করতে ন্যূনতম কত sample</span>
+    random_state=<span class="num">42</span>
+)
+dt.<span class="fn">fit</span>(X_train, y_train)
+y_pred = dt.<span class="fn">predict</span>(X_test)
+<span class="fn">print</span>(<span class="str">f"Accuracy: {accuracy_score(y_test, y_pred):.2%}"</span>)
+<span class="fn">print</span>(<span class="fn">classification_report</span>(y_test, y_pred))
+
+<span class="cm"># কোন feature সবচেয়ে গুরুত্বপূর্ণ?</span>
+imp = pd.<span class="cls">Series</span>(dt.feature_importances_, index=X.columns).<span class="fn">sort_values</span>(ascending=<span class="cls">False</span>)
+<span class="fn">print</span>(imp.<span class="fn">head</span>(<span class="num">5</span>))</pre></div>
+</div>
+
+<!-- RANDOM FOREST -->
+<div class="ac" id="a-rf">
+<div class="an">③ Random Forest</div>
+<div class="at">🌲🌲🌲 "অনেক গাছের মতামত নাও — সংখ্যাগরিষ্ঠ জেতে"</div>
+<div class="ib"><div class="il b">🍎 কিন্ডারগার্টেন ব্যাখ্যা</div>একটি সিদ্ধান্তের জন্য ১ জনকে না জিজ্ঞেস করে ১০০ জনকে জিজ্ঞেস করো, তারপর সংখ্যাগরিষ্ঠের মতামত নাও। Random Forest ঠিক এটাই করে — অনেক Decision Tree-র average/vote নেয়।</div>
+<div class="cb2"><span class="clbl">python</span><pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier, RandomForestRegressor
+
+rf = <span class="cls">RandomForestClassifier</span>(
+    n_estimators=<span class="num">100</span>,     <span class="cm"># কতটি Decision Tree</span>
+    max_depth=<span class="num">10</span>,         <span class="cm"># প্রতিটি গাছের গভীরতা</span>
+    max_features=<span class="str">'sqrt'</span>,  <span class="cm"># প্রতি split-এ কত feature দেখবে</span>
+    n_jobs=<span class="op">-</span><span class="num">1</span>,            <span class="cm"># সব CPU core</span>
+    random_state=<span class="num">42</span>
+)
+rf.<span class="fn">fit</span>(X_train, y_train)
+<span class="fn">print</span>(<span class="str">f"Accuracy: {rf.score(X_test, y_test):.2%}"</span>)
+
+<span class="cm"># Regression-এ (car price prediction)</span>
+rf_reg = <span class="cls">RandomForestRegressor</span>(n_estimators=<span class="num">100</span>, random_state=<span class="num">42</span>)
+rf_reg.<span class="fn">fit</span>(X_train, y_train)
+y_pred_rf = rf_reg.<span class="fn">predict</span>(X_test)
+<span class="fn">print</span>(<span class="str">f"RF MAE: {mean_absolute_error(y_test, y_pred_rf):,.0f}"</span>)</pre></div>
+</div>
+
+<!-- KNN -->
+<div class="ac" id="a-knn">
+<div class="an">④ K-Nearest Neighbors (KNN)</div>
+<div class="at">👥 "তোমার প্রতিবেশীর মতো তুমিও"</div>
+<div class="ib"><div class="il b">🍎 কিন্ডারগার্টেন ব্যাখ্যা</div>নতুন প্রতিবেশী কেমন হবে? সম্ভবত পাশের বাসার মানুষদের মতো! KNN একটি নতুন point-এর কাছের K-টি point দেখে তাদের majority class দেয়।</div>
+<div class="ib warn"><div class="il o">⚠️ গুরুত্বপূর্ণ</div>KNN distance-based, তাই অবশ্যই <strong>scaling</strong> করতে হবে। না হলে বড় scale-এর feature সব কিছু dominate করবে।</div>
+<div class="cb2"><span class="clbl">python</span><pre><span class="kw">from</span> sklearn.neighbors <span class="kw">import</span> KNeighborsClassifier
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score
+
+<span class="cm"># Scaling আবশ্যক!</span>
+scaler = <span class="cls">StandardScaler</span>()
+X_tr_sc = scaler.<span class="fn">fit_transform</span>(X_train)  <span class="cm"># train-এ fit+transform</span>
+X_te_sc = scaler.<span class="fn">transform</span>(X_test)       <span class="cm"># test-এ শুধু transform</span>
+
+knn = <span class="cls">KNeighborsClassifier</span>(n_neighbors=<span class="num">5</span>, metric=<span class="str">'euclidean'</span>)
+knn.<span class="fn">fit</span>(X_tr_sc, y_train)
+
+<span class="cm"># সঠিক K খোঁজো — cross validation দিয়ে</span>
+best_k, best_score = <span class="num">1</span>, <span class="num">0</span>
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">21</span>):
+    score = <span class="fn">cross_val_score</span>(<span class="cls">KNeighborsClassifier</span>(k), X_tr_sc, y_train, cv=<span class="num">5</span>).<span class="fn">mean</span>()
+    <span class="kw">if</span> score > best_score: best_k, best_score = k, score
+<span class="fn">print</span>(<span class="str">f"Best K: {best_k}, Score: {best_score:.2%}"</span>)</pre></div>
+</div>
+
+<!-- SVM -->
+<div class="ac" id="a-svm">
+<div class="an">⑤ Support Vector Machine (SVM)</div>
+<div class="at">📐 "সবচেয়ে চওড়া রাস্তা দিয়ে ভাগ করো"</div>
+<div class="ib"><div class="il b">🍎 কিন্ডারগার্টেন ব্যাখ্যা</div>দুটো গ্রুপকে লাইন দিয়ে ভাগ করো। অনেক লাইন দিয়ে ভাগ করা যায়, কিন্তু SVM সেই লাইন খোঁজে যেটি দুটো গ্রুপের সবচেয়ে কাছের point থেকে সবচেয়ে দূরে — "সবচেয়ে চওড়া মার্জিন"।</div>
+<div class="cb2"><span class="clbl">python</span><pre><span class="kw">from</span> sklearn.svm <span class="kw">import</span> SVC, SVR
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+
+scaler = <span class="cls">StandardScaler</span>()
+X_tr_sc = scaler.<span class="fn">fit_transform</span>(X_train)
+X_te_sc = scaler.<span class="fn">transform</span>(X_test)
+
+svm = <span class="cls">SVC</span>(
+    C=<span class="num">1.0</span>,           <span class="cm"># regularization</span>
+    kernel=<span class="str">'rbf'</span>,   <span class="cm"># 'linear', 'poly', 'rbf'</span>
+    probability=<span class="cls">True</span>
+)
+svm.<span class="fn">fit</span>(X_tr_sc, y_train)
+<span class="fn">print</span>(<span class="str">f"Accuracy: {svm.score(X_te_sc, y_test):.2%}"</span>)</pre></div>
+</div>
+
+<!-- K-MEANS -->
+<div class="ac" id="a-km">
+<div class="an">⑥ K-Means Clustering</div>
+<div class="at">🎯 "পরিচয় না জেনেও গুচ্ছ বানাও"</div>
+<div class="ib"><div class="il b">🍎 কিন্ডারগার্টেন ব্যাখ্যা</div>একটি মাঠে ১০০ জন দাঁড়িয়ে। তুমি ৩ দলে ভাগ করতে চাও। K-Means: ৩টি random point mark করো → প্রত্যেকে কাছের mark-এ যাও → mark গুলো দলের center-এ সরাও → stable না হওয়া পর্যন্ত repeat।</div>
+<div class="cb2"><span class="clbl">python</span><pre><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+
+scaler = <span class="cls">StandardScaler</span>()
+X_sc = scaler.<span class="fn">fit_transform</span>(X)
+
+<span class="cm"># Elbow Method — সঠিক K খোঁজো</span>
+inertias = []
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>):
+    km = <span class="cls">KMeans</span>(n_clusters=k, random_state=<span class="num">42</span>, n_init=<span class="num">10</span>)
+    km.<span class="fn">fit</span>(X_sc)
+    inertias.<span class="fn">append</span>(km.inertia_)
+<span class="cm"># Plot করে "কনুই" = best K</span>
+
+kmeans = <span class="cls">KMeans</span>(n_clusters=<span class="num">4</span>, random_state=<span class="num">42</span>, n_init=<span class="num">10</span>)
+kmeans.<span class="fn">fit</span>(X_sc)
+df[<span class="str">'cluster'</span>] = kmeans.labels_
+<span class="fn">print</span>(df.<span class="fn">groupby</span>(<span class="str">'cluster'</span>).<span class="fn">mean</span>())</pre></div>
+</div>
+
+<!-- LOGISTIC REGRESSION -->
+<div class="ac" id="a-logit">
+<div class="an">⑦ Logistic Regression</div>
+<div class="at">📊 "হ্যাঁ/না — সম্ভাবনা হিসেব করে বলো"</div>
+<div class="ib"><div class="il b">🍎 কিন্ডারগার্টেন ব্যাখ্যা</div>নামে "Regression" কিন্তু এটি Classification-এর জন্য! এটি বলে না "spam" বা "না spam" — বলে "৮৭% সম্ভাবনা spam।" তারপর ৫০%-এর বেশি হলে spam বলে।</div>
+<div class="cb2"><span class="clbl">python</span><pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> roc_auc_score, confusion_matrix, classification_report
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+
+scaler = <span class="cls">StandardScaler</span>()
+X_tr_sc = scaler.<span class="fn">fit_transform</span>(X_train)
+X_te_sc = scaler.<span class="fn">transform</span>(X_test)
+
+log_reg = <span class="cls">LogisticRegression</span>(C=<span class="num">1.0</span>, max_iter=<span class="num">1000</span>, random_state=<span class="num">42</span>)
+log_reg.<span class="fn">fit</span>(X_tr_sc, y_train)
+
+<span class="cm"># Probability দেখো</span>
+y_proba = log_reg.<span class="fn">predict_proba</span>(X_te_sc)
+<span class="fn">print</span>(<span class="str">"Prob [class0, class1]:"</span>, y_proba[:<span class="num">3</span>])
+
+<span class="cm"># AUC-ROC: imbalanced dataset-এ সেরা metric</span>
+auc = <span class="fn">roc_auc_score</span>(y_test, y_proba[:, <span class="num">1</span>])
+<span class="fn">print</span>(<span class="str">f"AUC-ROC: {auc:.3f}"</span>)  <span class="cm"># 1.0 = perfect</span>
+
+<span class="cm"># Confusion Matrix: TP, TN, FP, FN</span>
+<span class="fn">print</span>(<span class="fn">confusion_matrix</span>(y_test, log_reg.<span class="fn">predict</span>(X_te_sc)))</pre></div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="card cb" style="margin-top:28px;">
+<div class="ctitle" style="color:var(--blue);font-size:15px;">📊 সব Algorithm একনজরে তুলনা</div>
+<div class="tc"><table>
+<tr><th>Algorithm</th><th>ধরন</th><th>কখন সেরা?</th><th>Scaling?</th><th>Interpret?</th></tr>
+<tr><td style="color:var(--blue)">Linear Regression</td><td>Supervised/Reg</td><td>Linear data, baseline</td><td>না</td><td>✅</td></tr>
+<tr><td style="color:var(--green)">Decision Tree</td><td>Supervised/Both</td><td>Non-linear, interpretability</td><td>না</td><td>✅</td></tr>
+<tr><td style="color:var(--orange)">Random Forest</td><td>Supervised/Both</td><td>High accuracy, tabular</td><td>না</td><td>⚠️</td></tr>
+<tr><td style="color:var(--purple)">KNN</td><td>Supervised/Both</td><td>Small dataset</td><td>✅ হ্যাঁ</td><td>✅</td></tr>
+<tr><td style="color:var(--pink)">SVM</td><td>Supervised/Both</td><td>High-dim, clear margin</td><td>✅ হ্যাঁ</td><td>❌</td></tr>
+<tr><td style="color:var(--yellow)">K-Means</td><td>Unsupervised</td><td>Customer segmentation</td><td>✅ হ্যাঁ</td><td>⚠️</td></tr>
+<tr><td style="color:var(--cyan)">Logistic Reg</td><td>Supervised/Clf</td><td>Binary classification</td><td>✅ হ্যাঁ</td><td>✅</td></tr>
+</table></div>
+</div>
+
+<!-- FINAL PROJECT -->
+<div class="ex" style="margin-top:28px;">
+<div class="exh"><span class="exbadge">FINAL PROJECT</span><span class="extitle">চূড়ান্ত প্রজেক্ট — Complete ML Pipeline</span></div>
+<div class="exi"><div class="exn">প্রজেক্ট <span class="diff hard">Advanced</span></div>
+<p>Fintech startup-এ ML Engineer হিসেবে <code class="ci">loan_data.csv</code> দিয়ে loan approval predict করো। Production-grade ML pipeline তৈরি করো — preprocessing থেকে model comparison পর্যন্ত।</p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">সম্পূর্ণ সমাধান দেখাও</button>
+<div class="sc"><div class="cb2"><span class="clbl">python — production ml pipeline</span><pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split, cross_val_score
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, LabelEncoder
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.tree <span class="kw">import</span> DecisionTreeClassifier
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, roc_auc_score
+
+<span class="cm"># ═══ ১. DATA LOADING ═══</span>
+df = pd.<span class="fn">read_csv</span>(<span class="str">'loan_data.csv'</span>)
+
+<span class="cm"># ═══ ২. PREPROCESSING ═══</span>
+le = <span class="cls">LabelEncoder</span>()
+cat_cols = df.<span class="fn">select_dtypes</span>(include=[<span class="str">'object'</span>]).columns.<span class="fn">drop</span>(<span class="str">'loan_approved'</span>)
+<span class="kw">for</span> col <span class="kw">in</span> cat_cols:
+    df[col] = le.<span class="fn">fit_transform</span>(df[col].<span class="fn">astype</span>(<span class="fn">str</span>))
+num_cols = df.<span class="fn">select_dtypes</span>(include=[<span class="str">'number'</span>]).columns
+df[num_cols] = df[num_cols].<span class="fn">fillna</span>(df[num_cols].<span class="fn">median</span>())
+df = df.<span class="fn">drop_duplicates</span>()
+
+<span class="cm"># ═══ ৩. SPLIT ═══</span>
+X = df.<span class="fn">drop</span>(<span class="str">'loan_approved'</span>, axis=<span class="num">1</span>)
+y = df[<span class="str">'loan_approved'</span>]
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>, stratify=y  <span class="cm"># stratify: class ratio বজায় রাখে</span>
+)
+scaler = <span class="cls">StandardScaler</span>()
+X_tr_sc = scaler.<span class="fn">fit_transform</span>(X_train)
+X_te_sc = scaler.<span class="fn">transform</span>(X_test)
+
+<span class="cm"># ═══ ৪. MODEL COMPARISON ═══</span>
+models = {
+    <span class="str">'Logistic Regression'</span>: <span class="cls">LogisticRegression</span>(max_iter=<span class="num">1000</span>, random_state=<span class="num">42</span>),
+    <span class="str">'Decision Tree'</span>: <span class="cls">DecisionTreeClassifier</span>(max_depth=<span class="num">5</span>, random_state=<span class="num">42</span>),
+    <span class="str">'Random Forest'</span>: <span class="cls">RandomForestClassifier</span>(n_estimators=<span class="num">100</span>, random_state=<span class="num">42</span>),
+}
+
+results = {}
+<span class="kw">for</span> name, model <span class="kw">in</span> models.items():
+    cv_scores = <span class="fn">cross_val_score</span>(model, X_tr_sc, y_train, cv=<span class="num">5</span>, scoring=<span class="str">'roc_auc'</span>)
+    model.<span class="fn">fit</span>(X_tr_sc, y_train)
+    test_auc = <span class="fn">roc_auc_score</span>(y_test, model.<span class="fn">predict_proba</span>(X_te_sc)[:, <span class="num">1</span>])
+    results[name] = {<span class="str">'cv_auc'</span>: cv_scores.<span class="fn">mean</span>(), <span class="str">'test_auc'</span>: test_auc}
+    <span class="fn">print</span>(<span class="str">f"{name}: CV={cv_scores.mean():.3f}, Test={test_auc:.3f}"</span>)
+
+best = <span class="fn">max</span>(results, key=<span class="kw">lambda</span> x: results[x][<span class="str">'test_auc'</span>])
+<span class="fn">print</span>(<span class="str">f"
+✅ Best Model: {best}"</span>)</pre></div></div></div>
+</div>
+
+<div class="iv"><div class="ivh"><span class="ivbadge">INTERVIEW</span><span class="ivtitle">Senior ML Engineer Interview</span></div>
+<div class="ivq"><div class="ql">প্রশ্ন ১</div>
+<p><strong>Class imbalance কী? 95% "না" এবং 5% "হ্যাঁ" থাকলে কীভাবে handle করবে?</strong></p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><p>Class imbalance = একটি class অনেক বেশি অন্যটির তুলনায়। Solutions:</p>
+<ul style="padding-left:20px;font-size:14px;margin-top:8px;">
+<li><code>class_weight='balanced'</code> — sklearn model-এ</li>
+<li>SMOTE — minority class oversample করো</li>
+<li>Accuracy-এর বদলে AUC-ROC, F1-score ব্যবহার করো</li>
+</ul>
+<div class="cb2"><pre>model = <span class="cls">LogisticRegression</span>(class_weight=<span class="str">'balanced'</span>, random_state=<span class="num">42</span>)</pre></div></div></div>
+<div class="ivq"><div class="ql">প্রশ্ন ২</div>
+<p><strong>train_test_split-এ stratify=y কেন দেওয়া হয়?</strong></p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><p>stratify=y দিলে train ও test set-এ target class-এর অনুপাত original-এর মতো থাকে। Original-এ 80% "না", 20% "হ্যাঁ" থাকলে train ও test-এও একই অনুপাত থাকবে। না দিলে একটি set শুধু "না"-তে ভরে যেতে পারে।</p></div></div>
+<div class="ivq"><div class="ql">প্রশ্ন ৩</div>
+<p><strong>Random Forest কি Decision Tree-র চেয়ে সবসময় ভালো? কখন Decision Tree বেছে নেবে?</strong></p>
+<button class="stog" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.textContent.includes('দেখাও')?'উত্তর লুকাও':'উত্তর দেখাও'">উত্তর দেখাও</button>
+<div class="sc"><p>Random Forest সাধারণত ভালো accuracy দেয় কারণ bagging variance কমায়। কিন্তু Decision Tree বেছে নেবে যখন: (১) Model-এর decision explain করতে হবে (healthcare, finance), (২) Smaller dataset এবং training speed গুরুত্বপূর্ণ, (৩) Interpretability > Accuracy।</p></div></div>
+</div>
+</section>
+
+<!-- QUICK REFERENCE -->
+<section class="section" id="qref">
+<div class="shead"><div class="snum">১৩</div><div><div class="stitle">Quick Reference — দ্রুত রেফারেন্স</div><div class="ssub">সব গুরুত্বপূর্ণ command একজায়গায়</div></div></div>
+<div class="two">
+<div class="card cb"><div class="ctitle" style="color:var(--blue)">🧹 Data Cleaning</div>
+<div class="cb2" style="margin:0;"><pre style="font-size:11.5px;"><span class="cm"># Duplicates</span>
+df.<span class="fn">duplicated</span>().<span class="fn">sum</span>()
+df.<span class="fn">drop_duplicates</span>(keep=<span class="str">'first'</span>)
+<span class="cm"># Replace/Rename/Astype</span>
+df.<span class="fn">replace</span>(<span class="str">'old'</span>, <span class="str">'new'</span>)
+df.<span class="fn">rename</span>({<span class="str">'old'</span>:<span class="str">'new'</span>}, axis=<span class="num">1</span>)
+df[<span class="str">'col'</span>].<span class="fn">astype</span>(<span class="str">'int'</span>)
+<span class="cm"># Apply/Lambda</span>
+df[<span class="str">'col'</span>].<span class="fn">apply</span>(<span class="kw">lambda</span> x: x*<span class="num">2</span>)</pre></div></div>
+<div class="card co"><div class="ctitle" style="color:var(--orange)">🔍 Missing Values</div>
+<div class="cb2" style="margin:0;"><pre style="font-size:11.5px;"><span class="cm"># Detect</span>
+df.<span class="fn">isna</span>().<span class="fn">sum</span>()
+df.<span class="fn">isna</span>().<span class="fn">sum</span>().<span class="fn">idxmax</span>()
+<span class="cm"># Fill</span>
+df.<span class="fn">fillna</span>(<span class="num">0</span>)
+df[<span class="str">'c'</span>].<span class="fn">fillna</span>(df[<span class="str">'c'</span>].<span class="fn">median</span>())
+df[<span class="str">'c'</span>].<span class="fn">fillna</span>(df[<span class="str">'c'</span>].<span class="fn">mode</span>()[<span class="num">0</span>])
+<span class="cm"># Drop</span>
+df.<span class="fn">dropna</span>(axis=<span class="num">0</span>, how=<span class="str">'any'</span>)</pre></div></div>
+<div class="card cg"><div class="ctitle" style="color:var(--green)">🔗 Processing</div>
+<div class="cb2" style="margin:0;"><pre style="font-size:11.5px;"><span class="cm"># Filter</span>
+df[(df[<span class="str">'a'</span>]&gt;x) &amp; (df[<span class="str">'b'</span>]==y)]
+<span class="cm"># Concat/Merge</span>
+pd.<span class="fn">concat</span>([df1,df2], axis=<span class="num">1</span>)
+df1.<span class="fn">merge</span>(df2,on=<span class="str">'id'</span>,how=<span class="str">'left'</span>)
+<span class="cm"># Sort/GroupBy</span>
+df.<span class="fn">sort_values</span>(by=<span class="str">'col'</span>)
+df.<span class="fn">groupby</span>(<span class="str">'col'</span>).<span class="fn">agg</span>({<span class="str">'x'</span>:<span class="str">'sum'</span>})</pre></div></div>
+<div class="card cp"><div class="ctitle" style="color:var(--purple)">🤖 ML Workflow</div>
+<div class="cb2" style="margin:0;"><pre style="font-size:11.5px;"><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+X_tr,X_te,y_tr,y_te = train_test_split(
+    X,y,test_size=<span class="num">0.2</span>,random_state=<span class="num">42</span>)
+sc=<span class="cls">StandardScaler</span>()
+X_tr_sc=sc.<span class="fn">fit_transform</span>(X_tr)
+X_te_sc=sc.<span class="fn">transform</span>(X_te)
+model.<span class="fn">fit</span>(X_tr_sc,y_tr)
+pred=model.<span class="fn">predict</span>(X_te_sc)</pre></div></div>
+</div>
+
+<div class="ib ok" style="margin-top:28px;">
+<div class="il g">🎉 অভিনন্দন!</div>
+তুমি Pandas Data Cleaning, Missing Values, Data Processing এবং Machine Learning-এর সম্পূর্ণ ভিত্তি শিখে ফেলেছ! এখন real dataset দিয়ে practice করো।<br><br>
+<strong>পরবর্তী বিষয়:</strong> Feature Engineering → Cross-Validation → Hyperparameter Tuning → Neural Networks → Deep Learning
+</div>
+</section>
+
+</div><!-- end .content -->
+</main>
+
+<script>
+const sections=document.querySelectorAll("section[id]");
+const navItems=document.querySelectorAll(".ni[href]");
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      navItems.forEach(n=>n.classList.remove("active"));
+      const a=document.querySelector(`.ni[href="#${e.target.id}"]`);
+      if(a)a.classList.add("active");
+    }
+  });
+},{rootMargin:"-20% 0px -70% 0px"});
+sections.forEach(s=>obs.observe(s));
+document.querySelectorAll(".ni[href]").forEach(l=>{
+  l.addEventListener("click",e=>{
+    e.preventDefault();
+    const id=l.getAttribute("href").substring(1);
+    const el=document.getElementById(id);
+    if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
+    if(window.innerWidth<900)document.querySelector(".sidebar").classList.remove("open");
+  });
+});
+// Mobile menu button
+const mtog=document.getElementById("mtog");
+if(mtog){
+  mtog.style.display="flex";
+  if(window.innerWidth>=900)mtog.style.display="none";
+  window.addEventListener("resize",()=>{
+    mtog.style.display=window.innerWidth<900?"flex":"none";
+  });
+}
+</script>
+</body>
+</html>

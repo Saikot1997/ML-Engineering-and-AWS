@@ -1,0 +1,2787 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Streamlit সম্পূর্ণ গাইড — বাংলায়</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&family=Noto+Sans+Bengali:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #111827;
+    --bg3: #1a2235;
+    --card: #162032;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --accent5: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --border: #1e3a5f;
+    --code-bg: #0d1117;
+    --highlight: #ffd700;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: linear-gradient(135deg, #0a0e1a 0%, #0f1f3d 50%, #1a0a2e 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:0.5;transform:translate(-50%,-50%) scale(1)} 50%{opacity:1;transform:translate(-50%,-50%) scale(1.1)} }
+
+  .hero-badge {
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    color: var(--accent);
+    padding: 6px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    animation: fadeDown 0.8s ease;
+  }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, #00d4ff, #7c3aed, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+    animation: fadeUp 1s ease 0.2s both;
+    line-height: 1.2;
+  }
+
+  .hero-subtitle {
+    font-family: 'Noto Serif Bengali', serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    color: var(--text2);
+    margin-bottom: 40px;
+    animation: fadeUp 1s ease 0.4s both;
+    max-width: 700px;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 1s ease 0.6s both;
+  }
+
+  .stat-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 12px;
+    padding: 16px 28px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ===== NAVIGATION ===== */
+  .toc {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 40px auto;
+    max-width: 900px;
+  }
+
+  .toc h2 {
+    color: var(--accent);
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 8px;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: var(--text2);
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 14px;
+    border: 1px solid transparent;
+  }
+
+  .toc-item:hover {
+    background: rgba(0,212,255,0.08);
+    border-color: rgba(0,212,255,0.2);
+    color: var(--accent);
+    transform: translateX(4px);
+  }
+
+  .toc-num {
+    background: rgba(0,212,255,0.15);
+    color: var(--accent);
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* ===== MAIN LAYOUT ===== */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* ===== SECTION HEADERS ===== */
+  .section {
+    margin-bottom: 80px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .section-num {
+    font-size: 0.75rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+
+  .section h2 {
+    font-family: 'Noto Serif Bengali', serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .section h3 {
+    font-family: 'Noto Serif Bengali', serif;
+    font-size: 1.2rem;
+    color: var(--accent);
+    margin: 32px 0 16px;
+  }
+
+  /* ===== CALLOUT BOXES ===== */
+  .callout {
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    border-left: 4px solid;
+    position: relative;
+  }
+
+  .callout-info { background: rgba(0,212,255,0.06); border-color: var(--accent); }
+  .callout-warn { background: rgba(245,158,11,0.06); border-color: var(--accent4); }
+  .callout-success { background: rgba(16,185,129,0.06); border-color: var(--accent3); }
+  .callout-danger { background: rgba(239,68,68,0.06); border-color: var(--accent5); }
+  .callout-purple { background: rgba(124,58,237,0.06); border-color: var(--accent2); }
+
+  .callout-title {
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .callout-info .callout-title { color: var(--accent); }
+  .callout-warn .callout-title { color: var(--accent4); }
+  .callout-success .callout-title { color: var(--accent3); }
+  .callout-danger .callout-title { color: var(--accent5); }
+  .callout-purple .callout-title { color: var(--accent2); }
+
+  .callout p { color: var(--text2); font-size: 15px; }
+
+  /* ===== CODE BLOCKS ===== */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid #21262d;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 20px 0;
+    position: relative;
+  }
+
+  .code-header {
+    background: #161b22;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #21262d;
+  }
+
+  .code-lang {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .code-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .code-dots span {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot-red { background: #ff5f57; }
+  .dot-yellow { background: #febc2e; }
+  .dot-green { background: #28c840; }
+
+  .code-body {
+    padding: 20px;
+    overflow-x: auto;
+  }
+
+  pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #e6edf3;
+    white-space: pre;
+  }
+
+  /* Syntax colors */
+  .kw { color: #ff7b72; }   /* keywords */
+  .fn { color: #d2a8ff; }   /* functions */
+  .st { color: #a5d6ff; }   /* strings */
+  .cm { color: #8b949e; font-style: italic; }  /* comments */
+  .nm { color: #79c0ff; }   /* numbers/vars */
+  .op { color: #ffa657; }   /* operators/decorators */
+  .cl { color: #ffa657; }   /* class names */
+
+  /* ===== DIAGRAM BOXES ===== */
+  .diagram-container {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 28px 0;
+    overflow-x: auto;
+  }
+
+  /* ===== CARDS ===== */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s;
+  }
+
+  .card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,212,255,0.1);
+  }
+
+  .card-icon { font-size: 2rem; margin-bottom: 12px; }
+  .card h4 { color: var(--accent); margin-bottom: 8px; font-size: 0.95rem; }
+  .card p { color: var(--text2); font-size: 13.5px; }
+
+  /* ===== EXERCISE SECTION ===== */
+  .exercise-block {
+    background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(0,212,255,0.05));
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 16px;
+    padding: 28px;
+    margin: 40px 0;
+  }
+
+  .exercise-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(124,58,237,0.2);
+  }
+
+  .exercise-badge {
+    background: var(--accent2);
+    color: white;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .exercise-title {
+    font-family: 'Noto Serif Bengali', serif;
+    color: var(--accent2);
+    font-size: 1.1rem;
+  }
+
+  .exercise-item {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(124,58,237,0.15);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+
+  .exercise-q {
+    color: var(--highlight);
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 15px;
+  }
+
+  .exercise-hint {
+    color: var(--text3);
+    font-size: 13px;
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .diff-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .diff-easy { background: rgba(16,185,129,0.2); color: var(--accent3); }
+  .diff-med { background: rgba(245,158,11,0.2); color: var(--accent4); }
+  .diff-hard { background: rgba(239,68,68,0.2); color: var(--accent5); }
+
+  /* ===== STEP LIST ===== */
+  .steps {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+  }
+
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .steps li::before {
+    content: counter(step);
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .steps li strong {
+    color: var(--text);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .steps li span {
+    color: var(--text2);
+    font-size: 14px;
+  }
+
+  /* ===== TABLE ===== */
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 20px 0;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th {
+    background: var(--bg3);
+    color: var(--accent);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text2);
+    font-size: 14px;
+  }
+
+  tr:hover td { background: rgba(0,212,255,0.03); }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(0,212,255,0.08);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+
+  strong { color: var(--text); }
+
+  p { color: var(--text2); margin-bottom: 14px; line-height: 1.9; }
+
+  /* ===== ALGO SECTION ===== */
+  .algo-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin: 24px 0;
+    overflow: hidden;
+  }
+
+  .algo-header {
+    background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(124,58,237,0.1));
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .algo-emoji { font-size: 2rem; }
+
+  .algo-title { font-family: 'Noto Serif Bengali', serif; font-size: 1.2rem; color: var(--text); }
+  .algo-subtitle { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; }
+
+  .algo-body { padding: 24px; }
+
+  .algo-explain {
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+    color: var(--text2);
+    font-size: 15px;
+    border-left: 3px solid var(--accent3);
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text3);
+    font-size: 13px;
+  }
+
+  /* ===== MISC ===== */
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(255,215,0,0.05), rgba(255,215,0,0.02));
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    color: var(--text2);
+  }
+
+  .highlight-box strong { color: var(--highlight); }
+
+  .tag {
+    display: inline-block;
+    background: rgba(0,212,255,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(0,212,255,0.2);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin: 2px;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 48px 0;
+  }
+
+  /* SVG diagrams */
+  svg text { font-family: 'Noto Sans Bengali', sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="hero-badge">🇧🇩 সম্পূর্ণ বাংলায় · Streamlit Complete Guide</div>
+  <h1>Streamlit সম্পূর্ণ গাইড</h1>
+  <p class="hero-subtitle">
+    একদম শূন্য থেকে শুরু করে — ইনস্টলেশন, ফাংশন, প্রোজেক্ট, অ্যালগরিদম — সব কিছু বাংলায়
+    <br>নতুনদের জন্য, কিন্তু Job Interview পর্যন্ত পৌঁছানোর জন্য
+  </p>
+  <div class="hero-stats">
+    <div class="stat-box">
+      <div class="stat-num">৪টি</div>
+      <div class="stat-label">Notebook Cover</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">১২+</div>
+      <div class="stat-label">অ্যালগরিদম</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">৫০+</div>
+      <div class="stat-label">Interview প্রশ্ন</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">১০০%</div>
+      <div class="stat-label">বাংলায়</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TABLE OF CONTENTS ===== -->
+<div class="container">
+<div class="toc">
+  <h2>📚 বিষয়সূচি (Table of Contents)</h2>
+  <div class="toc-grid">
+    <a href="#s1" class="toc-item"><span class="toc-num">১</span> Streamlit কী ও কেন?</a>
+    <a href="#s2" class="toc-item"><span class="toc-num">২</span> ইনস্টলেশন Step-by-Step</a>
+    <a href="#s3" class="toc-item"><span class="toc-num">৩</span> প্রথম Streamlit অ্যাপ</a>
+    <a href="#s4" class="toc-item"><span class="toc-num">৪</span> সমস্ত Functions</a>
+    <a href="#s5" class="toc-item"><span class="toc-num">৫</span> Titanic Project (EDA)</a>
+    <a href="#s6" class="toc-item"><span class="toc-num">৬</span> DataVisualization</a>
+    <a href="#s7" class="toc-item"><span class="toc-num">৭</span> ML Modelling</a>
+    <a href="#s8" class="toc-item"><span class="toc-num">৮</span> Good Practices & Cache</a>
+    <a href="#s9" class="toc-item"><span class="toc-num">৯</span> Model Saving</a>
+    <a href="#s10" class="toc-item"><span class="toc-num">১০</span> Hosting on GitHub</a>
+    <a href="#s11" class="toc-item"><span class="toc-num">১১</span> Deep Learning Project</a>
+    <a href="#s12" class="toc-item"><span class="toc-num">১২</span> সব অ্যালগরিদম</a>
+  </div>
+</div>
+
+<!-- ===== SECTION 1: What is Streamlit ===== -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(0,212,255,0.1)">🌐</div>
+    <div>
+      <div class="section-num">অধ্যায় ০১</div>
+      <h2>Streamlit কী এবং কেন ব্যবহার করা হয়?</h2>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <div class="callout-title">🎯 মূল ধারণা</div>
+    <p>কল্পনা করো তুমি একটা Machine Learning model বানিয়েছ। এখন তোমার boss বা client কে দেখাতে হবে। তুমি কি Python কোড দেখাবে? না! তুমি একটা সুন্দর ওয়েবসাইট দেখাবে যেখানে সে নিজে ক্লিক করে দেখতে পারবে। এই কাজটাই Streamlit করে।</p>
+  </div>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <!-- Background grid lines -->
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#00d4ff"/>
+        </marker>
+      </defs>
+
+      <!-- Python Script box -->
+      <rect x="30" y="90" width="180" height="120" rx="12" fill="#162032" stroke="#1e3a5f" stroke-width="1.5"/>
+      <text x="120" y="130" text-anchor="middle" fill="#00d4ff" font-size="28" font-family="'Hind Siliguri',sans-serif">🐍</text>
+      <text x="120" y="158" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="600" font-family="'Hind Siliguri',sans-serif">Python Script</text>
+      <text x="120" y="176" text-anchor="middle" fill="#64748b" font-size="11" font-family="'Hind Siliguri',sans-serif">(.py ফাইল)</text>
+      <text x="120" y="194" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">ML Code + Streamlit</text>
+
+      <!-- Arrow 1 -->
+      <line x1="210" y1="150" x2="290" y2="150" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="250" y="140" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="'Hind Siliguri',sans-serif">streamlit run</text>
+
+      <!-- Streamlit Engine box -->
+      <rect x="295" y="90" width="180" height="120" rx="12" fill="#1a0a2e" stroke="#7c3aed" stroke-width="1.5"/>
+      <text x="385" y="130" text-anchor="middle" fill="#7c3aed" font-size="28" font-family="'Hind Siliguri',sans-serif">⚡</text>
+      <text x="385" y="158" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="600" font-family="'Hind Siliguri',sans-serif">Streamlit Engine</text>
+      <text x="385" y="176" text-anchor="middle" fill="#64748b" font-size="11" font-family="'Hind Siliguri',sans-serif">(Python → HTML)</text>
+      <text x="385" y="194" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">Automatically converts</text>
+
+      <!-- Arrow 2 -->
+      <line x1="475" y1="150" x2="555" y2="150" stroke="#00d4ff" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="515" y="140" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="'Hind Siliguri',sans-serif">localhost:8501</text>
+
+      <!-- Web App box -->
+      <rect x="560" y="90" width="180" height="120" rx="12" fill="#0a1e0a" stroke="#10b981" stroke-width="1.5"/>
+      <text x="650" y="130" text-anchor="middle" fill="#10b981" font-size="28" font-family="'Hind Siliguri',sans-serif">🌐</text>
+      <text x="650" y="158" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="600" font-family="'Hind Siliguri',sans-serif">Web Application</text>
+      <text x="650" y="176" text-anchor="middle" fill="#64748b" font-size="11" font-family="'Hind Siliguri',sans-serif">(Browser-এ দেখা যায়)</text>
+      <text x="650" y="194" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">Interactive!</text>
+
+      <!-- Title -->
+      <text x="400" y="40" text-anchor="middle" fill="#e2e8f0" font-size="16" font-weight="700" font-family="'Hind Siliguri',sans-serif">Streamlit কীভাবে কাজ করে</text>
+      <text x="400" y="60" text-anchor="middle" fill="#64748b" font-size="12" font-family="'Hind Siliguri',sans-serif">Python code → Streamlit → সুন্দর ওয়েবসাইট</text>
+
+      <!-- Bottom annotation -->
+      <text x="120" y="240" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="'Hind Siliguri',sans-serif">তুমি এটা লেখো</text>
+      <text x="385" y="240" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="'Hind Siliguri',sans-serif">Streamlit এটা করে</text>
+      <text x="650" y="240" text-anchor="middle" fill="#10b981" font-size="11" font-family="'Hind Siliguri',sans-serif">User এটা দেখে!</text>
+    </svg>
+  </div>
+
+  <h3>Streamlit এর আগে কী হতো?</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">😰</div>
+      <h4>আগের সমস্যা</h4>
+      <p>Data Scientist রা শুধু Jupyter Notebook দিয়ে দিতো। Boss কিছুই বুঝতো না, কারণ code দেখতে চায় না!</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <h4>Streamlit এর সমাধান</h4>
+      <p>মাত্র কয়েক লাইন Python code দিয়ে পুরো interactive website বানিয়ে ফেলো। কোনো HTML/CSS জানা লাগবে না!</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🚀</div>
+      <h4>কোথায় ব্যবহার হয়?</h4>
+      <p>ML model demo, Data Dashboard, Business Report, Research Presentation — সব জায়গায়!</p>
+    </div>
+  </div>
+
+  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ মনে রাখো</div>
+    <p>Streamlit .py ফাইলে কাজ করে, Jupyter Notebook (.ipynb) এ না। তোমাকে VSCode বা অন্য কোনো Code Editor ব্যবহার করতে হবে।</p>
+  </div>
+
+  <!-- EXERCISE 1 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-badge">Interview Q&A</span>
+      <span class="exercise-title">অধ্যায় ১ — Streamlit Basics</span>
+    </div>
+
+    <div class="exercise-item">
+      <span class="diff-badge diff-easy">সহজ</span>
+      <div class="exercise-q">Q1. Streamlit কী এবং Data Science-এ কেন ব্যবহার করা হয়?</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: Streamlit হলো একটি Python library যা Machine Learning ও Data Science প্রোজেক্টকে interactive web application এ রূপান্তরিত করে। এটি HTML/CSS/JavaScript না জেনেও শুধু Python দিয়ে professional web app বানানোর সুবিধা দেয়। Data Scientist রা তাদের model-এর result এবং visualization সহজে stakeholder দের দেখাতে এটি ব্যবহার করে।</p>
+      <div class="exercise-hint">💡 Interview tip: "rapid prototyping" এবং "model deployment" শব্দদুটি উল্লেখ করো।</div>
+    </div>
+
+    <div class="exercise-item">
+      <span class="diff-badge diff-med">মাঝারি</span>
+      <div class="exercise-q">Q2. Streamlit এবং Flask/Django এর মধ্যে পার্থক্য কী?</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: Flask/Django হলো General-purpose web frameworks যেগুলোতে HTML template, routing, database management সব manually করতে হয়। Streamlit শুধুমাত্র Data Science এর জন্য designed — এখানে শুধু Python লিখলেই UI automatically তৈরি হয়। Streamlit দিয়ে development অনেক দ্রুত, কিন্তু customization কম।</p>
+    </div>
+
+    <div class="exercise-item">
+      <span class="diff-badge diff-hard">কঠিন (ML Engineer)</span>
+      <div class="exercise-q">Q3. Production environment-এ Streamlit এর limitations কী কী?</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: (১) Statelessness — প্রতিটি user interaction-এ পুরো script re-run হয়, যা heavy computation এর ক্ষেত্রে slow। (২) Multi-user scalability সীমিত। (৩) Complex UI customization কঠিন। (৪) Session state management manually করতে হয়। Production-এ st.cache_data() ও st.session_state ব্যবহার করে এই সমস্যাগুলো আংশিকভাবে সমাধান করা যায়।</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 2: Installation ===== -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(16,185,129,0.1)">⚙️</div>
+    <div>
+      <div class="section-num">অধ্যায় ০২</div>
+      <h2>ইনস্টলেশন — একদম Step-by-Step</h2>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <div class="callout-title">📌 প্রথমে বুঝি</div>
+    <p>Streamlit install করার আগে তোমার computer-এ Python এবং pip থাকতে হবে। Anaconda install করলে দুটোই পাওয়া যায় একসাথে। চলো step-by-step দেখি।</p>
+  </div>
+
+  <h3>🔧 Windows-এ ইনস্টলেশন প্রক্রিয়া</h3>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 760 380" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="arr2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#10b981"/>
+        </marker>
+      </defs>
+
+      <!-- Step 1 -->
+      <rect x="20" y="20" width="155" height="80" rx="10" fill="#162032" stroke="#10b981" stroke-width="1.5"/>
+      <circle cx="50" cy="50" r="14" fill="#10b981"/>
+      <text x="50" y="55" text-anchor="middle" fill="white" font-size="13" font-weight="700" font-family="'Hind Siliguri',sans-serif">১</text>
+      <text x="97" y="50" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600" font-family="'Hind Siliguri',sans-serif">Anaconda</text>
+      <text x="97" y="66" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">Download করো</text>
+      <text x="97" y="82" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">anaconda.com থেকে</text>
+
+      <!-- Arrow -->
+      <line x1="175" y1="60" x2="210" y2="60" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <!-- Step 2 -->
+      <rect x="215" y="20" width="155" height="80" rx="10" fill="#162032" stroke="#10b981" stroke-width="1.5"/>
+      <circle cx="245" cy="50" r="14" fill="#10b981"/>
+      <text x="245" y="55" text-anchor="middle" fill="white" font-size="13" font-weight="700" font-family="'Hind Siliguri',sans-serif">২</text>
+      <text x="292" y="50" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600" font-family="'Hind Siliguri',sans-serif">Anaconda</text>
+      <text x="292" y="66" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">Navigator খোলো</text>
+      <text x="292" y="82" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">Start Menu থেকে</text>
+
+      <!-- Arrow -->
+      <line x1="370" y1="60" x2="405" y2="60" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <!-- Step 3 -->
+      <rect x="410" y="20" width="155" height="80" rx="10" fill="#162032" stroke="#10b981" stroke-width="1.5"/>
+      <circle cx="440" cy="50" r="14" fill="#10b981"/>
+      <text x="440" y="55" text-anchor="middle" fill="white" font-size="13" font-weight="700" font-family="'Hind Siliguri',sans-serif">৩</text>
+      <text x="487" y="50" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600" font-family="'Hind Siliguri',sans-serif">Powershell</text>
+      <text x="487" y="66" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">Prompt Launch করো</text>
+      <text x="487" y="82" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">Terminal খুলবে</text>
+
+      <!-- Arrow -->
+      <line x1="565" y1="60" x2="600" y2="60" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <!-- Step 4 -->
+      <rect x="605" y="20" width="135" height="80" rx="10" fill="#162032" stroke="#10b981" stroke-width="1.5"/>
+      <circle cx="630" cy="50" r="14" fill="#10b981"/>
+      <text x="630" y="55" text-anchor="middle" fill="white" font-size="13" font-weight="700" font-family="'Hind Siliguri',sans-serif">৪</text>
+      <text x="672" y="50" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600" font-family="'Hind Siliguri',sans-serif">Command</text>
+      <text x="672" y="66" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">pip install</text>
+      <text x="672" y="82" text-anchor="middle" fill="#10b981" font-size="10" font-family="'Hind Siliguri',sans-serif">Streamlit</text>
+
+      <!-- Terminal mockup -->
+      <rect x="20" y="140" width="720" height="220" rx="12" fill="#0d1117" stroke="#21262d" stroke-width="1"/>
+      <!-- Title bar -->
+      <rect x="20" y="140" width="720" height="36" rx="12" fill="#161b22"/>
+      <rect x="20" y="164" width="720" height="12" fill="#161b22"/>
+      <circle cx="46" cy="158" r="6" fill="#ff5f57"/>
+      <circle cx="66" cy="158" r="6" fill="#febc2e"/>
+      <circle cx="86" cy="158" r="6" fill="#28c840"/>
+      <text x="380" y="163" text-anchor="middle" fill="#8b949e" font-size="11" font-family="'Hind Siliguri',sans-serif">Anaconda Powershell Prompt</text>
+
+      <!-- Terminal content -->
+      <text x="44" y="202" fill="#8b949e" font-size="12" font-family="monospace">(base) PS C:\Users\YourName&gt;</text>
+      <text x="250" y="202" fill="#00d4ff" font-size="12" font-family="monospace">pip install streamlit</text>
+      <text x="44" y="222" fill="#8b949e" font-size="12" font-family="monospace">Collecting streamlit...</text>
+      <text x="44" y="240" fill="#8b949e" font-size="12" font-family="monospace">Downloading streamlit-1.x.x.tar.gz</text>
+      <text x="44" y="258" fill="#28c840" font-size="12" font-family="monospace">Successfully installed streamlit ✓</text>
+
+      <text x="44" y="286" fill="#8b949e" font-size="12" font-family="monospace">(base) PS C:\Users\YourName&gt;</text>
+      <text x="250" y="286" fill="#ffa657" font-size="12" font-family="monospace">streamlit hello</text>
+      <text x="44" y="306" fill="#28c840" font-size="12" font-family="monospace">You can now view your Streamlit app in your browser! 🎉</text>
+      <text x="44" y="324" fill="#64748b" font-size="12" font-family="monospace">Local URL: http://localhost:8501</text>
+      <text x="44" y="342" fill="#64748b" font-size="12" font-family="monospace">Network URL: http://192.168.x.x:8501</text>
+    </svg>
+  </div>
+
+  <h3>📟 প্রয়োজনীয় Commands</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Terminal / Powershell</span>
+      <div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    </div>
+    <div class="code-body">
+<pre><span class="cm"># Step 1: Streamlit install করো</span>
+<span class="nm">pip install streamlit</span>
+
+<span class="cm"># Step 2: ঠিকমতো install হয়েছে কিনা check করো</span>
+<span class="nm">streamlit hello</span>
+
+<span class="cm"># Step 3: Browser-এ http://localhost:8501 এ যাও</span>
+<span class="cm"># Demo page দেখাবে — সফলভাবে install হয়েছে!</span>
+
+<span class="cm"># কোনো folder-এ যেতে cd command</span>
+<span class="nm">cd Documents</span>
+<span class="nm">cd MyProject</span>
+
+<span class="cm"># সেই folder-এর files দেখতে</span>
+<span class="nm">ls</span>           <span class="cm"># Mac/Linux-এ</span>
+<span class="nm">dir</span>          <span class="cm"># Windows-এ</span>
+
+<span class="cm"># App চালাতে</span>
+<span class="nm">streamlit run app.py</span></pre>
+    </div>
+  </div>
+
+  <div class="callout callout-warn">
+    <div class="callout-title">🍎 MAC ব্যবহারকারীদের জন্য</div>
+    <p>MAC-এ Anaconda Terminal না খুলে সরাসরি Mac Terminal খুলতে হবে (Spotlight Search → Terminal লিখে খোঁজো)। বাকি সব commands একই।</p>
+  </div>
+
+  <h3>🏗️ Recommended Project Structure</h3>
+  <div class="diagram-container">
+    <svg viewBox="0 0 500 260" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:500px;margin:0 auto;display:block;">
+      <!-- Folder structure -->
+      <text x="30" y="30" fill="#ffa657" font-size="13" font-family="monospace">📁 MyProject/</text>
+      <line x1="42" y1="38" x2="42" y2="220" stroke="#1e3a5f" stroke-width="1" stroke-dasharray="3,3"/>
+
+      <text x="62" y="65" fill="#10b981" font-size="13" font-family="monospace">📄 model.py</text>
+      <text x="200" y="65" fill="#64748b" font-size="11" font-family="monospace">← ML model code এখানে</text>
+      <line x1="42" y1="58" x2="60" y2="58" stroke="#1e3a5f" stroke-width="1"/>
+
+      <text x="62" y="100" fill="#00d4ff" font-size="13" font-family="monospace">📄 streamlit_app.py</text>
+      <text x="270" y="100" fill="#64748b" font-size="11" font-family="monospace">← Streamlit code এখানে</text>
+      <line x1="42" y1="93" x2="60" y2="93" stroke="#1e3a5f" stroke-width="1"/>
+
+      <text x="62" y="135" fill="#94a3b8" font-size="13" font-family="monospace">📄 data.csv</text>
+      <text x="180" y="135" fill="#64748b" font-size="11" font-family="monospace">← Dataset</text>
+      <line x1="42" y1="128" x2="60" y2="128" stroke="#1e3a5f" stroke-width="1"/>
+
+      <text x="62" y="170" fill="#94a3b8" font-size="13" font-family="monospace">📄 requirements.txt</text>
+      <text x="230" y="170" fill="#64748b" font-size="11" font-family="monospace">← Dependencies</text>
+      <line x1="42" y1="163" x2="60" y2="163" stroke="#1e3a5f" stroke-width="1"/>
+
+      <text x="62" y="205" fill="#94a3b8" font-size="13" font-family="monospace">📄 saved_model.pkl</text>
+      <text x="240" y="205" fill="#64748b" font-size="11" font-family="monospace">← Saved ML model</text>
+      <line x1="42" y1="198" x2="60" y2="198" stroke="#1e3a5f" stroke-width="1"/>
+
+      <!-- Why 2 files note -->
+      <rect x="10" y="230" width="480" height="25" rx="6" fill="rgba(245,158,11,0.08)" stroke="rgba(245,158,11,0.2)" stroke-width="1"/>
+      <text x="250" y="247" text-anchor="middle" fill="#f59e0b" font-size="11" font-family="'Hind Siliguri',sans-serif">💡 model.py ও streamlit_app.py আলাদা রাখো — error খুঁজে পাওয়া সহজ হয়</text>
+    </svg>
+  </div>
+
+  <!-- EXERCISE 2 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-badge">Interview Q&A</span>
+      <span class="exercise-title">অধ্যায় ২ — Installation & Setup</span>
+    </div>
+
+    <div class="exercise-item">
+      <span class="diff-badge diff-easy">সহজ</span>
+      <div class="exercise-q">Q1. <code>streamlit run app.py</code> এবং <code>python app.py</code> এর মধ্যে পার্থক্য কী?</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: <code>python app.py</code> দিলে script terminal-এ run হয়, কিন্তু কোনো web interface তৈরি হয় না। <code>streamlit run app.py</code> দিলে Streamlit তার নিজস্ব web server চালু করে এবং browser-এ automatically একটি interactive web page open করে। Streamlit script-কে একটি web app-এ রূপান্তরিত করে।</p>
+    </div>
+
+    <div class="exercise-item">
+      <span class="diff-badge diff-med">ML Engineering</span>
+      <div class="exercise-q">Q2. Production deployment-এর জন্য requirements.txt কেন দরকার? কীভাবে বানাবে?</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: requirements.txt-এ সব dependencies (libraries ও তাদের version) লেখা থাকে। অন্য কেউ বা server-এ deploy করার সময় <code>pip install -r requirements.txt</code> দিলে same environment তৈরি হয়। বানাতে: <code>pip freeze &gt; requirements.txt</code></p>
+      <div class="code-block" style="margin-top:10px;">
+        <div class="code-header"><span class="code-lang">requirements.txt example</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre>streamlit==1.28.0
+pandas==2.0.3
+scikit-learn==1.3.0
+matplotlib==3.7.2
+seaborn==0.12.2</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 3: First App ===== -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(124,58,237,0.1)">🚀</div>
+    <div>
+      <div class="section-num">অধ্যায় ০৩</div>
+      <h2>প্রথম Streamlit App — Hello World!</h2>
+    </div>
+  </div>
+
+  <p>চলো একটা super simple app বানাই। মাত্র ৫ লাইন code!</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python · streamlit_app.py</span>
+      <div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    </div>
+    <div class="code-body">
+<pre><span class="kw">import</span> streamlit <span class="kw">as</span> st
+
+<span class="cm"># st.title() = বড় title দেখাও</span>
+st.<span class="fn">title</span>(<span class="st">"আমার প্রথম Streamlit"</span>)
+
+<span class="cm"># st.write() = যেকোনো text বা data দেখাও</span>
+st.<span class="fn">write</span>(<span class="st">"স্বাগতম! এটা আমার প্রথম web app।"</span>)
+
+<span class="cm"># st.checkbox() = একটা checkbox তৈরি করো</span>
+<span class="cm"># যদি user check করে, তাহলে if block চলবে</span>
+<span class="kw">if</span> st.<span class="fn">checkbox</span>(<span class="st">"আরো দেখাও"</span>):
+    st.<span class="fn">write</span>(<span class="st">"তুমি checkbox check করেছ! 🎉"</span>)</pre>
+    </div>
+  </div>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#6366f1"/>
+        </marker>
+      </defs>
+      <!-- Browser mockup -->
+      <rect x="10" y="10" width="700" height="280" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+      <!-- Browser bar -->
+      <rect x="10" y="10" width="700" height="40" rx="12" fill="#e2e8f0"/>
+      <rect x="10" y="38" width="700" height="12" fill="#e2e8f0"/>
+      <circle cx="36" cy="30" r="7" fill="#ff5f57"/>
+      <circle cx="58" cy="30" r="7" fill="#febc2e"/>
+      <circle cx="80" cy="30" r="7" fill="#28c840"/>
+      <rect x="150" y="20" width="400" height="20" rx="10" fill="white"/>
+      <text x="350" y="34" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="monospace">localhost:8501</text>
+
+      <!-- Sidebar mock -->
+      <rect x="10" y="50" width="160" height="240" fill="#f1f5f9"/>
+      <text x="90" y="80" text-anchor="middle" fill="#64748b" font-size="11" font-family="'Hind Siliguri',sans-serif">Streamlit</text>
+      <circle cx="30" cy="110" r="4" fill="#28c840"/>
+      <text x="45" y="114" fill="#475569" font-size="10" font-family="'Hind Siliguri',sans-serif">আমার প্রথম Streamlit</text>
+
+      <!-- Main content -->
+      <text x="220" y="110" fill="#0f172a" font-size="20" font-weight="700" font-family="'Hind Siliguri',sans-serif">আমার প্রথম Streamlit</text>
+      <text x="220" y="145" fill="#475569" font-size="13" font-family="'Hind Siliguri',sans-serif">স্বাগতম! এটা আমার প্রথম web app।</text>
+
+      <!-- Checkbox unchecked -->
+      <rect x="220" y="165" width="14" height="14" rx="2" fill="none" stroke="#94a3b8" stroke-width="2"/>
+      <text x="242" y="177" fill="#475569" font-size="13" font-family="'Hind Siliguri',sans-serif">আরো দেখাও</text>
+
+      <!-- Arrow showing what happens when checked -->
+      <line x1="420" y1="172" x2="500" y2="172" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr2)"/>
+      <text x="460" y="162" text-anchor="middle" fill="#7c3aed" font-size="11" font-family="'Hind Siliguri',sans-serif">check করলে...</text>
+
+      <!-- Checkbox checked state -->
+      <rect x="510" y="165" width="14" height="14" rx="2" fill="#7c3aed" stroke="#7c3aed" stroke-width="2"/>
+      <text x="516" y="176" fill="white" font-size="9" font-weight="700" font-family="'Hind Siliguri',sans-serif">✓</text>
+      <text x="532" y="177" fill="#475569" font-size="13" font-family="'Hind Siliguri',sans-serif">আরো দেখাও</text>
+      <text x="510" y="205" fill="#475569" font-size="13" font-family="'Hind Siliguri',sans-serif">তুমি checkbox check করেছ! 🎉</text>
+    </svg>
+  </div>
+
+  <div class="callout callout-success">
+    <div class="callout-title">✅ এটাই Streamlit এর জাদু!</div>
+    <p>কোনো HTML, CSS, JavaScript ছাড়াই একটা interactive webpage! User checkbox check করলে নতুন content দেখায়। এই কাজটা করতে আগে অনেক কোড লাগতো।</p>
+  </div>
+
+  <!-- EXERCISE 3 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-badge">Coding Exercise</span>
+      <span class="exercise-title">অধ্যায় ৩ — First App</span>
+    </div>
+    <div class="exercise-item">
+      <span class="diff-badge diff-easy">সহজ</span>
+      <div class="exercise-q">Ex 1. নিচের code লিখে run করো এবং observe করো কী হয়:</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">import</span> streamlit <span class="kw">as</span> st
+name = st.<span class="fn">text_input</span>(<span class="st">"তোমার নাম লেখো:"</span>)
+<span class="kw">if</span> name:
+    st.<span class="fn">write</span>(<span class="st">f"হ্যালো, </span>{name}<span class="st">! 👋"</span>)</pre></div>
+      </div>
+      <div class="exercise-hint">💡 Streamlit-এ প্রতিটি widget (text_input, button, checkbox) একটি Python value return করে।</div>
+    </div>
+    <div class="exercise-item">
+      <span class="diff-badge diff-med">ML Engineering</span>
+      <div class="exercise-q">Ex 2. একটি BMI calculator বানাও যেখানে height ও weight input নিবে এবং BMI category দেখাবে।</div>
+      <div class="exercise-hint">💡 st.number_input(), st.slider(), st.success(), st.warning(), st.error() ব্যবহার করো।</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 4: All Functions ===== -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(245,158,11,0.1)">🧰</div>
+    <div>
+      <div class="section-num">অধ্যায় ০৪</div>
+      <h2>Streamlit-এর সব গুরুত্বপূর্ণ Functions</h2>
+    </div>
+  </div>
+
+  <p>Streamlit-এ অনেক function আছে। চলো গ্রুপে ভাগ করে বুঝি:</p>
+
+  <h3>📝 Text দেখানোর Functions</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python · Text Functions</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+    <div class="code-body">
+<pre><span class="kw">import</span> streamlit <span class="kw">as</span> st
+
+<span class="cm"># সবচেয়ে বড় title (H1 এর মতো)</span>
+st.<span class="fn">title</span>(<span class="st">"আমার প্রোজেক্ট"</span>)
+
+<span class="cm"># বড় header (H2 এর মতো)</span>
+st.<span class="fn">header</span>(<span class="st">"ডেটা বিশ্লেষণ"</span>)
+
+<span class="cm"># ছোট subheader (H3 এর মতো)</span>
+st.<span class="fn">subheader</span>(<span class="st">"Titanic Dataset"</span>)
+
+<span class="cm"># Normal text — **bold**, *italic* সহ Markdown support</span>
+st.<span class="fn">markdown</span>(<span class="st">"এটা **bold** এবং এটা *italic*"</span>)
+
+<span class="cm"># যেকোনো কিছু print করো (text, number, dataframe)</span>
+st.<span class="fn">write</span>(<span class="st">"Hello!"</span>)
+st.<span class="fn">write</span>(<span class="nm">42</span>)
+st.<span class="fn">write</span>(df)  <span class="cm"># dataframe ও দেখায়!</span>
+
+<span class="cm"># Code দেখাও (syntax highlighting সহ)</span>
+st.<span class="fn">code</span>(<span class="st">"print('Hello World')"</span>, language=<span class="st">"python"</span>)
+
+<span class="cm"># সবুজ success message</span>
+st.<span class="fn">success</span>(<span class="st">"Model সফলভাবে train হয়েছে! ✅"</span>)
+
+<span class="cm"># হলুদ warning message</span>
+st.<span class="fn">warning</span>(<span class="st">"Missing values আছে! ⚠️"</span>)
+
+<span class="cm"># লাল error message</span>
+st.<span class="fn">error</span>(<span class="st">"ফাইল পাওয়া যায়নি! ❌"</span>)
+
+<span class="cm"># নীল info message</span>
+st.<span class="fn">info</span>(<span class="st">"এটা একটা তথ্য বার্তা ℹ️"</span>)</pre>
+    </div>
+  </div>
+
+  <h3>🎛️ Widget Functions (User Input)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python · Widget Functions</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+    <div class="code-body">
+<pre><span class="cm"># Button — click করলে True return করে</span>
+<span class="kw">if</span> st.<span class="fn">button</span>(<span class="st">"Predict করো"</span>):
+    st.<span class="fn">write</span>(<span class="st">"Prediction চলছে..."</span>)
+
+<span class="cm"># Checkbox — True/False</span>
+show_data = st.<span class="fn">checkbox</span>(<span class="st">"Data দেখাও"</span>)
+
+<span class="cm"># Dropdown (selectbox) — একটা option বেছে নাও</span>
+model = st.<span class="fn">selectbox</span>(<span class="st">"Model বেছে নাও"</span>, 
+                       [<span class="st">"Random Forest"</span>, <span class="st">"SVC"</span>, <span class="st">"Logistic Regression"</span>])
+
+<span class="cm"># Radio buttons</span>
+choice = st.<span class="fn">radio</span>(<span class="st">"কী দেখাবো?"</span>, [<span class="st">"Accuracy"</span>, <span class="st">"Confusion Matrix"</span>])
+
+<span class="cm"># Slider — range থেকে number বেছে নাও</span>
+age = st.<span class="fn">slider</span>(<span class="st">"বয়স"</span>, min_value=<span class="nm">0</span>, max_value=<span class="nm">100</span>, value=<span class="nm">25</span>)
+
+<span class="cm"># Number input</span>
+salary = st.<span class="fn">number_input</span>(<span class="st">"বেতন (টাকা)"</span>, min_value=<span class="nm">0</span>)
+
+<span class="cm"># Text input</span>
+name = st.<span class="fn">text_input</span>(<span class="st">"তোমার নাম"</span>)
+
+<span class="cm"># File upload</span>
+file = st.<span class="fn">file_uploader</span>(<span class="st">"CSV ফাইল upload করো"</span>, type=[<span class="st">"csv"</span>])
+
+<span class="cm"># Multi-select</span>
+features = st.<span class="fn">multiselect</span>(<span class="st">"Features বেছে নাও"</span>, 
+                            [<span class="st">"Age"</span>, <span class="st">"Sex"</span>, <span class="st">"Pclass"</span>, <span class="st">"Fare"</span>])</pre>
+    </div>
+  </div>
+
+  <h3>📊 Data দেখানোর Functions</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python · Data Display</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+    <div class="code-body">
+<pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Dataframe দেখাও (interactive table)</span>
+st.<span class="fn">dataframe</span>(df)         <span class="cm"># scroll করা যায়</span>
+st.<span class="fn">table</span>(df.<span class="fn">head</span>(<span class="nm">5</span>))    <span class="cm"># static table</span>
+
+<span class="cm"># Chart দেখাও</span>
+st.<span class="fn">line_chart</span>(df[<span class="st">"column"</span>])
+st.<span class="fn">bar_chart</span>(df[<span class="st">"column"</span>])
+
+<span class="cm"># Matplotlib/Seaborn chart — এভাবে wrap করতে হয়</span>
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+fig, ax = plt.<span class="fn">subplots</span>()
+ax.<span class="fn">plot</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>], [<span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">6</span>])
+st.<span class="fn">pyplot</span>(fig)           <span class="cm"># ← এটা অবশ্যই দিতে হবে!</span>
+
+<span class="cm"># Image দেখাও</span>
+st.<span class="fn">image</span>(<span class="st">"image.png"</span>, caption=<span class="st">"আমার ছবি"</span>)
+
+<span class="cm"># Metric (KPI card) দেখাও</span>
+st.<span class="fn">metric</span>(<span class="st">"Accuracy"</span>, <span class="st">"92.3%"</span>, delta=<span class="st">"+2.1%"</span>)</pre>
+    </div>
+  </div>
+
+  <h3>📐 Layout Functions</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python · Layout</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+    <div class="code-body">
+<pre><span class="cm"># Side-by-side columns বানাও</span>
+col1, col2, col3 = st.<span class="fn">columns</span>(<span class="nm">3</span>)
+<span class="kw">with</span> col1:
+    st.<span class="fn">metric</span>(<span class="st">"Accuracy"</span>, <span class="st">"92%"</span>)
+<span class="kw">with</span> col2:
+    st.<span class="fn">metric</span>(<span class="st">"Precision"</span>, <span class="st">"89%"</span>)
+<span class="kw">with</span> col3:
+    st.<span class="fn">metric</span>(<span class="st">"Recall"</span>, <span class="st">"88%"</span>)
+
+<span class="cm"># Sidebar — বাম দিকে menu</span>
+st.sidebar.<span class="fn">title</span>(<span class="st">"Navigation"</span>)
+page = st.sidebar.<span class="fn">radio</span>(<span class="st">"Go to"</span>, [<span class="st">"Home"</span>, <span class="st">"Analysis"</span>])
+
+<span class="cm"># Expandable section</span>
+<span class="kw">with</span> st.<span class="fn">expander</span>(<span class="st">"আরো details দেখো"</span>):
+    st.<span class="fn">write</span>(<span class="st">"এখানে hidden content আছে"</span>)
+
+<span class="cm"># Tab তৈরি করো</span>
+tab1, tab2 = st.<span class="fn">tabs</span>([<span class="st">"📊 Data"</span>, <span class="st">"🤖 Model"</span>])
+<span class="kw">with</span> tab1:
+    st.<span class="fn">write</span>(<span class="st">"Data tab"</span>)
+<span class="kw">with</span> tab2:
+    st.<span class="fn">write</span>(<span class="st">"Model tab"</span>)
+
+<span class="cm"># Progress bar</span>
+progress = st.<span class="fn">progress</span>(<span class="nm">0</span>)
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">100</span>):
+    progress.<span class="fn">progress</span>(i + <span class="nm">1</span>)</pre>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Function</th><th>কী করে</th><th>Return করে</th><th>উদাহরণ</th></tr></thead>
+      <tbody>
+        <tr><td><code>st.title()</code></td><td>বড় title দেখায়</td><td>None</td><td>Page heading</td></tr>
+        <tr><td><code>st.write()</code></td><td>যেকোনো কিছু দেখায়</td><td>None</td><td>Text, df, chart</td></tr>
+        <tr><td><code>st.checkbox()</code></td><td>Checkbox তৈরি করে</td><td>True/False</td><td>Toggle content</td></tr>
+        <tr><td><code>st.selectbox()</code></td><td>Dropdown তৈরি করে</td><td>Selected value</td><td>Model choice</td></tr>
+        <tr><td><code>st.slider()</code></td><td>Slider তৈরি করে</td><td>Number</td><td>Age, threshold</td></tr>
+        <tr><td><code>st.button()</code></td><td>Button তৈরি করে</td><td>True (click হলে)</td><td>Submit, Predict</td></tr>
+        <tr><td><code>st.dataframe()</code></td><td>Table দেখায়</td><td>None</td><td>DataFrame show</td></tr>
+        <tr><td><code>st.pyplot(fig)</code></td><td>Matplotlib chart দেখায়</td><td>None</td><td>Any plt chart</td></tr>
+        <tr><td><code>st.columns(n)</code></td><td>n টা column বানায়</td><td>Column objects</td><td>Side-by-side</td></tr>
+        <tr><td><code>st.sidebar</code></td><td>Left sidebar-এ elements</td><td>—</td><td>Navigation menu</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- EXERCISE 4 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-badge">Interview + Coding</span>
+      <span class="exercise-title">অধ্যায় ৪ — Functions</span>
+    </div>
+
+    <div class="exercise-item">
+      <span class="diff-badge diff-easy">সহজ</span>
+      <div class="exercise-q">Q1. st.write() এবং st.dataframe() এর মধ্যে পার্থক্য কী?</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: st.write() universal — text, number, dataframe, chart সবকিছু দেখাতে পারে। st.dataframe() specifically DataFrame-এর জন্য এবং এটি sortable, filterable interactive table দেখায়। Large dataset-এ st.dataframe() বেশি ভালো কাজ করে কারণ এটি virtual scrolling support করে।</p>
+    </div>
+
+    <div class="exercise-item">
+      <span class="diff-badge diff-hard">ML Engineering</span>
+      <div class="exercise-q">Ex 2. নিচের ML Dashboard বানাও:</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Exercise Solution Template</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">import</span> streamlit <span class="kw">as</span> st
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+st.<span class="fn">title</span>(<span class="st">"🤖 ML Model Dashboard"</span>)
+
+<span class="cm"># KPI Metrics row</span>
+col1, col2, col3, col4 = st.<span class="fn">columns</span>(<span class="nm">4</span>)
+col1.<span class="fn">metric</span>(<span class="st">"Accuracy"</span>, <span class="st">"94.2%"</span>, <span class="st">"+1.2%"</span>)
+col2.<span class="fn">metric</span>(<span class="st">"Precision"</span>, <span class="st">"91.8%"</span>, <span class="st">"-0.3%"</span>)
+col3.<span class="fn">metric</span>(<span class="st">"Recall"</span>, <span class="st">"89.5%"</span>, <span class="st">"+2.1%"</span>)
+col4.<span class="fn">metric</span>(<span class="st">"F1 Score"</span>, <span class="st">"90.6%"</span>, <span class="st">"+0.8%"</span>)
+
+<span class="cm"># Sidebar controls</span>
+threshold = st.sidebar.<span class="fn">slider</span>(<span class="st">"Classification Threshold"</span>, <span class="nm">0.0</span>, <span class="nm">1.0</span>, <span class="nm">0.5</span>)
+model_name = st.sidebar.<span class="fn">selectbox</span>(<span class="st">"Model"</span>, 
+    [<span class="st">"Random Forest"</span>, <span class="st">"XGBoost"</span>, <span class="st">"Logistic Regression"</span>])
+
+st.<span class="fn">write</span>(<span class="st">f"Selected: {model_name}, Threshold: {threshold}"</span>)</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 5: Titanic Project ===== -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(0,212,255,0.1)">🚢</div>
+    <div>
+      <div class="section-num">অধ্যায় ০৫</div>
+      <h2>Titanic Project — Data Exploration (EDA)</h2>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <div class="callout-title">🎯 প্রোজেক্টের লক্ষ্য</div>
+    <p>Titanic-এর passengers-এর data নিয়ে predict করবো — কে survive করেছিল, কে করেনি। এটা একটা Binary Classification problem। আমরা ৩-page Streamlit app বানাবো: Exploration → DataVisualization → Modelling।</p>
+  </div>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 760 160" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <!-- Project flow -->
+      <defs>
+        <marker id="arr3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#00d4ff"/>
+        </marker>
+      </defs>
+
+      <rect x="10" y="40" width="200" height="80" rx="12" fill="#162032" stroke="#00d4ff" stroke-width="1.5"/>
+      <text x="110" y="72" text-anchor="middle" fill="#00d4ff" font-size="22" font-family="'Hind Siliguri',sans-serif">📊</text>
+      <text x="110" y="92" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="600" font-family="'Hind Siliguri',sans-serif">Page 1: Exploration</text>
+      <text x="110" y="108" text-anchor="middle" fill="#64748b" font-size="11" font-family="'Hind Siliguri',sans-serif">Data দেখা, shape, describe</text>
+
+      <line x1="210" y1="80" x2="268" y2="80" stroke="#00d4ff" stroke-width="2" marker-end="url(#arr3)"/>
+
+      <rect x="273" y="40" width="200" height="80" rx="12" fill="#162032" stroke="#10b981" stroke-width="1.5"/>
+      <text x="373" y="72" text-anchor="middle" fill="#10b981" font-size="22" font-family="'Hind Siliguri',sans-serif">📈</text>
+      <text x="373" y="92" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="600" font-family="'Hind Siliguri',sans-serif">Page 2: Visualization</text>
+      <text x="373" y="108" text-anchor="middle" fill="#64748b" font-size="11" font-family="'Hind Siliguri',sans-serif">Plots, Charts, Heatmap</text>
+
+      <line x1="473" y1="80" x2="531" y2="80" stroke="#00d4ff" stroke-width="2" marker-end="url(#arr3)"/>
+
+      <rect x="536" y="40" width="200" height="80" rx="12" fill="#162032" stroke="#7c3aed" stroke-width="1.5"/>
+      <text x="636" y="72" text-anchor="middle" fill="#7c3aed" font-size="22" font-family="'Hind Siliguri',sans-serif">🤖</text>
+      <text x="636" y="92" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="600" font-family="'Hind Siliguri',sans-serif">Page 3: Modelling</text>
+      <text x="636" y="108" text-anchor="middle" fill="#64748b" font-size="11" font-family="'Hind Siliguri',sans-serif">Train, Evaluate, Predict</text>
+
+      <text x="380" y="20" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="'Hind Siliguri',sans-serif">Titanic Streamlit App — ৩টি Page</text>
+    </svg>
+  </div>
+
+  <h3>📁 প্রথমে App Structure সেটআপ</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python · streamlit_app.py — Structure Setup</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+    <div class="code-body">
+<pre><span class="kw">import</span> streamlit <span class="kw">as</span> st
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+
+<span class="cm"># ── Data Load করো ──</span>
+df = pd.<span class="fn">read_csv</span>(<span class="st">"train.csv"</span>)
+
+<span class="cm"># ── App Title ──</span>
+st.<span class="fn">title</span>(<span class="st">"Titanic: Binary Classification Project 🚢"</span>)
+
+<span class="cm"># ── Sidebar Navigation ──</span>
+st.sidebar.<span class="fn">title</span>(<span class="st">"📋 Table of Contents"</span>)
+pages = [<span class="st">"Exploration"</span>, <span class="st">"DataVisualization"</span>, <span class="st">"Modelling"</span>]
+page = st.sidebar.<span class="fn">radio</span>(<span class="st">"Go to"</span>, pages)
+
+<span class="cm"># ── Page 1: Exploration ──</span>
+<span class="kw">if</span> page == pages[<span class="nm">0</span>]:
+    st.<span class="fn">write</span>(<span class="st">"### 📊 Presentation of Data"</span>)
+    
+    <span class="cm"># প্রথম ১০ টা row দেখাও</span>
+    st.<span class="fn">dataframe</span>(df.<span class="fn">head</span>(<span class="nm">10</span>))
+    
+    <span class="cm"># Shape দেখাও (rows × columns)</span>
+    st.<span class="fn">write</span>(<span class="st">f"Dataset এর আকার: {df.shape[0]} rows × {df.shape[1]} columns"</span>)
+    
+    <span class="cm"># Statistical summary</span>
+    st.<span class="fn">dataframe</span>(df.<span class="fn">describe</span>())
+    
+    <span class="cm"># Missing values দেখানোর option</span>
+    <span class="kw">if</span> st.<span class="fn">checkbox</span>(<span class="st">"Missing Values দেখাও"</span>):
+        st.<span class="fn">dataframe</span>(df.<span class="fn">isna</span>().<span class="fn">sum</span>().<span class="fn">to_frame</span>(<span class="st">"Missing Count"</span>))</pre>
+    </div>
+  </div>
+
+  <h3>🔍 Dataset সম্পর্কে জ্ঞান</h3>
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Column</th><th>বাংলা অর্থ</th><th>Type</th><th>ML-এ ভূমিকা</th></tr></thead>
+      <tbody>
+        <tr><td><code>Survived</code></td><td>বেঁচে ছিল কিনা (0=না, 1=হ্যাঁ)</td><td>Binary</td><td>🎯 Target variable</td></tr>
+        <tr><td><code>Pclass</code></td><td>যাত্রীর class (1=প্রথম, 2=দ্বিতীয়, 3=তৃতীয়)</td><td>Categorical</td><td>Feature</td></tr>
+        <tr><td><code>Sex</code></td><td>লিঙ্গ</td><td>Categorical</td><td>Feature</td></tr>
+        <tr><td><code>Age</code></td><td>বয়স</td><td>Numerical</td><td>Feature (missing আছে)</td></tr>
+        <tr><td><code>SibSp</code></td><td>Siblings/Spouses aboard</td><td>Numerical</td><td>Feature</td></tr>
+        <tr><td><code>Parch</code></td><td>Parents/Children aboard</td><td>Numerical</td><td>Feature</td></tr>
+        <tr><td><code>Fare</code></td><td>টিকেটের মূল্য</td><td>Numerical</td><td>Feature</td></tr>
+        <tr><td><code>Embarked</code></td><td>কোন port থেকে উঠেছে</td><td>Categorical</td><td>Feature</td></tr>
+        <tr><td><code>Name, Ticket, Cabin</code></td><td>নাম, টিকেট, কেবিন</td><td>Text</td><td>❌ Drop করবো</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- EXERCISE 5 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-badge">Interview + Coding</span>
+      <span class="exercise-title">অধ্যায় ৫ — EDA</span>
+    </div>
+    <div class="exercise-item">
+      <span class="diff-badge diff-med">ML Engineering</span>
+      <div class="exercise-q">Q1. EDA (Exploratory Data Analysis) কেন করা হয়? কোন কোন steps follow করো?</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: EDA data সম্পর্কে জানতে, patterns খুঁজতে এবং modeling strategy ঠিক করতে করা হয়। Steps: (১) Shape ও dtypes চেক (২) Missing values খোঁজা (৩) Distribution দেখা (৪) Outliers identify করা (৫) Correlation analysis (৬) Target variable এর balance চেক।</p>
+    </div>
+    <div class="exercise-item">
+      <span class="diff-badge diff-hard">Senior ML Engineer</span>
+      <div class="exercise-q">Ex 2. Titanic dataset-এ missing values handle করার বিভিন্ন strategy নিয়ে আলোচনা করো।</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: Age (177 missing): median দিয়ে impute করা হয়, কারণ age distribution skewed। Embarked (2 missing): mode দিয়ে। Cabin (687 missing — খুব বেশি): সম্পূর্ণ column drop করা হয়। Advanced: KNN imputer বা iterative imputer ব্যবহার করলে ভালো result পাওয়া যায়।</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 6: DataVisualization ===== -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(16,185,129,0.1)">📈</div>
+    <div>
+      <div class="section-num">অধ্যায় ০৬</div>
+      <h2>DataVisualization Page</h2>
+    </div>
+  </div>
+
+  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ গুরুত্বপূর্ণ নিয়ম</div>
+    <p>Streamlit-এ Matplotlib/Seaborn chart দেখাতে হলে অবশ্যই <code>fig = plt.figure()</code> দিয়ে শুরু করো এবং শেষে <code>st.pyplot(fig)</code> দিতে হবে। এটা না দিলে chart দেখাবে না!</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python · Page 2 — DataVisualization</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+    <div class="code-body">
+<pre><span class="kw">if</span> page == pages[<span class="nm">1</span>]:
+    st.<span class="fn">write</span>(<span class="st">"### 📈 DataVisualization"</span>)
+
+    <span class="cm"># ── Target Variable Distribution ──</span>
+    fig = plt.<span class="fn">figure</span>()                 <span class="cm"># ← অবশ্যই fig বানাও</span>
+    sns.<span class="fn">countplot</span>(x=<span class="st">"Survived"</span>, data=df)
+    plt.<span class="fn">title</span>(<span class="st">"Survival Distribution"</span>)
+    st.<span class="fn">pyplot</span>(fig)                      <span class="cm"># ← অবশ্যই st.pyplot(fig) দাও</span>
+
+    <span class="cm"># ── Passenger Descriptions ──</span>
+    fig = plt.<span class="fn">figure</span>()
+    sns.<span class="fn">countplot</span>(x=<span class="st">"Sex"</span>, data=df)
+    plt.<span class="fn">title</span>(<span class="st">"যাত্রীদের লিঙ্গ বিতরণ"</span>)
+    st.<span class="fn">pyplot</span>(fig)
+
+    fig = plt.<span class="fn">figure</span>()
+    sns.<span class="fn">countplot</span>(x=<span class="st">"Pclass"</span>, data=df)
+    plt.<span class="fn">title</span>(<span class="st">"যাত্রীদের Class বিতরণ"</span>)
+    st.<span class="fn">pyplot</span>(fig)
+
+    fig = sns.<span class="fn">displot</span>(x=<span class="st">"Age"</span>, data=df)
+    plt.<span class="fn">title</span>(<span class="st">"বয়স বিতরণ"</span>)
+    st.<span class="fn">pyplot</span>(fig)
+
+    <span class="cm"># ── Survival Analysis ──</span>
+    fig = plt.<span class="fn">figure</span>()
+    sns.<span class="fn">countplot</span>(x=<span class="st">"Survived"</span>, hue=<span class="st">"Sex"</span>, data=df)
+    st.<span class="fn">pyplot</span>(fig)
+    <span class="cm"># Insight: মহিলারা বেশি survive করেছিল!</span>
+
+    fig = sns.<span class="fn">catplot</span>(x=<span class="st">"Pclass"</span>, y=<span class="st">"Survived"</span>, data=df, kind=<span class="st">"point"</span>)
+    st.<span class="fn">pyplot</span>(fig)
+    <span class="cm"># Insight: ১ম class-এর যাত্রীরা বেশি survive করেছিল!</span>
+
+    fig = sns.<span class="fn">lmplot</span>(x=<span class="st">"Age"</span>, y=<span class="st">"Survived"</span>, hue=<span class="st">"Pclass"</span>, data=df)
+    st.<span class="fn">pyplot</span>(fig)
+
+    <span class="cm"># ── Correlation Heatmap ──</span>
+    fig, ax = plt.<span class="fn">subplots</span>()
+    sns.<span class="fn">heatmap</span>(df.<span class="fn">corr</span>(numeric_only=<span class="kw">True</span>), ax=ax, annot=<span class="kw">True</span>, fmt=<span class="st">".2f"</span>)
+    plt.<span class="fn">title</span>(<span class="st">"Correlation Matrix"</span>)
+    st.<span class="fn">write</span>(fig)</pre>
+    </div>
+  </div>
+
+  <div class="callout callout-success">
+    <div class="callout-title">💡 Key Insights এই Chart থেকে</div>
+    <p>
+      <strong>১. Sex vs Survival:</strong> মহিলারা অনেক বেশি survive করেছিল (Women &amp; Children first rule)<br>
+      <strong>২. Pclass vs Survival:</strong> ১ম class → সবচেয়ে বেশি survive, ৩য় class → সবচেয়ে কম<br>
+      <strong>৩. Age vs Survival:</strong> বাচ্চারা বেশি survive করেছিল<br>
+      <strong>৪. Correlation:</strong> Fare এবং Pclass এর মধ্যে strong negative correlation
+    </p>
+  </div>
+
+  <!-- EXERCISE 6 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-badge">Interview + Coding</span>
+      <span class="exercise-title">অধ্যায় ৬ — DataVisualization</span>
+    </div>
+    <div class="exercise-item">
+      <span class="diff-badge diff-med">ML Engineering</span>
+      <div class="exercise-q">Q1. Correlation Heatmap কেন দরকার? High correlation মানে কী?</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: Correlation Heatmap দেখায় কোন features একসাথে পরিবর্তিত হয়। High correlation (|r| > 0.8) মানে দুটো feature প্রায় একই তথ্য দিচ্ছে — একটা drop করা যায় (Multicollinearity কমাতে)। Target variable এর সাথে feature-এর correlation দেখে feature importance বোঝা যায়।</p>
+    </div>
+    <div class="exercise-item">
+      <span class="diff-badge diff-hard">Senior Level</span>
+      <div class="exercise-q">Ex 2. একটা interactive chart বানাও যেখানে user dropdown থেকে feature বেছে সেটার survival rate দেখতে পারবে।</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Solution</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre>feature = st.<span class="fn">selectbox</span>(<span class="st">"Feature বেছে নাও"</span>, [<span class="st">"Sex"</span>, <span class="st">"Pclass"</span>, <span class="st">"Embarked"</span>])
+fig = plt.<span class="fn">figure</span>(figsize=(<span class="nm">8</span>, <span class="nm">4</span>))
+sns.<span class="fn">barplot</span>(x=feature, y=<span class="st">"Survived"</span>, data=df)
+plt.<span class="fn">title</span>(<span class="st">f"{feature} অনুযায়ী Survival Rate"</span>)
+st.<span class="fn">pyplot</span>(fig)</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 7: Modelling ===== -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(124,58,237,0.1)">🤖</div>
+    <div>
+      <div class="section-num">অধ্যায় ০৭</div>
+      <h2>ML Modelling — Titanic Survival Prediction</h2>
+    </div>
+  </div>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="arr4" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+          <polygon points="0 0, 7 2.5, 0 5" fill="#7c3aed"/>
+        </marker>
+      </defs>
+      <!-- Steps -->
+      <rect x="10" y="60" width="120" height="80" rx="8" fill="#162032" stroke="#7c3aed" stroke-width="1"/>
+      <text x="70" y="92" text-anchor="middle" fill="#7c3aed" font-size="18" font-family="'Hind Siliguri',sans-serif">🗑️</text>
+      <text x="70" y="112" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="'Hind Siliguri',sans-serif">Irrelevant</text>
+      <text x="70" y="126" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="'Hind Siliguri',sans-serif">Columns Drop</text>
+
+      <line x1="130" y1="100" x2="148" y2="100" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="152" y="60" width="120" height="80" rx="8" fill="#162032" stroke="#7c3aed" stroke-width="1"/>
+      <text x="212" y="92" text-anchor="middle" fill="#7c3aed" font-size="18" font-family="'Hind Siliguri',sans-serif">🔧</text>
+      <text x="212" y="112" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="'Hind Siliguri',sans-serif">Missing Values</text>
+      <text x="212" y="126" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="'Hind Siliguri',sans-serif">Imputation</text>
+
+      <line x1="272" y1="100" x2="290" y2="100" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="294" y="60" width="120" height="80" rx="8" fill="#162032" stroke="#7c3aed" stroke-width="1"/>
+      <text x="354" y="92" text-anchor="middle" fill="#7c3aed" font-size="18" font-family="'Hind Siliguri',sans-serif">🔢</text>
+      <text x="354" y="112" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="'Hind Siliguri',sans-serif">Encoding</text>
+      <text x="354" y="126" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="'Hind Siliguri',sans-serif">(Categorical→Num)</text>
+
+      <line x1="414" y1="100" x2="432" y2="100" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="436" y="60" width="120" height="80" rx="8" fill="#162032" stroke="#7c3aed" stroke-width="1"/>
+      <text x="496" y="92" text-anchor="middle" fill="#7c3aed" font-size="18" font-family="'Hind Siliguri',sans-serif">✂️</text>
+      <text x="496" y="112" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="'Hind Siliguri',sans-serif">Train/Test Split</text>
+      <text x="496" y="126" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="'Hind Siliguri',sans-serif">80% / 20%</text>
+
+      <line x1="556" y1="100" x2="574" y2="100" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="578" y="60" width="120" height="80" rx="8" fill="#162032" stroke="#7c3aed" stroke-width="1"/>
+      <text x="638" y="92" text-anchor="middle" fill="#7c3aed" font-size="18" font-family="'Hind Siliguri',sans-serif">⚖️</text>
+      <text x="638" y="112" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="'Hind Siliguri',sans-serif">Scaling</text>
+      <text x="638" y="126" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="'Hind Siliguri',sans-serif">(StandardScaler)</text>
+
+      <text x="380" y="30" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="'Hind Siliguri',sans-serif">ML Preprocessing Pipeline</text>
+    </svg>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python · Page 3 — Full Modelling Code</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+    <div class="code-body">
+<pre><span class="kw">if</span> page == pages[<span class="nm">2</span>]:
+    st.<span class="fn">write</span>(<span class="st">"### 🤖 Modelling"</span>)
+
+    <span class="cm"># ── Step 1: Irrelevant columns drop করো ──</span>
+    df = df.<span class="fn">drop</span>([<span class="st">"PassengerId"</span>, <span class="st">"Name"</span>, <span class="st">"Ticket"</span>, <span class="st">"Cabin"</span>], axis=<span class="nm">1</span>)
+
+    <span class="cm"># ── Step 2: Target ও Features আলাদা করো ──</span>
+    y = df[<span class="st">"Survived"</span>]           <span class="cm"># এটা predict করতে চাই</span>
+    X_cat = df[[<span class="st">"Pclass"</span>, <span class="st">"Sex"</span>, <span class="st">"Embarked"</span>]]   <span class="cm"># Categorical</span>
+    X_num = df[[<span class="st">"Age"</span>, <span class="st">"Fare"</span>, <span class="st">"SibSp"</span>, <span class="st">"Parch"</span>]] <span class="cm"># Numerical</span>
+
+    <span class="cm"># ── Step 3: Missing values fill করো ──</span>
+    <span class="kw">for</span> col <span class="kw">in</span> X_cat.columns:
+        X_cat[col] = X_cat[col].<span class="fn">fillna</span>(X_cat[col].<span class="fn">mode</span>()[<span class="nm">0</span>])  <span class="cm"># mode দিয়ে</span>
+    <span class="kw">for</span> col <span class="kw">in</span> X_num.columns:
+        X_num[col] = X_num[col].<span class="fn">fillna</span>(X_num[col].<span class="fn">median</span>())  <span class="cm"># median দিয়ে</span>
+
+    <span class="cm"># ── Step 4: Categorical encode করো (One-Hot Encoding) ──</span>
+    X_cat_scaled = pd.<span class="fn">get_dummies</span>(X_cat, columns=X_cat.columns)
+    X = pd.<span class="fn">concat</span>([X_cat_scaled, X_num], axis=<span class="nm">1</span>)
+
+    <span class="cm"># ── Step 5: Train/Test Split ──</span>
+    <span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+    X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+        X, y, test_size=<span class="nm">0.2</span>, random_state=<span class="nm">123</span>
+    )
+
+    <span class="cm"># ── Step 6: Scaling ──</span>
+    <span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+    scaler = <span class="fn">StandardScaler</span>()
+    X_train[X_num.columns] = scaler.<span class="fn">fit_transform</span>(X_train[X_num.columns])
+    X_test[X_num.columns] = scaler.<span class="fn">transform</span>(X_test[X_num.columns])
+
+    <span class="cm"># ── Step 7: Model Prediction Function ──</span>
+    <span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+    <span class="kw">from</span> sklearn.svm <span class="kw">import</span> SVC
+    <span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+    <span class="kw">from</span> sklearn.metrics <span class="kw">import</span> confusion_matrix
+
+    <span class="kw">def</span> <span class="fn">prediction</span>(classifier):
+        <span class="kw">if</span> classifier == <span class="st">"Random Forest"</span>:
+            clf = <span class="fn">RandomForestClassifier</span>()
+        <span class="kw">elif</span> classifier == <span class="st">"SVC"</span>:
+            clf = <span class="fn">SVC</span>()
+        <span class="kw">elif</span> classifier == <span class="st">"Logistic Regression"</span>:
+            clf = <span class="fn">LogisticRegression</span>()
+        clf.<span class="fn">fit</span>(X_train, y_train)
+        <span class="kw">return</span> clf
+
+    <span class="kw">def</span> <span class="fn">scores</span>(clf, choice):
+        <span class="kw">if</span> choice == <span class="st">"Accuracy"</span>:
+            <span class="kw">return</span> clf.<span class="fn">score</span>(X_test, y_test)
+        <span class="kw">elif</span> choice == <span class="st">"Confusion matrix"</span>:
+            <span class="kw">return</span> <span class="fn">confusion_matrix</span>(y_test, clf.<span class="fn">predict</span>(X_test))
+
+    <span class="cm"># ── Step 8: Interactive Model Selection ──</span>
+    choice = [<span class="st">"Random Forest"</span>, <span class="st">"SVC"</span>, <span class="st">"Logistic Regression"</span>]
+    option = st.<span class="fn">selectbox</span>(<span class="st">"Model বেছে নাও"</span>, choice)
+    st.<span class="fn">write</span>(<span class="st">f"Selected: {option}"</span>)
+
+    clf = <span class="fn">prediction</span>(option)
+    display = st.<span class="fn">radio</span>(<span class="st">"কী দেখাবো?"</span>, (<span class="st">"Accuracy"</span>, <span class="st">"Confusion matrix"</span>))
+
+    <span class="kw">if</span> display == <span class="st">"Accuracy"</span>:
+        st.<span class="fn">metric</span>(<span class="st">"Test Accuracy"</span>, <span class="st">f"{scores(clf, display)*100:.1f}%"</span>)
+    <span class="kw">elif</span> display == <span class="st">"Confusion matrix"</span>:
+        st.<span class="fn">dataframe</span>(<span class="fn">scores</span>(clf, display))</pre>
+    </div>
+  </div>
+
+  <!-- EXERCISE 7 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-badge">Interview + Coding</span>
+      <span class="exercise-title">অধ্যায় ৭ — ML Modelling</span>
+    </div>
+    <div class="exercise-item">
+      <span class="diff-badge diff-easy">সহজ</span>
+      <div class="exercise-q">Q1. fit_transform() এবং transform() এর মধ্যে পার্থক্য কী?</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: fit_transform() প্রথমে training data থেকে statistics (mean, std) শেখে এবং তারপর transform করে। transform() শুধু আগে শেখা statistics ব্যবহার করে transform করে। Test data-এ কখনো fit_transform() দেবে না — এতে data leakage হয়। Test data সবসময় training data-এর mean/std দিয়ে scale করতে হবে।</p>
+    </div>
+    <div class="exercise-item">
+      <span class="diff-badge diff-hard">Senior ML Engineer</span>
+      <div class="exercise-q">Q2. Confusion Matrix এর চারটা cell কী কী মানে? F1 Score কখন Accuracy-র চেয়ে ভালো metric?</div>
+      <div class="diagram-container" style="padding:20px;">
+        <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:400px;margin:0 auto;display:block;">
+          <text x="200" y="20" text-anchor="middle" fill="#94a3b8" font-size="13" font-weight="600" font-family="'Hind Siliguri',sans-serif">Confusion Matrix</text>
+          <!-- Headers -->
+          <text x="240" y="50" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="'Hind Siliguri',sans-serif">Predicted: 0</text>
+          <text x="340" y="50" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="'Hind Siliguri',sans-serif">Predicted: 1</text>
+          <text x="80" y="95" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="'Hind Siliguri',sans-serif">Actual: 0</text>
+          <text x="80" y="155" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="'Hind Siliguri',sans-serif">Actual: 1</text>
+          <!-- Cells -->
+          <rect x="140" y="60" width="90" height="60" rx="6" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5"/>
+          <text x="185" y="88" text-anchor="middle" fill="#10b981" font-size="16" font-weight="700" font-family="'Hind Siliguri',sans-serif">TN</text>
+          <text x="185" y="106" text-anchor="middle" fill="#10b981" font-size="10" font-family="'Hind Siliguri',sans-serif">True Negative</text>
+          <text x="185" y="118" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">সঠিকভাবে 0 বলেছে</text>
+
+          <rect x="240" y="60" width="90" height="60" rx="6" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1.5"/>
+          <text x="285" y="88" text-anchor="middle" fill="#ef4444" font-size="16" font-weight="700" font-family="'Hind Siliguri',sans-serif">FP</text>
+          <text x="285" y="106" text-anchor="middle" fill="#ef4444" font-size="10" font-family="'Hind Siliguri',sans-serif">False Positive</text>
+          <text x="285" y="118" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">ভুলভাবে 1 বলেছে</text>
+
+          <rect x="140" y="128" width="90" height="60" rx="6" fill="rgba(239,68,68,0.15)" stroke="#ef4444" stroke-width="1.5"/>
+          <text x="185" y="156" text-anchor="middle" fill="#ef4444" font-size="16" font-weight="700" font-family="'Hind Siliguri',sans-serif">FN</text>
+          <text x="185" y="174" text-anchor="middle" fill="#ef4444" font-size="10" font-family="'Hind Siliguri',sans-serif">False Negative</text>
+          <text x="185" y="186" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">ভুলভাবে 0 বলেছে</text>
+
+          <rect x="240" y="128" width="90" height="60" rx="6" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5"/>
+          <text x="285" y="156" text-anchor="middle" fill="#10b981" font-size="16" font-weight="700" font-family="'Hind Siliguri',sans-serif">TP</text>
+          <text x="285" y="174" text-anchor="middle" fill="#10b981" font-size="10" font-family="'Hind Siliguri',sans-serif">True Positive</text>
+          <text x="285" y="186" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">সঠিকভাবে 1 বলেছে</text>
+        </svg>
+      </div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: Imbalanced dataset (যেমন: fraud detection যেখানে 99% normal, 1% fraud) এ Accuracy misleading হয়। একটা model সবসময় "normal" predict করলেও 99% accuracy পাবে! সেক্ষেত্রে F1 Score = 2×(Precision×Recall)/(Precision+Recall) ব্যবহার করো।</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 8: Good Practices ===== -->
+<div class="section" id="s8">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(245,158,11,0.1)">⚡</div>
+    <div>
+      <div class="section-num">অধ্যায় ০৮</div>
+      <h2>Good Practices — Cache Memory</h2>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <div class="callout-title">🤔 সমস্যাটা বোঝো</div>
+    <p>Streamlit-এ যখনই user কোনো widget-এ click করে, পুরো Python script আবার থেকে শুরু হয়! যদি তোমার data loading বা model training ৫ মিনিট লাগে, তাহলে প্রতিটা click এ ৫ মিনিট অপেক্ষা? এই সমস্যার সমাধান হলো Cache।</p>
+  </div>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="arr4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/>
+        </marker>
+      </defs>
+      <!-- Without cache -->
+      <text x="165" y="25" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="600" font-family="'Hind Siliguri',sans-serif">❌ Cache ছাড়া (Slow)</text>
+      <rect x="20" y="40" width="290" height="160" rx="10" fill="rgba(239,68,68,0.05)" stroke="#ef4444" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <rect x="35" y="55" width="80" height="35" rx="6" fill="#162032" stroke="#1e3a5f"/>
+      <text x="75" y="77" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="'Hind Siliguri',sans-serif">User clicks</text>
+
+      <line x1="115" y1="72" x2="133" y2="72" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="137" y="55" width="80" height="35" rx="6" fill="#1a0a0a" stroke="#ef4444"/>
+      <text x="177" y="70" text-anchor="middle" fill="#ef4444" font-size="9" font-family="'Hind Siliguri',sans-serif">Load Data</text>
+      <text x="177" y="82" text-anchor="middle" fill="#ef4444" font-size="9" font-family="'Hind Siliguri',sans-serif">(২ মিনিট! 😫)</text>
+
+      <line x1="217" y1="72" x2="235" y2="72" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="239" y="55" width="60" height="35" rx="6" fill="#162032" stroke="#1e3a5f"/>
+      <text x="269" y="77" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="'Hind Siliguri',sans-serif">Show UI</text>
+
+      <text x="165" y="120" text-anchor="middle" fill="#ef4444" font-size="11" font-family="'Hind Siliguri',sans-serif">আবার click করলে...</text>
+      <text x="165" y="145" text-anchor="middle" fill="#ef4444" font-size="13" font-family="'Hind Siliguri',sans-serif">আবার ২ মিনিট! 😭</text>
+      <text x="165" y="170" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">প্রতিটা interaction-এ same কাজ বারবার</text>
+
+      <!-- With cache -->
+      <text x="520" y="25" text-anchor="middle" fill="#10b981" font-size="13" font-weight="600" font-family="'Hind Siliguri',sans-serif">✅ Cache সহ (Fast)</text>
+      <rect x="375" y="40" width="310" height="160" rx="10" fill="rgba(16,185,129,0.05)" stroke="#10b981" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <rect x="390" y="55" width="70" height="35" rx="6" fill="#162032" stroke="#1e3a5f"/>
+      <text x="425" y="77" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="'Hind Siliguri',sans-serif">1st click</text>
+
+      <line x1="460" y1="72" x2="478" y2="72" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="482" y="55" width="80" height="35" rx="6" fill="#0a1e0a" stroke="#10b981"/>
+      <text x="522" y="70" text-anchor="middle" fill="#10b981" font-size="9" font-family="'Hind Siliguri',sans-serif">Load + Cache</text>
+      <text x="522" y="82" text-anchor="middle" fill="#10b981" font-size="9" font-family="'Hind Siliguri',sans-serif">(২ মিনিট, একবার)</text>
+
+      <line x1="562" y1="72" x2="580" y2="72" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="584" y="55" width="90" height="35" rx="6" fill="#162032" stroke="#1e3a5f"/>
+      <text x="629" y="77" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="'Hind Siliguri',sans-serif">Show UI</text>
+
+      <text x="520" y="120" text-anchor="middle" fill="#10b981" font-size="11" font-family="'Hind Siliguri',sans-serif">আবার click করলে...</text>
+      <text x="520" y="145" text-anchor="middle" fill="#10b981" font-size="13" font-family="'Hind Siliguri',sans-serif">Cache থেকে instant! ⚡</text>
+      <text x="520" y="170" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">Data memory-তে আছে, আবার load হয় না</text>
+    </svg>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python · @st.cache_data ব্যবহার</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+    <div class="code-body">
+<pre><span class="kw">import</span> streamlit <span class="kw">as</span> st
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># @st.cache_data decorator মানে: এই function-এর result memory-তে রাখো</span>
+<span class="cm"># একই argument দিলে আবার run না করে memory থেকে দাও</span>
+<span class="op">@st.cache_data</span>
+<span class="kw">def</span> <span class="fn">load_data</span>(path):
+    df = pd.<span class="fn">read_csv</span>(path)
+    <span class="kw">return</span> df
+
+<span class="op">@st.cache_data</span>
+<span class="kw">def</span> <span class="fn">preprocess</span>(df):
+    <span class="cm"># এই কাজ অনেক সময় লাগতে পারে</span>
+    df = df.<span class="fn">dropna</span>()
+    <span class="kw">return</span> df
+
+<span class="cm"># এখন যতবার user কিছু করুক — data আবার load হবে না!</span>
+df = <span class="fn">load_data</span>(<span class="st">"train.csv"</span>)
+df_clean = <span class="fn">preprocess</span>(df)
+
+<span class="cm"># ── Cache এর আরো ব্যবহার — Model ──</span>
+<span class="op">@st.cache_resource</span>  <span class="cm"># ML model এর জন্য cache_resource ব্যবহার করো</span>
+<span class="kw">def</span> <span class="fn">train_model</span>(X_train, y_train):
+    <span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+    clf = <span class="fn">RandomForestClassifier</span>(n_estimators=<span class="nm">100</span>)
+    clf.<span class="fn">fit</span>(X_train, y_train)
+    <span class="kw">return</span> clf
+
+<span class="cm"># ── cache_data vs cache_resource ──</span>
+<span class="cm"># cache_data: data (DataFrame, arrays) এর জন্য — serialize করা হয়</span>
+<span class="cm"># cache_resource: ML models, DB connections এর জন্য — shared object</span></pre>
+    </div>
+  </div>
+
+  <!-- EXERCISE 8 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-badge">Interview + Coding</span>
+      <span class="exercise-title">অধ্যায় ৮ — Cache & Performance</span>
+    </div>
+    <div class="exercise-item">
+      <span class="diff-badge diff-hard">Senior ML Engineer</span>
+      <div class="exercise-q">Q1. @st.cache_data এবং @st.cache_resource এর মধ্যে কখন কোনটা ব্যবহার করবে?</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: cache_data: data objects এর জন্য (DataFrame, lists, dicts)। Streamlit এটা pickle করে serialize করে, তাই প্রতিটা session নিজের copy পায়। cache_resource: shared resources এর জন্য (ML models, database connections, API clients)। সব sessions একই object share করে। Large model এর ক্ষেত্রে cache_resource memory efficient।</p>
+    </div>
+    <div class="exercise-item">
+      <span class="diff-badge diff-med">ML Engineering</span>
+      <div class="exercise-q">Q2. Cache কখন invalidate হয়? কীভাবে manually clear করবে?</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: Cache invalidate হয়: (১) Function এর code পরিবর্তন হলে (২) Function arguments পরিবর্তন হলে (৩) st.cache_data.clear() call করলে। ttl parameter দিয়ে time-based expiry set করা যায়: @st.cache_data(ttl=3600) মানে ১ ঘণ্টা পর cache expire।</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 9: Model Saving ===== -->
+<div class="section" id="s9">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(16,185,129,0.1)">💾</div>
+    <div>
+      <div class="section-num">অধ্যায় ০৯</div>
+      <h2>Model Saving — Joblib ও Pickle</h2>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <div class="callout-title">🤔 কেন Model Save করতে হয়?</div>
+    <p>Streamlit-এ প্রতিবার page load হলে model আবার train হয়। বড় Deep Learning model train হতে ঘণ্টা লাগতে পারে! তাই একবার train করে save করে রাখো, Streamlit app-এ শুধু load করো।</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python · model_training.py — Save করো</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+    <div class="code-body">
+<pre><span class="cm"># ── Method 1: Joblib (NumPy arrays এর জন্য সেরা) ──</span>
+<span class="kw">import</span> joblib
+
+<span class="cm"># Train করার পর save করো</span>
+clf.<span class="fn">fit</span>(X_train, y_train)
+joblib.<span class="fn">dump</span>(clf, <span class="st">"model.joblib"</span>)       <span class="cm"># save</span>
+joblib.<span class="fn">dump</span>(scaler, <span class="st">"scaler.joblib"</span>)   <span class="cm"># scaler ও save করো!</span>
+
+<span class="cm"># ── Method 2: Pickle (Python objects এর জন্য) ──</span>
+<span class="kw">import</span> pickle
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"model.pkl"</span>, <span class="st">"wb"</span>) <span class="kw">as</span> f:
+    pickle.<span class="fn">dump</span>(clf, f)            <span class="cm"># "wb" = write binary</span></pre>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python · streamlit_app.py — Load করো</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+    <div class="code-body">
+<pre><span class="cm"># ── Joblib দিয়ে Load ──</span>
+<span class="kw">import</span> joblib
+
+<span class="op">@st.cache_resource</span>
+<span class="kw">def</span> <span class="fn">load_model</span>():
+    clf = joblib.<span class="fn">load</span>(<span class="st">"model.joblib"</span>)
+    scaler = joblib.<span class="fn">load</span>(<span class="st">"scaler.joblib"</span>)
+    <span class="kw">return</span> clf, scaler
+
+clf, scaler = <span class="fn">load_model</span>()
+
+<span class="cm"># এখন clf দিয়ে predict করো, model re-train হবে না!</span>
+<span class="cm"># ── Pickle দিয়ে Load ──</span>
+<span class="kw">import</span> pickle
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">"model.pkl"</span>, <span class="st">"rb"</span>) <span class="kw">as</span> f:  <span class="cm"># "rb" = read binary</span>
+    clf = pickle.<span class="fn">load</span>(f)
+
+<span class="cm"># ── Deep Learning (Keras/TensorFlow) ──</span>
+<span class="kw">from</span> tensorflow.keras.models <span class="kw">import</span> load_model, save_model
+
+model.<span class="fn">save</span>(<span class="st">"model.h5"</span>)          <span class="cm"># save</span>
+model = <span class="fn">load_model</span>(<span class="st">"model.h5"</span>)  <span class="cm"># load</span></pre>
+    </div>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Library</th><th>Best For</th><th>Extension</th><th>Speed</th></tr></thead>
+      <tbody>
+        <tr><td><code>joblib</code></td><td>sklearn models, large NumPy arrays</td><td>.joblib</td><td>⚡ Fast</td></tr>
+        <tr><td><code>pickle</code></td><td>General Python objects</td><td>.pkl</td><td>🔄 Medium</td></tr>
+        <tr><td><code>keras save()</code></td><td>TensorFlow/Keras models</td><td>.h5 / SavedModel</td><td>🔄 Medium</td></tr>
+        <tr><td><code>torch.save()</code></td><td>PyTorch models</td><td>.pt / .pth</td><td>⚡ Fast</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- EXERCISE 9 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-badge">ML Engineering Exercise</span>
+      <span class="exercise-title">অধ্যায় ৯ — Model Saving</span>
+    </div>
+    <div class="exercise-item">
+      <span class="diff-badge diff-hard">Senior Level</span>
+      <div class="exercise-q">Ex 1. একটা complete ML pipeline বানাও যেখানে scaler এবং model একসাথে save হবে এবং Streamlit-এ load হবে।</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Solution</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="cm"># train_and_save.py</span>
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">import</span> joblib
+
+<span class="cm"># Pipeline: scaler + model একসাথে</span>
+pipeline = <span class="fn">Pipeline</span>([
+    (<span class="st">'scaler'</span>, <span class="fn">StandardScaler</span>()),
+    (<span class="st">'clf'</span>, <span class="fn">RandomForestClassifier</span>())
+])
+pipeline.<span class="fn">fit</span>(X_train, y_train)
+joblib.<span class="fn">dump</span>(pipeline, <span class="st">"pipeline.joblib"</span>)
+
+<span class="cm"># streamlit_app.py</span>
+<span class="op">@st.cache_resource</span>
+<span class="kw">def</span> <span class="fn">load_pipeline</span>():
+    <span class="kw">return</span> joblib.<span class="fn">load</span>(<span class="st">"pipeline.joblib"</span>)
+
+pipeline = <span class="fn">load_pipeline</span>()
+pred = pipeline.<span class="fn">predict</span>(new_data)  <span class="cm"># Automatically scales!</span></pre></div>
+      </div>
+      <div class="exercise-hint">💡 Pipeline ব্যবহার করলে preprocessing ও model একসাথে manage হয় — production-এ সেরা practice।</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 10: Hosting ===== -->
+<div class="section" id="s10">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(0,212,255,0.1)">☁️</div>
+    <div>
+      <div class="section-num">অধ্যায় ১০</div>
+      <h2>Streamlit App Hosting — GitHub দিয়ে</h2>
+    </div>
+  </div>
+
+  <p>App বানিয়ে শুধু নিজের computer-এ রাখলে হবে না — সবাইকে দেখাতে হলে hosting দরকার।</p>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 760 160" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="arr5" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+          <polygon points="0 0, 7 2.5, 0 5" fill="#00d4ff"/>
+        </marker>
+      </defs>
+      <!-- Boxes -->
+      <rect x="10" y="40" width="130" height="80" rx="8" fill="#162032" stroke="#00d4ff" stroke-width="1.5"/>
+      <text x="75" y="72" text-anchor="middle" fill="#e2e8f0" font-size="20" font-family="'Hind Siliguri',sans-serif">💻</text>
+      <text x="75" y="92" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600" font-family="'Hind Siliguri',sans-serif">Local Files</text>
+      <text x="75" y="108" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">app.py, model.pkl</text>
+
+      <line x1="140" y1="80" x2="168" y2="80" stroke="#00d4ff" stroke-width="1.5" marker-end="url(#arr5)"/>
+      <text x="154" y="70" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">git push</text>
+
+      <rect x="172" y="40" width="130" height="80" rx="8" fill="#162032" stroke="#00d4ff" stroke-width="1.5"/>
+      <text x="237" y="72" text-anchor="middle" fill="#e2e8f0" font-size="20" font-family="'Hind Siliguri',sans-serif">🐙</text>
+      <text x="237" y="92" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600" font-family="'Hind Siliguri',sans-serif">GitHub Repo</text>
+      <text x="237" y="108" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">Public repository</text>
+
+      <line x1="302" y1="80" x2="330" y2="80" stroke="#00d4ff" stroke-width="1.5" marker-end="url(#arr5)"/>
+      <text x="316" y="70" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">connect</text>
+
+      <rect x="334" y="40" width="140" height="80" rx="8" fill="#162032" stroke="#7c3aed" stroke-width="1.5"/>
+      <text x="404" y="72" text-anchor="middle" fill="#7c3aed" font-size="20" font-family="'Hind Siliguri',sans-serif">⚡</text>
+      <text x="404" y="92" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600" font-family="'Hind Siliguri',sans-serif">Streamlit Cloud</text>
+      <text x="404" y="108" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">share.streamlit.io</text>
+
+      <line x1="474" y1="80" x2="502" y2="80" stroke="#00d4ff" stroke-width="1.5" marker-end="url(#arr5)"/>
+      <text x="488" y="70" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">auto deploy</text>
+
+      <rect x="506" y="40" width="140" height="80" rx="8" fill="#0a1e0a" stroke="#10b981" stroke-width="1.5"/>
+      <text x="576" y="72" text-anchor="middle" fill="#10b981" font-size="20" font-family="'Hind Siliguri',sans-serif">🌐</text>
+      <text x="576" y="92" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600" font-family="'Hind Siliguri',sans-serif">Live Website!</text>
+      <text x="576" y="108" text-anchor="middle" fill="#10b981" font-size="10" font-family="'Hind Siliguri',sans-serif">যে কেউ access করতে পারে</text>
+
+      <text x="376" y="145" text-anchor="middle" fill="#64748b" font-size="11" font-family="'Hind Siliguri',sans-serif">Community Plan: ৩টা app পর্যন্ত FREE!</text>
+    </svg>
+  </div>
+
+  <ol class="steps">
+    <li>
+      <strong>Streamlit Cloud Account বানাও</strong>
+      <span>share.streamlit.io তে যাও → "Sign up" করো → GitHub account দিয়ে। Email-এ confirmation আসবে।</span>
+    </li>
+    <li>
+      <strong>GitHub Repository বানাও</strong>
+      <span>github.com এ নতুন repository বানাও। App files সেখানে upload করো: app.py, requirements.txt, data files।</span>
+    </li>
+    <li>
+      <strong>requirements.txt বানাও</strong>
+      <span>Terminal-এ <code>pip freeze > requirements.txt</code> run করো। এই file দেখে Streamlit Cloud জানবে কোন libraries install করতে হবে।</span>
+    </li>
+    <li>
+      <strong>GitHub-এ Push করো</strong>
+      <span><code>git add .</code> → <code>git commit -m "Streamlit app"</code> → <code>git push</code></span>
+    </li>
+    <li>
+      <strong>Streamlit Cloud-এ Deploy করো</strong>
+      <span>"New app" → Repository নাম দাও → Branch select করো → Main file path দাও → "Deploy!" click করো। কয়েক মিনিটে live হবে!</span>
+    </li>
+  </ol>
+
+  <div class="callout callout-success">
+    <div class="callout-title">💡 Colab ব্যবহারকারীদের জন্য</div>
+    <p>Google Colab-এ থাকলে <strong>ngrok</strong> দিয়ে সরাসরি Streamlit run করতে পারো। <code>!pip install pyngrok streamlit</code> দিয়ে install করো এবং ngrok tunnel ব্যবহার করো public URL পেতে।</p>
+  </div>
+</div>
+
+<!-- ===== SECTION 11: Deep Learning ===== -->
+<div class="section" id="s11">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(124,58,237,0.1)">🧠</div>
+    <div>
+      <div class="section-num">অধ্যায় ১১</div>
+      <h2>Bonus — Word2Vec Deep Learning Project</h2>
+    </div>
+  </div>
+
+  <div class="callout callout-purple">
+    <div class="callout-title">🎯 প্রোজেক্টের লক্ষ্য</div>
+    <p>২৫,০০০ movie review দিয়ে Word2Vec model বানাবো। এই model একটা word দিলে তার সাথে সম্পর্কিত words খুঁজে দেবে। যেমন: "king" → "queen", "man", "royal" ইত্যাদি।</p>
+  </div>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <defs>
+        <marker id="arr4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#6366f1"/>
+        </marker>
+        <marker id="arr5" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#10b981"/>
+        </marker>
+      </defs>
+      <text x="380" y="25" text-anchor="middle" fill="#94a3b8" font-size="13" font-weight="600" font-family="'Hind Siliguri',sans-serif">Word2Vec (CBOW) Architecture</text>
+
+      <!-- Input -->
+      <rect x="20" y="45" width="140" height="130" rx="10" fill="#162032" stroke="#7c3aed" stroke-width="1.5"/>
+      <text x="90" y="65" text-anchor="middle" fill="#7c3aed" font-size="11" font-weight="600" font-family="'Hind Siliguri',sans-serif">Input Layer</text>
+      <text x="90" y="83" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">Context words</text>
+      <rect x="35" y="92" width="110" height="18" rx="4" fill="rgba(124,58,237,0.2)"/>
+      <text x="90" y="105" text-anchor="middle" fill="#d2a8ff" font-size="10" font-family="'Hind Siliguri',sans-serif">"the" "quick"</text>
+      <rect x="35" y="116" width="110" height="18" rx="4" fill="rgba(124,58,237,0.2)"/>
+      <text x="90" y="129" text-anchor="middle" fill="#d2a8ff" font-size="10" font-family="'Hind Siliguri',sans-serif">"brown" "fox"</text>
+      <rect x="35" y="140" width="110" height="18" rx="4" fill="rgba(124,58,237,0.2)"/>
+      <text x="90" y="153" text-anchor="middle" fill="#d2a8ff" font-size="10" font-family="'Hind Siliguri',sans-serif">vocab_size=10000</text>
+
+      <!-- Arrow -->
+      <line x1="160" y1="110" x2="188" y2="110" stroke="#7c3aed" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <!-- Embedding -->
+      <rect x="192" y="45" width="160" height="130" rx="10" fill="#162032" stroke="#00d4ff" stroke-width="1.5"/>
+      <text x="272" y="65" text-anchor="middle" fill="#00d4ff" font-size="11" font-weight="600" font-family="'Hind Siliguri',sans-serif">Embedding Layer</text>
+      <text x="272" y="83" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">Word → Vector</text>
+      <rect x="207" y="92" width="130" height="40" rx="4" fill="rgba(0,212,255,0.1)"/>
+      <text x="272" y="108" text-anchor="middle" fill="#a5d6ff" font-size="9" font-family="'Hind Siliguri',sans-serif">[0.2, -0.5, 0.8, ...]</text>
+      <text x="272" y="122" text-anchor="middle" fill="#a5d6ff" font-size="9" font-family="'Hind Siliguri',sans-serif">300 dimensions</text>
+      <text x="272" y="148" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">GlobalAveragePooling1D</text>
+      <text x="272" y="162" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">averages context vectors</text>
+
+      <!-- Arrow -->
+      <line x1="352" y1="110" x2="380" y2="110" stroke="#00d4ff" stroke-width="1.5" marker-end="url(#arr5)"/>
+
+      <!-- Dense -->
+      <rect x="384" y="45" width="160" height="130" rx="10" fill="#162032" stroke="#10b981" stroke-width="1.5"/>
+      <text x="464" y="65" text-anchor="middle" fill="#10b981" font-size="11" font-weight="600" font-family="'Hind Siliguri',sans-serif">Dense Layer</text>
+      <text x="464" y="83" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">Output</text>
+      <rect x="399" y="92" width="130" height="40" rx="4" fill="rgba(16,185,129,0.1)"/>
+      <text x="464" y="108" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="'Hind Siliguri',sans-serif">10000 neurons</text>
+      <text x="464" y="122" text-anchor="middle" fill="#6ee7b7" font-size="9" font-family="'Hind Siliguri',sans-serif">Softmax activation</text>
+      <text x="464" y="148" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">Predicts target word</text>
+      <text x="464" y="162" text-anchor="middle" fill="#64748b" font-size="9" font-family="'Hind Siliguri',sans-serif">probability distribution</text>
+
+      <!-- Arrow -->
+      <line x1="544" y1="110" x2="572" y2="110" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr5)"/>
+
+      <!-- Output -->
+      <rect x="576" y="45" width="170" height="130" rx="10" fill="#162032" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="661" y="65" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="600" font-family="'Hind Siliguri',sans-serif">Word Embeddings</text>
+      <text x="661" y="83" text-anchor="middle" fill="#64748b" font-size="10" font-family="'Hind Siliguri',sans-serif">(Learned weights)</text>
+      <text x="661" y="110" text-anchor="middle" fill="#fde68a" font-size="10" font-family="'Hind Siliguri',sans-serif">"king" ≈ "queen"</text>
+      <text x="661" y="130" text-anchor="middle" fill="#fde68a" font-size="10" font-family="'Hind Siliguri',sans-serif">"Paris" - "France"</text>
+      <text x="661" y="150" text-anchor="middle" fill="#fde68a" font-size="10" font-family="'Hind Siliguri',sans-serif">+ "Italy" = "Rome"</text>
+    </svg>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python · Word2Vec Model বানানো</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+    <div class="code-body">
+<pre><span class="kw">import</span> tensorflow <span class="kw">as</span> tf
+<span class="kw">from</span> tensorflow.keras <span class="kw">import</span> Sequential
+<span class="kw">from</span> tensorflow.keras.layers <span class="kw">import</span> Embedding, Dense, GlobalAveragePooling1D
+
+<span class="cm"># ── Step 1: Tokenizer দিয়ে text → numbers ──</span>
+tokenizer = tf.keras.preprocessing.text.<span class="fn">Tokenizer</span>(num_words=<span class="nm">10000</span>)
+tokenizer.<span class="fn">fit_on_texts</span>(df.review)
+<span class="cm"># word → index mapping</span>
+word2idx = tokenizer.word_index
+idx2word = tokenizer.index_word
+
+<span class="cm"># ── Step 2: CBOW Model Architecture ──</span>
+vocab_size = <span class="nm">10000</span>
+embedding_dim = <span class="nm">300</span>
+
+model = <span class="fn">Sequential</span>()
+model.<span class="fn">add</span>(<span class="fn">Embedding</span>(vocab_size, embedding_dim))  <span class="cm"># Word → 300-dim vector</span>
+model.<span class="fn">add</span>(<span class="fn">GlobalAveragePooling1D</span>())               <span class="cm"># Context words average করো</span>
+model.<span class="fn">add</span>(<span class="fn">Dense</span>(vocab_size, activation=<span class="st">"softmax"</span>)) <span class="cm"># Target word predict করো</span>
+
+model.<span class="fn">compile</span>(optimizer=<span class="st">"adam"</span>, loss=<span class="st">"sparse_categorical_crossentropy"</span>)
+
+<span class="cm"># ── Step 3: Train ও Save ──</span>
+model.<span class="fn">fit</span>(X, y, epochs=<span class="nm">50</span>)  <span class="cm"># সতর্কতা: অনেক সময় লাগবে!</span>
+model.<span class="fn">save</span>(<span class="st">"word2vec.h5"</span>)   <span class="cm"># H5 format-এ save করো</span>
+
+<span class="cm"># ── Streamlit App: Similarity Finder ──</span>
+<span class="op">@st.cache_resource</span>
+<span class="kw">def</span> <span class="fn">load_w2v</span>():
+    model = tf.keras.models.<span class="fn">load_model</span>(<span class="st">"word2vec.h5"</span>)
+    vectors = model.layers[<span class="nm">0</span>].trainable_weights[<span class="nm">0</span>].<span class="fn">numpy</span>()
+    <span class="kw">return</span> model, vectors
+
+model, vectors = <span class="fn">load_w2v</span>()
+
+<span class="cm"># User input</span>
+word = st.<span class="fn">text_input</span>(<span class="st">"একটা word লেখো:"</span>)
+n = st.<span class="fn">slider</span>(<span class="st">"কতটা similar word দেখাবো?"</span>, <span class="nm">5</span>, <span class="nm">20</span>, <span class="nm">10</span>)
+
+<span class="kw">if</span> word <span class="kw">and</span> word <span class="kw">in</span> word2idx:
+    similar = <span class="fn">find_closest</span>(word2idx[word], vectors, n)
+    <span class="kw">for</span> idx, score <span class="kw">in</span> similar:
+        st.<span class="fn">write</span>(<span class="st">f"**{idx2word[int(idx)]}** — similarity: {score:.3f}"</span>)</pre>
+    </div>
+  </div>
+
+  <!-- EXERCISE 11 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-badge">Deep Learning Interview</span>
+      <span class="exercise-title">অধ্যায় ১১ — Word2Vec & NLP</span>
+    </div>
+    <div class="exercise-item">
+      <span class="diff-badge diff-hard">Senior ML Engineer</span>
+      <div class="exercise-q">Q1. Word2Vec CBOW এবং Skip-gram এর মধ্যে পার্থক্য কী? কখন কোনটা ব্যবহার করবে?</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: CBOW (Continuous Bag of Words): context words → target word predict করে। দ্রুত, frequent words-এ ভালো। Skip-gram: একটা word → আশেপাশের context words predict করে। ধীর কিন্তু rare words-এ ভালো, large dataset-এ বেশি effective। Small dataset → CBOW। Large dataset → Skip-gram।</p>
+    </div>
+    <div class="exercise-item">
+      <span class="diff-badge diff-hard">Advanced</span>
+      <div class="exercise-q">Q2. Cosine Similarity কী? Word embeddings-এ কেন এটা ব্যবহার করা হয়?</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর: Cosine Similarity = dot(v1,v2) / (||v1|| × ||v2||)। এটা দুটো vector-এর মধ্যকার angle measure করে, magnitude নয়। Word embeddings-এ Euclidean distance-এর চেয়ে Cosine similarity ভালো কারণ words-এর semantic relationship direction-based (angle) হয়, size-based নয়। মান -1 থেকে 1 এর মধ্যে হয়, 1 মানে identical, 0 মানে unrelated।</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 12: ALL ALGORITHMS ===== -->
+<div class="section" id="s12">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(124,58,237,0.1))">🧮</div>
+    <div>
+      <div class="section-num">অধ্যায় ১২</div>
+      <h2>সব গুরুত্বপূর্ণ ML Algorithms</h2>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <div class="callout-title">📚 পড়ার নির্দেশনা</div>
+    <p>প্রতিটা algorithm একটা ছোট গল্পের মতো বোঝানো হয়েছে (kindergarten style)। তারপর Python code এবং ML Engineering কাজে কীভাবে ব্যবহার করবে সেটা দেওয়া আছে।</p>
+  </div>
+
+  <!-- Algorithm 1: Linear Regression -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-emoji">📏</span>
+      <div>
+        <div class="algo-subtitle">Algorithm 01 · Regression</div>
+        <div class="algo-title">Linear Regression — সরলরেখা দিয়ে অনুমান</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-explain">
+        🎈 <strong>Kindergarten ব্যাখ্যা:</strong> মনে করো তোমার বয়স বাড়লে তোমার উচ্চতাও বাড়ে। তুমি একটা সরল লাইন টানো সব data point-এর মাঝ দিয়ে। এখন নতুন বয়স জানলে সেই লাইন থেকে উচ্চতা অনুমান করো। এটাই Linear Regression!
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python · Linear Regression</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> mean_squared_error, r2_score
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Train</span>
+model = <span class="fn">LinearRegression</span>()
+model.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="cm"># Predict</span>
+y_pred = model.<span class="fn">predict</span>(X_test)
+
+<span class="cm"># Evaluate</span>
+mse = <span class="fn">mean_squared_error</span>(y_test, y_pred)
+rmse = np.<span class="fn">sqrt</span>(mse)
+r2 = <span class="fn">r2_score</span>(y_test, y_pred)
+
+<span class="fn">print</span>(<span class="st">f"RMSE: {rmse:.2f}"</span>)  <span class="cm"># কম হওয়া ভালো</span>
+<span class="fn">print</span>(<span class="st">f"R² Score: {r2:.2f}"</span>) <span class="cm"># 1.0 হওয়া সবচেয়ে ভালো</span>
+
+<span class="cm"># ML Project: House Price Prediction</span>
+<span class="cm"># Features: area, bedrooms, location_score</span>
+<span class="cm"># Target: price</span>
+
+<span class="cm"># Regularization: Ridge (L2) ও Lasso (L1)</span>
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> Ridge, Lasso
+ridge = <span class="fn">Ridge</span>(alpha=<span class="nm">1.0</span>)  <span class="cm"># Overfitting কমায়</span>
+lasso = <span class="fn">Lasso</span>(alpha=<span class="nm">0.1</span>)  <span class="cm"># Feature selection ও করে</span></pre></div>
+      </div>
+      <p style="font-size:13px;color:var(--text2);">📌 <strong>ML Project use:</strong> House price prediction, Stock price prediction, Sales forecasting। Assumptions: linearity, no multicollinearity, homoscedasticity।</p>
+    </div>
+  </div>
+
+  <!-- Algorithm 2: Logistic Regression -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-emoji">🎯</span>
+      <div>
+        <div class="algo-subtitle">Algorithm 02 · Classification</div>
+        <div class="algo-title">Logistic Regression — হ্যাঁ বা না বলা</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-explain">
+        🎈 <strong>Kindergarten ব্যাখ্যা:</strong> একটা বাচ্চা pass করবে কিনা সেটা predict করতে হবে। তোমার কাছে তার পড়াশোনার ঘণ্টা আছে। বেশি পড়লে pass-এর সম্ভাবনা বেশি। Logistic Regression একটা S-আকার curve বানায় এবং বলে — "৭০% সম্ভাবনা pass করবে।" ৫০%-এর বেশি হলে pass, নইলে fail।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python · Logistic Regression</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report, roc_auc_score
+
+model = <span class="fn">LogisticRegression</span>(max_iter=<span class="nm">1000</span>, C=<span class="nm">1.0</span>)
+<span class="cm"># C: regularization strength, কম মানে বেশি regularization</span>
+model.<span class="fn">fit</span>(X_train, y_train)
+
+y_pred = model.<span class="fn">predict</span>(X_test)
+y_prob = model.<span class="fn">predict_proba</span>(X_test)[:, <span class="nm">1</span>]  <span class="cm"># Probability of class 1</span>
+
+<span class="fn">print</span>(<span class="fn">classification_report</span>(y_test, y_pred))
+<span class="fn">print</span>(<span class="st">f"ROC-AUC: {roc_auc_score(y_test, y_prob):.3f}"</span>)
+
+<span class="cm"># ML Project: Titanic survival, Email spam detection, Credit fraud</span>
+<span class="cm"># Threshold tuning: default 0.5, medical diagnosis-এ কম threshold</span>
+<span class="cm"># (false negative বেশি costly)</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Algorithm 3: Decision Tree -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-emoji">🌳</span>
+      <div>
+        <div class="algo-subtitle">Algorithm 03 · Tree-based</div>
+        <div class="algo-title">Decision Tree — হ্যাঁ/না প্রশ্নের গাছ</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-explain">
+        🎈 <strong>Kindergarten ব্যাখ্যা:</strong> "আজ বাইরে যাবে কিনা?" প্রশ্নের উত্তর খুঁজো। প্রথম প্রশ্ন: "বৃষ্টি আছে?" হ্যাঁ → "ছাতা আছে?" না → যাবে না। এভাবে প্রশ্নের একটা গাছ বানাও। Decision Tree এভাবেই কাজ করে!
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python · Decision Tree</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">from</span> sklearn.tree <span class="kw">import</span> DecisionTreeClassifier, plot_tree
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+model = <span class="fn">DecisionTreeClassifier</span>(
+    max_depth=<span class="nm">5</span>,          <span class="cm"># গাছ বেশি গভীর হলে overfit</span>
+    min_samples_split=<span class="nm">20</span>, <span class="cm"># কম data থাকলে split করো না</span>
+    random_state=<span class="nm">42</span>
+)
+model.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="cm"># Feature importance দেখো</span>
+importance = pd.<span class="fn">Series</span>(model.feature_importances_, index=X.columns)
+importance.<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>).<span class="fn">plot</span>(kind=<span class="st">"bar"</span>)
+
+<span class="cm"># Tree visualize করো</span>
+fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="nm">15</span>, <span class="nm">8</span>))
+<span class="fn">plot_tree</span>(model, ax=ax, feature_names=X.columns, filled=<span class="kw">True</span>)
+plt.<span class="fn">show</span>()
+
+<span class="cm"># ML Project: Customer churn, Medical diagnosis, Loan approval</span>
+<span class="cm"># Advantage: Interpretable, no scaling needed</span>
+<span class="cm"># Disadvantage: Overfit prone, unstable</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Algorithm 4: Random Forest -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-emoji">🌲🌲🌲</span>
+      <div>
+        <div class="algo-subtitle">Algorithm 04 · Ensemble</div>
+        <div class="algo-title">Random Forest — অনেক গাছের সিদ্ধান্ত</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-explain">
+        🎈 <strong>Kindergarten ব্যাখ্যা:</strong> একটা গাছ ভুল করতে পারে, কিন্তু ১০০টা গাছ যদি vote করে — সংখ্যাগরিষ্ঠের মত জেতে। Random Forest তাই করে: অনেকগুলো আলাদা Decision Tree বানায় (প্রত্যেকটা আলাদা data দিয়ে) এবং সবার vote নিয়ে final answer দেয়।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python · Random Forest — ML Engineering</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> GridSearchCV, cross_val_score
+
+<span class="cm"># ── Hyperparameter Tuning দিয়ে ──</span>
+param_grid = {
+    <span class="st">"n_estimators"</span>: [<span class="nm">100</span>, <span class="nm">200</span>, <span class="nm">500</span>],   <span class="cm"># কতটা tree</span>
+    <span class="st">"max_depth"</span>: [<span class="nm">5</span>, <span class="nm">10</span>, <span class="kw">None</span>],        <span class="cm"># কতটা গভীর</span>
+    <span class="st">"min_samples_split"</span>: [<span class="nm">2</span>, <span class="nm">5</span>, <span class="nm">10</span>],  <span class="cm"># minimum samples to split</span>
+}
+
+rf = <span class="fn">RandomForestClassifier</span>(random_state=<span class="nm">42</span>)
+grid_search = <span class="fn">GridSearchCV</span>(rf, param_grid, cv=<span class="nm">5</span>, scoring=<span class="st">"f1"</span>)
+grid_search.<span class="fn">fit</span>(X_train, y_train)
+
+best_model = grid_search.best_estimator_
+<span class="fn">print</span>(<span class="st">f"Best params: {grid_search.best_params_}"</span>)
+
+<span class="cm"># Cross-validation</span>
+scores = <span class="fn">cross_val_score</span>(best_model, X, y, cv=<span class="nm">5</span>, scoring=<span class="st">"f1"</span>)
+<span class="fn">print</span>(<span class="st">f"CV F1: {scores.mean():.3f} ± {scores.std():.3f}"</span>)
+
+<span class="cm"># Feature importance</span>
+feat_imp = pd.<span class="fn">DataFrame</span>({
+    <span class="st">"feature"</span>: X.columns,
+    <span class="st">"importance"</span>: best_model.feature_importances_
+}).<span class="fn">sort_values</span>(<span class="st">"importance"</span>, ascending=<span class="kw">False</span>)
+<span class="fn">print</span>(feat_imp)</pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Algorithm 5: SVM -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-emoji">✂️</span>
+      <div>
+        <div class="algo-subtitle">Algorithm 05 · Classification/Regression</div>
+        <div class="algo-title">SVM (Support Vector Machine) — সেরা বিভাজনরেখা</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-explain">
+        🎈 <strong>Kindergarten ব্যাখ্যা:</strong> দুই দলের বাচ্চা মাঠে দাঁড়িয়ে আছে। তুমি একটা রেখা টানবে যেটা দুই দলকে আলাদা করবে এবং উভয় দল থেকে সমান দূরে থাকবে। এই "সবচেয়ে ভালো রেখা" খোঁজাই SVM।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python · SVM</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">from</span> sklearn.svm <span class="kw">import</span> SVC, SVR
+
+<span class="cm"># Classification</span>
+svc = <span class="fn">SVC</span>(
+    kernel=<span class="st">"rbf"</span>,    <span class="cm"># linear, rbf, poly — rbf সবচেয়ে common</span>
+    C=<span class="nm">1.0</span>,           <span class="cm"># margin vs error tradeoff</span>
+    gamma=<span class="st">"scale"</span>,  <span class="cm"># kernel coefficient</span>
+    probability=<span class="kw">True</span> <span class="cm"># predict_proba এর জন্য</span>
+)
+svc.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="cm"># ⚠️ SVM ব্যবহারের আগে অবশ্যই Scale করো!</span>
+<span class="cm"># StandardScaler বা MinMaxScaler দিয়ে</span>
+
+<span class="cm"># ML Project: Text classification, Image classification</span>
+<span class="cm"># Advantage: High-dimensional data-এ ভালো</span>
+<span class="cm"># Disadvantage: Large dataset-এ slow, scaling দরকার</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Algorithm 6: K-Nearest Neighbors -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-emoji">👥</span>
+      <div>
+        <div class="algo-subtitle">Algorithm 06 · Classification/Regression</div>
+        <div class="algo-title">K-Nearest Neighbors — প্রতিবেশীর মত</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-explain">
+        🎈 <strong>Kindergarten ব্যাখ্যা:</strong> নতুন একটা বাচ্চা class-এ এলো। সে ক্রিকেট খেলে কিনা জানা নেই। তার সবচেয়ে কাছের ৫ জন বন্ধু দেখো — যদি ৪ জন ক্রিকেট খেলে, তাহলে সেও ক্রিকেট খেলে বলে ধরো। এটাই KNN! K=৫ মানে ৫ জন প্রতিবেশীর vote নাও।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python · KNN</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">from</span> sklearn.neighbors <span class="kw">import</span> KNeighborsClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># Best K খোঁজো (Elbow method)</span>
+k_scores = []
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">31</span>):
+    knn = <span class="fn">KNeighborsClassifier</span>(n_neighbors=k)
+    score = <span class="fn">cross_val_score</span>(knn, X, y, cv=<span class="nm">5</span>).<span class="fn">mean</span>()
+    k_scores.<span class="fn">append</span>(score)
+
+plt.<span class="fn">plot</span>(<span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">31</span>), k_scores)
+plt.<span class="fn">xlabel</span>(<span class="st">"K value"</span>)
+plt.<span class="fn">ylabel</span>(<span class="st">"CV Accuracy"</span>)
+plt.<span class="fn">title</span>(<span class="st">"Best K for KNN"</span>)
+<span class="cm"># যেখানে score সবচেয়ে বেশি, সেটাই best K</span>
+
+<span class="cm"># ML Project: Recommendation systems, Anomaly detection</span>
+<span class="cm"># ⚠️ অবশ্যই scaling করো — distance-based algorithm!</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Algorithm 7: K-Means -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-emoji">🎨</span>
+      <div>
+        <div class="algo-subtitle">Algorithm 07 · Unsupervised / Clustering</div>
+        <div class="algo-title">K-Means Clustering — দলে ভাগ করা</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-explain">
+        🎈 <strong>Kindergarten ব্যাখ্যা:</strong> তোমার কাছে অনেক রঙিন বল আছে, কিন্তু কোনো label নেই। তুমি চাও ৩ দলে ভাগ করতে। কাছাকাছি রঙের বলগুলো এক দলে রাখো। K-Means এই কাজটাই করে — K টা group বানায় এবং কাছাকাছি data-কে একই group-এ রাখে।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python · K-Means — Customer Segmentation</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> silhouette_score
+
+<span class="cm"># Best K খোঁজো (Elbow method)</span>
+inertias = []
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">2</span>, <span class="nm">11</span>):
+    km = <span class="fn">KMeans</span>(n_clusters=k, random_state=<span class="nm">42</span>, n_init=<span class="nm">10</span>)
+    km.<span class="fn">fit</span>(X_scaled)
+    inertias.<span class="fn">append</span>(km.inertia_)
+
+<span class="cm"># Silhouette score — কম হলে better clustering</span>
+silhouette_scores = []
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">2</span>, <span class="nm">11</span>):
+    km = <span class="fn">KMeans</span>(n_clusters=k, random_state=<span class="nm">42</span>)
+    labels = km.<span class="fn">fit_predict</span>(X_scaled)
+    score = <span class="fn">silhouette_score</span>(X_scaled, labels)
+    silhouette_scores.<span class="fn">append</span>(score)
+
+<span class="cm"># Final model</span>
+best_k = <span class="nm">3</span>  <span class="cm"># Elbow point থেকে নাও</span>
+km = <span class="fn">KMeans</span>(n_clusters=best_k, random_state=<span class="nm">42</span>, n_init=<span class="nm">10</span>)
+df[<span class="st">"cluster"</span>] = km.<span class="fn">fit_predict</span>(X_scaled)
+
+<span class="cm"># ML Project: Customer segmentation, Document clustering</span>
+<span class="cm"># Image compression, Anomaly detection</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Algorithm 8: XGBoost -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-emoji">🚀</span>
+      <div>
+        <div class="algo-subtitle">Algorithm 08 · Gradient Boosting</div>
+        <div class="algo-title">XGBoost — ভুল থেকে শেখার machine</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-explain">
+        🎈 <strong>Kindergarten ব্যাখ্যা:</strong> প্রথম একটা student পরীক্ষা দিলো, কিছু ভুল করলো। দ্বিতীয় student শুধু সেই ভুলগুলো ঠিক করার চেষ্টা করলো। তৃতীয় student আগের দুজনের বাকি ভুলগুলো ঠিক করলো। এভাবে অনেকগুলো "weak" model মিলে একটা "strong" model হয়। এটাই Gradient Boosting, এবং XGBoost এটার সবচেয়ে fast version।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python · XGBoost — Production Ready</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">import</span> xgboost <span class="kw">as</span> xgb
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> GridSearchCV
+
+<span class="cm"># ── Classification ──</span>
+xgb_clf = xgb.<span class="fn">XGBClassifier</span>(
+    n_estimators=<span class="nm">300</span>,
+    max_depth=<span class="nm">6</span>,
+    learning_rate=<span class="nm">0.05</span>,  <span class="cm"># ছোট learning rate = ভালো</span>
+    subsample=<span class="nm">0.8</span>,       <span class="cm"># প্রতি tree-এ 80% data</span>
+    colsample_bytree=<span class="nm">0.8</span>,<span class="cm"># প্রতি tree-এ 80% features</span>
+    use_label_encoder=<span class="kw">False</span>,
+    eval_metric=<span class="st">"logloss"</span>,
+    early_stopping_rounds=<span class="nm">50</span>,  <span class="cm"># overfitting prevent করে</span>
+    random_state=<span class="nm">42</span>
+)
+
+xgb_clf.<span class="fn">fit</span>(
+    X_train, y_train,
+    eval_set=[(X_test, y_test)],
+    verbose=<span class="kw">False</span>
+)
+
+<span class="cm"># SHAP দিয়ে Explainability</span>
+<span class="kw">import</span> shap
+explainer = shap.<span class="fn">TreeExplainer</span>(xgb_clf)
+shap_values = explainer.<span class="fn">shap_values</span>(X_test)
+shap.<span class="fn">summary_plot</span>(shap_values, X_test)
+
+<span class="cm"># ML Project: Kaggle competitions, Financial risk scoring</span>
+<span class="cm"># Fraud detection, Tabular data — XGBoost সবচেয়ে জনপ্রিয়!</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Algorithm 9: Neural Network -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-emoji">🧠</span>
+      <div>
+        <div class="algo-subtitle">Algorithm 09 · Deep Learning</div>
+        <div class="algo-title">Neural Network — মানুষের মস্তিষ্কের অনুকরণ</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-explain">
+        🎈 <strong>Kindergarten ব্যাখ্যা:</strong> তোমার মস্তিষ্কে অনেক neuron (nerve cell) আছে। একটা neuron সংকেত পেলে অন্যটাকে পাঠায়। Neural Network-এও এরকম — অনেক "artificial neurons" আছে যারা একে অপরের সাথে সংযুক্ত। Input দিলে সংকেত এগিয়ে যায় এবং output পাওয়া যায়।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python · Neural Network (Keras)</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">from</span> tensorflow.keras <span class="kw">import</span> Sequential
+<span class="kw">from</span> tensorflow.keras.layers <span class="kw">import</span> Dense, Dropout, BatchNormalization
+<span class="kw">from</span> tensorflow.keras.callbacks <span class="kw">import</span> EarlyStopping, ReduceLROnPlateau
+
+<span class="cm"># ── Model Architecture ──</span>
+model = <span class="fn">Sequential</span>([
+    <span class="fn">Dense</span>(<span class="nm">256</span>, activation=<span class="st">"relu"</span>, input_shape=(X_train.shape[<span class="nm">1</span>],)),
+    <span class="fn">BatchNormalization</span>(),     <span class="cm"># Training stable করে</span>
+    <span class="fn">Dropout</span>(<span class="nm">0.3</span>),            <span class="cm"># Overfitting কমায়</span>
+    <span class="fn">Dense</span>(<span class="nm">128</span>, activation=<span class="st">"relu"</span>),
+    <span class="fn">Dropout</span>(<span class="nm">0.2</span>),
+    <span class="fn">Dense</span>(<span class="nm">64</span>, activation=<span class="st">"relu"</span>),
+    <span class="fn">Dense</span>(<span class="nm">1</span>, activation=<span class="st">"sigmoid"</span>)  <span class="cm"># Binary output</span>
+])
+
+model.<span class="fn">compile</span>(
+    optimizer=<span class="st">"adam"</span>,
+    loss=<span class="st">"binary_crossentropy"</span>,
+    metrics=[<span class="st">"accuracy"</span>]
+)
+
+<span class="cm"># ── Smart Training ──</span>
+callbacks = [
+    <span class="fn">EarlyStopping</span>(patience=<span class="nm">10</span>, restore_best_weights=<span class="kw">True</span>),
+    <span class="fn">ReduceLROnPlateau</span>(factor=<span class="nm">0.5</span>, patience=<span class="nm">5</span>)
+]
+
+history = model.<span class="fn">fit</span>(
+    X_train, y_train,
+    validation_split=<span class="nm">0.2</span>,
+    epochs=<span class="nm">100</span>,
+    batch_size=<span class="nm">32</span>,
+    callbacks=callbacks,
+    verbose=<span class="nm">1</span>
+)
+
+<span class="cm"># ML Project: Fraud detection, ECG classification (তোমার thesis!)</span>
+<span class="cm"># Image recognition, NLP tasks</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Algorithm 10: CNN -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-emoji">🖼️</span>
+      <div>
+        <div class="algo-subtitle">Algorithm 10 · Deep Learning · Image</div>
+        <div class="algo-title">CNN (Convolutional Neural Network) — ছবি চেনানো</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-explain">
+        🎈 <strong>Kindergarten ব্যাখ্যা:</strong> তুমি একটা ছবিতে বিড়াল খুঁজছ। প্রথমে কান খোঁজো, তারপর চোখ, তারপর মুখ। CNN-ও এভাবেই কাজ করে — প্রথম layer simple features (edges) খোঁজে, পরের layer complex features (চোখ, কান) খোঁজে, শেষ layer সব মিলিয়ে বলে "এটা বিড়াল!"
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python · CNN for Image Classification</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">from</span> tensorflow.keras <span class="kw">import</span> Sequential
+<span class="kw">from</span> tensorflow.keras.layers <span class="kw">import</span> (Conv2D, MaxPooling2D, Flatten, 
+                                       Dense, Dropout, BatchNormalization)
+
+model = <span class="fn">Sequential</span>([
+    <span class="cm"># Block 1: Edge detection</span>
+    <span class="fn">Conv2D</span>(<span class="nm">32</span>, (<span class="nm">3</span>,<span class="nm">3</span>), activation=<span class="st">"relu"</span>, input_shape=(<span class="nm">224</span>,<span class="nm">224</span>,<span class="nm">3</span>)),
+    <span class="fn">BatchNormalization</span>(),
+    <span class="fn">MaxPooling2D</span>(<span class="nm">2</span>,<span class="nm">2</span>),
+
+    <span class="cm"># Block 2: Complex features</span>
+    <span class="fn">Conv2D</span>(<span class="nm">64</span>, (<span class="nm">3</span>,<span class="nm">3</span>), activation=<span class="st">"relu"</span>),
+    <span class="fn">BatchNormalization</span>(),
+    <span class="fn">MaxPooling2D</span>(<span class="nm">2</span>,<span class="nm">2</span>),
+
+    <span class="cm"># Block 3: High-level features</span>
+    <span class="fn">Conv2D</span>(<span class="nm">128</span>, (<span class="nm">3</span>,<span class="nm">3</span>), activation=<span class="st">"relu"</span>),
+    <span class="fn">MaxPooling2D</span>(<span class="nm">2</span>,<span class="nm">2</span>),
+
+    <span class="cm"># Classification Head</span>
+    <span class="fn">Flatten</span>(),
+    <span class="fn">Dense</span>(<span class="nm">512</span>, activation=<span class="st">"relu"</span>),
+    <span class="fn">Dropout</span>(<span class="nm">0.5</span>),
+    <span class="fn">Dense</span>(<span class="nm">num_classes</span>, activation=<span class="st">"softmax"</span>)
+])
+
+<span class="cm"># Transfer Learning (Production-ready approach)</span>
+<span class="kw">from</span> tensorflow.keras.applications <span class="kw">import</span> EfficientNetB0
+base = <span class="fn">EfficientNetB0</span>(weights=<span class="st">"imagenet"</span>, include_top=<span class="kw">False</span>)
+base.trainable = <span class="kw">False</span>  <span class="cm"># Freeze base layers</span>
+
+<span class="cm"># ML Project: Blood cell classification (তোমার thesis-এর এই ধরনের!)</span>
+<span class="cm"># Medical imaging, Defect detection (HELLA PCBA!)</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Algorithm 11: PCA -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-emoji">🔭</span>
+      <div>
+        <div class="algo-subtitle">Algorithm 11 · Dimensionality Reduction</div>
+        <div class="algo-title">PCA — জটিল data সহজ করা</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-explain">
+        🎈 <strong>Kindergarten ব্যাখ্যা:</strong> একটা ৩D object-এর ছায়া দেওয়ালে পড়ে 2D হয়ে যায়। সব তথ্য নেই কিন্তু মূল আকৃতি বোঝা যায়। PCA এরকমই — অনেক features থেকে সবচেয়ে গুরুত্বপূর্ণ patterns বের করে কম dimensions-এ প্রকাশ করে।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python · PCA</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">from</span> sklearn.decomposition <span class="kw">import</span> PCA
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># অবশ্যই scale করো আগে!</span>
+scaler = <span class="fn">StandardScaler</span>()
+X_scaled = scaler.<span class="fn">fit_transform</span>(X)
+
+<span class="cm"># কতটা components রাখবো?</span>
+pca_full = <span class="fn">PCA</span>()
+pca_full.<span class="fn">fit</span>(X_scaled)
+
+<span class="cm"># Explained variance plot</span>
+plt.<span class="fn">plot</span>(pca_full.explained_variance_ratio_.<span class="fn">cumsum</span>())
+plt.<span class="fn">xlabel</span>(<span class="st">"Number of components"</span>)
+plt.<span class="fn">ylabel</span>(<span class="st">"Cumulative explained variance"</span>)
+plt.<span class="fn">axhline</span>(y=<span class="nm">0.95</span>, color=<span class="st">"r"</span>)  <span class="cm"># 95% variance ধরে রাখো</span>
+<span class="cm"># যেখানে line cross করে সেটাই best n_components</span>
+
+<span class="cm"># Final PCA</span>
+pca = <span class="fn">PCA</span>(n_components=<span class="nm">0.95</span>)  <span class="cm"># 95% variance retain</span>
+X_pca = pca.<span class="fn">fit_transform</span>(X_scaled)
+<span class="fn">print</span>(<span class="st">f"Original: {X.shape[1]} features → PCA: {X_pca.shape[1]} features"</span>)
+
+<span class="cm"># ML Project: High-dim data visualization, Noise reduction</span>
+<span class="cm"># Preprocessing before ML model (curse of dimensionality)</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Algorithm 12: LSTM -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <span class="algo-emoji">⏰</span>
+      <div>
+        <div class="algo-subtitle">Algorithm 12 · Deep Learning · Sequential</div>
+        <div class="algo-title">LSTM — সময়ের ধারা মনে রাখা</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-explain">
+        🎈 <strong>Kindergarten ব্যাখ্যা:</strong> তুমি একটা গল্প পড়ছ। আগের বাক্য না জানলে পরের বাক্য বোঝা যায় না। LSTM-এর একটা "memory" আছে — আগের তথ্য মনে রেখে পরের তথ্য process করে। তাই time series (stock price, ECG) এবং text-এ এটা ভালো কাজ করে।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python · LSTM for Time Series</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">from</span> tensorflow.keras.layers <span class="kw">import</span> LSTM, Dense, Dropout
+<span class="kw">from</span> tensorflow.keras <span class="kw">import</span> Sequential
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># ── Sliding Window তৈরি ──</span>
+<span class="kw">def</span> <span class="fn">create_sequences</span>(data, window_size=<span class="nm">60</span>):
+    X, y = [], []
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(window_size, <span class="fn">len</span>(data)):
+        X.<span class="fn">append</span>(data[i-window_size:i])   <span class="cm"># আগের 60 values</span>
+        y.<span class="fn">append</span>(data[i])                 <span class="cm"># পরের value predict করো</span>
+    <span class="kw">return</span> np.<span class="fn">array</span>(X), np.<span class="fn">array</span>(y)
+
+X_seq, y_seq = <span class="fn">create_sequences</span>(scaled_data)
+X_seq = X_seq.<span class="fn">reshape</span>(X_seq.shape[<span class="nm">0</span>], X_seq.shape[<span class="nm">1</span>], <span class="nm">1</span>)
+
+<span class="cm"># ── LSTM Model ──</span>
+model = <span class="fn">Sequential</span>([
+    <span class="fn">LSTM</span>(<span class="nm">100</span>, return_sequences=<span class="kw">True</span>, input_shape=(window_size, <span class="nm">1</span>)),
+    <span class="fn">Dropout</span>(<span class="nm">0.2</span>),
+    <span class="fn">LSTM</span>(<span class="nm">100</span>, return_sequences=<span class="kw">False</span>),
+    <span class="fn">Dropout</span>(<span class="nm">0.2</span>),
+    <span class="fn">Dense</span>(<span class="nm">1</span>)  <span class="cm"># Next value predict করো</span>
+])
+model.<span class="fn">compile</span>(optimizer=<span class="st">"adam"</span>, loss=<span class="st">"mse"</span>)
+
+<span class="cm"># ML Project: Stock prediction, ECG arrhythmia detection</span>
+<span class="cm"># Sensor data analysis, Weather forecasting</span></pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Final Algorithm Exercise -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-badge">Senior ML Interview</span>
+      <span class="exercise-title">অধ্যায় ১২ — Algorithm Selection</span>
+    </div>
+
+    <div class="exercise-item">
+      <span class="diff-badge diff-hard">Senior Level</span>
+      <div class="exercise-q">Q1. কোন situation-এ কোন algorithm বেছে নেবে? একটা framework দাও।</div>
+      <p style="color:#94a3b8;font-size:14px;">✅ উত্তর চার্ট:</p>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Situation</th><th>Algorithm</th><th>কারণ</th></tr></thead>
+          <tbody>
+            <tr><td>Small tabular data, interpretability চাই</td><td>Logistic Regression / Decision Tree</td><td>Simple, explainable</td></tr>
+            <tr><td>Medium tabular data, best performance চাই</td><td>XGBoost / Random Forest</td><td>Robust, handles missing values</td></tr>
+            <tr><td>Image classification</td><td>CNN / Transfer Learning (EfficientNet)</td><td>Feature extraction automatic</td></tr>
+            <tr><td>Time series / Sequential data</td><td>LSTM / Transformer</td><td>Memory for temporal patterns</td></tr>
+            <tr><td>No labels (clustering)</td><td>K-Means / DBSCAN</td><td>Unsupervised</td></tr>
+            <tr><td>High dimensions, slow training</td><td>PCA → then any model</td><td>Curse of dimensionality কমায়</td></tr>
+            <tr><td>Text data / NLP</td><td>BERT / Transformers</td><td>Context understanding</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="exercise-item">
+      <span class="diff-badge diff-hard">ML Engineering Project</span>
+      <div class="exercise-q">Ex 2. End-to-end ML pipeline বানাও: data loading → preprocessing → multiple models → comparison → save best model → Streamlit deployment।</div>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Complete ML Pipeline</span><div class="code-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div></div>
+        <div class="code-body"><pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> joblib
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">import</span> xgboost <span class="kw">as</span> xgb
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> f1_score
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score
+
+<span class="cm"># 1. Load & Preprocess</span>
+df = pd.<span class="fn">read_csv</span>(<span class="st">"data.csv"</span>)
+X, y = df.<span class="fn">drop</span>(<span class="st">"target"</span>, axis=<span class="nm">1</span>), df[<span class="st">"target"</span>]
+
+<span class="cm"># 2. Multiple Model Comparison</span>
+models = {
+    <span class="st">"Logistic Regression"</span>: <span class="fn">Pipeline</span>([
+        (<span class="st">"scaler"</span>, <span class="fn">StandardScaler</span>()),
+        (<span class="st">"clf"</span>, <span class="fn">LogisticRegression</span>())
+    ]),
+    <span class="st">"Random Forest"</span>: <span class="fn">RandomForestClassifier</span>(random_state=<span class="nm">42</span>),
+    <span class="st">"XGBoost"</span>: xgb.<span class="fn">XGBClassifier</span>(random_state=<span class="nm">42</span>)
+}
+
+results = {}
+<span class="kw">for</span> name, model <span class="kw">in</span> models.items():
+    scores = <span class="fn">cross_val_score</span>(model, X, y, cv=<span class="nm">5</span>, scoring=<span class="st">"f1"</span>)
+    results[name] = {<span class="st">"mean"</span>: scores.<span class="fn">mean</span>(), <span class="st">"std"</span>: scores.<span class="fn">std</span>()}
+    <span class="fn">print</span>(<span class="st">f"{name}: {scores.mean():.3f} ± {scores.std():.3f}"</span>)
+
+<span class="cm"># 3. Best Model Save</span>
+best_name = <span class="fn">max</span>(results, key=<span class="kw">lambda</span> x: results[x][<span class="st">"mean"</span>])
+best_model = models[best_name]
+best_model.<span class="fn">fit</span>(X, y)
+joblib.<span class="fn">dump</span>(best_model, <span class="st">"best_model.joblib"</span>)
+<span class="fn">print</span>(<span class="st">f"Best model: {best_name} saved!"</span>)</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== SUMMARY ===== -->
+<div class="callout callout-success">
+  <div class="callout-title">🎉 অভিনন্দন! তুমি শেষ করেছ!</div>
+  <p>
+    এই গাইডে তুমি শিখেছ:
+    <br>✅ Streamlit installation থেকে deployment পর্যন্ত সব কিছু
+    <br>✅ Titanic project-এর সম্পূর্ণ workflow (EDA → Visualization → Modelling)
+    <br>✅ Cache, Model Saving, GitHub Hosting
+    <br>✅ Word2Vec Deep Learning project
+    <br>✅ ১২+ ML Algorithms — বাচ্চাদের মতো ব্যাখ্যা + Production-ready code
+    <br>✅ ৩০+ Interview প্রশ্ন ও উত্তর
+    <br><br>
+    এখন তুমি Streamlit দিয়ে তোমার নিজের ML project present করার জন্য সম্পূর্ণ প্রস্তুত! 🚀
+  </p>
+</div>
+
+</div><!-- end container -->
+
+<footer>
+  <p>📚 Streamlit সম্পূর্ণ গাইড — বাংলায় | সম্পূর্ণ বাংলায় প্রস্তুতকৃত</p>
+  <p style="margin-top:8px;">Noto Bengali Font · JetBrains Mono · Playfair Display</p>
+</footer>
+
+</body>
+</html>

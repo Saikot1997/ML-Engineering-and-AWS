@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pandas বাংলা টিউটোরিয়াল — ডেটা সায়েন্সের প্রথম পদক্ষেপ</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1f2937;
+    --accent: #f97316;
+    --accent2: #fbbf24;
+    --accent3: #34d399;
+    --accent4: #60a5fa;
+    --accent5: #c084fc;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --border: #30363d;
+    --code-bg: #0d1117;
+    --card: #161b22;
+    --danger: #f87171;
+    --success: #34d399;
+    --info: #60a5fa;
+    --warn: #fbbf24;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 17px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ===== HEADER ===== */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, #1e3a5f 0%, transparent 70%),
+                radial-gradient(ellipse 50% 40% at 80% 80%, #1a1a2e 0%, transparent 60%),
+                linear-gradient(180deg, #0d1117 0%, #0d1117 100%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.3;
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 900px; }
+  .badge {
+    display: inline-block;
+    background: rgba(249,115,22,0.15);
+    border: 1px solid rgba(249,115,22,0.4);
+    color: var(--accent);
+    padding: 0.4rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    font-weight: 600;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    font-size: 1.2rem;
+    color: var(--text2);
+    max-width: 600px;
+    margin: 0 auto 3rem;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 3rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--accent);
+    display: block;
+  }
+  .stat-label { font-size: 0.85rem; color: var(--text3); }
+
+  /* ===== TOC ===== */
+  .toc-wrapper {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 800px;
+    margin: 3rem auto;
+  }
+  .toc-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.6rem;
+  }
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    background: var(--bg3);
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  .toc-item:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(249,115,22,0.08);
+  }
+  .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-weight: 600;
+    min-width: 22px;
+  }
+
+  /* ===== MAIN LAYOUT ===== */
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ===== SECTIONS ===== */
+  .section {
+    padding: 5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-header {
+    margin-bottom: 3rem;
+  }
+  .section-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    display: block;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.8rem;
+    line-height: 1.2;
+  }
+  .section-sub {
+    color: var(--text2);
+    font-size: 1rem;
+    max-width: 700px;
+  }
+
+  /* ===== CALLOUT BOXES ===== */
+  .callout {
+    border-radius: 12px;
+    padding: 1.4rem 1.6rem;
+    margin: 1.8rem 0;
+    border-left: 4px solid;
+    display: flex;
+    gap: 1rem;
+  }
+  .callout-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .callout-body { flex: 1; }
+  .callout-title { font-weight: 700; margin-bottom: 0.3rem; font-size: 1rem; }
+  .callout.info { background: rgba(96,165,250,0.08); border-color: var(--info); }
+  .callout.info .callout-title { color: var(--info); }
+  .callout.warn { background: rgba(251,191,36,0.08); border-color: var(--warn); }
+  .callout.warn .callout-title { color: var(--warn); }
+  .callout.success { background: rgba(52,211,153,0.08); border-color: var(--success); }
+  .callout.success .callout-title { color: var(--success); }
+  .callout.danger { background: rgba(248,113,113,0.08); border-color: var(--danger); }
+  .callout.danger .callout-title { color: var(--danger); }
+  .callout.tip { background: rgba(192,132,252,0.08); border-color: var(--accent5); }
+  .callout.tip .callout-title { color: var(--accent5); }
+
+  /* ===== CODE BLOCKS ===== */
+  .code-block {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+  .code-header {
+    background: var(--bg2);
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  .code-dots { display: flex; gap: 6px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+  pre {
+    padding: 1.4rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    line-height: 1.7;
+  }
+  code { font-family: 'JetBrains Mono', monospace; }
+  .inline-code {
+    background: rgba(249,115,22,0.12);
+    color: var(--accent);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+    font-weight: 600;
+  }
+
+  /* Token colors */
+  .kw { color: #ff79c6; }
+  .fn { color: #8be9fd; }
+  .st { color: #f1fa8c; }
+  .cm { color: #6272a4; font-style: italic; }
+  .nm { color: #bd93f9; }
+  .op { color: #ff79c6; }
+  .bl { color: #50fa7b; }
+  .at { color: #ffb86c; }
+
+  /* ===== TABLES ===== */
+  .table-wrap { overflow-x: auto; margin: 1.5rem 0; border-radius: 12px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: var(--bg2); }
+  th {
+    padding: 0.9rem 1.2rem;
+    text-align: left;
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: 0.8rem 1.2rem;
+    border-bottom: 1px solid rgba(48,54,61,0.5);
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: rgba(31,41,55,0.3); }
+
+  /* ===== SVG DIAGRAMS ===== */
+  .diagram-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+  .diagram-title {
+    font-size: 0.85rem;
+    color: var(--text3);
+    margin-top: 1rem;
+    font-style: italic;
+  }
+  svg text { font-family: 'Hind Siliguri', sans-serif; }
+  .diagram-wrap svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+  /* ===== EXERCISE CARDS ===== */
+  .exercise-section {
+    background: linear-gradient(135deg, rgba(249,115,22,0.05) 0%, rgba(251,191,36,0.03) 100%);
+    border: 2px solid rgba(249,115,22,0.2);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin: 3rem 0;
+  }
+  .exercise-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .exercise-icon {
+    width: 48px; height: 48px;
+    background: var(--accent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .exercise-h { font-size: 1.4rem; font-weight: 700; color: var(--accent); }
+  .exercise-sub { font-size: 0.9rem; color: var(--text3); }
+  .exercise-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.2rem;
+  }
+  .exercise-card:last-child { margin-bottom: 0; }
+  .ex-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .ex-q { font-weight: 600; color: #fff; margin-bottom: 0.6rem; font-size: 1rem; }
+  .ex-hint { font-size: 0.9rem; color: var(--text2); margin-top: 0.6rem; }
+  details { margin-top: 1rem; }
+  summary {
+    cursor: pointer;
+    color: var(--accent3);
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.4rem 0;
+    user-select: none;
+  }
+  summary:hover { color: var(--accent); }
+  .answer {
+    margin-top: 0.8rem;
+    padding: 1rem;
+    background: rgba(52,211,153,0.06);
+    border: 1px solid rgba(52,211,153,0.2);
+    border-radius: 8px;
+    font-size: 0.92rem;
+  }
+
+  /* ===== HIGHLIGHT BOXES ===== */
+  .highlight-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin: 1.8rem 0;
+  }
+  .highlight-box h4 {
+    color: var(--accent2);
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
+  }
+
+  /* ===== STEP BOXES ===== */
+  .steps { display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0; }
+  .step-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+  }
+  .step-text { flex: 1; }
+  .step-title { font-weight: 700; color: #fff; margin-bottom: 0.2rem; }
+  .step-desc { color: var(--text2); font-size: 0.95rem; }
+
+  /* ===== COMPARISON CARDS ===== */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .compare-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem;
+  }
+  .compare-card h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .compare-card ul { list-style: none; }
+  .compare-card li {
+    padding: 0.3rem 0;
+    font-size: 0.92rem;
+    color: var(--text2);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .compare-card li::before { content: "→"; color: var(--accent); flex-shrink: 0; margin-top: 0.1rem; }
+
+  /* ===== ALGO SECTION ===== */
+  .algo-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .algo-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent5);
+  }
+  .algo-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+  .algo-emoji { font-size: 2rem; margin-bottom: 1rem; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem;
+    text-align: center;
+    color: var(--text3);
+    font-size: 0.9rem;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .compare-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 2rem; }
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .section { animation: fadeInUp 0.5s ease both; }
+
+  p { margin-bottom: 1rem; color: var(--text); }
+  h3 { font-size: 1.4rem; color: var(--accent2); margin: 2rem 0 0.8rem; }
+  h4 { font-size: 1.1rem; color: var(--text); margin: 1.5rem 0 0.5rem; }
+  ul, ol { margin: 0.8rem 0 1rem 1.5rem; }
+  li { margin-bottom: 0.4rem; color: var(--text2); }
+  strong { color: var(--accent2); }
+  em { color: var(--accent3); font-style: normal; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <span class="badge">🐼 ডেটা সায়েন্স বাংলা সিরিজ · পর্ব ১</span>
+    <h1>Pandas দিয়ে<br><span>ডেটার দুনিয়ায়</span> প্রবেশ</h1>
+    <p>একেবারে শূন্য থেকে শুরু — DataFrame কী, কীভাবে তৈরি হয়, কীভাবে ডেটা পড়া যায়, সব কিছু বাংলায় বুঝি।</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">১০+</span><span class="stat-label">বিষয়</span></div>
+      <div class="stat"><span class="stat-num">৩০+</span><span class="stat-label">কোড উদাহরণ</span></div>
+      <div class="stat"><span class="stat-num">২০+</span><span class="stat-label">ইন্টারভিউ প্রশ্ন</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="container">
+  <div class="toc-wrapper">
+    <div class="toc-title">📚 বিষয়সূচি</div>
+    <div class="toc-grid">
+      <a href="#s1" class="toc-item"><span class="toc-num">০১</span>Pandas কী এবং কেন</a>
+      <a href="#s2" class="toc-item"><span class="toc-num">০২</span>DataFrame বনাম NumPy</a>
+      <a href="#s3" class="toc-item"><span class="toc-num">০৩</span>NumPy Array থেকে DataFrame</a>
+      <a href="#s4" class="toc-item"><span class="toc-num">০৪</span>Dictionary থেকে DataFrame</a>
+      <a href="#s5" class="toc-item"><span class="toc-num">০৫</span>CSV ফাইল থেকে DataFrame</a>
+      <a href="#s6" class="toc-item"><span class="toc-num">০৬</span>প্রথম অন্বেষণ</a>
+      <a href="#s7" class="toc-item"><span class="toc-num">০৭</span>কলাম নির্বাচন</a>
+      <a href="#s8" class="toc-item"><span class="toc-num">০৮</span>loc ও iloc</a>
+      <a href="#s9" class="toc-item"><span class="toc-num">০৯</span>Conditional Indexing</a>
+      <a href="#s10" class="toc-item"><span class="toc-num">১০</span>পরিসংখ্যান বিশ্লেষণ</a>
+      <a href="#algo" class="toc-item"><span class="toc-num">১১</span>অ্যালগরিদম গাইড</a>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 1: PANDAS কী -->
+<div class="container">
+<section class="section" id="s1">
+  <div class="section-header">
+    <span class="section-tag">Section 01</span>
+    <h2 class="section-title">Pandas কী এবং কেন শিখব?</h2>
+    <p class="section-sub">একেবারে সহজ ভাষায় — ধরো তুমি এক্সেলে কাজ করো, Pandas হলো সেই Python সংস্করণ, তবে অনেক অনেক বেশি শক্তিশালী।</p>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">🧒</span>
+    <div class="callout-body">
+      <div class="callout-title">শিশুর মতো বুঝি</div>
+      ধরো তোমার কাছে একটা বিশাল খাতা আছে যেখানে হাজার হাজার ছাত্রের নাম, বয়স, রোল নম্বর, নম্বর লেখা আছে। সেই খাতা থেকে "শুধু যারা ৮০-এর উপরে পেয়েছে তাদের তালিকা" বের করতে হলে হাতে করলে ঘণ্টার পর ঘণ্টা লাগবে। Pandas দিয়ে এটা মাত্র একটা লাইনে হয়!
+    </div>
+  </div>
+
+  <p>Pandas মূলত দুটো কাজ করে:</p>
+
+  <div class="diagram-wrap">
+    <svg width="700" height="200" viewBox="0 0 700 200">
+      <defs>
+        <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#fbbf24;stop-opacity:1" />
+        </linearGradient>
+        <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+      <!-- Box 1 -->
+      <rect x="40" y="60" width="240" height="80" rx="12" fill="url(#g1)" opacity="0.9"/>
+      <text x="160" y="95" text-anchor="middle" fill="white" font-size="16" font-weight="bold">ডেটা লোড করা</text>
+      <text x="160" y="118" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="12">CSV, Excel, JSON থেকে</text>
+      <!-- Arrow -->
+      <path d="M290 100 L420 100" stroke="#6272a4" stroke-width="2" stroke-dasharray="5"/>
+      <polygon points="420,95 430,100 420,105" fill="#6272a4"/>
+      <!-- Pandas logo area -->
+      <circle cx="360" cy="100" r="25" fill="#161b22" stroke="#30363d"/>
+      <text x="360" y="95" text-anchor="middle" fill="#f97316" font-size="11" font-weight="bold">🐼</text>
+      <text x="360" y="112" text-anchor="middle" fill="#f97316" font-size="9">pandas</text>
+      <!-- Box 2 -->
+      <rect x="430" y="60" width="240" height="80" rx="12" fill="url(#g2)" opacity="0.9"/>
+      <text x="550" y="95" text-anchor="middle" fill="white" font-size="16" font-weight="bold">ডেটা ম্যানিপুলেট</text>
+      <text x="550" y="118" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="12">ফিল্টার, সর্ট, বিশ্লেষণ</text>
+    </svg>
+    <div class="diagram-title">চিত্র: Pandas-এর দুটো মূল ভূমিকা</div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="code-lang">PYTHON</span>
+    </div>
+    <pre><span class="cm"># Pandas import করার নিয়ম — সবসময় 'pd' alias ব্যবহার করা হয়</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># NumPy ও প্রায় সবসময় সাথে আসে</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># এটাই সব ডেটা সায়েন্স কোডের প্রথম দুটো লাইন!</span></pre>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <div class="callout-title">কেন 'pd' লিখি?</div>
+      <code>pandas</code> লিখতে ৬টা অক্ষর, <code>pd</code> লিখতে ২টা। প্রতিটা লাইনে যদি <code>pandas.read_csv()</code> না লিখে <code>pd.read_csv()</code> লিখতে পারি — তাহলে অনেক কম টাইপ করতে হয়। এটা convention, মানে সবাই এটাই করে।
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: DataFrame vs NumPy -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <span class="section-tag">Section 02</span>
+    <h2 class="section-title">DataFrame কী? NumPy-র সাথে পার্থক্য কী?</h2>
+    <p class="section-sub">DataFrame হলো একটা বিশেষ ধরনের টেবিল। এটা Excel-এর spreadsheet-এর মতোই — কিন্তু Python-এ।</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg width="700" height="320" viewBox="0 0 700 320">
+      <!-- DataFrame structure -->
+      <text x="350" y="25" text-anchor="middle" fill="#f97316" font-size="14" font-weight="bold">একটি DataFrame-এর গঠন</text>
+      <!-- Index column header -->
+      <rect x="40" y="40" width="80" height="35" rx="4" fill="#1f2937" stroke="#f97316" stroke-width="2"/>
+      <text x="80" y="63" text-anchor="middle" fill="#f97316" font-size="11" font-weight="bold">Index</text>
+      <!-- Column headers -->
+      <rect x="125" y="40" width="110" height="35" rx="4" fill="#1f2937" stroke="#60a5fa" stroke-width="2"/>
+      <text x="180" y="63" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="bold">নাম (Name)</text>
+      <rect x="240" y="40" width="110" height="35" rx="4" fill="#1f2937" stroke="#60a5fa" stroke-width="2"/>
+      <text x="295" y="63" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="bold">লিঙ্গ (Sex)</text>
+      <rect x="355" y="40" width="110" height="35" rx="4" fill="#1f2937" stroke="#60a5fa" stroke-width="2"/>
+      <text x="410" y="63" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="bold">উচ্চতা (cm)</text>
+      <rect x="470" y="40" width="110" height="35" rx="4" fill="#1f2937" stroke="#60a5fa" stroke-width="2"/>
+      <text x="525" y="63" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="bold">বয়স (Age)</text>
+
+      <!-- Label: columns -->
+      <text x="360" y="15" text-anchor="middle" fill="#60a5fa" font-size="11">← কলামগুলো (প্রতিটা বৈশিষ্ট্য) →</text>
+
+      <!-- Rows -->
+      <!-- Row 0 -->
+      <rect x="40" y="80" width="80" height="35" rx="4" fill="#1a1a2e" stroke="#f97316" stroke-width="1"/>
+      <text x="80" y="103" text-anchor="middle" fill="#f97316" font-size="12">0</text>
+      <rect x="125" y="80" width="110" height="35" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <text x="180" y="103" text-anchor="middle" fill="#e2e8f0" font-size="12">রবিন</text>
+      <rect x="240" y="80" width="110" height="35" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <text x="295" y="103" text-anchor="middle" fill="#e2e8f0" font-size="12">পুরুষ</text>
+      <rect x="355" y="80" width="110" height="35" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <text x="410" y="103" text-anchor="middle" fill="#bd93f9" font-size="12">174</text>
+      <rect x="470" y="80" width="110" height="35" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <text x="525" y="103" text-anchor="middle" fill="#bd93f9" font-size="12">23</text>
+
+      <!-- Row 1 -->
+      <rect x="40" y="120" width="80" height="35" rx="4" fill="#1a1a2e" stroke="#f97316" stroke-width="1"/>
+      <text x="80" y="143" text-anchor="middle" fill="#f97316" font-size="12">1</text>
+      <rect x="125" y="120" width="110" height="35" rx="4" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+      <text x="180" y="143" text-anchor="middle" fill="#e2e8f0" font-size="12">মার্ক</text>
+      <rect x="240" y="120" width="110" height="35" rx="4" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+      <text x="295" y="143" text-anchor="middle" fill="#e2e8f0" font-size="12">পুরুষ</text>
+      <rect x="355" y="120" width="110" height="35" rx="4" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+      <text x="410" y="143" text-anchor="middle" fill="#bd93f9" font-size="12">182</text>
+      <rect x="470" y="120" width="110" height="35" rx="4" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+      <text x="525" y="143" text-anchor="middle" fill="#bd93f9" font-size="12">40</text>
+
+      <!-- Row 2 -->
+      <rect x="40" y="160" width="80" height="35" rx="4" fill="#1a1a2e" stroke="#f97316" stroke-width="1"/>
+      <text x="80" y="183" text-anchor="middle" fill="#f97316" font-size="12">2</text>
+      <rect x="125" y="160" width="110" height="35" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <text x="180" y="183" text-anchor="middle" fill="#e2e8f0" font-size="12">আলিনে</text>
+      <rect x="240" y="160" width="110" height="35" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <text x="295" y="183" text-anchor="middle" fill="#e2e8f0" font-size="12">মহিলা</text>
+      <rect x="355" y="160" width="110" height="35" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <text x="410" y="183" text-anchor="middle" fill="#bd93f9" font-size="12">169</text>
+      <rect x="470" y="160" width="110" height="35" rx="4" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <text x="525" y="183" text-anchor="middle" fill="#bd93f9" font-size="12">56</text>
+
+      <!-- Labels -->
+      <text x="25" y="140" text-anchor="middle" fill="#f97316" font-size="11" transform="rotate(-90, 25, 140)">← সারিগুলো (প্রতিটা ব্যক্তি) →</text>
+
+      <!-- Legend -->
+      <rect x="40" y="215" width="16" height="16" rx="3" fill="#1a1a2e" stroke="#f97316" stroke-width="2"/>
+      <text x="62" y="228" fill="#text2" font-size="11" fill="#94a3b8">= Index (সারির ঠিকানা)</text>
+      <rect x="40" y="240" width="16" height="16" rx="3" fill="#1f2937" stroke="#60a5fa" stroke-width="2"/>
+      <text x="62" y="253" fill="#94a3b8" font-size="11">= Column Header (কলামের নাম)</text>
+      <rect x="40" y="265" width="16" height="16" rx="3" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <text x="62" y="278" fill="#94a3b8" font-size="11">= Data Cell (আসল ডেটা)</text>
+      <rect x="355" y="240" width="16" height="16" rx="3" fill="#0d1117" stroke="#30363d"/>
+      <text x="375" y="253" fill="#bd93f9" font-size="11">= সংখ্যা (int/float type)</text>
+    </svg>
+    <div class="diagram-title">চিত্র: একটি DataFrame-এর সম্পূর্ণ গঠন — সারি, কলাম ও Index</div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <h4 style="color: var(--info);">🔢 NumPy Array</h4>
+      <ul>
+        <li>সব কলামে একই ধরনের ডেটা (শুধু সংখ্যা বা শুধু string)</li>
+        <li>কলামের নাম থাকে না (শুধু নম্বর দিয়ে access করতে হয়)</li>
+        <li>দ্রুত গণনার জন্য আদর্শ</li>
+        <li>Matrix operation-এর জন্য ভালো</li>
+      </ul>
+    </div>
+    <div class="compare-card">
+      <h4 style="color: var(--accent);">🐼 Pandas DataFrame</h4>
+      <ul>
+        <li>ভিন্ন কলামে ভিন্ন ধরনের ডেটা রাখা যায়</li>
+        <li>প্রতিটা কলামের নাম থাকে (নামে access করা যায়)</li>
+        <li>ডেটা পরিষ্কার ও বিশ্লেষণের জন্য আদর্শ</li>
+        <li>Excel-এর মতো readable</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <div class="callout-title">Index মানে কী?</div>
+      Index হলো প্রতিটা সারির "ঠিকানা"। ধরো বাড়ির ঠিকানার মতো — প্রতিটা ঘরের একটা নম্বর থাকে। DataFrame-এ প্রতিটা সারির একটা Index থাকে (default: 0, 1, 2...)। কিন্তু আমরা চাইলে Index পরিবর্তন করতে পারি।
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: NumPy থেকে DataFrame -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <span class="section-tag">Section 03</span>
+    <h2 class="section-title">NumPy Array থেকে DataFrame তৈরি</h2>
+    <p class="section-sub">প্রথম পদ্ধতি: আমাদের কাছে যদি NumPy array থাকে, সেটাকে DataFrame-এ রূপান্তর করতে পারি।</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="code-lang">PYTHON — NumPy থেকে DataFrame</span>
+    </div>
+    <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># ধাপ ১: একটা NumPy array তৈরি করি (৩ সারি, ৪ কলাম)</span>
+array = np.array([
+    [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>],
+    [<span class="nm">5</span>, <span class="nm">6</span>, <span class="nm">7</span>, <span class="nm">8</span>],
+    [<span class="nm">9</span>, <span class="nm">10</span>, <span class="nm">11</span>, <span class="nm">12</span>]
+])
+
+<span class="cm"># ধাপ ২: DataFrame তৈরি করি</span>
+df = pd.DataFrame(
+    data = array,          <span class="cm"># কোন ডেটা দিয়ে বানাবো</span>
+    index = [<span class="st">'i_1'</span>, <span class="st">'i_2'</span>, <span class="st">'i_3'</span>],   <span class="cm"># প্রতি সারির নাম</span>
+    columns = [<span class="st">'A'</span>, <span class="st">'B'</span>, <span class="st">'C'</span>, <span class="st">'D'</span>]   <span class="cm"># প্রতি কলামের নাম</span>
+)
+
+<span class="fn">print</span>(df)
+
+<span class="cm"># আউটপুট:
+#      A   B   C   D
+# i_1  1   2   3   4
+# i_2  5   6   7   8
+# i_3  9  10  11  12</span></pre>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg width="660" height="260" viewBox="0 0 660 260">
+      <text x="330" y="20" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="bold">pd.DataFrame() constructor-এর parameter গুলো</text>
+      <!-- Central box -->
+      <rect x="230" y="80" width="200" height="100" rx="12" fill="#1f2937" stroke="#f97316" stroke-width="2"/>
+      <text x="330" y="108" text-anchor="middle" fill="#f97316" font-size="14" font-weight="bold">pd.DataFrame()</text>
+      <text x="330" y="130" text-anchor="middle" fill="#94a3b8" font-size="11">আমাদের DataFrame</text>
+      <text x="330" y="150" text-anchor="middle" fill="#94a3b8" font-size="11">তৈরির যন্ত্র</text>
+
+      <!-- data arrow -->
+      <path d="M80 100 L225 120" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="5"/>
+      <circle cx="80" cy="100" r="4" fill="#60a5fa"/>
+      <rect x="10" y="60" width="65" height="50" rx="6" fill="#1a2744" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="42" y="85" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="bold">data</text>
+      <text x="42" y="103" text-anchor="middle" fill="#94a3b8" font-size="9">NumPy array</text>
+
+      <!-- index arrow -->
+      <path d="M80 170 L225 155" stroke="#34d399" stroke-width="1.5" stroke-dasharray="5"/>
+      <circle cx="80" cy="170" r="4" fill="#34d399"/>
+      <rect x="10" y="145" width="65" height="50" rx="6" fill="#0d2b1f" stroke="#34d399" stroke-width="1.5"/>
+      <text x="42" y="165" text-anchor="middle" fill="#34d399" font-size="11" font-weight="bold">index</text>
+      <text x="42" y="183" text-anchor="middle" fill="#94a3b8" font-size="9">সারির নাম</text>
+
+      <!-- columns arrow -->
+      <path d="M580 100 L435 120" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="5"/>
+      <circle cx="580" cy="100" r="4" fill="#c084fc"/>
+      <rect x="585" y="60" width="70" height="55" rx="6" fill="#1f0d2b" stroke="#c084fc" stroke-width="1.5"/>
+      <text x="620" y="82" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="bold">columns</text>
+      <text x="620" y="100" text-anchor="middle" fill="#94a3b8" font-size="9">কলামের</text>
+      <text x="620" y="114" text-anchor="middle" fill="#94a3b8" font-size="9">নামের list</text>
+
+      <!-- output -->
+      <path d="M330 185 L330 220" stroke="#f97316" stroke-width="2"/>
+      <polygon points="325,220 330,232 335,220" fill="#f97316"/>
+      <text x="330" y="250" text-anchor="middle" fill="#e2e8f0" font-size="12">সুন্দর DataFrame তৈরি হয়ে যায়! ✨</text>
+    </svg>
+    <div class="diagram-title">চিত্র: pd.DataFrame() তৈরির তিনটি parameter</div>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <div class="callout-title">এই পদ্ধতির সমস্যা</div>
+      NumPy array-তে সব ডেটা একই ধরনের হতে হয়। মানে হয় সব সংখ্যা, নয়তো সব string। কিন্তু বাস্তবে ডেটাতে মিশ্রণ থাকে — কারো নাম (string) আবার বয়স (number)। এজন্য Dictionary পদ্ধতি বেশি কাজের।
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: Dictionary থেকে DataFrame -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <span class="section-tag">Section 04</span>
+    <h2 class="section-title">Dictionary থেকে DataFrame তৈরি</h2>
+    <p class="section-sub">এটাই সবচেয়ে বেশি ব্যবহৃত পদ্ধতি। Dictionary-তে key হলো column নাম, আর value হলো সেই column-এর সব ডেটা।</p>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">📖</span>
+    <div class="callout-body">
+      <div class="callout-title">Dictionary মনে নেই?</div>
+      Dictionary হলো Python-এর এক ধরনের ডেটা স্ট্রাকচার যেখানে "key: value" জুটি থাকে। যেমন: <code>{"নাম": "রবিন", "বয়স": 23}</code>। এখানে "নাম" হলো key, "রবিন" হলো value।
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="code-lang">PYTHON — Dictionary থেকে DataFrame</span>
+    </div>
+    <pre><span class="cm"># একটা মুদি দোকানের মালামালের তালিকা</span>
+dictionary = {
+    <span class="st">'পণ্য'</span>: [<span class="st">"মধু"</span>, <span class="st">"ময়দা"</span>, <span class="st">"ওয়াইন"</span>],
+    <span class="st">'মেয়াদ'</span>: [<span class="st">"08/10/2025"</span>, <span class="st">"09/25/2024"</span>, <span class="st">"10/15/2023"</span>],
+    <span class="st">'পরিমাণ'</span>: [<span class="nm">100</span>, <span class="nm">55</span>, <span class="nm">1800</span>],  <span class="cm"># সংখ্যা</span>
+    <span class="st">'দাম'</span>: [<span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">10</span>]            <span class="cm"># সংখ্যা</span>
+}
+
+<span class="cm"># লক্ষ্য করো: পণ্যের নাম string, দাম number — mixed type!</span>
+<span class="cm"># NumPy-তে এটা সম্ভব না, কিন্তু DataFrame-এ সহজেই হয়</span>
+
+df = pd.DataFrame(data = dictionary)
+<span class="fn">print</span>(df)
+
+<span class="cm"># আউটপুট:
+#    পণ্য       মেয়াদ  পরিমাণ  দাম
+# 0   মধু  08/10/2025     100    2
+# 1  ময়দা  09/25/2024      55    3
+# 2  ওয়াইন  10/15/2023    1800   10</span></pre>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg width="680" height="280" viewBox="0 0 680 280">
+      <text x="340" y="22" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="bold">Dictionary → DataFrame রূপান্তর</text>
+      <!-- Dictionary -->
+      <rect x="20" y="40" width="240" height="200" rx="12" fill="#0d1117" stroke="#60a5fa" stroke-width="2"/>
+      <text x="140" y="65" text-anchor="middle" fill="#60a5fa" font-size="12" font-weight="bold">Dictionary</text>
+      <text x="40" y="90" fill="#f1fa8c" font-size="11">'পণ্য': ['মধু', 'ময়দা', 'ওয়াইন']</text>
+      <text x="40" y="115" fill="#f1fa8c" font-size="11">'মেয়াদ': ['08/10', '09/25', ...]</text>
+      <text x="40" y="140" fill="#f1fa8c" font-size="11">'পরিমাণ': [100, 55, 1800]</text>
+      <text x="40" y="165" fill="#f1fa8c" font-size="11">'দাম': [2, 3, 10]</text>
+      <!-- Arrow -->
+      <path d="M265 140 L350 140" stroke="#f97316" stroke-width="3"/>
+      <polygon points="350,135 365,140 350,145" fill="#f97316"/>
+      <text x="315" y="125" text-anchor="middle" fill="#f97316" font-size="11">pd.DataFrame()</text>
+      <!-- DataFrame -->
+      <rect x="370" y="40" width="295" height="200" rx="12" fill="#0d1117" stroke="#f97316" stroke-width="2"/>
+      <text x="517" y="65" text-anchor="middle" fill="#f97316" font-size="12" font-weight="bold">DataFrame</text>
+      <!-- Header row -->
+      <rect x="385" y="75" width="60" height="25" rx="3" fill="#1f2937" stroke="#60a5fa" stroke-width="1"/>
+      <text x="415" y="92" text-anchor="middle" fill="#60a5fa" font-size="10" font-weight="bold">পণ্য</text>
+      <rect x="450" y="75" width="70" height="25" rx="3" fill="#1f2937" stroke="#60a5fa" stroke-width="1"/>
+      <text x="485" y="92" text-anchor="middle" fill="#60a5fa" font-size="10" font-weight="bold">মেয়াদ</text>
+      <rect x="525" y="75" width="60" height="25" rx="3" fill="#1f2937" stroke="#60a5fa" stroke-width="1"/>
+      <text x="555" y="92" text-anchor="middle" fill="#60a5fa" font-size="10" font-weight="bold">পরিমাণ</text>
+      <rect x="590" y="75" width="60" height="25" rx="3" fill="#1f2937" stroke="#60a5fa" stroke-width="1"/>
+      <text x="620" y="92" text-anchor="middle" fill="#60a5fa" font-size="10" font-weight="bold">দাম</text>
+      <!-- data rows -->
+      <text x="385" y="125" fill="#e2e8f0" font-size="10">0  মধু  08/10  100  2</text>
+      <text x="385" y="155" fill="#e2e8f0" font-size="10">1  ময়দা  09/25   55  3</text>
+      <text x="385" y="185" fill="#e2e8f0" font-size="10">2  ওয়াইন  10/15 1800 10</text>
+      <!-- Note: key becomes column -->
+      <path d="M140 90 Q 250 15 415 75" stroke="#fbbf24" stroke-width="1" stroke-dasharray="3" fill="none"/>
+      <text x="220" y="25" fill="#fbbf24" font-size="10">key → column name</text>
+    </svg>
+    <div class="diagram-title">চিত্র: Dictionary-র key গুলো column নামে, আর list গুলো সেই column-এর ডেটায় পরিণত হয়</div>
+  </div>
+
+  <!-- Exercise 1 -->
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <div class="exercise-icon">💼</div>
+      <div>
+        <div class="exercise-h">ইন্টারভিউ প্রশ্ন — Section 03 & 04</div>
+        <div class="exercise-sub">Machine Learning Engineering level</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div class="ex-num">প্রশ্ন ০১</div>
+      <div class="ex-q">একটি ML প্রজেক্টে তোমার কাছে ৫ জন রোগীর ডেটা আছে: নাম, বয়স, রক্তচাপ (mmHg), এবং ডায়াবেটিস আছে কিনা (True/False)। একটি DataFrame তৈরি করো।</div>
+      <div class="ex-hint">💡 Hint: Dictionary ব্যবহার করো। Boolean value-ও রাখা যায়।</div>
+      <details>
+        <summary>✅ সমাধান দেখো</summary>
+        <div class="answer">
+          <div class="code-block" style="margin:0">
+            <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">SOLUTION</span></div>
+            <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+patient_data = {
+    <span class="st">'নাম'</span>: [<span class="st">'রহিম'</span>, <span class="st">'করিম'</span>, <span class="st">'সুমি'</span>, <span class="st">'দিনা'</span>, <span class="st">'তারেক'</span>],
+    <span class="st">'বয়স'</span>: [<span class="nm">45</span>, <span class="nm">32</span>, <span class="nm">60</span>, <span class="nm">28</span>, <span class="nm">55</span>],
+    <span class="st">'রক্তচাপ'</span>: [<span class="nm">120</span>, <span class="nm">135</span>, <span class="nm">145</span>, <span class="nm">110</span>, <span class="nm">160</span>],
+    <span class="st">'ডায়াবেটিস'</span>: [<span class="bl">True</span>, <span class="bl">False</span>, <span class="bl">True</span>, <span class="bl">False</span>, <span class="bl">True</span>]
+}
+
+df_patients = pd.DataFrame(data = patient_data)
+<span class="fn">print</span>(df_patients)
+<span class="fn">print</span>(<span class="st">"\nDtype গুলো:"</span>)
+<span class="fn">print</span>(df_patients.dtypes)
+<span class="cm">
+# বাংলা ব্যাখ্যা:
+# - নাম কলাম: object (string) type
+# - বয়স, রক্তচাপ: int64 type (পূর্ণ সংখ্যা)
+# - ডায়াবেটিস: bool type (True/False)
+# এই mixed type ব্যবহার করাই Pandas-এর শক্তি!</span></pre>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="exercise-card">
+      <div class="ex-num">প্রশ্ন ০২</div>
+      <div class="ex-q">NumPy array বনাম Dictionary দিয়ে DataFrame তৈরির মধ্যে কোনটা বেশি ভালো এবং কেন? ইন্টারভিউয়ারকে ব্যাখ্যা করো।</div>
+      <details>
+        <summary>✅ সমাধান দেখো</summary>
+        <div class="answer">
+          <strong>Dictionary পদ্ধতি বেশি ভালো</strong> কারণ:
+          <br><br>
+          ১. <strong>Mixed data types:</strong> Dictionary-তে একই সাথে string, int, float, bool রাখা যায়। NumPy array-তে সব একই type হতে হয়।
+          <br>২. <strong>Column names:</strong> Dictionary-তে key-ই column name হয়ে যায়, আলাদা করে columns parameter দিতে হয় না।
+          <br>৩. <strong>Readable code:</strong> কোড পড়তে সহজ, বুঝতে সহজ।
+          <br><br>
+          NumPy ব্যবহার করা ভালো শুধু যখন সব ডেটা numerical এবং matrix computation দরকার।
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: CSV ফাইল -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <span class="section-tag">Section 05</span>
+    <h2 class="section-title">CSV ফাইল থেকে DataFrame লোড করা</h2>
+    <p class="section-sub">বাস্তবে ৯৯% সময় আমরা ফাইল থেকে ডেটা লোড করি। সবচেয়ে common ফরম্যাট হলো CSV।</p>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">📄</span>
+    <div class="callout-body">
+      <div class="callout-title">CSV ফাইল কী?</div>
+      CSV = Comma-Separated Values। মানে যেখানে ডেটা কমা দিয়ে আলাদা করা। যেমন:
+      <br><code>নাম,বয়স,দাম</code>
+      <br><code>মধু,5,200</code>
+      <br><code>ময়দা,2,50</code>
+      <br><br>
+      এটা মূলত একটা সাধারণ text ফাইল, কিন্তু Excel-এ খুললে spreadsheet-এর মতো দেখায়।
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg width="680" height="240" viewBox="0 0 680 240">
+      <text x="340" y="22" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="bold">pd.read_csv() এর parameter গুলো</text>
+      <!-- Central read_csv box -->
+      <rect x="240" y="90" width="200" height="80" rx="12" fill="#1f2937" stroke="#f97316" stroke-width="2"/>
+      <text x="340" y="118" text-anchor="middle" fill="#f97316" font-size="14" font-weight="bold">pd.read_csv()</text>
+      <text x="340" y="140" text-anchor="middle" fill="#94a3b8" font-size="11">CSV → DataFrame</text>
+      <text x="340" y="158" text-anchor="middle" fill="#94a3b8" font-size="10">যাদু ঘটে এখানে!</text>
+
+      <!-- params -->
+      <!-- filepath -->
+      <rect x="10" y="50" width="145" height="45" rx="8" fill="#1a1a2e" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="82" y="70" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="bold">filepath</text>
+      <text x="82" y="88" text-anchor="middle" fill="#94a3b8" font-size="9">'heart.csv' ফাইলের পথ</text>
+      <path d="M155 72 L240 115" stroke="#60a5fa" stroke-width="1" stroke-dasharray="4"/>
+
+      <!-- sep -->
+      <rect x="10" y="115" width="145" height="45" rx="8" fill="#1a1a2e" stroke="#34d399" stroke-width="1.5"/>
+      <text x="82" y="135" text-anchor="middle" fill="#34d399" font-size="11" font-weight="bold">sep = ','</text>
+      <text x="82" y="153" text-anchor="middle" fill="#94a3b8" font-size="9">কমা দিয়ে আলাদা</text>
+      <path d="M155 137 L240 130" stroke="#34d399" stroke-width="1" stroke-dasharray="4"/>
+
+      <!-- header -->
+      <rect x="525" y="50" width="145" height="45" rx="8" fill="#1a1a2e" stroke="#c084fc" stroke-width="1.5"/>
+      <text x="597" y="70" text-anchor="middle" fill="#c084fc" font-size="11" font-weight="bold">header = 0</text>
+      <text x="597" y="88" text-anchor="middle" fill="#94a3b8" font-size="9">প্রথম লাইনে column নাম</text>
+      <path d="M525 72 L440 115" stroke="#c084fc" stroke-width="1" stroke-dasharray="4"/>
+
+      <!-- index_col -->
+      <rect x="525" y="115" width="145" height="45" rx="8" fill="#1a1a2e" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="597" y="135" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="bold">index_col</text>
+      <text x="597" y="153" text-anchor="middle" fill="#94a3b8" font-size="9">কোন কলাম Index হবে</text>
+      <path d="M525 137 L440 145" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4"/>
+
+      <!-- output -->
+      <path d="M340 175 L340 210" stroke="#f97316" stroke-width="2"/>
+      <polygon points="335,210 340,222 345,210" fill="#f97316"/>
+      <text x="340" y="235" text-anchor="middle" fill="#e2e8f0" font-size="12">DataFrame তৈরি হয়!</text>
+    </svg>
+    <div class="diagram-title">চিত্র: pd.read_csv() এর চারটি গুরুত্বপূর্ণ parameter</div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="code-lang">PYTHON — CSV লোড করার পুরো উদাহরণ</span>
+    </div>
+    <pre><span class="cm"># সবচেয়ে সাধারণ উপায় (heart.csv ফাইলের জন্য)</span>
+df = pd.read_csv(<span class="st">'heart.csv'</span>)
+
+<span class="cm"># বিস্তারিত উপায় (transactions.csv এর জন্য)</span>
+transactions = pd.read_csv(
+    filepath_or_buffer = <span class="st">'transactions.csv'</span>,  <span class="cm"># ফাইলের নাম/পথ</span>
+    sep = <span class="st">','</span>,                                 <span class="cm"># কমা দিয়ে আলাদা</span>
+    header = <span class="nm">0</span>,                               <span class="cm"># ০ নম্বর লাইনে column নাম</span>
+    index_col = <span class="st">'transaction_id'</span>             <span class="cm"># এই column-টা Index হবে</span>
+)
+
+<span class="cm"># header = None মানে: ফাইলে কোনো column নাম নেই
+# sep = ';' মানে: semicolon দিয়ে আলাদা (ইউরোপিয়ান CSV-তে সাধারণ)
+# index_col = 0 মানে: প্রথম কলামটাই Index হবে</span></pre>
+  </div>
+
+  <div class="highlight-box">
+    <h4>🗂️ ফাইলের পথ (File Path) কীভাবে দেবো?</h4>
+    <p>যদি Python স্ক্রিপ্ট এবং CSV ফাইল একই ফোল্ডারে থাকে, শুধু ফাইলের নাম লিখলেই হয়: <span class="inline-code">'heart.csv'</span></p>
+    <p>ভিন্ন ফোল্ডারে থাকলে পুরো পথ দিতে হবে: <span class="inline-code">'data/heart.csv'</span> বা <span class="inline-code">'/home/user/data/heart.csv'</span></p>
+  </div>
+
+  <!-- Exercise 2 -->
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <div class="exercise-icon">💼</div>
+      <div>
+        <div class="exercise-h">ইন্টারভিউ প্রশ্ন — Section 05</div>
+        <div class="exercise-sub">Real-world ML Engineering scenario</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div class="ex-num">প্রশ্ন ০৩</div>
+      <div class="ex-q">তোমার কাছে একটি sensor_data.csv ফাইল আছে যেখানে semicolon (;) দিয়ে ডেটা আলাদা, প্রথম লাইনে column নাম নেই, এবং "sensor_id" নামে একটি কলাম আছে যেটাকে Index হিসেবে ব্যবহার করতে হবে। কোডটা লিখো।</div>
+      <details>
+        <summary>✅ সমাধান দেখো</summary>
+        <div class="answer">
+          <div class="code-block" style="margin:0">
+            <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">SOLUTION</span></div>
+            <pre><span class="cm"># header=None কারণ প্রথম লাইনে column নাম নেই</span>
+df_sensor = pd.read_csv(
+    filepath_or_buffer = <span class="st">'sensor_data.csv'</span>,
+    sep = <span class="st">';'</span>,
+    header = <span class="bl">None</span>,
+    index_col = <span class="st">'sensor_id'</span>
+)
+
+<span class="cm"># যদি header=None হয়, তাহলে pandas নিজে 
+# 0,1,2... দিয়ে column নাম দেয়
+# পরে rename করা যায়:
+df_sensor.columns = [<span class="st">'তাপমাত্রা'</span>, <span class="st">'চাপ'</span>, <span class="st">'আর্দ্রতা'</span>]</span></pre>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="exercise-card">
+      <div class="ex-num">প্রশ্ন ০৪ (Real ML Interview)</div>
+      <div class="ex-q">একটা production ML pipeline-এ তুমি কীভাবে নিশ্চিত করবে যে CSV ফাইলটা ঠিকঠাক লোড হয়েছে? (Error handling সহ)</div>
+      <details>
+        <summary>✅ সমাধান দেখো</summary>
+        <div class="answer">
+          <div class="code-block" style="margin:0">
+            <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">PRODUCTION CODE</span></div>
+            <pre><span class="kw">import</span> os
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> logging
+
+<span class="kw">def</span> <span class="fn">load_data_safely</span>(filepath, **kwargs):
+    <span class="cm">"""
+    নিরাপদে CSV লোড করার function
+    **kwargs দিয়ে sep, header, index_col পাঠানো যায়
+    """</span>
+    <span class="cm"># ১. ফাইল আছে কিনা চেক করো</span>
+    <span class="kw">if not</span> os.path.exists(filepath):
+        <span class="kw">raise</span> FileNotFoundError(<span class="st">f"ফাইল পাওয়া যায়নি: {filepath}"</span>)
+    
+    <span class="cm"># ২. লোড করার চেষ্টা করো</span>
+    <span class="kw">try</span>:
+        df = pd.read_csv(filepath, **kwargs)
+        
+        <span class="cm"># ৩. বেসিক ভ্যালিডেশন</span>
+        <span class="kw">assert</span> <span class="fn">len</span>(df) > <span class="nm">0</span>, <span class="st">"DataFrame খালি!"</span>
+        
+        logging.info(<span class="st">f"✅ লোড সফল: {df.shape[0]} সারি, {df.shape[1]} কলাম"</span>)
+        <span class="kw">return</span> df
+    
+    <span class="kw">except</span> <span class="at">Exception</span> <span class="kw">as</span> e:
+        logging.error(<span class="st">f"❌ লোড ব্যর্থ: {e}"</span>)
+        <span class="kw">raise</span>
+
+<span class="cm"># ব্যবহার:</span>
+df = load_data_safely(<span class="st">'heart.csv'</span>, sep=<span class="st">','</span>, header=<span class="nm">0</span>)</pre>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6: প্রথম অন্বেষণ -->
+<section class="section" id="s6">
+  <div class="section-header">
+    <span class="section-tag">Section 06</span>
+    <h2 class="section-title">DataFrame-এর প্রথম অন্বেষণ</h2>
+    <p class="section-sub">ডেটা লোড হয়ে গেলে প্রথমেই কিছু basic প্রশ্নের উত্তর খুঁজি: কত সারি? কত কলাম? কী ধরনের ডেটা?</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg width="680" height="320" viewBox="0 0 680 320">
+      <text x="340" y="22" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="bold">DataFrame অন্বেষণের প্রধান method গুলো</text>
+      
+      <!-- Method cards in grid -->
+      <!-- head() -->
+      <rect x="20" y="40" width="150" height="70" rx="10" fill="#1a2744" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="95" y="65" text-anchor="middle" fill="#60a5fa" font-size="13" font-weight="bold">df.head(n)</text>
+      <text x="95" y="85" text-anchor="middle" fill="#94a3b8" font-size="10">প্রথম n সারি দেখাও</text>
+      <text x="95" y="102" text-anchor="middle" fill="#94a3b8" font-size="10">default n=5</text>
+
+      <!-- tail() -->
+      <rect x="180" y="40" width="150" height="70" rx="10" fill="#1a2744" stroke="#34d399" stroke-width="1.5"/>
+      <text x="255" y="65" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold">df.tail(n)</text>
+      <text x="255" y="85" text-anchor="middle" fill="#94a3b8" font-size="10">শেষ n সারি দেখাও</text>
+      <text x="255" y="102" text-anchor="middle" fill="#94a3b8" font-size="10">default n=5</text>
+
+      <!-- shape -->
+      <rect x="340" y="40" width="150" height="70" rx="10" fill="#1a2744" stroke="#c084fc" stroke-width="1.5"/>
+      <text x="415" y="65" text-anchor="middle" fill="#c084fc" font-size="13" font-weight="bold">df.shape</text>
+      <text x="415" y="85" text-anchor="middle" fill="#94a3b8" font-size="10">(সারির সংখ্যা,</text>
+      <text x="415" y="102" text-anchor="middle" fill="#94a3b8" font-size="10">কলামের সংখ্যা)</text>
+
+      <!-- columns -->
+      <rect x="500" y="40" width="160" height="70" rx="10" fill="#1a2744" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="580" y="65" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="bold">df.columns</text>
+      <text x="580" y="85" text-anchor="middle" fill="#94a3b8" font-size="10">সব column নামের</text>
+      <text x="580" y="102" text-anchor="middle" fill="#94a3b8" font-size="10">তালিকা</text>
+
+      <!-- dtypes -->
+      <rect x="20" y="140" width="150" height="70" rx="10" fill="#1a2744" stroke="#f97316" stroke-width="1.5"/>
+      <text x="95" y="165" text-anchor="middle" fill="#f97316" font-size="13" font-weight="bold">df.dtypes</text>
+      <text x="95" y="185" text-anchor="middle" fill="#94a3b8" font-size="10">প্রতি column-এর</text>
+      <text x="95" y="202" text-anchor="middle" fill="#94a3b8" font-size="10">ডেটার ধরন</text>
+
+      <!-- info() -->
+      <rect x="180" y="140" width="150" height="70" rx="10" fill="#1a2744" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="255" y="165" text-anchor="middle" fill="#60a5fa" font-size="13" font-weight="bold">df.info()</text>
+      <text x="255" y="185" text-anchor="middle" fill="#94a3b8" font-size="10">dtypes + missing</text>
+      <text x="255" y="202" text-anchor="middle" fill="#94a3b8" font-size="10">values সারাংশ</text>
+
+      <!-- describe() -->
+      <rect x="340" y="140" width="150" height="70" rx="10" fill="#1a2744" stroke="#34d399" stroke-width="1.5"/>
+      <text x="415" y="165" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold">df.describe()</text>
+      <text x="415" y="185" text-anchor="middle" fill="#94a3b8" font-size="10">পরিসংখ্যান সারাংশ</text>
+      <text x="415" y="202" text-anchor="middle" fill="#94a3b8" font-size="10">mean, std, min...</text>
+
+      <!-- value_counts -->
+      <rect x="500" y="140" width="160" height="70" rx="10" fill="#1a2744" stroke="#c084fc" stroke-width="1.5"/>
+      <text x="580" y="160" text-anchor="middle" fill="#c084fc" font-size="12" font-weight="bold">df['col']</text>
+      <text x="580" y="178" text-anchor="middle" fill="#c084fc" font-size="12" font-weight="bold">.value_counts()</text>
+      <text x="580" y="198" text-anchor="middle" fill="#94a3b8" font-size="10">কোন value কতবার</text>
+
+      <!-- Recommended workflow -->
+      <rect x="20" y="240" width="640" height="65" rx="10" fill="#0d2b1a" stroke="#34d399" stroke-width="1.5"/>
+      <text x="340" y="260" text-anchor="middle" fill="#34d399" font-size="12" font-weight="bold">✅ প্রস্তাবিত কার্যপ্রবাহ (Recommended Workflow)</text>
+      <text x="340" y="283" text-anchor="middle" fill="#94a3b8" font-size="11">head() → shape → dtypes → describe() → value_counts()</text>
+      <text x="340" y="300" text-anchor="middle" fill="#64748b" font-size="10">"প্রথমে দেখো → মাপো → ধরন বোঝো → পরিসংখ্যান → বিতরণ"</text>
+    </svg>
+    <div class="diagram-title">চিত্র: নতুন DataFrame পেলে যে ৭টি method সবার আগে ব্যবহার করতে হয়</div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="code-lang">PYTHON — সব exploration method</span>
+    </div>
+    <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+df = pd.read_csv(<span class="st">'transactions.csv'</span>, index_col=<span class="st">'transaction_id'</span>)
+
+<span class="cm"># ১. প্রথম কয়েকটা সারি দেখো</span>
+df.head(<span class="nm">5</span>)        <span class="cm"># প্রথম ৫টা সারি</span>
+df.head(<span class="nm">20</span>)       <span class="cm"># প্রথম ২০টা সারি</span>
+df.tail(<span class="nm">10</span>)       <span class="cm"># শেষ ১০টা সারি</span>
+
+<span class="cm"># ২. আকার জানো</span>
+<span class="fn">print</span>(df.shape)    <span class="cm"># যেমন: (23053, 9) মানে ২৩০৫৩ সারি, ৯ কলাম</span>
+<span class="fn">print</span>(df.shape[<span class="nm">0</span>]) <span class="cm"># শুধু সারির সংখ্যা: 23053</span>
+<span class="fn">print</span>(df.shape[<span class="nm">1</span>]) <span class="cm"># শুধু কলামের সংখ্যা: 9</span>
+
+<span class="cm"># ৩. column নামগুলো দেখো</span>
+<span class="fn">print</span>(df.columns)
+<span class="fn">print</span>(df.columns[<span class="nm">4</span>])  <span class="cm"># ৫ম column-এর নাম (index 4)</span>
+
+<span class="cm"># ৪. প্রতিটা column-এর data type জানো</span>
+<span class="fn">print</span>(df.dtypes)
+<span class="cm"># int64 = পূর্ণ সংখ্যা (যেমন: ৪৫, ১০০)
+# float64 = দশমিক সংখ্যা (যেমন: ৩.১৪, ৭৮.৫)
+# object = text/string (যেমন: 'রবিন', 'e-Shop')
+# bool = সত্য/মিথ্যা (True/False)</span>
+
+<span class="cm"># ৫. বিস্তারিত সারাংশ (missing values সহ)</span>
+df.info()
+
+<span class="cm"># ৬. পরিসংখ্যান সারাংশ (numerical columns)
+# এটা mean, std, min, max, quartile দেখায়</span>
+df.describe()
+
+<span class="cm"># ৭. categorical column-এর বিতরণ</span>
+df[<span class="st">'Store_type'</span>].value_counts()
+<span class="cm"># আউটপুট:
+# e-Shop            9284
+# MBR               4657
+# Flagship store    4565
+# TeleShop          4493</span></pre>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body">
+      <div class="callout-title">সতর্কতা: describe() সব column-এ পরিসংখ্যান দেয়!</div>
+      <code>describe()</code> numerical হলে পরিসংখ্যান দেয়, কিন্তু যদি কোনো numerical column আসলে categorical হয় (যেমন: কোনো ID নম্বর), সে ক্ষেত্রে mean বের করা অর্থহীন। সবসময় column-এর অর্থ বুঝে তারপর পরিসংখ্যান interpret করতে হবে।
+    </div>
+  </div>
+
+  <!-- Exercise 3 -->
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <div class="exercise-icon">💼</div>
+      <div>
+        <div class="exercise-h">ইন্টারভিউ প্রশ্ন — Section 06</div>
+        <div class="exercise-sub">Data Exploration level</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div class="ex-num">প্রশ্ন ০৫</div>
+      <div class="ex-q">তুমি একটা নতুন heart.csv ডেটাসেট পেয়েছো। ৫ লাইনের কোড লিখে বলো: কত সারি ও কলাম আছে, কোন কলামগুলো numerical, কোনো missing value আছে কিনা।</div>
+      <details>
+        <summary>✅ সমাধান দেখো</summary>
+        <div class="answer">
+          <div class="code-block" style="margin:0">
+            <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">SOLUTION</span></div>
+            <pre>df = pd.read_csv(<span class="st">'heart.csv'</span>)
+<span class="fn">print</span>(<span class="st">f"আকার: {df.shape}"</span>)           <span class="cm"># (918, 8)</span>
+<span class="fn">print</span>(<span class="st">f"\nDtype:\n{df.dtypes}"</span>)    <span class="cm"># প্রতিটার ধরন</span>
+<span class="fn">print</span>(<span class="st">f"\nMissing Values:\n{df.isnull().sum()}"</span>) <span class="cm"># কোথায় NaN</span>
+df.info()                             <span class="cm"># সব এক জায়গায়</span></pre>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="exercise-card">
+      <div class="ex-num">প্রশ্ন ০৬ (Advanced)</div>
+      <div class="ex-q">transactions DataFrame-এ positive total_amt সহ transaction-গুলোর গড় amount কত? negative amount-গুলো কেন বাদ দিতে হবে ব্যাখ্যা করো।</div>
+      <details>
+        <summary>✅ সমাধান দেখো</summary>
+        <div class="answer">
+          <div class="code-block" style="margin:0">
+            <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">SOLUTION</span></div>
+            <pre><span class="cm"># Negative amount মানে cancelled/refunded transaction</span>
+positive_df = transactions[transactions[<span class="st">'total_amt'</span>] > <span class="nm">0</span>]
+mean_positive = positive_df[<span class="st">'total_amt'</span>].mean()
+<span class="fn">print</span>(<span class="st">f"Positive transaction-এর গড়: €{mean_positive:.2f}"</span>)
+<span class="cm"># উত্তর: ~€2608
+
+# কেন বাদ দিতে হবে:
+# Negative value গুলো real purchase না — সেগুলো refund।
+# যদি সেগুলো রাখি, mean নিচে নেমে যাবে (€2108)
+# এটা misleading হবে। আসল customer spending 
+# বুঝতে হলে শুধু positive দেখতে হবে।</span></pre>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 7: কলাম নির্বাচন -->
+<section class="section" id="s7">
+  <div class="section-header">
+    <span class="section-tag">Section 07</span>
+    <h2 class="section-title">DataFrame থেকে কলাম নির্বাচন</h2>
+    <p class="section-sub">বিশাল DataFrame থেকে শুধু দরকারি কলামগুলো বের করে আনার পদ্ধতি।</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="code-lang">PYTHON — Column Selection</span>
+    </div>
+    <pre><span class="cm"># একটি কলাম নির্বাচন (Series হিসেবে আসে)</span>
+age_series = df[<span class="st">'cust_id'</span>]
+<span class="fn">print</span>(<span class="kw">type</span>(age_series))  <span class="cm"># pandas.core.series.Series</span>
+
+<span class="cm"># একাধিক কলাম নির্বাচন (DataFrame হিসেবে আসে)</span>
+<span class="cm"># লক্ষ্য করো: দুটো square bracket ব্যবহার করতে হয়!</span>
+subset = transactions[[<span class="st">'cust_id'</span>, <span class="st">'Qty'</span>]]
+<span class="fn">print</span>(<span class="kw">type</span>(subset))      <span class="cm"># pandas.core.frame.DataFrame</span>
+
+<span class="cm"># categorical ও numerical আলাদা করা (real ML project এ সবসময় করা হয়)</span>
+cat_var_names = [<span class="st">'cust_id'</span>, <span class="st">'tran_date'</span>, <span class="st">'Store_type'</span>]
+num_var_names = [<span class="st">'Qty'</span>, <span class="st">'Rate'</span>, <span class="st">'Tax'</span>, <span class="st">'total_amt'</span>]
+
+cat_vars = transactions[cat_var_names]   <span class="cm"># categorical ডেটা</span>
+num_vars = transactions[num_var_names]   <span class="cm"># numerical ডেটা</span>
+
+<span class="fn">print</span>(cat_vars.head())
+<span class="fn">print</span>(num_vars.head())</pre>
+  </div>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <div class="callout-title">Series বনাম DataFrame — পার্থক্য কী?</div>
+      <strong>Series</strong> = একটামাত্র column। এটা একটা 1D (এক মাত্রার) ডেটা।
+      <br><strong>DataFrame</strong> = একাধিক column। এটা 2D (দুই মাত্রার) ডেটা।
+      <br><br>
+      <code>df['col']</code> → Series (একটা column)
+      <br><code>df[['col1', 'col2']]</code> → DataFrame (একাধিক column)
+    </div>
+  </div>
+
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <div class="exercise-icon">💼</div>
+      <div>
+        <div class="exercise-h">ইন্টারভিউ প্রশ্ন — Section 07</div>
+      </div>
+    </div>
+    <div class="exercise-card">
+      <div class="ex-num">প্রশ্ন ০৭</div>
+      <div class="ex-q">heart.csv DataFrame থেকে শুধু numerical columns (int বা float type) বের করো — select_dtypes ব্যবহার করে।</div>
+      <details>
+        <summary>✅ সমাধান দেখো</summary>
+        <div class="answer">
+          <div class="code-block" style="margin:0">
+            <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">SOLUTION</span></div>
+            <pre><span class="cm"># পদ্ধতি ১: select_dtypes (সবচেয়ে Pythonic উপায়)</span>
+num_df = df.select_dtypes(include=[<span class="st">'int'</span>, <span class="st">'float'</span>])
+<span class="fn">print</span>(num_df.columns.tolist())
+<span class="cm"># ['age', 'blood_pressure', 'cholesterol', 
+#  'blood_glucose', 'heart_rate_max']</span>
+
+<span class="cm"># পদ্ধতি ২: object (string) বাদ দাও</span>
+num_df2 = df.select_dtypes(exclude=[<span class="st">'object'</span>])
+
+<span class="cm"># পদ্ধতি ৩: শুধু categorical</span>
+cat_df = df.select_dtypes(include=[<span class="st">'object'</span>])
+<span class="fn">print</span>(cat_df.columns.tolist())
+<span class="cm"># ['sex', 'chest_pain', 'ex_induced_angina']</span></pre>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 8: loc ও iloc -->
+<section class="section" id="s8">
+  <div class="section-header">
+    <span class="section-tag">Section 08</span>
+    <h2 class="section-title">সারি নির্বাচন: loc ও iloc</h2>
+    <p class="section-sub">কলাম নির্বাচন শিখেছো, এবার সারি (row) নির্বাচন শেখো। দুটো পদ্ধতি: <em>loc</em> (নাম দিয়ে) আর <em>iloc</em> (নম্বর দিয়ে)।</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg width="680" height="300" viewBox="0 0 680 300">
+      <text x="340" y="22" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="bold">loc বনাম iloc — পার্থক্য</text>
+      
+      <!-- loc side -->
+      <rect x="20" y="40" width="300" height="240" rx="12" fill="#1a2744" stroke="#60a5fa" stroke-width="2"/>
+      <text x="170" y="68" text-anchor="middle" fill="#60a5fa" font-size="15" font-weight="bold">loc — Label-based</text>
+      <text x="170" y="90" text-anchor="middle" fill="#94a3b8" font-size="11">"নাম দিয়ে" খোঁজা</text>
+      
+      <text x="40" y="120" fill="#e2e8f0" font-size="11">df.loc[80712190438]</text>
+      <text x="40" y="142" fill="#94a3b8" font-size="10">↑ Index নাম/label দিয়ে</text>
+      
+      <text x="40" y="175" fill="#e2e8f0" font-size="11">df.loc[[id1, id2, id3]]</text>
+      <text x="40" y="197" fill="#94a3b8" font-size="10">↑ একাধিক Index</text>
+
+      <text x="40" y="230" fill="#e2e8f0" font-size="11">df.loc[id, ['Tax', 'total_amt']]</text>
+      <text x="40" y="252" fill="#94a3b8" font-size="10">↑ নির্দিষ্ট সারি ও কলাম</text>
+      
+      <!-- iloc side -->
+      <rect x="360" y="40" width="300" height="240" rx="12" fill="#1a1a2e" stroke="#c084fc" stroke-width="2"/>
+      <text x="510" y="68" text-anchor="middle" fill="#c084fc" font-size="15" font-weight="bold">iloc — Integer-based</text>
+      <text x="510" y="90" text-anchor="middle" fill="#94a3b8" font-size="11">"নম্বর দিয়ে" খোঁজা</text>
+      
+      <text x="380" y="120" fill="#e2e8f0" font-size="11">df.iloc[0]</text>
+      <text x="380" y="142" fill="#94a3b8" font-size="10">↑ ০ নম্বর সারি (প্রথম সারি)</text>
+      
+      <text x="380" y="175" fill="#e2e8f0" font-size="11">df.iloc[0:4, 0:3]</text>
+      <text x="380" y="197" fill="#94a3b8" font-size="10">↑ সারি 0-3, কলাম 0-2</text>
+
+      <text x="380" y="230" fill="#e2e8f0" font-size="11">df.iloc[-1]</text>
+      <text x="380" y="252" fill="#94a3b8" font-size="10">↑ শেষ সারি</text>
+    </svg>
+    <div class="diagram-title">চিত্র: loc = নাম দিয়ে, iloc = নম্বর দিয়ে সারি খোঁজা</div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="code-lang">PYTHON — loc ও iloc উদাহরণ</span>
+    </div>
+    <pre><span class="cm">## === loc: Label-based (নাম দিয়ে) ===</span>
+
+<span class="cm"># একটা সারি</span>
+df.loc[<span class="nm">80712190438</span>]  <span class="cm"># Index 80712190438-এর পুরো সারি</span>
+
+<span class="cm"># একাধিক সারি</span>
+df.loc[[<span class="nm">80712190438</span>, <span class="nm">29258453508</span>, <span class="nm">51750724947</span>]]
+
+<span class="cm"># নির্দিষ্ট সারি + নির্দিষ্ট কলাম</span>
+df.loc[[<span class="nm">80712190438</span>, <span class="nm">29258453508</span>], [<span class="st">'Tax'</span>, <span class="st">'total_amt'</span>]]
+
+<span class="cm">## === iloc: Integer-based (নম্বর দিয়ে) ===</span>
+
+<span class="cm"># প্রথম সারি (index 0)</span>
+df.iloc[<span class="nm">0</span>]
+
+<span class="cm"># প্রথম ৪টা সারি, প্রথম ৩টা কলাম</span>
+df.iloc[<span class="nm">0</span>:<span class="nm">4</span>, <span class="nm">0</span>:<span class="nm">3</span>]  <span class="cm"># Python slicing এর মতো!</span>
+
+<span class="cm"># শেষ সারি</span>
+df.iloc[-<span class="nm">1</span>]
+
+<span class="cm">## গুরুত্বপূর্ণ পার্থক্য:
+# Default index (0,1,2...) হলে loc আর iloc একই কাজ করে
+# কিন্তু custom index (যেমন: transaction_id) হলে:
+# loc['transaction_id'] = সেই ID দিয়ে খোঁজো
+# iloc[0] = প্রথম সারি (যাই হোক ID)</span></pre>
+  </div>
+
+  <div class="callout danger">
+    <span class="callout-icon">🚨</span>
+    <div class="callout-body">
+      <div class="callout-title">মান পরিবর্তন করতে অবশ্যই loc ব্যবহার করো!</div>
+      <code>df[df['col'] == 3]['new_col'] = value</code> → ❌ কাজ নাও করতে পারে (copy তৈরি হয়)
+      <br><code>df.loc[df['col'] == 3, 'new_col'] = value</code> → ✅ সঠিক পদ্ধতি
+    </div>
+  </div>
+
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <div class="exercise-icon">💼</div>
+      <div>
+        <div class="exercise-h">ইন্টারভিউ প্রশ্ন — Section 08</div>
+      </div>
+    </div>
+    <div class="exercise-card">
+      <div class="ex-num">প্রশ্ন ০৮</div>
+      <div class="ex-q">transactions DataFrame-এ customer 268819-এর সব transaction বের করো এবং তার মোট খরচ loop ব্যবহার না করে বের করো।</div>
+      <details>
+        <summary>✅ সমাধান দেখো</summary>
+        <div class="answer">
+          <div class="code-block" style="margin:0">
+            <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">SOLUTION</span></div>
+            <pre><span class="cm"># ফিল্টার করো</span>
+t_268819 = transactions.loc[transactions[<span class="st">'cust_id'</span>] == <span class="nm">268819</span>]
+
+<span class="cm"># Loop ছাড়া সুমেশন (Vectorized operation - ML এ এটাই করে)</span>
+total = t_268819[<span class="st">'total_amt'</span>].sum()
+<span class="fn">print</span>(<span class="st">f"মোট: €{total:.2f}"</span>)  <span class="cm"># ~€14911.97</span>
+
+<span class="cm"># Loop পদ্ধতিও কাজ করে, কিন্তু ধীর:
+total_loop = 0
+for amount in t_268819['total_amt']:
+    total_loop += amount
+# বড় ডেটাসেটে .sum() অনেক দ্রুত!</span></pre>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 9: Conditional Indexing -->
+<section class="section" id="s9">
+  <div class="section-header">
+    <span class="section-tag">Section 09</span>
+    <h2 class="section-title">Conditional Indexing — শর্ত দিয়ে ফিল্টার করা</h2>
+    <p class="section-sub">এটা Data Science-এর সবচেয়ে গুরুত্বপূর্ণ skill। "শুধু যারা ৪৫ বছরের বেশি এবং cholesterol ২০০-এর বেশি" — এই ধরনের শর্ত প্রয়োগ করা শেখো।</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg width="680" height="280" viewBox="0 0 680 280">
+      <text x="340" y="20" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="bold">Conditional Indexing কীভাবে কাজ করে</text>
+      
+      <!-- Original DataFrame -->
+      <rect x="20" y="35" width="180" height="200" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <text x="110" y="58" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="bold">Original DataFrame</text>
+      <rect x="30" y="65" width="160" height="22" rx="3" fill="#1f2937" stroke="#60a5fa" stroke-width="1"/>
+      <text x="110" y="81" text-anchor="middle" fill="#60a5fa" font-size="10">col 1 | col 2 | col 3</text>
+      <text x="110" y="107" text-anchor="middle" fill="#e2e8f0" font-size="11">A  |  1  |  a</text>
+      <rect x="30" y="113" width="160" height="22" rx="3" fill="#1a3a1a" stroke="#34d399" stroke-width="1.5"/>
+      <text x="110" y="129" text-anchor="middle" fill="#34d399" font-size="11">B  |  3  |  b  ✓</text>
+      <text x="110" y="152" text-anchor="middle" fill="#e2e8f0" font-size="11">C  |  5  |  c</text>
+      <rect x="30" y="158" width="160" height="22" rx="3" fill="#1a3a1a" stroke="#34d399" stroke-width="1.5"/>
+      <text x="110" y="174" text-anchor="middle" fill="#34d399" font-size="11">D  |  3  |  d  ✓</text>
+      <text x="110" y="197" text-anchor="middle" fill="#e2e8f0" font-size="11">E  |  7  |  e</text>
+
+      <!-- Condition -->
+      <rect x="240" y="90" width="160" height="60" rx="10" fill="#1f2937" stroke="#f97316" stroke-width="2"/>
+      <text x="320" y="113" text-anchor="middle" fill="#f97316" font-size="12" font-weight="bold">শর্ত প্রয়োগ</text>
+      <text x="320" y="135" text-anchor="middle" fill="#e2e8f0" font-size="11">col 2 == 3</text>
+      <path d="M205 140 L240 120" stroke="#f97316" stroke-width="2"/>
+      <path d="M405 120 L445 120" stroke="#f97316" stroke-width="2"/>
+      <polygon points="445,115 458,120 445,125" fill="#f97316"/>
+
+      <!-- Filtered DataFrame -->
+      <rect x="462" y="60" width="200" height="140" rx="8" fill="#0d1117" stroke="#34d399" stroke-width="2"/>
+      <text x="562" y="83" text-anchor="middle" fill="#34d399" font-size="11" font-weight="bold">ফিল্টার করা DataFrame</text>
+      <rect x="472" y="90" width="180" height="22" rx="3" fill="#1f2937" stroke="#60a5fa" stroke-width="1"/>
+      <text x="562" y="106" text-anchor="middle" fill="#60a5fa" font-size="10">col 1 | col 2 | col 3</text>
+      <text x="562" y="132" text-anchor="middle" fill="#34d399" font-size="11">B  |  3  |  b</text>
+      <text x="562" y="157" text-anchor="middle" fill="#34d399" font-size="11">D  |  3  |  d</text>
+
+      <!-- Multiple conditions -->
+      <text x="340" y="230" text-anchor="middle" fill="#fbbf24" font-size="12" font-weight="bold">একাধিক শর্ত:</text>
+      <text x="340" y="255" text-anchor="middle" fill="#e2e8f0" font-size="11">df[(শর্ত_১) &amp; (শর্ত_২)]  ← দুটোই সত্য হতে হবে (AND)</text>
+      <text x="340" y="275" text-anchor="middle" fill="#e2e8f0" font-size="11">df[(শর্ত_১) | (শর্ত_২)]  ← যেকোনো একটা (OR)</text>
+    </svg>
+    <div class="diagram-title">চিত্র: শর্ত দিলে শুধু সেই সারিগুলো ফিল্টার হয়ে বের আসে</div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="code-lang">PYTHON — Conditional Indexing সব ধরনের উদাহরণ</span>
+    </div>
+    <pre><span class="cm">## === বেসিক শর্ত ===</span>
+
+<span class="cm"># e-Shop-এ হওয়া transaction</span>
+eshop = transactions[transactions[<span class="st">'Store_type'</span>] == <span class="st">'e-Shop'</span>]
+
+<span class="cm"># total_amt > 0 (positive transaction)</span>
+positive = transactions[transactions[<span class="st">'total_amt'</span>] > <span class="nm">0</span>]
+
+<span class="cm">## === AND শর্ত: & দিয়ে ===</span>
+<span class="cm"># e-Shop এবং positive amount</span>
+eshop_positive = transactions[
+    (transactions[<span class="st">'Store_type'</span>] == <span class="st">'e-Shop'</span>) &amp;
+    (transactions[<span class="st">'total_amt'</span>] > <span class="nm">0</span>)
+]
+
+<span class="cm">## === OR শর্ত: | দিয়ে ===</span>
+<span class="cm"># e-Shop অথবা MBR</span>
+eshop_or_mbr = transactions[
+    (transactions[<span class="st">'Store_type'</span>] == <span class="st">'e-Shop'</span>) |
+    (transactions[<span class="st">'Store_type'</span>] == <span class="st">'MBR'</span>)
+]
+
+<span class="cm">## === NOT শর্ত: ~ দিয়ে ===</span>
+<span class="cm"># e-Shop ছাড়া সব</span>
+not_eshop = transactions[~(transactions[<span class="st">'Store_type'</span>] == <span class="st">'e-Shop'</span>)]
+
+<span class="cm">## === loc দিয়ে ফিল্টার + মান পরিবর্তন ===</span>
+<span class="cm"># Store_type 'e-Shop' হলে একটা নতুন কলামে 'Online' লিখো</span>
+transactions.loc[transactions[<span class="st">'Store_type'</span>] == <span class="st">'e-Shop'</span>, <span class="st">'channel'</span>] = <span class="st">'Online'</span>
+
+<span class="cm">## ML project এ সাধারণ pattern:</span>
+<span class="cm"># Outlier বাদ দেওয়া</span>
+df_clean = df[(df[<span class="st">'cholesterol'</span>] > <span class="nm">0</span>) &amp; (df[<span class="st">'cholesterol'</span>] &lt; <span class="nm">600</span>)]</pre>
+  </div>
+
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <div class="exercise-icon">💼</div>
+      <div>
+        <div class="exercise-h">ইন্টারভিউ প্রশ্ন — Section 09</div>
+        <div class="exercise-sub">Real ML Engineering problems</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div class="ex-num">প্রশ্ন ০৯</div>
+      <div class="ex-q">heart.csv থেকে এমন রোগীদের বের করো যারা: (১) পুরুষ, (২) বয়স ৫০-এর বেশি, (৩) cholesterol ২০০-৩৫০ এর মধ্যে। কতজন রোগী এই শর্ত পূরণ করে?</div>
+      <details>
+        <summary>✅ সমাধান দেখো</summary>
+        <div class="answer">
+          <div class="code-block" style="margin:0">
+            <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">SOLUTION</span></div>
+            <pre">df = pd.read_csv(<span class="st">'heart.csv'</span>)
+
+filtered = df[
+    (df[<span class="st">'sex'</span>] == <span class="st">'M'</span>) &amp;          <span class="cm"># পুরুষ</span>
+    (df[<span class="st">'age'</span>] > <span class="nm">50</span>) &amp;              <span class="cm"># বয়স ৫০+</span>
+    (df[<span class="st">'cholesterol'</span>] >= <span class="nm">200</span>) &amp;   <span class="cm"># cholesterol ২০০+</span>
+    (df[<span class="st">'cholesterol'</span>] <= <span class="nm">350</span>)      <span class="cm"># cholesterol ৩৫০-</span>
+]
+
+<span class="fn">print</span>(<span class="st">f"এই শর্ত পূরণকারী রোগী: {len(filtered)} জন"</span>)
+<span class="fn">print</span>(filtered[[<span class="st">'age'</span>, <span class="st">'sex'</span>, <span class="st">'cholesterol'</span>]].head())</pre>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="exercise-card">
+      <div class="ex-num">প্রশ্ন ১০ (Advanced — Production Level)</div>
+      <div class="ex-q">একটা function লিখো যেটা কোনো DataFrame-এ যেকোনো column-এর outlier (IQR method অনুযায়ী) বাদ দেবে।</div>
+      <details>
+        <summary>✅ সমাধান দেখো</summary>
+        <div class="answer">
+          <div class="code-block" style="margin:0">
+            <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">PRODUCTION FUNCTION</span></div>
+            <pre"><span class="kw">def</span> <span class="fn">remove_outliers_iqr</span>(df, column):
+    <span class="cm">"""
+    IQR method দিয়ে outlier বাদ দাও।
+    Extreme value: Q1 - 1.5*IQR থেকে Q3 + 1.5*IQR বাইরে।
+    """</span>
+    Q1 = df[column].quantile(<span class="nm">0.25</span>)  <span class="cm"># ২৫তম percentile</span>
+    Q3 = df[column].quantile(<span class="nm">0.75</span>)  <span class="cm"># ৭৫তম percentile</span>
+    IQR = Q3 - Q1                     <span class="cm"># Interquartile range</span>
+    
+    lower = Q1 - <span class="nm">1.5</span> * IQR           <span class="cm"># নিচের সীমা</span>
+    upper = Q3 + <span class="nm">1.5</span> * IQR           <span class="cm"># উপরের সীমা</span>
+    
+    <span class="cm"># এই সীমার মধ্যে যা আছে সেটাই রাখো</span>
+    df_clean = df[(df[column] >= lower) &amp; (df[column] <= upper)]
+    
+    removed = <span class="fn">len</span>(df) - <span class="fn">len</span>(df_clean)
+    <span class="fn">print</span>(<span class="st">f"বাদ দেওয়া হয়েছে: {removed} টি outlier"</span>)
+    <span class="fn">return</span> df_clean
+
+<span class="cm"># ব্যবহার:</span>
+df_clean = remove_outliers_iqr(df, <span class="st">'cholesterol'</span>)</pre>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 10: Statistical Analysis -->
+<section class="section" id="s10">
+  <div class="section-header">
+    <span class="section-tag">Section 10</span>
+    <h2 class="section-title">দ্রুত পরিসংখ্যান বিশ্লেষণ</h2>
+    <p class="section-sub">describe(), value_counts() দিয়ে ডেটার পরিসংখ্যান বুঝি। ML project শুরু করার আগে এটা সবসময় করতে হয়।</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="code-lang">PYTHON — describe() বিস্তারিত</span>
+    </div>
+    <pre><span class="cm"># describe() এর আউটপুট কীভাবে পড়বো:</span>
+df[<span class="st">'total_amt'</span>].describe()
+
+<span class="cm"># আউটপুট:
+# count    23031.000000  ← কতটা non-null value আছে
+# mean      2108.007267  ← গড় মান
+# std       2506.210476  ← standard deviation (বিচ্ছুরণ)
+# min      -8270.925000  ← সবচেয়ে ছোট মান
+# 25%        762.450000  ← ২৫% এর নিচে (Q1)
+# 50%       1756.950000  ← মাঝের মান (Median/Q2)
+# 75%       3569.702500  ← ৭৫% এর নিচে (Q3)
+# max       8287.500000  ← সবচেয়ে বড় মান</span>
+
+<span class="cm"># value_counts: categorical column-এর বিতরণ</span>
+df[<span class="st">'Store_type'</span>].value_counts()
+<span class="cm"># e-Shop            9284  ← সবচেয়ে বেশি
+# MBR               4657
+# Flagship store    4565
+# TeleShop          4493</span>
+
+<span class="cm"># normalize=True দিলে percentage দেয়</span>
+df[<span class="st">'Store_type'</span>].value_counts(normalize=<span class="bl">True</span>)
+<span class="cm"># e-Shop            0.403  ← ৪০.৩% transaction e-Shop এ</span></pre>
+  </div>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body">
+      <div class="callout-title">std (Standard Deviation) মানে কী সহজভাবে?</div>
+      std হলো ডেটা গড় থেকে কতটা দূরে ছড়িয়ে আছে তার পরিমাপ।
+      <br>std কম = ডেটা গড়ের কাছাকাছি (uniform data)
+      <br>std বেশি = ডেটা অনেক বিক্ষিপ্ত (varied data)
+      <br><br>উদাহরণ: সবাই যদি ৫০০০ টাকা আয় করে, std ≈ 0। কেউ ১০০০, কেউ ১০ লাখ হলে std অনেক বড়।
+    </div>
+  </div>
+
+  <!-- Final Exercise -->
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <div class="exercise-icon">💼</div>
+      <div>
+        <div class="exercise-h">চূড়ান্ত ইন্টারভিউ প্রশ্ন</div>
+        <div class="exercise-sub">Senior ML Engineer level — End-to-End EDA</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div class="ex-num">প্রশ্ন ১১ — বড় প্রশ্ন</div>
+      <div class="ex-q">একটা complete EDA (Exploratory Data Analysis) function লিখো যেটা যেকোনো CSV ফাইলে apply করলে: আকার, types, missing values, numerical summary, categorical distribution একসাথে দেখাবে।</div>
+      <details>
+        <summary>✅ সমাধান দেখো (Production-grade EDA function)</summary>
+        <div class="answer">
+          <div class="code-block" style="margin:0">
+            <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">COMPLETE EDA FUNCTION</span></div>
+            <pre><span class="kw">def</span> <span class="fn">quick_eda</span>(df, name=<span class="st">"DataFrame"</span>):
+    <span class="cm">"""
+    যেকোনো DataFrame-এর দ্রুত EDA।
+    ML project শুরু করার আগে এটা run করো।
+    """</span>
+    sep = <span class="st">"="</span>*<span class="nm">50</span>
+    
+    <span class="fn">print</span>(<span class="st">f"\n{sep}"</span>)
+    <span class="fn">print</span>(<span class="st">f"📊 EDA রিপোর্ট: {name}"</span>)
+    <span class="fn">print</span>(sep)
+    
+    <span class="cm"># ১. আকার</span>
+    <span class="fn">print</span>(<span class="st">f"\n🔢 আকার: {df.shape[0]} সারি × {df.shape[1]} কলাম"</span>)
+    
+    <span class="cm"># ২. Data types</span>
+    <span class="fn">print</span>(<span class="st">f"\n📋 Data Types:"</span>)
+    <span class="fn">print</span>(df.dtypes.value_counts())
+    
+    <span class="cm"># ৩. Missing values</span>
+    missing = df.isnull().sum()
+    missing_pct = (missing/<span class="fn">len</span>(df)*<span class="nm">100</span>).round(<span class="nm">2</span>)
+    missing_df = pd.DataFrame({
+        <span class="st">'Missing'</span>: missing,
+        <span class="st">'Percentage'</span>: missing_pct
+    })
+    missing_df = missing_df[missing_df[<span class="st">'Missing'</span>] > <span class="nm">0</span>]
+    <span class="kw">if</span> <span class="fn">len</span>(missing_df) > <span class="nm">0</span>:
+        <span class="fn">print</span>(<span class="st">f"\n⚠️ Missing Values:"</span>)
+        <span class="fn">print</span>(missing_df)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="st">"\n✅ কোনো missing value নেই!"</span>)
+    
+    <span class="cm"># ৪. Numerical summary</span>
+    num_cols = df.select_dtypes(include=[<span class="st">'int'</span>, <span class="st">'float'</span>]).columns
+    <span class="kw">if</span> <span class="fn">len</span>(num_cols) > <span class="nm">0</span>:
+        <span class="fn">print</span>(<span class="st">f"\n📈 Numerical সারাংশ:"</span>)
+        <span class="fn">print</span>(df[num_cols].describe().round(<span class="nm">2</span>))
+    
+    <span class="cm"># ৫. Categorical distribution</span>
+    cat_cols = df.select_dtypes(include=[<span class="st">'object'</span>]).columns
+    <span class="kw">for</span> col <span class="kw">in</span> cat_cols:
+        <span class="fn">print</span>(<span class="st">f"\n🏷️ '{col}' বিতরণ:"</span>)
+        <span class="fn">print</span>(df[col].value_counts().head(<span class="nm">5</span>))
+    
+    <span class="fn">print</span>(<span class="st">f"\n{sep}\n"</span>)
+
+<span class="cm"># ব্যবহার:</span>
+df = pd.read_csv(<span class="st">'heart.csv'</span>)
+quick_eda(df, name=<span class="st">"Heart Disease Dataset"</span>)</pre>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ALGORITHMS SECTION -->
+<section class="section" id="algo">
+  <div class="section-header">
+    <span class="section-tag">Bonus Section</span>
+    <h2 class="section-title">অ্যালগরিদম গাইড — শিশুর মতো বুঝি</h2>
+    <p class="section-sub">Data Science ও ML-এ যে অ্যালগরিদমগুলো সবচেয়ে বেশি দরকার হয়, সেগুলো একেবারে সহজ ভাষায়।</p>
+  </div>
+
+  <!-- Algorithm 1: Linear Search -->
+  <div class="algo-card">
+    <div class="algo-emoji">🔍</div>
+    <div class="algo-title">১. Linear Search (রৈখিক খোঁজা)</div>
+    <div class="callout info" style="margin: 1rem 0">
+      <span class="callout-icon">🧒</span>
+      <div class="callout-body">
+        <div class="callout-title">শিশুর মতো বুঝি</div>
+        ধরো তোমার একটা বাক্সে ১০টা মার্বেল আছে। তুমি লাল মার্বেলটা খুঁজছো। তুমি একটা একটা করে তুলে দেখলে — এটাই Linear Search!
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">PYTHON</span></div>
+      <pre><span class="kw">def</span> <span class="fn">linear_search</span>(arr, target):
+    <span class="cm">"""প্রতিটা element একবার করে চেক করো"""</span>
+    <span class="kw">for</span> i, value <span class="kw">in</span> <span class="fn">enumerate</span>(arr):
+        <span class="kw">if</span> value == target:
+            <span class="kw">return</span> i  <span class="cm"># পেয়ে গেছি! index ফেরত দাও</span>
+    <span class="kw">return</span> -<span class="nm">1</span>  <span class="cm"># পাইনি</span>
+
+<span class="cm"># ML project এ Pandas দিয়ে একই কাজ:</span>
+<span class="cm"># df[df['cholesterol'] == 200]  ← পুরো column scan করে</span>
+
+<span class="cm"># Time Complexity: O(n) — n বাড়লে সময় linearly বাড়ে
+# Space Complexity: O(1) — কোনো extra memory নেই</span></pre>
+    </div>
+  </div>
+
+  <!-- Algorithm 2: Binary Search -->
+  <div class="algo-card">
+    <div class="algo-emoji">⚡</div>
+    <div class="algo-title">২. Binary Search (দ্বিখণ্ড খোঁজা)</div>
+    <div class="callout info" style="margin: 1rem 0">
+      <span class="callout-icon">🧒</span>
+      <div class="callout-body">
+        <div class="callout-title">শিশুর মতো বুঝি</div>
+        ধরো একটা শব্দকোষে 'Pandas' শব্দ খুঁজছো। তুমি মাঝখানে খুললে, P তো N-এর পরে, তাই আগের অংশ বাদ। আবার মাঝখানে — এভাবে বারবার অর্ধেক করে খুঁজলে খুব দ্রুত পাবে! ডেটা sorted থাকলেই এটা করা যায়।
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">PYTHON</span></div>
+      <pre><span class="kw">def</span> <span class="fn">binary_search</span>(arr, target):
+    <span class="cm">"""sorted array-তে দ্রুত খোঁজা"""</span>
+    left, right = <span class="nm">0</span>, <span class="fn">len</span>(arr) - <span class="nm">1</span>
+    
+    <span class="kw">while</span> left &lt;= right:
+        mid = (left + right) // <span class="nm">2</span>  <span class="cm"># মাঝখান</span>
+        
+        <span class="kw">if</span> arr[mid] == target:
+            <span class="kw">return</span> mid       <span class="cm"># পেয়েছি!</span>
+        <span class="kw">elif</span> arr[mid] &lt; target:
+            left = mid + <span class="nm">1</span>   <span class="cm"># ডান দিকে যাও</span>
+        <span class="kw">else</span>:
+            right = mid - <span class="nm">1</span>  <span class="cm"># বাম দিকে যাও</span>
+    
+    <span class="kw">return</span> -<span class="nm">1</span>  <span class="cm"># পাইনি</span>
+
+<span class="cm"># ML use case: sorted index-এ দ্রুত lookup
+# Pandas sorted index:
+df_sorted = df.sort_values('age')
+# এখন iloc দিয়ে এক ধরনের binary search হয়
+
+# Time: O(log n) ← n দ্বিগুণ হলে মাত্র ১ ধাপ বেশি!
+# Space: O(1)</span></pre>
+    </div>
+  </div>
+
+  <!-- Algorithm 3: Sorting -->
+  <div class="algo-card">
+    <div class="algo-emoji">📊</div>
+    <div class="algo-title">৩. Sorting (বাছাই করা)</div>
+    <div class="callout info" style="margin: 1rem 0">
+      <span class="callout-icon">🧒</span>
+      <div class="callout-body">
+        <div class="callout-title">শিশুর মতো বুঝি</div>
+        ক্লাসে ছাত্রদের নম্বর অনুযায়ী সাজানো — যে সবচেয়ে বেশি পেয়েছে সে প্রথম। এটাই sorting। Pandas-এ এটা একটা মাত্র line-এ হয়ে যায়।
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">PYTHON — Pandas দিয়ে Sorting</span></div>
+      <pre><span class="cm"># ছোট থেকে বড় (ascending)</span>
+df_sorted = df.sort_values(<span class="st">'age'</span>)
+
+<span class="cm"># বড় থেকে ছোট (descending)</span>
+df_sorted = df.sort_values(<span class="st">'cholesterol'</span>, ascending=<span class="bl">False</span>)
+
+<span class="cm"># একাধিক কলামে sort</span>
+df_sorted = df.sort_values([<span class="st">'age'</span>, <span class="st">'blood_pressure'</span>],
+                            ascending=[<span class="bl">True</span>, <span class="bl">False</span>])
+
+<span class="cm"># ML use case: feature importance অনুযায়ী sort করা
+feature_importance = pd.Series({
+    <span class="st">'age'</span>: <span class="nm">0.35</span>, <span class="st">'cholesterol'</span>: <span class="nm">0.28</span>, <span class="st">'bp'</span>: <span class="nm">0.15</span>
+})
+feature_importance.sort_values(ascending=<span class="bl">False</span>)
+<span class="cm"># Top features প্রথমে দেখাবে!</span>
+
+<span class="cm"># নিজে implement করলে:
+# Bubble Sort: O(n²) — ধীর, ছোট ডেটায়
+# Merge Sort: O(n log n) — দ্রুত, বড় ডেটায়
+# Pandas internally TimSort ব্যবহার করে</span></pre>
+    </div>
+  </div>
+
+  <!-- Algorithm 4: GroupBy (MapReduce pattern) -->
+  <div class="algo-card">
+    <div class="algo-emoji">🗂️</div>
+    <div class="algo-title">৪. GroupBy — দলে ভাগ করে হিসাব করা</div>
+    <div class="callout info" style="margin: 1rem 0">
+      <span class="callout-icon">🧒</span>
+      <div class="callout-body">
+        <div class="callout-title">শিশুর মতো বুঝি</div>
+        একটা ক্লাসে ছেলে ও মেয়েদের আলাদা গড় নম্বর বের করতে হবে। প্রথমে লিঙ্গ অনুযায়ী দল ভাগ করো (Group), তারপর প্রতি দলের গড় বের করো (Aggregate)। এটাই GroupBy!
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">PYTHON — GroupBy Pattern</span></div>
+      <pre><span class="cm">## === GroupBy Pattern: Split → Apply → Combine ===</span>
+
+<span class="cm"># Store type অনুযায়ী মোট বিক্রয়</span>
+store_summary = transactions.groupby(<span class="st">'Store_type'</span>).agg({
+    <span class="st">'total_amt'</span>: [<span class="st">'sum'</span>, <span class="st">'mean'</span>, <span class="st">'count'</span>]
+})
+
+<span class="cm"># Heart dataset: sex অনুযায়ী cholesterol গড়</span>
+sex_chol = df.groupby(<span class="st">'sex'</span>)[<span class="st">'cholesterol'</span>].mean()
+<span class="fn">print</span>(sex_chol)
+<span class="cm"># F    236.78
+# M    175.45</span>
+
+<span class="cm"># একাধিক কলামে group</span>
+multi_group = df.groupby([<span class="st">'sex'</span>, <span class="st">'chest_pain'</span>]).agg({
+    <span class="st">'age'</span>: <span class="st">'mean'</span>,
+    <span class="st">'heart_rate_max'</span>: [<span class="st">'mean'</span>, <span class="st">'max'</span>]
+})
+
+<span class="cm"># ML use case: feature engineering
+# প্রতিটা store-এর average order value
+df['avg_order_by_store'] = df[<span class="st">'Store_type'</span>].map(
+    transactions.groupby(<span class="st">'Store_type'</span>)[<span class="st">'total_amt'</span>].mean()
+)</span></pre>
+    </div>
+  </div>
+
+  <!-- Algorithm 5: Missing Value Handling -->
+  <div class="algo-card">
+    <div class="algo-emoji">🔧</div>
+    <div class="algo-title">৫. Missing Value Handling — শূন্যস্থান পূরণ করা</div>
+    <div class="callout info" style="margin: 1rem 0">
+      <span class="callout-icon">🧒</span>
+      <div class="callout-body">
+        <div class="callout-title">শিশুর মতো বুঝি</div>
+        একটা উপস্থিতির খাতায় কোনো ছাত্রের নামের পাশে কিছু লেখা নেই — সে কি অনুপস্থিত ছিলো? নাকি রেকর্ড হয়নি? এই "কিছু লেখা নেই" মানেই NaN (Not a Number)। ML model NaN নিতে পারে না, তাই পূরণ করতে হয়।
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">PYTHON — Complete Missing Value Strategy</span></div>
+      <pre"><span class="cm"># ১. Missing value কোথায় আছে?</span>
+<span class="fn">print</span>(df.isnull().sum())          <span class="cm"># প্রতি column-এ কতটা</span>
+<span class="fn">print</span>(df.isnull().mean() * <span class="nm">100</span>)  <span class="cm"># percentage হিসেবে</span>
+
+<span class="cm"># ২. Drop করো (সেই সারি বাদ দাও)</span>
+df_dropped = df.dropna()           <span class="cm"># কোনো NaN থাকলেই বাদ</span>
+df_dropped = df.dropna(subset=[<span class="st">'cholesterol'</span>])  <span class="cm"># শুধু এই column-এ NaN হলে বাদ</span>
+
+<span class="cm"># ৩. Impute করো (মান দিয়ে পূরণ করো)</span>
+<span class="cm"># Numerical: গড় বা মধ্যক দিয়ে পূরণ</span>
+mean_chol = df[<span class="st">'cholesterol'</span>].mean()
+df[<span class="st">'cholesterol'</span>].fillna(mean_chol, inplace=<span class="bl">True</span>)
+
+<span class="cm"># Categorical: সবচেয়ে বেশি যেটা আছে সেটা দিয়ে পূরণ</span>
+mode_sex = df[<span class="st">'sex'</span>].mode()[<span class="nm">0</span>]
+df[<span class="st">'sex'</span>].fillna(mode_sex, inplace=<span class="bl">True</span>)
+
+<span class="cm"># আগের মান দিয়ে পূরণ (time series-এ common)</span>
+df[<span class="st">'temperature'</span>].fillna(method=<span class="st">'ffill'</span>, inplace=<span class="bl">True</span>)
+
+<span class="cm"># ৪. ML project এ Sklearn Imputer ব্যবহার করো:</span>
+<span class="kw">from</span> sklearn.impute <span class="kw">import</span> SimpleImputer
+imputer = SimpleImputer(strategy=<span class="st">'mean'</span>)
+df_imputed = imputer.fit_transform(df[num_cols])</pre>
+    </div>
+  </div>
+
+  <!-- Algorithm 6: Vectorized Operations -->
+  <div class="algo-card">
+    <div class="algo-emoji">🚀</div>
+    <div class="algo-title">৬. Vectorized Operations — Loop ছাড়া দ্রুত হিসাব</div>
+    <div class="callout info" style="margin: 1rem 0">
+      <span class="callout-icon">🧒</span>
+      <div class="callout-body">
+        <div class="callout-title">শিশুর মতো বুঝি</div>
+        ১০০ জনের নম্বর ২ দিয়ে গুণ করতে হবে। Loop-এ একটা একটা করলে ১০০ ধাপ। কিন্তু Pandas-এ <code>df['নম্বর'] * 2</code> লিখলে একসাথে সব হয়ে যায় — এটাই Vectorization। অনেক গুণ দ্রুত!
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><span class="code-lang">PYTHON — Vectorization vs Loop</span></div>
+      <pre><span class="kw">import</span> time
+
+<span class="cm"># Loop পদ্ধতি (ধীর)</span>
+start = time.time()
+result_loop = []
+<span class="kw">for</span> price <span class="kw">in</span> transactions[<span class="st">'total_amt'</span>]:
+    result_loop.append(price * <span class="nm">1.15</span>)  <span class="cm"># ১৫% VAT যোগ করো</span>
+<span class="fn">print</span>(<span class="st">f"Loop: {time.time()-start:.4f}s"</span>)
+
+<span class="cm"># Vectorized পদ্ধতি (দ্রুত)</span>
+start = time.time()
+result_vec = transactions[<span class="st">'total_amt'</span>] * <span class="nm">1.15</span>
+<span class="fn">print</span>(<span class="st">f"Vectorized: {time.time()-start:.4f}s"</span>)
+<span class="cm"># Vectorized ~১০০x দ্রুত হতে পারে!
+
+# আরো উদাহরণ:
+df['বয়স_বর্গ'] = df['age'] ** 2           # প্রতিটা বয়সের বর্গ
+df['BMI_category'] = (df['BMI'] > 25)      # True/False column
+df['log_cholesterol'] = np.log(df['cholesterol'])  # log transform
+df['age_group'] = pd.cut(df['age'],
+    bins=[0, 30, 50, 100],
+    labels=['তরুণ', 'মধ্যবয়স্ক', 'বৃদ্ধ']  # age bucket</span></pre>
+    </div>
+  </div>
+
+</section>
+
+</div><!-- end container -->
+
+<footer>
+  <div class="container">
+    <p>🐼 Pandas বাংলা টিউটোরিয়াল · পর্ব ১ — DataFrame Fundamentals</p>
+    <p style="margin-top: 0.5rem; color: var(--text3);">পরবর্তী পর্বে: Exploratory Statistics — numerical ও categorical variable বিশ্লেষণ</p>
+  </div>
+</footer>
+
+</body>
+</html>

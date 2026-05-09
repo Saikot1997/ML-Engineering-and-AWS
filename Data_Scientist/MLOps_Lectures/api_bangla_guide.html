@@ -1,0 +1,2523 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ডেটা API সম্পূর্ণ গাইড | Data APIs Complete Guide in Bengali</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f1e;
+    --bg2: #0f1729;
+    --bg3: #141e35;
+    --card: #111827;
+    --card2: #1a2540;
+    --border: #1e2d4a;
+    --accent1: #38bdf8;
+    --accent2: #818cf8;
+    --accent3: #34d399;
+    --accent4: #fb923c;
+    --accent5: #f472b6;
+    --gold: #fbbf24;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --code-bg: #0d1117;
+    --code-border: #21262d;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --info: #3b82f6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Hind Siliguri', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 17px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ---- HEADER ---- */
+  .hero {
+    background: linear-gradient(135deg, #0a0f1e 0%, #0f1e3a 50%, #0a0f1e 100%);
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(56,189,248,0.12) 0%, transparent 70%);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(56,189,248,0.1);
+    border: 1px solid rgba(56,189,248,0.3);
+    color: var(--accent1);
+    padding: 6px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, #e2e8f0 0%, #38bdf8 50%, #818cf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--text2);
+    max-width: 700px;
+    margin: 0 auto 40px;
+    position: relative;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .stat-item {
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent1);
+    display: block;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ---- NAV ---- */
+  .toc {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+  .toc-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+  .toc-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    list-style: none;
+  }
+  .toc-links a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .toc-links a:hover {
+    color: var(--accent1);
+    border-color: var(--accent1);
+    background: rgba(56,189,248,0.08);
+  }
+
+  /* ---- LAYOUT ---- */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ---- SECTIONS ---- */
+  .section {
+    padding: 70px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .section-num {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .num-blue { background: rgba(56,189,248,0.15); color: var(--accent1); border: 1px solid rgba(56,189,248,0.3); }
+  .num-purple { background: rgba(129,140,248,0.15); color: var(--accent2); border: 1px solid rgba(129,140,248,0.3); }
+  .num-green { background: rgba(52,211,153,0.15); color: var(--accent3); border: 1px solid rgba(52,211,153,0.3); }
+  .num-orange { background: rgba(251,146,60,0.15); color: var(--accent4); border: 1px solid rgba(251,146,60,0.3); }
+  .num-pink { background: rgba(244,114,182,0.15); color: var(--accent5); border: 1px solid rgba(244,114,182,0.3); }
+  .num-gold { background: rgba(251,191,36,0.15); color: var(--gold); border: 1px solid rgba(251,191,36,0.3); }
+
+  .section-title {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    color: var(--text);
+  }
+  .section-title span { color: var(--accent1); }
+
+  h3 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 36px 0 16px;
+    padding-left: 14px;
+    border-left: 3px solid var(--accent1);
+  }
+  h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent2);
+    margin: 24px 0 10px;
+  }
+
+  p { color: var(--text2); margin-bottom: 16px; }
+  p strong { color: var(--text); }
+  p .highlight { color: var(--accent1); font-weight: 600; }
+  p .highlight-g { color: var(--accent3); font-weight: 600; }
+  p .highlight-o { color: var(--accent4); font-weight: 600; }
+
+  /* ---- CARDS ---- */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent2); }
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 24px 0; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 24px 0; }
+  .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 24px 0; }
+
+  /* ---- CODE BLOCKS ---- */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 12px;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid var(--code-border);
+  }
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .code-dots { display: flex; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #28c840; }
+  pre {
+    padding: 20px 22px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #cdd9e5;
+  }
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .cm { color: #8b949e; font-style: italic; }
+  .num { color: #79c0ff; }
+  .var { color: #ffa657; }
+  .op { color: #ff7b72; }
+  .cls { color: #ffa657; }
+  .dec { color: #79c0ff; }
+
+  /* ---- CALLOUT BOXES ---- */
+  .callout {
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .callout-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+  .callout-body h4 { margin: 0 0 6px; font-size: 1rem; }
+  .callout-body p { margin: 0; font-size: 0.95rem; }
+  .callout-info { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); }
+  .callout-info h4 { color: #60a5fa; }
+  .callout-warn { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); }
+  .callout-warn h4 { color: #fbbf24; }
+  .callout-tip { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); }
+  .callout-tip h4 { color: #34d399; }
+  .callout-danger { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); }
+  .callout-danger h4 { color: #f87171; }
+
+  /* ---- EXERCISE BOX ---- */
+  .exercise-box {
+    background: linear-gradient(135deg, rgba(129,140,248,0.08), rgba(56,189,248,0.05));
+    border: 1px solid rgba(129,140,248,0.3);
+    border-radius: 16px;
+    padding: 30px;
+    margin: 36px 0;
+  }
+  .exercise-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(129,140,248,0.2);
+  }
+  .exercise-badge {
+    background: linear-gradient(135deg, #818cf8, #38bdf8);
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .exercise-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .exercise-q {
+    background: rgba(0,0,0,0.25);
+    border-radius: 10px;
+    padding: 18px;
+    margin: 12px 0;
+  }
+  .q-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent2);
+    font-weight: 700;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .q-text { color: var(--text2); font-size: 0.95rem; }
+  .q-hint {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: rgba(52,211,153,0.08);
+    border-left: 3px solid var(--accent3);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.88rem;
+    color: var(--accent3);
+  }
+
+  /* ---- TABLE ---- */
+  .table-wrap { overflow-x: auto; margin: 20px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  th {
+    background: var(--card2);
+    color: var(--accent1);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    vertical-align: top;
+  }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  td code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--code-bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--accent3);
+  }
+
+  /* ---- BADGE ---- */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .badge-blue { background: rgba(56,189,248,0.15); color: var(--accent1); }
+  .badge-green { background: rgba(52,211,153,0.15); color: var(--accent3); }
+  .badge-orange { background: rgba(251,146,60,0.15); color: var(--accent4); }
+  .badge-red { background: rgba(239,68,68,0.15); color: #f87171; }
+  .badge-purple { background: rgba(129,140,248,0.15); color: var(--accent2); }
+
+  /* ---- SVG DIAGRAMS ---- */
+  .diagram-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+    margin: 28px 0;
+    overflow-x: auto;
+    text-align: center;
+  }
+  .diagram-caption {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 0.85rem;
+    color: var(--text3);
+    font-style: italic;
+  }
+
+  /* ---- STATUS CODE TABLE ---- */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .status-card {
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid;
+  }
+  .status-2xx { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.3); }
+  .status-3xx { background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.3); }
+  .status-4xx { background: rgba(251,146,60,0.08); border-color: rgba(251,146,60,0.3); }
+  .status-5xx { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.3); }
+  .status-code { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; }
+  .status-2xx .status-code { color: #34d399; }
+  .status-3xx .status-code { color: var(--gold); }
+  .status-4xx .status-code { color: var(--accent4); }
+  .status-5xx .status-code { color: #f87171; }
+  .status-desc { font-size: 0.85rem; color: var(--text2); margin-top: 6px; }
+
+  /* ---- ALGO ---- */
+  .algo-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .algo-header {
+    padding: 20px 28px;
+    background: linear-gradient(135deg, var(--card2), var(--card));
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .algo-emoji { font-size: 2rem; }
+  .algo-name { font-size: 1.3rem; font-weight: 700; color: var(--text); }
+  .algo-complexity { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text3); margin-top: 4px; }
+  .algo-body { padding: 24px 28px; }
+  .algo-story {
+    background: rgba(251,191,36,0.06);
+    border: 1px solid rgba(251,191,36,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+    color: var(--text2);
+  }
+  .algo-story strong { color: var(--gold); }
+
+  /* ---- FOOTER ---- */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    text-align: center;
+    color: var(--text3);
+    font-size: 0.85rem;
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 768px) {
+    .hero { padding: 50px 20px 40px; }
+    .toc { padding: 16px 20px; }
+    .container { padding: 0 20px; }
+    .section { padding: 50px 0; }
+    pre { font-size: 12px; }
+    .hero-stats { gap: 24px; }
+  }
+
+  .step-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 24px 0;
+  }
+  .step-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 18px 0;
+  }
+  .step-item:not(:last-child) { border-bottom: 1px dashed var(--border); }
+  .step-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-content h4 { margin: 0 0 6px; }
+  .step-content p { margin: 0; font-size: 0.92rem; }
+
+  .json-demo {
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 12px;
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-x: auto;
+  }
+  .j-key { color: #79c0ff; }
+  .j-str { color: #a5d6ff; }
+  .j-num { color: #ffa657; }
+  .j-bool { color: #ff7b72; }
+  .j-brace { color: #8b949e; }
+
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    font-size: 0.88rem;
+    background: var(--card2);
+  }
+  .pill-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  details {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 10px 0;
+    overflow: hidden;
+  }
+  summary {
+    padding: 14px 18px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--accent2);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: '▶'; font-size: 10px; transition: transform 0.2s; }
+  details[open] summary::before { transform: rotate(90deg); }
+  details > *:not(summary) { padding: 0 18px 18px; }
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero">
+  <div class="hero-badge">সম্পূর্ণ বাংলা গাইড • Complete Bengali Guide</div>
+  <h1>ডেটা API — শুরু থেকে শেষ পর্যন্ত<br><span style="font-size:0.65em;opacity:0.8">Data APIs: Zero to Hero</span></h1>
+  <p class="hero-sub">একদম নতুনদের জন্য — API কী, JSON কী, HTTP রিকোয়েস্ট কী, ETL পাইপলাইন, Chess.com বিশ্লেষণ এবং Machine Learning অ্যালগরিদম — সব বাংলায়।</p>
+  <div class="hero-stats">
+    <div class="stat-item"><span class="stat-num">৩টি</span><span class="stat-label">বিষয় কভার</span></div>
+    <div class="stat-item"><span class="stat-num">৬+</span><span class="stat-label">অ্যালগরিদম</span></div>
+    <div class="stat-item"><span class="stat-num">৩০+</span><span class="stat-label">ইন্টারভিউ প্রশ্ন</span></div>
+    <div class="stat-item"><span class="stat-num">১০০%</span><span class="stat-label">বাংলায়</span></div>
+  </div>
+</div>
+
+<!-- ==================== TOC ==================== -->
+<nav class="toc">
+  <div class="toc-title">বিষয়সূচি</div>
+  <ul class="toc-links">
+    <li><a href="#sec1">১. API কী?</a></li>
+    <li><a href="#sec2">২. JSON ফরম্যাট</a></li>
+    <li><a href="#sec3">৩. HTTP রিকোয়েস্ট</a></li>
+    <li><a href="#sec4">৪. ETL পাইপলাইন</a></li>
+    <li><a href="#sec5">৫. ডেটা ইন্টিগ্রেশন</a></li>
+    <li><a href="#sec6">৬. Chess API বিশ্লেষণ</a></li>
+    <li><a href="#sec7">৭. অ্যালগরিদম</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+<!-- ==================== SECTION 1: API ==================== -->
+<section class="section" id="sec1">
+  <div class="section-header">
+    <div class="section-num num-blue">০১</div>
+    <h2 class="section-title">API কী? <span>— একদম সহজ ভাষায়</span></h2>
+  </div>
+
+  <p><strong>API</strong> মানে <strong>Application Programming Interface</strong>। এটা দুটো সফটওয়্যারের মধ্যে কথা বলার একটা নিয়মকানুন।</p>
+
+  <div class="callout callout-info">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body">
+      <h4>রেস্টুরেন্টের উদাহরণ</h4>
+      <p>ভাবো তুমি রেস্টুরেন্টে গেছ। তুমি হলে <strong>Client (ক্লায়েন্ট)</strong>, রান্নাঘর হলো <strong>Server (সার্ভার)</strong>, আর ওয়েটার হলো <strong>API</strong>। তুমি সরাসরি রান্নাঘরে যেতে পারো না — ওয়েটারকে অর্ডার দাও, সে রান্নাঘরে জানায়, রান্নাঘর তোমার খাবার তৈরি করে দেয়। ওয়েটার = API!</p>
+    </div>
+  </div>
+
+  <!-- SVG Diagram: API Communication -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;">
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#38bdf8"/>
+        </marker>
+        <marker id="arrow2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#818cf8"/>
+        </marker>
+      </defs>
+      <!-- Client Box -->
+      <rect x="20" y="70" width="140" height="80" rx="12" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="90" y="106" text-anchor="middle" fill="#38bdf8" font-size="28">📱</text>
+      <text x="90" y="132" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Hind Siliguri, sans-serif">তোমার অ্যাপ</text>
+      <text x="90" y="148" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">(Client)</text>
+
+      <!-- Arrow right: Request -->
+      <line x1="165" y1="100" x2="265" y2="100" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="215" y="90" text-anchor="middle" fill="#38bdf8" font-size="12" font-family="Hind Siliguri, sans-serif">Request পাঠায়</text>
+
+      <!-- API Box -->
+      <rect x="270" y="60" width="160" height="100" rx="12" fill="#1a2540" stroke="#818cf8" stroke-width="2"/>
+      <text x="350" y="100" text-anchor="middle" fill="#818cf8" font-size="26">⚙️</text>
+      <text x="350" y="128" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="bold" font-family="Hind Siliguri, sans-serif">API</text>
+      <text x="350" y="148" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">(মধ্যস্থতাকারী)</text>
+
+      <!-- Arrow right: to server -->
+      <line x1="435" y1="100" x2="535" y2="100" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="485" y="90" text-anchor="middle" fill="#38bdf8" font-size="12" font-family="Hind Siliguri, sans-serif">ডেটা চায়</text>
+
+      <!-- Server Box -->
+      <rect x="540" y="70" width="140" height="80" rx="12" fill="#111827" stroke="#34d399" stroke-width="1.5"/>
+      <text x="610" y="106" text-anchor="middle" fill="#34d399" font-size="28">🗄️</text>
+      <text x="610" y="132" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Hind Siliguri, sans-serif">ডেটাবেস</text>
+      <text x="610" y="148" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">(Server)</text>
+
+      <!-- Return arrows -->
+      <line x1="535" y1="130" x2="435" y2="130" stroke="#818cf8" stroke-width="2" marker-end="url(#arrow2)"/>
+      <text x="485" y="152" text-anchor="middle" fill="#818cf8" font-size="12" font-family="Hind Siliguri, sans-serif">ডেটা ফেরত</text>
+
+      <line x1="265" y1="130" x2="165" y2="130" stroke="#818cf8" stroke-width="2" marker-end="url(#arrow2)"/>
+      <text x="215" y="152" text-anchor="middle" fill="#818cf8" font-size="12" font-family="Hind Siliguri, sans-serif">Response আসে</text>
+    </svg>
+    <p class="diagram-caption">চিত্র: API কিভাবে Client ও Server-এর মধ্যে কাজ করে</p>
+  </div>
+
+  <h3>API কত ধরনের?</h3>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(239,68,68,0.15)">🔒</div> Private API</div>
+      <p style="font-size:0.9rem">কোম্পানির ভেতরে ব্যবহার হয়। বাইরে থেকে ধরা যায় না। উদাহরণ: Uber-এর ভেতরের সিস্টেম।</p>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(52,211,153,0.15)">🌍</div> Public API</div>
+      <p style="font-size:0.9rem">যে কেউ ব্যবহার করতে পারে। অনেক সময় key লাগে বা টাকা লাগে। উদাহরণ: Wikipedia API, Chess.com API।</p>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(251,191,36,0.15)">🤝</div> Partner API</div>
+      <p style="font-size:0.9rem">শুধু অনুমোদিত পার্টনার কোম্পানি ব্যবহার করতে পারে। দুই কোম্পানির মধ্যে সংযোগ।</p>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-icon" style="background:rgba(129,140,248,0.15)">🔗</div> Composite API</div>
+      <p style="font-size:0.9rem">একসাথে একাধিক API কল করে। এক রিকোয়েস্টে অনেক কাজ করতে পারে।</p>
+    </div>
+  </div>
+
+  <h3>Endpoint কী?</h3>
+  <p><span class="highlight">Endpoint</span> হলো একটা নির্দিষ্ট URL, যেখানে তুমি রিকোয়েস্ট পাঠালে নির্দিষ্ট ডেটা পাবে। যেমন রেস্টুরেন্টে আলাদা আলাদা টেবিল আছে — কোন টেবিলে কি ধরনের খাবার পাওয়া যাবে নির্দিষ্ট করা।</p>
+
+  <div class="json-demo" style="font-family:'JetBrains Mono',monospace;font-size:13px;margin:16px 0;">
+<span class="cm"># উদাহরণ Endpoints:</span>
+<span style="color:#38bdf8">https://api.chess.com/pub/titled/GM</span>      <span class="cm">← সব Grandmaster-এর লিস্ট</span>
+<span style="color:#38bdf8">https://api.chess.com/pub/player/magnus</span>  <span class="cm">← Magnus Carlsen-এর তথ্য</span>
+<span style="color:#38bdf8">https://api.chess.com/pub/player/magnus/stats</span> <span class="cm">← তার পারফরম্যান্স</span>
+  </div>
+
+  <!-- Interview Exercise 1 -->
+  <div class="exercise-box">
+    <div class="exercise-header">
+      <span class="exercise-badge">💼 Interview Exercise</span>
+      <span class="exercise-title">সেকশন ১ — API মৌলিক ধারণা</span>
+    </div>
+
+    <div class="exercise-q">
+      <div class="q-num">প্রশ্ন ০১</div>
+      <p class="q-text">তুমি একটি ML Engineering টিমে কাজ করছ। তোমার টিম একটি Real-time weather prediction মডেল বানাচ্ছে। OpenWeatherMap API ব্যবহার করে প্রতি ঘণ্টায় ডেটা নিতে হবে। কোন ধরনের API এটি? তুমি কিভাবে এই API-কে তোমার ML pipeline-এ integrate করবে?</p>
+      <div class="q-hint">💡 Hint: Public API, API key, scheduled data fetching, feature engineering pipeline চিন্তা করো।</div>
+    </div>
+
+    <div class="exercise-q">
+      <div class="q-num">প্রশ্ন ০২</div>
+      <p class="q-text">REST API এবং GraphQL API-এর পার্থক্য কী? একটি ML feature store-এর জন্য কোনটি বেশি উপযুক্ত এবং কেন?</p>
+      <div class="q-hint">💡 Hint: REST = multiple endpoints, GraphQL = single endpoint with query language। Feature store-এ flexible querying দরকার।</div>
+    </div>
+
+    <div class="exercise-q">
+      <div class="q-num">প্রশ্ন ০৩ (Coding)</div>
+      <p class="q-text">একটি function লেখো যেটা OpenWeatherMap API থেকে যেকোনো শহরের তাপমাত্রা নিয়ে আসবে, এবং যদি API request fail করে তাহলে 3 বার retry করবে।</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+        <span class="code-lang">python — interview solution</span>
+      </div>
+      <pre><span class="kw">import</span> requests
+<span class="kw">import</span> time
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+<span class="kw">def</span> <span class="fn">get_temperature_with_retry</span>(
+    city: <span class="cls">str</span>,
+    api_key: <span class="cls">str</span>,
+    max_retries: <span class="num">int</span> = <span class="num">3</span>,
+    backoff_factor: <span class="cls">float</span> = <span class="num">2.0</span>
+) -> Optional[<span class="cls">float</span>]:
+    <span class="str">"""
+    শহরের তাপমাত্রা ফেরত দেয়। Request fail হলে retry করে।
+
+    Args:
+        city: শহরের নাম (e.g., "Dhaka")
+        api_key: OpenWeatherMap API key
+        max_retries: সর্বোচ্চ কতবার চেষ্টা করবে
+        backoff_factor: প্রতিবার কতগুণ বেশি অপেক্ষা করবে
+
+    Returns:
+        তাপমাত্রা (Celsius), অথবা None যদি সব retry fail হয়
+    """</span>
+    url = <span class="str">f"https://api.openweathermap.org/data/2.5/weather"</span>
+    params = {
+        <span class="str">"q"</span>: city,
+        <span class="str">"appid"</span>: api_key,
+        <span class="str">"units"</span>: <span class="str">"metric"</span>  <span class="cm"># Celsius</span>
+    }
+
+    <span class="kw">for</span> attempt <span class="kw">in</span> <span class="fn">range</span>(max_retries):
+        <span class="kw">try</span>:
+            response = requests.<span class="fn">get</span>(url, params=params, timeout=<span class="num">10</span>)
+
+            <span class="cm"># ✅ 200 = সফল</span>
+            <span class="kw">if</span> response.status_code == <span class="num">200</span>:
+                data = response.<span class="fn">json</span>()
+                temp = data[<span class="str">"main"</span>][<span class="str">"temp"</span>]
+                <span class="fn">print</span>(<span class="str">f"✅ {city}-এর তাপমাত্রা: {temp}°C"</span>)
+                <span class="kw">return</span> temp
+
+            <span class="cm"># ❌ 4xx = আমাদের ভুল, retry করা বেকার</span>
+            <span class="kw">elif</span> <span class="num">400</span> <= response.status_code < <span class="num">500</span>:
+                <span class="fn">print</span>(<span class="str">f"❌ Client error {response.status_code}: retry করব না"</span>)
+                <span class="kw">return</span> <span class="kw">None</span>
+
+        <span class="kw">except</span> requests.exceptions.<span class="cls">Timeout</span>:
+            <span class="fn">print</span>(<span class="str">f"⏱️ Attempt {attempt+1}: Timeout হয়েছে"</span>)
+        <span class="kw">except</span> requests.exceptions.<span class="cls">ConnectionError</span>:
+            <span class="fn">print</span>(<span class="str">f"🔌 Attempt {attempt+1}: Connection error"</span>)
+
+        <span class="cm"># Exponential backoff: 2s, 4s, 8s...</span>
+        wait_time = backoff_factor ** attempt
+        <span class="fn">print</span>(<span class="str">f"⏳ {wait_time} সেকেন্ড অপেক্ষা করছি..."</span>)
+        time.<span class="fn">sleep</span>(wait_time)
+
+    <span class="fn">print</span>(<span class="str">f"💀 {max_retries} বার চেষ্টা করেও ব্যর্থ"</span>)
+    <span class="kw">return</span> <span class="kw">None</span>
+
+<span class="cm"># ML pipeline-এ ব্যবহার:</span>
+<span class="kw">def</span> <span class="fn">fetch_weather_features</span>(cities: <span class="cls">list</span>) -> <span class="cls">dict</span>:
+    <span class="str">"""ML model-এর জন্য weather features collect করে"""</span>
+    features = {}
+    <span class="kw">for</span> city <span class="kw">in</span> cities:
+        temp = <span class="fn">get_temperature_with_retry</span>(city, api_key=<span class="str">"YOUR_KEY"</span>)
+        <span class="kw">if</span> temp <span class="kw">is not None</span>:
+            features[city] = {<span class="str">"temperature"</span>: temp}
+    <span class="kw">return</span> features</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 2: JSON ==================== -->
+<section class="section" id="sec2">
+  <div class="section-header">
+    <div class="section-num num-green">০২</div>
+    <h2 class="section-title">JSON ফরম্যাট <span>— ডেটার ভাষা</span></h2>
+  </div>
+
+  <p><span class="highlight-g">JSON</span> মানে <strong>JavaScript Object Notation</strong>। এটা ডেটা রাখার একটা পদ্ধতি — যেন একটা চিরকুটে সুন্দর করে গুছিয়ে তথ্য লেখা। API থেকে যখন ডেটা আসে, সেটা প্রায় সবসময় JSON ফরম্যাটে আসে।</p>
+
+  <div class="callout callout-tip">
+    <div class="callout-icon">🎒</div>
+    <div class="callout-body">
+      <h4>স্কুলব্যাগের উদাহরণ</h4>
+      <p>JSON হলো একটা ব্যাগের মতো। ব্যাগে আছে খোপ (keys), প্রতিটা খোপে কিছু রাখা আছে (values)। কোনো খোপে আবার আরেকটা ছোট ব্যাগ আছে (nested object), কোনো খোপে অনেকগুলো জিনিস সারিবদ্ধ (array/list)।</p>
+    </div>
+  </div>
+
+  <h3>JSON-এর মূল গঠন</h3>
+
+  <!-- SVG: JSON Structure Diagram -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;">
+      <!-- Title -->
+      <text x="350" y="30" text-anchor="middle" fill="#94a3b8" font-size="14" font-family="Hind Siliguri, sans-serif">JSON-এর তিনটি মূল ধরন</text>
+
+      <!-- Object -->
+      <rect x="30" y="50" width="190" height="220" rx="12" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="125" y="80" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="Hind Siliguri, sans-serif">Object { }</text>
+      <text x="125" y="100" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">Key-Value জোড়া</text>
+      <rect x="50" y="112" width="150" height="30" rx="6" fill="#0d1117"/>
+      <text x="125" y="132" text-anchor="middle" fill="#79c0ff" font-size="12" font-family="JetBrains Mono, monospace">"name": "Saikot"</text>
+      <rect x="50" y="148" width="150" height="30" rx="6" fill="#0d1117"/>
+      <text x="125" y="168" text-anchor="middle" fill="#79c0ff" font-size="12" font-family="JetBrains Mono, monospace">"age": 25</text>
+      <rect x="50" y="184" width="150" height="30" rx="6" fill="#0d1117"/>
+      <text x="125" y="204" text-anchor="middle" fill="#79c0ff" font-size="12" font-family="JetBrains Mono, monospace">"city": "Dhaka"</text>
+      <text x="125" y="252" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri, sans-serif">Python-এ: dict</text>
+
+      <!-- Array -->
+      <rect x="255" y="50" width="190" height="220" rx="12" fill="#111827" stroke="#34d399" stroke-width="1.5"/>
+      <text x="350" y="80" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="Hind Siliguri, sans-serif">Array [ ]</text>
+      <text x="350" y="100" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">তালিকা / সারি</text>
+      <rect x="275" y="112" width="150" height="30" rx="6" fill="#0d1117"/>
+      <text x="350" y="132" text-anchor="middle" fill="#a5d6ff" font-size="12" font-family="JetBrains Mono, monospace">"Python"</text>
+      <rect x="275" y="148" width="150" height="30" rx="6" fill="#0d1117"/>
+      <text x="350" y="168" text-anchor="middle" fill="#a5d6ff" font-size="12" font-family="JetBrains Mono, monospace">"TensorFlow"</text>
+      <rect x="275" y="184" width="150" height="30" rx="6" fill="#0d1117"/>
+      <text x="350" y="204" text-anchor="middle" fill="#a5d6ff" font-size="12" font-family="JetBrains Mono, monospace">"PyTorch"</text>
+      <text x="350" y="252" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri, sans-serif">Python-এ: list</text>
+
+      <!-- Nested -->
+      <rect x="480" y="50" width="190" height="220" rx="12" fill="#111827" stroke="#818cf8" stroke-width="1.5"/>
+      <text x="575" y="80" text-anchor="middle" fill="#818cf8" font-size="13" font-weight="bold" font-family="Hind Siliguri, sans-serif">Nested (ভেতরে ভেতরে)</text>
+      <text x="575" y="100" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">Object-এর ভেতরে Array</text>
+      <rect x="498" y="110" width="154" height="90" rx="6" fill="#0d1117"/>
+      <text x="575" y="130" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="JetBrains Mono, monospace">"skills": [</text>
+      <text x="575" y="150" text-anchor="middle" fill="#a5d6ff" font-size="11" font-family="JetBrains Mono, monospace">  "Python",</text>
+      <text x="575" y="168" text-anchor="middle" fill="#a5d6ff" font-size="11" font-family="JetBrains Mono, monospace">  "SQL"</text>
+      <text x="575" y="188" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="JetBrains Mono, monospace">]</text>
+      <text x="575" y="252" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri, sans-serif">Python-এ: dict with list</text>
+    </svg>
+    <p class="diagram-caption">চিত্র: JSON-এর তিনটি মূল উপাদান</p>
+  </div>
+
+  <h3>বাস্তব JSON উদাহরণ</h3>
+  <p>নোটবুকে যে <code>team.json</code> ফাইলের কথা বলা হয়েছে, সেটা দেখো:</p>
+
+  <div class="json-demo">
+<span class="j-brace">{</span>
+  <span class="j-key">"TeamName"</span>: <span class="j-str">"TechTeam - BD"</span>,     <span class="cm">← String মান</span>
+  <span class="j-key">"homeTown"</span>: <span class="j-str">"Paris"</span>,
+  <span class="j-key">"formed"</span>: <span class="j-num">2022</span>,                          <span class="cm">← Number মান</span>
+  <span class="j-key">"members"</span>: <span class="j-brace">[</span>                              <span class="cm">← Array শুরু</span>
+    <span class="j-brace">{</span>                                           <span class="cm">← প্রথম সদস্যের Object</span>
+      <span class="j-key">"name"</span>: <span class="j-str">"Yohan"</span>,
+      <span class="j-key">"age"</span>: <span class="j-num">29</span>,
+      <span class="j-key">"skills"</span>: <span class="j-brace">[</span><span class="j-str">"Python"</span>, <span class="j-str">"R"</span>, <span class="j-str">"Java"</span><span class="j-brace">]</span>    <span class="cm">← Array-এর ভেতরে Array</span>
+    <span class="j-brace">}</span>,
+    <span class="j-brace">{</span>                                           <span class="cm">← দ্বিতীয় সদস্যের Object</span>
+      <span class="j-key">"name"</span>: <span class="j-str">"Pierre"</span>,
+      <span class="j-key">"age"</span>: <span class="j-num">39</span>,
+      <span class="j-key">"skills"</span>: <span class="j-brace">[</span><span class="j-str">"Python"</span>, <span class="j-str">"R"</span>, <span class="j-str">"Java"</span>, <span class="j-str">"SQL"</span><span class="j-brace">]</span>
+    <span class="j-brace">}</span>
+  <span class="j-brace">]</span>                                             <span class="cm">← Array শেষ</span>
+<span class="j-brace">}</span>
+  </div>
+
+  <h3>Python-এ JSON নিয়ে কাজ</h3>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="code-lang">python — json basics</span>
+    </div>
+    <pre><span class="kw">import</span> json
+
+<span class="cm"># ১. ফাইল থেকে JSON লোড (সঠিক পদ্ধতি)</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">'team.json'</span>, <span class="str">'r'</span>) <span class="kw">as</span> file:
+    data = json.<span class="fn">load</span>(file)   <span class="cm"># JSON → Python dict</span>
+
+<span class="cm"># ২. Key দেখা</span>
+<span class="fn">print</span>(data.<span class="fn">keys</span>())
+<span class="cm"># dict_keys(['TeamName', 'homeTown', 'formed', 'members'])</span>
+
+<span class="cm"># ৩. সরাসরি মান নেওয়া</span>
+<span class="fn">print</span>(data[<span class="str">'TeamName'</span>])           <span class="cm"># → "TechTeam - BD"</span>
+<span class="fn">print</span>(data[<span class="str">'formed'</span>])             <span class="cm"># → 2022</span>
+
+<span class="cm"># ৪. Array-এর মধ্যে থেকে নেওয়া</span>
+first_member = data[<span class="str">'members'</span>][<span class="num">0</span>]  <span class="cm"># প্রথম সদস্য (index 0)</span>
+second_member = data[<span class="str">'members'</span>][<span class="num">1</span>] <span class="cm"># দ্বিতীয় সদস্য (index 1)</span>
+<span class="fn">print</span>(first_member[<span class="str">'name'</span>])        <span class="cm"># → "Yohan"</span>
+
+<span class="cm"># ৫. Nested access (ভেতর থেকে ভেতরে)</span>
+yohan_skills = data[<span class="str">'members'</span>][<span class="num">0</span>][<span class="str">'skills'</span>]
+<span class="fn">print</span>(yohan_skills)                 <span class="cm"># → ['Python', 'R', 'Java']</span>
+
+<span class="cm"># ৬. গড় বয়স বের করা</span>
+ages = [member[<span class="str">'age'</span>] <span class="kw">for</span> member <span class="kw">in</span> data[<span class="str">'members'</span>]]
+average_age = <span class="fn">sum</span>(ages) / <span class="fn">len</span>(ages)
+<span class="fn">print</span>(<span class="str">f"গড় বয়স: {average_age}"</span>)   <span class="cm"># → 34.0</span>
+
+<span class="cm"># ৭. Python dict → JSON string (পাঠানোর জন্য)</span>
+json_string = json.<span class="fn">dumps</span>(data, indent=<span class="num">2</span>)
+<span class="fn">print</span>(json_string)</pre>
+  </div>
+
+  <div class="exercise-box">
+    <div class="exercise-header">
+      <span class="exercise-badge">💼 Interview Exercise</span>
+      <span class="exercise-title">সেকশন ২ — JSON এবং ডেটা স্ট্রাকচার</span>
+    </div>
+
+    <div class="exercise-q">
+      <div class="q-num">প্রশ্ন ০১ (ML Engineering)</div>
+      <p class="q-text">তুমি একটি NLP model-এর জন্য ডেটা collect করছ। Twitter API থেকে নিচের মতো JSON আসছে। তুমি কিভাবে এটাকে pandas DataFrame-এ রূপান্তরিত করবে এবং sentiment analysis-এর জন্য feature বের করবে?</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+        <span class="code-lang">python — ml engineering solution</span>
+      </div>
+      <pre><span class="kw">import</span> json
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="cm"># Twitter API থেকে এই রকম JSON আসে</span>
+tweets_json = <span class="str">"""
+{
+  "data": [
+    {"id": "1", "text": "Python is amazing!", "created_at": "2024-01-01T10:00:00Z",
+     "public_metrics": {"like_count": 45, "retweet_count": 12}},
+    {"id": "2", "text": "I hate bugs in code", "created_at": "2024-01-01T11:00:00Z",
+     "public_metrics": {"like_count": 5, "retweet_count": 1}}
+  ]
+}
+"""</span>
+
+<span class="kw">def</span> <span class="fn">parse_tweets_for_ml</span>(json_str: <span class="cls">str</span>) -> pd.<span class="cls">DataFrame</span>:
+    <span class="str">"""
+    JSON tweet ডেটাকে ML-ready DataFrame-এ রূপান্তরিত করে।
+    Features:
+    - text: raw tweet text
+    - char_count: character count (proxy for detail)
+    - like_count, retweet_count: engagement signals
+    - engagement_rate: combined engagement metric
+    - hour: posting hour (temporal feature)
+    """</span>
+    data = json.<span class="fn">loads</span>(json_str)
+    tweets = data[<span class="str">"data"</span>]
+
+    records = []
+    <span class="kw">for</span> tweet <span class="kw">in</span> tweets:
+        metrics = tweet[<span class="str">"public_metrics"</span>]
+        created = datetime.<span class="fn">fromisoformat</span>(
+            tweet[<span class="str">"created_at"</span>].<span class="fn">replace</span>(<span class="str">"Z"</span>, <span class="str">"+00:00"</span>)
+        )
+
+        records.<span class="fn">append</span>({
+            <span class="str">"id"</span>: tweet[<span class="str">"id"</span>],
+            <span class="str">"text"</span>: tweet[<span class="str">"text"</span>],
+            <span class="str">"char_count"</span>: <span class="fn">len</span>(tweet[<span class="str">"text"</span>]),
+            <span class="str">"like_count"</span>: metrics[<span class="str">"like_count"</span>],
+            <span class="str">"retweet_count"</span>: metrics[<span class="str">"retweet_count"</span>],
+            <span class="str">"engagement_rate"</span>: metrics[<span class="str">"like_count"</span>] + metrics[<span class="str">"retweet_count"</span>] * <span class="num">2</span>,
+            <span class="str">"hour"</span>: created.hour
+        })
+
+    <span class="kw">return</span> pd.<span class="cls">DataFrame</span>(records)
+
+df = <span class="fn">parse_tweets_for_ml</span>(tweets_json)
+<span class="fn">print</span>(df.to_string())</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 3: HTTP ==================== -->
+<section class="section" id="sec3">
+  <div class="section-header">
+    <div class="section-num num-orange">০৩</div>
+    <h2 class="section-title">HTTP রিকোয়েস্ট <span>— ইন্টারনেটে ডেটা আনা-নেওয়া</span></h2>
+  </div>
+
+  <p><span class="highlight-o">HTTP</span> হলো ইন্টারনেটে ডেটা পাঠানো-নেওয়ার নিয়ম। যেমন ডাকঘরে চিঠি পাঠাতে হলে নির্দিষ্ট নিয়মে খাম ভরতে হয় — HTTP হলো সেই নিয়ম।</p>
+
+  <h3>HTTP Method — ৪টি মূল ধরন</h3>
+
+  <!-- SVG: HTTP Methods -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;">
+      <!-- GET -->
+      <rect x="20" y="30" width="150" height="120" rx="12" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="95" y="65" text-anchor="middle" fill="#38bdf8" font-size="22" font-weight="bold" font-family="JetBrains Mono, monospace">GET</text>
+      <text x="95" y="88" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri, sans-serif">ডেটা পড়া</text>
+      <text x="95" y="108" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">👁️ READ only</text>
+      <text x="95" y="130" text-anchor="middle" fill="#64748b" font-size="10" font-family="Hind Siliguri, sans-serif">সবচেয়ে বেশি ব্যবহৃত</text>
+
+      <!-- POST -->
+      <rect x="190" y="30" width="150" height="120" rx="12" fill="#111827" stroke="#34d399" stroke-width="1.5"/>
+      <text x="265" y="65" text-anchor="middle" fill="#34d399" font-size="22" font-weight="bold" font-family="JetBrains Mono, monospace">POST</text>
+      <text x="265" y="88" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri, sans-serif">নতুন ডেটা পাঠানো</text>
+      <text x="265" y="108" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">✍️ CREATE</text>
+      <text x="265" y="130" text-anchor="middle" fill="#64748b" font-size="10" font-family="Hind Siliguri, sans-serif">form submit, login</text>
+
+      <!-- PUT -->
+      <rect x="360" y="30" width="150" height="120" rx="12" fill="#111827" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="435" y="65" text-anchor="middle" fill="#fbbf24" font-size="22" font-weight="bold" font-family="JetBrains Mono, monospace">PUT</text>
+      <text x="435" y="88" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri, sans-serif">ডেটা আপডেট</text>
+      <text x="435" y="108" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">✏️ UPDATE</text>
+      <text x="435" y="130" text-anchor="middle" fill="#64748b" font-size="10" font-family="Hind Siliguri, sans-serif">পুরো রেকর্ড বদলানো</text>
+
+      <!-- DELETE -->
+      <rect x="530" y="30" width="150" height="120" rx="12" fill="#111827" stroke="#f87171" stroke-width="1.5"/>
+      <text x="605" y="65" text-anchor="middle" fill="#f87171" font-size="22" font-weight="bold" font-family="JetBrains Mono, monospace">DELETE</text>
+      <text x="605" y="88" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri, sans-serif">ডেটা মুছে ফেলা</text>
+      <text x="605" y="108" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">🗑️ DELETE</text>
+      <text x="605" y="130" text-anchor="middle" fill="#64748b" font-size="10" font-family="Hind Siliguri, sans-serif">রেকর্ড ডিলিট</text>
+    </svg>
+    <p class="diagram-caption">চিত্র: চারটি HTTP Method এবং তাদের কাজ</p>
+  </div>
+
+  <h3>Status Code — সার্ভার কী বলছে?</h3>
+  <p>Request পাঠানোর পর সার্ভার একটা <span class="highlight">Status Code</span> ফেরত দেয়। এটা দিয়ে বোঝা যায় আমাদের request সফল হয়েছে কি না।</p>
+
+  <div class="status-grid">
+    <div class="status-card status-2xx">
+      <div class="status-code">2xx</div>
+      <div class="status-desc"><strong style="color:#34d399">সফল! ✅</strong><br>200 = OK<br>201 = নতুন তৈরি হয়েছে<br>204 = সফল, কিন্তু কিছু নেই</div>
+    </div>
+    <div class="status-card status-3xx">
+      <div class="status-code">3xx</div>
+      <div class="status-desc"><strong style="color:#fbbf24">Redirect ↩️</strong><br>301 = চিরতরে নতুন জায়গায়<br>302 = সাময়িকভাবে নতুন জায়গায়</div>
+    </div>
+    <div class="status-card status-4xx">
+      <div class="status-code">4xx</div>
+      <div class="status-desc"><strong style="color:#fb923c">তোমার ভুল ❌</strong><br>400 = খারাপ request<br>401 = লগইন করোনি<br>403 = অনুমতি নেই<br>404 = খুঁজে পাওয়া যায়নি</div>
+    </div>
+    <div class="status-card status-5xx">
+      <div class="status-code">5xx</div>
+      <div class="status-desc"><strong style="color:#f87171">সার্ভারের ভুল 💀</strong><br>500 = সার্ভার ক্র্যাশ<br>502 = Gateway সমস্যা<br>503 = সার্ভার অচল<br>504 = সময়সীমা শেষ</div>
+    </div>
+  </div>
+
+  <h3>Python-এ requests লাইব্রেরি</h3>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="code-lang">python — requests library</span>
+    </div>
+    <pre><span class="kw">import</span> requests
+
+<span class="cm"># ১. সবচেয়ে সহজ GET request</span>
+response = requests.<span class="fn">get</span>(<span class="str">"https://api.chess.com/pub/titled/GM"</span>)
+<span class="fn">print</span>(response.status_code)   <span class="cm"># 200 মানে সফল</span>
+
+<span class="cm"># ২. JSON response নেওয়া</span>
+data = response.<span class="fn">json</span>()         <span class="cm"># JSON → Python dict</span>
+<span class="fn">print</span>(data.<span class="fn">keys</span>())
+
+<span class="cm"># ৩. Headers পাঠানো (পরিচয় দেওয়া)</span>
+headers = {<span class="str">"User-Agent"</span>: <span class="str">"MyApp/1.0"</span>}
+response = requests.<span class="fn">get</span>(<span class="str">"https://api.chess.com/pub/titled/GM"</span>, headers=headers)
+
+<span class="cm"># ৪. Parameters পাঠানো (URL-এ ?key=value)</span>
+params = {<span class="str">"country"</span>: <span class="str">"BD"</span>, <span class="str">"limit"</span>: <span class="num">10</span>}
+response = requests.<span class="fn">get</span>(<span class="str">"https://example.com/api/users"</span>, params=params)
+<span class="cm"># এটা তৈরি করে: https://example.com/api/users?country=BD&limit=10</span>
+
+<span class="cm"># ৫. Timeout দেওয়া (সার্ভার ধীর হলে আটকে না থাকার জন্য)</span>
+<span class="kw">try</span>:
+    response = requests.<span class="fn">get</span>(<span class="str">"https://api.example.com/data"</span>, timeout=<span class="num">10</span>)
+    response.<span class="fn">raise_for_status</span>()  <span class="cm"># 4xx/5xx হলে Exception তোলে</span>
+    data = response.<span class="fn">json</span>()
+<span class="kw">except</span> requests.exceptions.<span class="cls">Timeout</span>:
+    <span class="fn">print</span>(<span class="str">"সার্ভার সময়মতো জবাব দেয়নি"</span>)
+<span class="kw">except</span> requests.exceptions.<span class="cls">HTTPError</span> <span class="kw">as</span> e:
+    <span class="fn">print</span>(<span class="str">f"HTTP Error: {e}"</span>)
+<span class="kw">except</span> requests.exceptions.<span class="cls">ConnectionError</span>:
+    <span class="fn">print</span>(<span class="str">"ইন্টারনেট সংযোগ নেই"</span>)</pre>
+  </div>
+
+  <div class="exercise-box">
+    <div class="exercise-header">
+      <span class="exercise-badge">💼 Interview Exercise</span>
+      <span class="exercise-title">সেকশন ৩ — HTTP ও API Calls</span>
+    </div>
+
+    <div class="exercise-q">
+      <div class="q-num">প্রশ্ন ০১ (Senior ML Engineer Level)</div>
+      <p class="q-text">তুমি একটি production ML system বানাচ্ছ যেটা একটি third-party prediction API ব্যবহার করে। API-এর rate limit হলো 100 requests/minute। তোমার সিস্টেমে 10,000 records আছে যেগুলোর prediction দরকার। একটি efficient solution লেখো যেটা rate limiting handle করবে এবং batch processing করবে।</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+        <span class="code-lang">python — rate-limited batch API caller</span>
+      </div>
+      <pre><span class="kw">import</span> requests
+<span class="kw">import</span> time
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> typing <span class="kw">import</span> List, Dict
+<span class="kw">from</span> tqdm <span class="kw">import</span> tqdm  <span class="cm"># progress bar</span>
+
+<span class="kw">class</span> <span class="cls">RateLimitedAPIClient</span>:
+    <span class="str">"""
+    Rate-limited API client যেটা automatically throttle করে।
+    Production ML pipeline-এ ব্যবহারের জন্য।
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>, base_url: <span class="cls">str</span>, api_key: <span class="cls">str</span>,
+                 max_per_minute: <span class="num">int</span> = <span class="num">100</span>):
+        <span class="var">self</span>.base_url = base_url
+        <span class="var">self</span>.headers = {<span class="str">"Authorization"</span>: <span class="str">f"Bearer {api_key}"</span>,
+                        <span class="str">"User-Agent"</span>: <span class="str">"MLPipeline/1.0"</span>}
+        <span class="var">self</span>.delay = <span class="num">60.0</span> / max_per_minute  <span class="cm"># প্রতি request-এর মধ্যে বিরতি</span>
+        <span class="var">self</span>.last_call = <span class="num">0</span>
+
+    <span class="kw">def</span> <span class="fn">_throttle</span>(<span class="var">self</span>):
+        <span class="str">"""Rate limit enforce করে"""</span>
+        elapsed = time.<span class="fn">time</span>() - <span class="var">self</span>.last_call
+        wait = <span class="var">self</span>.delay - elapsed
+        <span class="kw">if</span> wait > <span class="num">0</span>:
+            time.<span class="fn">sleep</span>(wait)
+        <span class="var">self</span>.last_call = time.<span class="fn">time</span>()
+
+    <span class="kw">def</span> <span class="fn">predict_single</span>(<span class="var">self</span>, record: <span class="cls">Dict</span>) -> <span class="cls">Dict</span>:
+        <span class="str">"""একটি record-এর prediction নেয়"""</span>
+        <span class="var">self</span>.<span class="fn">_throttle</span>()
+        response = requests.<span class="fn">post</span>(
+            <span class="str">f"{self.base_url}/predict"</span>,
+            json=record,
+            headers=<span class="var">self</span>.headers,
+            timeout=<span class="num">15</span>
+        )
+        response.<span class="fn">raise_for_status</span>()
+        <span class="kw">return</span> response.<span class="fn">json</span>()
+
+    <span class="kw">def</span> <span class="fn">predict_batch</span>(<span class="var">self</span>, records: <span class="cls">List</span>[<span class="cls">Dict</span>]) -> pd.<span class="cls">DataFrame</span>:
+        <span class="str">"""সব records-এর prediction করে DataFrame বানায়"""</span>
+        results = []
+
+        <span class="kw">for</span> record <span class="kw">in</span> <span class="fn">tqdm</span>(records, desc=<span class="str">"Predicting"</span>):
+            <span class="kw">try</span>:
+                pred = <span class="var">self</span>.<span class="fn">predict_single</span>(record)
+                results.<span class="fn">append</span>({**record, **pred})
+            <span class="kw">except</span> requests.exceptions.<span class="cls">HTTPError</span> <span class="kw">as</span> e:
+                <span class="cm"># fail হলে NaN দিয়ে রাখি, pipeline বন্ধ না করে</span>
+                results.<span class="fn">append</span>({**record, <span class="str">"prediction"</span>: <span class="kw">None</span>,
+                               <span class="str">"error"</span>: <span class="fn">str</span>(e)})
+
+        <span class="kw">return</span> pd.<span class="cls">DataFrame</span>(results)
+
+<span class="cm"># ব্যবহার:</span>
+client = <span class="cls">RateLimitedAPIClient</span>(
+    base_url=<span class="str">"https://api.mymlservice.com"</span>,
+    api_key=<span class="str">"your-key"</span>,
+    max_per_minute=<span class="num">100</span>
+)
+records = [{<span class="str">"feature1"</span>: <span class="num">1.5</span>, <span class="str">"feature2"</span>: <span class="num">2.3</span>} <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10000</span>)]
+results_df = client.<span class="fn">predict_batch</span>(records)</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 4: ETL ==================== -->
+<section class="section" id="sec4">
+  <div class="section-header">
+    <div class="section-num num-purple">০৪</div>
+    <h2 class="section-title">ETL পাইপলাইন <span>— Extract, Transform, Load</span></h2>
+  </div>
+
+  <p><span class="highlight">ETL</span> হলো ডেটা নিয়ে কাজ করার সবচেয়ে গুরুত্বপূর্ণ প্যাটার্ন। প্রতিটি ML Engineering প্রজেক্টে এটা থাকে।</p>
+
+  <!-- SVG: ETL Flow -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;">
+      <defs>
+        <marker id="arrowE" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#38bdf8"/>
+        </marker>
+      </defs>
+
+      <!-- E box -->
+      <rect x="20" y="50" width="180" height="110" rx="14" fill="#0f2444" stroke="#38bdf8" stroke-width="2"/>
+      <text x="110" y="85" text-anchor="middle" fill="#38bdf8" font-size="28" font-weight="900" font-family="JetBrains Mono, monospace">E</text>
+      <text x="110" y="108" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="bold" font-family="Hind Siliguri, sans-serif">Extract</text>
+      <text x="110" y="128" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri, sans-serif">API থেকে ডেটা নেওয়া</text>
+      <text x="110" y="148" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">requests.get()</text>
+
+      <!-- Arrow E→T -->
+      <line x1="205" y1="105" x2="258" y2="105" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowE)"/>
+
+      <!-- T box -->
+      <rect x="263" y="50" width="175" height="110" rx="14" fill="#1a0f44" stroke="#818cf8" stroke-width="2"/>
+      <text x="350" y="85" text-anchor="middle" fill="#818cf8" font-size="28" font-weight="900" font-family="JetBrains Mono, monospace">T</text>
+      <text x="350" y="108" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="bold" font-family="Hind Siliguri, sans-serif">Transform</text>
+      <text x="350" y="128" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri, sans-serif">পরিষ্কার ও রূপান্তর</text>
+      <text x="350" y="148" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">pandas operations</text>
+
+      <!-- Arrow T→L -->
+      <line x1="442" y1="105" x2="495" y2="105" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrowE)"/>
+
+      <!-- L box -->
+      <rect x="500" y="50" width="175" height="110" rx="14" fill="#0f2a18" stroke="#34d399" stroke-width="2"/>
+      <text x="587" y="85" text-anchor="middle" fill="#34d399" font-size="28" font-weight="900" font-family="JetBrains Mono, monospace">L</text>
+      <text x="587" y="108" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="bold" font-family="Hind Siliguri, sans-serif">Load</text>
+      <text x="587" y="128" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri, sans-serif">ডেটাবেসে সংরক্ষণ</text>
+      <text x="587" y="148" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">df.to_csv() / SQL</text>
+    </svg>
+    <p class="diagram-caption">চিত্র: ETL পাইপলাইনের তিনটি ধাপ</p>
+  </div>
+
+  <h3>সম্পূর্ণ ETL পাইপলাইন — বাস্তব উদাহরণ</h3>
+  <p>এই উদাহরণটা আমরা step-by-step বুঝব। একটা টিমের members-এর skills বিশ্লেষণ করতে হবে।</p>
+
+  <div class="step-flow">
+    <div class="step-item">
+      <div class="step-circle">১</div>
+      <div class="step-content">
+        <h4>Extract — Members list আনা</h4>
+        <p>প্রথমে সব member-এর ID তালিকা আনো, তারপর প্রতিটা ID-এর জন্য আলাদা request করো।</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-circle">২</div>
+      <div class="step-content">
+        <h4>Transform — DataFrame গড়া ও Explode করা</h4>
+        <p>Skills column-এ list আছে, তাই <code>explode()</code> দিয়ে প্রতিটা skill আলাদা row-তে আনো।</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-circle">৩</div>
+      <div class="step-content">
+        <h4>Join — Skills ডেটার সাথে মেলানো</h4>
+        <p>Skills endpoint থেকে skill নাম নিয়ে left join করো।</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-circle">৪</div>
+      <div class="step-content">
+        <h4>Load — CSV-তে সেভ করা</h4>
+        <p><code>df.to_csv()</code> দিয়ে ফাইলে সেভ করো।</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="code-lang">python — complete ETL pipeline</span>
+    </div>
+    <pre><span class="kw">import</span> requests
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+BASE_URL = <span class="str">"https://dst-moduleapi.s3.eu-west-1.amazonaws.com"</span>
+
+<span class="cm"># ===== EXTRACT =====</span>
+<span class="kw">def</span> <span class="fn">extract_skills</span>():
+    <span class="str">"""API থেকে members ও skills ডেটা বের করে"""</span>
+
+    <span class="cm"># ১. Members list নেওয়া</span>
+    response = requests.<span class="fn">get</span>(<span class="str">f"{BASE_URL}/members"</span>)
+    members_id = response.<span class="fn">json</span>()[<span class="str">'members'</span>]  <span class="cm"># ID-র তালিকা</span>
+
+    <span class="cm"># ২. প্রতিটা member-এর বিস্তারিত তথ্য নেওয়া</span>
+    members_data = []
+    <span class="kw">for</span> ID <span class="kw">in</span> members_id:
+        <span class="cm"># .format() দিয়ে URL-এ ID বসানো হচ্ছে</span>
+        url = <span class="str">f"{BASE_URL}/members/{ID}"</span>
+        data = requests.<span class="fn">get</span>(url).<span class="fn">json</span>()
+        members_data.<span class="fn">append</span>(data)
+
+    df = pd.<span class="cls">DataFrame</span>(members_data)
+
+    <span class="cm"># ৩. Skills তালিকা নেওয়া</span>
+    skills_response = requests.<span class="fn">get</span>(<span class="str">f"{BASE_URL}/skills"</span>).<span class="fn">json</span>()
+    skills_df = pd.<span class="cls">DataFrame</span>(skills_response[<span class="str">'skills'</span>])
+
+    <span class="kw">return</span> df, skills_df
+
+<span class="cm"># ===== TRANSFORM =====</span>
+<span class="kw">def</span> <span class="fn">transform_skills</span>(df, skills_df):
+    <span class="str">"""
+    Granularity পরিবর্তন: প্রতিটা member → প্রতিটা skill।
+    তারপর statistics বের করা।
+    """</span>
+    <span class="cm"># MemberSkillsID column-এ আগে list ছিল [skill1, skill2, ...]</span>
+    <span class="cm"># explode() করলে প্রতিটা skill আলাদা row হয়</span>
+    df = df.<span class="fn">explode</span>(<span class="str">"MemberSkillsID"</span>)
+
+    <span class="cm"># Skill ID → Skill Name (Join)</span>
+    df = df.<span class="fn">merge</span>(skills_df,
+                  left_on=<span class="str">"MemberSkillsID"</span>,
+                  right_on=<span class="str">"SkillID"</span>,
+                  how=<span class="str">"left"</span>)
+
+    <span class="cm"># Statistics: কতজন ওই skill জানে + গড় বয়স</span>
+    stats = df.<span class="fn">groupby</span>(<span class="str">"SkillName"</span>).<span class="fn">agg</span>({
+        <span class="str">"SkillName"</span>: <span class="str">"count"</span>,   <span class="cm"># কতজন জানে</span>
+        <span class="str">"MemberAge"</span>: <span class="str">"mean"</span>    <span class="cm"># গড় বয়স</span>
+    }).<span class="fn">rename</span>(columns={
+        <span class="str">"SkillName"</span>: <span class="str">"SkillMastery"</span>,
+        <span class="str">"MemberAge"</span>: <span class="str">"AverageAge"</span>
+    })
+
+    <span class="kw">return</span> stats
+
+<span class="cm"># ===== LOAD =====</span>
+<span class="kw">def</span> <span class="fn">load_skills</span>(stats):
+    <span class="str">"""DataFrame কে CSV ফাইলে সেভ করে"""</span>
+    stats.<span class="fn">to_csv</span>(<span class="str">"skills_kpis.csv"</span>)
+    <span class="fn">print</span>(<span class="str">"✅ skills_kpis.csv সেভ হয়েছে!"</span>)
+
+<span class="cm"># ===== Pipeline চালানো =====</span>
+df, skills_df = <span class="fn">extract_skills</span>()
+stats = <span class="fn">transform_skills</span>(df, skills_df)
+<span class="fn">load_skills</span>(stats)
+<span class="fn">print</span>(stats)</pre>
+  </div>
+
+  <h3>explode() — সহজ ব্যাখ্যা</h3>
+
+  <!-- SVG: Explode visualization -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;">
+      <!-- Before -->
+      <text x="175" y="30" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Hind Siliguri, sans-serif">explode() করার আগে</text>
+      <rect x="30" y="45" width="290" height="50" rx="8" fill="#111827" stroke="#1e2d4a" stroke-width="1"/>
+      <text x="50" y="66" fill="#38bdf8" font-size="12" font-family="JetBrains Mono, monospace">MemberName</text>
+      <text x="200" y="66" fill="#38bdf8" font-size="12" font-family="JetBrains Mono, monospace">MemberSkillsID</text>
+      <line x1="30" y1="72" x2="320" y2="72" stroke="#1e2d4a" stroke-width="1"/>
+      <text x="50" y="88" fill="#94a3b8" font-size="12" font-family="JetBrains Mono, monospace">Yohan</text>
+      <text x="200" y="88" fill="#ffa657" font-size="12" font-family="JetBrains Mono, monospace">["sk1","sk2","sk3"]</text>
+
+      <rect x="30" y="100" width="290" height="35" rx="0" fill="rgba(0,0,0,0.2)"/>
+      <text x="50" y="122" fill="#94a3b8" font-size="12" font-family="JetBrains Mono, monospace">Pierre</text>
+      <text x="200" y="122" fill="#ffa657" font-size="12" font-family="JetBrains Mono, monospace">["sk1","sk2","sk4"]</text>
+      <text x="175" y="155" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">শুধু ২টি row আছে</text>
+
+      <!-- Arrow -->
+      <text x="350" y="115" text-anchor="middle" fill="#818cf8" font-size="24">→</text>
+      <text x="350" y="135" text-anchor="middle" fill="#818cf8" font-size="10" font-family="Hind Siliguri, sans-serif">.explode()</text>
+
+      <!-- After -->
+      <text x="540" y="30" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Hind Siliguri, sans-serif">explode() করার পরে</text>
+      <rect x="390" y="45" width="285" height="200" rx="8" fill="#111827" stroke="#34d399" stroke-width="1.5"/>
+      <text x="410" y="66" fill="#34d399" font-size="12" font-family="JetBrains Mono, monospace">MemberName</text>
+      <text x="545" y="66" fill="#34d399" font-size="12" font-family="JetBrains Mono, monospace">SkillID</text>
+      <line x1="390" y1="72" x2="675" y2="72" stroke="#1e2d4a" stroke-width="1"/>
+      <text x="410" y="90" fill="#94a3b8" font-size="12" font-family="JetBrains Mono, monospace">Yohan</text>
+      <text x="545" y="90" fill="#ffa657" font-size="12" font-family="JetBrains Mono, monospace">sk1</text>
+      <text x="410" y="110" fill="#94a3b8" font-size="12" font-family="JetBrains Mono, monospace">Yohan</text>
+      <text x="545" y="110" fill="#ffa657" font-size="12" font-family="JetBrains Mono, monospace">sk2</text>
+      <text x="410" y="130" fill="#94a3b8" font-size="12" font-family="JetBrains Mono, monospace">Yohan</text>
+      <text x="545" y="130" fill="#ffa657" font-size="12" font-family="JetBrains Mono, monospace">sk3</text>
+      <text x="410" y="150" fill="#94a3b8" font-size="12" font-family="JetBrains Mono, monospace">Pierre</text>
+      <text x="545" y="150" fill="#ffa657" font-size="12" font-family="JetBrains Mono, monospace">sk1</text>
+      <text x="410" y="170" fill="#94a3b8" font-size="12" font-family="JetBrains Mono, monospace">Pierre</text>
+      <text x="545" y="170" fill="#ffa657" font-size="12" font-family="JetBrains Mono, monospace">sk2</text>
+      <text x="410" y="190" fill="#94a3b8" font-size="12" font-family="JetBrains Mono, monospace">Pierre</text>
+      <text x="545" y="190" fill="#ffa657" font-size="12" font-family="JetBrains Mono, monospace">sk4</text>
+      <text x="533" y="232" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">৬টি row — প্রতিটা skill আলাদা!</text>
+    </svg>
+    <p class="diagram-caption">চিত্র: explode() কিভাবে list-কে আলাদা rows-এ ভাঙে</p>
+  </div>
+
+  <div class="exercise-box">
+    <div class="exercise-header">
+      <span class="exercise-badge">💼 Interview Exercise</span>
+      <span class="exercise-title">সেকশন ৪ — ETL ও Pipeline Design</span>
+    </div>
+
+    <div class="exercise-q">
+      <div class="q-num">প্রশ্ন ০১ (System Design)</div>
+      <p class="q-text">একটি e-commerce কোম্পানি চায় প্রতিদিন রাত ২টায় automatically তাদের sales API থেকে ডেটা নিয়ে ML model train করতে। তুমি কিভাবে এই ETL pipeline ডিজাইন করবে? Failure handling কিভাবে করবে?</p>
+      <div class="q-hint">💡 Hint: Scheduled jobs (cron/Airflow), error logging, idempotency, data validation, model retraining trigger।</div>
+    </div>
+
+    <div class="exercise-q">
+      <div class="q-num">প্রশ্ন ০২ (Coding)</div>
+      <p class="q-text">নিচের multi-store transaction ডেটা দেওয়া আছে। একটি ETL pipeline লেখো যেটা: (a) সব stores থেকে transactions নেবে, (b) missing values handle করবে, (c) store-wise KPI DataFrame তৈরি করবে, (d) শুধু যে stores-এর revenue > 10,000 সেগুলো save করবে।</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+        <span class="code-lang">python — production ETL with validation</span>
+      </div>
+      <pre><span class="kw">import</span> requests
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> logging
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="cm"># Professional logging setup</span>
+logging.<span class="fn">basicConfig</span>(
+    level=logging.INFO,
+    format=<span class="str">'%(asctime)s - %(levelname)s - %(message)s'</span>
+)
+logger = logging.<span class="fn">getLogger</span>(__name__)
+
+BASE = <span class="str">"https://dst-moduleapi.s3.eu-west-1.amazonaws.com"</span>
+
+<span class="kw">class</span> <span class="cls">StoreETLPipeline</span>:
+
+    <span class="kw">def</span> <span class="fn">extract</span>(<span class="var">self</span>) -> tuple[pd.<span class="cls">DataFrame</span>, pd.<span class="cls">DataFrame</span>]:
+        <span class="str">"""Stores metadata ও transactions extract করে"""</span>
+        logger.<span class="fn">info</span>(<span class="str">"🔄 Extract শুরু..."</span>)
+
+        <span class="cm"># Store list</span>
+        stores_data = requests.<span class="fn">get</span>(<span class="str">f"{BASE}/global_transactions"</span>).<span class="fn">json</span>()
+        df_stores = pd.<span class="cls">DataFrame</span>(stores_data[<span class="str">'Stores'</span>])
+        logger.<span class="fn">info</span>(<span class="str">f"✅ {len(df_stores)} stores পাওয়া গেছে"</span>)
+
+        <span class="cm"># Transactions per store</span>
+        all_transactions = []
+        <span class="kw">for</span> store_id <span class="kw">in</span> df_stores[<span class="str">'StoreID'</span>]:
+            <span class="kw">try</span>:
+                resp = requests.<span class="fn">get</span>(
+                    <span class="str">f"{BASE}/transactions/store/{store_id}"</span>,
+                    timeout=<span class="num">10</span>
+                )
+                <span class="kw">if</span> resp.status_code == <span class="num">200</span>:
+                    txns = pd.<span class="cls">DataFrame</span>(resp.<span class="fn">json</span>()[<span class="str">'Transactions'</span>])
+                    txns[<span class="str">'StoreID'</span>] = store_id
+                    all_transactions.<span class="fn">append</span>(txns)
+            <span class="kw">except</span> <span class="cls">Exception</span> <span class="kw">as</span> e:
+                logger.<span class="fn">warning</span>(<span class="str">f"⚠️ Store {store_id} fail: {e}"</span>)
+
+        df_txn = pd.<span class="fn">concat</span>(all_transactions, ignore_index=<span class="kw">True</span>)
+        logger.<span class="fn">info</span>(<span class="str">f"✅ {len(df_txn)} transactions extracted"</span>)
+        <span class="kw">return</span> df_stores, df_txn
+
+    <span class="kw">def</span> <span class="fn">transform</span>(<span class="var">self</span>, df_stores, df_txn) -> pd.<span class="cls">DataFrame</span>:
+        <span class="str">"""Data cleaning ও KPI calculation"""</span>
+        logger.<span class="fn">info</span>(<span class="str">"🔄 Transform শুরু..."</span>)
+
+        <span class="cm"># Type fixing</span>
+        df_txn[<span class="str">'Quantity'</span>] = pd.<span class="fn">to_numeric</span>(df_txn[<span class="str">'Quantity'</span>], errors=<span class="str">'coerce'</span>)
+        df_txn[<span class="str">'Price'</span>] = pd.<span class="fn">to_numeric</span>(df_txn[<span class="str">'Price'</span>], errors=<span class="str">'coerce'</span>)
+
+        <span class="cm"># Missing data report</span>
+        missing = df_txn.<span class="fn">isna</span>().<span class="fn">sum</span>()
+        <span class="kw">if</span> missing.<span class="fn">any</span>():
+            logger.<span class="fn">warning</span>(<span class="str">f"⚠️ Missing values:\n{missing[missing > 0]}"</span>)
+
+        <span class="cm"># Revenue calculation</span>
+        df_txn[<span class="str">'Revenue'</span>] = df_txn[<span class="str">'Quantity'</span>] * df_txn[<span class="str">'Price'</span>]
+
+        <span class="cm"># Store-level KPIs</span>
+        kpis = df_txn.<span class="fn">groupby</span>(<span class="str">'StoreID'</span>).<span class="fn">agg</span>(
+            total_revenue=(<span class="str">'Revenue'</span>, <span class="str">'sum'</span>),
+            avg_basket=(<span class="str">'Revenue'</span>, <span class="str">'mean'</span>),
+            transaction_count=(<span class="str">'Revenue'</span>, <span class="str">'count'</span>),
+            top_product=(<span class="str">'ProductName'</span>, <span class="kw">lambda</span> x: x.<span class="fn">mode</span>()[<span class="num">0</span>])
+        ).<span class="fn">reset_index</span>()
+
+        <span class="cm"># Stores metadata join</span>
+        result = kpis.<span class="fn">merge</span>(df_stores, on=<span class="str">'StoreID'</span>, how=<span class="str">'left'</span>)
+        logger.<span class="fn">info</span>(<span class="str">f"✅ {len(result)} stores transformed"</span>)
+        <span class="kw">return</span> result
+
+    <span class="kw">def</span> <span class="fn">load</span>(<span class="var">self</span>, df: pd.<span class="cls">DataFrame</span>, min_revenue: <span class="cls">float</span> = <span class="num">10_000</span>):
+        <span class="str">"""শুধু high-performing stores save করে"""</span>
+        logger.<span class="fn">info</span>(<span class="str">"🔄 Load শুরু..."</span>)
+        filtered = df[df[<span class="str">'total_revenue'</span>] > min_revenue]
+        filename = <span class="str">f"store_kpis_{datetime.now().strftime('%Y%m%d')}.csv"</span>
+        filtered.<span class="fn">to_csv</span>(filename, index=<span class="kw">False</span>)
+        logger.<span class="fn">info</span>(<span class="str">f"✅ {len(filtered)} stores saved → {filename}"</span>)
+
+    <span class="kw">def</span> <span class="fn">run</span>(<span class="var">self</span>):
+        <span class="str">"""Full pipeline চালায়"""</span>
+        df_stores, df_txn = <span class="var">self</span>.<span class="fn">extract</span>()
+        result = <span class="var">self</span>.<span class="fn">transform</span>(df_stores, df_txn)
+        <span class="var">self</span>.<span class="fn">load</span>(result)
+
+pipeline = <span class="cls">StoreETLPipeline</span>()
+pipeline.<span class="fn">run</span>()</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 5: DATA INTEGRATION ==================== -->
+<section class="section" id="sec5">
+  <div class="section-header">
+    <div class="section-num num-pink">০৫</div>
+    <h2 class="section-title">ডেটা ইন্টিগ্রেশন <span>— একাধিক API একসাথে</span></h2>
+  </div>
+
+  <p>বাস্তব প্রজেক্টে ডেটা <strong>একটি জায়গায় থাকে না</strong>। SQL database, HTTP API, CSV ফাইল — সব জায়গা থেকে ডেটা এনে একসাথে মেলাতে হয়।</p>
+
+  <!-- SVG: Data Integration diagram -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;">
+      <defs>
+        <marker id="arrowI" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#818cf8"/>
+        </marker>
+      </defs>
+
+      <!-- Sources -->
+      <rect x="20" y="30" width="130" height="60" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="85" y="57" text-anchor="middle" fill="#38bdf8" font-size="20">🧍</text>
+      <text x="85" y="80" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri, sans-serif">Client API</text>
+
+      <rect x="20" y="110" width="130" height="60" rx="10" fill="#111827" stroke="#34d399" stroke-width="1.5"/>
+      <text x="85" y="137" text-anchor="middle" fill="#34d399" font-size="20">📦</text>
+      <text x="85" y="160" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri, sans-serif">Product API</text>
+
+      <rect x="20" y="190" width="130" height="60" rx="10" fill="#111827" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="85" y="217" text-anchor="middle" fill="#fbbf24" font-size="20">🏪</text>
+      <text x="85" y="240" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri, sans-serif">Store API</text>
+
+      <!-- Arrows to merge -->
+      <line x1="155" y1="60" x2="270" y2="130" stroke="#818cf8" stroke-width="1.5" marker-end="url(#arrowI)" stroke-dasharray="5,3"/>
+      <line x1="155" y1="140" x2="270" y2="140" stroke="#818cf8" stroke-width="1.5" marker-end="url(#arrowI)" stroke-dasharray="5,3"/>
+      <line x1="155" y1="220" x2="270" y2="150" stroke="#818cf8" stroke-width="1.5" marker-end="url(#arrowI)" stroke-dasharray="5,3"/>
+
+      <!-- Transaction source -->
+      <rect x="20" y="260" width="130" height="0" rx="0" fill="none"/>
+
+      <!-- Merge center -->
+      <rect x="275" y="100" width="150" height="80" rx="12" fill="#1a2540" stroke="#818cf8" stroke-width="2"/>
+      <text x="350" y="132" text-anchor="middle" fill="#818cf8" font-size="20">🔗</text>
+      <text x="350" y="152" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="Hind Siliguri, sans-serif">DataFrame.merge()</text>
+      <text x="350" y="170" text-anchor="middle" fill="#64748b" font-size="11" font-family="Hind Siliguri, sans-serif">JOIN operations</text>
+
+      <!-- Arrow to output -->
+      <line x1="430" y1="140" x2="520" y2="140" stroke="#818cf8" stroke-width="2" marker-end="url(#arrowI)"/>
+
+      <!-- Output -->
+      <rect x="525" y="80" width="155" height="120" rx="12" fill="#0f2a18" stroke="#34d399" stroke-width="2"/>
+      <text x="602" y="115" text-anchor="middle" fill="#34d399" font-size="18">📊</text>
+      <text x="602" y="138" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="Hind Siliguri, sans-serif">Client KPI</text>
+      <text x="602" y="158" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri, sans-serif">DataFrame</text>
+      <text x="602" y="178" text-anchor="middle" fill="#64748b" font-size="10" font-family="Hind Siliguri, sans-serif">Total orders, Revenue</text>
+      <text x="602" y="194" text-anchor="middle" fill="#64748b" font-size="10" font-family="Hind Siliguri, sans-serif">Favourite store, etc.</text>
+    </svg>
+    <p class="diagram-caption">চিত্র: তিনটি API থেকে ডেটা এনে একটি Client KPI DataFrame তৈরি</p>
+  </div>
+
+  <h3>pandas merge() — Join-এর ধরন</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Join Type</th><th>how=</th><th>কী করে</th><th>কখন ব্যবহার</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="badge badge-blue">INNER</span></td><td><code>"inner"</code></td><td>শুধু উভয় table-এ মিলে এমন rows রাখে</td><td>শুধু পরিষ্কার matched ডেটা চাইলে</td></tr>
+        <tr><td><span class="badge badge-green">LEFT</span></td><td><code>"left"</code></td><td>বামের সব rows রাখে, ডানের না মিললে NaN</td><td>Main table-এ extra info যোগ করতে</td></tr>
+        <tr><td><span class="badge badge-orange">RIGHT</span></td><td><code>"right"</code></td><td>ডানের সব rows রাখে, বামের না মিললে NaN</td><td>Secondary table-কে base রাখতে</td></tr>
+        <tr><td><span class="badge badge-purple">OUTER</span></td><td><code>"outer"</code></td><td>দুই table-এর সব rows রাখে</td><td>কোনো ডেটাই বাদ দিতে না চাইলে</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="exercise-box">
+    <div class="exercise-header">
+      <span class="exercise-badge">💼 Interview Exercise</span>
+      <span class="exercise-title">সেকশন ৫ — Multi-source Data Integration</span>
+    </div>
+
+    <div class="exercise-q">
+      <div class="q-num">প্রশ্ন ০১ (Full ML Pipeline)</div>
+      <p class="q-text">তুমি একটি Customer Churn Prediction model বানাচ্ছ। তোমার কাছে আছে: (a) Transaction API (purchases history), (b) Customer Profile API (demographics), (c) Support Ticket API (complaints). এই তিনটি source থেকে features বের করো এবং ML-ready dataset তৈরি করো।</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+        <span class="code-lang">python — customer churn feature engineering</span>
+      </div>
+      <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">build_churn_features</span>(
+    transactions: pd.<span class="cls">DataFrame</span>,
+    customers: pd.<span class="cls">DataFrame</span>,
+    support_tickets: pd.<span class="cls">DataFrame</span>
+) -> pd.<span class="cls">DataFrame</span>:
+    <span class="str">"""
+    তিনটি API source থেকে Customer Churn prediction features বানায়।
+
+    Features:
+    ┌─ Transactional ─────────────────────────────────┐
+    │  recency: কতদিন আগে শেষ purchase করেছে          │
+    │  frequency: মোট কতটা transaction করেছে           │
+    │  monetary: মোট কত টাকা খরচ করেছে                 │
+    └─────────────────────────────────────────────────┘
+    ┌─ Demographic ────────────────────────────────────┐
+    │  age, loyalty_years: কতদিন ধরে customer           │
+    │  is_fidelized: loyalty program-এ আছে কি           │
+    └─────────────────────────────────────────────────┘
+    ┌─ Support ───────────────────────────────────────┐
+    │  complaint_count: কতটা complaint করেছে           │
+    │  avg_resolution_days: সমস্যা সমাধানে কত দিন লেগেছে │
+    └─────────────────────────────────────────────────┘
+    """</span>
+    <span class="cm"># --- RFM Features (Recency, Frequency, Monetary) ---</span>
+    today = pd.<span class="cls">Timestamp</span>.<span class="fn">now</span>()
+    transactions[<span class="str">'date'</span>] = pd.<span class="fn">to_datetime</span>(transactions[<span class="str">'date'</span>])
+    transactions[<span class="str">'amount'</span>] = transactions[<span class="str">'qty'</span>] * transactions[<span class="str">'price'</span>]
+
+    rfm = transactions.<span class="fn">groupby</span>(<span class="str">'client_id'</span>).<span class="fn">agg</span>(
+        recency=(<span class="str">'date'</span>, <span class="kw">lambda</span> x: (today - x.<span class="fn">max</span>()).days),
+        frequency=(<span class="str">'date'</span>, <span class="str">'count'</span>),
+        monetary=(<span class="str">'amount'</span>, <span class="str">'sum'</span>),
+        avg_basket=(<span class="str">'amount'</span>, <span class="str">'mean'</span>)
+    ).<span class="fn">reset_index</span>()
+
+    <span class="cm"># --- Customer demographic features ---</span>
+    customers[<span class="str">'loyalty_years'</span>] = (
+        today - pd.<span class="fn">to_datetime</span>(customers[<span class="str">'joined_date'</span>])
+    ).dt.days / <span class="num">365</span>
+
+    <span class="cm"># --- Support features ---</span>
+    support_features = support_tickets.<span class="fn">groupby</span>(<span class="str">'client_id'</span>).<span class="fn">agg</span>(
+        complaint_count=(<span class="str">'ticket_id'</span>, <span class="str">'count'</span>),
+        avg_resolution_days=(<span class="str">'resolution_days'</span>, <span class="str">'mean'</span>)
+    ).<span class="fn">reset_index</span>()
+
+    <span class="cm"># --- সব মেলানো (LEFT JOIN — সব customers রাখা) ---</span>
+    features = customers\
+        .<span class="fn">merge</span>(rfm, on=<span class="str">'client_id'</span>, how=<span class="str">'left'</span>)\
+        .<span class="fn">merge</span>(support_features, on=<span class="str">'client_id'</span>, how=<span class="str">'left'</span>)
+
+    <span class="cm"># --- Missing values handle করা ---</span>
+    <span class="cm"># support ticket নেই মানে 0 complaint</span>
+    features[<span class="str">'complaint_count'</span>] = features[<span class="str">'complaint_count'</span>].<span class="fn">fillna</span>(<span class="num">0</span>)
+    features[<span class="str">'avg_resolution_days'</span>] = features[<span class="str">'avg_resolution_days'</span>].<span class="fn">fillna</span>(<span class="num">0</span>)
+
+    <span class="cm"># transaction নেই মানে inactive customer → high churn risk</span>
+    features[<span class="str">'recency'</span>] = features[<span class="str">'recency'</span>].<span class="fn">fillna</span>(<span class="num">999</span>)
+    features[<span class="str">'frequency'</span>] = features[<span class="str">'frequency'</span>].<span class="fn">fillna</span>(<span class="num">0</span>)
+    features[<span class="str">'monetary'</span>] = features[<span class="str">'monetary'</span>].<span class="fn">fillna</span>(<span class="num">0</span>)
+
+    <span class="kw">return</span> features
+
+<span class="cm"># এই features এখন ML model-এ দেওয়ার জন্য তৈরি!</span>
+<span class="cm"># from sklearn.ensemble import RandomForestClassifier</span>
+<span class="cm"># X = features.drop(['client_id', 'churn'], axis=1)</span>
+<span class="cm"># y = features['churn']</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 6: CHESS ==================== -->
+<section class="section" id="sec6">
+  <div class="section-header">
+    <div class="section-num num-gold">০৬</div>
+    <h2 class="section-title">Chess.com API বিশ্লেষণ <span>— বাস্তব প্রজেক্ট</span></h2>
+  </div>
+
+  <p>Chess.com-এর public API ব্যবহার করে আমরা দাবার Grandmaster (GM) খেলোয়াড়দের ডেটা বিশ্লেষণ করব। এটা একটা সত্যিকারের API থেকে ডেটা নেওয়ার সম্পূর্ণ উদাহরণ।</p>
+
+  <h3>Chess.com API-এর মূল Endpoints</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Endpoint</th><th>কী পাবে</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><code>/pub/titled/{title}</code></td><td>Titled players-এর তালিকা</td><td>GM, IM, FM, CM</td></tr>
+        <tr><td><code>/pub/player/{username}</code></td><td>Player-এর personal info</td><td>দেশ, followers, join date</td></tr>
+        <tr><td><code>/pub/player/{username}/stats</code></td><td>Performance statistics</td><td>rating, win/loss/draw</td></tr>
+        <tr><td><code>/pub/country/{code}</code></td><td>দেশের তথ্য</td><td>name, code</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Timestamp → মানুষের বোঝার তারিখ</h3>
+
+  <div class="callout callout-info">
+    <div class="callout-icon">🕐</div>
+    <div class="callout-body">
+      <h4>Unix Timestamp কী?</h4>
+      <p>Chess.com <code>last_online: 1735000000</code> এই ধরনের সংখ্যা দেয়। এটা হলো ১ জানুয়ারি ১৯৭০ থেকে এখন পর্যন্ত কত <strong>সেকেন্ড</strong> পেরিয়েছে তার হিসাব। pandas-এর <code>pd.to_datetime(col, unit='s')</code> দিয়ে এটাকে সাধারণ তারিখে রূপান্তর করা যায়।</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+      <span class="code-lang">python — chess.com full analysis</span>
+    </div>
+    <pre><span class="kw">import</span> requests
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+headers = {<span class="str">'User-Agent'</span>: <span class="str">'MyChessAnalyzer/1.0'</span>}
+
+<span class="cm"># ===== STEP 1: সব GM-দের তালিকা =====</span>
+response = requests.<span class="fn">get</span>(
+    <span class="str">'https://api.chess.com/pub/titled/GM'</span>,
+    headers=headers
+)
+grandmasters = response.<span class="fn">json</span>()[<span class="str">'players'</span>]
+<span class="fn">print</span>(<span class="str">f"মোট {len(grandmasters)} জন Grandmaster পাওয়া গেছে"</span>)
+
+<span class="cm"># ===== STEP 2: প্রতিটা GM-এর personal info =====</span>
+<span class="kw">def</span> <span class="fn">get_player_info</span>(username):
+    <span class="kw">try</span>:
+        url = <span class="str">f'https://api.chess.com/pub/player/{username}'</span>
+        data = requests.<span class="fn">get</span>(url, headers=headers, timeout=<span class="num">10</span>).<span class="fn">json</span>()
+        <span class="kw">return</span> data
+    <span class="kw">except</span>:
+        <span class="kw">return</span> {}
+
+<span class="cm"># প্রথম ৫০ জনের তথ্য নেওয়া (সব নিলে অনেক সময় লাগবে)</span>
+gm_data = [<span class="fn">get_player_info</span>(gm) <span class="kw">for</span> gm <span class="kw">in</span> grandmasters[:<span class="num">50</span>]]
+df_gms = pd.<span class="cls">DataFrame</span>(gm_data)
+
+<span class="cm"># ===== STEP 3: অপ্রয়োজনীয় columns সরানো =====</span>
+drop_cols = [<span class="str">'url'</span>, <span class="str">'is_streamer'</span>, <span class="str">'avatar'</span>, <span class="str">'@id'</span>,
+             <span class="str">'verified'</span>, <span class="str">'location'</span>, <span class="str">'status'</span>, <span class="str">'twitch_url'</span>]
+df_gms = df_gms.<span class="fn">drop</span>(columns=[c <span class="kw">for</span> c <span class="kw">in</span> drop_cols <span class="kw">if</span> c <span class="kw">in</span> df_gms.columns])
+
+<span class="cm"># ===== STEP 4: Country endpoint → দেশের নাম =====</span>
+<span class="kw">if</span> <span class="str">'country'</span> <span class="kw">in</span> df_gms.columns:
+    country_endpoints = df_gms[<span class="str">'country'</span>].<span class="fn">dropna</span>().<span class="fn">unique</span>()
+    country_map = {}
+    <span class="kw">for</span> ep <span class="kw">in</span> country_endpoints:
+        <span class="kw">try</span>:
+            name = requests.<span class="fn">get</span>(ep, headers=headers).<span class="fn">json</span>()[<span class="str">'name'</span>]
+            country_map[ep] = name
+        <span class="kw">except</span>:
+            country_map[ep] = <span class="str">"Unknown"</span>
+    df_gms[<span class="str">'country'</span>] = df_gms[<span class="str">'country'</span>].<span class="fn">map</span>(country_map)
+
+<span class="cm"># ===== STEP 5: Timestamp → সাধারণ তারিখ =====</span>
+<span class="kw">for</span> col <span class="kw">in</span> [<span class="str">'last_online'</span>, <span class="str">'joined'</span>]:
+    <span class="kw">if</span> col <span class="kw">in</span> df_gms.columns:
+        df_gms[col] = pd.<span class="fn">to_datetime</span>(df_gms[col], unit=<span class="str">'s'</span>, errors=<span class="str">'coerce'</span>)
+
+<span class="cm"># ===== STEP 6: Statistics বের করা =====</span>
+<span class="fn">print</span>(<span class="str">"\n🏆 সবচেয়ে বেশি দেশ থেকে GM:"</span>)
+<span class="fn">print</span>(df_gms[<span class="str">'country'</span>].<span class="fn">value_counts</span>().<span class="fn">head</span>(<span class="num">5</span>))
+
+<span class="fn">print</span>(<span class="str">"\n👥 সবচেয়ে বেশি followers:"</span>)
+<span class="fn">print</span>(df_gms[[<span class="str">'name'</span>, <span class="str">'followers'</span>]].<span class="fn">sort_values</span>(
+    <span class="str">'followers'</span>, ascending=<span class="kw">False</span>).<span class="fn">head</span>(<span class="num">5</span>))
+
+<span class="cm"># ===== STEP 7: Player stats (Blitz/Rapid ratings) =====</span>
+<span class="kw">def</span> <span class="fn">get_player_stats</span>(username):
+    url = <span class="str">f'https://api.chess.com/pub/player/{username}/stats'</span>
+    data = requests.<span class="fn">get</span>(url, headers=headers, timeout=<span class="num">10</span>).<span class="fn">json</span>()
+    result = {<span class="str">'username'</span>: username}
+
+    <span class="kw">for</span> mode <span class="kw">in</span> [<span class="str">'chess_blitz'</span>, <span class="str">'chess_rapid'</span>]:
+        <span class="kw">if</span> mode <span class="kw">in</span> data:
+            rec = data[mode][<span class="str">'record'</span>]
+            total = rec[<span class="str">'win'</span>] + rec[<span class="str">'loss'</span>] + rec[<span class="str">'draw'</span>]
+            prefix = mode.<span class="fn">split</span>(<span class="str">'_'</span>)[<span class="num">1</span>].<span class="fn">capitalize</span>()
+            <span class="kw">if</span> total > <span class="num">0</span>:
+                result[<span class="str">f'{prefix}WinRate'</span>] = rec[<span class="str">'win'</span>] / total
+                result[<span class="str">f'{prefix}Rating'</span>] = data[mode][<span class="str">'last'</span>][<span class="str">'rating'</span>]
+    <span class="kw">return</span> result
+
+<span class="cm"># Correlation: কি জেতার হার বেশি হলে rating বেশি?</span>
+stats_data = [<span class="fn">get_player_stats</span>(u) <span class="kw">for</span> u <span class="kw">in</span> df_gms[<span class="str">'username'</span>].<span class="fn">dropna</span>()[:20]]
+df_stats = pd.<span class="cls">DataFrame</span>(stats_data)
+
+<span class="kw">if</span> <span class="str">'BlitzWinRate'</span> <span class="kw">in</span> df_stats.columns <span class="kw">and</span> <span class="str">'BlitzRating'</span> <span class="kw">in</span> df_stats.columns:
+    corr = df_stats[[<span class="str">'BlitzWinRate'</span>, <span class="str">'BlitzRating'</span>]].<span class="fn">corr</span>().iloc[<span class="num">0</span>, <span class="num">1</span>]
+    <span class="fn">print</span>(<span class="str">f"\n📊 BlitzWinRate vs BlitzRating correlation: {corr:.3f}"</span>)</pre>
+  </div>
+
+  <div class="exercise-box">
+    <div class="exercise-header">
+      <span class="exercise-badge">💼 Interview Exercise</span>
+      <span class="exercise-title">সেকশন ৬ — Real API Analysis</span>
+    </div>
+
+    <div class="exercise-q">
+      <div class="q-num">প্রশ্ন ০১ (Data Science Interview)</div>
+      <p class="q-text">Chess.com ডেটা ব্যবহার করে একটি model তৈরি করো যেটা predict করবে কোনো player Grandmaster হবে কি না, শুধু তাদের Blitz stats দেখে। কোন features সবচেয়ে গুরুত্বপূর্ণ হবে এবং কেন?</p>
+      <div class="q-hint">💡 Features: BlitzRating, BlitzWinRate, BlitzDrawRate, frequency (games played), followers। Random Forest বা Logistic Regression ব্যবহার করো।</div>
+    </div>
+
+    <div class="exercise-q">
+      <div class="q-num">প্রশ্ন ০২ (Statistical Reasoning)</div>
+      <p class="q-text">Chess.com API বিশ্লেষণে দেখা গেল BlitzWinRate এবং BlitzRating-এর correlation প্রত্যাশার চেয়ে কম। কেন এটা হতে পারে? কোন statistical concept এটা ব্যাখ্যা করে?</p>
+      <div class="q-hint">💡 Hint: "Elo system", "regression to the mean", "Elo inflation", tournament selection bias — এই concepts চিন্তা করো।</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SECTION 7: ALGORITHMS ==================== -->
+<section class="section" id="sec7">
+  <div class="section-header">
+    <div class="section-num num-blue">০৭</div>
+    <h2 class="section-title">অ্যালগরিদম <span>— কিন্ডারগার্টেন থেকে ML প্রজেক্ট</span></h2>
+  </div>
+
+  <p>এই সেকশনে ML Engineering-এ ব্যবহৃত গুরুত্বপূর্ণ অ্যালগরিদমগুলো একদম সহজ ভাষায় বুঝব এবং Python-এ implement করব।</p>
+
+  <!-- ===== ALGO 1: LINEAR REGRESSION ===== -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-emoji">📈</div>
+      <div>
+        <div class="algo-name">Linear Regression — রৈখিক প্রতিগমন</div>
+        <div class="algo-complexity">Time: O(n·d²) | Space: O(d²) | Supervised Learning</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-story">
+        <strong>🧒 শিশুর মতো বুঝি:</strong> ধরো তুমি লক্ষ্য করলে — বাসায় যত বেশি মানুষ আসে, তত বেশি ভাত রান্না হয়। ৪ জন = ৪ কাপ ভাত, ৮ জন = ৮ কাপ। এই সম্পর্কটা একটা সরল রেখা! Linear Regression ঠিক এই কাজটাই করে — দুটো জিনিসের মধ্যে সরল রেখার সম্পর্ক বের করে।
+      </div>
+      <p>সূত্র: <strong>y = mx + b</strong> (y = মান, x = input, m = slope, b = intercept)</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span class="code-lang">python — linear regression from scratch + sklearn</span>
+        </div>
+        <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> <span class="cls">LinearRegression</span>
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> <span class="fn">train_test_split</span>
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> mean_squared_error, r2_score
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># ===== FROM SCRATCH (বুঝতে) =====</span>
+<span class="kw">class</span> <span class="cls">SimpleLinearRegression</span>:
+    <span class="str">"""নিজে বানানো Linear Regression"""</span>
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="var">self</span>, X, y):
+        <span class="cm"># Least Squares method:</span>
+        <span class="cm"># slope m = Σ(xi-x̄)(yi-ȳ) / Σ(xi-x̄)²</span>
+        x_mean, y_mean = np.<span class="fn">mean</span>(X), np.<span class="fn">mean</span>(y)
+        numerator = np.<span class="fn">sum</span>((X - x_mean) * (y - y_mean))
+        denominator = np.<span class="fn">sum</span>((X - x_mean) ** <span class="num">2</span>)
+        <span class="var">self</span>.m = numerator / denominator
+        <span class="var">self</span>.b = y_mean - <span class="var">self</span>.m * x_mean
+        <span class="kw">return</span> <span class="var">self</span>
+
+    <span class="kw">def</span> <span class="fn">predict</span>(<span class="var">self</span>, X):
+        <span class="kw">return</span> <span class="var">self</span>.m * X + <span class="var">self</span>.b
+
+<span class="cm"># ===== ML PROJECT উদাহরণ =====</span>
+<span class="cm"># API থেকে আনা chess player ডেটা দিয়ে:</span>
+<span class="cm"># কত games খেললে rating কত হয়?</span>
+
+np.random.<span class="fn">seed</span>(<span class="num">42</span>)
+games_played = np.random.<span class="fn">randint</span>(<span class="num">100</span>, <span class="num">5000</span>, <span class="num">200</span>)
+<span class="cm"># Rating = 1200 + 0.1 * games + noise</span>
+blitz_rating = <span class="num">1200</span> + <span class="num">0.1</span> * games_played + np.random.<span class="fn">normal</span>(<span class="num">0</span>, <span class="num">80</span>, <span class="num">200</span>)
+
+X = games_played.<span class="fn">reshape</span>(-<span class="num">1</span>, <span class="num">1</span>)
+y = blitz_rating
+
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>
+)
+
+<span class="cm"># sklearn দিয়ে (production-grade)</span>
+model = <span class="cls">LinearRegression</span>()
+model.<span class="fn">fit</span>(X_train, y_train)
+
+y_pred = model.<span class="fn">predict</span>(X_test)
+mse = <span class="fn">mean_squared_error</span>(y_test, y_pred)
+r2 = <span class="fn">r2_score</span>(y_test, y_pred)
+
+<span class="fn">print</span>(<span class="str">f"Slope (m): {model.coef_[0]:.4f}"</span>)
+<span class="fn">print</span>(<span class="str">f"Intercept (b): {model.intercept_:.2f}"</span>)
+<span class="fn">print</span>(<span class="str">f"MSE: {mse:.2f}"</span>)
+<span class="fn">print</span>(<span class="str">f"R² Score: {r2:.4f}"</span>)  <span class="cm"># 1.0 = perfect, 0 = no relationship</span>
+
+<span class="cm"># নতুন prediction:</span>
+new_games = np.<span class="fn">array</span>([[<span class="num">2000</span>]])
+pred_rating = model.<span class="fn">predict</span>(new_games)[<span class="num">0</span>]
+<span class="fn">print</span>(<span class="str">f"\n2000 games খেললে predicted rating: {pred_rating:.0f}"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ALGO 2: DECISION TREE ===== -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-emoji">🌳</div>
+      <div>
+        <div class="algo-name">Decision Tree — সিদ্ধান্ত গাছ</div>
+        <div class="algo-complexity">Time: O(n·d·log n) | Space: O(n) | Supervised (Classification/Regression)</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-story">
+        <strong>🧒 শিশুর মতো বুঝি:</strong> তুমি কি আজ বাইরে খেলতে যাবে? প্রথম প্রশ্ন: বৃষ্টি আছে? হ্যাঁ → ঘরে থাকো। না → পরের প্রশ্ন: খুব গরম? হ্যাঁ → ঘরে থাকো। না → বাইরে খেলো! Decision Tree ঠিক এভাবে কাজ করে — একটার পর একটা প্রশ্ন করে সিদ্ধান্ত নেয়।
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span class="code-lang">python — decision tree for chess player classification</span>
+        </div>
+        <pre><span class="kw">from</span> sklearn.tree <span class="kw">import</span> <span class="cls">DecisionTreeClassifier</span>, <span class="fn">export_text</span>
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> <span class="cls">LabelEncoder</span>
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># ML Project: Chess API data দিয়ে player level predict করা</span>
+<span class="cm"># Features: BlitzRating, RapidRating, BlitzWinRate, followers</span>
+<span class="cm"># Target: player_tier (Beginner / Intermediate / Expert / GM)</span>
+
+np.random.<span class="fn">seed</span>(<span class="num">42</span>)
+n = <span class="num">1000</span>
+
+<span class="cm"># Synthetic chess player dataset</span>
+df = pd.<span class="cls">DataFrame</span>({
+    <span class="str">'blitz_rating'</span>: np.random.<span class="fn">normal</span>(<span class="num">1500</span>, <span class="num">400</span>, n).<span class="fn">clip</span>(<span class="num">800</span>, <span class="num">3200</span>),
+    <span class="str">'rapid_rating'</span>: np.random.<span class="fn">normal</span>(<span class="num">1450</span>, <span class="num">380</span>, n).<span class="fn">clip</span>(<span class="num">800</span>, <span class="num">3200</span>),
+    <span class="str">'win_rate'</span>: np.random.<span class="fn">uniform</span>(<span class="num">0.3</span>, <span class="num">0.8</span>, n),
+    <span class="str">'games_played'</span>: np.random.<span class="fn">randint</span>(<span class="num">50</span>, <span class="num">10000</span>, n),
+    <span class="str">'followers'</span>: np.random.<span class="fn">randint</span>(<span class="num">0</span>, <span class="num">100000</span>, n)
+})
+
+<span class="cm"># Target: Rating অনুযায়ী tier নির্ধারণ</span>
+<span class="kw">def</span> <span class="fn">assign_tier</span>(rating):
+    <span class="kw">if</span> rating >= <span class="num">2500</span>: <span class="kw">return</span> <span class="str">'GM'</span>
+    <span class="kw">elif</span> rating >= <span class="num">2000</span>: <span class="kw">return</span> <span class="str">'Expert'</span>
+    <span class="kw">elif</span> rating >= <span class="num">1400</span>: <span class="kw">return</span> <span class="str">'Intermediate'</span>
+    <span class="kw">else</span>: <span class="kw">return</span> <span class="str">'Beginner'</span>
+
+df[<span class="str">'tier'</span>] = df[<span class="str">'blitz_rating'</span>].<span class="fn">apply</span>(assign_tier)
+
+feature_cols = [<span class="str">'blitz_rating'</span>, <span class="str">'rapid_rating'</span>, <span class="str">'win_rate'</span>,
+                <span class="str">'games_played'</span>, <span class="str">'followers'</span>]
+X = df[feature_cols]
+y = df[<span class="str">'tier'</span>]
+
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>, stratify=y
+)
+
+<span class="cm"># Decision Tree train করা</span>
+tree = <span class="cls">DecisionTreeClassifier</span>(
+    max_depth=<span class="num">5</span>,         <span class="cm"># গাছ কত গভীর হবে</span>
+    min_samples_split=<span class="num">10</span>, <span class="cm"># একটা node split করতে কমপক্ষে কত sample</span>
+    random_state=<span class="num">42</span>
+)
+tree.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="fn">print</span>(<span class="str">"Classification Report:"</span>)
+<span class="fn">print</span>(<span class="fn">classification_report</span>(y_test, tree.<span class="fn">predict</span>(X_test)))
+
+<span class="cm"># Feature importance — কোন feature সবচেয়ে গুরুত্বপূর্ণ?</span>
+importance_df = pd.<span class="cls">DataFrame</span>({
+    <span class="str">'feature'</span>: feature_cols,
+    <span class="str">'importance'</span>: tree.feature_importances_
+}).<span class="fn">sort_values</span>(<span class="str">'importance'</span>, ascending=<span class="kw">False</span>)
+<span class="fn">print</span>(<span class="str">"\nFeature Importance:"</span>)
+<span class="fn">print</span>(importance_df.<span class="fn">to_string</span>(index=<span class="kw">False</span>))</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ALGO 3: RANDOM FOREST ===== -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-emoji">🌲🌲🌲</div>
+      <div>
+        <div class="algo-name">Random Forest — এলোমেলো বন</div>
+        <div class="algo-complexity">Time: O(n·d·k·log n) | Ensemble Method | Very Popular in ML</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-story">
+        <strong>🧒 শিশুর মতো বুঝি:</strong> একজন ডাক্তার ভুল করতে পারে। কিন্তু ১০০ জন ডাক্তার মিলে যদি মত দেয়, তাহলে ভুল হওয়ার সম্ভাবনা কমে! Random Forest হলো অনেকগুলো Decision Tree একসাথে — সবার সিদ্ধান্তের majority vote বা average নেওয়া হয়।
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span class="code-lang">python — random forest with hyperparameter tuning</span>
+        </div>
+        <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="cls">RandomForestClassifier</span>
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> <span class="cls">GridSearchCV</span>, cross_val_score
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Same chess dataset থেকে...</span>
+
+<span class="cm"># ===== Hyperparameter Tuning =====</span>
+param_grid = {
+    <span class="str">'n_estimators'</span>: [<span class="num">50</span>, <span class="num">100</span>, <span class="num">200</span>],    <span class="cm"># কতটা গাছ</span>
+    <span class="str">'max_depth'</span>: [<span class="num">5</span>, <span class="num">10</span>, <span class="kw">None</span>],           <span class="cm"># গাছ কত গভীর</span>
+    <span class="str">'min_samples_split'</span>: [<span class="num">2</span>, <span class="num">5</span>, <span class="num">10</span>]       <span class="cm"># split করার minimum sample</span>
+}
+
+rf = <span class="cls">RandomForestClassifier</span>(random_state=<span class="num">42</span>, n_jobs=-<span class="num">1</span>)
+
+<span class="cm"># GridSearchCV: সব combination চেষ্টা করে সেরাটা বেছে নেয়</span>
+grid_search = <span class="cls">GridSearchCV</span>(
+    rf, param_grid,
+    cv=<span class="num">5</span>,            <span class="cm"># 5-fold cross validation</span>
+    scoring=<span class="str">'accuracy'</span>,
+    n_jobs=-<span class="num">1</span>         <span class="cm"># সব CPU ব্যবহার করো</span>
+)
+grid_search.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="fn">print</span>(<span class="str">f"সেরা parameters: {grid_search.best_params_}"</span>)
+<span class="fn">print</span>(<span class="str">f"Best CV accuracy: {grid_search.best_score_:.4f}"</span>)
+
+best_rf = grid_search.best_estimator_
+
+<span class="cm"># Cross-validation score</span>
+cv_scores = <span class="fn">cross_val_score</span>(best_rf, X, y, cv=<span class="num">5</span>)
+<span class="fn">print</span>(<span class="str">f"\nCV Scores: {cv_scores}"</span>)
+<span class="fn">print</span>(<span class="str">f"Mean: {cv_scores.mean():.4f} ± {cv_scores.std():.4f}"</span>)
+
+<span class="cm"># Test set final evaluation</span>
+test_accuracy = best_rf.<span class="fn">score</span>(X_test, y_test)
+<span class="fn">print</span>(<span class="str">f"\nTest Accuracy: {test_accuracy:.4f}"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ALGO 4: K-MEANS ===== -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-emoji">🎯</div>
+      <div>
+        <div class="algo-name">K-Means Clustering — দলে ভাগ করা</div>
+        <div class="algo-complexity">Time: O(n·k·i·d) | Space: O(n+k) | Unsupervised Learning</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-story">
+        <strong>🧒 শিশুর মতো বুঝি:</strong> ধরো তোমার ক্লাসে ৩০ জন ছাত্র আছে। শিক্ষক বললেন "৩টা দল বানাও, যেন কাছের মানুষরা একদলে পড়ে।" তুমি আপনা-আপনি দলের কেন্দ্র ঠিক করো, কাছের মানুষরা সেই দলে পড়ে, আবার কেন্দ্র নতুন করে ঠিক করো — এভাবেই K-Means কাজ করে!
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span class="code-lang">python — k-means for customer segmentation</span>
+        </div>
+        <pre><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> <span class="cls">KMeans</span>
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> <span class="cls">StandardScaler</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># ML Project: Transaction ডেটা দিয়ে Customer Segmentation</span>
+<span class="cm"># API থেকে আনা Customer RFM features</span>
+np.random.<span class="fn">seed</span>(<span class="num">42</span>)
+
+customers = pd.<span class="cls">DataFrame</span>({
+    <span class="str">'recency'</span>: np.random.<span class="fn">exponential</span>(<span class="num">30</span>, <span class="num">500</span>),      <span class="cm"># কতদিন আগে শেষ purchase</span>
+    <span class="str">'frequency'</span>: np.random.<span class="fn">poisson</span>(<span class="num">8</span>, <span class="num">500</span>) + <span class="num">1</span>,      <span class="cm"># কতবার কিনেছে</span>
+    <span class="str">'monetary'</span>: np.random.<span class="fn">exponential</span>(<span class="num">200</span>, <span class="num">500</span>)       <span class="cm"># মোট কত টাকা</span>
+})
+
+<span class="cm"># ⚠️ IMPORTANT: Clustering করার আগে Scaling করতে হবে!</span>
+<span class="cm"># নাহলে বড় মানের feature (monetary) সব নিয়ন্ত্রণ করবে</span>
+scaler = <span class="cls">StandardScaler</span>()
+X_scaled = scaler.<span class="fn">fit_transform</span>(customers)
+
+<span class="cm"># Elbow Method: সঠিক K বেছে নেওয়া</span>
+inertias = []
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">11</span>):
+    km = <span class="cls">KMeans</span>(n_clusters=k, random_state=<span class="num">42</span>, n_init=<span class="num">10</span>)
+    km.<span class="fn">fit</span>(X_scaled)
+    inertias.<span class="fn">append</span>(km.inertia_)
+<span class="cm"># Plot করলে "kink" বা "elbow" দেখা যাবে — সেটাই সঠিক K</span>
+
+<span class="cm"># K=4 ব্যবহার করে final clustering</span>
+kmeans = <span class="cls">KMeans</span>(n_clusters=<span class="num">4</span>, random_state=<span class="num">42</span>, n_init=<span class="num">10</span>)
+customers[<span class="str">'segment'</span>] = kmeans.<span class="fn">fit_predict</span>(X_scaled)
+
+<span class="cm"># Segment বিশ্লেষণ</span>
+segment_analysis = customers.<span class="fn">groupby</span>(<span class="str">'segment'</span>).<span class="fn">agg</span>({
+    <span class="str">'recency'</span>: <span class="str">'mean'</span>,
+    <span class="str">'frequency'</span>: <span class="str">'mean'</span>,
+    <span class="str">'monetary'</span>: <span class="str">'mean'</span>,
+    <span class="str">'segment'</span>: <span class="str">'count'</span>
+}).<span class="fn">rename</span>(columns={<span class="str">'segment'</span>: <span class="str">'count'</span>})
+
+<span class="fn">print</span>(segment_analysis.<span class="fn">round</span>(<span class="num">2</span>))
+
+<span class="cm"># Segment নাম দেওয়া (domain knowledge দিয়ে)</span>
+<span class="cm"># কম recency + বেশি frequency + বেশি monetary = "Champions"</span>
+<span class="cm"># বেশি recency + কম frequency = "At Risk"</span>
+<span class="cm"># ইত্যাদি</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ALGO 5: LOGISTIC REGRESSION ===== -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-emoji">🔀</div>
+      <div>
+        <div class="algo-name">Logistic Regression — সম্ভাবনার হিসাব</div>
+        <div class="algo-complexity">Time: O(n·d·iterations) | Binary/Multi-class Classification</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-story">
+        <strong>🧒 শিশুর মতো বুঝি:</strong> "এটা কি বিড়াল না কুকুর?" — Linear Regression এই প্রশ্নের উত্তর দিতে পারে না কারণ উত্তর 0 বা 1 হতে হবে। Logistic Regression এই কাজ করে — এটা বলে "৮০% সম্ভাবনা এটা বিড়াল, ২০% কুকুর।"
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span class="code-lang">python — logistic regression for churn prediction</span>
+        </div>
+        <pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> <span class="cls">LogisticRegression</span>
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> <span class="cls">StandardScaler</span>
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> <span class="cls">Pipeline</span>
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> roc_auc_score, confusion_matrix
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># ML Project: Customer Churn Prediction</span>
+<span class="cm"># API থেকে আনা transaction + support ticket data দিয়ে</span>
+
+np.random.<span class="fn">seed</span>(<span class="num">42</span>)
+n = <span class="num">1000</span>
+
+df = pd.<span class="cls">DataFrame</span>({
+    <span class="str">'recency'</span>: np.random.<span class="fn">exponential</span>(<span class="num">45</span>, n),
+    <span class="str">'frequency'</span>: np.random.<span class="fn">poisson</span>(<span class="num">6</span>, n) + <span class="num">1</span>,
+    <span class="str">'monetary'</span>: np.random.<span class="fn">exponential</span>(<span class="num">150</span>, n),
+    <span class="str">'complaint_count'</span>: np.random.<span class="fn">poisson</span>(<span class="num">1.5</span>, n),
+    <span class="str">'loyalty_years'</span>: np.random.<span class="fn">uniform</span>(<span class="num">0.1</span>, <span class="num">10</span>, n)
+})
+
+<span class="cm"># Target: recency বেশি + complaint বেশি = churn likely</span>
+churn_prob = <span class="num">1</span> / (<span class="num">1</span> + np.<span class="fn">exp</span>(-(
+    <span class="num">0.05</span> * df[<span class="str">'recency'</span>] - <span class="num">0.3</span> * df[<span class="str">'frequency'</span>] +
+    <span class="num">0.5</span> * df[<span class="str">'complaint_count'</span>] - <span class="num">0.2</span> * df[<span class="str">'loyalty_years'</span>] - <span class="num">2</span>
+)))
+df[<span class="str">'churned'</span>] = (np.random.<span class="fn">random</span>(n) < churn_prob).<span class="fn">astype</span>(<span class="cls">int</span>)
+
+feature_cols = [<span class="str">'recency'</span>, <span class="str">'frequency'</span>, <span class="str">'monetary'</span>,
+                <span class="str">'complaint_count'</span>, <span class="str">'loyalty_years'</span>]
+X = df[feature_cols]
+y = df[<span class="str">'churned'</span>]
+
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>, stratify=y
+)
+
+<span class="cm"># Pipeline: Scaling + Logistic Regression একসাথে</span>
+pipe = <span class="cls">Pipeline</span>([
+    (<span class="str">'scaler'</span>, <span class="cls">StandardScaler</span>()),
+    (<span class="str">'model'</span>, <span class="cls">LogisticRegression</span>(
+        C=<span class="num">1.0</span>,          <span class="cm"># regularization (ছোট = বেশি regularization)</span>
+        max_iter=<span class="num">1000</span>,
+        class_weight=<span class="str">'balanced'</span>  <span class="cm"># imbalanced data handle</span>
+    ))
+])
+
+pipe.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="cm"># Predictions</span>
+y_pred = pipe.<span class="fn">predict</span>(X_test)
+y_prob = pipe.<span class="fn">predict_proba</span>(X_test)[:, <span class="num">1</span>]  <span class="cm"># churn probability</span>
+
+<span class="cm"># Evaluation</span>
+<span class="fn">print</span>(<span class="str">f"AUC-ROC: {roc_auc_score(y_test, y_prob):.4f}"</span>)
+cm = <span class="fn">confusion_matrix</span>(y_test, y_pred)
+<span class="fn">print</span>(<span class="str">f"Confusion Matrix:\n{cm}"</span>)
+
+<span class="cm"># Coefficients — কোন feature সবচেয়ে প্রভাবশালী?</span>
+coef_df = pd.<span class="cls">DataFrame</span>({
+    <span class="str">'feature'</span>: feature_cols,
+    <span class="str">'coefficient'</span>: pipe.<span class="fn">named_steps</span>[<span class="str">'model'</span>].coef_[<span class="num">0</span>]
+}).<span class="fn">sort_values</span>(<span class="str">'coefficient'</span>, ascending=<span class="kw">False</span>)
+<span class="fn">print</span>(<span class="str">"\nFeature Coefficients (positive = churn বাড়ায়):"</span>)
+<span class="fn">print</span>(coef_df)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ALGO 6: NEURAL NETWORK ===== -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-emoji">🧠</div>
+      <div>
+        <div class="algo-name">Neural Network — কৃত্রিম মস্তিষ্ক</div>
+        <div class="algo-complexity">Time: O(epochs·n·layers) | Deep Learning | Most Flexible</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-story">
+        <strong>🧒 শিশুর মতো বুঝি:</strong> তোমার মস্তিষ্কে অনেক neuron আছে। একটা neuron অনেকের কাছ থেকে সংকেত পায়, সেগুলো মিলিয়ে নতুন সংকেত পাঠায়। Neural Network ঠিক এভাবেই কাজ করে — অনেক layer, প্রতিটা layer-এ অনেক "artificial neuron।" প্রথম layer input নেয়, শেষ layer output দেয়।
+      </div>
+
+      <!-- SVG: Neural Network diagram -->
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 680 240" xmlns="http://www.w3.org/2000/svg" style="max-width:650px;width:100%;">
+          <!-- Input Layer -->
+          <text x="80" y="25" text-anchor="middle" fill="#38bdf8" font-size="12" font-family="Hind Siliguri, sans-serif">Input Layer</text>
+          <circle cx="80" cy="60" r="18" fill="#0f2444" stroke="#38bdf8" stroke-width="2"/>
+          <text x="80" y="65" text-anchor="middle" fill="#38bdf8" font-size="11" font-family="JetBrains Mono, monospace">x₁</text>
+          <circle cx="80" cy="120" r="18" fill="#0f2444" stroke="#38bdf8" stroke-width="2"/>
+          <text x="80" y="125" text-anchor="middle" fill="#38bdf8" font-size="11" font-family="JetBrains Mono, monospace">x₂</text>
+          <circle cx="80" cy="180" r="18" fill="#0f2444" stroke="#38bdf8" stroke-width="2"/>
+          <text x="80" y="185" text-anchor="middle" fill="#38bdf8" font-size="11" font-family="JetBrains Mono, monospace">x₃</text>
+
+          <!-- Hidden Layer 1 -->
+          <text x="270" y="25" text-anchor="middle" fill="#818cf8" font-size="12" font-family="Hind Siliguri, sans-serif">Hidden Layer</text>
+          <circle cx="270" cy="50" r="18" fill="#1a0f44" stroke="#818cf8" stroke-width="2"/>
+          <circle cx="270" cy="100" r="18" fill="#1a0f44" stroke="#818cf8" stroke-width="2"/>
+          <circle cx="270" cy="150" r="18" fill="#1a0f44" stroke="#818cf8" stroke-width="2"/>
+          <circle cx="270" cy="200" r="18" fill="#1a0f44" stroke="#818cf8" stroke-width="2"/>
+
+          <!-- Hidden Layer 2 -->
+          <circle cx="430" cy="70" r="18" fill="#1a0f44" stroke="#818cf8" stroke-width="2"/>
+          <circle cx="430" cy="130" r="18" fill="#1a0f44" stroke="#818cf8" stroke-width="2"/>
+          <circle cx="430" cy="190" r="18" fill="#1a0f44" stroke="#818cf8" stroke-width="2"/>
+
+          <!-- Output Layer -->
+          <text x="600" y="25" text-anchor="middle" fill="#34d399" font-size="12" font-family="Hind Siliguri, sans-serif">Output</text>
+          <circle cx="600" cy="120" r="22" fill="#0f2a18" stroke="#34d399" stroke-width="2.5"/>
+          <text x="600" y="125" text-anchor="middle" fill="#34d399" font-size="11" font-family="JetBrains Mono, monospace">ŷ</text>
+
+          <!-- Connections Input→H1 -->
+          <g stroke="#1e2d4a" stroke-width="0.8" opacity="0.7">
+            <line x1="98" y1="60" x2="252" y2="50"/>
+            <line x1="98" y1="60" x2="252" y2="100"/>
+            <line x1="98" y1="60" x2="252" y2="150"/>
+            <line x1="98" y1="60" x2="252" y2="200"/>
+            <line x1="98" y1="120" x2="252" y2="50"/>
+            <line x1="98" y1="120" x2="252" y2="100"/>
+            <line x1="98" y1="120" x2="252" y2="150"/>
+            <line x1="98" y1="120" x2="252" y2="200"/>
+            <line x1="98" y1="180" x2="252" y2="50"/>
+            <line x1="98" y1="180" x2="252" y2="100"/>
+            <line x1="98" y1="180" x2="252" y2="150"/>
+            <line x1="98" y1="180" x2="252" y2="200"/>
+          </g>
+
+          <!-- Connections H1→H2 -->
+          <g stroke="#1e2d4a" stroke-width="0.8" opacity="0.7">
+            <line x1="288" y1="50" x2="412" y2="70"/>
+            <line x1="288" y1="50" x2="412" y2="130"/>
+            <line x1="288" y1="50" x2="412" y2="190"/>
+            <line x1="288" y1="100" x2="412" y2="70"/>
+            <line x1="288" y1="100" x2="412" y2="130"/>
+            <line x1="288" y1="100" x2="412" y2="190"/>
+            <line x1="288" y1="150" x2="412" y2="70"/>
+            <line x1="288" y1="150" x2="412" y2="130"/>
+            <line x1="288" y1="150" x2="412" y2="190"/>
+            <line x1="288" y1="200" x2="412" y2="70"/>
+            <line x1="288" y1="200" x2="412" y2="130"/>
+            <line x1="288" y1="200" x2="412" y2="190"/>
+          </g>
+
+          <!-- Connections H2→Output -->
+          <g stroke="#34d399" stroke-width="1" opacity="0.6">
+            <line x1="448" y1="70" x2="578" y2="120"/>
+            <line x1="448" y1="130" x2="578" y2="120"/>
+            <line x1="448" y1="190" x2="578" y2="120"/>
+          </g>
+
+          <!-- Labels -->
+          <text x="80" y="215" text-anchor="middle" fill="#64748b" font-size="10" font-family="Hind Siliguri, sans-serif">Features</text>
+          <text x="270" y="225" text-anchor="middle" fill="#64748b" font-size="10" font-family="Hind Siliguri, sans-serif">4 neurons</text>
+          <text x="430" y="215" text-anchor="middle" fill="#64748b" font-size="10" font-family="Hind Siliguri, sans-serif">3 neurons</text>
+          <text x="600" y="155" text-anchor="middle" fill="#64748b" font-size="10" font-family="Hind Siliguri, sans-serif">Prediction</text>
+        </svg>
+        <p class="diagram-caption">চিত্র: Neural Network-এর layers এবং connections</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span class="code-lang">python — neural network with sklearn MLPClassifier</span>
+        </div>
+        <pre><span class="kw">from</span> sklearn.neural_network <span class="kw">import</span> <span class="cls">MLPClassifier</span>
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> <span class="cls">StandardScaler</span>
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> <span class="cls">Pipeline</span>
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># ML Project: Chess player tier classification with Neural Network</span>
+
+<span class="cm"># sklearn-এর MLPClassifier (Multi-Layer Perceptron)</span>
+nn_pipeline = <span class="cls">Pipeline</span>([
+    (<span class="str">'scaler'</span>, <span class="cls">StandardScaler</span>()),  <span class="cm"># Neural Net-এ scaling জরুরি!</span>
+    (<span class="str">'model'</span>, <span class="cls">MLPClassifier</span>(
+        hidden_layer_sizes=(<span class="num">128</span>, <span class="num">64</span>, <span class="num">32</span>),  <span class="cm"># 3টা hidden layer</span>
+        activation=<span class="str">'relu'</span>,              <span class="cm"># activation function</span>
+        learning_rate_init=<span class="num">0.001</span>,        <span class="cm"># কত দ্রুত শিখবে</span>
+        max_iter=<span class="num">500</span>,                   <span class="cm"># সর্বোচ্চ কত epoch</span>
+        early_stopping=<span class="kw">True</span>,            <span class="cm"># overfitting হলে থামবে</span>
+        validation_fraction=<span class="num">0.1</span>,        <span class="cm"># 10% validation data</span>
+        random_state=<span class="num">42</span>,
+        verbose=<span class="kw">False</span>
+    ))
+])
+
+nn_pipeline.<span class="fn">fit</span>(X_train, y_train)
+y_pred_nn = nn_pipeline.<span class="fn">predict</span>(X_test)
+
+<span class="fn">print</span>(<span class="str">"Neural Network Results:"</span>)
+<span class="fn">print</span>(<span class="fn">classification_report</span>(y_test, y_pred_nn))
+
+<span class="cm"># Model Comparison</span>
+models = {
+    <span class="str">'Decision Tree'</span>: tree,
+    <span class="str">'Random Forest'</span>: best_rf,
+    <span class="str">'Neural Network'</span>: nn_pipeline
+}
+
+<span class="fn">print</span>(<span class="str">"\n📊 Model Comparison:"</span>)
+<span class="fn">print</span>(<span class="str">f"{'Model':<20} {'Accuracy':>10}"</span>)
+<span class="fn">print</span>(<span class="str">"-" * 32</span>)
+<span class="kw">for</span> name, m <span class="kw">in</span> models.items():
+    acc = m.<span class="fn">score</span>(X_test, y_test)
+    <span class="fn">print</span>(<span class="str">f"{name:<20} {acc:>10.4f}"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ALGO 7: GRADIENT BOOSTING ===== -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-emoji">🚀</div>
+      <div>
+        <div class="algo-name">Gradient Boosting (XGBoost) — ধীরে ধীরে শেখা</div>
+        <div class="algo-complexity">Time: O(n·d·k·trees) | State-of-the-art for tabular data</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <div class="algo-story">
+        <strong>🧒 শিশুর মতো বুঝি:</strong> ধরো তুমি একটা ছবি আঁকছ। প্রথমে এলোমেলো আঁকলে, তারপর দেখলে কোথায় ভুল হয়েছে, শুধু সেই ভুলগুলো ঠিক করলে। আবার দেখলে, আবার ঠিক করলে — এভাবে অনেকবার। Gradient Boosting ঠিক এটাই করে — প্রতিটা নতুন tree আগের tree-এর ভুল (residuals) ঠিক করার চেষ্টা করে।
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div>
+          <span class="code-lang">python — xgboost for ml engineering project</span>
+        </div>
+        <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> <span class="cls">GradientBoostingClassifier</span>
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># sklearn-এর Gradient Boosting (production-ready)</span>
+gb = <span class="cls">GradientBoostingClassifier</span>(
+    n_estimators=<span class="num">200</span>,       <span class="cm"># কতটা tree</span>
+    learning_rate=<span class="num">0.05</span>,    <span class="cm"># প্রতি step-এ কতটুকু শিখবে (ছোট = ধীরে কিন্তু ভালো)</span>
+    max_depth=<span class="num">4</span>,            <span class="cm"># প্রতিটা tree-এর depth</span>
+    subsample=<span class="num">0.8</span>,          <span class="cm"># প্রতিটা tree-এ ৮০% ডেটা ব্যবহার</span>
+    random_state=<span class="num">42</span>
+)
+
+gb.<span class="fn">fit</span>(X_train, y_train)
+
+cv_scores = <span class="fn">cross_val_score</span>(gb, X, y, cv=<span class="num">5</span>, scoring=<span class="str">'accuracy'</span>)
+<span class="fn">print</span>(<span class="str">f"Gradient Boosting CV: {cv_scores.mean():.4f} ± {cv_scores.std():.4f}"</span>)
+
+<span class="cm"># XGBoost (আরও দ্রুত, আরও ভালো — সবচেয়ে জনপ্রিয়)</span>
+<span class="cm"># pip install xgboost</span>
+<span class="kw">try</span>:
+    <span class="kw">from</span> xgboost <span class="kw">import</span> <span class="cls">XGBClassifier</span>
+    <span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> <span class="cls">LabelEncoder</span>
+
+    le = <span class="cls">LabelEncoder</span>()
+    y_encoded = le.<span class="fn">fit_transform</span>(y)
+    X_tr, X_te, y_tr, y_te = <span class="fn">train_test_split</span>(
+        X, y_encoded, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>
+    )
+
+    xgb = <span class="cls">XGBClassifier</span>(
+        n_estimators=<span class="num">300</span>,
+        learning_rate=<span class="num">0.05</span>,
+        max_depth=<span class="num">5</span>,
+        use_label_encoder=<span class="kw">False</span>,
+        eval_metric=<span class="str">'mlogloss'</span>,
+        random_state=<span class="num">42</span>
+    )
+    xgb.<span class="fn">fit</span>(X_tr, y_tr, eval_set=[(X_te, y_te)], verbose=<span class="kw">False</span>)
+    <span class="fn">print</span>(<span class="str">f"XGBoost Test Accuracy: {xgb.score(X_te, y_te):.4f}"</span>)
+<span class="kw">except</span> <span class="cls">ImportError</span>:
+    <span class="fn">print</span>(<span class="str">"XGBoost install করো: pip install xgboost"</span>)</pre>
+      </div>
+
+      <!-- Algorithm comparison table -->
+      <h3>কোন অ্যালগরিদম কখন ব্যবহার করবে?</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>অ্যালগরিদম</th><th>Best For</th><th>Strength</th><th>Weakness</th><th>ML Project Example</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge badge-blue">Linear Regression</span></td>
+              <td>Continuous prediction</td>
+              <td>Simple, interpretable</td>
+              <td>Only linear relationships</td>
+              <td>House price, API response time</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-green">Logistic Regression</span></td>
+              <td>Binary classification</td>
+              <td>Probability output, fast</td>
+              <td>Linear decision boundary</td>
+              <td>Churn prediction, spam detection</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-orange">Decision Tree</span></td>
+              <td>Interpretable rules</td>
+              <td>Human-readable</td>
+              <td>Overfits easily</td>
+              <td>Credit approval, medical diagnosis</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-purple">Random Forest</span></td>
+              <td>General classification</td>
+              <td>Robust, feature importance</td>
+              <td>Slower, less interpretable</td>
+              <td>Customer segmentation, fraud detection</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-green">XGBoost</span></td>
+              <td>Tabular data (competitions)</td>
+              <td>State-of-the-art accuracy</td>
+              <td>Many hyperparameters</td>
+              <td>Kaggle competitions, ranking</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-blue">Neural Network</span></td>
+              <td>Images, text, audio</td>
+              <td>Handles complex patterns</td>
+              <td>Needs lots of data, slow</td>
+              <td>ECG classification, NLP</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-orange">K-Means</span></td>
+              <td>Unsupervised grouping</td>
+              <td>No labels needed</td>
+              <td>Must choose K manually</td>
+              <td>Customer segmentation, anomaly detection</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Final Exercise -->
+  <div class="exercise-box">
+    <div class="exercise-header">
+      <span class="exercise-badge">💼 Capstone Exercise</span>
+      <span class="exercise-title">সব একসাথে — Chess API থেকে ML Model পর্যন্ত</span>
+    </div>
+
+    <div class="exercise-q">
+      <div class="q-num">Capstone Project (ML Engineering Level)</div>
+      <p class="q-text">Chess.com API ব্যবহার করে একটি end-to-end ML pipeline তৈরি করো:</p>
+      <ol style="margin-top:10px;padding-left:20px;color:var(--text2);font-size:0.95rem;line-height:2;">
+        <li><strong>Extract:</strong> Titled players (GM, IM, FM) এবং তাদের stats API থেকে নাও</li>
+        <li><strong>Transform:</strong> Features বানাও: WinRate, DrawRate, Rating, followers, country</li>
+        <li><strong>EDA:</strong> Top countries, rating distribution, win_rate vs rating correlation</li>
+        <li><strong>Model:</strong> Player-এর title (GM/IM/FM) predict করো Blitz+Rapid stats দিয়ে</li>
+        <li><strong>Evaluate:</strong> Multiple models compare করো, best model বেছে নাও</li>
+        <li><strong>Load:</strong> Results CSV-তে save করো এবং model pickle করো</li>
+      </ol>
+      <div class="q-hint">💡 এটাই একটি সত্যিকারের ML Engineering Portfolio Project! GitHub-এ দাও।</div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <p style="color:var(--text2);font-size:1rem;margin-bottom:12px">📚 Data APIs — সম্পূর্ণ বাংলা গাইড</p>
+  <p>API Introduction • Data Integration • Chess Analytics • ML Algorithms</p>
+  <p style="margin-top:16px;color:var(--accent3)">🎯 শূন্য থেকে Production পর্যন্ত — সবকিছু বাংলায়</p>
+</footer>
+
+</body>
+</html>

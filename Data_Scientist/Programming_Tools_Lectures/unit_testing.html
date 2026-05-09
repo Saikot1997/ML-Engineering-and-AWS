@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="API নিরাপত্তার মূল ধারণা">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>পর্ব ৩: Unit Testing, TDD ও GDPR</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+  :root {
+    --bg: #060a10; --surface: #0c1420; --surface2: #111d2e; --surface3: #162438;
+    --green: #4ade80; --red: #f87171; --blue: #60a5fa; --purple: #c084fc;
+    --orange: #fb923c; --teal: #2dd4bf; --yellow: #facc15;
+    --text: #e2e8f0; --text-muted: #94a3b8; --border: #1e3348;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Hind Siliguri',sans-serif; line-height:1.8; font-size:16px; }
+
+  .hero { background:linear-gradient(160deg,#060a10,#0a1020,#100820); padding:60px 20px; text-align:center; border-bottom:2px solid var(--green); overflow:hidden; }
+  .hero-badges { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+  .hero-badge { display:inline-block; padding:4px 14px; border-radius:20px; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; }
+  .badge-green { background:rgba(74,222,128,0.1); border:1px solid var(--green); color:var(--green); }
+  .badge-blue { background:rgba(96,165,250,0.1); border:1px solid var(--blue); color:var(--blue); }
+  .hero h1 { font-size:clamp(26px,4.5vw,48px); font-weight:700; background:linear-gradient(135deg,#4ade80,#60a5fa,#c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:14px; }
+  .hero p { font-size:17px; color:var(--text-muted); max-width:650px; margin:0 auto; }
+
+  .container { max-width:960px; margin:0 auto; padding:40px 20px; }
+
+  .part-header { display:flex; align-items:center; gap:16px; padding:16px 24px; border-radius:12px; margin-bottom:24px; }
+  .part-header.testing { background:linear-gradient(135deg,rgba(74,222,128,0.05),rgba(96,165,250,0.05)); border:1px solid rgba(74,222,128,0.3); }
+  .part-header.gdpr { background:linear-gradient(135deg,rgba(96,165,250,0.05),rgba(192,132,252,0.05)); border:1px solid rgba(96,165,250,0.3); }
+  .part-num { font-size:36px; font-weight:700; }
+  .part-title { font-size:22px; font-weight:600; }
+
+  .section { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:36px; margin-bottom:28px; position:relative; overflow:hidden; }
+  .section::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; }
+  .section.green-line::before { background:linear-gradient(to bottom,var(--green),#16a34a); }
+  .section.blue-line::before { background:linear-gradient(to bottom,var(--blue),#2563eb); }
+  .section.purple-line::before { background:linear-gradient(to bottom,var(--purple),#9333ea); }
+  .section.red-line::before { background:linear-gradient(to bottom,var(--red),#dc2626); }
+  .section.teal-line::before { background:linear-gradient(to bottom,var(--teal),#0d9488); }
+
+  .section-title { font-size:22px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+  .green-line .section-title { color:var(--green); }
+  .blue-line .section-title { color:var(--blue); }
+  .purple-line .section-title { color:var(--purple); }
+  .red-line .section-title { color:var(--red); }
+  .teal-line .section-title { color:var(--teal); }
+  .section-title .icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+
+  h2 { font-size:19px; color:#e2e8f0; margin:22px 0 12px; }
+  h3 { font-size:16px; margin:18px 0 10px; border-left:3px solid; padding-left:10px; }
+  .green-line h3 { color:var(--green); border-color:var(--green); }
+  .blue-line h3 { color:var(--blue); border-color:var(--blue); }
+  .purple-line h3 { color:var(--purple); border-color:var(--purple); }
+  .teal-line h3 { color:var(--teal); border-color:var(--teal); }
+  p { margin-bottom:14px; }
+  ul, ol { padding-left:24px; margin-bottom:14px; }
+  li { margin-bottom:8px; }
+  strong { color:#fff; }
+  em { color:var(--yellow); font-style:normal; }
+
+  .code-block { background:#020810; border:1px solid var(--border); border-radius:10px; padding:20px; font-family:'Fira Code',monospace; font-size:13px; color:#7dd3fc; overflow-x:auto; margin:16px 0; line-height:1.7; position:relative; white-space: pre-wrap; }
+  .code-label { position:absolute; top:8px; right:12px; font-size:10px; color:#374151; font-family:monospace; text-transform:uppercase; letter-spacing:1px; }
+  .comment { color:#374151; }
+  .keyword { color:#c084fc; }
+  .string { color:#86efac; }
+  .number { color:#fb923c; }
+  .func { color:#38bdf8; }
+  .decorator { color:#facc15; }
+
+  .highlight { border-radius:12px; padding:16px 20px; margin:14px 0; border:1px solid; }
+  .hl-green { border-color:rgba(74,222,128,0.3); background:rgba(74,222,128,0.04); }
+  .hl-blue { border-color:rgba(96,165,250,0.3); background:rgba(96,165,250,0.04); }
+  .hl-warn { border-color:rgba(250,204,21,0.3); background:rgba(250,204,21,0.04); }
+  .hl-red { border-color:rgba(248,113,113,0.3); background:rgba(248,113,113,0.04); }
+
+  .card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; margin:18px 0; }
+  .card { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:18px; }
+  .card .card-icon { font-size:26px; margin-bottom:8px; }
+  .card h4 { margin-bottom:8px; font-size:15px; }
+  .card p { font-size:14px; color:var(--text-muted); }
+
+  .tdd-cycle { display:flex; align-items:center; justify-content:center; gap:0; margin:24px auto; flex-wrap:wrap; max-width:640px; }
+  .tdd-phase { flex:1; min-width:130px; text-align:center; padding:20px 10px; border-radius:12px; }
+  .tdd-phase.red { background:rgba(248,113,113,0.1); border:2px solid var(--red); }
+  .tdd-phase.green { background:rgba(74,222,128,0.1); border:2px solid var(--green); }
+  .tdd-phase.refactor { background:rgba(96,165,250,0.1); border:2px solid var(--blue); }
+  .tdd-phase.repeat { background:rgba(250,204,21,0.1); border:2px solid var(--yellow); }
+  .tdd-phase .phase-icon { font-size:30px; margin-bottom:8px; }
+  .tdd-phase h4 { font-size:14px; margin-bottom:6px; }
+  .tdd-phase p { font-size:12px; color:var(--text-muted); margin:0; }
+  .tdd-arrow { font-size:22px; color:#374151; padding:0 2px; }
+
+  .diagram-wrap { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:24px; margin:20px 0; text-align:center; overflow-x:auto; }
+  .diagram-wrap p.caption { color:var(--text-muted); font-size:13px; margin-top:12px; }
+
+  .pytest-output { background:#020810; border:1px solid #16a34a; border-radius:10px; padding:18px; font-family:'Fira Code',monospace; font-size:13px; margin:16px 0; }
+  .pass { color:#4ade80; }
+  .fail { color:#f87171; }
+  .info-line { color:#6b7280; }
+
+  .rights-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:12px; margin:18px 0; }
+  .right-item { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:14px 16px; border-left:4px solid var(--blue); }
+  .right-item h5 { color:var(--blue); margin-bottom:6px; font-size:14px; }
+  .right-item p { font-size:13px; color:var(--text-muted); margin:0; }
+
+  .fine-item { background:rgba(248,113,113,0.05); border:1px solid rgba(248,113,113,0.3); border-radius:10px; padding:14px 18px; margin-bottom:10px; display:flex; align-items:flex-start; gap:12px; }
+  .fine-amount { font-size:20px; font-weight:700; color:var(--red); min-width:70px; }
+  .fine-desc { font-size:14px; color:var(--text-muted); }
+
+  .steps { display:flex; flex-direction:column; gap:14px; margin:18px 0; }
+  .step { display:flex; gap:14px; align-items:flex-start; background:var(--surface2); border-radius:12px; padding:14px 18px; border:1px solid var(--border); }
+  .step-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; color:#000; flex-shrink:0; }
+  .step-content strong { color:#e2e8f0; display:block; margin-bottom:4px; }
+
+  table { width:100%; border-collapse:collapse; margin:16px 0; }
+  th { background:rgba(74,222,128,0.08); color:var(--green); padding:12px; text-align:left; font-size:14px; border-bottom:2px solid rgba(74,222,128,0.3); }
+  td { padding:12px; border-bottom:1px solid var(--border); font-size:14px; }
+  tr:hover td { background:var(--surface2); }
+
+  .tag { display:inline-block; padding:2px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+  .tag-green { background:rgba(74,222,128,0.1); color:var(--green); border:1px solid var(--green); }
+  .tag-red { background:rgba(248,113,113,0.1); color:var(--red); border:1px solid var(--red); }
+  .tag-blue { background:rgba(96,165,250,0.1); color:var(--blue); border:1px solid var(--blue); }
+
+  .quiz { background:rgba(74,222,128,0.04); border:1px solid rgba(74,222,128,0.3); border-radius:12px; padding:22px; margin:20px 0; }
+  .quiz h4 { color:var(--green); margin-bottom:14px; }
+  .quiz-q { margin-bottom:10px; padding:10px 14px; background:var(--surface2); border-radius:8px; }
+
+  .pros-cons { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:16px 0; }
+  .pros { background:var(--surface2); border-radius:10px; padding:16px; border:1px solid rgba(74,222,128,0.3); }
+  .cons { background:var(--surface2); border-radius:10px; padding:16px; border:1px solid rgba(248,113,113,0.3); }
+  .pros h4 { color:var(--green); margin-bottom:10px; }
+  .cons h4 { color:var(--red); margin-bottom:10px; }
+
+  .nav-footer { display:flex; justify-content:space-between; align-items:center; padding:20px; border-top:1px solid var(--border); margin-top:40px; flex-wrap:wrap; gap:12px; }
+  .nav-btn-prev { background:var(--surface2); color:var(--text-muted); padding:10px 24px; border-radius:8px; text-decoration:none; font-size:14px; border:1px solid var(--border); }
+  .nav-btn-done { background:linear-gradient(135deg,var(--green),#16a34a); color:#000; padding:10px 24px; border-radius:8px; font-weight:700; font-size:14px; display:inline-block; }
+  .progress-bar { display:flex; gap:8px; }
+  .progress-dot { width:10px; height:10px; border-radius:50%; background:var(--border); }
+  .progress-dot.active { background:var(--green); box-shadow:0 0 8px var(--green); }
+
+  @media (max-width:600px) { .tdd-cycle { flex-direction:column; align-items:stretch; } .tdd-arrow { transform:rotate(90deg); align-self:center; } .pros-cons { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badges">
+    <span class="hero-badge badge-green">পর্ব ৩ • শেষ অধ্যায়</span>
+    <span class="hero-badge badge-blue">Unit Testing + TDD + GDPR</span>
+  </div>
+  <div style="margin-bottom:16px">
+    <a href="../Programming_Tools_DS.html" style="display:inline-block;padding:6px 18px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.4);border-radius:8px;color:#4ade80;text-decoration:none;font-size:13px;">← মূল পাতায় ফিরুন</a>
+  </div>
+  <h1>🧪 Unit Testing, TDD ও GDPR</h1>
+  <p>কোড পরীক্ষার পদ্ধতি এবং ডেটা সুরক্ষার আইন — সব কিছু বাংলায়, উদাহরণ ও ডায়াগ্রামসহ</p>
+</div>
+
+<div class="container">
+
+  <!-- ===== PART A: UNIT TESTING ===== -->
+  <div class="part-header testing">
+    <div class="part-num" style="color:var(--green)">🧪</div>
+    <div>
+      <div class="part-title" style="color:var(--green)">অংশ ক: Unit Testing</div>
+      <div style="color:var(--text-muted);font-size:14px">কোডের প্রতিটি অংশ সঠিকভাবে পরীক্ষা করা</div>
+    </div>
+  </div>
+
+  <div class="section green-line">
+    <div class="section-title"><span class="icon" style="background:rgba(74,222,128,0.1);border:1px solid var(--green)">🔬</span> Unit Testing কী?</div>
+
+    <p><strong>Unit Testing</strong> মানে আপনার কোডের ছোট ছোট অংশ (unit) — সাধারণত একটি function বা class — আলাদাভাবে পরীক্ষা করা যে সেটি সঠিকভাবে কাজ করছে কিনা।</p>
+
+    <div class="highlight hl-green">
+      <strong>🔑 মূল ধারণা:</strong> একটি unit-কে নির্দিষ্ট input দাও → দেখো সে সঠিক output দিচ্ছে কিনা।
+    </div>
+
+    <h2>Unit Testing vs Integration Testing</h2>
+    <div class="card-grid">
+      <div class="card" style="border-color:rgba(74,222,128,0.4)">
+        <div class="card-icon">🔬</div>
+        <h4 style="color:var(--green)">Unit Testing</h4>
+        <p>একটি function/class আলাদাভাবে পরীক্ষা। শুধু নিজের ডেটা। দ্রুত ও সহজ।</p>
+        <p style="margin-top:8px;font-size:13px;color:var(--text-muted)">উদাহরণ: গাড়ির বাল্ব একা কাজ করছে কিনা</p>
+      </div>
+      <div class="card" style="border-color:rgba(96,165,250,0.4)">
+        <div class="card-icon">🔗</div>
+        <h4 style="color:var(--blue)">Integration Testing</h4>
+        <p>একাধিক অংশ একসাথে কাজ করে কিনা। Real database/network। ধীর ও জটিল।</p>
+        <p style="margin-top:8px;font-size:13px;color:var(--text-muted)">উদাহরণ: বোতাম চাপলে হেডলাইট জ্বলে কিনা</p>
+      </div>
+    </div>
+
+    <div class="highlight hl-blue">
+      <strong>🚗 গাড়ির উদাহরণ:</strong><br>
+      Unit test: বাল্ব ভালো? বোতাম কাজ করছে? তার সঠিক? ব্যাটারি ঠিক আছে?<br>
+      Integration test: বোতাম চাপলে কি আলো জ্বলে?
+    </div>
+
+    <h2>Unit Testing-এর সুবিধা ও অসুবিধা</h2>
+    <div class="pros-cons">
+      <div class="pros">
+        <h4>✅ সুবিধা</h4>
+        <ul style="font-size:14px">
+          <li><strong>সময় বাঁচায়:</strong> Bug শুরুতেই ধরা পড়ে, পরে খুঁজতে হয় না</li>
+          <li><strong>কোড পরিবর্তন নিরাপদ:</strong> নতুন কিছু যোগ করলে পুরনোটা ঠিক আছে কিনা জানা যায়</li>
+          <li><strong>Documentation:</strong> unit test পড়লে function কী করে বোঝা যায়</li>
+          <li><strong>কোড মান উন্নত:</strong> test লিখতে গেলে ভালো করে ভাবতে হয়</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h4>❌ অসুবিধা</h4>
+        <ul style="font-size:14px">
+          <li>সব ক্ষেত্র cover করা অসম্ভব</li>
+          <li>Integration সমস্যা ধরে না</li>
+          <li>প্রতিটি function-এর জন্য test লিখতে হয়</li>
+          <li>অতিরিক্ত সময় লাগে</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- PYTEST SECTION -->
+  <div class="section green-line">
+    <div class="section-title"><span class="icon" style="background:rgba(74,222,128,0.1);border:1px solid var(--green)">⚗️</span> pytest দিয়ে Automated Testing</div>
+
+    <p><strong>pytest</strong> হলো Python-এর একটি জনপ্রিয় testing framework যা স্বয়ংক্রিয়ভাবে test run করে বিস্তারিত report দেয়।</p>
+
+    <h3>মূল নিয়মগুলো:</h3>
+    <ul>
+      <li>Test file-এর নাম: <code style="background:var(--surface3);padding:2px 8px;border-radius:4px;font-family:monospace;color:var(--green)">test_কিছু.py</code> বা <code style="background:var(--surface3);padding:2px 8px;border-radius:4px;font-family:monospace;color:var(--green)">কিছু_test.py</code></li>
+      <li>Test function শুরু হবে <code style="background:var(--surface3);padding:2px 8px;border-radius:4px;font-family:monospace;color:var(--green)">test_</code> দিয়ে — নইলে pytest দেখবে না!</li>
+      <li>Check করতে <code style="background:var(--surface3);padding:2px 8px;border-radius:4px;font-family:monospace;color:var(--green)">assert</code> ব্যবহার করুন</li>
+    </ul>
+
+    <h2>সম্পূর্ণ উদাহরণ: total() ফাংশন</h2>
+
+    <div class="code-block">
+<span class="code-label">code1.py</span>
+<span class="comment"># আমাদের main code — একটি list-এর সব সংখ্যা যোগ করে</span>
+<span class="keyword">def</span> <span class="func">total</span>(my_list):
+    <span class="string">"""একটি list-এর সব উপাদানের যোগফল ফেরত দেয়"""</span>
+    result: float = <span class="number">0.0</span>
+    <span class="keyword">for</span> item <span class="keyword">in</span> my_list:
+        result += item    <span class="comment"># প্রতিটি উপাদান যোগ করা</span>
+    <span class="keyword">return</span> result</div>
+
+    <div class="code-block">
+<span class="code-label">code1_test.py</span>
+<span class="keyword">from</span> code1 <span class="keyword">import</span> total   <span class="comment"># আমাদের function import</span>
+<span class="keyword">import</span> pytest
+
+<span class="keyword">def</span> <span class="func">test_total</span>():    <span class="comment"># নাম অবশ্যই test_ দিয়ে শুরু!</span>
+
+    <span class="comment"># সাধারণ ক্ষেত্র (use cases):</span>
+    <span class="keyword">assert</span> total([<span class="number">1.0</span>, <span class="number">2.0</span>, <span class="number">3.0</span>]) == <span class="number">6.0</span>   <span class="comment"># 1+2+3 = 6 ✅</span>
+    <span class="keyword">assert</span> total([<span class="number">1</span>, -<span class="number">1</span>]) == <span class="number">0</span>              <span class="comment"># 1-1 = 0 ✅</span>
+    <span class="keyword">assert</span> total([-<span class="number">1</span>, -<span class="number">1</span>]) == -<span class="number">2</span>            <span class="comment"># -1-1 = -2 ✅</span>
+
+    <span class="comment"># প্রান্তিক ক্ষেত্র (edge cases) — বিশেষ পরিস্থিতি:</span>
+    <span class="keyword">assert</span> total([<span class="number">1.0</span>]) == <span class="number">1.0</span>             <span class="comment"># একটি উপাদান ✅</span>
+    <span class="keyword">assert</span> total([]) == <span class="number">0</span>                   <span class="comment"># খালি list → 0 ✅</span>
+
+<span class="comment"># Error handling — ভুল type দিলে TypeError আসা উচিত:</span>
+<span class="keyword">def</span> <span class="func">test_total_raises_error_on_int</span>():
+    <span class="keyword">with</span> pytest.raises(TypeError):   <span class="comment"># এর ভেতরে TypeError আশা করছি</span>
+        total(<span class="number">1</span>)                        <span class="comment"># list-এর বদলে int দিলে error হবে</span></div>
+
+    <div class="code-block">
+<span class="comment"># install করুন:</span>
+pip3 install pytest
+
+<span class="comment"># test চালান:</span>
+python3 -m pytest code1_test.py -v</div>
+
+    <div class="pytest-output">
+<span class="info-line">========== test session starts ==========</span>
+<span class="info-line">platform linux -- Python 3.8, pytest-6.2.3</span>
+<span class="info-line">collected 2 items</span>
+<br>
+code1_test.py::<span class="pass">test_total</span> <span class="pass">PASSED</span>
+code1_test.py::<span class="pass">test_total_raises_error_on_int</span> <span class="pass">PASSED</span>
+<br>
+<span class="pass">========== 2 passed in 0.05s ==========</span></div>
+
+    <div class="highlight hl-green">
+      <strong>🟢 সবুজ PASSED = test সফল</strong> &nbsp;|&nbsp; <strong style="color:var(--red)">🔴 FAILED = test ব্যর্থ</strong> — Pytest দেখায় ঠিক কোন assert ব্যর্থ হয়েছে!
+    </div>
+
+    <div class="highlight hl-warn">
+      <strong>⚠️ যদি আমরা total() ফাংশন ভুলে পরিবর্তন করি:</strong>
+      <div class="pytest-output" style="margin-top:10px">
+<span class="info-line">FAILED code1_test.py::test_total</span>
+<span class="fail">AssertionError: assert 6.0 == 5.0</span>
+<span class="info-line">কোন line-এ ব্যর্থ → assert total([1.0, 2.0, 3.0]) == 5.0</span></div>
+      pytest আমাকে বলে দিচ্ছে — ৬ হওয়ার কথা, কিন্তু কোড ৫ দিচ্ছে। দ্রুত bug ধরা গেলো!
+    </div>
+
+    <h2>Fixtures — বারবার একই object তৈরি না করা</h2>
+    <p><strong>Fixture</strong> হলো একটি helper function যা প্রতিটি test-এর আগে দরকারি object তৈরি করে দেয়। Code duplicate হয় না।</p>
+
+    <div class="code-block">
+<span class="code-label">wallet.py</span>
+<span class="keyword">class</span> <span class="func">Wallet</span>(object):
+    <span class="keyword">def</span> <span class="func">__init__</span>(self, initial_amount=<span class="number">0</span>):
+        self.balance = initial_amount   <span class="comment"># ব্যালেন্স সংরক্ষণ</span>
+
+    <span class="keyword">def</span> <span class="func">spend_cash</span>(self, amount):
+        <span class="keyword">if</span> self.balance &lt; amount:
+            <span class="keyword">raise</span> InsufficientAmount(<span class="string">'ব্যালেন্স কম!'</span>)
+        self.balance -= amount
+
+    <span class="keyword">def</span> <span class="func">add_cash</span>(self, amount):
+        self.balance += amount
+
+<span class="keyword">class</span> <span class="func">InsufficientAmount</span>(Exception):
+    <span class="keyword">pass</span>    <span class="comment"># Custom exception — নিজস্ব error type</span></div>
+
+    <div class="code-block">
+<span class="code-label">wallet_test.py</span>
+<span class="keyword">from</span> wallet <span class="keyword">import</span> Wallet, InsufficientAmount
+<span class="keyword">import</span> pytest
+
+<span class="comment"># ---- Fixtures ----</span>
+<span class="decorator">@pytest.fixture</span>
+<span class="keyword">def</span> <span class="func">empty_wallet</span>():
+    <span class="keyword">return</span> Wallet()       <span class="comment"># ব্যালেন্স = 0</span>
+
+<span class="decorator">@pytest.fixture</span>
+<span class="keyword">def</span> <span class="func">wallet</span>():
+    <span class="keyword">return</span> Wallet(<span class="number">20</span>)     <span class="comment"># ব্যালেন্স = 20</span>
+
+<span class="comment"># ---- Tests — fixture argument হিসেবে পাঠানো ----</span>
+<span class="keyword">def</span> <span class="func">test_default_initial_amount</span>(empty_wallet):
+    <span class="keyword">assert</span> empty_wallet.balance == <span class="number">0</span>     <span class="comment"># শুরুতে 0 হবে</span>
+
+<span class="keyword">def</span> <span class="func">test_setting_initial_amount</span>(wallet):
+    <span class="keyword">assert</span> wallet.balance == <span class="number">20</span>          <span class="comment"># 20 দিয়ে তৈরি</span>
+
+<span class="keyword">def</span> <span class="func">test_wallet_add_cash</span>(wallet):
+    wallet.add_cash(<span class="number">80</span>)                   <span class="comment"># 20 + 80</span>
+    <span class="keyword">assert</span> wallet.balance == <span class="number">100</span>
+
+<span class="keyword">def</span> <span class="func">test_wallet_spend_cash</span>(wallet):
+    wallet.spend_cash(<span class="number">10</span>)                 <span class="comment"># 20 - 10</span>
+    <span class="keyword">assert</span> wallet.balance == <span class="number">10</span>
+
+<span class="keyword">def</span> <span class="func">test_spend_raises_exception</span>(empty_wallet):
+    <span class="keyword">with</span> pytest.raises(InsufficientAmount):
+        empty_wallet.spend_cash(<span class="number">100</span>)      <span class="comment"># 0 টাকায় 100 খরচ → Error!</span></div>
+
+    <div class="pytest-output">
+<span class="info-line">collected 5 items</span>
+<br>
+wallet_test.py <span class="pass">.....</span>     <span class="pass">[100%]</span>
+<span class="pass">========== 5 passed in 0.05s ==========</span></div>
+
+    <h2>Parametrize — একসাথে অনেক ক্ষেত্র পরীক্ষা</h2>
+    <div class="code-block">
+<span class="comment"># একই test বিভিন্ন data দিয়ে চালানো — তিনটি আলাদা test এর বদলে একটিই!</span>
+<span class="decorator">@pytest.mark.parametrize</span>(<span class="string">"earned,spent,expected"</span>, [
+    (<span class="number">30</span>, <span class="number">10</span>, <span class="number">20</span>),   <span class="comment"># ৩০ পেলাম, ১০ খরচ → বাকি ২০</span>
+    (<span class="number">20</span>, <span class="number">2</span>,  <span class="number">18</span>),   <span class="comment"># ২০ পেলাম, ২ খরচ → বাকি ১৮</span>
+    (<span class="number">50</span>, <span class="number">50</span>, <span class="number">0</span>),    <span class="comment"># ৫০ পেলাম, ৫০ খরচ → বাকি ০</span>
+])
+<span class="keyword">def</span> <span class="func">test_transactions</span>(earned, spent, expected):
+    my_wallet = Wallet()
+    my_wallet.add_cash(earned)
+    my_wallet.spend_cash(spent)
+    <span class="keyword">assert</span> my_wallet.balance == expected    <span class="comment"># এটি ৩ বার চলবে!</span></div>
+
+    <h2>একটি ভালো unit test-এর বৈশিষ্ট্য</h2>
+    <div class="card-grid">
+      <div class="card" style="border-color:rgba(74,222,128,0.4)"><div class="card-icon">✍️</div><h4 style="color:var(--green)">সহজে লেখা যায়</h4><p>অতিরিক্ত setup ছাড়াই চলে</p></div>
+      <div class="card" style="border-color:rgba(74,222,128,0.4)"><div class="card-icon">📖</div><h4 style="color:var(--green)">সহজে পড়া যায়</h4><p>নাম দেখেই বোঝা যায় কী পরীক্ষা হচ্ছে</p></div>
+      <div class="card" style="border-color:rgba(74,222,128,0.4)"><div class="card-icon">⚡</div><h4 style="color:var(--green)">দ্রুত চলে</h4><p>millisecond-এ সম্পন্ন হয়</p></div>
+      <div class="card" style="border-color:rgba(74,222,128,0.4)"><div class="card-icon">🔁</div><h4 style="color:var(--green)">নির্ভরযোগ্য</h4><p>বারবার চালালে একই ফলাফল</p></div>
+    </div>
+  </div>
+
+  <!-- ===== PART B: TDD ===== -->
+  <div class="part-header testing" style="margin-top:40px">
+    <div class="part-num" style="color:var(--blue)">🔄</div>
+    <div>
+      <div class="part-title" style="color:var(--blue)">অংশ খ: TDD — Test Driven Development</div>
+      <div style="color:var(--text-muted);font-size:14px">আগে test লিখুন, তারপর code করুন</div>
+    </div>
+  </div>
+
+  <div class="section blue-line">
+    <div class="section-title"><span class="icon" style="background:rgba(96,165,250,0.1);border:1px solid var(--blue)">🔄</span> TDD কী এবং কেন?</div>
+
+    <p><strong>TDD (Test Driven Development)</strong> মানে হলো <em>আগে test লিখুন</em>, তারপর সেই test pass করানোর জন্য code লিখুন। Kent Beck ৯০-এর দশকে এটি জনপ্রিয় করেন।</p>
+
+    <div class="highlight hl-blue">
+      <strong>সাধারণ কোডিং:</strong> Code লিখি → Test করি → Bug পাই → Fix করি<br><br>
+      <strong>TDD:</strong> Test লিখি (fail) → Code লিখি (pass) → Code সুন্দর করি → পরবর্তী feature
+    </div>
+
+    <h2>TDD চক্র: Red → Green → Refactor → Repeat</h2>
+
+    <div class="tdd-cycle">
+      <div class="tdd-phase red">
+        <div class="phase-icon">🔴</div>
+        <h4 style="color:var(--red)">Red</h4>
+        <p>Test লিখুন। এখনো code নেই তাই test fail করবে।</p>
+      </div>
+      <div class="tdd-arrow">→</div>
+      <div class="tdd-phase green">
+        <div class="phase-icon">🟢</div>
+        <h4 style="color:var(--green)">Green</h4>
+        <p>Minimum code লিখুন শুধু test pass করাতে।</p>
+      </div>
+      <div class="tdd-arrow">→</div>
+      <div class="tdd-phase refactor">
+        <div class="phase-icon">🔵</div>
+        <h4 style="color:var(--blue)">Refactor</h4>
+        <p>Code সুন্দর ও দক্ষ করুন। Test pass রাখুন।</p>
+      </div>
+      <div class="tdd-arrow">→</div>
+      <div class="tdd-phase repeat">
+        <div class="phase-icon">🔁</div>
+        <h4 style="color:var(--yellow)">Repeat</h4>
+        <p>নতুন feature-এর জন্য আবার শুরু থেকে।</p>
+      </div>
+    </div>
+
+    <h2>TDD উদাহরণ: Sorting Function</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num" style="background:var(--red)">🔴</div>
+        <div class="step-content">
+          <strong>Step 1 — Red: আগে test লিখুন (code এখনো নেই!)</strong>
+          <div class="code-block" style="margin-top:10px">
+<span class="comment"># test_sort.py — sort.py এখনো বানাইনি, তবুও test লিখছি</span>
+<span class="keyword">import</span> sort   <span class="comment"># এই module নেই → ImportError → RED ✓</span>
+
+<span class="keyword">def</span> <span class="func">test_ascending_sorting</span>():
+    <span class="keyword">assert</span> sort.sorting([<span class="number">3</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">1</span>, <span class="number">5</span>]) == [<span class="number">1</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]
+
+<span class="keyword">def</span> <span class="func">test_sorting_decreasing</span>():
+    <span class="keyword">assert</span> sort.sorting([<span class="number">3</span>, <span class="number">1</span>, <span class="number">4</span>], ascending=<span class="keyword">False</span>) == [<span class="number">4</span>, <span class="number">3</span>, <span class="number">1</span>]</div>
+          এখন pytest চালালে fail হবে কারণ sort.py নেই — এটাই expected!
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--green)">🟢</div>
+        <div class="step-content">
+          <strong>Step 2 — Green: Minimum code লিখুন শুধু test pass করাতে</strong>
+          <div class="code-block" style="margin-top:10px">
+<span class="comment"># sort.py — সর্বনিম্ন implementation, elegant হতে হবে না</span>
+<span class="keyword">def</span> <span class="func">sorting</span>(list_test, ascending=<span class="keyword">True</span>):
+    <span class="keyword">return</span> sorted(list_test) <span class="keyword">if</span> ascending <span class="keyword">else</span> sorted(list_test, reverse=<span class="keyword">True</span>)</div>
+          <div class="pytest-output" style="margin-top:8px">
+<span class="pass">test_ascending_sorting PASSED</span>
+<span class="pass">test_sorting_decreasing PASSED</span>
+<span class="pass">2 passed ✅</span></div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num" style="background:var(--blue)">🔵</div>
+        <div class="step-content">
+          <strong>Step 3 — Refactor: Code উন্নত করুন (test pass রেখে)</strong>
+          এই উদাহরণে function এত সহজ যে refactor দরকার নেই। জটিল code-এ এখানে comments, error handling, optimization করা হয়। Test চালিয়ে নিশ্চিত করুন সব ঠিক আছে।
+        </div>
+      </div>
+    </div>
+
+    <h2>TDD-র সুবিধা ও সীমাবদ্ধতা</h2>
+    <div class="pros-cons">
+      <div class="pros">
+        <h4>✅ সুবিধা</h4>
+        <ul style="font-size:14px">
+          <li>কোড মান উন্নত হয়</li>
+          <li>Bug দ্রুত ধরা পড়ে</li>
+          <li>Refactoring নিরাপদ</li>
+          <li>Team-এ কাজ করা সহজ</li>
+          <li>Test-ই documentation</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h4>❌ অসুবিধা</h4>
+        <ul style="font-size:14px">
+          <li>শুরুতে বেশি সময় লাগে</li>
+          <li>UI বা async কাজ test কঠিন</li>
+          <li>সব error ধরে না</li>
+          <li>সব project-এ দরকার নেই</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="highlight hl-warn">
+      <strong>📌 কখন TDD ব্যবহার করবেন:</strong> গুরুত্বপূর্ণ business logic, বারবার পরিবর্তন হবে এমন code, team collaboration। সব ছোট script-এ দরকার নেই।
+    </div>
+  </div>
+
+  <!-- ===== PART C: GDPR ===== -->
+  <div class="part-header gdpr" style="margin-top:40px">
+    <div class="part-num" style="color:var(--blue)">⚖️</div>
+    <div>
+      <div class="part-title" style="color:var(--blue)">অংশ গ: GDPR ও ডেটা নৈতিকতা</div>
+      <div style="color:var(--text-muted);font-size:14px">ইউরোপীয় ডেটা সুরক্ষা আইন — বাংলায়</div>
+    </div>
+  </div>
+
+  <div class="section purple-line">
+    <div class="section-title"><span class="icon" style="background:rgba(192,132,252,0.1);border:1px solid var(--purple)">⚖️</span> GDPR কী?</div>
+
+    <p><strong>GDPR</strong> = <em>General Data Protection Regulation</em>। ইউরোপীয় ইউনিয়নের ডেটা সুরক্ষা আইন, ২০১৮ সালের ২৫ মে থেকে কার্যকর। এটি বিশ্বের সবচেয়ে কঠোর ডেটা সুরক্ষা আইন।</p>
+
+    <div class="highlight hl-blue">
+      <strong>🌍 এই আইন কাদের জন্য?</strong><br>
+      EU-এর ২৭টি দেশের সব সংস্থা — ছোট-বড়, সরকারি-বেসরকারি। এমনকি EU-এর বাইরে থেকে EU নাগরিকদের ডেটা ব্যবহার করলেও GDPR মানতে হবে!
+    </div>
+
+    <div class="diagram-wrap">
+      <svg width="520" height="170" viewBox="0 0 520 170" style="max-width:100%">
+        <!-- diagram elements -->
+        <!-- 3 pillars -->
+        <rect x="20" y="30" width="140" height="110" rx="10" fill="rgba(96,165,250,0.07)" stroke="#60a5fa" stroke-width="1.5"/>
+        <text x="90" y="58" text-anchor="middle" font-size="22" font-family="Hind Siliguri, sans-serif">🛡️</text>
+        <text x="90" y="82" text-anchor="middle" fill="#60a5fa" font-size="12" font-family="Hind Siliguri" font-weight="bold">নতুন অধিকার</text>
+        <text x="90" y="100" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">মুছে দেওয়া, জানার</text>
+        <text x="90" y="116" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">সংশোধনের অধিকার</text>
+        <text x="90" y="132" text-anchor="middle" fill="#60a5fa" font-size="10" font-family="Hind Siliguri">→ ব্যক্তির ক্ষমতা বাড়ে</text>
+
+        <rect x="190" y="30" width="140" height="110" rx="10" fill="rgba(192,132,252,0.07)" stroke="#c084fc" stroke-width="1.5"/>
+        <text x="260" y="58" text-anchor="middle" font-size="22" font-family="Hind Siliguri, sans-serif">📋</text>
+        <text x="260" y="82" text-anchor="middle" fill="#c084fc" font-size="12" font-family="Hind Siliguri" font-weight="bold">জবাবদিহিতা</text>
+        <text x="260" y="100" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">Controller ও</text>
+        <text x="260" y="116" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">Processor-এর দায়িত্ব</text>
+        <text x="260" y="132" text-anchor="middle" fill="#c084fc" font-size="10" font-family="Hind Siliguri">→ প্রমাণ দিতে হবে</text>
+
+        <rect x="360" y="30" width="140" height="110" rx="10" fill="rgba(248,113,113,0.07)" stroke="#f87171" stroke-width="1.5"/>
+        <text x="430" y="58" text-anchor="middle" font-size="22" font-family="Hind Siliguri, sans-serif">💰</text>
+        <text x="430" y="82" text-anchor="middle" fill="#f87171" font-size="12" font-family="Hind Siliguri" font-weight="bold">ভারী জরিমানা</text>
+        <text x="430" y="100" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">€২০ মিলিয়ন বা</text>
+        <text x="430" y="116" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">টার্নওভারের ৪%</text>
+        <text x="430" y="132" text-anchor="middle" fill="#f87171" font-size="10" font-family="Hind Siliguri">→ যেটি বেশি</text>
+      </svg>
+      <p class="caption">GDPR-এর তিনটি মূল স্তম্ভ</p>
+    </div>
+
+    <h2>Personal Data কী? Sensitive Data কী?</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0">
+      <div style="background:var(--surface2);border-radius:10px;padding:16px;border:1px solid var(--border)">
+        <h4 style="color:var(--blue);margin-bottom:10px">🔵 Personal Data (ব্যক্তিগত তথ্য)</h4>
+        <p style="font-size:13px;color:var(--text-muted)">যা দিয়ে একজনকে চিহ্নিত করা যায়:</p>
+        <ul style="font-size:13px;color:var(--text-muted)">
+          <li>নাম, ছবি, ইমেইল</li>
+          <li>ফোন নম্বর, IP address</li>
+          <li>জাতীয় পরিচয় নম্বর</li>
+          <li>Location data</li>
+        </ul>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:16px;border:1px solid rgba(248,113,113,0.3)">
+        <h4 style="color:var(--red);margin-bottom:10px">🔴 Sensitive Data (বিশেষ সুরক্ষা)</h4>
+        <p style="font-size:13px;color:var(--text-muted)">অতিরিক্ত আইনি সুরক্ষা পায়:</p>
+        <ul style="font-size:13px;color:var(--text-muted)">
+          <li>স্বাস্থ্য ও চিকিৎসা তথ্য</li>
+          <li>ধর্মীয় বিশ্বাস</li>
+          <li>রাজনৈতিক মত</li>
+          <li>জাতিগত পরিচয়, যৌন অভিমুখিতা</li>
+          <li>বায়োমেট্রিক ডেটা</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- GDPR Rights -->
+  <div class="section blue-line">
+    <div class="section-title"><span class="icon" style="background:rgba(96,165,250,0.1);border:1px solid var(--blue)">🛡️</span> GDPR-এ ব্যক্তির ৮টি অধিকার</div>
+
+    <div class="rights-grid">
+      <div class="right-item">
+        <h5>① জানার অধিকার (Art. 15)</h5>
+        <p>কোম্পানি আমার কী তথ্য রাখছে, কেন, কার সাথে শেয়ার করছে — জানার অধিকার।</p>
+      </div>
+      <div class="right-item">
+        <h5>② অ্যাক্সেসের অধিকার (Art. 15)</h5>
+        <p>চাইলে ১ মাসের মধ্যে আমার সব ডেটার কপি পাওয়ার অধিকার।</p>
+      </div>
+      <div class="right-item">
+        <h5>③ সংশোধনের অধিকার (Art. 16)</h5>
+        <p>ভুল তথ্য সংশোধন বা আপডেট করতে বলার অধিকার।</p>
+      </div>
+      <div class="right-item">
+        <h5>④ মুছে দেওয়ার অধিকার (Art. 17)</h5>
+        <p>"ভুলে যাওয়ার অধিকার" — database থেকে আমার ডেটা মুছতে বলার অধিকার।</p>
+      </div>
+      <div class="right-item">
+        <h5>⑤ সীমিত ব্যবহারের অধিকার (Art. 18)</h5>
+        <p>ডেটা মুছার আগে ব্যবহার সীমিত করতে বলার অধিকার।</p>
+      </div>
+      <div class="right-item">
+        <h5>⑥ ডেটা বহনের অধিকার (Art. 20)</h5>
+        <p>আমার ডেটা নিয়ে অন্য service-এ যাওয়ার অধিকার (data portability)।</p>
+      </div>
+      <div class="right-item">
+        <h5>⑦ আপত্তির অধিকার (Art. 21)</h5>
+        <p>নির্দিষ্ট উদ্দেশ্যে আমার ডেটা ব্যবহারে "না" বলার অধিকার।</p>
+      </div>
+      <div class="right-item">
+        <h5>⑧ স্বয়ংক্রিয় সিদ্ধান্তের বিরুদ্ধে (Art. 22)</h5>
+        <p>শুধু Algorithm-এর সিদ্ধান্তে অস্বীকৃতি জানাতে মানুষের হস্তক্ষেপ চাওয়ার অধিকার।</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy by Design -->
+  <div class="section teal-line">
+    <div class="section-title"><span class="icon" style="background:rgba(45,212,191,0.1);border:1px solid var(--teal)">🏗️</span> Privacy by Design ও GDPR-এর মূলনীতি</div>
+
+    <p><strong>Privacy by Design</strong> মানে product বা service তৈরির <em>শুরু থেকেই</em> ডেটা সুরক্ষা মাথায় রাখা — পরে add করা নয় (GDPR Article 25)।</p>
+
+    <div class="diagram-wrap">
+      <svg width="540" height="320" viewBox="0 0 540 320" style="max-width:100%">
+        <!-- Center -->
+        <circle cx="270" cy="155" r="55" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-width="2"/>
+        <text x="270" y="149" text-anchor="middle" fill="#2dd4bf" font-size="12" font-family="Hind Siliguri" font-weight="bold">Privacy</text>
+        <text x="270" y="166" text-anchor="middle" fill="#2dd4bf" font-size="12" font-family="Hind Siliguri">by Design</text>
+        <!-- 6 principles around -->
+        <!-- Top -->
+        <rect x="185" y="10" width="170" height="45" rx="8" fill="var(--surface2)" stroke="#60a5fa" stroke-width="1.5"/>
+        <text x="270" y="30" text-anchor="middle" fill="#60a5fa" font-size="12" font-family="Hind Siliguri" font-weight="bold">① স্বচ্ছতা</text>
+        <text x="270" y="47" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">Fairness &amp; Transparency</text>
+        <line x1="270" y1="55" x2="270" y2="100" stroke="#60a5fa" stroke-width="1" stroke-dasharray="4,3"/>
+        <!-- Bottom -->
+        <rect x="185" y="255" width="170" height="45" rx="8" fill="var(--surface2)" stroke="#f87171" stroke-width="1.5"/>
+        <text x="270" y="275" text-anchor="middle" fill="#f87171" font-size="12" font-family="Hind Siliguri" font-weight="bold">⑥ নিরাপত্তা</text>
+        <text x="270" y="292" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">Integrity &amp; Confidentiality</text>
+        <line x1="270" y1="255" x2="270" y2="210" stroke="#f87171" stroke-width="1" stroke-dasharray="4,3"/>
+        <!-- Left top -->
+        <rect x="10" y="60" width="140" height="50" rx="8" fill="var(--surface2)" stroke="#4ade80" stroke-width="1.5"/>
+        <text x="80" y="82" text-anchor="middle" fill="#4ade80" font-size="12" font-family="Hind Siliguri" font-weight="bold">② উদ্দেশ্য সীমা</text>
+        <text x="80" y="100" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">Purpose Limitation</text>
+        <line x1="150" y1="85" x2="215" y2="125" stroke="#4ade80" stroke-width="1" stroke-dasharray="4,3"/>
+        <!-- Left bottom -->
+        <rect x="10" y="200" width="140" height="50" rx="8" fill="var(--surface2)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="80" y="222" text-anchor="middle" fill="#fb923c" font-size="12" font-family="Hind Siliguri" font-weight="bold">③ ন্যূনতম তথ্য</text>
+        <text x="80" y="240" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">Data Minimization</text>
+        <line x1="150" y1="225" x2="215" y2="185" stroke="#fb923c" stroke-width="1" stroke-dasharray="4,3"/>
+        <!-- Right top -->
+        <rect x="390" y="60" width="140" height="50" rx="8" fill="var(--surface2)" stroke="#2dd4bf" stroke-width="1.5"/>
+        <text x="460" y="82" text-anchor="middle" fill="#2dd4bf" font-size="12" font-family="Hind Siliguri" font-weight="bold">④ নির্ভুলতা</text>
+        <text x="460" y="100" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">Accuracy</text>
+        <line x1="390" y1="85" x2="325" y2="125" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="4,3"/>
+        <!-- Right bottom -->
+        <rect x="390" y="200" width="140" height="50" rx="8" fill="var(--surface2)" stroke="#facc15" stroke-width="1.5"/>
+        <text x="460" y="222" text-anchor="middle" fill="#facc15" font-size="12" font-family="Hind Siliguri" font-weight="bold">⑤ সংরক্ষণ সীমা</text>
+        <text x="460" y="240" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">Storage Limitation</text>
+        <line x1="390" y1="225" x2="325" y2="185" stroke="#facc15" stroke-width="1" stroke-dasharray="4,3"/>
+      </svg>
+      <p class="caption">GDPR-এর ৬টি মূলনীতি — Privacy by Design-এর কেন্দ্রে</p>
+    </div>
+
+    <h2>Pseudonymization বনাম Anonymization</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0">
+      <div style="background:var(--surface2);border-radius:10px;padding:16px;border:1px solid rgba(45,212,191,0.3)">
+        <h4 style="color:var(--teal);margin-bottom:10px">🔄 Pseudonymization (ছদ্মনামকরণ)</h4>
+        <ul style="font-size:14px;color:var(--text-muted)">
+          <li>পরিচয় লুকানো হয়, মূলটা থাকে</li>
+          <li><strong style="color:#fff">Reversible</strong> — ফেরানো সম্ভব</li>
+          <li>GDPR এখনো প্রযোজ্য</li>
+          <li>উদাহরণ: "রহিম" → "User_2234"</li>
+          <li>Hash function, Encryption</li>
+        </ul>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:16px;border:1px solid rgba(96,165,250,0.3)">
+        <h4 style="color:var(--blue);margin-bottom:10px">🗑️ Anonymization (বেনামীকরণ)</h4>
+        <ul style="font-size:14px;color:var(--text-muted)">
+          <li>পরিচয় সম্পূর্ণ মুছে দেওয়া</li>
+          <li><strong style="color:#fff">Irreversible</strong> — ফেরানো অসম্ভব</li>
+          <li>GDPR আর প্রযোজ্য নয়!</li>
+          <li>উদাহরণ: জন্মসাল শুধু বছর রাখা</li>
+          <li>Randomization, Generalization</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- GDPR Fines & Obligations -->
+  <div class="section red-line">
+    <div class="section-title"><span class="icon" style="background:rgba(248,113,113,0.1);border:1px solid var(--red)">💸</span> GDPR জরিমানার বাস্তব উদাহরণ ও বাধ্যবাধকতা</div>
+
+    <h2>বাস্তব জরিমানার ঘটনা</h2>
+    <div class="fine-item">
+      <div class="fine-amount">€35M</div>
+      <div class="fine-desc"><strong>H&M (জার্মানি, 2020)</strong> — কর্মীদের স্বাস্থ্য, ধর্ম ও ব্যক্তিগত সমস্যার প্রোফাইল তৈরি। Data Minimization নীতি লঙ্ঘন।</div>
+    </div>
+    <div class="fine-item">
+      <div class="fine-amount">€3M</div>
+      <div class="fine-desc"><strong>Carrefour (ফ্রান্স)</strong> — গ্রাহকদের অধিকার নিশ্চিত না করা, অ্যাক্সেসের অনুরোধে সাড়া না দেওয়া।</div>
+    </div>
+    <div class="fine-item">
+      <div class="fine-amount">£20M</div>
+      <div class="fine-desc"><strong>British Airways (UK, 2018)</strong> — Cyberattack-এ গ্রাহকদের ডেটা চুরি। মৌলিক নিরাপত্তা ব্যবস্থা না রাখায় জরিমানা।</div>
+    </div>
+
+    <h2>প্রতিষ্ঠানের বাধ্যবাধকতা</h2>
+    <ul>
+      <li><strong>সম্মতি সংগ্রহ:</strong> ১৬ বছরের বেশি ব্যক্তির স্পষ্ট সম্মতি লাগবে। অপ্রাপ্তবয়স্কের ক্ষেত্রে অভিভাবকের।</li>
+      <li><strong>Processing Register:</strong> কোন ডেটা কীভাবে ব্যবহার হচ্ছে — সব রেকর্ড রাখতে হবে।</li>
+      <li><strong>৭২ ঘণ্টার নিয়ম:</strong> ডেটা লঙ্ঘন হলে ৭২ ঘণ্টার মধ্যে নিয়ন্ত্রক সংস্থাকে জানাতে হবে।</li>
+      <li><strong>DPO নিয়োগ:</strong> বড় প্রতিষ্ঠানে Data Protection Officer রাখতে হবে।</li>
+      <li><strong>DPIA:</strong> উচ্চ-ঝুঁকির processing-এ প্রভাব মূল্যায়ন করতে হবে।</li>
+    </ul>
+
+    <div class="highlight hl-red">
+      <strong>⚠️ DPO-এর কাজ:</strong> ডেটা নিয়ন্ত্রক, প্রসেসর ও কর্মীদের পরামর্শ দেওয়া → GDPR মেনে চলা হচ্ছে কিনা তদারক করা → DPIA-তে সহায়তা → নিয়ন্ত্রক সংস্থার সাথে যোগাযোগ।
+    </div>
+  </div>
+
+  <!-- AI Ethics -->
+  <div class="section purple-line">
+    <div class="section-title"><span class="icon" style="background:rgba(192,132,252,0.1);border:1px solid var(--purple)">🤖</span> AI ও নৈতিকতা</div>
+
+    <h2>Deepfake কী?</h2>
+    <p><strong>Deepfake</strong> শব্দটি এসেছে "deep learning" + "fake" থেকে (২০১৭)। এটি AI দিয়ে কারও মুখ বা কণ্ঠ অন্য ভিডিওতে বসানোর প্রযুক্তি। GDPR-এর সরাসরি লঙ্ঘন যদি সম্মতি ছাড়া তৈরি হয়।</p>
+
+    <h2>Algorithm Bias (পক্ষপাতমূলক সিদ্ধান্ত)</h2>
+    <div class="highlight hl-warn">
+      <strong>🎯 উদাহরণ:</strong> একটি কোম্পানি AI দিয়ে CV বাছাই করে। যদি কোম্পানির ৯০% কর্মী পুরুষ হয়, AI শিখবে পুরুষ = ভালো candidate। ফলে নারী বা সংখ্যালঘুদের CV বাদ পড়বে — এটাই Algorithm Bias। একটি biased database → biased result।
+    </div>
+
+    <h2>Self-driving Car — নৈতিক দ্বিধা</h2>
+    <div class="diagram-wrap">
+      <svg width="440" height="180" viewBox="0 0 440 180" style="max-width:100%">
+        <defs>
+          <marker id="car-arr-h" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0,0 8,3 0,6" fill="#60a5fa"/>
+          </marker>
+          <marker id="car-arr-v" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+            <polygon points="0,0 8,3 0,6" fill="#f87171"/>
+          </marker>
+        </defs>
+        <rect x="80" y="10" width="80" height="160" rx="6" fill="rgba(45,212,191,0.05)" stroke="#2dd4bf" stroke-width="1.5"/>
+        <text x="120" y="35" text-anchor="middle" fill="#2dd4bf" font-size="11" font-family="Hind Siliguri">রাস্তা</text>
+        <rect x="95" y="70" width="50" height="28" rx="6" fill="rgba(96,165,250,0.2)" stroke="#60a5fa" stroke-width="2"/>
+        <text x="120" y="89" text-anchor="middle" font-size="16" font-family="Hind Siliguri, sans-serif">🚗</text>
+        <text x="120" y="148" text-anchor="middle" font-size="18" font-family="Hind Siliguri, sans-serif">👥</text>
+        <text x="120" y="168" text-anchor="middle" fill="#f87171" font-size="10" font-family="Hind Siliguri">পথচারী</text>
+        <!-- Wall -->
+        <rect x="200" y="55" width="40" height="80" rx="4" fill="rgba(248,113,113,0.1)" stroke="#f87171" stroke-width="2"/>
+        <text x="220" y="100" text-anchor="middle" font-size="18" font-family="Hind Siliguri, sans-serif">🧱</text>
+        <!-- Options -->
+        <text x="310" y="50" text-anchor="middle" fill="#facc15" font-size="30" font-family="Hind Siliguri, sans-serif">?</text>
+        <text x="300" y="80" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">সরাসরি গেলে →</text>
+        <text x="300" y="96" text-anchor="middle" fill="#f87171" font-size="11" font-family="Hind Siliguri">পথচারী মৃত্যু</text>
+        <text x="300" y="120" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri">দেয়ালে গেলে →</text>
+        <text x="300" y="136" text-anchor="middle" fill="#60a5fa" font-size="11" font-family="Hind Siliguri">যাত্রী মৃত্যু</text>
+        <line x1="120" y1="100" x2="120" y2="130" stroke="#f87171" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#car-arr-v)"/>
+        <line x1="143" y1="84" x2="198" y2="84" stroke="#60a5fa" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#car-arr-h)"/>
+      </svg>
+      <p class="caption">Self-driving Car-এর Trolley Problem — কে বাঁচাবে? AI কীভাবে সিদ্ধান্ত নেবে?</p>
+    </div>
+
+    <p>CNRS ও MIT-এর গবেষকরা <strong>moralmachine.net</strong> ওয়েবসাইট তৈরি করেছেন এই নৈতিক প্রশ্নে মানুষের মতামত সংগ্রহ করতে।</p>
+
+    <div class="highlight hl-blue">
+      <strong>💡 GDPR ও AI:</strong>
+      <ul style="margin-top:8px;font-size:14px">
+        <li>AI সিদ্ধান্তে প্রভাবিত ব্যক্তির মানব পর্যালোচনার অধিকার আছে (Art. 22)</li>
+        <li>Algorithm-এর bias বিশ্লেষণ ও প্রকাশ করতে হবে</li>
+        <li>AI-এর সিদ্ধান্ত ব্যাখ্যাযোগ্য (Explainable AI) হওয়া দরকার</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ===== FINAL SUMMARY ===== -->
+  <div class="section green-line">
+    <div class="section-title"><span class="icon" style="background:rgba(74,222,128,0.1);border:1px solid var(--green)">📋</span> সম্পূর্ণ কোর্সের সারসংক্ষেপ</div>
+
+    <h2>পর্ব ১ ও ২: API নিরাপত্তা</h2>
+    <table>
+      <tr><th>বিষয়</th><th>মূল ধারণা</th><th>Error Code</th></tr>
+      <tr><td><strong>Authentication</strong></td><td>পরিচয় যাচাই — তুমি কে?</td><td><span class="tag tag-blue">401</span></td></tr>
+      <tr><td><strong>Authorization</strong></td><td>অনুমতি যাচাই — কী করতে পারবে?</td><td><span class="tag tag-red">403</span></td></tr>
+      <tr><td><strong>Traceability</strong></td><td>কে, কখন, কী করলো রেকর্ড রাখা</td><td>—</td></tr>
+      <tr><td><strong>API Keys</strong></td><td>Header বা Query-তে secret string</td><td>—</td></tr>
+      <tr><td><strong>Basic Auth</strong></td><td>username:password → Base64 → Authorization header</td><td>—</td></tr>
+      <tr><td><strong>JWT</strong></td><td>Signed token, নিজেই তথ্য বহন করে, মেয়াদ আছে</td><td>—</td></tr>
+      <tr><td><strong>HTTPS</strong></td><td>TLS handshake দিয়ে সব ডেটা encrypt করা</td><td>—</td></tr>
+      <tr><td><strong>Rate Limiting</strong></td><td>নির্দিষ্ট সময়ে request-এর সীমা</td><td><span class="tag tag-red">429</span></td></tr>
+    </table>
+
+    <h2>পর্ব ৩ (এই পর্ব): Unit Testing ও GDPR</h2>
+    <table>
+      <tr><th>বিষয়</th><th>মূল ধারণা</th></tr>
+      <tr><td><strong>Unit Testing</strong></td><td>একটি function আলাদাভাবে পরীক্ষা করা</td></tr>
+      <tr><td><strong>pytest</strong></td><td>Python automated testing — test_ দিয়ে শুরু, assert দিয়ে চেক</td></tr>
+      <tr><td><strong>Fixtures</strong></td><td>@pytest.fixture দিয়ে পুনর্ব্যবহারযোগ্য test object</td></tr>
+      <tr><td><strong>TDD</strong></td><td>Red → Green → Refactor — আগে test, পরে code</td></tr>
+      <tr><td><strong>GDPR</strong></td><td>EU-এর ডেটা সুরক্ষা আইন (2018), সর্বোচ্চ €20M জরিমানা</td></tr>
+      <tr><td><strong>Personal Data</strong></td><td>যে তথ্যে ব্যক্তি চিহ্নিত হয়</td></tr>
+      <tr><td><strong>Privacy by Design</strong></td><td>শুরু থেকেই গোপনীয়তা নিশ্চিত করা</td></tr>
+      <tr><td><strong>Pseudonymization</strong></td><td>পরিচয় লুকানো, reversible, GDPR প্রযোজ্য</td></tr>
+      <tr><td><strong>Anonymization</strong></td><td>পরিচয় মুছে দেওয়া, irreversible, GDPR প্রযোজ্য নয়</td></tr>
+    </table>
+
+    <div class="quiz">
+      <h4>🧪 চূড়ান্ত জ্ঞান পরীক্ষা</h4>
+
+      <div class="quiz-q">
+        <strong>প্রশ্ন ১:</strong> একটি JWT token expire হয়ে গেছে — সার্ভার কী করবে?
+        <details style="margin-top:8px"><summary style="cursor:pointer;color:var(--green);font-weight:600">উত্তর দেখুন</summary>
+          <p style="margin-top:6px;font-size:14px;background:var(--surface3);padding:10px;border-radius:6px">401 বা 403 error দেবে। Client-কে নতুন করে login করতে বলবে — নতুন token নিতে হবে।</p>
+        </details>
+      </div>
+
+      <div class="quiz-q">
+        <strong>প্রশ্ন ২:</strong> TDD-র Green phase-এ কী করা হয়?
+        <details style="margin-top:8px"><summary style="cursor:pointer;color:var(--green);font-weight:600">উত্তর দেখুন</summary>
+          <p style="margin-top:6px;font-size:14px;background:var(--surface3);padding:10px;border-radius:6px">শুধু test pass করানোর জন্য সর্বনিম্ন code লেখা। সুন্দর না হলেও চলবে — optimization এখানে নয়।</p>
+        </details>
+      </div>
+
+      <div class="quiz-q">
+        <strong>প্রশ্ন ৩:</strong> HTTPS ছাড়া Basic Auth কতটা বিপজ্জনক?
+        <details style="margin-top:8px"><summary style="cursor:pointer;color:var(--green);font-weight:600">উত্তর দেখুন</summary>
+          <p style="margin-top:6px;font-size:14px;background:var(--surface3);padding:10px;border-radius:6px">অত্যন্ত বিপজ্জনক। Base64 এনক্রিপশন নয় — যে কেউ সহজে decode করতে পারে। নেটওয়ার্কে intercept হলে password সাথে সাথে চুরি।</p>
+        </details>
+      </div>
+
+      <div class="quiz-q">
+        <strong>প্রশ্ন ৪:</strong> Anonymization ও Pseudonymization-এর পার্থক্য কী?
+        <details style="margin-top:8px"><summary style="cursor:pointer;color:var(--green);font-weight:600">উত্তর দেখুন</summary>
+          <p style="margin-top:6px;font-size:14px;background:var(--surface3);padding:10px;border-radius:6px">Pseudonymization reversible — মূল ডেটায় ফিরে যাওয়া সম্ভব, GDPR প্রযোজ্য। Anonymization irreversible — পরিচয় বের করা অসম্ভব, GDPR আর প্রযোজ্য নয়।</p>
+        </details>
+      </div>
+
+      <div class="quiz-q">
+        <strong>প্রশ্ন ৫:</strong> GDPR লঙ্ঘনে সর্বোচ্চ কত জরিমানা?
+        <details style="margin-top:8px"><summary style="cursor:pointer;color:var(--green);font-weight:600">উত্তর দেখুন</summary>
+          <p style="margin-top:6px;font-size:14px;background:var(--surface3);padding:10px;border-radius:6px">€২০ মিলিয়ন অথবা কোম্পানির বার্ষিক বৈশ্বিক টার্নওভারের ৪% — দুটির মধ্যে যেটি বেশি সেটি।</p>
+        </details>
+      </div>
+
+      <div class="quiz-q">
+        <strong>প্রশ্ন ৬:</strong> pytest-এ test function-এর নাম কী দিয়ে শুরু হতে হবে?
+        <details style="margin-top:8px"><summary style="cursor:pointer;color:var(--green);font-weight:600">উত্তর দেখুন</summary>
+          <p style="margin-top:6px;font-size:14px;background:var(--surface3);padding:10px;border-radius:6px"><code style="background:var(--surface);padding:2px 8px;border-radius:4px;font-family:monospace;color:var(--green)">test_</code> দিয়ে — যেমন test_total(), test_login()। নইলে pytest সেই function চালাবে না।</p>
+        </details>
+      </div>
+    </div>
+
+    <div class="highlight hl-green" style="margin-top:24px">
+      <strong>🎉 অভিনন্দন! তিনটি পর্ব সম্পন্ন।</strong>
+      <p style="margin-top:10px">আপনি এখন জানেন:</p>
+      <ul style="margin-top:6px">
+        <li>✅ API নিরাপত্তার তিনটি স্তর — Authentication, Authorization, Traceability</li>
+        <li>✅ চারটি Authentication পদ্ধতি — API Key, Basic Auth, JWT, HTTPS</li>
+        <li>✅ Unit Testing ও pytest ব্যবহার</li>
+        <li>✅ TDD — Red, Green, Refactor চক্র</li>
+        <li>✅ GDPR — ডেটা সুরক্ষার আইন ও ব্যক্তির অধিকার</li>
+      </ul>
+      <p style="margin-top:10px">এই জ্ঞান দিয়ে আপনি একজন সচেতন, নিরাপদ ও দায়িত্বশীল developer হিসেবে কাজ করতে পারবেন! 🚀</p>
+    </div>
+  </div>
+
+  <div class="nav-footer">
+    <a href="../Programming_Tools_DS.html" class="nav-btn-prev">← মূল পাতায়</a>
+    <div class="progress-bar">
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot active"></div>
+    </div>
+    <span class="nav-btn-done">✅ কোর্স সম্পন্ন!</span>
+  </div>
+
+</div>
+</body>
+</html>

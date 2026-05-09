@@ -1,0 +1,2966 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="Deep Learning বাংলা লেকচার সিরিজ">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenCV দিয়ে ইমেজ প্রসেসিং — সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&family=Baloo+Da+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2128;
+    --bg4: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #6e7681;
+    --accent: #58a6ff;
+    --accent2: #79c0ff;
+    --green: #3fb950;
+    --green2: #56d364;
+    --yellow: #d29922;
+    --yellow2: #e3b341;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --orange: #ffa657;
+    --teal: #39d353;
+    --pink: #ff7b72;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 17px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, #0d1117 0%, #1a1f3a 40%, #0d2137 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 20px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(88,166,255,0.12) 0%, transparent 65%);
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(88,166,255,0.15);
+    border: 1px solid rgba(88,166,255,0.3);
+    color: var(--accent);
+    font-size: 13px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+    letter-spacing: 0.5px;
+  }
+  .hero h1 {
+    font-family: 'Baloo Da 2', sans-serif;
+    font-size: clamp(26px, 5vw, 46px);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.25;
+    margin-bottom: 14px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    color: var(--text2);
+    max-width: 640px;
+    margin: 0 auto 28px;
+    font-size: 16px;
+  }
+  .hero-badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .badge {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .badge span { color: var(--green); margin-right: 5px; }
+
+  /* ── Layout ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 40px 0;
+  }
+  .toc h2 {
+    font-family: 'Baloo Da 2', sans-serif;
+    font-size: 20px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+  }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 6px 0; }
+  .toc a { color: var(--text2); text-decoration: none; transition: color .2s; }
+  .toc a:hover { color: var(--accent); }
+
+  /* ── Sections ── */
+  .section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 36px 40px;
+    margin: 32px 0;
+  }
+  @media(max-width:600px){ .section{ padding:24px 18px; } }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    font-size: 14px;
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section h2 {
+    font-family: 'Baloo Da 2', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  h3 {
+    font-family: 'Baloo Da 2', sans-serif;
+    font-size: 19px;
+    color: var(--accent2);
+    margin: 28px 0 12px;
+  }
+  h4 {
+    font-family: 'Baloo Da 2', sans-serif;
+    font-size: 16px;
+    color: var(--yellow2);
+    margin: 20px 0 8px;
+  }
+
+  p { margin-bottom: 14px; color: var(--text); }
+
+  /* ── Info Boxes ── */
+  .info-box {
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 20px 0;
+    border-left: 4px solid;
+  }
+  .info-box.blue  { background: rgba(88,166,255,.08); border-color: var(--accent); }
+  .info-box.green { background: rgba(63,185,80,.08);  border-color: var(--green); }
+  .info-box.yellow{ background: rgba(210,153,34,.08); border-color: var(--yellow2); }
+  .info-box.red   { background: rgba(248,81,73,.08);  border-color: var(--red); }
+  .info-box.purple{ background: rgba(188,140,255,.08);border-color: var(--purple); }
+  .info-box .box-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .info-box.blue   .box-title { color: var(--accent); }
+  .info-box.green  .box-title { color: var(--green2); }
+  .info-box.yellow .box-title { color: var(--yellow2); }
+  .info-box.red    .box-title { color: var(--red); }
+  .info-box.purple .box-title { color: var(--purple); }
+
+  /* ── Code ── */
+  .code-block {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 18px 0;
+  }
+  .code-header {
+    background: var(--bg3);
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-size: 12px;
+    color: var(--text3);
+    font-family: 'Fira Code', monospace;
+  }
+  .code-label {
+    font-size: 12px;
+    color: var(--green);
+  }
+  pre {
+    padding: 20px;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #e6edf3;
+  }
+  .kw  { color: #ff7b72; }
+  .fn  { color: #d2a8ff; }
+  .st  { color: #a5d6ff; }
+  .cm  { color: #8b949e; font-style: italic; }
+  .nm  { color: #79c0ff; }
+  .op  { color: #f47067; }
+  .num { color: #f0883e; }
+
+  code {
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    background: rgba(88,166,255,0.12);
+    color: var(--accent2);
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  /* ── SVG Diagrams ── */
+  .diagram-wrap {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .diagram-caption {
+    font-size: 13px;
+    color: var(--text3);
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  /* ── Tables ── */
+  .table-wrap { overflow-x: auto; margin: 20px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th {
+    background: var(--bg3);
+    color: var(--accent);
+    padding: 12px 16px;
+    text-align: left;
+    border: 1px solid var(--border);
+    font-size: 13px;
+  }
+  td {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    color: var(--text2);
+  }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  /* ── Exercise ── */
+  .exercise-block {
+    background: linear-gradient(135deg, rgba(63,185,80,.05), rgba(88,166,255,.05));
+    border: 1px solid rgba(63,185,80,.25);
+    border-radius: 12px;
+    padding: 26px 30px;
+    margin: 30px 0;
+  }
+  .exercise-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(63,185,80,.2);
+  }
+  .exercise-icon {
+    font-size: 22px;
+  }
+  .exercise-title {
+    font-family: 'Baloo Da 2', sans-serif;
+    font-size: 18px;
+    color: var(--green2);
+  }
+  .exercise-title span {
+    font-size: 13px;
+    color: var(--text3);
+    font-weight: 400;
+    margin-left: 8px;
+  }
+  .exercise-list { padding-left: 0; list-style: none; }
+  .exercise-list li {
+    padding: 10px 14px;
+    margin: 8px 0;
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    border-left: 3px solid var(--green);
+    color: var(--text);
+    font-size: 15px;
+  }
+  .exercise-list li strong { color: var(--yellow2); }
+  .hint-box {
+    background: rgba(255,166,87,.06);
+    border: 1px solid rgba(255,166,87,.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 14px;
+  }
+  .hint-box .hint-title { color: var(--orange); font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+
+  /* ── Pixel Grid Visual ── */
+  .pixel-grid { display: inline-grid; gap: 3px; }
+  .pixel-cell {
+    width: 40px; height: 40px;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Fira Code', monospace;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* ── Color Space Demo ── */
+  .color-demo {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  .color-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    min-width: 140px;
+  }
+  .color-swatch {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 12px;
+    border: 3px solid rgba(255,255,255,0.1);
+  }
+  .color-card p { font-size: 13px; color: var(--text2); margin: 0; }
+  .color-card strong { color: var(--text); font-size: 15px; display: block; margin-bottom: 4px; }
+
+  /* ── Algo Section ── */
+  .algo-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 20px 0;
+  }
+  .algo-card h4 {
+    font-size: 18px;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .algo-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-family: 'Fira Code', monospace;
+  }
+  .algo-badge.filter { background: rgba(88,166,255,.2); color: var(--accent); }
+  .algo-badge.edge   { background: rgba(188,140,255,.2); color: var(--purple); }
+  .algo-badge.morph  { background: rgba(63,185,80,.2);   color: var(--green2); }
+  .algo-badge.thresh { background: rgba(210,153,34,.2);  color: var(--yellow2); }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text3);
+    font-size: 14px;
+    margin-top: 60px;
+  }
+
+  /* ── Utility ── */
+  .tag {
+    display: inline-block;
+    font-size: 12px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    margin: 2px;
+    font-family: 'Fira Code', monospace;
+  }
+  .tag.blue   { background: rgba(88,166,255,.15); color: var(--accent2); }
+  .tag.green  { background: rgba(63,185,80,.15);  color: var(--green2); }
+  .tag.purple { background: rgba(188,140,255,.15);color: var(--purple); }
+  .tag.orange { background: rgba(255,166,87,.15); color: var(--orange); }
+
+  ul, ol { padding-left: 22px; margin-bottom: 14px; }
+  li { margin: 6px 0; color: var(--text); }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 32px 0;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 20px 0;
+  }
+  @media(max-width:640px){ .two-col{ grid-template-columns: 1fr; } }
+
+  .highlight-word { color: var(--yellow2); font-weight: 600; }
+  .green-text { color: var(--green2); }
+  .red-text   { color: var(--red); }
+  .blue-text  { color: var(--accent); }
+  .purple-text{ color: var(--purple); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+  <div class="hero-tag">🎓 সম্পূর্ণ বাংলায় — নিউবিদের জন্য</div>
+  <h1>OpenCV দিয়ে <span>ইমেজ প্রসেসিং</span><br>সম্পূর্ণ বাংলা গাইড</h1>
+  <p>তিনটি Jupyter Notebook-এর সমস্ত বিষয়বস্তু — পিক্সেল থেকে শুরু করে Canny Edge Detection পর্যন্ত — সহজ বাংলায়, ML Engineering চাকরির interview প্রশ্নসহ।</p>
+  <div class="hero-badges">
+    <div class="badge"><span>📚</span> Notebook 1: ইমেজ পড়া ও দেখানো</div>
+    <div class="badge"><span>🔧</span> Notebook 2: Transformation ও Filter</div>
+    <div class="badge"><span>🚀</span> Notebook 3: Advanced Analysis</div>
+    <div class="badge"><span>💼</span> Interview Exercise সহ</div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════ TOC ═══════════════ -->
+<div class="toc">
+  <h2>📋 বিষয়সূচি</h2>
+  <ol>
+    <li><a href="#s1">ইমেজ প্রসেসিং কী এবং কেন দরকার?</a></li>
+    <li><a href="#s2">প্যাকেজ Import — numpy, cv2, matplotlib</a></li>
+    <li><a href="#s3">ইমেজ পড়া (imread) — Color vs Grayscale</a></li>
+    <li><a href="#s4">পিক্সেল কী? — ইমেজের গভীরে</a></li>
+    <li><a href="#s5">Color Space — BGR, RGB, HSV ইত্যাদি</a></li>
+    <li><a href="#s6">ইমেজ দেখানো (imshow) ও Color Space Fix</a></li>
+    <li><a href="#s7">ইমেজের সাইজ পরিবর্তন (resize)</a></li>
+    <li><a href="#s8">Pixel Manipulation — Masking ও fillPoly</a></li>
+    <li><a href="#s9">Data Augmentation — Rotation, Flip, Zoom</a></li>
+    <li><a href="#s10">Image Filters — Blur, MedianBlur, GaussianBlur</a></li>
+    <li><a href="#s11">Threshold Technique — Binary ও Adaptive</a></li>
+    <li><a href="#s12">Advanced: Canny Edge Detection ও HoughLines</a></li>
+    <li><a href="#s13">Advanced Filters: Sobel ও Laplacian</a></li>
+    <li><a href="#s14">Morphological Transformation — Erosion ও Dilation</a></li>
+    <li><a href="#s15">সমস্ত Algorithm এর সারসংক্ষেপ ও Python Implementation</a></li>
+  </ol>
+</div>
+
+<!-- ═══════════════ SECTION 1 ═══════════════ -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <h2>ইমেজ প্রসেসিং কী এবং কেন দরকার?</h2>
+  </div>
+
+  <div class="info-box blue">
+    <div class="box-title">💡 একদম সহজ ভাষায়</div>
+    ধরো তুমি একটা ছবি দেখছ। তোমার চোখ সেই ছবি দেখতে পায়, কিন্তু কম্পিউটার কীভাবে ছবি "দেখে"? সে শুধু সংখ্যা বোঝে! তাই ছবিকে সংখ্যায় রূপান্তর করে সেই সংখ্যা নিয়ে কাজ করার নামই হলো <strong>Image Processing</strong>।
+  </div>
+
+  <h3>বাস্তব জীবনে কোথায় কাজে লাগে?</h3>
+  <div class="two-col">
+    <div class="info-box green">
+      <div class="box-title">🏥 চিকিৎসা বিজ্ঞানে</div>
+      X-ray, MRI স্ক্যান বিশ্লেষণ করে ক্যান্সার ধরা। ডাক্তার যা চোখে দেখতে পান না, কম্পিউটার সেই সূক্ষ্ম পার্থক্য ধরে ফেলে।
+    </div>
+    <div class="info-box purple">
+      <div class="box-title">🚗 Self-Driving গাড়িতে</div>
+      গাড়ি রাস্তার লাইন, ট্রাফিক সাইন, এবং পথচারী চিনতে ক্রমাগত ইমেজ প্রসেস করে চলে।
+    </div>
+    <div class="info-box yellow">
+      <div class="box-title">🏭 Manufacturing-এ</div>
+      HELLA-র মতো কোম্পানিতে solder joint-এর ত্রুটি ধরতে automated visual inspection ব্যবহার হয়।
+    </div>
+    <div class="info-box blue">
+      <div class="box-title">📱 Face Recognition-এ</div>
+      তোমার ফোন আনলক হয় মুখ দেখে — এটাও image processing-এর অংশ।
+    </div>
+  </div>
+
+  <h3>Machine Learning-এ এটা কেন গুরুত্বপূর্ণ?</h3>
+  <p>ML model-কে ছবি দেওয়ার আগে সেই ছবি <strong>প্রস্তুত</strong> করতে হয়। কাঁচা ছবি সরাসরি model-এ দিলে ভালো ফল আসে না। তাই:</p>
+  <ul>
+    <li>ছবি থেকে <strong>অপ্রয়োজনীয় অংশ</strong> সরানো হয় (Masking)</li>
+    <li>ছবির <strong>noise কমানো</strong> হয় (Filtering)</li>
+    <li>ছবির <strong>edge/কিনারা</strong> বের করা হয় (Edge Detection)</li>
+    <li>ছবির পরিমাণ বাড়ানো হয় (Data Augmentation — rotation, flip)</li>
+  </ul>
+
+  <!-- SVG Diagram: ML Pipeline -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 800 160" xmlns="http://www.w3.org/2000/svg" style="max-width:760px;width:100%" overflow="visible">
+      <defs>
+        <marker id="ar" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#58a6ff"/>
+        </marker>
+      </defs>
+      <!-- Box 1 -->
+      <rect x="10" y="40" width="130" height="70" rx="10" fill="#1c2128" stroke="#58a6ff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="75" y="72" text-anchor="middle" fill="#79c0ff" font-size="13" font-family="Hind Siliguri">📷 Raw</text>
+      <text dominant-baseline="middle" x="75" y="92" text-anchor="middle" fill="#79c0ff" font-size="13" font-family="Hind Siliguri">Image</text>
+      <!-- Arrow -->
+      <line x1="140" y1="75" x2="175" y2="75" stroke="#58a6ff" stroke-width="2" marker-end="url(#ar)"/>
+      <!-- Box 2 -->
+      <rect x="175" y="40" width="140" height="70" rx="10" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="245" y="72" text-anchor="middle" fill="#56d364" font-size="12" font-family="Hind Siliguri">🔧 Pre-processing</text>
+      <text dominant-baseline="middle" x="245" y="90" text-anchor="middle" fill="#56d364" font-size="11" font-family="Hind Siliguri">(OpenCV দিয়ে)</text>
+      <!-- Arrow -->
+      <line x1="315" y1="75" x2="350" y2="75" stroke="#58a6ff" stroke-width="2" marker-end="url(#ar)"/>
+      <!-- Box 3 -->
+      <rect x="350" y="40" width="140" height="70" rx="10" fill="#1c2128" stroke="#d29922" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="420" y="72" text-anchor="middle" fill="#e3b341" font-size="12" font-family="Hind Siliguri">🧠 ML Model</text>
+      <text dominant-baseline="middle" x="420" y="90" text-anchor="middle" fill="#e3b341" font-size="11" font-family="Hind Siliguri">(Train/Predict)</text>
+      <!-- Arrow -->
+      <line x1="490" y1="75" x2="525" y2="75" stroke="#58a6ff" stroke-width="2" marker-end="url(#ar)"/>
+      <!-- Box 4 -->
+      <rect x="525" y="40" width="130" height="70" rx="10" fill="#1c2128" stroke="#bc8cff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="590" y="72" text-anchor="middle" fill="#bc8cff" font-size="13" font-family="Hind Siliguri">✅ Result</text>
+      <text dominant-baseline="middle" x="590" y="90" text-anchor="middle" fill="#bc8cff" font-size="11" font-family="Hind Siliguri">(Prediction)</text>
+      <!-- Labels -->
+      <text dominant-baseline="middle" x="245" y="130" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">← এই ধাপটাই আমরা শিখছি →</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: Machine Learning pipeline-এ Image Processing-এর স্থান</div>
+  </div>
+
+  <!-- Exercise 1 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 1 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>প্রশ্ন ১:</strong> "Data augmentation কী এবং image classification-এ কেন এটা ব্যবহার করা হয়?" — এই প্রশ্নটার উত্তর ৩ লাইনে লেখো।</li>
+      <li><strong>প্রশ্ন ২:</strong> তোমার কাছে ১০,০০০ medical X-ray ছবি আছে। সব ছবির আলো আলাদা। Pre-processing pipeline কীভাবে ডিজাইন করবে?</li>
+      <li><strong>প্রশ্ন ৩:</strong> OpenCV কী এবং এটা কেন Python-এ image processing-এর জন্য সবচেয়ে জনপ্রিয় library?</li>
+    </ul>
+    <div class="hint-box">
+      <div class="hint-title">💡 Hint (উত্তরের দিকনির্দেশনা)</div>
+      Data augmentation = কৃত্রিমভাবে data বাড়ানো (flip, rotate, zoom)। Medical images-এ histogram equalization দিয়ে আলো normalize করা হয়। OpenCV C++ দিয়ে লেখা তাই অনেক দ্রুত।
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 2 ═══════════════ -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <h2>প্যাকেজ Import — numpy, cv2, matplotlib</h2>
+  </div>
+
+  <p>কোনো কাজ শুরু করার আগে আমাদের দরকারি <strong>tools</strong> নিয়ে নিতে হয়। Python-এ এই tools-গুলোকে বলা হয় <strong>library</strong> বা <strong>package</strong>। রান্নার আগে যেমন চুলা, কড়াই বের করি — এটাও তেমন!</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python</span>
+      <span class="code-label">প্রতিটি Notebook-এর প্রথম cell</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">import</span> numpy <span class="kw">as</span> np        <span class="cm"># সংখ্যার array নিয়ে কাজ করার জন্য</span>
+<span class="kw">import</span> cv2               <span class="cm"># ইমেজ পড়া, বদলানো, filter দেওয়ার জন্য</span>
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt  <span class="cm"># ইমেজ দেখানোর জন্য</span>
+<span class="kw">import</span> random            <span class="cm"># এলোমেলো সংখ্যা বানানোর জন্য (noise তৈরিতে)</span></pre>
+  </div>
+
+  <h3>প্রতিটি library কী কাজ করে?</h3>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Library</th>
+        <th>পুরো নাম</th>
+        <th>কাজ</th>
+        <th>কেন দরকার?</th>
+      </tr>
+      <tr>
+        <td><code>numpy</code></td>
+        <td>Numerical Python</td>
+        <td>Array/Matrix operations</td>
+        <td>ইমেজ = সংখ্যার matrix। NumPy দিয়ে সেই matrix নিয়ে কাজ করি।</td>
+      </tr>
+      <tr>
+        <td><code>cv2</code></td>
+        <td>OpenCV (Open Computer Vision)</td>
+        <td>ইমেজ পড়া, বদলানো, filter</td>
+        <td>Image processing-এর মূল হাতিয়ার। C++ এ লেখা তাই অনেক দ্রুত।</td>
+      </tr>
+      <tr>
+        <td><code>matplotlib.pyplot</code></td>
+        <td>MATLAB-style Plotting</td>
+        <td>ছবি স্ক্রিনে দেখানো</td>
+        <td>cv2 নিজে ছবি দেখায় না, matplotlib ব্যবহার করতে হয়।</td>
+      </tr>
+      <tr>
+        <td><code>random</code></td>
+        <td>Python Built-in</td>
+        <td>এলোমেলো সংখ্যা</td>
+        <td>Salt & Pepper noise তৈরিতে লাগে।</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="info-box yellow">
+    <div class="box-title">⚠️ গুরুত্বপূর্ণ: OpenCV-এর নাম cv2 কেন?</div>
+    OpenCV-এর version 2 থেকে Python binding-এর নাম <code>cv2</code> হয়েছে। এখন OpenCV 4.x চলছে, কিন্তু নামটা আর বদলায়নি! তাই <code>import cv2</code> লিখলেই সর্বশেষ version পাওয়া যায়।
+  </div>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 2 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>Practical:</strong> একটা Python script লেখো যেটা check করবে তোমার system-এ OpenCV ঠিকঠাক install হয়েছে কিনা এবং version print করবে। (<em>Hint: <code>cv2.__version__</code></em>)</li>
+      <li><strong>Conceptual:</strong> NumPy ছাড়া কি image processing করা যায়? কেন বা কেন না?</li>
+      <li><strong>Production:</strong> একটা ML pipeline-এ image pre-processing করতে cv2 ব্যবহার করছ। Memory leak এড়াতে কী কী সতর্কতা নেবে?</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 3 ═══════════════ -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <h2>ইমেজ পড়া (imread) — Color vs Grayscale</h2>
+  </div>
+
+  <p>ইমেজ পড়তে আমরা cv2-এর <code>imread()</code> function ব্যবহার করি। নাম দেখেই বোঝা যাচ্ছে — "image read" থেকে imread!</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python</span>
+      <span class="code-label">imread ব্যবহার</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># রঙিন ছবি পড়া (default)</span>
+img_color = cv2.<span class="fn">imread</span>(<span class="st">"street.jpg"</span>, cv2.IMREAD_COLOR)
+
+<span class="cm"># সাদাকালো ছবি পড়া</span>
+img_gray = cv2.<span class="fn">imread</span>(<span class="st">"street.jpg"</span>, cv2.IMREAD_GRAYSCALE)
+
+<span class="cm"># type দেখো — দুটোই numpy array!</span>
+<span class="fn">print</span>(<span class="st">'img_gray-এর type: '</span>, <span class="fn">type</span>(img_gray))
+<span class="fn">print</span>(<span class="st">'img_color-এর type: '</span>, <span class="fn">type</span>(img_color))
+
+<span class="cm"># Output:</span>
+<span class="cm"># img_gray-এর type: &lt;class 'numpy.ndarray'&gt;</span>
+<span class="cm"># img_color-এর type: &lt;class 'numpy.ndarray'&gt;</span>
+
+<span class="cm"># Shape দেখো</span>
+<span class="fn">print</span>(img_color.shape)  <span class="cm"># (150, 150, 3) — উচ্চতা, প্রস্থ, channel</span>
+<span class="fn">print</span>(img_gray.shape)   <span class="cm"># (150, 150) — উচ্চতা, প্রস্থ</span></pre>
+  </div>
+
+  <div class="info-box blue">
+    <div class="box-title">💡 .shape বুঝি সহজে</div>
+    <p><strong>(150, 150, 3)</strong> মানে:</p>
+    <ul>
+      <li><strong>150</strong> → উচ্চতা (height) — উপর থেকে নিচে কতটি row আছে</li>
+      <li><strong>150</strong> → প্রস্থ (width) — বাম থেকে ডানে কতটি column আছে</li>
+      <li><strong>3</strong> → Color channel — Blue, Green, Red (BGR)</li>
+    </ul>
+    <p>Grayscale-এ channel নেই, তাই শুধু (150, 150)।</p>
+  </div>
+
+  <!-- SVG: imread options diagram -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%" overflow="visible">
+      <!-- Central imread box -->
+      <rect x="270" y="70" width="160" height="60" rx="10" fill="#1c2128" stroke="#58a6ff" stroke-width="2"/>
+      <text dominant-baseline="middle" x="350" y="96" text-anchor="middle" fill="#79c0ff" font-size="14" font-family="Hind Siliguri" font-weight="bold">cv2.imread()</text>
+      <text dominant-baseline="middle" x="350" y="116" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Fira Code">"image.jpg", flag</text>
+
+      <!-- Left: IMREAD_COLOR -->
+      <rect x="30" y="50" width="180" height="100" rx="10" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="120" y="80" text-anchor="middle" fill="#56d364" font-size="12" font-family="Hind Siliguri">IMREAD_COLOR</text>
+      <text dominant-baseline="middle" x="120" y="100" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">রঙিন ছবি</text>
+      <text dominant-baseline="middle" x="120" y="118" text-anchor="middle" fill="#e3b341" font-size="11" font-family="Fira Code">shape: (H,W,3)</text>
+      <text dominant-baseline="middle" x="120" y="136" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">3 channel: B,G,R</text>
+      <line x1="210" y1="100" x2="270" y2="100" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="5,3"/>
+
+      <!-- Right: IMREAD_GRAYSCALE -->
+      <rect x="490" y="50" width="180" height="100" rx="10" fill="#1c2128" stroke="#d29922" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="580" y="80" text-anchor="middle" fill="#e3b341" font-size="12" font-family="Hind Siliguri">IMREAD_GRAYSCALE</text>
+      <text dominant-baseline="middle" x="580" y="100" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">সাদাকালো ছবি</text>
+      <text dominant-baseline="middle" x="580" y="118" text-anchor="middle" fill="#56d364" font-size="11" font-family="Fira Code">shape: (H,W)</text>
+      <text dominant-baseline="middle" x="580" y="136" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">1 channel (0-255)</text>
+      <line x1="430" y1="100" x2="490" y2="100" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="5,3"/>
+    </svg>
+    <div class="diagram-caption">চিত্র: imread-এর দুটি প্রধান mode</div>
+  </div>
+
+  <div class="info-box red">
+    <div class="box-title">⚠️ সাবধান: imread শুধু কিছু format support করে</div>
+    <ul>
+      <li>✅ সাপোর্ট করে: <code>.jpg</code>, <code>.jpeg</code>, <code>.png</code>, <code>.bmp</code>, <code>.tiff</code></li>
+      <li>❌ সাপোর্ট করে না: <code>.gif</code> (animated), <code>.webp</code> (পুরোনো version-এ), <code>.svg</code></li>
+      <li>ফাইল না পেলে <code>None</code> return করে — error দেয় না! তাই সবসময় check করো।</li>
+    </ul>
+  </div>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 3 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>Bug Fix:</strong> একটা production pipeline crash করছে কারণ কিছু images load হচ্ছে না। <code>imread</code> <code>None</code> return করলে সেটা handle করার robust code লেখো।</li>
+      <li><strong>Batch Loading:</strong> একটা folder-এর সব <code>.jpg</code> ও <code>.png</code> ফাইল grayscale-এ পড়ে একটা list-এ store করার function লেখো। (glob বা os.listdir ব্যবহার করো)</li>
+      <li><strong>Conceptual:</strong> Grayscale image পড়লে কত memory সাশ্রয় হয় color image-এর তুলনায়? (150×150 pixel ধরো)</li>
+    </ul>
+    <div class="hint-box">
+      <div class="hint-title">💡 Memory Hint</div>
+      Color: 150×150×3 = 67,500 bytes ≈ 66 KB। Grayscale: 150×150×1 = 22,500 bytes ≈ 22 KB। মানে ৩ গুণ কম memory লাগে!
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 4 ═══════════════ -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <h2>পিক্সেল কী? — ইমেজের গভীরে</h2>
+  </div>
+
+  <p>একটা ছবিকে ভালো করে দেখলে বোঝা যাবে — এটা আসলে হাজারো ছোট ছোট রঙিন বর্গক্ষেত্রের সমষ্টি। প্রতিটি এই ছোট বর্গকে বলে <strong class="highlight-word">Pixel</strong> (Picture Element সংক্ষেপে)।</p>
+
+  <h3>Grayscale Pixel — সহজ উদাহরণ</h3>
+  <p>Grayscale (সাদাকালো) ছবিতে প্রতিটি pixel হলো একটা সংখ্যা — <strong>0 থেকে 255</strong> পর্যন্ত।</p>
+
+  <div class="diagram-wrap">
+    <!-- Grayscale pixel grid -->
+    <svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="max-width:600px;width:100%" overflow="visible">
+      <text dominant-baseline="middle" x="310" y="20" text-anchor="middle" fill="#8b949e" font-size="12" font-family="Hind Siliguri">5×5 Grayscale Pixel Grid (diagonal = white)</text>
+      <!-- Grid -->
+      <g transform="translate(160,30)">
+        <!-- Row 0 -->
+        <rect x="0" y="0" width="55" height="55" fill="rgb(255,255,255)" rx="3"/>
+        <text dominant-baseline="middle" x="27" y="33" text-anchor="middle" fill="#000" font-size="14" font-family="Fira Code" font-weight="bold">255</text>
+        <rect x="58" y="0" width="55" height="55" fill="rgb(0,0,0)" rx="3" stroke="#333" stroke-width="1"/>
+        <text dominant-baseline="middle" x="85" y="33" text-anchor="middle" fill="#666" font-size="14" font-family="Fira Code">0</text>
+        <rect x="116" y="0" width="55" height="55" fill="rgb(0,0,0)" rx="3" stroke="#333" stroke-width="1"/>
+        <text dominant-baseline="middle" x="143" y="33" text-anchor="middle" fill="#666" font-size="14" font-family="Fira Code">0</text>
+        <rect x="174" y="0" width="55" height="55" fill="rgb(0,0,0)" rx="3" stroke="#333" stroke-width="1"/>
+        <text dominant-baseline="middle" x="201" y="33" text-anchor="middle" fill="#666" font-size="14" font-family="Fira Code">0</text>
+        <rect x="232" y="0" width="55" height="55" fill="rgb(0,0,0)" rx="3" stroke="#333" stroke-width="1"/>
+        <text dominant-baseline="middle" x="259" y="33" text-anchor="middle" fill="#666" font-size="14" font-family="Fira Code">0</text>
+        <!-- Row 1 -->
+        <rect x="0" y="58" width="55" height="55" fill="rgb(0,0,0)" rx="3" stroke="#333" stroke-width="1"/>
+        <text dominant-baseline="middle" x="27" y="91" text-anchor="middle" fill="#666" font-size="14" font-family="Fira Code">0</text>
+        <rect x="58" y="58" width="55" height="55" fill="rgb(255,255,255)" rx="3"/>
+        <text dominant-baseline="middle" x="85" y="91" text-anchor="middle" fill="#000" font-size="14" font-family="Fira Code" font-weight="bold">255</text>
+        <rect x="116" y="58" width="55" height="55" fill="rgb(0,0,0)" rx="3" stroke="#333" stroke-width="1"/>
+        <text dominant-baseline="middle" x="143" y="91" text-anchor="middle" fill="#666" font-size="14" font-family="Fira Code">0</text>
+        <rect x="174" y="58" width="55" height="55" fill="rgb(0,0,0)" rx="3" stroke="#333" stroke-width="1"/>
+        <text dominant-baseline="middle" x="201" y="91" text-anchor="middle" fill="#666" font-size="14" font-family="Fira Code">0</text>
+        <rect x="232" y="58" width="55" height="55" fill="rgb(0,0,0)" rx="3" stroke="#333" stroke-width="1"/>
+        <text dominant-baseline="middle" x="259" y="91" text-anchor="middle" fill="#666" font-size="14" font-family="Fira Code">0</text>
+        <!-- Row 2 - middle -->
+        <rect x="0" y="116" width="55" height="55" fill="rgb(0,0,0)" rx="3" stroke="#333" stroke-width="1"/>
+        <text dominant-baseline="middle" x="27" y="149" text-anchor="middle" fill="#666" font-size="14" font-family="Fira Code">0</text>
+        <rect x="58" y="116" width="55" height="55" fill="rgb(0,0,0)" rx="3" stroke="#333" stroke-width="1"/>
+        <text dominant-baseline="middle" x="85" y="149" text-anchor="middle" fill="#666" font-size="14" font-family="Fira Code">0</text>
+        <rect x="116" y="116" width="55" height="55" fill="rgb(255,255,255)" rx="3"/>
+        <text dominant-baseline="middle" x="143" y="149" text-anchor="middle" fill="#000" font-size="14" font-family="Fira Code" font-weight="bold">255</text>
+        <rect x="174" y="116" width="55" height="55" fill="rgb(0,0,0)" rx="3" stroke="#333" stroke-width="1"/>
+        <text dominant-baseline="middle" x="201" y="149" text-anchor="middle" fill="#666" font-size="14" font-family="Fira Code">0</text>
+        <rect x="232" y="116" width="55" height="55" fill="rgb(0,0,0)" rx="3" stroke="#333" stroke-width="1"/>
+        <text dominant-baseline="middle" x="259" y="149" text-anchor="middle" fill="#666" font-size="14" font-family="Fira Code">0</text>
+      </g>
+      <!-- Labels -->
+      <text dominant-baseline="middle" x="90" y="80" text-anchor="middle" fill="#3fb950" font-size="12" font-family="Hind Siliguri">সাদা = 255</text>
+      <text dominant-baseline="middle" x="90" y="140" text-anchor="middle" fill="#f85149" font-size="12" font-family="Hind Siliguri">কালো = 0</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: একটা diagonal line-এর pixel মান। 255 = সাদা, 0 = কালো।</div>
+  </div>
+
+  <h3>NumPy Array হিসেবে ইমেজ</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># এই pixel grid তৈরি করো:</span>
+img_example = np.<span class="fn">array</span>([
+    [<span class="num">255</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>],
+    [<span class="num">0</span>, <span class="num">255</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>],
+    [<span class="num">0</span>, <span class="num">0</span>, <span class="num">255</span>, <span class="num">0</span>, <span class="num">0</span>],
+    [<span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">255</span>, <span class="num">0</span>],
+    [<span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="num">255</span>]
+], dtype=np.uint8)  <span class="cm"># uint8 = 0 থেকে 255 পর্যন্ত</span>
+
+<span class="fn">print</span>(img_example.shape)  <span class="cm"># (5, 5)</span>
+
+<span class="cm"># একটা নির্দিষ্ট pixel-এর মান দেখতে:</span>
+<span class="fn">print</span>(img_example[<span class="num">0</span>, <span class="num">0</span>])  <span class="cm"># 255 — প্রথম row, প্রথম column</span>
+<span class="fn">print</span>(img_example[<span class="num">2</span>, <span class="num">2</span>])  <span class="cm"># 255 — মাঝের pixel</span>
+
+<span class="cm"># একটা pixel-এর মান বদলানো:</span>
+img_example[<span class="num">0</span>, <span class="num">0</span>] = <span class="num">128</span>  <span class="cm"># 128 = ধূসর রঙ</span></pre>
+  </div>
+
+  <div class="info-box green">
+    <div class="box-title">🎯 dtype=np.uint8 কেন?</div>
+    <p><code>uint8</code> মানে "unsigned 8-bit integer"। এটা মাত্র ৮ bit (1 byte) ব্যবহার করে এবং 0 থেকে 255 পর্যন্ত মান রাখতে পারে। ইমেজের প্রতিটি pixel 0-255 range-এ থাকে, তাই এটাই সঠিক datatype। float32 ব্যবহার করলে ৪ গুণ বেশি memory লাগবে!</p>
+  </div>
+
+  <h3>ইমেজের উপর বাম দিকটা কালো করা</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># উপর-বাম কোণের 75×75 pixel কালো করা</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">75</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="num">75</span>):
+        img_gray[i, j] = <span class="num">0</span>  <span class="cm"># 0 মানে কালো</span>
+
+<span class="cm"># আরও efficient উপায় (NumPy slicing):</span>
+img_gray[:<span class="num">75</span>, :<span class="num">75</span>] = <span class="num">0</span>  <span class="cm"># একই কাজ, অনেক দ্রুত!</span></pre>
+  </div>
+
+  <div class="info-box yellow">
+    <div class="box-title">⚡ Production Tip: Loop বনাম NumPy Slicing</div>
+    <p>For loop ব্যবহার করলে ৭৫×৭৫ = ৫,৬২৫ বার iteration হয়। NumPy slicing একবারেই করে — প্রায় ১০০-১০০০ গুণ দ্রুত। <strong>সবসময় NumPy vectorization ব্যবহার করো</strong>।</p>
+  </div>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 4 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>Performance:</strong> ৫০০×৫০০ grayscale image-এর সব pixel-এর গড় মান বের করো। Loop দিয়ে এবং NumPy দিয়ে — time পরিমাপ করো। (<em>Hint: <code>time.time()</code> বা <code>%timeit</code></em>)</li>
+      <li><strong>Manipulation:</strong> একটা ১০০×১০০ grayscale image নাও যার সব pixel 128। ডানদিকের অর্ধেক 255 করো এবং বামদিকের অর্ধেক 0 করো। ফলাফল দেখাও।</li>
+      <li><strong>Debug:</strong> <code>img[5, 3]</code> এবং <code>img[3, 5]</code> — এই দুটো কি একই pixel? কেন?</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 5 ═══════════════ -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <h2>Color Space — BGR, RGB, HSV ইত্যাদি</h2>
+  </div>
+
+  <p>রঙিন ছবিতে প্রতিটি pixel-এ তিনটা সংখ্যা থাকে — তিনটা "রঙের মাত্রা"। এই তিনটা মাত্রাকে কোন নিয়মে সাজানো হয়েছে — সেটাই হলো <strong class="highlight-word">Color Space</strong>।</p>
+
+  <!-- SVG: Color Space Comparison -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 750 220" xmlns="http://www.w3.org/2000/svg" style="max-width:730px;width:100%" overflow="visible">
+      <text dominant-baseline="middle" x="375" y="20" text-anchor="middle" fill="#8b949e" font-size="12" font-family="Hind Siliguri">একই রঙ, আলাদা Color Space-এ আলাদাভাবে প্রকাশ</text>
+
+      <!-- BGR Box -->
+      <rect x="20" y="35" width="190" height="160" rx="10" fill="#1c2128" stroke="#f85149" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="115" y="60" text-anchor="middle" fill="#f85149" font-size="14" font-family="Hind Siliguri" font-weight="bold">BGR (OpenCV)</text>
+      <rect x="40" y="75" width="50" height="50" fill="rgb(255,0,0)" rx="5"/>
+      <text dominant-baseline="middle" x="65" y="108" text-anchor="middle" fill="#fff" font-size="11" font-family="Fira Code">B=255</text>
+      <rect x="100" y="75" width="50" height="50" fill="rgb(0,255,0)" rx="5"/>
+      <text dominant-baseline="middle" x="125" y="108" text-anchor="middle" fill="#000" font-size="11" font-family="Fira Code">G=255</text>
+      <rect x="160" y="75" width="30" height="50" fill="rgb(0,0,255)" rx="5"/>
+      <text dominant-baseline="middle" x="125" y="150" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Fira Code">R=255</text>
+      <text dominant-baseline="middle" x="115" y="175" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">cv2 default!</text>
+
+      <!-- RGB Box -->
+      <rect x="230" y="35" width="190" height="160" rx="10" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="325" y="60" text-anchor="middle" fill="#3fb950" font-size="14" font-family="Hind Siliguri" font-weight="bold">RGB (matplotlib)</text>
+      <rect x="250" y="75" width="50" height="50" fill="rgb(255,0,0)" rx="5"/>
+      <text dominant-baseline="middle" x="275" y="108" text-anchor="middle" fill="#fff" font-size="11" font-family="Fira Code">R=255</text>
+      <rect x="310" y="75" width="50" height="50" fill="rgb(0,255,0)" rx="5"/>
+      <text dominant-baseline="middle" x="335" y="108" text-anchor="middle" fill="#000" font-size="11" font-family="Fira Code">G=255</text>
+      <rect x="370" y="75" width="30" height="50" fill="rgb(0,0,255)" rx="5"/>
+      <text dominant-baseline="middle" x="335" y="150" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Fira Code">B=255</text>
+      <text dominant-baseline="middle" x="325" y="175" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">মানুষের পরিচিত</text>
+
+      <!-- HSV Box -->
+      <rect x="440" y="35" width="290" height="160" rx="10" fill="#1c2128" stroke="#d29922" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="585" y="60" text-anchor="middle" fill="#d29922" font-size="14" font-family="Hind Siliguri" font-weight="bold">HSV (রঙ-আলো-উজ্জ্বলতা)</text>
+      <text x="490" y="90" fill="#e3b341" font-size="12" font-family="Hind Siliguri">H = Hue (কোন রঙ? 0-360°)</text>
+      <text x="490" y="115" fill="#e3b341" font-size="12" font-family="Hind Siliguri">S = Saturation (কতটা তীব্র?)</text>
+      <text x="490" y="140" fill="#e3b341" font-size="12" font-family="Hind Siliguri">V = Value (কতটা উজ্জ্বল?)</text>
+      <text dominant-baseline="middle" x="585" y="175" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">রঙ ফিল্টারিংয়ে ব্যবহার</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: তিনটি প্রধান Color Space-এর তুলনা</div>
+  </div>
+
+  <h3>Color Pixel-এর উদাহরণ</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># Color image-এ একটা pixel দেখতে:</span>
+<span class="fn">print</span>(img_color[<span class="num">0</span>, <span class="num">0</span>])  <span class="cm"># Output: [200, 181, 185] — [B, G, R]</span>
+
+<span class="cm"># একটা 5×5×3 array বানাও:</span>
+color_example = np.<span class="fn">zeros</span>((<span class="num">5</span>, <span class="num">5</span>, <span class="num">3</span>), dtype=np.uint8)
+
+<span class="cm"># প্রথম pixel = নীল (BGR format)</span>
+color_example[<span class="num">0</span>, <span class="num">0</span>] = [<span class="num">255</span>, <span class="num">0</span>, <span class="num">0</span>]   <span class="cm"># Blue=255, Green=0, Red=0</span>
+
+<span class="cm"># শেষ pixel = সবুজ (BGR format)</span>
+color_example[<span class="num">4</span>, <span class="num">4</span>] = [<span class="num">0</span>, <span class="num">255</span>, <span class="num">0</span>]   <span class="cm"># Blue=0, Green=255, Red=0</span></pre>
+  </div>
+
+  <div class="info-box red">
+    <div class="box-title">🚨 সবচেয়ে বড় ভুল: BGR vs RGB</div>
+    <p><strong>OpenCV = BGR</strong> (Blue আগে)<br><strong>Matplotlib = RGB</strong> (Red আগে)</p>
+    <p>তাই যদি সরাসরি cv2 দিয়ে পড়া ছবি matplotlib দিয়ে দেখাও — রঙ উল্টো হয়ে যাবে! নীলা ছবি লাল দেখাবে, লাল ছবি নীল দেখাবে। এই সমস্যার সমাধান পরের section-এ।</p>
+  </div>
+
+  <div class="color-demo">
+    <div class="color-card">
+      <div class="color-swatch" style="background: rgb(0,0,255);"></div>
+      <strong>BGR: [255,0,0]</strong>
+      <p>cv2 মনে করে: নীল</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: rgb(255,0,0);"></div>
+      <strong>BGR: [0,0,255]</strong>
+      <p>cv2 মনে করে: লাল</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: rgb(0,255,0);"></div>
+      <strong>BGR: [0,255,0]</strong>
+      <p>cv2 মনে করে: সবুজ</p>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: rgb(180,130,80);"></div>
+      <strong>BGR: [80,130,180]</strong>
+      <p>মিশ্র রঙ</p>
+    </div>
+  </div>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 5 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>Color Detection:</strong> HSV color space ব্যবহার করে একটা ছবি থেকে শুধু লাল রঙের অংশ বের করার mask তৈরি করো। (Real-world use: traffic light detection)</li>
+      <li><strong>Conceptual:</strong> Object detection model train করার সময় BGR vs RGB — কোনটায় train করা হয় এবং inference-এ কী সমস্যা হতে পারে?</li>
+      <li><strong>Advanced:</strong> LAB color space কী? কোন ধরনের image processing task-এ এটা BGR/RGB-এর চেয়ে ভালো?</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 6 ═══════════════ -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <h2>ইমেজ দেখানো (imshow) ও Color Space Fix</h2>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span><span class="code-label">grayscale দেখানো</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># সাদাকালো ছবি দেখানো</span>
+plt.<span class="fn">figure</span>(figsize=(<span class="num">8</span>, <span class="num">5</span>))
+plt.<span class="fn">imshow</span>(img_gray, cmap=<span class="st">'gray'</span>)  <span class="cm"># cmap='gray' অবশ্যই দিতে হবে!</span>
+plt.<span class="fn">xticks</span>([])  <span class="cm"># x-axis label সরাও</span>
+plt.<span class="fn">yticks</span>([])  <span class="cm"># y-axis label সরাও</span>
+plt.<span class="fn">show</span>()</pre>
+  </div>
+
+  <div class="info-box red">
+    <div class="box-title">⚠️ cmap='gray' না দিলে কী হয়?</div>
+    matplotlib ডিফল্টভাবে grayscale array-কে নীলা-হলুদ রঙে দেখায়! সঠিক grayscale দেখতে <code>cmap='gray'</code> অবশ্যই দিতে হবে।
+  </div>
+
+  <h3>Color ছবির BGR → RGB রূপান্তর</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span><span class="code-label">cvtColor — Color Space বদলানো</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># সমস্যা: cv2 BGR-এ পড়ে, matplotlib RGB দেখায়</span>
+<span class="cm"># সমাধান: cvtColor দিয়ে convert করো</span>
+
+img_color_rgb = cv2.<span class="fn">cvtColor</span>(img_color, cv2.COLOR_BGR2RGB)
+
+<span class="cm"># এখন সঠিক রঙে দেখাবে</span>
+plt.<span class="fn">figure</span>(figsize=(<span class="num">8</span>, <span class="num">5</span>))
+plt.<span class="fn">imshow</span>(img_color_rgb)  <span class="cm"># cmap লাগবে না</span>
+plt.<span class="fn">xticks</span>([])
+plt.<span class="fn">yticks</span>([])
+plt.<span class="fn">show</span>()
+
+<span class="cm"># অন্যান্য রূপান্তর:</span>
+gray = cv2.<span class="fn">cvtColor</span>(img_color, cv2.COLOR_BGR2GRAY)   <span class="cm"># রঙিন → সাদাকালো</span>
+hsv  = cv2.<span class="fn">cvtColor</span>(img_color, cv2.COLOR_BGR2HSV)    <span class="cm"># BGR → HSV</span></pre>
+  </div>
+
+  <!-- SVG: BGR to RGB fix diagram -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%" overflow="visible">
+      <defs><marker id="ar2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#58a6ff"/></marker></defs>
+
+      <!-- imread -->
+      <rect x="20" y="45" width="140" height="70" rx="10" fill="#1c2128" stroke="#58a6ff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="90" y="75" text-anchor="middle" fill="#79c0ff" font-size="13" font-family="Fira Code">cv2.imread()</text>
+      <text dominant-baseline="middle" x="90" y="95" text-anchor="middle" fill="#f85149" font-size="12" font-family="Hind Siliguri">BGR ফরম্যাটে</text>
+      <line x1="160" y1="80" x2="200" y2="80" stroke="#58a6ff" stroke-width="2" marker-end="url(#ar2)"/>
+
+      <!-- cvtColor -->
+      <rect x="200" y="45" width="160" height="70" rx="10" fill="#1c2128" stroke="#d29922" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="280" y="72" text-anchor="middle" fill="#e3b341" font-size="12" font-family="Fira Code">cv2.cvtColor()</text>
+      <text dominant-baseline="middle" x="280" y="90" text-anchor="middle" fill="#e3b341" font-size="12" font-family="Hind Siliguri">COLOR_BGR2RGB</text>
+      <text dominant-baseline="middle" x="280" y="107" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">channel অদলবদল</text>
+      <line x1="360" y1="80" x2="400" y2="80" stroke="#58a6ff" stroke-width="2" marker-end="url(#ar2)"/>
+
+      <!-- imshow -->
+      <rect x="400" y="45" width="140" height="70" rx="10" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="470" y="75" text-anchor="middle" fill="#56d364" font-size="13" font-family="Fira Code">plt.imshow()</text>
+      <text dominant-baseline="middle" x="470" y="95" text-anchor="middle" fill="#56d364" font-size="12" font-family="Hind Siliguri">✅ সঠিক রঙ!</text>
+
+      <!-- Warning path (without cvtColor) -->
+      <path d="M 160 105 Q 280 145 400 105" fill="none" stroke="#f85149" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text dominant-baseline="middle" x="280" y="148" text-anchor="middle" fill="#f85149" font-size="11" font-family="Hind Siliguri">❌ cvtColor ছাড়া → রঙ উল্টো হবে!</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: ছবি সঠিকভাবে দেখানোর workflow</div>
+  </div>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 6 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>Bug Fix:</strong> একটা model inference করছে কিন্তু ফলাফল ভুল আসছে। Debugging করতে গিয়ে দেখলে training-এ RGB ছবি দেওয়া হয়েছিল কিন্তু inference-এ BGR। এই bug ঠিক করো এবং ভবিষ্যতে এড়াতে একটা utility function লেখো।</li>
+      <li><strong>Practical:</strong> subplot ব্যবহার করে একটা figure-এ তিনটা ছবি পাশাপাশি দেখাও: original BGR, সঠিক RGB, এবং grayscale।</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 7 ═══════════════ -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <h2>ইমেজের সাইজ পরিবর্তন (resize)</h2>
+  </div>
+
+  <p>ML model-গুলো সাধারণত নির্দিষ্ট সাইজের ছবি নেয়। যেমন VGG16 নেয় 224×224। তাই ছবিকে সেই সাইজে আনতে <code>resize</code> দরকার।</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># ছোট করা (shrink) — INTER_AREA সবচেয়ে ভালো</span>
+img_small = cv2.<span class="fn">resize</span>(img_color, dsize=(<span class="num">75</span>, <span class="num">75</span>), 
+                        interpolation=cv2.INTER_AREA)
+
+<span class="cm"># বড় করা (enlarge) — INTER_LINEAR বা INTER_CUBIC</span>
+img_large = cv2.<span class="fn">resize</span>(img_color, dsize=(<span class="num">1000</span>, <span class="num">1000</span>), 
+                        interpolation=cv2.INTER_LINEAR)
+
+<span class="cm"># পাশাপাশি দেখানো</span>
+fig = plt.<span class="fn">figure</span>(figsize=(<span class="num">12</span>, <span class="num">12</span>))
+fig.<span class="fn">add_subplot</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">1</span>)
+plt.<span class="fn">imshow</span>(img_small)
+plt.<span class="fn">title</span>(<span class="st">"75×75 — ছোট"</span>)
+
+fig.<span class="fn">add_subplot</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">2</span>)
+plt.<span class="fn">imshow</span>(img_large)
+plt.<span class="fn">title</span>(<span class="st">"1000×1000 — বড়"</span>)
+plt.<span class="fn">show</span>()</pre>
+  </div>
+
+  <h3>Interpolation Method কোনটা কখন?</h3>
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Method</th>
+        <th>কখন ব্যবহার?</th>
+        <th>গতি</th>
+        <th>গুণগত মান</th>
+      </tr>
+      <tr>
+        <td><code>INTER_NEAREST</code></td>
+        <td>দ্রুততা দরকার, মান গুরুত্বপূর্ণ নয়</td>
+        <td>⚡ খুব দ্রুত</td>
+        <td>⭐ কম</td>
+      </tr>
+      <tr>
+        <td><code>INTER_LINEAR</code></td>
+        <td>বড় করা — ভালো ভারসাম্য</td>
+        <td>⚡⚡ দ্রুত</td>
+        <td>⭐⭐⭐ ভালো</td>
+      </tr>
+      <tr>
+        <td><code>INTER_CUBIC</code></td>
+        <td>বড় করা — সর্বোচ্চ মান দরকার</td>
+        <td>🐢 ধীর</td>
+        <td>⭐⭐⭐⭐ খুব ভালো</td>
+      </tr>
+      <tr>
+        <td><code>INTER_AREA</code></td>
+        <td><strong>ছোট করা</strong> — সবচেয়ে ভালো</td>
+        <td>⚡⚡ মাঝারি</td>
+        <td>⭐⭐⭐⭐ খুব ভালো</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="info-box blue">
+    <div class="box-title">💡 Interpolation কী — একদম সহজে</div>
+    ছবি ছোট করলে কিছু pixel মিলিয়ে যায়, বড় করলে নতুন pixel বানাতে হয়। কিন্তু সেই নতুন pixel-এর মান কত? আশেপাশের pixel-এর গড় নিলে? নাকি সবচেয়ে কাছেরটা নেব? এই সিদ্ধান্তটাকেই বলে <strong>Interpolation</strong>।
+  </div>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 7 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>Pipeline:</strong> ImageNet dataset-এর জন্য ছবি প্রস্তুত করো — যেকোনো সাইজের ছবিকে 224×224 করো, aspect ratio বজায় রেখে (letterboxing)।</li>
+      <li><strong>Batch:</strong> একটা folder-এর সব ছবিকে 128×128 করে resize করে নতুন folder-এ save করার script লেখো।</li>
+      <li><strong>Memory:</strong> 1000×1000×3 float32 array কত MB? Real-time inference-এ এটা সমস্যা হতে পারে কেন?</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 8 ═══════════════ -->
+<div class="section" id="s8">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <h2>Pixel Manipulation — Masking ও fillPoly</h2>
+  </div>
+
+  <p>কখনো ছবির একটা নির্দিষ্ট অংশ রেখে বাকিটা লুকাতে চাই। যেমন — self-driving car-এ রাস্তার ত্রিভুজ অংশটুকু দেখতে চাই, বাকিটা না। এই কাজটা করে <strong class="highlight-word">Masking</strong>।</p>
+
+  <div class="info-box blue">
+    <div class="box-title">💡 Mask কীভাবে কাজ করে — রান্নাঘরের উদাহরণ</div>
+    ধরো তুমি দেওয়ালে রঙ করছ কিন্তু জানালাটায় রঙ লাগাতে চাও না। তুমি জানালায় পেপার লাগাও — সেই পেপারটাই হলো mask! Image processing-এও ঠিক এভাবে কাজ করে।
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span><span class="code-label">Triangle Mask তৈরি</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># ধাপ ১: ছবির সাইজ নাও</span>
+height, width = img_gray.shape
+
+<span class="cm"># ধাপ ২: ত্রিভুজের তিনটা কোণের coordinate</span>
+<span class="cm"># (নিচে-বাম, মাঝে-উপর, নিচে-ডান)</span>
+vertices = [
+    (<span class="num">0</span>, height),           <span class="cm"># নিচে-বাম কোণ</span>
+    (width/<span class="num">2</span>, height/<span class="num">2</span>),   <span class="cm"># মাঝখান</span>
+    (width, height),        <span class="cm"># নিচে-ডান কোণ</span>
+]
+vertices = np.<span class="fn">array</span>([vertices], np.int32)
+
+<span class="cm"># ধাপ ৩: সব শূন্য (কালো) mask তৈরি করো</span>
+mask = np.<span class="fn">zeros_like</span>(img_gray)  <span class="cm"># img_gray-এর মতো সাইজ, কিন্তু সব 0</span>
+
+<span class="cm"># ধাপ ৪: ত্রিভুজের ভেতরে 255 (সাদা) করো</span>
+mask = cv2.<span class="fn">fillPoly</span>(mask, vertices, color=<span class="num">255</span>)
+
+<span class="cm"># ধাপ ৫: mask দিয়ে ছবি কাটো</span>
+<span class="cm"># bitwise_and: দুটো জায়গাতেই যেখানে value আছে, শুধু সেটা রাখো</span>
+masked_image = cv2.<span class="fn">bitwise_and</span>(img_gray, mask)
+
+plt.<span class="fn">imshow</span>(masked_image, cmap=<span class="st">'gray'</span>)
+plt.<span class="fn">show</span>()</pre>
+  </div>
+
+  <!-- SVG: Masking process -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;width:100%" overflow="visible">
+      <defs><marker id="ar3" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#58a6ff"/></marker></defs>
+
+      <!-- Original Image -->
+      <rect x="20" y="30" width="140" height="140" rx="8" fill="#333"/>
+      <text dominant-baseline="middle" x="90" y="155" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">মূল ছবি</text>
+      <!-- mask indicator inside -->
+      <polygon points="90,60 20,160 160,160" fill="rgba(88,166,255,0.2)" stroke="#58a6ff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="90" y="120" text-anchor="middle" fill="#79c0ff" font-size="10" font-family="Hind Siliguri">রাখতে চাই</text>
+
+      <!-- AND symbol -->
+      <text dominant-baseline="middle" font-family="'Hind Siliguri', sans-serif" x="200" y="108" text-anchor="middle" fill="#58a6ff" font-size="28" font-weight="bold">AND</text>
+      <text dominant-baseline="middle" x="200" y="128" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">bitwise_and</text>
+
+      <!-- Mask -->
+      <rect x="250" y="30" width="140" height="140" rx="8" fill="#111"/>
+      <polygon points="320,60 250,160 390,160" fill="white"/>
+      <text dominant-baseline="middle" x="320" y="180" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">Mask (সাদা=রাখো)</text>
+
+      <!-- Equals -->
+      <text dominant-baseline="middle" font-family="'Hind Siliguri', sans-serif" x="435" y="108" text-anchor="middle" fill="#58a6ff" font-size="28" font-weight="bold">=</text>
+
+      <!-- Result -->
+      <rect x="460" y="30" width="140" height="140" rx="8" fill="#111"/>
+      <polygon points="530,60 460,160 600,160" fill="#555"/>
+      <text dominant-baseline="middle" x="530" y="180" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">ফলাফল (শুধু ত্রিভুজ)</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: Masking কীভাবে কাজ করে — bitwise AND operation</div>
+  </div>
+
+  <h3>bitwise_and কীভাবে কাজ করে?</h3>
+  <p>ধরো একটা pixel-এর মান ছবিতে 200, mask-এ 255 → AND করলে: 200 (রাখা হলো)।<br>
+  আরেকটা pixel-এর মান ছবিতে 150, mask-এ 0 → AND করলে: 0 (বাদ গেলো)।</p>
+  <p>যেখানে mask = 255 (সাদা) → ছবির মূল মান রাখো। যেখানে mask = 0 (কালো) → কালো হয়ে যাবে।</p>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 8 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>Lane Detection:</strong> Self-driving car-এ রাস্তার lane দেখার জন্য ছবির নিচের অর্ধেক রেখে বাকিটা mask করো। (এটা real ADAS pipeline-এ ব্যবহার হয়)</li>
+      <li><strong>ROI Selection:</strong> একটা manufacturing inspection system-এ product-এর শুধু middle 60% analyze করতে হবে। ওই অংশটা extract করো।</li>
+      <li><strong>Circular Mask:</strong> fillPoly-এর বদলে circular mask কীভাবে তৈরি করবে? (<em>Hint: <code>cv2.circle()</code></em>)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 9 ═══════════════ -->
+<div class="section" id="s9">
+  <div class="section-header">
+    <div class="section-num">9</div>
+    <h2>Data Augmentation — Rotation, Flip, Zoom</h2>
+  </div>
+
+  <div class="info-box blue">
+    <div class="box-title">💡 Data Augmentation কেন দরকার?</div>
+    ধরো তোমার কাছে ১৫,০০০ দালানের ছবি আছে — সব সোজা। Model সেটা শিখলো। এখন উল্টো বা কাত হওয়া দালান দেখাও — model চিনবে না! তাই কৃত্রিমভাবে rotate, flip করে data-র পরিমাণ ও বৈচিত্র্য বাড়ানো হয়।
+  </div>
+
+  <h3>ঘোরানো (Rotation)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">def</span> <span class="fn">rotation</span>(img, angle):
+    <span class="cm">"""ছবিকে কোণে ঘোরানো"""</span>
+    long, large = img.shape[:<span class="num">2</span>]  <span class="cm"># height, width</span>
+    
+    <span class="cm"># ধাপ ১: Rotation Matrix তৈরি করো</span>
+    <span class="cm"># args: center point, angle (degrees), scale</span>
+    M = cv2.<span class="fn">getRotationMatrix2D</span>(
+        (<span class="fn">int</span>(long/<span class="num">2</span>), <span class="fn">int</span>(large/<span class="num">2</span>)),  <span class="cm"># মাঝখান থেকে ঘোরাও</span>
+        angle,                          <span class="cm"># কত ডিগ্রি?</span>
+        <span class="num">1</span>                               <span class="cm"># scale = 1 (সাইজ একই)</span>
+    )
+    
+    <span class="cm"># ধাপ ২: Matrix apply করো</span>
+    img = cv2.<span class="fn">warpAffine</span>(img, M, (long, large))
+    <span class="kw">return</span> img
+
+<span class="cm"># ব্যবহার:</span>
+img_rotate = <span class="fn">rotation</span>(img_color, <span class="num">90</span>)  <span class="cm"># ৯০ ডিগ্রি ঘোরাও</span></pre>
+  </div>
+
+  <h3>উল্টানো (Flip)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># উপর-নিচ উল্টানো (vertical flip)</span>
+img_flip_v = cv2.<span class="fn">flip</span>(img_color, <span class="num">0</span>)   <span class="cm"># 0 = vertical</span>
+
+<span class="cm"># বাম-ডান উল্টানো (horizontal flip)</span>
+img_flip_h = cv2.<span class="fn">flip</span>(img_color, <span class="num">1</span>)   <span class="cm"># 1 = horizontal</span>
+
+<span class="cm"># দুদিকেই উল্টানো</span>
+img_flip_b = cv2.<span class="fn">flip</span>(img_color, <span class="num">-1</span>)  <span class="cm"># -1 = both</span></pre>
+  </div>
+
+  <h3>Zoom করা (Crop + Resize)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># উপর-বাম কোণে zoom করা</span>
+long, larg = img_color.shape[:<span class="num">2</span>]
+long_z = <span class="fn">int</span>(<span class="num">0.5</span> * long)   <span class="cm"># অর্ধেক উচ্চতা</span>
+larg_z = <span class="fn">int</span>(<span class="num">0.5</span> * larg)   <span class="cm"># অর্ধেক প্রস্থ</span>
+long_deb = <span class="num">0</span>               <span class="cm"># শুরু: row 0</span>
+larg_deb = <span class="num">0</span>               <span class="cm"># শুরু: column 0</span>
+
+<span class="cm"># নির্দিষ্ট অংশ কেটে নাও (crop)</span>
+img_zoom = img_color[long_deb:long_deb+long_z, larg_deb:larg_deb+larg_z, :]
+
+<span class="cm"># আবার মূল সাইজে বড় করো (zoom effect)</span>
+img_zoom = cv2.<span class="fn">resize</span>(img_zoom, (long_z, larg_z))</pre>
+  </div>
+
+  <!-- SVG: Augmentation diagram -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 720 160" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;width:100%" overflow="visible">
+      <!-- Original -->
+      <rect x="20" y="20" width="100" height="100" rx="8" fill="#222" stroke="#58a6ff" stroke-width="1.5"/>
+      <text font-family="'Hind Siliguri', sans-serif" x="30" y="70" fill="#79c0ff" font-size="22">🏠</text>
+      <text dominant-baseline="middle" x="70" y="140" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">মূল ছবি</text>
+
+      <!-- Rotate -->
+      <rect x="155" y="20" width="100" height="100" rx="8" fill="#222" stroke="#3fb950" stroke-width="1.5"/>
+      <g transform="translate(205,70) rotate(90)"><text font-family="'Hind Siliguri', sans-serif" x="-15" y="8" fill="#56d364" font-size="22">🏠</text></g>
+      <text dominant-baseline="middle" x="205" y="140" text-anchor="middle" fill="#3fb950" font-size="11" font-family="Hind Siliguri">Rotate 90°</text>
+
+      <!-- Flip H -->
+      <rect x="290" y="20" width="100" height="100" rx="8" fill="#222" stroke="#d29922" stroke-width="1.5"/>
+      <text font-family="'Hind Siliguri', sans-serif" x="340" y="70" fill="#e3b341" font-size="22" transform="scale(-1,1) translate(-680,0)">🏠</text>
+      <text dominant-baseline="middle" x="340" y="140" text-anchor="middle" fill="#d29922" font-size="11" font-family="Hind Siliguri">Flip Horizontal</text>
+
+      <!-- Flip V -->
+      <rect x="425" y="20" width="100" height="100" rx="8" fill="#222" stroke="#bc8cff" stroke-width="1.5"/>
+      <text font-family="'Hind Siliguri', sans-serif" x="475" y="80" fill="#bc8cff" font-size="22" transform="scale(1,-1) translate(0,-150)">🏠</text>
+      <text dominant-baseline="middle" x="475" y="140" text-anchor="middle" fill="#bc8cff" font-size="11" font-family="Hind Siliguri">Flip Vertical</text>
+
+      <!-- Zoom -->
+      <rect x="560" y="20" width="100" height="100" rx="8" fill="#222" stroke="#ffa657" stroke-width="1.5"/>
+      <text font-family="'Hind Siliguri', sans-serif" x="575" y="75" fill="#ffa657" font-size="34">🏠</text>
+      <text dominant-baseline="middle" x="610" y="140" text-anchor="middle" fill="#ffa657" font-size="11" font-family="Hind Siliguri">Zoom In</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: Data Augmentation-এর বিভিন্ন রূপ — একটা ছবি থেকে অনেক ছবি!</div>
+  </div>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 9 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>Augmentation Pipeline:</strong> একটা image classification dataset-এর জন্য augmentation pipeline লেখো যেটা: random rotation (±30°), random horizontal flip, random brightness change — প্রতিটা 50% probability-তে apply করবে।</li>
+      <li><strong>Conceptual:</strong> Medical imaging-এ (যেমন X-ray) কোন augmentation করা উচিত এবং কোনটা করা উচিত নয়? কেন? (উদাহরণ: cardiac X-ray উল্টো করা কি ঠিক?)</li>
+      <li><strong>Advanced:</strong> Albumentations library কী এবং cv2-এর সাথে তুলনায় কী সুবিধা?</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 10 ═══════════════ -->
+<div class="section" id="s10">
+  <div class="section-header">
+    <div class="section-num">10</div>
+    <h2>Image Filters — Blur, MedianBlur, GaussianBlur</h2>
+  </div>
+
+  <p>ছবিতে অনেক সময় <strong>noise</strong> থাকে — অপ্রয়োজনীয় দাগ বা বিন্দু যা ML model-কে বিভ্রান্ত করে। Filter দিয়ে এই noise কমানো হয়।</p>
+
+  <h3>Convolution — সহজে বোঝা যাক</h3>
+  <div class="info-box blue">
+    <div class="box-title">💡 Convolution কী — kindergarten উদাহরণ</div>
+    ধরো তুমি একটা বড় আয়না দিয়ে একটা ছবির উপর ছোট ছোট জানালা সরাচ্ছ। প্রতিটা জানালায় যে পিক্সেলগুলো পড়ছে তার গড় নিচ্ছ এবং মাঝের pixel-কে সেই গড়ে বদলে দিচ্ছ। এই পুরো প্রক্রিয়াটাকেই বলে Convolution। সেই "জানালা"টাই হলো <strong>Kernel</strong> বা <strong>Filter</strong>।
+  </div>
+
+  <!-- SVG: Convolution -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%" overflow="visible">
+      <text dominant-baseline="middle" x="350" y="20" text-anchor="middle" fill="#8b949e" font-size="12" font-family="Hind Siliguri">3×3 Averaging Kernel দিয়ে Convolution</text>
+
+      <!-- Input Matrix -->
+      <text dominant-baseline="middle" x="90" y="45" text-anchor="middle" fill="#79c0ff" font-size="12" font-family="Hind Siliguri">Input (৩×৩ উদাহরণ)</text>
+      <g transform="translate(20,55)">
+        <rect x="0" y="0" width="40" height="40" fill="rgba(88,166,255,0.3)" stroke="#58a6ff" stroke-width="2" rx="3"/>
+        <rect x="40" y="0" width="40" height="40" fill="rgba(88,166,255,0.3)" stroke="#58a6ff" stroke-width="2" rx="3"/>
+        <rect x="80" y="0" width="40" height="40" fill="rgba(88,166,255,0.3)" stroke="#58a6ff" stroke-width="2" rx="3"/>
+        <rect x="0" y="40" width="40" height="40" fill="rgba(88,166,255,0.3)" stroke="#58a6ff" stroke-width="2" rx="3"/>
+        <rect x="40" y="40" width="40" height="40" fill="rgba(255,166,87,0.6)" stroke="#ffa657" stroke-width="2.5" rx="3"/>
+        <rect x="80" y="40" width="40" height="40" fill="rgba(88,166,255,0.3)" stroke="#58a6ff" stroke-width="2" rx="3"/>
+        <rect x="0" y="80" width="40" height="40" fill="rgba(88,166,255,0.3)" stroke="#58a6ff" stroke-width="2" rx="3"/>
+        <rect x="40" y="80" width="40" height="40" fill="rgba(88,166,255,0.3)" stroke="#58a6ff" stroke-width="2" rx="3"/>
+        <rect x="80" y="80" width="40" height="40" fill="rgba(88,166,255,0.3)" stroke="#58a6ff" stroke-width="2" rx="3"/>
+        <!-- Values -->
+        <text dominant-baseline="middle" x="20" y="25" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="Fira Code">100</text>
+        <text dominant-baseline="middle" x="60" y="25" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="Fira Code">120</text>
+        <text dominant-baseline="middle" x="100" y="25" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="Fira Code">80</text>
+        <text dominant-baseline="middle" x="20" y="65" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="Fira Code">90</text>
+        <text dominant-baseline="middle" x="60" y="65" text-anchor="middle" fill="#ffa657" font-size="12" font-family="Fira Code" font-weight="bold">200</text>
+        <text dominant-baseline="middle" x="100" y="65" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="Fira Code">110</text>
+        <text dominant-baseline="middle" x="20" y="105" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="Fira Code">70</text>
+        <text dominant-baseline="middle" x="60" y="105" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="Fira Code">130</text>
+        <text dominant-baseline="middle" x="100" y="105" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="Fira Code">95</text>
+      </g>
+
+      <!-- Kernel -->
+      <text dominant-baseline="middle" x="255" y="45" text-anchor="middle" fill="#56d364" font-size="12" font-family="Hind Siliguri">3×3 Kernel (গড়)</text>
+      <g transform="translate(215,55)">
+        <rect x="0" y="0" width="40" height="40" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <rect x="40" y="0" width="40" height="40" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <rect x="80" y="0" width="40" height="40" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <rect x="0" y="40" width="40" height="40" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <rect x="40" y="40" width="40" height="40" fill="rgba(63,185,80,0.3)" stroke="#3fb950" stroke-width="2.5" rx="3"/>
+        <rect x="80" y="40" width="40" height="40" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <rect x="0" y="80" width="40" height="40" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <rect x="40" y="80" width="40" height="40" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <rect x="80" y="80" width="40" height="40" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <text dominant-baseline="middle" x="20" y="25" text-anchor="middle" fill="#56d364" font-size="11" font-family="Fira Code">1/9</text>
+        <text dominant-baseline="middle" x="60" y="25" text-anchor="middle" fill="#56d364" font-size="11" font-family="Fira Code">1/9</text>
+        <text dominant-baseline="middle" x="100" y="25" text-anchor="middle" fill="#56d364" font-size="11" font-family="Fira Code">1/9</text>
+        <text dominant-baseline="middle" x="20" y="65" text-anchor="middle" fill="#56d364" font-size="11" font-family="Fira Code">1/9</text>
+        <text dominant-baseline="middle" x="60" y="65" text-anchor="middle" fill="#56d364" font-size="12" font-family="Fira Code" font-weight="bold">1/9</text>
+        <text dominant-baseline="middle" x="100" y="65" text-anchor="middle" fill="#56d364" font-size="11" font-family="Fira Code">1/9</text>
+        <text dominant-baseline="middle" x="20" y="105" text-anchor="middle" fill="#56d364" font-size="11" font-family="Fira Code">1/9</text>
+        <text dominant-baseline="middle" x="60" y="105" text-anchor="middle" fill="#56d364" font-size="11" font-family="Fira Code">1/9</text>
+        <text dominant-baseline="middle" x="100" y="105" text-anchor="middle" fill="#56d364" font-size="11" font-family="Fira Code">1/9</text>
+      </g>
+
+      <!-- Arrow and Result -->
+      <text font-family="'Hind Siliguri', sans-serif" x="440" y="100" fill="#58a6ff" font-size="28" font-weight="bold">→</text>
+      <text dominant-baseline="middle" x="490" y="80" text-anchor="middle" fill="#e3b341" font-size="13" font-family="Hind Siliguri">গড় = (100+120+80</text>
+      <text dominant-baseline="middle" x="490" y="100" text-anchor="middle" fill="#e3b341" font-size="13" font-family="Hind Siliguri">+90+200+110</text>
+      <text dominant-baseline="middle" x="490" y="120" text-anchor="middle" fill="#e3b341" font-size="13" font-family="Hind Siliguri">+70+130+95)/9</text>
+      <text dominant-baseline="middle" x="490" y="150" text-anchor="middle" fill="#ffa657" font-size="18" font-family="Fira Code" font-weight="bold">≈ 111</text>
+      <text dominant-baseline="middle" x="490" y="170" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">(200 → 111, নরম হলো!)</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: 3×3 Averaging filter কীভাবে কাজ করে। মাঝের 200 কমে 111 হয়ে গেলো।</div>
+  </div>
+
+  <h3>তিনটি প্রধান Filter</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span><span class="code-label">blur — গড় filter</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># Average Blur — সব pixel-এর সমান গুরুত্ব</span>
+filter_blur = cv2.<span class="fn">blur</span>(img_color, ksize=(<span class="num">3</span>, <span class="num">3</span>))
+<span class="cm"># ksize বড় করলে বেশি blur হবে, কিন্তু তথ্য হারাবে!</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span><span class="code-label">medianBlur — Salt & Pepper noise সারাতে</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># Salt & Pepper Noise যোগ করা</span>
+salt_value = <span class="num">20</span>
+noise = np.random.<span class="fn">randint</span>(salt_value+<span class="num">1</span>, size=(<span class="num">150</span>, <span class="num">150</span>))
+img_noisy = img_color.<span class="fn">copy</span>()
+img_noisy[noise == <span class="num">0</span>] = <span class="num">0</span>    <span class="cm"># Pepper (কালো দাগ)</span>
+img_noisy[noise == salt_value] = <span class="num">255</span>  <span class="cm"># Salt (সাদা দাগ)</span>
+
+<span class="cm"># Median Filter দিয়ে ঠিক করা</span>
+<span class="cm"># প্রতিটা kernel window-এর median নেয় (গড় না!)</span>
+filter_median = cv2.<span class="fn">medianBlur</span>(img_noisy, <span class="num">3</span>)</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span><span class="code-label">GaussianBlur — সাধারণ noise সারাতে</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># Gaussian Blur — মাঝের pixel-এর গুরুত্ব বেশি</span>
+filter_gaussian = cv2.<span class="fn">GaussianBlur</span>(
+    img_color, 
+    ksize=(<span class="num">3</span>, <span class="num">3</span>),  <span class="cm"># kernel size (বিজোড় সংখ্যা হতে হবে!)</span>
+    sigmaX=<span class="num">0</span>,      <span class="cm"># 0 = auto-calculate</span>
+    sigmaY=<span class="num">0</span>
+)</pre>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Filter</th>
+        <th>কাজের পদ্ধতি</th>
+        <th>কোন noise-এ ভালো?</th>
+        <th>কখন ব্যবহার?</th>
+      </tr>
+      <tr>
+        <td><code>blur()</code></td>
+        <td>সব pixel-এর সমান গড়</td>
+        <td>সাধারণ blur</td>
+        <td>দ্রুত কিন্তু কম কার্যকর</td>
+      </tr>
+      <tr>
+        <td><code>medianBlur()</code></td>
+        <td>Kernel-এর median মান</td>
+        <td>Salt & Pepper noise</td>
+        <td>ক্যামেরার noise, বিন্দু-দাগ</td>
+      </tr>
+      <tr>
+        <td><code>GaussianBlur()</code></td>
+        <td>Gaussian weight — মাঝে বেশি গুরুত্ব</td>
+        <td>Gaussian noise</td>
+        <td>Edge detection-এর আগে</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 10 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>Noise Analysis:</strong> একটা noisy medical image দেওয়া আছে। কোন filter ব্যবহার করবে এবং কেন? Code দিয়ে ৩টা filter compare করো, PSNR (Peak Signal-to-Noise Ratio) দিয়ে মূল্যায়ন করো।</li>
+      <li><strong>Real-time:</strong> Real-time video stream-এ blur apply করতে কোন filter সবচেয়ে কার্যকর হবে speed ও quality-র ভারসাম্যে?</li>
+      <li><strong>CNN Pre-processing:</strong> CNN-এর আগে GaussianBlur কেন প্রয়োগ করা হয়? Overfitting-এর সাথে কী সম্পর্ক?</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 11 ═══════════════ -->
+<div class="section" id="s11">
+  <div class="section-header">
+    <div class="section-num">11</div>
+    <h2>Threshold Technique — Binary ও Adaptive</h2>
+  </div>
+
+  <p>Threshold মানে হলো একটা সীমা নির্ধারণ করা। যেসব pixel সেই সীমার উপরে — তাদের সাদা (255) করো। নিচে — কালো (0) করো। এটাকে বলে <strong class="highlight-word">Binarization</strong> — ছবিকে শুধু কালো ও সাদায় রূপান্তর।</p>
+
+  <!-- SVG: Threshold concept -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%" overflow="visible">
+      <text dominant-baseline="middle" x="350" y="20" text-anchor="middle" fill="#8b949e" font-size="12" font-family="Hind Siliguri">Threshold = 115 দিয়ে Binary Thresholding</text>
+
+      <!-- Number line -->
+      <line x1="50" y1="80" x2="650" y2="80" stroke="#30363d" stroke-width="2"/>
+      <text dominant-baseline="middle" x="50" y="100" text-anchor="middle" fill="#8b949e" font-size="12" font-family="Fira Code">0</text>
+      <text dominant-baseline="middle" x="650" y="100" text-anchor="middle" fill="#8b949e" font-size="12" font-family="Fira Code">255</text>
+
+      <!-- Threshold line -->
+      <line x1="330" y1="50" x2="330" y2="110" stroke="#ffa657" stroke-width="2.5" stroke-dasharray="5,3"/>
+      <text dominant-baseline="middle" x="330" y="40" text-anchor="middle" fill="#ffa657" font-size="12" font-family="Fira Code">Threshold=115</text>
+
+      <!-- Left zone (below threshold) -->
+      <rect x="55" y="55" width="270" height="30" fill="rgba(248,81,73,0.2)" rx="4"/>
+      <text dominant-baseline="middle" x="190" y="75" text-anchor="middle" fill="#f85149" font-size="12" font-family="Hind Siliguri">0 থেকে 115 → কালো (0)</text>
+
+      <!-- Right zone (above threshold) -->
+      <rect x="335" y="55" width="310" height="30" fill="rgba(63,185,80,0.2)" rx="4"/>
+      <text dominant-baseline="middle" x="490" y="75" text-anchor="middle" fill="#3fb950" font-size="12" font-family="Hind Siliguri">115 থেকে 255 → সাদা (255)</text>
+
+      <!-- Example pixels -->
+      <circle cx="150" cy="80" r="12" fill="#555"/>
+      <text dominant-baseline="middle" x="150" y="130" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Fira Code">90 → 0</text>
+      <circle cx="250" cy="80" r="12" fill="#777"/>
+      <text dominant-baseline="middle" x="250" y="130" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Fira Code">100 → 0</text>
+      <circle cx="430" cy="80" r="12" fill="#aaa"/>
+      <text dominant-baseline="middle" x="430" y="130" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Fira Code">150 → 255</text>
+      <circle cx="580" cy="80" r="12" fill="#eee"/>
+      <text dominant-baseline="middle" x="580" y="130" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Fira Code">220 → 255</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: THRESH_BINARY — 115-এর নিচে কালো, উপরে সাদা</div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span><span class="code-label">Global Threshold</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># ধাপ ১: grayscale পড়ো</span>
+img_gray = cv2.<span class="fn">imread</span>(<span class="st">'building.jpg'</span>, cv2.IMREAD_GRAYSCALE)
+
+<span class="cm"># ধাপ ২: Gaussian Blur দিয়ে noise কমাও (ভালো result-এর জন্য)</span>
+filter_gb = cv2.<span class="fn">GaussianBlur</span>(img_gray, ksize=(<span class="num">3</span>,<span class="num">3</span>), sigmaX=<span class="num">0</span>)
+
+<span class="cm"># ধাপ ৩: Threshold apply করো</span>
+threshold_val, img_thresh = cv2.<span class="fn">threshold</span>(
+    filter_gb,   <span class="cm"># ইনপুট (grayscale)</span>
+    <span class="num">115</span>,         <span class="cm"># threshold value</span>
+    <span class="num">255</span>,         <span class="cm"># max value (সাদা)</span>
+    cv2.THRESH_BINARY  <span class="cm"># type</span>
+)
+<span class="cm"># threshold() দুটো জিনিস return করে:</span>
+<span class="cm"># 1. ব্যবহৃত threshold মান</span>
+<span class="cm"># 2. threshold apply হওয়া ছবি</span></pre>
+  </div>
+
+  <h3>Threshold-এর ধরন</h3>
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Type</th>
+        <th>নিয়ম</th>
+        <th>ব্যবহার</th>
+      </tr>
+      <tr>
+        <td><code>THRESH_BINARY</code></td>
+        <td>উপরে → 255, নিচে → 0</td>
+        <td>সাধারণ binarization</td>
+      </tr>
+      <tr>
+        <td><code>THRESH_BINARY_INV</code></td>
+        <td>উপরে → 0, নিচে → 255 (উল্টো)</td>
+        <td>কালো পটভূমিতে সাদা object</td>
+      </tr>
+      <tr>
+        <td><code>THRESH_TRUNC</code></td>
+        <td>উপরে → threshold মান, নিচে → আগের মান</td>
+        <td>উজ্জ্বলতা সীমিত করা</td>
+      </tr>
+      <tr>
+        <td><code>THRESH_TOZERO</code></td>
+        <td>নিচে → 0, উপরে → আগের মান</td>
+        <td>অন্ধকার অংশ বাদ দেওয়া</td>
+      </tr>
+    </table>
+  </div>
+
+  <h3>Adaptive Threshold — ভালো result</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span><span class="code-label">Adaptive Threshold</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># সমস্যা: পুরো ছবিতে আলো আলাদা হলে global threshold কাজ করে না</span>
+<span class="cm"># সমাধান: ছবির ছোট ছোট অংশের জন্য আলাদা threshold calculate করো</span>
+
+img_adaptive = cv2.<span class="fn">adaptiveThreshold</span>(
+    filter_gb,          <span class="cm"># input (grayscale)</span>
+    <span class="num">255</span>,                <span class="cm"># max value</span>
+    adaptiveMethod=cv2.ADAPTIVE_THRESH_GAUSSIAN_C,  <span class="cm"># পদ্ধতি</span>
+    thresholdType=cv2.THRESH_BINARY,                <span class="cm"># threshold type</span>
+    blockSize=<span class="num">11</span>,      <span class="cm"># neighborhood size (বিজোড় হতে হবে)</span>
+    C=<span class="num">5</span>                 <span class="cm"># গড় থেকে বিয়োগ করা হবে</span>
+)</pre>
+  </div>
+
+  <div class="info-box green">
+    <div class="box-title">🎯 Adaptive vs Global — কখন কোনটা?</div>
+    <ul>
+      <li><strong>Global:</strong> ছবির সর্বত্র আলো সমান → ব্যবহার করো</li>
+      <li><strong>Adaptive:</strong> ছবির বিভিন্ন অংশে আলো আলাদা (real-world photos) → ব্যবহার করো</li>
+      <li>Real-world OCR (text recognition), document scanning-এ adaptive সবসময় ভালো কাজ করে।</li>
+    </ul>
+  </div>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 11 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>OCR Pipeline:</strong> একটা স্ক্যান করা document ছবি আছে যেখানে আলো সমান নয়। Adaptive thresholding ব্যবহার করে text ভালোভাবে বের করার pipeline লেখো।</li>
+      <li><strong>Otsu's Method:</strong> <code>cv2.THRESH_OTSU</code> কী এবং কখন এটা manual threshold-এর চেয়ে ভালো?</li>
+      <li><strong>Production:</strong> ব্যাচে ১০,০০০ ছবিতে adaptive threshold apply করার efficient pipeline লেখো (multiprocessing ব্যবহার করো)।</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 12 ═══════════════ -->
+<div class="section" id="s12">
+  <div class="section-header">
+    <div class="section-num">12</div>
+    <h2>Advanced: Canny Edge Detection ও HoughLines</h2>
+  </div>
+
+  <p>Canny algorithm হলো সবচেয়ে জনপ্রিয় edge detection পদ্ধতি। ১৯৮৬ সালে John Canny এটা তৈরি করেছিলেন। এটা ছবির কিনারা (edge) গুলো খুঁজে বের করে।</p>
+
+  <div class="info-box blue">
+    <div class="box-title">💡 Edge কী — সহজে বোঝা</div>
+    ছবিতে যেখানে রঙ বা উজ্জ্বলতা হঠাৎ অনেক পরিবর্তন হয় — সেটাই edge। যেমন দালানের দেওয়াল আর আকাশের সীমানা।
+  </div>
+
+  <!-- SVG: Canny steps -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 760 130" xmlns="http://www.w3.org/2000/svg" style="max-width:740px;width:100%" overflow="visible">
+      <defs><marker id="ar4" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#58a6ff"/></marker></defs>
+
+      <rect x="10" y="20" width="120" height="80" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="70" y="55" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="Hind Siliguri">📸 মূল ছবি</text>
+      <text dominant-baseline="middle" x="70" y="75" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">(Color)</text>
+
+      <line x1="130" y1="60" x2="155" y2="60" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ar4)"/>
+
+      <rect x="155" y="20" width="130" height="80" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="220" y="52" text-anchor="middle" fill="#56d364" font-size="11" font-family="Hind Siliguri">GaussianBlur</text>
+      <text dominant-baseline="middle" x="220" y="68" text-anchor="middle" fill="#56d364" font-size="10" font-family="Hind Siliguri">Noise সরাও</text>
+      <text dominant-baseline="middle" x="220" y="83" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Fira Code">cv2.GaussianBlur()</text>
+
+      <line x1="285" y1="60" x2="310" y2="60" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ar4)"/>
+
+      <rect x="310" y="20" width="130" height="80" rx="8" fill="#1c2128" stroke="#d29922" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="375" y="52" text-anchor="middle" fill="#e3b341" font-size="11" font-family="Hind Siliguri">Canny Edge</text>
+      <text dominant-baseline="middle" x="375" y="68" text-anchor="middle" fill="#e3b341" font-size="10" font-family="Hind Siliguri">2 threshold</text>
+      <text dominant-baseline="middle" x="375" y="83" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Fira Code">cv2.Canny()</text>
+
+      <line x1="440" y1="60" x2="465" y2="60" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ar4)"/>
+
+      <rect x="465" y="20" width="130" height="80" rx="8" fill="#1c2128" stroke="#bc8cff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="530" y="52" text-anchor="middle" fill="#bc8cff" font-size="11" font-family="Hind Siliguri">HoughLines</text>
+      <text dominant-baseline="middle" x="530" y="68" text-anchor="middle" fill="#bc8cff" font-size="10" font-family="Hind Siliguri">Line Detection</text>
+      <text dominant-baseline="middle" x="530" y="83" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Fira Code">HoughLinesP()</text>
+
+      <line x1="595" y1="60" x2="620" y2="60" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#ar4)"/>
+
+      <rect x="620" y="20" width="120" height="80" rx="8" fill="#1c2128" stroke="#ffa657" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="680" y="55" text-anchor="middle" fill="#ffa657" font-size="11" font-family="Hind Siliguri">📐 ফলাফল</text>
+      <text dominant-baseline="middle" x="680" y="75" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">(Lines রঙিন)</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: Canny + HoughLines pipeline</div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span><span class="code-label">Canny + HoughLinesP</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># ধাপ ১: Color ছবি পড়ো এবং convert করো</span>
+building_color = cv2.<span class="fn">imread</span>(<span class="st">'building.jpg'</span>, cv2.IMREAD_COLOR)
+building_color = cv2.<span class="fn">cvtColor</span>(building_color, cv2.COLOR_BGR2RGB)
+
+<span class="cm"># ধাপ ২: Gaussian noise দূর করো</span>
+filter_gb = cv2.<span class="fn">GaussianBlur</span>(building_color, (<span class="num">3</span>,<span class="num">3</span>), <span class="num">0</span>)
+
+<span class="cm"># ধাপ ৩: Canny edge detection</span>
+<span class="cm"># minVal=100: এর নিচের intensity → edge না</span>
+<span class="cm"># maxVal=200: এর উপরের intensity → নিশ্চিত edge</span>
+edges = cv2.<span class="fn">Canny</span>(filter_gb, <span class="num">100</span>, <span class="num">200</span>)
+
+<span class="cm"># ধাপ ৪: Line detection</span>
+lines = cv2.<span class="fn">HoughLinesP</span>(
+    edges,
+    rho=<span class="num">3</span>,              <span class="cm"># r-এর resolution (pixel)</span>
+    theta=np.pi/<span class="num">20</span>,    <span class="cm"># θ-এর resolution (radian)</span>
+    threshold=<span class="num">100</span>,     <span class="cm"># সর্বনিম্ন intersection</span>
+    minLineLength=<span class="num">0</span>,   <span class="cm"># সর্বনিম্ন line দৈর্ঘ্য</span>
+    maxLineGap=<span class="num">20</span>      <span class="cm"># দুই point-এর সর্বোচ্চ ফাঁক</span>
+)
+
+<span class="cm"># ধাপ ৫: line ছবিতে আঁকো</span>
+line_img = np.<span class="fn">zeros</span>(
+    (building_color.shape[<span class="num">0</span>], building_color.shape[<span class="num">1</span>], <span class="num">3</span>), 
+    dtype=np.uint8
+)
+<span class="kw">for</span> line <span class="kw">in</span> lines:
+    <span class="kw">for</span> x1, y1, x2, y2 <span class="kw">in</span> line:
+        cv2.<span class="fn">line</span>(line_img, (x1,y1), (x2,y2), color=[<span class="num">255</span>,<span class="num">0</span>,<span class="num">0</span>], thickness=<span class="num">3</span>)
+
+<span class="cm"># ধাপ ৬: মূল ছবির সাথে মেশাও</span>
+result = cv2.<span class="fn">addWeighted</span>(building_color, <span class="num">0.8</span>, line_img, <span class="num">1.0</span>, <span class="num">0.0</span>)</pre>
+  </div>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 12 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>Lane Detection:</strong> Highway-এর ছবি থেকে Canny + HoughLinesP ব্যবহার করে lane line detect করো। শুধু নিচের অর্ধেকে line দেখাও (masking সহ)।</li>
+      <li><strong>Tuning:</strong> Canny-এর minVal ও maxVal কীভাবে নির্বাচন করবে? কোনো systematic পদ্ধতি আছে?</li>
+      <li><strong>Real Project:</strong> একটা defect detection system-এ manufactured parts-এর straight edge detect করতে এই pipeline কীভাবে adapt করবে?</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 13 ═══════════════ -->
+<div class="section" id="s13">
+  <div class="section-header">
+    <div class="section-num">13</div>
+    <h2>Advanced Filters: Sobel ও Laplacian</h2>
+  </div>
+
+  <h3>Sobel Filter — দিকনির্দেশক Edge</h3>
+  <p>Sobel filter শুধু নির্দিষ্ট দিকের edge বের করে — হয় vertical (খাড়া) অথবা horizontal (আড়াআড়ি)।</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg" style="max-width:480px;width:100%" overflow="visible">
+      <text dominant-baseline="middle" x="250" y="20" text-anchor="middle" fill="#8b949e" font-size="12" font-family="Hind Siliguri">Sobel Kernel — দুই ধরনের</text>
+
+      <!-- X kernel (vertical edges) -->
+      <text dominant-baseline="middle" x="100" y="45" text-anchor="middle" fill="#79c0ff" font-size="12" font-family="Hind Siliguri">X Filter (dx=1, dy=0)</text>
+      <text dominant-baseline="middle" x="100" y="58" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">খাড়া edge ধরে</text>
+      <g transform="translate(40,65)">
+        <rect x="0" y="0" width="40" height="40" fill="rgba(248,81,73,0.2)" stroke="#f85149" stroke-width="1.5" rx="3"/>
+        <rect x="40" y="0" width="40" height="40" fill="rgba(48,54,61,0.5)" stroke="#30363d" stroke-width="1" rx="3"/>
+        <rect x="80" y="0" width="40" height="40" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <rect x="0" y="40" width="40" height="40" fill="rgba(248,81,73,0.3)" stroke="#f85149" stroke-width="1.5" rx="3"/>
+        <rect x="40" y="40" width="40" height="40" fill="rgba(48,54,61,0.5)" stroke="#30363d" stroke-width="1" rx="3"/>
+        <rect x="80" y="40" width="40" height="40" fill="rgba(63,185,80,0.3)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <rect x="0" y="80" width="40" height="40" fill="rgba(248,81,73,0.2)" stroke="#f85149" stroke-width="1.5" rx="3"/>
+        <rect x="40" y="80" width="40" height="40" fill="rgba(48,54,61,0.5)" stroke="#30363d" stroke-width="1" rx="3"/>
+        <rect x="80" y="80" width="40" height="40" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <text dominant-baseline="middle" x="20" y="25" text-anchor="middle" fill="#f85149" font-size="14" font-family="Fira Code">-1</text>
+        <text dominant-baseline="middle" x="60" y="25" text-anchor="middle" fill="#6e7681" font-size="14" font-family="Fira Code">0</text>
+        <text dominant-baseline="middle" x="100" y="25" text-anchor="middle" fill="#3fb950" font-size="14" font-family="Fira Code">+1</text>
+        <text dominant-baseline="middle" x="20" y="65" text-anchor="middle" fill="#f85149" font-size="14" font-family="Fira Code">-2</text>
+        <text dominant-baseline="middle" x="60" y="65" text-anchor="middle" fill="#6e7681" font-size="14" font-family="Fira Code">0</text>
+        <text dominant-baseline="middle" x="100" y="65" text-anchor="middle" fill="#3fb950" font-size="14" font-family="Fira Code">+2</text>
+        <text dominant-baseline="middle" x="20" y="105" text-anchor="middle" fill="#f85149" font-size="14" font-family="Fira Code">-1</text>
+        <text dominant-baseline="middle" x="60" y="105" text-anchor="middle" fill="#6e7681" font-size="14" font-family="Fira Code">0</text>
+        <text dominant-baseline="middle" x="100" y="105" text-anchor="middle" fill="#3fb950" font-size="14" font-family="Fira Code">+1</text>
+      </g>
+
+      <!-- Y kernel (horizontal edges) -->
+      <text dominant-baseline="middle" x="370" y="45" text-anchor="middle" fill="#e3b341" font-size="12" font-family="Hind Siliguri">Y Filter (dx=0, dy=1)</text>
+      <text dominant-baseline="middle" x="370" y="58" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">আড়াআড়ি edge ধরে</text>
+      <g transform="translate(310,65)">
+        <rect x="0" y="0" width="40" height="40" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <rect x="40" y="0" width="40" height="40" fill="rgba(63,185,80,0.3)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <rect x="80" y="0" width="40" height="40" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5" rx="3"/>
+        <rect x="0" y="40" width="40" height="40" fill="rgba(48,54,61,0.5)" stroke="#30363d" stroke-width="1" rx="3"/>
+        <rect x="40" y="40" width="40" height="40" fill="rgba(48,54,61,0.5)" stroke="#30363d" stroke-width="1" rx="3"/>
+        <rect x="80" y="40" width="40" height="40" fill="rgba(48,54,61,0.5)" stroke="#30363d" stroke-width="1" rx="3"/>
+        <rect x="0" y="80" width="40" height="40" fill="rgba(248,81,73,0.2)" stroke="#f85149" stroke-width="1.5" rx="3"/>
+        <rect x="40" y="80" width="40" height="40" fill="rgba(248,81,73,0.3)" stroke="#f85149" stroke-width="1.5" rx="3"/>
+        <rect x="80" y="80" width="40" height="40" fill="rgba(248,81,73,0.2)" stroke="#f85149" stroke-width="1.5" rx="3"/>
+        <text dominant-baseline="middle" x="20" y="25" text-anchor="middle" fill="#3fb950" font-size="14" font-family="Fira Code">+1</text>
+        <text dominant-baseline="middle" x="60" y="25" text-anchor="middle" fill="#3fb950" font-size="14" font-family="Fira Code">+2</text>
+        <text dominant-baseline="middle" x="100" y="25" text-anchor="middle" fill="#3fb950" font-size="14" font-family="Fira Code">+1</text>
+        <text dominant-baseline="middle" x="20" y="65" text-anchor="middle" fill="#6e7681" font-size="14" font-family="Fira Code">0</text>
+        <text dominant-baseline="middle" x="60" y="65" text-anchor="middle" fill="#6e7681" font-size="14" font-family="Fira Code">0</text>
+        <text dominant-baseline="middle" x="100" y="65" text-anchor="middle" fill="#6e7681" font-size="14" font-family="Fira Code">0</text>
+        <text dominant-baseline="middle" x="20" y="105" text-anchor="middle" fill="#f85149" font-size="14" font-family="Fira Code">-1</text>
+        <text dominant-baseline="middle" x="60" y="105" text-anchor="middle" fill="#f85149" font-size="14" font-family="Fira Code">-2</text>
+        <text dominant-baseline="middle" x="100" y="105" text-anchor="middle" fill="#f85149" font-size="14" font-family="Fira Code">-1</text>
+      </g>
+    </svg>
+    <div class="diagram-caption">চিত্র: Sobel X এবং Y kernel। বাম-ডান পার্থক্য vs উপর-নিচ পার্থক্য।</div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># grayscale-এ Sobel</span>
+street_gray = cv2.<span class="fn">imread</span>(<span class="st">'street.jpg'</span>, cv2.IMREAD_GRAYSCALE)
+
+<span class="cm"># খাড়া (vertical) edge</span>
+sobel_x = cv2.<span class="fn">Sobel</span>(street_gray, ddepth=cv2.CV_64F, dx=<span class="num">1</span>, dy=<span class="num">0</span>)
+
+<span class="cm"># আড়াআড়ি (horizontal) edge</span>
+sobel_y = cv2.<span class="fn">Sobel</span>(street_gray, ddepth=cv2.CV_64F, dx=<span class="num">0</span>, dy=<span class="num">1</span>)
+
+<span class="cm"># উভয় দিক একসাথে (magnitude)</span>
+sobel_combined = np.<span class="fn">sqrt</span>(sobel_x**<span class="num">2</span> + sobel_y**<span class="num">2</span>)
+
+<span class="cm"># Laplacian — সব দিক একসাথে</span>
+laplacian = cv2.<span class="fn">Laplacian</span>(street_gray, ddepth=cv2.CV_64F)</pre>
+  </div>
+
+  <div class="info-box purple">
+    <div class="box-title">🔬 Sobel vs Laplacian পার্থক্য</div>
+    <ul>
+      <li><strong>Sobel:</strong> শুধু একটা দিকের edge ধরে (X বা Y)। প্রথম derivative।</li>
+      <li><strong>Laplacian:</strong> সব দিকের edge ধরে। দ্বিতীয় derivative। noise-এর প্রতি বেশি সংবেদনশীল।</li>
+      <li><strong>CNN:</strong> কিন্তু আধুনিক CNN এই সব filter নিজেই শিখে নেয়! তবু মূল ধারণা জানা দরকার।</li>
+    </ul>
+  </div>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 13 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>Feature Extraction:</strong> Sobel filter দিয়ে extract করা horizontal ও vertical gradient একটা feature vector হিসেবে SVM classifier-এ দাও। এটা কি deep learning-এর চেয়ে দ্রুত হবে? কখন এটা ভালো option?</li>
+      <li><strong>Comparison:</strong> Canny vs Sobel — edge detection-এ কোনটা কখন ভালো? Real example দাও।</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 14 ═══════════════ -->
+<div class="section" id="s14">
+  <div class="section-header">
+    <div class="section-num">14</div>
+    <h2>Morphological Transformation — Erosion ও Dilation</h2>
+  </div>
+
+  <h3>Erosion — কমিয়ে দাও</h3>
+  <div class="info-box blue">
+    <div class="box-title">💡 Erosion কী — kindergarten উদাহরণ</div>
+    ধরো তোমার হাতে একটা chalk দিয়ে আঁকা ছবি আছে। যদি ভেজা কাপড় দিয়ে একটু ঘষো — প্রান্তগুলো ছোট হয়ে যাবে। ছোট দাগগুলো মুছে যাবে। এটাই Erosion!
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span><span class="code-label">Erosion ও Dilation</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># Spider image প্রস্তুত</span>
+spider_gray = cv2.<span class="fn">imread</span>(<span class="st">'spider.jpeg'</span>, cv2.IMREAD_GRAYSCALE)
+spider_gray = cv2.<span class="fn">resize</span>(spider_gray, (<span class="num">150</span>, <span class="num">150</span>))
+spider_gray = <span class="num">255</span> - spider_gray  <span class="cm"># রঙ উল্টাও (foreground সাদা করো)</span>
+filter_gb = cv2.<span class="fn">GaussianBlur</span>(spider_gray, ksize=(<span class="num">3</span>,<span class="num">3</span>), sigmaX=<span class="num">0</span>)
+
+<span class="cm"># === EROSION ===</span>
+<span class="cm"># Kernel: সব 1 — যে window scan করে</span>
+kernel_small = np.<span class="fn">ones</span>((<span class="num">3</span>,<span class="num">3</span>), np.uint8)
+kernel_med   = np.<span class="fn">ones</span>((<span class="num">5</span>,<span class="num">5</span>), np.uint8)
+kernel_large = np.<span class="fn">ones</span>((<span class="num">7</span>,<span class="num">7</span>), np.uint8)
+
+erosion_3  = cv2.<span class="fn">erode</span>(filter_gb, kernel_small)  <span class="cm"># সামান্য erode</span>
+erosion_5  = cv2.<span class="fn">erode</span>(filter_gb, kernel_med)    <span class="cm"># মাঝারি erode</span>
+erosion_7  = cv2.<span class="fn">erode</span>(filter_gb, kernel_large)  <span class="cm"># বেশি erode</span>
+
+<span class="cm"># === DILATION === (বিপরীত কাজ)</span>
+kernel = np.<span class="fn">ones</span>((<span class="num">5</span>,<span class="num">5</span>), np.uint8)
+dilation = cv2.<span class="fn">dilate</span>(erosion_5, kernel)
+
+<span class="cm"># মূল ছবি - dilated ছবি = শুধু প্রান্ত রেখা!</span>
+diff = spider_gray - dilation</pre>
+  </div>
+
+  <!-- SVG: Erosion vs Dilation -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%" overflow="visible">
+      <text dominant-baseline="middle" x="350" y="20" text-anchor="middle" fill="#8b949e" font-size="12" font-family="Hind Siliguri">Morphological Transformation-এর প্রভাব</text>
+
+      <!-- Original circle -->
+      <circle cx="120" cy="100" r="60" fill="white"/>
+      <circle cx="100" cy="85" r="8" fill="white" stroke="#0d1117" stroke-width="2"/>
+      <circle cx="145" cy="80" r="5" fill="white" stroke="#0d1117" stroke-width="2"/>
+      <rect x="60" y="30" width="120" height="140" rx="8" fill="none" stroke="#8b949e" stroke-width="1" stroke-dasharray="4,3"/>
+      <text dominant-baseline="middle" x="120" y="175" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">মূল ছবি</text>
+
+      <!-- Arrow Erosion -->
+      <text dominant-baseline="middle" x="220" y="90" text-anchor="middle" fill="#f85149" font-size="13" font-family="Hind Siliguri">Erosion →</text>
+      <text dominant-baseline="middle" x="220" y="108" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">(ছোট হয়)</text>
+
+      <!-- Eroded circle -->
+      <circle cx="340" cy="100" r="45" fill="white"/>
+      <rect x="280" y="30" width="120" height="140" rx="8" fill="none" stroke="#f85149" stroke-width="1" stroke-dasharray="4,3"/>
+      <text dominant-baseline="middle" x="340" y="175" text-anchor="middle" fill="#f85149" font-size="11" font-family="Hind Siliguri">Erosion হলে</text>
+
+      <!-- Arrow Dilation -->
+      <text dominant-baseline="middle" x="440" y="90" text-anchor="middle" fill="#3fb950" font-size="13" font-family="Hind Siliguri">Dilation →</text>
+      <text dominant-baseline="middle" x="440" y="108" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">(বড় হয়)</text>
+
+      <!-- Dilated circle -->
+      <circle cx="570" cy="100" r="70" fill="white"/>
+      <circle cx="550" cy="80" r="10" fill="white" stroke="#0d1117" stroke-width="2"/>
+      <circle cx="595" cy="75" r="7" fill="white" stroke="#0d1117" stroke-width="2"/>
+      <rect x="500" y="20" width="140" height="150" rx="8" fill="none" stroke="#3fb950" stroke-width="1" stroke-dasharray="4,3"/>
+      <text dominant-baseline="middle" x="570" y="180" text-anchor="middle" fill="#3fb950" font-size="11" font-family="Hind Siliguri">Dilation হলে</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: Erosion → object ছোট হয়, ছোট দাগ মুছে। Dilation → object বড় হয়।</div>
+  </div>
+
+  <h3>Erosion + Dilation = Contour বের করা</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># Morphological Gradient: Original - Eroded = Edge/Contour</span>
+diff = spider_gray - dilation
+
+<span class="cm"># এই technique-এর real-world use:</span>
+<span class="cm"># - বস্তুর outline বের করা</span>
+<span class="cm"># - দুটো connected বস্তু আলাদা করা (Erosion)</span>
+<span class="cm"># - ছোট noise দূর করা (Erosion তারপর Dilation = Opening)</span>
+<span class="cm"># - ছোট ফাঁকফোকর বন্ধ করা (Dilation তারপর Erosion = Closing)</span>
+
+<span class="cm"># Opening (noise removal)</span>
+opening = cv2.<span class="fn">morphologyEx</span>(filter_gb, cv2.MORPH_OPEN, kernel)
+
+<span class="cm"># Closing (hole filling)</span>
+closing = cv2.<span class="fn">morphologyEx</span>(filter_gb, cv2.MORPH_CLOSE, kernel)</pre>
+  </div>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">💼</span>
+      <div class="exercise-title">Interview Exercise — Section 14 <span>ML Engineering Level</span></div>
+    </div>
+    <ul class="exercise-list">
+      <li><strong>Defect Detection:</strong> Circuit board-এর ছবিতে soldering defect (ছোট blob) detect করতে কোন morphological operation ব্যবহার করবে এবং কেন?</li>
+      <li><strong>Cell Counting:</strong> Microscopy image-এ overlapping cells আলাদা করতে Erosion কীভাবে সাহায্য করে? Watershed algorithm-এর সাথে কীভাবে combine করবে?</li>
+      <li><strong>OCR:</strong> text recognition-এর আগে noise remove করতে Opening vs Closing — কোনটা কখন?</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 15 ═══════════════ -->
+<div class="section" id="s15">
+  <div class="section-header">
+    <div class="section-num">15</div>
+    <h2>সমস্ত Algorithm — সারসংক্ষেপ ও Python Implementation</h2>
+  </div>
+
+  <div class="info-box green">
+    <div class="box-title">🎯 এই section টা কীসের?</div>
+    সমস্ত algorithm-এর ব্যাখ্যা একদম ছোট্ট করে (kindergarten level) এবং তার সাথে complete Python implementation — ML Engineering project-এ সরাসরি ব্যবহারযোগ্য।
+  </div>
+
+  <!-- ── Algorithm 1: imread/imshow ── -->
+  <div class="algo-card">
+    <h4><span class="tag blue">01</span> Image I/O Pipeline <span class="algo-badge filter">Utility</span></h4>
+    <p>🍎 <strong>সহজ ব্যাখ্যা:</strong> ছবি পড়া মানে হলো ছবিটাকে সংখ্যার তালিকায় রূপান্তর করে computer-এর memory-তে রাখা।</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">python</span><span class="code-label">Production-ready Image I/O</span></div>
+      <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">import</span> cv2
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> typing <span class="kw">import</span> Optional, Tuple
+
+<span class="kw">def</span> <span class="fn">load_image</span>(
+    path: str,
+    color: bool = <span class="kw">True</span>,
+    target_size: Optional[Tuple[int, int]] = <span class="kw">None</span>,
+    convert_rgb: bool = <span class="kw">True</span>
+) -> Optional[np.ndarray]:
+    <span class="st">"""
+    Production-ready image loading function.
+    
+    Args:
+        path: ছবির পথ
+        color: True=রঙিন, False=সাদাকালো
+        target_size: (width, height) — resize করতে
+        convert_rgb: BGR থেকে RGB convert করবে কিনা
+    
+    Returns:
+        numpy array অথবা None (file না পেলে)
+    """</span>
+    <span class="cm"># File exist করে কিনা check</span>
+    <span class="kw">if</span> <span class="kw">not</span> Path(path).<span class="fn">exists</span>():
+        <span class="fn">print</span>(<span class="st">f"Error: ফাইল পাওয়া যায়নি: {path}"</span>)
+        <span class="kw">return</span> <span class="kw">None</span>
+    
+    <span class="cm"># Flag নির্বাচন</span>
+    flag = cv2.IMREAD_COLOR <span class="kw">if</span> color <span class="kw">else</span> cv2.IMREAD_GRAYSCALE
+    
+    <span class="cm"># ছবি পড়া</span>
+    img = cv2.<span class="fn">imread</span>(str(path), flag)
+    
+    <span class="cm"># None check (corrupt file)</span>
+    <span class="kw">if</span> img <span class="kw">is</span> <span class="kw">None</span>:
+        <span class="fn">print</span>(<span class="st">f"Error: ছবি পড়া যায়নি: {path}"</span>)
+        <span class="kw">return</span> <span class="kw">None</span>
+    
+    <span class="cm"># RGB convert (color image হলে)</span>
+    <span class="kw">if</span> color <span class="kw">and</span> convert_rgb:
+        img = cv2.<span class="fn">cvtColor</span>(img, cv2.COLOR_BGR2RGB)
+    
+    <span class="cm"># Resize</span>
+    <span class="kw">if</span> target_size <span class="kw">is not</span> <span class="kw">None</span>:
+        img = cv2.<span class="fn">resize</span>(img, target_size, interpolation=cv2.INTER_AREA)
+    
+    <span class="kw">return</span> img
+
+<span class="cm"># ব্যবহার:</span>
+img = <span class="fn">load_image</span>(<span class="st">"street.jpg"</span>, color=<span class="kw">True</span>, target_size=(<span class="num">224</span>, <span class="num">224</span>))
+<span class="kw">if</span> img <span class="kw">is not</span> <span class="kw">None</span>:
+    <span class="fn">print</span>(<span class="st">f"ছবি load হয়েছে: shape={img.shape}, dtype={img.dtype}"</span>)</pre>
+    </div>
+  </div>
+
+  <!-- ── Algorithm 2: Data Augmentation ── -->
+  <div class="algo-card">
+    <h4><span class="tag green">02</span> Data Augmentation Pipeline <span class="algo-badge filter">Augmentation</span></h4>
+    <p>🎪 <strong>সহজ ব্যাখ্যা:</strong> একটা ছবি থেকে অনেক ছবি বানাও — ঘুরিয়ে, উল্টিয়ে, কেটে। Model তখন সব অবস্থায় চিনতে পারে।</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">python</span><span class="code-label">Complete Augmentation Pipeline</span></div>
+      <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">import</span> random
+
+<span class="kw">def</span> <span class="fn">augment_image</span>(img: np.ndarray, config: dict) -> np.ndarray:
+    <span class="st">"""
+    ML project-এর জন্য augmentation pipeline।
+    
+    config উদাহরণ:
+    {
+        'rotate': True,     # ঘোরাবে?
+        'rotate_range': 30, # কত ডিগ্রি পর্যন্ত (±)?
+        'flip_h': True,     # horizontal flip?
+        'flip_h_prob': 0.5, # কত probability?
+        'flip_v': False,    # vertical flip?
+        'zoom': True,       # zoom?
+        'zoom_range': 0.1   # কতটুকু zoom (0-1)?
+    }
+    """</span>
+    result = img.<span class="fn">copy</span>()
+    h, w = result.shape[:<span class="num">2</span>]
+    
+    <span class="cm"># ১. Random Rotation</span>
+    <span class="kw">if</span> config.<span class="fn">get</span>(<span class="st">'rotate'</span>, <span class="kw">False</span>):
+        angle = random.<span class="fn">uniform</span>(-config[<span class="st">'rotate_range'</span>], config[<span class="st">'rotate_range'</span>])
+        M = cv2.<span class="fn">getRotationMatrix2D</span>((<span class="fn">int</span>(w/<span class="num">2</span>), <span class="fn">int</span>(h/<span class="num">2</span>)), angle, <span class="num">1</span>)
+        result = cv2.<span class="fn">warpAffine</span>(result, M, (w, h))
+    
+    <span class="cm"># ২. Horizontal Flip</span>
+    prob = config.<span class="fn">get</span>(<span class="st">'flip_h_prob'</span>, <span class="num">0.5</span>)
+    <span class="kw">if</span> config.<span class="fn">get</span>(<span class="st">'flip_h'</span>, <span class="kw">False</span>) <span class="kw">and</span> random.<span class="fn">random</span>() &lt; prob:
+        result = cv2.<span class="fn">flip</span>(result, <span class="num">1</span>)
+    
+    <span class="cm"># ৩. Vertical Flip</span>
+    <span class="kw">if</span> config.<span class="fn">get</span>(<span class="st">'flip_v'</span>, <span class="kw">False</span>) <span class="kw">and</span> random.<span class="fn">random</span>() &lt; <span class="num">0.5</span>:
+        result = cv2.<span class="fn">flip</span>(result, <span class="num">0</span>)
+    
+    <span class="cm"># ৪. Random Zoom (Crop)</span>
+    <span class="kw">if</span> config.<span class="fn">get</span>(<span class="st">'zoom'</span>, <span class="kw">False</span>):
+        zoom_f = random.<span class="fn">uniform</span>(<span class="num">0</span>, config.<span class="fn">get</span>(<span class="st">'zoom_range'</span>, <span class="num">0.1</span>))
+        crop_h = <span class="fn">int</span>(h * zoom_f)
+        crop_w = <span class="fn">int</span>(w * zoom_f)
+        <span class="kw">if</span> crop_h &gt; <span class="num">0</span> <span class="kw">and</span> crop_w &gt; <span class="num">0</span>:
+            result = result[crop_h:h-crop_h, crop_w:w-crop_w]
+            result = cv2.<span class="fn">resize</span>(result, (w, h))
+    
+    <span class="kw">return</span> result
+
+<span class="cm"># ব্যবহার:</span>
+config = {
+    <span class="st">'rotate'</span>: <span class="kw">True</span>, <span class="st">'rotate_range'</span>: <span class="num">30</span>,
+    <span class="st">'flip_h'</span>: <span class="kw">True</span>, <span class="st">'flip_h_prob'</span>: <span class="num">0.5</span>,
+    <span class="st">'zoom'</span>: <span class="kw">True</span>,   <span class="st">'zoom_range'</span>: <span class="num">0.15</span>
+}
+
+augmented = <span class="fn">augment_image</span>(img, config)
+<span class="cm"># dataset পুরোটায় করতে:</span>
+augmented_dataset = [<span class="fn">augment_image</span>(x, config) <span class="kw">for</span> x <span class="kw">in</span> dataset]</pre>
+    </div>
+  </div>
+
+  <!-- ── Algorithm 3: Noise + Filter ── -->
+  <div class="algo-card">
+    <h4><span class="tag purple">03</span> Noise Reduction Pipeline <span class="algo-badge filter">Filter</span></h4>
+    <p>🧹 <strong>সহজ ব্যাখ্যা:</strong> ছবিতে যে অপ্রয়োজনীয় দাগ-বিন্দু আছে সেগুলো সরিয়ে পরিষ্কার করা — যেমন পুরোনো ছবির ধুলো মোছা।</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">python</span><span class="code-label">Smart Noise Reduction</span></div>
+      <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">def</span> <span class="fn">denoise_image</span>(img: np.ndarray, noise_type: str = <span class="st">'gaussian'</span>) -> np.ndarray:
+    <span class="st">"""
+    Noise-এর ধরন অনুযায়ী সঠিক filter ব্যবহার।
+    
+    noise_type:
+        'gaussian'   → GaussianBlur
+        'salt_pepper'→ medianBlur  
+        'general'    → bilateral filter (edge preserve করে)
+    """</span>
+    <span class="kw">if</span> noise_type == <span class="st">'gaussian'</span>:
+        <span class="kw">return</span> cv2.<span class="fn">GaussianBlur</span>(img, (<span class="num">5</span>, <span class="num">5</span>), <span class="num">0</span>)
+    
+    <span class="kw">elif</span> noise_type == <span class="st">'salt_pepper'</span>:
+        <span class="kw">return</span> cv2.<span class="fn">medianBlur</span>(img, <span class="num">5</span>)
+    
+    <span class="kw">elif</span> noise_type == <span class="st">'general'</span>:
+        <span class="cm"># Bilateral: blur করে কিন্তু edge রাখে!</span>
+        <span class="kw">return</span> cv2.<span class="fn">bilateralFilter</span>(img, d=<span class="num">9</span>, sigmaColor=<span class="num">75</span>, sigmaSpace=<span class="num">75</span>)
+    
+    <span class="kw">else</span>:
+        <span class="kw">raise</span> ValueError(<span class="st">f"অজানা noise type: {noise_type}"</span>)
+
+<span class="cm"># ব্যবহার:</span>
+clean_img = <span class="fn">denoise_image</span>(noisy_img, noise_type=<span class="st">'salt_pepper'</span>)</pre>
+    </div>
+  </div>
+
+  <!-- ── Algorithm 4: Edge Detection ── -->
+  <div class="algo-card">
+    <h4><span class="tag orange">04</span> Complete Edge Detection <span class="algo-badge edge">Edge</span></h4>
+    <p>✏️ <strong>সহজ ব্যাখ্যা:</strong> ছবির মধ্যে কোথায় কোথায় রঙ বা আলো হঠাৎ বদলায় — সেই সীমানাগুলো বের করা। যেমন কলমের আউটলাইন।</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">python</span><span class="code-label">Multi-method Edge Detection</span></div>
+      <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">def</span> <span class="fn">detect_edges</span>(img: np.ndarray, method: str = <span class="st">'canny'</span>) -> np.ndarray:
+    <span class="st">"""
+    বিভিন্ন edge detection method।
+    
+    method:
+        'canny'     → সবচেয়ে জনপ্রিয়, sharp edge
+        'sobel'     → directional edge (x+y combined)
+        'laplacian' → omnidirectional edge
+    """</span>
+    <span class="cm"># Grayscale convert করো</span>
+    <span class="kw">if</span> <span class="fn">len</span>(img.shape) == <span class="num">3</span>:
+        gray = cv2.<span class="fn">cvtColor</span>(img, cv2.COLOR_RGB2GRAY)
+    <span class="kw">else</span>:
+        gray = img.<span class="fn">copy</span>()
+    
+    <span class="cm"># Noise কমাও</span>
+    blurred = cv2.<span class="fn">GaussianBlur</span>(gray, (<span class="num">5</span>, <span class="num">5</span>), <span class="num">0</span>)
+    
+    <span class="kw">if</span> method == <span class="st">'canny'</span>:
+        <span class="cm"># Otsu দিয়ে threshold auto-select</span>
+        _, otsu = cv2.<span class="fn">threshold</span>(blurred, <span class="num">0</span>, <span class="num">255</span>, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        high = <span class="fn">int</span>(np.<span class="fn">max</span>([otsu, blurred.<span class="fn">mean</span>() * <span class="num">2</span>]))
+        low = <span class="fn">int</span>(high * <span class="num">0.5</span>)
+        <span class="kw">return</span> cv2.<span class="fn">Canny</span>(blurred, low, high)
+    
+    <span class="kw">elif</span> method == <span class="st">'sobel'</span>:
+        sx = cv2.<span class="fn">Sobel</span>(blurred, cv2.CV_64F, <span class="num">1</span>, <span class="num">0</span>)
+        sy = cv2.<span class="fn">Sobel</span>(blurred, cv2.CV_64F, <span class="num">0</span>, <span class="num">1</span>)
+        magnitude = np.<span class="fn">sqrt</span>(sx**<span class="num">2</span> + sy**<span class="num">2</span>)
+        <span class="kw">return</span> np.<span class="fn">uint8</span>(np.<span class="fn">clip</span>(magnitude, <span class="num">0</span>, <span class="num">255</span>))
+    
+    <span class="kw">elif</span> method == <span class="st">'laplacian'</span>:
+        lap = cv2.<span class="fn">Laplacian</span>(blurred, cv2.CV_64F)
+        <span class="kw">return</span> np.<span class="fn">uint8</span>(np.<span class="fn">abs</span>(lap))
+    
+    <span class="kw">else</span>:
+        <span class="kw">raise</span> ValueError(<span class="st">f"অজানা method: {method}"</span>)
+
+<span class="cm"># ব্যবহার:</span>
+edges_canny = <span class="fn">detect_edges</span>(img, method=<span class="st">'canny'</span>)
+edges_sobel = <span class="fn">detect_edges</span>(img, method=<span class="st">'sobel'</span>)</pre>
+    </div>
+  </div>
+
+  <!-- ── Algorithm 5: Thresholding ── -->
+  <div class="algo-card">
+    <h4><span class="tag blue">05</span> Smart Binarization <span class="algo-badge thresh">Threshold</span></h4>
+    <p>⬛⬜ <strong>সহজ ব্যাখ্যা:</strong> ছবিকে শুধু কালো আর সাদায় ভাগ করা। যেমন আলো-অন্ধকারের সীমানা।</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">python</span><span class="code-label">Adaptive Binarization</span></div>
+      <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">def</span> <span class="fn">binarize</span>(img: np.ndarray, method: str = <span class="st">'otsu'</span>) -> np.ndarray:
+    <span class="st">"""
+    ছবিকে binary (কালো-সাদা) করা।
+    
+    method:
+        'otsu'     → auto threshold (সবচেয়ে ভালো general)
+        'adaptive' → variable threshold (uneven lighting)
+        'manual'   → নিজে threshold দাও
+    """</span>
+    <span class="kw">if</span> <span class="fn">len</span>(img.shape) == <span class="num">3</span>:
+        gray = cv2.<span class="fn">cvtColor</span>(img, cv2.COLOR_RGB2GRAY)
+    <span class="kw">else</span>:
+        gray = img
+    
+    blurred = cv2.<span class="fn">GaussianBlur</span>(gray, (<span class="num">3</span>, <span class="num">3</span>), <span class="num">0</span>)
+    
+    <span class="kw">if</span> method == <span class="st">'otsu'</span>:
+        <span class="cm"># Otsu = সবচেয়ে ভালো threshold auto খোঁজে</span>
+        _, binary = cv2.<span class="fn">threshold</span>(blurred, <span class="num">0</span>, <span class="num">255</span>,
+                                   cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        <span class="kw">return</span> binary
+    
+    <span class="kw">elif</span> method == <span class="st">'adaptive'</span>:
+        <span class="kw">return</span> cv2.<span class="fn">adaptiveThreshold</span>(
+            blurred, <span class="num">255</span>,
+            cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            cv2.THRESH_BINARY,
+            blockSize=<span class="num">11</span>, C=<span class="num">5</span>
+        )
+    
+    <span class="kw">elif</span> method == <span class="st">'manual'</span>:
+        _, binary = cv2.<span class="fn">threshold</span>(blurred, <span class="num">127</span>, <span class="num">255</span>, cv2.THRESH_BINARY)
+        <span class="kw">return</span> binary
+
+<span class="cm"># ব্যবহার:</span>
+binary = <span class="fn">binarize</span>(img, method=<span class="st">'adaptive'</span>)</pre>
+    </div>
+  </div>
+
+  <!-- ── Algorithm 6: Morphological ── -->
+  <div class="algo-card">
+    <h4><span class="tag green">06</span> Morphological Processing <span class="algo-badge morph">Morphology</span></h4>
+    <p>🔬 <strong>সহজ ব্যাখ্যা:</strong> ছবির আকার/গঠন পরিবর্তন। ছোট করা (erosion), বড় করা (dilation), এবং তাদের সমন্বয়।</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">python</span><span class="code-label">Morphological Operations</span></div>
+      <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">def</span> <span class="fn">morphological_process</span>(
+    binary_img: np.ndarray,
+    operation: str = <span class="st">'opening'</span>,
+    kernel_size: int = <span class="num">5</span>
+) -> np.ndarray:
+    <span class="st">"""
+    Morphological operation।
+    
+    operation:
+        'erosion'  → ছোট করা (noise দূর)
+        'dilation' → বড় করা (hole fill)
+        'opening'  → erosion তারপর dilation (noise remove)
+        'closing'  → dilation তারপর erosion (hole fill)
+        'gradient' → contour বের করা
+    """</span>
+    kernel = np.<span class="fn">ones</span>((kernel_size, kernel_size), np.uint8)
+    
+    ops = {
+        <span class="st">'erosion'</span> : <span class="kw">lambda</span> img: cv2.<span class="fn">erode</span>(img, kernel),
+        <span class="st">'dilation'</span>: <span class="kw">lambda</span> img: cv2.<span class="fn">dilate</span>(img, kernel),
+        <span class="st">'opening'</span> : <span class="kw">lambda</span> img: cv2.<span class="fn">morphologyEx</span>(img, cv2.MORPH_OPEN,     kernel),
+        <span class="st">'closing'</span> : <span class="kw">lambda</span> img: cv2.<span class="fn">morphologyEx</span>(img, cv2.MORPH_CLOSE,    kernel),
+        <span class="st">'gradient'</span>: <span class="kw">lambda</span> img: cv2.<span class="fn">morphologyEx</span>(img, cv2.MORPH_GRADIENT, kernel),
+    }
+    
+    <span class="kw">if</span> operation <span class="kw">not in</span> ops:
+        <span class="kw">raise</span> ValueError(<span class="st">f"অজানা operation: {operation}"</span>)
+    
+    <span class="kw">return</span> ops[operation](binary_img)
+
+<span class="cm"># ব্যবহার — noise দূর করা:</span>
+clean = <span class="fn">morphological_process</span>(binary_img, <span class="st">'opening'</span>, kernel_size=<span class="num">3</span>)
+
+<span class="cm"># ব্যবহার — contour বের করা:</span>
+contours = <span class="fn">morphological_process</span>(binary_img, <span class="st">'gradient'</span>, kernel_size=<span class="num">3</span>)</pre>
+    </div>
+  </div>
+
+  <!-- ── Complete Pipeline ── -->
+  <div class="algo-card">
+    <h4><span class="tag orange">07</span> Complete Pre-processing Pipeline <span class="algo-badge filter">🚀 Production</span></h4>
+    <p>🏭 <strong>সহজ ব্যাখ্যা:</strong> উপরের সব কাজ একসাথে — একটা ছবি দাও, ML-ready ছবি পাও।</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">python</span><span class="code-label">ML-Ready Image Preprocessing Pipeline</span></div>
+      <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+<span class="kw">from</span> typing <span class="kw">import</span> List
+
+<span class="kw">@dataclass</span>
+<span class="kw">class</span> PreprocessConfig:
+    target_size: Tuple[int, int] = (<span class="num">224</span>, <span class="num">224</span>)
+    normalize: bool = <span class="kw">True</span>
+    denoise: bool = <span class="kw">True</span>
+    noise_type: str = <span class="st">'gaussian'</span>
+    augment: bool = <span class="kw">False</span>
+
+<span class="kw">def</span> <span class="fn">preprocess_for_ml</span>(
+    image_path: str,
+    config: PreprocessConfig
+) -> Optional[np.ndarray]:
+    <span class="st">"""
+    ML model-এর জন্য image preprocessing।
+    
+    ধাপসমূহ:
+    1. Load করো (error handle সহ)
+    2. Resize করো (model input size)
+    3. Denoise করো (optional)
+    4. Augment করো (training-এ)
+    5. Normalize করো (0-1 range)
+    """</span>
+    <span class="cm"># ধাপ ১: Load</span>
+    img = <span class="fn">load_image</span>(image_path, color=<span class="kw">True</span>, convert_rgb=<span class="kw">True</span>)
+    <span class="kw">if</span> img <span class="kw">is</span> <span class="kw">None</span>:
+        <span class="kw">return</span> <span class="kw">None</span>
+    
+    <span class="cm"># ধাপ ২: Resize</span>
+    img = cv2.<span class="fn">resize</span>(img, config.target_size, interpolation=cv2.INTER_AREA)
+    
+    <span class="cm"># ধাপ ৩: Denoise</span>
+    <span class="kw">if</span> config.denoise:
+        img = <span class="fn">denoise_image</span>(img, config.noise_type)
+    
+    <span class="cm"># ধাপ ৪: Augmentation (training only)</span>
+    <span class="kw">if</span> config.augment:
+        aug_config = {<span class="st">'rotate'</span>: <span class="kw">True</span>, <span class="st">'rotate_range'</span>: <span class="num">20</span>, <span class="st">'flip_h'</span>: <span class="kw">True</span>}
+        img = <span class="fn">augment_image</span>(img, aug_config)
+    
+    <span class="cm"># ধাপ ৫: Normalize (0-255 → 0.0-1.0)</span>
+    <span class="kw">if</span> config.normalize:
+        img = img.<span class="fn">astype</span>(np.float32) / <span class="num">255.0</span>
+    
+    <span class="kw">return</span> img
+
+<span class="cm"># ব্যবহার — Training:</span>
+train_config = <span class="fn">PreprocessConfig</span>(
+    target_size=(<span class="num">224</span>, <span class="num">224</span>),
+    normalize=<span class="kw">True</span>,
+    denoise=<span class="kw">True</span>,
+    augment=<span class="kw">True</span>  <span class="cm"># Training-এ augment</span>
+)
+
+<span class="cm"># ব্যবহার — Inference:</span>
+infer_config = <span class="fn">PreprocessConfig</span>(
+    target_size=(<span class="num">224</span>, <span class="num">224</span>),
+    normalize=<span class="kw">True</span>,
+    denoise=<span class="kw">True</span>,
+    augment=<span class="kw">False</span>  <span class="cm"># Inference-এ augment নয়!</span>
+)
+
+<span class="cm"># Batch processing:</span>
+<span class="kw">def</span> <span class="fn">process_batch</span>(paths: List[str], config: PreprocessConfig):
+    results = []
+    <span class="kw">for</span> path <span class="kw">in</span> paths:
+        img = <span class="fn">preprocess_for_ml</span>(path, config)
+        <span class="kw">if</span> img <span class="kw">is not</span> <span class="kw">None</span>:
+            results.<span class="fn">append</span>(img)
+    <span class="kw">return</span> np.<span class="fn">array</span>(results)  <span class="cm"># (N, H, W, C) shape</span></pre>
+    </div>
+  </div>
+
+  <!-- Final Algorithm Summary Table -->
+  <h3>📊 সকল Algorithm এর Quick Reference</h3>
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>Algorithm</th>
+        <th>cv2 Function</th>
+        <th>Input</th>
+        <th>কী করে?</th>
+        <th>Real-world Use</th>
+      </tr>
+      <tr>
+        <td>Image Read</td>
+        <td><code>cv2.imread()</code></td>
+        <td>File path</td>
+        <td>ছবি numpy array-এ রূপান্তর</td>
+        <td>সব pipeline-এর শুরু</td>
+      </tr>
+      <tr>
+        <td>Color Convert</td>
+        <td><code>cv2.cvtColor()</code></td>
+        <td>Array + flag</td>
+        <td>Color space পরিবর্তন</td>
+        <td>BGR↔RGB, RGB↔HSV</td>
+      </tr>
+      <tr>
+        <td>Resize</td>
+        <td><code>cv2.resize()</code></td>
+        <td>Array + size</td>
+        <td>ছবির আকার পরিবর্তন</td>
+        <td>Model input size match</td>
+      </tr>
+      <tr>
+        <td>Rotation</td>
+        <td><code>getRotationMatrix2D + warpAffine</code></td>
+        <td>Array + angle</td>
+        <td>ছবি ঘোরানো</td>
+        <td>Data augmentation</td>
+      </tr>
+      <tr>
+        <td>Flip</td>
+        <td><code>cv2.flip()</code></td>
+        <td>Array + 0/1/-1</td>
+        <td>ছবি উল্টানো</td>
+        <td>Data augmentation</td>
+      </tr>
+      <tr>
+        <td>Average Blur</td>
+        <td><code>cv2.blur()</code></td>
+        <td>Array + ksize</td>
+        <td>গড় দিয়ে smooth করা</td>
+        <td>Quick noise reduction</td>
+      </tr>
+      <tr>
+        <td>Median Blur</td>
+        <td><code>cv2.medianBlur()</code></td>
+        <td>Array + ksize</td>
+        <td>Median দিয়ে smooth করা</td>
+        <td>Salt & Pepper noise</td>
+      </tr>
+      <tr>
+        <td>Gaussian Blur</td>
+        <td><code>cv2.GaussianBlur()</code></td>
+        <td>Array + ksize + sigma</td>
+        <td>Gaussian weight দিয়ে smooth</td>
+        <td>Edge detection-এর আগে</td>
+      </tr>
+      <tr>
+        <td>Threshold</td>
+        <td><code>cv2.threshold()</code></td>
+        <td>Grayscale + thresh</td>
+        <td>Binary করা (কালো-সাদা)</td>
+        <td>Document scanning, OCR</td>
+      </tr>
+      <tr>
+        <td>Adaptive Thresh</td>
+        <td><code>cv2.adaptiveThreshold()</code></td>
+        <td>Grayscale</td>
+        <td>অঞ্চলভেদে threshold</td>
+        <td>Uneven lighting</td>
+      </tr>
+      <tr>
+        <td>Canny</td>
+        <td><code>cv2.Canny()</code></td>
+        <td>Grayscale + thresholds</td>
+        <td>Edge detect করা</td>
+        <td>Object outline, ADAS</td>
+      </tr>
+      <tr>
+        <td>HoughLinesP</td>
+        <td><code>cv2.HoughLinesP()</code></td>
+        <td>Edge image</td>
+        <td>Straight line খোঁজা</td>
+        <td>Lane detection</td>
+      </tr>
+      <tr>
+        <td>Sobel</td>
+        <td><code>cv2.Sobel()</code></td>
+        <td>Grayscale + dx/dy</td>
+        <td>Directional gradient</td>
+        <td>Feature extraction</td>
+      </tr>
+      <tr>
+        <td>Laplacian</td>
+        <td><code>cv2.Laplacian()</code></td>
+        <td>Grayscale</td>
+        <td>All-direction gradient</td>
+        <td>Sharpness detection</td>
+      </tr>
+      <tr>
+        <td>Erosion</td>
+        <td><code>cv2.erode()</code></td>
+        <td>Binary + kernel</td>
+        <td>Object ছোট করা</td>
+        <td>Noise remove, cell separation</td>
+      </tr>
+      <tr>
+        <td>Dilation</td>
+        <td><code>cv2.dilate()</code></td>
+        <td>Binary + kernel</td>
+        <td>Object বড় করা</td>
+        <td>Gap filling, connecting parts</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ── Algorithm 8: Masking Pipeline ── -->
+  <div class="algo-card">
+    <h4><span class="tag purple">08</span> Region of Interest (ROI) Masking <span class="algo-badge filter">Masking</span></h4>
+    <p>🎭 <strong>সহজ ব্যাখ্যা:</strong> ছবির শুধু একটা নির্দিষ্ট অংশ নিয়ে কাজ করা — বাকিটা কালো ঢেকে দাও। চোখে কালো চশমা পরলে বাইরে দেখা যায় না — এটা তেমন।</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">python</span><span class="code-label">Flexible ROI Masking</span></div>
+      <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">def</span> <span class="fn">create_polygon_mask</span>(
+    img_shape: Tuple[int, int],
+    vertices: List[Tuple[int, int]]
+) -> np.ndarray:
+    <span class="st">"""
+    যেকোনো polygon আকারের mask তৈরি করো।
+    
+    Args:
+        img_shape: (height, width)
+        vertices: [(x1,y1), (x2,y2), ...] — polygon-এর কোণগুলো
+    
+    Returns:
+        Binary mask array
+    """</span>
+    mask = np.<span class="fn">zeros</span>(img_shape, dtype=np.uint8)
+    pts = np.<span class="fn">array</span>([vertices], dtype=np.int32)
+    cv2.<span class="fn">fillPoly</span>(mask, pts, color=<span class="num">255</span>)
+    <span class="kw">return</span> mask
+
+<span class="kw">def</span> <span class="fn">apply_roi_mask</span>(
+    img: np.ndarray,
+    mask_type: str = <span class="st">'triangle_bottom'</span>,
+    custom_vertices: List = <span class="kw">None</span>
+) -> np.ndarray:
+    <span class="st">"""
+    Pre-defined ROI mask apply করো।
+    
+    mask_type:
+        'triangle_bottom' → নিচের ত্রিভুজ (lane detection)
+        'rectangle_center'→ মাঝের আয়তক্ষেত্র (product inspection)
+        'custom'          → নিজের polygon দাও
+    """</span>
+    h, w = img.shape[:<span class="num">2</span>]
+    gray_shape = (h, w)
+
+    <span class="kw">if</span> mask_type == <span class="st">'triangle_bottom'</span>:
+        vertices = [(w//<span class="num">2</span>, h//<span class="num">2</span>), (<span class="num">0</span>, h), (w, h)]
+    <span class="kw">elif</span> mask_type == <span class="st">'rectangle_center'</span>:
+        margin_x, margin_y = w//<span class="num">5</span>, h//<span class="num">5</span>
+        vertices = [
+            (margin_x, margin_y), (w-margin_x, margin_y),
+            (w-margin_x, h-margin_y), (margin_x, h-margin_y)
+        ]
+    <span class="kw">elif</span> mask_type == <span class="st">'custom'</span>:
+        vertices = custom_vertices
+    <span class="kw">else</span>:
+        <span class="kw">raise</span> ValueError(<span class="st">f"অজানা mask_type: {mask_type}"</span>)
+
+    mask = <span class="fn">create_polygon_mask</span>(gray_shape, vertices)
+
+    <span class="cm"># Color image-এ mask apply</span>
+    <span class="kw">if</span> <span class="fn">len</span>(img.shape) == <span class="num">3</span>:
+        mask_3ch = np.<span class="fn">stack</span>([mask]*<span class="num">3</span>, axis=-<span class="num">1</span>)
+        <span class="kw">return</span> cv2.<span class="fn">bitwise_and</span>(img, mask_3ch)
+    <span class="kw">return</span> cv2.<span class="fn">bitwise_and</span>(img, mask)
+
+<span class="cm"># ব্যবহার:</span>
+lane_roi = <span class="fn">apply_roi_mask</span>(img, mask_type=<span class="st">'triangle_bottom'</span>)
+product_roi = <span class="fn">apply_roi_mask</span>(img, mask_type=<span class="st">'rectangle_center'</span>)</pre>
+    </div>
+  </div>
+
+  <!-- ── Algorithm 9: Contour Detection ── -->
+  <div class="algo-card">
+    <h4><span class="tag orange">09</span> Contour Detection ও Object Analysis <span class="algo-badge edge">Shape</span></h4>
+    <p>🔍 <strong>সহজ ব্যাখ্যা:</strong> ছবির মধ্যে কোথায় কোথায় কোনো বস্তুর বাইরের রেখা আছে সেটা খোঁজা। যেমন একটা ছবিতে কতটা মুদ্রা আছে তা গণনা করা।</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">python</span><span class="code-label">Contour Detection Pipeline</span></div>
+      <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">def</span> <span class="fn">find_and_draw_contours</span>(
+    img: np.ndarray,
+    min_area: int = <span class="num">100</span>,
+    draw_bbox: bool = <span class="kw">True</span>
+) -> Tuple[np.ndarray, int]:
+    <span class="st">"""
+    ছবিতে সমস্ত object-এর contour খোঁজো এবং আঁকো।
+    
+    Args:
+        img: input image (color বা grayscale)
+        min_area: সর্বনিম্ন area (ছোট noise বাদ দিতে)
+        draw_bbox: bounding box আঁকবে?
+    
+    Returns:
+        (annotated_image, object_count)
+    """</span>
+    result = img.<span class="fn">copy</span>()
+
+    <span class="cm"># Grayscale ও binary করো</span>
+    <span class="kw">if</span> <span class="fn">len</span>(img.shape) == <span class="num">3</span>:
+        gray = cv2.<span class="fn">cvtColor</span>(img, cv2.COLOR_RGB2GRAY)
+    <span class="kw">else</span>:
+        gray = img
+
+    blurred = cv2.<span class="fn">GaussianBlur</span>(gray, (<span class="num">5</span>, <span class="num">5</span>), <span class="num">0</span>)
+    _, binary = cv2.<span class="fn">threshold</span>(blurred, <span class="num">0</span>, <span class="num">255</span>,
+                               cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+    <span class="cm"># Contour খোঁজো</span>
+    contours, _ = cv2.<span class="fn">findContours</span>(
+        binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+    )
+
+    <span class="cm"># ছোট noise বাদ দাও</span>
+    significant = [c <span class="kw">for</span> c <span class="kw">in</span> contours <span class="kw">if</span> cv2.<span class="fn">contourArea</span>(c) > min_area]
+
+    <span class="kw">for</span> i, cnt <span class="kw">in</span> <span class="fn">enumerate</span>(significant):
+        <span class="cm"># Contour আঁকো (সবুজ)</span>
+        cv2.<span class="fn">drawContours</span>(result, [cnt], -<span class="num">1</span>, (<span class="num">0</span>, <span class="num">255</span>, <span class="num">0</span>), <span class="num">2</span>)
+
+        <span class="kw">if</span> draw_bbox:
+            <span class="cm"># Bounding box (নীল)</span>
+            x, y, w, h = cv2.<span class="fn">boundingRect</span>(cnt)
+            cv2.<span class="fn">rectangle</span>(result, (x, y), (x+w, y+h), (<span class="num">255</span>, <span class="num">0</span>, <span class="num">0</span>), <span class="num">2</span>)
+            <span class="cm"># Number label</span>
+            cv2.<span class="fn">putText</span>(result, <span class="fn">str</span>(i+<span class="num">1</span>), (x, y-<span class="num">10</span>),
+                       cv2.FONT_HERSHEY_SIMPLEX, <span class="num">0.7</span>, (<span class="num">255</span>, <span class="num">255</span>, <span class="num">0</span>), <span class="num">2</span>)
+
+    <span class="kw">return</span> result, <span class="fn">len</span>(significant)
+
+<span class="cm"># ব্যবহার:</span>
+annotated, count = <span class="fn">find_and_draw_contours</span>(img, min_area=<span class="num">500</span>)
+<span class="fn">print</span>(<span class="st">f"মোট {count}টি object পাওয়া গেছে"</span>)</pre>
+    </div>
+  </div>
+
+  <!-- ── Algorithm 10: Complete CV Pipeline Class ── -->
+  <div class="algo-card">
+    <h4><span class="tag blue">10</span> ImageProcessor Class — Object-Oriented Pipeline <span class="algo-badge filter">🏆 Production OOP</span></h4>
+    <p>🏗️ <strong>সহজ ব্যাখ্যা:</strong> সব কাজ একটা ক্লাসে ঢুকিয়ে — যেমন একটা সুইজ আর্মি ছুরি যেখানে সব কিছু আছে।</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">python</span><span class="code-label">Production ImageProcessor Class</span></div>
+      <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">class</span> <span class="fn">ImageProcessor</span>:
+    <span class="st">"""
+    ML Project-এর জন্য সম্পূর্ণ Image Processing class।
+    
+    ব্যবহার:
+        processor = ImageProcessor(target_size=(224, 224))
+        img = processor.load("image.jpg")
+        img = processor.preprocess(img, denoise=True)
+        img = processor.augment(img)
+        tensor = processor.to_tensor(img)
+    """</span>
+    
+    <span class="kw">def</span> <span class="fn">__init__</span>(
+        self,
+        target_size: Tuple[int, int] = (<span class="num">224</span>, <span class="num">224</span>),
+        color_mode: str = <span class="st">'rgb'</span>
+    ):
+        self.target_size = target_size
+        self.color_mode = color_mode
+        self.processing_log = []
+
+    <span class="kw">def</span> <span class="fn">load</span>(self, path: str) -> Optional[np.ndarray]:
+        <span class="st">"""ছবি load করো সব safety check সহ।"""</span>
+        img = cv2.<span class="fn">imread</span>(path)
+        <span class="kw">if</span> img <span class="kw">is</span> <span class="kw">None</span>:
+            self.processing_log.<span class="fn">append</span>(<span class="st">f"FAIL: {path}"</span>)
+            <span class="kw">return</span> <span class="kw">None</span>
+        <span class="kw">if</span> self.color_mode == <span class="st">'rgb'</span>:
+            img = cv2.<span class="fn">cvtColor</span>(img, cv2.COLOR_BGR2RGB)
+        <span class="kw">elif</span> self.color_mode == <span class="st">'gray'</span>:
+            img = cv2.<span class="fn">cvtColor</span>(img, cv2.COLOR_BGR2GRAY)
+        self.processing_log.<span class="fn">append</span>(<span class="st">f"OK: {path} {img.shape}"</span>)
+        <span class="kw">return</span> img
+
+    <span class="kw">def</span> <span class="fn">preprocess</span>(
+        self,
+        img: np.ndarray,
+        denoise: bool = <span class="kw">True</span>,
+        equalize: bool = <span class="kw">False</span>
+    ) -> np.ndarray:
+        <span class="st">"""Standard preprocessing।"""</span>
+        <span class="cm"># Resize</span>
+        img = cv2.<span class="fn">resize</span>(img, self.target_size, interpolation=cv2.INTER_AREA)
+        <span class="cm"># Denoise</span>
+        <span class="kw">if</span> denoise:
+            <span class="kw">if</span> <span class="fn">len</span>(img.shape) == <span class="num">3</span>:
+                img = cv2.<span class="fn">GaussianBlur</span>(img, (<span class="num">3</span>, <span class="num">3</span>), <span class="num">0</span>)
+            <span class="kw">else</span>:
+                img = cv2.<span class="fn">GaussianBlur</span>(img, (<span class="num">3</span>, <span class="num">3</span>), <span class="num">0</span>)
+        <span class="cm"># Histogram Equalization (contrast বাড়ানো)</span>
+        <span class="kw">if</span> equalize <span class="kw">and</span> <span class="fn">len</span>(img.shape) == <span class="num">2</span>:
+            img = cv2.<span class="fn">equalizeHist</span>(img)
+        <span class="kw">return</span> img
+
+    <span class="kw">def</span> <span class="fn">augment</span>(
+        self,
+        img: np.ndarray,
+        rotate_range: float = <span class="num">20</span>,
+        flip_prob: float = <span class="num">0.5</span>
+    ) -> np.ndarray:
+        <span class="st">"""Random augmentation।"""</span>
+        h, w = img.shape[:<span class="num">2</span>]
+        <span class="cm"># Random rotation</span>
+        angle = random.<span class="fn">uniform</span>(-rotate_range, rotate_range)
+        M = cv2.<span class="fn">getRotationMatrix2D</span>((<span class="fn">int</span>(w/<span class="num">2</span>), <span class="fn">int</span>(h/<span class="num">2</span>)), angle, <span class="num">1</span>)
+        img = cv2.<span class="fn">warpAffine</span>(img, M, (w, h))
+        <span class="cm"># Random flip</span>
+        <span class="kw">if</span> random.<span class="fn">random</span>() &lt; flip_prob:
+            img = cv2.<span class="fn">flip</span>(img, <span class="num">1</span>)
+        <span class="kw">return</span> img
+
+    <span class="kw">def</span> <span class="fn">to_tensor</span>(self, img: np.ndarray) -> np.ndarray:
+        <span class="st">"""ML model-এর জন্য normalize ও reshape।"""</span>
+        tensor = img.<span class="fn">astype</span>(np.float32) / <span class="num">255.0</span>
+        <span class="kw">if</span> <span class="fn">len</span>(tensor.shape) == <span class="num">2</span>:
+            tensor = tensor[..., np.newaxis]  <span class="cm"># (H,W) → (H,W,1)</span>
+        <span class="kw">return</span> tensor
+
+    <span class="kw">def</span> <span class="fn">detect_edges</span>(self, img: np.ndarray) -> np.ndarray:
+        <span class="st">"""Canny edge detection।"""</span>
+        <span class="kw">if</span> <span class="fn">len</span>(img.shape) == <span class="num">3</span>:
+            gray = cv2.<span class="fn">cvtColor</span>(img, cv2.COLOR_RGB2GRAY)
+        <span class="kw">else</span>:
+            gray = img
+        blurred = cv2.<span class="fn">GaussianBlur</span>(gray, (<span class="num">5</span>, <span class="num">5</span>), <span class="num">0</span>)
+        <span class="kw">return</span> cv2.<span class="fn">Canny</span>(blurred, <span class="num">50</span>, <span class="num">150</span>)
+
+    <span class="kw">def</span> <span class="fn">get_log</span>(self) -> List[str]:
+        <span class="st">"""Processing log দেখো।"""</span>
+        <span class="kw">return</span> self.processing_log
+
+<span class="cm"># ════════ ব্যবহারের উদাহরণ ════════</span>
+processor = <span class="fn">ImageProcessor</span>(target_size=(<span class="num">224</span>, <span class="num">224</span>), color_mode=<span class="st">'rgb'</span>)
+
+<span class="cm"># Training loop:</span>
+train_tensors = []
+<span class="kw">for</span> path <span class="kw">in</span> image_paths:
+    img = processor.<span class="fn">load</span>(path)
+    <span class="kw">if</span> img <span class="kw">is</span> <span class="kw">None</span>: <span class="kw">continue</span>
+    img = processor.<span class="fn">preprocess</span>(img, denoise=<span class="kw">True</span>)
+    img = processor.<span class="fn">augment</span>(img)           <span class="cm"># training-এ augment</span>
+    tensor = processor.<span class="fn">to_tensor</span>(img)
+    train_tensors.<span class="fn">append</span>(tensor)
+
+<span class="cm"># Inference loop:</span>
+test_tensors = []
+<span class="kw">for</span> path <span class="kw">in</span> test_paths:
+    img = processor.<span class="fn">load</span>(path)
+    <span class="kw">if</span> img <span class="kw">is</span> <span class="kw">None</span>: <span class="kw">continue</span>
+    img = processor.<span class="fn">preprocess</span>(img, denoise=<span class="kw">True</span>)
+    <span class="cm"># augment নয়!</span>
+    tensor = processor.<span class="fn">to_tensor</span>(img)
+    test_tensors.<span class="fn">append</span>(tensor)
+
+X_train = np.<span class="fn">array</span>(train_tensors)  <span class="cm"># (N, 224, 224, 3)</span>
+X_test  = np.<span class="fn">array</span>(test_tensors)   <span class="cm"># (M, 224, 224, 3)</span>
+<span class="fn">print</span>(<span class="st">f"Training set: {X_train.shape}"</span>)
+<span class="fn">print</span>(<span class="st">f"Test set:     {X_test.shape}"</span>)
+<span class="fn">print</span>(<span class="st">"Processing log:\n"</span> + <span class="st">"\n"</span>.<span class="fn">join</span>(processor.<span class="fn">get_log</span>()))</pre>
+    </div>
+  </div>
+
+  <!-- ── Concept Diagram: Full Picture ── -->
+  <h3>🗺️ সম্পূর্ণ OpenCV Journey — একটা নজরে</h3>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg" style="max-width:740px;width:100%" overflow="visible">
+      <defs>
+        <marker id="arMain" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 Z" fill="#58a6ff"/>
+        </marker>
+      </defs>
+
+      <!-- Title -->
+      <text dominant-baseline="middle" x="380" y="22" text-anchor="middle" fill="#8b949e" font-size="12" font-family="Hind Siliguri">OpenCV Image Processing — সম্পূর্ণ Map</text>
+
+      <!-- Raw Image -->
+      <rect x="310" y="35" width="140" height="50" rx="10" fill="#1c2128" stroke="#58a6ff" stroke-width="2"/>
+      <text dominant-baseline="middle" x="380" y="57" text-anchor="middle" fill="#79c0ff" font-size="13" font-family="Hind Siliguri" font-weight="bold">📷 Raw Image</text>
+      <text dominant-baseline="middle" x="380" y="75" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Fira Code">cv2.imread()</text>
+      <line x1="380" y1="85" x2="380" y2="108" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arMain)"/>
+
+      <!-- imread box -->
+      <rect x="310" y="108" width="140" height="45" rx="8" fill="#1c2128" stroke="#3fb950" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="380" y="127" text-anchor="middle" fill="#56d364" font-size="12" font-family="Hind Siliguri">NumPy Array</text>
+      <text dominant-baseline="middle" x="380" y="145" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Fira Code">(H, W, 3) uint8</text>
+
+      <!-- Branch left: Basic Ops -->
+      <line x1="310" y1="130" x2="220" y2="165" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arMain)"/>
+      <rect x="80" y="165" width="145" height="45" rx="8" fill="#1c2128" stroke="#d29922" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="152" y="183" text-anchor="middle" fill="#e3b341" font-size="12" font-family="Hind Siliguri">Basic Operations</text>
+      <text dominant-baseline="middle" x="152" y="199" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">resize · flip · rotate · crop</text>
+
+      <!-- Branch right: Color -->
+      <line x1="450" y1="130" x2="540" y2="165" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arMain)"/>
+      <rect x="530" y="165" width="145" height="45" rx="8" fill="#1c2128" stroke="#bc8cff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="602" y="183" text-anchor="middle" fill="#bc8cff" font-size="12" font-family="Hind Siliguri">Color Processing</text>
+      <text dominant-baseline="middle" x="602" y="199" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">BGR↔RGB · HSV · Gray</text>
+
+      <!-- Center down: Filtering -->
+      <line x1="380" y1="153" x2="380" y2="185" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arMain)"/>
+      <rect x="305" y="185" width="150" height="45" rx="8" fill="#1c2128" stroke="#ffa657" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="380" y="203" text-anchor="middle" fill="#ffa657" font-size="12" font-family="Hind Siliguri">Filtering</text>
+      <text dominant-baseline="middle" x="380" y="220" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">blur · median · gaussian</text>
+
+      <!-- From Filtering: 3 branches -->
+      <!-- Threshold -->
+      <line x1="305" y1="207" x2="220" y2="250" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arMain)"/>
+      <rect x="80" y="250" width="145" height="45" rx="8" fill="#1c2128" stroke="#f85149" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="152" y="268" text-anchor="middle" fill="#f85149" font-size="12" font-family="Hind Siliguri">Thresholding</text>
+      <text dominant-baseline="middle" x="152" y="284" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">binary · adaptive · Otsu</text>
+
+      <!-- Edge Detection -->
+      <line x1="380" y1="230" x2="380" y2="265" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arMain)"/>
+      <rect x="305" y="265" width="150" height="45" rx="8" fill="#1c2128" stroke="#39d353" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="380" y="283" text-anchor="middle" fill="#39d353" font-size="12" font-family="Hind Siliguri">Edge Detection</text>
+      <text dominant-baseline="middle" x="380" y="299" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">Canny · Sobel · Laplacian</text>
+
+      <!-- Morphology -->
+      <line x1="455" y1="207" x2="540" y2="250" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arMain)"/>
+      <rect x="530" y="250" width="145" height="45" rx="8" fill="#1c2128" stroke="#79c0ff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="602" y="268" text-anchor="middle" fill="#79c0ff" font-size="12" font-family="Hind Siliguri">Morphology</text>
+      <text dominant-baseline="middle" x="602" y="284" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">erode · dilate · open · close</text>
+
+      <!-- Converge to ML Ready -->
+      <line x1="152" y1="295" x2="260" y2="345" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arMain)"/>
+      <line x1="380" y1="310" x2="380" y2="345" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arMain)"/>
+      <line x1="602" y1="295" x2="500" y2="345" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#arMain)"/>
+
+      <!-- ML Ready -->
+      <rect x="255" y="345" width="250" height="55" rx="10" fill="#1c2128" stroke="#58a6ff" stroke-width="2.5"/>
+      <text dominant-baseline="middle" x="380" y="366" text-anchor="middle" fill="#79c0ff" font-size="14" font-family="Hind Siliguri" font-weight="bold">🤖 ML-Ready Data</text>
+      <text dominant-baseline="middle" x="380" y="384" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">normalize → tensor → model</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: OpenCV-এর সম্পূর্ণ journey — Raw Image থেকে ML-Ready data পর্যন্ত</div>
+  </div>
+
+  <!-- ── Common Errors & Solutions ── -->
+  <h3>⚠️ সবচেয়ে সাধারণ ভুল ও সমাধান</h3>
+  <div class="table-wrap">
+    <table>
+      <tr>
+        <th>ভুল</th>
+        <th>কারণ</th>
+        <th>সমাধান</th>
+      </tr>
+      <tr>
+        <td>ছবি নীলা দেখাচ্ছে</td>
+        <td>BGR ছবি RGB ছাড়া imshow-এ দেওয়া</td>
+        <td><code>cv2.cvtColor(img, cv2.COLOR_BGR2RGB)</code></td>
+      </tr>
+      <tr>
+        <td><code>imread</code> None দিচ্ছে</td>
+        <td>ফাইল নেই বা path ভুল</td>
+        <td>Path check করো, <code>Path.exists()</code> ব্যবহার করো</td>
+      </tr>
+      <tr>
+        <td>Grayscale ছবি রঙিন দেখাচ্ছে</td>
+        <td><code>cmap='gray'</code> দেওয়া হয়নি</td>
+        <td><code>plt.imshow(img, cmap='gray')</code></td>
+      </tr>
+      <tr>
+        <td>GaussianBlur error</td>
+        <td>ksize জোড় সংখ্যা দেওয়া হয়েছে</td>
+        <td>ksize অবশ্যই বিজোড়: (3,3), (5,5), (7,7)</td>
+      </tr>
+      <tr>
+        <td>adaptiveThreshold error</td>
+        <td>Color image দেওয়া হয়েছে</td>
+        <td>আগে grayscale convert করো</td>
+      </tr>
+      <tr>
+        <td>resize করার পর রঙ বদলায়</td>
+        <td>না, রঙ বদলায় না — শুধু size বদলায়</td>
+        <td>কোনো সমস্যা নেই</td>
+      </tr>
+      <tr>
+        <td>Model accuracy খুব কম</td>
+        <td>Training BGR, Inference RGB (বা উল্টো)</td>
+        <td>সব জায়গায় একই color space নিশ্চিত করো</td>
+      </tr>
+      <tr>
+        <td>Memory Error বড় dataset-এ</td>
+        <td>সব ছবি একবারে RAM-এ load করা</td>
+        <td>Generator/DataLoader ব্যবহার করো, batch-by-batch process করো</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ── Quick Cheatsheet ── -->
+  <h3>📋 দ্রুত Cheat Sheet — সব function একসাথে</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">python</span><span class="code-label">OpenCV Complete Cheat Sheet</span></div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">import</span> cv2
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># ══════════════════ IMAGE I/O ══════════════════</span>
+img  = cv2.<span class="fn">imread</span>(<span class="st">"img.jpg"</span>)                    <span class="cm"># পড়া (BGR)</span>
+imgG = cv2.<span class="fn">imread</span>(<span class="st">"img.jpg"</span>, cv2.IMREAD_GRAYSCALE)  <span class="cm"># grayscale পড়া</span>
+cv2.<span class="fn">imwrite</span>(<span class="st">"out.jpg"</span>, img)                     <span class="cm"># সেভ করা</span>
+
+<span class="cm"># ══════════════════ COLOR SPACE ══════════════════</span>
+rgb  = cv2.<span class="fn">cvtColor</span>(img, cv2.COLOR_BGR2RGB)    <span class="cm"># BGR→RGB</span>
+gray = cv2.<span class="fn">cvtColor</span>(img, cv2.COLOR_BGR2GRAY)   <span class="cm"># BGR→Gray</span>
+hsv  = cv2.<span class="fn">cvtColor</span>(img, cv2.COLOR_BGR2HSV)    <span class="cm"># BGR→HSV</span>
+
+<span class="cm"># ══════════════════ GEOMETRY ══════════════════</span>
+small = cv2.<span class="fn">resize</span>(img, (<span class="num">224</span>,<span class="num">224</span>), interpolation=cv2.INTER_AREA)
+M     = cv2.<span class="fn">getRotationMatrix2D</span>((w//<span class="num">2</span>,h//<span class="num">2</span>), <span class="num">45</span>, <span class="num">1</span>)
+rot   = cv2.<span class="fn">warpAffine</span>(img, M, (w,h))
+flipH = cv2.<span class="fn">flip</span>(img, <span class="num">1</span>)
+flipV = cv2.<span class="fn">flip</span>(img, <span class="num">0</span>)
+crop  = img[y:y+h, x:x+w]                       <span class="cm"># numpy slicing</span>
+
+<span class="cm"># ══════════════════ FILTERING ══════════════════</span>
+blur  = cv2.<span class="fn">blur</span>(img, (<span class="num">5</span>,<span class="num">5</span>))
+med   = cv2.<span class="fn">medianBlur</span>(img, <span class="num">5</span>)                 <span class="cm"># salt&pepper</span>
+gauss = cv2.<span class="fn">GaussianBlur</span>(img, (<span class="num">5</span>,<span class="num">5</span>), <span class="num">0</span>)
+bilat = cv2.<span class="fn">bilateralFilter</span>(img, <span class="num">9</span>, <span class="num">75</span>, <span class="num">75</span>)   <span class="cm"># edge preserving</span>
+
+<span class="cm"># ══════════════════ THRESHOLD ══════════════════</span>
+_, bw    = cv2.<span class="fn">threshold</span>(gray, <span class="num">127</span>, <span class="num">255</span>, cv2.THRESH_BINARY)
+_, otsu  = cv2.<span class="fn">threshold</span>(gray, <span class="num">0</span>, <span class="num">255</span>, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+adapt    = cv2.<span class="fn">adaptiveThreshold</span>(gray, <span class="num">255</span>,
+              cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, <span class="num">11</span>, <span class="num">5</span>)
+
+<span class="cm"># ══════════════════ EDGE DETECTION ══════════════════</span>
+edges  = cv2.<span class="fn">Canny</span>(gauss, <span class="num">100</span>, <span class="num">200</span>)
+sobelx = cv2.<span class="fn">Sobel</span>(gray, cv2.CV_64F, <span class="num">1</span>, <span class="num">0</span>)
+sobely = cv2.<span class="fn">Sobel</span>(gray, cv2.CV_64F, <span class="num">0</span>, <span class="num">1</span>)
+lap    = cv2.<span class="fn">Laplacian</span>(gray, cv2.CV_64F)
+
+<span class="cm"># ══════════════════ MORPHOLOGY ══════════════════</span>
+k      = np.<span class="fn">ones</span>((<span class="num">5</span>,<span class="num">5</span>), np.uint8)
+ero    = cv2.<span class="fn">erode</span>(bw, k)
+dil    = cv2.<span class="fn">dilate</span>(bw, k)
+opened = cv2.<span class="fn">morphologyEx</span>(bw, cv2.MORPH_OPEN,     k)  <span class="cm"># noise দূর</span>
+closed = cv2.<span class="fn">morphologyEx</span>(bw, cv2.MORPH_CLOSE,    k)  <span class="cm"># hole বন্ধ</span>
+grad   = cv2.<span class="fn">morphologyEx</span>(bw, cv2.MORPH_GRADIENT, k)  <span class="cm"># contour</span>
+
+<span class="cm"># ══════════════════ DRAWING ══════════════════</span>
+cv2.<span class="fn">line</span>(img, (x1,y1), (x2,y2), (<span class="num">255</span>,<span class="num">0</span>,<span class="num">0</span>), <span class="num">2</span>)         <span class="cm"># রেখা</span>
+cv2.<span class="fn">rectangle</span>(img, (x,y), (x+w,y+h), (<span class="num">0</span>,<span class="num">255</span>,<span class="num">0</span>), <span class="num">2</span>)  <span class="cm"># আয়তক্ষেত্র</span>
+cv2.<span class="fn">circle</span>(img, (cx,cy), radius, (<span class="num">0</span>,<span class="num">0</span>,<span class="num">255</span>), <span class="num">2</span>)       <span class="cm"># বৃত্ত</span>
+cv2.<span class="fn">putText</span>(img, <span class="st">"Label"</span>, (x,y), cv2.FONT_HERSHEY_SIMPLEX, <span class="num">1</span>, (<span class="num">255</span>,<span class="num">255</span>,<span class="num">0</span>), <span class="num">2</span>)
+
+<span class="cm"># ══════════════════ CONTOURS ══════════════════</span>
+cnts, _ = cv2.<span class="fn">findContours</span>(bw, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+<span class="fn">print</span>(<span class="st">f"মোট {<span class="fn">len</span>(cnts)} object"</span>)
+<span class="kw">for</span> cnt <span class="kw">in</span> cnts:
+    area = cv2.<span class="fn">contourArea</span>(cnt)
+    x,y,w,h = cv2.<span class="fn">boundingRect</span>(cnt)
+
+<span class="cm"># ══════════════════ HOUGH LINES ══════════════════</span>
+lines = cv2.<span class="fn">HoughLinesP</span>(edges, rho=<span class="num">3</span>, theta=np.pi/<span class="num">20</span>,
+                          threshold=<span class="num">100</span>, minLineLength=<span class="num">50</span>, maxLineGap=<span class="num">20</span>)
+<span class="kw">if</span> lines <span class="kw">is not</span> <span class="kw">None</span>:
+    <span class="kw">for</span> x1,y1,x2,y2 <span class="kw">in</span> lines[:,<span class="num">0</span>]:
+        cv2.<span class="fn">line</span>(img, (x1,y1), (x2,y2), (<span class="num">255</span>,<span class="num">0</span>,<span class="num">0</span>), <span class="num">2</span>)
+
+<span class="cm"># ══════════════════ MASK ══════════════════</span>
+mask    = np.<span class="fn">zeros</span>(gray.shape, np.uint8)
+pts     = np.<span class="fn">array</span>([[(w//<span class="num">2</span>,h//<span class="num">2</span>),(<span class="num">0</span>,h),(w,h)]], np.int32)
+cv2.<span class="fn">fillPoly</span>(mask, pts, <span class="num">255</span>)
+masked  = cv2.<span class="fn">bitwise_and</span>(gray, mask)
+
+<span class="cm"># ══════════════════ DISPLAY ══════════════════</span>
+plt.<span class="fn">imshow</span>(rgb)                              <span class="cm"># color</span>
+plt.<span class="fn">imshow</span>(gray, cmap=<span class="st">'gray'</span>)               <span class="cm"># grayscale</span>
+plt.<span class="fn">xticks</span>([]); plt.<span class="fn">yticks</span>([])
+plt.<span class="fn">show</span>()</pre>
+  </div>
+
+  <!-- Final mega exercise -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="exercise-icon">🏆</span>
+      <div class="exercise-title">চূড়ান্ত Capstone Project Exercise <span>Production ML Engineering</span></div>
+    </div>
+    <p style="color:var(--text2);margin-bottom:14px;">নিচের project-গুলো সম্পূর্ণ করলে তুমি একজন ML Engineer হিসেবে real job interview-এ সরাসরি এই কাজগুলো দেখাতে পারবে:</p>
+    <ul class="exercise-list">
+      <li><strong>Project 1 — Defect Detection Pipeline:</strong> ধরো তুমি HELLA GmbH-এর মতো একটা manufacturing company-তে কাজ করছ। PCB (Circuit Board)-এর ছবি থেকে defect (extra solder, bridge) detect করার complete OpenCV pipeline বানাও: Load → Grayscale → Denoise → Threshold → Morphological Opening → Contour Detection → Defect Classification।</li>
+      <li><strong>Project 2 — Dataset Augmentor:</strong> ১,০০০ ছবির folder নাও এবং augmentation দিয়ে ৫,০০০ ছবি তৈরি করো (প্রতিটা থেকে ৫টা augmented version)। Metadata (original path, transformation applied) CSV-তে save করো।</li>
+      <li><strong>Project 3 — Lane Detection Demo:</strong> Road image-এ Canny + HoughLinesP + Masking ব্যবহার করে lane line detect করো। Output-এ lane line লাল রঙে আঁকো। Video file-এ করলে bonus points!</li>
+      <li><strong>Project 4 — Preprocessing Benchmark:</strong> ৫টা filter (blur, medianBlur, GaussianBlur, bilateral, NLM denoising) তুলনা করো salt-pepper noisy image-এ। PSNR ও SSIM দিয়ে quantitative comparison দেখাও।</li>
+    </ul>
+    <div class="hint-box">
+      <div class="hint-title">💡 GitHub Portfolio Tip</div>
+      এই projects-গুলো GitHub-এ upload করো, README.md-তে বাংলায় ও ইংরেজিতে ব্যাখ্যা লেখো, এবং LinkedIn-এ share করো। MLOps/ML Engineering job application-এ এগুলো অনেক কাজে আসবে।
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<div class="divider"></div>
+
+</div><!-- /container -->
+
+<footer>
+  <div style="font-size:28px;margin-bottom:12px;">🎓</div>
+  <p style="color:var(--text2);margin-bottom:6px;">এই tutorial বাংলায় Computer Vision শেখার জন্য তৈরি — ML Engineering journey-এর প্রতিটি ধাপে।</p>
+  <p>OpenCV (cv2) · NumPy · Matplotlib · Python Image Processing</p>
+  <p style="margin-top:10px;color:var(--text3);font-size:12px;">
+    Notebook 01: Image Reading · Notebook 02: Transformations & Filters · Notebook 03: Advanced Analysis<br>
+    সম্পূর্ণ বাংলায় — শিক্ষার্থী থেকে ML Engineer পর্যন্ত
+  </p>
+</footer>
+
+</body>
+</html>

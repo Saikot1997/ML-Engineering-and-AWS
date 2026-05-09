@@ -1,0 +1,2341 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clustering সম্পূর্ণ গাইড — বাংলায়</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&family=Noto+Sans+Bengali:wght@300;400;600&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --bg2: #13161e;
+    --bg3: #1a1f2e;
+    --bg4: #1f2535;
+    --accent: #00d4aa;
+    --accent2: #7c6af7;
+    --accent3: #ff6b6b;
+    --accent4: #ffd166;
+    --accent5: #06d6a0;
+    --text: #e8eaf0;
+    --text2: #9ba3b8;
+    --text3: #c5cad8;
+    --border: #2a3045;
+    --code-bg: #0a0c12;
+    --kmeans-color: #00d4aa;
+    --hca-color: #7c6af7;
+    --meanshift-color: #ff6b6b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans Bengali', sans-serif;
+    font-size: 17px;
+    line-height: 1.9;
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(13,15,20,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 0; height: 60px;
+    overflow-x: auto;
+  }
+  nav a {
+    color: var(--text2); text-decoration: none; white-space: nowrap;
+    padding: 0 1rem; height: 60px; display: flex; align-items: center;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  .nav-logo { font-family: 'Playfair Display', serif; color: var(--accent); font-size: 18px; margin-right: 1rem; border: none !important; }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center;
+    background: radial-gradient(ellipse at 30% 40%, rgba(124,106,247,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 60%, rgba(0,212,170,0.12) 0%, transparent 60%),
+                var(--bg);
+    padding: 6rem 2rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+  .hero-badge {
+    background: linear-gradient(135deg, rgba(0,212,170,0.2), rgba(124,106,247,0.2));
+    border: 1px solid rgba(0,212,170,0.3);
+    color: var(--accent); padding: 6px 18px; border-radius: 50px;
+    font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 2rem; display: inline-block;
+  }
+  .hero h1 {
+    font-family: 'Noto Serif Bengali', serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 700; line-height: 1.2;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, var(--accent2) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+  }
+  .hero p {
+    font-size: 1.2rem; color: var(--text2); max-width: 700px;
+    margin: 0 auto 3rem;
+  }
+  .hero-pills { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .pill {
+    background: var(--bg3); border: 1px solid var(--border);
+    padding: 8px 20px; border-radius: 50px; font-size: 13px; color: var(--text2);
+  }
+  .pill span { color: var(--accent); margin-right: 6px; }
+
+  /* ─── LAYOUT ─── */
+  main { max-width: 1000px; margin: 0 auto; padding: 4rem 2rem; }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    margin-bottom: 6rem;
+    scroll-margin-top: 70px;
+  }
+
+  .section-header {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 2.5rem; padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-number {
+    width: 50px; height: 50px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900;
+    flex-shrink: 0;
+  }
+  .section-number.teal { background: rgba(0,212,170,0.15); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); }
+  .section-number.purple { background: rgba(124,106,247,0.15); color: var(--accent2); border: 1px solid rgba(124,106,247,0.3); }
+  .section-number.red { background: rgba(255,107,107,0.15); color: var(--accent3); border: 1px solid rgba(255,107,107,0.3); }
+  .section-number.gold { background: rgba(255,209,102,0.15); color: var(--accent4); border: 1px solid rgba(255,209,102,0.3); }
+  .section-number.green { background: rgba(6,214,160,0.15); color: var(--accent5); border: 1px solid rgba(6,214,160,0.3); }
+
+  .section-title {
+    font-family: 'Noto Serif Bengali', serif;
+    font-size: 1.8rem; font-weight: 700; color: var(--text);
+  }
+  .section-subtitle { font-size: 0.9rem; color: var(--text2); margin-top: 4px; }
+
+  h2.topic {
+    font-family: 'Noto Serif Bengali', serif;
+    font-size: 1.4rem; font-weight: 600;
+    color: var(--accent); margin: 2.5rem 0 1rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2.topic::before { content: '▶'; font-size: 0.7rem; opacity: 0.7; }
+
+  h3.subtopic {
+    font-size: 1.1rem; font-weight: 600;
+    color: var(--accent4); margin: 2rem 0 0.8rem;
+  }
+
+  p { color: var(--text3); margin-bottom: 1rem; }
+  strong { color: var(--text); }
+
+  /* ─── INFO BOXES ─── */
+  .box {
+    border-radius: 12px; padding: 1.5rem 1.8rem;
+    margin: 1.5rem 0; border-left: 4px solid;
+  }
+  .box-explain { background: rgba(0,212,170,0.06); border-color: var(--accent); }
+  .box-warn { background: rgba(255,209,102,0.06); border-color: var(--accent4); }
+  .box-important { background: rgba(124,106,247,0.06); border-color: var(--accent2); }
+  .box-danger { background: rgba(255,107,107,0.06); border-color: var(--accent3); }
+  .box-tip { background: rgba(6,214,160,0.06); border-color: var(--accent5); }
+
+  .box-title {
+    font-weight: 700; font-size: 0.85rem; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 8px;
+  }
+  .box-explain .box-title { color: var(--accent); }
+  .box-warn .box-title { color: var(--accent4); }
+  .box-important .box-title { color: var(--accent2); }
+  .box-danger .box-title { color: var(--accent3); }
+  .box-tip .box-title { color: var(--accent5); }
+
+  /* ─── CODE BLOCKS ─── */
+  .code-wrap { margin: 1.5rem 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+  .code-header {
+    background: var(--bg3); padding: 10px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text2); }
+  .code-label { font-size: 12px; color: var(--accent); font-weight: 600; }
+  pre {
+    background: var(--code-bg); padding: 1.5rem;
+    overflow-x: auto; font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px; line-height: 1.7;
+  }
+  .kw { color: #c792ea; }
+  .fn { color: #82aaff; }
+  .st { color: #c3e88d; }
+  .cm { color: #546e7a; font-style: italic; }
+  .nm { color: #f78c6c; }
+  .op { color: #89ddff; }
+  .bi { color: #ffcb6b; }
+
+  /* ─── SVG DIAGRAMS ─── */
+  .diagram-wrap {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem; margin: 2rem 0;
+    text-align: center;
+  }
+  .diagram-caption {
+    font-size: 13px; color: var(--text2); margin-top: 1rem;
+    font-style: italic;
+  }
+
+  /* ─── EXERCISE BOXES ─── */
+  .exercise-section {
+    background: linear-gradient(135deg, rgba(124,106,247,0.08), rgba(0,212,170,0.05));
+    border: 1px solid rgba(124,106,247,0.3);
+    border-radius: 16px; padding: 2rem; margin: 3rem 0;
+  }
+  .exercise-title {
+    font-family: 'Noto Serif Bengali', serif;
+    font-size: 1.2rem; font-weight: 700;
+    color: var(--accent2); margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .exercise-title::before { content: '🎯'; }
+
+  .q-item { margin-bottom: 2rem; }
+  .q-num {
+    display: inline-flex; width: 28px; height: 28px;
+    background: var(--accent2); color: white;
+    border-radius: 50%; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; margin-right: 10px; flex-shrink: 0;
+  }
+  .q-text { color: var(--text); font-weight: 600; font-size: 1rem; }
+  .q-explain { color: var(--text2); font-size: 0.92rem; margin-top: 0.5rem; margin-left: 38px; }
+  .q-answer {
+    margin-top: 0.8rem; margin-left: 38px;
+    background: var(--bg3); border-left: 3px solid var(--accent);
+    padding: 0.8rem 1rem; border-radius: 0 8px 8px 0;
+    font-size: 0.9rem; color: var(--text3);
+  }
+  .q-answer-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700; margin-bottom: 5px; }
+
+  details { margin: 0.5rem 0; }
+  summary {
+    cursor: pointer; color: var(--accent); font-size: 13px;
+    font-weight: 600; letter-spacing: 0.5px; padding: 4px 0;
+    list-style: none; display: flex; align-items: center; gap: 6px;
+  }
+  summary::before { content: '▶ উত্তর দেখুন'; }
+  details[open] summary::before { content: '▼ উত্তর লুকান'; }
+
+  /* ─── TABLE ─── */
+  .table-wrap { overflow-x: auto; margin: 1.5rem 0; border-radius: 12px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: var(--bg3); padding: 12px 16px;
+    text-align: left; font-size: 13px; font-weight: 700;
+    color: var(--accent); letter-spacing: 0.5px; border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 16px; border-bottom: 1px solid rgba(42,48,69,0.5);
+    color: var(--text3); font-size: 14px;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* ─── FORMULA ─── */
+  .formula {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.2rem 1.5rem;
+    text-align: center; margin: 1.5rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent4); font-size: 1.1rem; letter-spacing: 1px;
+  }
+  .formula-label { font-family: 'Noto Sans Bengali', sans-serif; font-size: 12px; color: var(--text2); margin-top: 8px; }
+
+  /* ─── STEP LIST ─── */
+  .steps { list-style: none; margin: 1rem 0; }
+  .steps li {
+    display: flex; gap: 1rem; margin-bottom: 1rem;
+    padding: 1rem; background: var(--bg2); border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .step-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--accent); color: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 14px; flex-shrink: 0;
+  }
+  .step-num.purple { background: var(--accent2); }
+  .step-num.red { background: var(--accent3); }
+  .step-num.gold { background: var(--accent4); color: #333; }
+
+  .step-content { flex: 1; }
+  .step-title { font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .step-desc { color: var(--text2); font-size: 0.9rem; }
+
+  /* ─── COMPARISON CARDS ─── */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem; position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .card.teal::before { background: var(--accent); }
+  .card.purple::before { background: var(--accent2); }
+  .card.red::before { background: var(--accent3); }
+  .card.gold::before { background: var(--accent4); }
+  .card-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+  .card h4 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+  .card p { font-size: 0.88rem; color: var(--text2); }
+
+  /* ─── ALGO SUMMARY SECTION ─── */
+  .algo-card {
+    background: var(--bg2); border-radius: 16px;
+    border: 1px solid var(--border); padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .algo-header {
+    display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .algo-icon {
+    width: 56px; height: 56px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem;
+  }
+  .algo-name { font-family: 'Noto Serif Bengali', serif; font-size: 1.4rem; font-weight: 700; }
+  .algo-tagline { font-size: 0.9rem; color: var(--text2); margin-top: 3px; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--bg2); border-top: 1px solid var(--border);
+    text-align: center; padding: 3rem 2rem;
+    color: var(--text2); font-size: 14px;
+  }
+  footer strong { color: var(--accent); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 600px) {
+    .section-title { font-size: 1.4rem; }
+    pre { font-size: 12px; }
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .highlight { color: var(--accent); font-weight: 700; }
+  .highlight2 { color: var(--accent4); font-weight: 700; }
+  .highlight3 { color: var(--accent2); font-weight: 700; }
+
+  ul.bn-list { list-style: none; padding: 0; margin: 1rem 0; }
+  ul.bn-list li {
+    padding: 0.5rem 0 0.5rem 2rem; position: relative;
+    color: var(--text3); font-size: 0.95rem; border-bottom: 1px solid rgba(42,48,69,0.4);
+  }
+  ul.bn-list li::before {
+    content: '→'; position: absolute; left: 0;
+    color: var(--accent); font-weight: 700;
+  }
+
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 50px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    margin: 2px;
+  }
+  .tag-teal { background: rgba(0,212,170,0.15); color: var(--accent); border: 1px solid rgba(0,212,170,0.3); }
+  .tag-purple { background: rgba(124,106,247,0.15); color: var(--accent2); border: 1px solid rgba(124,106,247,0.3); }
+  .tag-red { background: rgba(255,107,107,0.15); color: var(--accent3); border: 1px solid rgba(255,107,107,0.3); }
+  .tag-gold { background: rgba(255,209,102,0.15); color: var(--accent4); border: 1px solid rgba(255,209,102,0.3); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">🧬 Clustering</a>
+  <a href="#intro">ভূমিকা</a>
+  <a href="#kmeans">K-Means</a>
+  <a href="#hca">HCA</a>
+  <a href="#meanshift">Mean Shift</a>
+  <a href="#evaluation">মূল্যায়ন</a>
+  <a href="#algorithms">সব অ্যালগরিদম</a>
+  <a href="#interview">Interview</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">সম্পূর্ণ বাংলা গাইড · Beginner থেকে Expert</div>
+  <h1>Clustering সম্পূর্ণ মাস্টারক্লাস</h1>
+  <p>Unsupervised Machine Learning-এর তিনটি প্রধান অ্যালগরিদম — K-Means, HCA, এবং Mean Shift — সব কিছু বাংলায়, diagram সহ, Interview প্রশ্ন ও Python কোড সহ।</p>
+  <div class="hero-pills">
+    <div class="pill"><span>📘</span>নতুনদের জন্য</div>
+    <div class="pill"><span>💼</span>Interview Ready</div>
+    <div class="pill"><span>🐍</span>Python Code</div>
+    <div class="pill"><span>📊</span>SVG Diagrams</div>
+    <div class="pill"><span>🏭</span>Real ML Projects</div>
+  </div>
+</div>
+
+<main>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 1: INTRODUCTION
+═════════════════════════════════════════════════ -->
+<section class="section" id="intro">
+  <div class="section-header">
+    <div class="section-number teal">১</div>
+    <div>
+      <div class="section-title">ভূমিকা — Clustering কী?</div>
+      <div class="section-subtitle">Unsupervised Learning-এর মূল ধারণা</div>
+    </div>
+  </div>
+
+  <h2 class="topic">Machine Learning-এর দুনিয়া</h2>
+  <p>Machine Learning মানে হলো কম্পিউটারকে <strong>শেখানো</strong> — কিন্তু সেই শেখানোটা দুইভাবে হতে পারে:</p>
+
+  <!-- Supervised vs Unsupervised SVG -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;" font-family="'Hind Siliguri', 'Tiro Bangla', sans-serif">
+      <defs>
+        <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#00d4aa;stop-opacity:0.3"/>
+          <stop offset="100%" style="stop-color:#00d4aa;stop-opacity:0.05"/>
+        </linearGradient>
+        <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#7c6af7;stop-opacity:0.3"/>
+          <stop offset="100%" style="stop-color:#7c6af7;stop-opacity:0.05"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Supervised Box -->
+      <rect x="30" y="40" width="380" height="300" rx="16" fill="url(#g1)" stroke="#00d4aa" stroke-width="1.5"/>
+      <text x="220" y="80" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="18" font-weight="700">Supervised Learning</text>
+      <text x="220" y="105" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="13">(তত্ত্বাবধায়িত শিক্ষা)</text>
+
+      <!-- Data with labels -->
+      <rect x="60" y="125" width="60" height="40" rx="8" fill="#1a1f2e" stroke="#00d4aa" stroke-width="1"/>
+      <text x="90" y="140" text-anchor="middle" fill="#e8eaf0" font-family="sans-serif" font-size="11">ছবি</text>
+      <text x="90" y="155" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="10">🐱 বিড়াল</text>
+
+      <rect x="145" y="125" width="60" height="40" rx="8" fill="#1a1f2e" stroke="#00d4aa" stroke-width="1"/>
+      <text x="175" y="140" text-anchor="middle" fill="#e8eaf0" font-family="sans-serif" font-size="11">ছবি</text>
+      <text x="175" y="155" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="10">🐶 কুকুর</text>
+
+      <rect x="230" y="125" width="60" height="40" rx="8" fill="#1a1f2e" stroke="#00d4aa" stroke-width="1"/>
+      <text x="260" y="140" text-anchor="middle" fill="#e8eaf0" font-family="sans-serif" font-size="11">ছবি</text>
+      <text x="260" y="155" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="10">🐱 বিড়াল</text>
+
+      <text x="220" y="205" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">↓ Model শেখে</text>
+
+      <rect x="130" y="220" width="180" height="50" rx="10" fill="#1a1f2e" stroke="#00d4aa" stroke-width="1.5"/>
+      <text x="220" y="245" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="14" font-weight="700">Prediction Model</text>
+      <text x="220" y="262" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="11">নতুন ছবি দাও → উত্তর পাও</text>
+
+      <text x="220" y="310" text-anchor="middle" fill="#c5cad8" font-family="sans-serif" font-size="12">✓ Label আছে · উত্তর জানা আছে</text>
+      <text x="220" y="328" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="11">উদাহরণ: Regression, Classification</text>
+
+      <!-- Unsupervised Box -->
+      <rect x="490" y="40" width="380" height="300" rx="16" fill="url(#g2)" stroke="#7c6af7" stroke-width="1.5"/>
+      <text x="680" y="80" text-anchor="middle" fill="#7c6af7" font-family="sans-serif" font-size="18" font-weight="700">Unsupervised Learning</text>
+      <text x="680" y="105" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="13">(স্বতন্ত্র শিক্ষা)</text>
+
+      <!-- Data without labels -->
+      <circle cx="570" cy="155" r="18" fill="#1a1f2e" stroke="#7c6af7" stroke-width="1.5"/>
+      <text x="570" y="160" text-anchor="middle" fill="#e8eaf0" font-family="sans-serif" font-size="14">?</text>
+
+      <circle cx="630" cy="140" r="18" fill="#1a1f2e" stroke="#7c6af7" stroke-width="1.5"/>
+      <text x="630" y="145" text-anchor="middle" fill="#e8eaf0" font-family="sans-serif" font-size="14">?</text>
+
+      <circle cx="690" cy="160" r="18" fill="#1a1f2e" stroke="#7c6af7" stroke-width="1.5"/>
+      <text x="690" y="165" text-anchor="middle" fill="#e8eaf0" font-family="sans-serif" font-size="14">?</text>
+
+      <circle cx="760" cy="145" r="18" fill="#1a1f2e" stroke="#7c6af7" stroke-width="1.5"/>
+      <text x="760" y="150" text-anchor="middle" fill="#e8eaf0" font-family="sans-serif" font-size="14">?</text>
+
+      <text x="680" y="205" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">↓ Pattern খোঁজে</text>
+
+      <rect x="590" y="218" width="180" height="50" rx="10" fill="#1a1f2e" stroke="#7c6af7" stroke-width="1.5"/>
+      <text x="680" y="243" text-anchor="middle" fill="#7c6af7" font-family="sans-serif" font-size="14" font-weight="700">Clustering Model</text>
+      <text x="680" y="260" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="11">Group A · Group B · Group C</text>
+
+      <text x="680" y="310" text-anchor="middle" fill="#c5cad8" font-family="sans-serif" font-size="12">✗ Label নেই · নিজেই খুঁজে বের করে</text>
+      <text x="680" y="328" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="11">উদাহরণ: Clustering, Association</text>
+    </svg>
+    <div class="diagram-caption">চিত্র ১: Supervised vs Unsupervised Learning-এর পার্থক্য</div>
+  </div>
+
+  <div class="box box-explain">
+    <div class="box-title">🍎 বাস্তব জীবনের উদাহরণ দিয়ে বুঝি</div>
+    <p><strong>Supervised (শিক্ষক আছে):</strong> তোমার মা তোমাকে ছোটবেলায় বললেন "এটা আপেল, ওটা কমলা।" তুমি শিখলে। পরে নতুন ফল দেখলে বলতে পারলে কোনটা কী। এখানে শিক্ষক (label) আছে।</p>
+    <p><strong>Unsupervised (নিজেই শেখো):</strong> এক বাক্স ফল দেওয়া হলো, কেউ বললো না কোনটা কী। তুমি নিজেই দেখলে — "এগুলো লাল, গোল → এক দল। ওগুলো হলুদ, লম্বা → আরেক দল।" কেউ শেখায়নি — তুমি নিজেই pattern বের করলে। এটাই Clustering!</p>
+  </div>
+
+  <h2 class="topic">Clustering কী এবং কেন দরকার?</h2>
+  <p><strong>Clustering</strong> হলো এমন একটি পদ্ধতি যেখানে একটি বড় dataset-এর মধ্যে <span class="highlight">স্বাভাবিকভাবে থাকা গোষ্ঠী বা দল</span> খুঁজে বের করা হয়। একই দলের data গুলো একে অপরের মতো, আর ভিন্ন দলের data গুলো আলাদা।</p>
+
+  <!-- Clustering Visual SVG -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;" font-family="'Hind Siliguri', 'Tiro Bangla', sans-serif">
+      <!-- Before Clustering -->
+      <text x="175" y="25" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="14" font-weight="700">Clustering এর আগে</text>
+      <rect x="20" y="35" width="310" height="270" rx="12" fill="#13161e" stroke="#2a3045" stroke-width="1"/>
+
+      <!-- Random dots -->
+      <circle cx="80" cy="80" r="5" fill="#9ba3b8"/><circle cx="110" cy="95" r="5" fill="#9ba3b8"/>
+      <circle cx="65" cy="110" r="5" fill="#9ba3b8"/><circle cx="95" cy="120" r="5" fill="#9ba3b8"/>
+      <circle cx="75" cy="65" r="5" fill="#9ba3b8"/><circle cx="120" cy="75" r="5" fill="#9ba3b8"/>
+      <circle cx="200" cy="90" r="5" fill="#9ba3b8"/><circle cx="230" cy="75" r="5" fill="#9ba3b8"/>
+      <circle cx="220" cy="110" r="5" fill="#9ba3b8"/><circle cx="250" cy="95" r="5" fill="#9ba3b8"/>
+      <circle cx="210" cy="60" r="5" fill="#9ba3b8"/><circle cx="270" cy="85" r="5" fill="#9ba3b8"/>
+      <circle cx="100" cy="220" r="5" fill="#9ba3b8"/><circle cx="130" cy="240" r="5" fill="#9ba3b8"/>
+      <circle cx="85" cy="255" r="5" fill="#9ba3b8"/><circle cx="115" cy="275" r="5" fill="#9ba3b8"/>
+      <circle cx="140" cy="260" r="5" fill="#9ba3b8"/><circle cx="160" cy="235" r="5" fill="#9ba3b8"/>
+      <circle cx="230" cy="200" r="5" fill="#9ba3b8"/><circle cx="260" cy="220" r="5" fill="#9ba3b8"/>
+      <circle cx="245" cy="255" r="5" fill="#9ba3b8"/><circle cx="280" cy="240" r="5" fill="#9ba3b8"/>
+      <circle cx="150" cy="160" r="5" fill="#9ba3b8"/><circle cx="180" cy="175" r="5" fill="#9ba3b8"/>
+
+      <text x="175" y="175" text-anchor="middle" fill="#546e7a" font-family="sans-serif" font-size="12">সব একরকম দেখাচ্ছে 😕</text>
+
+      <!-- Arrow -->
+      <text x="355" y="175" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="24">→</text>
+      <text x="355" y="192" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="11">Clustering</text>
+
+      <!-- After Clustering -->
+      <text x="525" y="25" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="14" font-weight="700">Clustering এর পরে</text>
+      <rect x="370" y="35" width="310" height="270" rx="12" fill="#13161e" stroke="#2a3045" stroke-width="1"/>
+
+      <!-- Group 1 - Teal -->
+      <ellipse cx="445" cy="90" rx="55" ry="45" fill="rgba(0,212,170,0.08)" stroke="#00d4aa" stroke-width="1" stroke-dasharray="4,3"/>
+      <circle cx="420" cy="80" r="5" fill="#00d4aa"/><circle cx="450" cy="95" r="5" fill="#00d4aa"/>
+      <circle cx="435" cy="110" r="5" fill="#00d4aa"/><circle cx="465" cy="80" r="5" fill="#00d4aa"/>
+      <circle cx="425" cy="65" r="5" fill="#00d4aa"/><circle cx="460" cy="108" r="5" fill="#00d4aa"/>
+      <text x="445" y="145" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="11">গ্রুপ A</text>
+
+      <!-- Group 2 - Purple -->
+      <ellipse cx="600" cy="85" rx="55" ry="40" fill="rgba(124,106,247,0.08)" stroke="#7c6af7" stroke-width="1" stroke-dasharray="4,3"/>
+      <circle cx="575" cy="78" r="5" fill="#7c6af7"/><circle cx="605" cy="70" r="5" fill="#7c6af7"/>
+      <circle cx="595" cy="100" r="5" fill="#7c6af7"/><circle cx="625" cy="85" r="5" fill="#7c6af7"/>
+      <circle cx="580" cy="95" r="5" fill="#7c6af7"/><circle cx="618" cy="68" r="5" fill="#7c6af7"/>
+      <text x="600" y="135" text-anchor="middle" fill="#7c6af7" font-family="sans-serif" font-size="11">গ্রুপ B</text>
+
+      <!-- Group 3 - Red -->
+      <ellipse cx="460" cy="245" rx="60" ry="40" fill="rgba(255,107,107,0.08)" stroke="#ff6b6b" stroke-width="1" stroke-dasharray="4,3"/>
+      <circle cx="430" cy="238" r="5" fill="#ff6b6b"/><circle cx="460" cy="225" r="5" fill="#ff6b6b"/>
+      <circle cx="485" cy="248" r="5" fill="#ff6b6b"/><circle cx="445" cy="260" r="5" fill="#ff6b6b"/>
+      <circle cx="475" cy="265" r="5" fill="#ff6b6b"/><circle cx="435" cy="255" r="5" fill="#ff6b6b"/>
+      <text x="460" y="295" text-anchor="middle" fill="#ff6b6b" font-family="sans-serif" font-size="11">গ্রুপ C</text>
+
+      <!-- Group 4 - Gold -->
+      <ellipse cx="610" cy="235" rx="50" ry="38" fill="rgba(255,209,102,0.08)" stroke="#ffd166" stroke-width="1" stroke-dasharray="4,3"/>
+      <circle cx="585" cy="228" r="5" fill="#ffd166"/><circle cx="615" cy="220" r="5" fill="#ffd166"/>
+      <circle cx="635" cy="240" r="5" fill="#ffd166"/><circle cx="600" cy="250" r="5" fill="#ffd166"/>
+      <circle cx="625" cy="255" r="5" fill="#ffd166"/>
+      <text x="610" y="282" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="11">গ্রুপ D</text>
+
+      <text x="525" y="175" text-anchor="middle" fill="#546e7a" font-family="sans-serif" font-size="12">স্পষ্ট গোষ্ঠী দেখা যাচ্ছে! 🎉</text>
+    </svg>
+    <div class="diagram-caption">চিত্র ২: Clustering করলে ছড়ানো data-তে স্পষ্ট গোষ্ঠী দেখা যায়</div>
+  </div>
+
+  <h2 class="topic">Clustering কোথায় ব্যবহার হয়?</h2>
+  <div class="card-grid">
+    <div class="card teal">
+      <div class="card-icon">🛒</div>
+      <h4>Customer Segmentation</h4>
+      <p>e-commerce সাইট customer-দের গোষ্ঠীতে ভাগ করে। "বেশি খরচ করে" → premium offer, "মাঝে মাঝে কেনে" → discount offer।</p>
+    </div>
+    <div class="card purple">
+      <div class="card-icon">🌐</div>
+      <h4>Website Grouping</h4>
+      <p>Google news একই বিষয়ের হাজার নিউজকে একসাথে গ্রুপ করে দেখায়।</p>
+    </div>
+    <div class="card red">
+      <div class="card-icon">🏥</div>
+      <h4>Medical Diagnosis</h4>
+      <p>রোগীদের symptom দেখে গোষ্ঠীতে ভাগ করা — কোন দল কোন রোগে আক্রান্ত।</p>
+    </div>
+    <div class="card gold">
+      <div class="card-icon">🖼️</div>
+      <h4>Image Compression</h4>
+      <p>Mean Shift দিয়ে image-এর রং কমিয়ে compress করা যায় (আমরা পরে দেখবো)।</p>
+    </div>
+  </div>
+
+  <h2 class="topic">Unsupervised Learning-এ আর কী কী আছে?</h2>
+  <div class="box box-important">
+    <div class="box-title">📚 তিন ধরনের Unsupervised Learning</div>
+    <ul class="bn-list">
+      <li><strong>Clustering (গোষ্ঠীকরণ):</strong> data-কে দলে ভাগ করা — আমরা এই পুরো module এটাই শিখবো</li>
+      <li><strong>Association Rules:</strong> "যারা আলু কেনে, তারা পেঁয়াজও কেনে" — সম্পর্ক খোঁজা</li>
+      <li><strong>Dimension Reduction:</strong> ১০০টি feature থাকলে সেটাকে ৫টিতে নামিয়ে আনা (যেমন PCA)</li>
+    </ul>
+  </div>
+
+  <!-- Exercise 1 -->
+  <div class="exercise-section">
+    <div class="exercise-title">Section ১ — Interview Exercise</div>
+
+    <div class="q-item">
+      <span class="q-num">১</span>
+      <span class="q-text">Supervised এবং Unsupervised Learning-এর মধ্যে মূল পার্থক্য কী?</span>
+      <div class="q-explain">এটি প্রায় সব ML interview-এর প্রথম প্রশ্ন। সহজভাবে explain করার চেষ্টা করো।</div>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      Supervised learning-এ training data-তে label থাকে (input + output উভয়ই দেওয়া থাকে), model সেই pattern শিখে নতুন input-এ output predict করে। Unsupervised learning-এ শুধু input data থাকে, কোনো label নেই। Model নিজেই data-র মধ্যে hidden structure বা pattern খুঁজে বের করে। Clustering unsupervised learning-এর একটি উদাহরণ।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">২</span>
+      <span class="q-text">একটি বাস্তব project-এ Clustering কখন ব্যবহার করবে?</span>
+      <div class="q-explain">Business context-এ answer দিতে হবে।</div>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      যখন: (১) আমাদের কাছে labeled data নেই, (২) data-র মধ্যে natural groups আছে কিনা জানি না, (৩) customer বা product segmentation করতে চাই। উদাহরণ: একটি hospital-এ রোগীর data আছে কিন্তু diagnosis নেই — Clustering দিয়ে similar symptom-এর রোগীদের গ্রুপ করা যায়।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">৩</span>
+      <span class="q-text">Dimension Reduction কেন দরকার? একটি উদাহরণ দাও।</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      একজন মানুষের medical data-তে হাজার হাজার feature থাকতে পারে (blood pressure, হার্টবিট, ২০ রকম blood test ইত্যাদি)। এত feature দিয়ে model train করা ধীর ও কঠিন। Dimension Reduction (যেমন PCA) এই ১০০০ feature-কে ১০টি important feature-এ কমিয়ে আনে, যা model-এর accuracy কমায় না কিন্তু speed বাড়ায়।
+      </div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 2: K-MEANS
+═════════════════════════════════════════════════ -->
+<section class="section" id="kmeans">
+  <div class="section-header">
+    <div class="section-number purple">২</div>
+    <div>
+      <div class="section-title">K-Means Algorithm</div>
+      <div class="section-subtitle">সবচেয়ে জনপ্রিয় Clustering পদ্ধতি</div>
+    </div>
+  </div>
+
+  <h2 class="topic">K-Means কী? — একদম সহজ ভাষায়</h2>
+
+  <div class="box box-explain">
+    <div class="box-title">🎯 একটা মজার উদাহরণ</div>
+    <p>মনে করো তোমার ক্লাসে ৩০ জন ছাত্র আছে। তোমাকে বলা হলো তাদের ৩টি দলে ভাগ করো। কীভাবে করবে?</p>
+    <p>১. প্রথমে ৩ জনকে দলনেতা (centroid) বেছে নাও — যেকোনো ৩ জন</p>
+    <p>২. বাকি প্রত্যেকে যে দলনেতার কাছে আছে, সেই দলে যাক</p>
+    <p>৩. এখন প্রতিটি দলের "মাঝখানের মানুষ" (গড় অবস্থান) নতুন দলনেতা হোক</p>
+    <p>৪. আবার সবাই নতুন দলনেতার কাছে যাক</p>
+    <p>৫. যতক্ষণ দলনেতা পরিবর্তন না হয়, ততক্ষণ চলো</p>
+    <p><strong>এটাই K-Means! K = কতগুলো দল চাই।</strong></p>
+  </div>
+
+  <!-- K-Means Step by Step SVG -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;" font-family="'Hind Siliguri', 'Tiro Bangla', sans-serif">
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#9ba3b8"/>
+        </marker>
+      </defs>
+
+      <!-- Step 0 -->
+      <text x="112" y="22" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="13" font-weight="700">ধাপ ০: শুরু</text>
+      <rect x="10" y="30" width="204" height="200" rx="10" fill="#13161e" stroke="#2a3045" stroke-width="1"/>
+      <!-- random points -->
+      <circle cx="60" cy="80" r="4" fill="#9ba3b8"/><circle cx="90" cy="65" r="4" fill="#9ba3b8"/>
+      <circle cx="75" cy="100" r="4" fill="#9ba3b8"/><circle cx="50" cy="115" r="4" fill="#9ba3b8"/>
+      <circle cx="110" cy="85" r="4" fill="#9ba3b8"/><circle cx="140" cy="70" r="4" fill="#9ba3b8"/>
+      <circle cx="130" cy="120" r="4" fill="#9ba3b8"/><circle cx="160" cy="100" r="4" fill="#9ba3b8"/>
+      <circle cx="55" cy="170" r="4" fill="#9ba3b8"/><circle cx="85" cy="185" r="4" fill="#9ba3b8"/>
+      <circle cx="70" cy="160" r="4" fill="#9ba3b8"/><circle cx="100" cy="175" r="4" fill="#9ba3b8"/>
+      <circle cx="155" cy="160" r="4" fill="#9ba3b8"/><circle cx="175" cy="180" r="4" fill="#9ba3b8"/>
+      <!-- random centroids -->
+      <polygon points="80,130 87,117 94,130" fill="#ff6b6b" stroke="white" stroke-width="1"/>
+      <polygon points="120,145 127,132 134,145" fill="#00d4aa" stroke="white" stroke-width="1"/>
+      <polygon points="170,135 177,122 184,135" fill="#7c6af7" stroke="white" stroke-width="1"/>
+      <text x="112" y="245" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="10">৩টি centroid (▲) এলোমেলোভাবে</text>
+
+      <!-- Arrow 1 -->
+      <line x1="220" y1="130" x2="248" y2="130" stroke="#9ba3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Step 1 -->
+      <text x="335" y="22" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="13" font-weight="700">ধাপ ১: Assign</text>
+      <rect x="255" y="30" width="160" height="200" rx="10" fill="#13161e" stroke="#2a3045" stroke-width="1"/>
+      <circle cx="298" cy="80" r="4" fill="#ff6b6b"/><circle cx="315" cy="65" r="4" fill="#ff6b6b"/>
+      <circle cx="308" cy="100" r="4" fill="#ff6b6b"/><circle cx="285" cy="115" r="4" fill="#ff6b6b"/>
+      <circle cx="350" cy="85" r="4" fill="#00d4aa"/><circle cx="368" cy="70" r="4" fill="#00d4aa"/>
+      <circle cx="362" cy="120" r="4" fill="#00d4aa"/><circle cx="385" cy="100" r="4" fill="#7c6af7"/>
+      <circle cx="275" cy="170" r="4" fill="#ff6b6b"/><circle cx="295" cy="185" r="4" fill="#ff6b6b"/>
+      <circle cx="285" cy="160" r="4" fill="#ff6b6b"/><circle cx="312" cy="175" r="4" fill="#00d4aa"/>
+      <circle cx="375" cy="160" r="4" fill="#7c6af7"/><circle cx="390" cy="180" r="4" fill="#7c6af7"/>
+      <!-- centroids same position -->
+      <polygon points="305,130 312,117 319,130" fill="#ff6b6b" stroke="white" stroke-width="1"/>
+      <polygon points="345,145 352,132 359,145" fill="#00d4aa" stroke="white" stroke-width="1"/>
+      <polygon points="390,135 397,122 404,135" fill="#7c6af7" stroke="white" stroke-width="1"/>
+      <text x="335" y="245" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="10">কাছের centroid-এ assign হলো</text>
+
+      <!-- Arrow 2 -->
+      <line x1="422" y1="130" x2="450" y2="130" stroke="#9ba3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Step 2 -->
+      <text x="545" y="22" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="13" font-weight="700">ধাপ ২: Update</text>
+      <rect x="458" y="30" width="175" height="200" rx="10" fill="#13161e" stroke="#2a3045" stroke-width="1"/>
+      <circle cx="498" cy="80" r="4" fill="#ff6b6b"/><circle cx="515" cy="65" r="4" fill="#ff6b6b"/>
+      <circle cx="508" cy="100" r="4" fill="#ff6b6b"/><circle cx="485" cy="115" r="4" fill="#ff6b6b"/>
+      <circle cx="555" cy="85" r="4" fill="#00d4aa"/><circle cx="568" cy="70" r="4" fill="#00d4aa"/>
+      <circle cx="562" cy="120" r="4" fill="#00d4aa"/><circle cx="590" cy="105" r="4" fill="#7c6af7"/>
+      <circle cx="475" cy="170" r="4" fill="#ff6b6b"/><circle cx="495" cy="185" r="4" fill="#ff6b6b"/>
+      <circle cx="485" cy="160" r="4" fill="#ff6b6b"/><circle cx="518" cy="175" r="4" fill="#00d4aa"/>
+      <circle cx="580" cy="162" r="4" fill="#7c6af7"/><circle cx="600" cy="178" r="4" fill="#7c6af7"/>
+      <!-- updated centroids (moved to center of groups) -->
+      <polygon points="496,112 503,99 510,112" fill="#ff6b6b" stroke="white" stroke-width="1.5"/>
+      <polygon points="553,100 560,87 567,100" fill="#00d4aa" stroke="white" stroke-width="1.5"/>
+      <polygon points="591,140 598,127 605,140" fill="#7c6af7" stroke="white" stroke-width="1.5"/>
+      <text x="545" y="245" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="10">Centroid দলের মাঝে চলে গেল</text>
+
+      <!-- Arrow 3 -->
+      <line x1="640" y1="130" x2="668" y2="130" stroke="#9ba3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Final -->
+      <text x="782" y="22" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="13" font-weight="700">চূড়ান্ত ফলাফল</text>
+      <rect x="675" y="30" width="215" height="200" rx="10" fill="#13161e" stroke="#00d4aa" stroke-width="2"/>
+      <!-- Cluster 1 - red -->
+      <ellipse cx="730" cy="95" rx="45" ry="42" fill="rgba(255,107,107,0.1)" stroke="#ff6b6b" stroke-width="1" stroke-dasharray="3,2"/>
+      <circle cx="710" cy="82" r="4" fill="#ff6b6b"/><circle cx="730" cy="70" r="4" fill="#ff6b6b"/>
+      <circle cx="748" cy="88" r="4" fill="#ff6b6b"/><circle cx="715" cy="108" r="4" fill="#ff6b6b"/>
+      <circle cx="745" cy="110" r="4" fill="#ff6b6b"/>
+      <polygon points="730,97 737,84 744,97" fill="#ff6b6b" stroke="white" stroke-width="1.5"/>
+      <!-- Cluster 2 - teal -->
+      <ellipse cx="835" cy="88" rx="42" ry="38" fill="rgba(0,212,170,0.1)" stroke="#00d4aa" stroke-width="1" stroke-dasharray="3,2"/>
+      <circle cx="815" cy="78" r="4" fill="#00d4aa"/><circle cx="840" cy="68" r="4" fill="#00d4aa"/>
+      <circle cx="858" cy="88" r="4" fill="#00d4aa"/><circle cx="820" cy="100" r="4" fill="#00d4aa"/>
+      <circle cx="850" cy="102" r="4" fill="#00d4aa"/>
+      <polygon points="837,90 844,77 851,90" fill="#00d4aa" stroke="white" stroke-width="1.5"/>
+      <!-- Cluster 3 - purple -->
+      <ellipse cx="782" cy="185" rx="88" ry="40" fill="rgba(124,106,247,0.1)" stroke="#7c6af7" stroke-width="1" stroke-dasharray="3,2"/>
+      <circle cx="710" cy="178" r="4" fill="#7c6af7"/><circle cx="740" cy="168" r="4" fill="#7c6af7"/>
+      <circle cx="765" cy="192" r="4" fill="#7c6af7"/><circle cx="798" cy="175" r="4" fill="#7c6af7"/>
+      <circle cx="830" cy="188" r="4" fill="#7c6af7"/><circle cx="855" cy="176" r="4" fill="#7c6af7"/>
+      <polygon points="782,183 789,170 796,183" fill="#7c6af7" stroke="white" stroke-width="1.5"/>
+      <text x="782" y="245" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="10">Centroid স্থির হয়ে গেল ✓</text>
+
+      <!-- Legend -->
+      <text x="450" y="290" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">▲ = Centroid (দলনেতা)   ● = Data Point</text>
+    </svg>
+    <div class="diagram-caption">চিত্র ৩: K-Means এর ধাপ-বধাপ কাজ করার পদ্ধতি</div>
+  </div>
+
+  <h2 class="topic">K-Means Algorithm — ধাপে ধাপে</h2>
+  <ul class="steps">
+    <li>
+      <div class="step-num">১</div>
+      <div class="step-content">
+        <div class="step-title">K টি Centroid এলোমেলোভাবে বেছে নাও</div>
+        <div class="step-desc">K মানে কতটি দল চাই। K=4 মানে 4টি দলে ভাগ করবো। প্রথমে 4টি random point বেছে নেওয়া হয় centroid হিসেবে।</div>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">২</div>
+      <div class="step-content">
+        <div class="step-title">প্রতিটি Data Point-কে নিকটতম Centroid-এ Assign করো</div>
+        <div class="step-desc">প্রতিটি point এবং প্রতিটি centroid-এর মধ্যে distance হিসাব করো। যে centroid সবচেয়ে কাছে, সেই দলে যাও।</div>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">৩</div>
+      <div class="step-content">
+        <div class="step-title">নতুন Centroid হিসাব করো</div>
+        <div class="step-desc">প্রতিটি দলের সব point-এর গড় (mean) হিসাব করো। এই গড় অবস্থানই নতুন centroid।</div>
+      </div>
+    </li>
+    <li>
+      <div class="step-num">৪</div>
+      <div class="step-content">
+        <div class="step-title">Convergence পর্যন্ত পুনরাবৃত্তি করো</div>
+        <div class="step-desc">ধাপ ২ ও ৩ আবার করো। যখন centroid আর নড়বে না (পরিবর্তন হবে না), তখন থামো। এটাই convergence।</div>
+      </div>
+    </li>
+  </ul>
+
+  <h2 class="topic">Elbow Method — কতটি Cluster দরকার?</h2>
+  <p>K-Means-এর সবচেয়ে বড় সমস্যা: <strong>K কত হবে জানি না।</strong> Elbow Method এই সমস্যার সমাধান করে।</p>
+
+  <div class="box box-warn">
+    <div class="box-title">⚡ Distortion / Inertia কী?</div>
+    <p>প্রতিটি point তার centroid থেকে কতটা দূরে — এই দূরত্বের যোগফলকে বলা হয় <strong>distortion</strong>। Cluster যত ভালো, distortion তত কম।</p>
+    <div class="formula">distortion = Σ distance(xᵢ, cᵢ) / n</div>
+    <div class="formula-label">যেখানে xᵢ = প্রতিটি data point, cᵢ = তার centroid, n = মোট points</div>
+  </div>
+
+  <!-- Elbow Curve SVG -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 350" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;" font-family="'Hind Siliguri', 'Tiro Bangla', sans-serif">
+      <!-- Axes -->
+      <line x1="70" y1="280" x2="560" y2="280" stroke="#2a3045" stroke-width="2"/>
+      <line x1="70" y1="50" x2="70" y2="280" stroke="#2a3045" stroke-width="2"/>
+
+      <!-- X labels -->
+      <text x="120" y="300" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">K=2</text>
+      <text x="200" y="300" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">K=3</text>
+      <text x="295" y="300" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="14" font-weight="700">K=4 ★</text>
+      <text x="390" y="300" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">K=5</text>
+      <text x="480" y="300" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">K=6</text>
+
+      <!-- Y labels -->
+      <text x="55" y="80" text-anchor="end" fill="#9ba3b8" font-family="sans-serif" font-size="11">High</text>
+      <text x="55" y="280" text-anchor="end" fill="#9ba3b8" font-family="sans-serif" font-size="11">Low</text>
+
+      <!-- Axis labels -->
+      <text x="315" y="330" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="13">K (Cluster সংখ্যা)</text>
+      <text x="25" y="165" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="13" transform="rotate(-90, 25, 165)">Distortion</text>
+
+      <!-- The curve -->
+      <polyline points="120,80 200,140 295,190 390,215 480,230"
+        fill="none" stroke="#00d4aa" stroke-width="3"/>
+
+      <!-- Points -->
+      <circle cx="120" cy="80" r="6" fill="#00d4aa"/>
+      <circle cx="200" cy="140" r="6" fill="#00d4aa"/>
+      <circle cx="295" cy="190" r="10" fill="#ffd166" stroke="#fff" stroke-width="2"/>
+      <circle cx="390" cy="215" r="6" fill="#00d4aa"/>
+      <circle cx="480" cy="230" r="6" fill="#00d4aa"/>
+
+      <!-- Elbow annotation -->
+      <line x1="295" y1="60" x2="295" y2="185" stroke="#ffd166" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="295" y="55" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12" font-weight="700">এখানে বাঁক = Optimal K!</text>
+
+      <!-- Annotation arrows showing steep vs gradual -->
+      <text x="158" y="108" fill="#ff6b6b" font-family="sans-serif" font-size="11">খাড়া নামছে</text>
+      <text x="360" y="200" fill="#9ba3b8" font-family="sans-serif" font-size="11">ধীরে নামছে</text>
+
+      <text x="315" y="258" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="11">বাঁকের (elbow) পরে distortion ধীরে কমে — ওই K-ই optimal</text>
+    </svg>
+    <div class="diagram-caption">চিত্র ৪: Elbow Method — বাঁকের জায়গায় optimal K পাওয়া যায়</div>
+  </div>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 Elbow কীভাবে চেনা যায়?</div>
+    <p>Distortion vs K এর graph আঁকো। যেখানে curve "কনুইয়ের মতো" বাঁক নেয় — তার আগে খাড়া নামে, পরে ধীরে নামে — সেই K-ই optimal। Ruspini dataset-এ K=4 এ এই বাঁক দেখা যায়।</p>
+  </div>
+
+  <h2 class="topic">Python Implementation</h2>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">ধাপ ১: Library Import এবং Data Load</span>
+    </div>
+    <pre><span class="cm"># প্রয়োজনীয় library গুলো import করা</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+
+<span class="cm"># CSV file পড়া — 'indices' column টি row label হিসেবে ব্যবহার হবে</span>
+df = pd.<span class="fn">read_csv</span>(<span class="st">"ruspini.csv"</span>, index_col=<span class="st">'indices'</span>)
+
+<span class="cm"># প্রথম ৫টি row দেখা</span>
+df.<span class="fn">head</span>(<span class="nm">5</span>)</pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">ধাপ ২: Data Visualization</span>
+    </div>
+    <pre><span class="cm"># Scatter plot — data দেখতে কেমন?</span>
+plt.<span class="fn">scatter</span>(df[<span class="st">'x'</span>], df[<span class="st">'y'</span>])
+plt.<span class="fn">xlabel</span>(<span class="st">'x'</span>)
+plt.<span class="fn">ylabel</span>(<span class="st">'y'</span>)
+plt.<span class="fn">title</span>(<span class="st">'2D Space-এ Data'</span>)
+plt.<span class="fn">show</span>()
+
+<span class="cm"># Boxplot — outlier আছে কিনা দেখা</span>
+liste = [df[<span class="st">'x'</span>], df[<span class="st">'y'</span>]]
+plt.<span class="fn">boxplot</span>(liste, labels=[<span class="st">'x'</span>, <span class="st">'y'</span>])
+plt.<span class="fn">title</span>(<span class="st">'Boxplot of Variables'</span>)
+plt.<span class="fn">show</span>()</pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">ধাপ ৩: Elbow Method দিয়ে Optimal K খোঁজা</span>
+    </div>
+    <pre><span class="kw">from</span> scipy.spatial.distance <span class="kw">import</span> cdist
+
+range_n_clusters = [<span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">6</span>]
+distortions = []
+
+<span class="kw">for</span> n_clusters <span class="kw">in</span> range_n_clusters:
+    <span class="cm"># প্রতিটি K-এর জন্য KMeans train করা</span>
+    cluster = <span class="fn">KMeans</span>(n_clusters=n_clusters, random_state=<span class="nm">42</span>)
+    cluster.<span class="fn">fit</span>(df)
+    
+    <span class="cm"># Distortion হিসাব: প্রতিটি point থেকে নিকটতম centroid-এর দূরত্বের গড়</span>
+    dist = np.<span class="fn">min</span>(<span class="fn">cdist</span>(df, cluster.cluster_centers_, <span class="st">'euclidean'</span>), axis=<span class="nm">1</span>)
+    distortions.<span class="fn">append</span>(np.<span class="fn">sum</span>(dist) / np.<span class="fn">size</span>(df, axis=<span class="nm">0</span>))
+
+<span class="cm"># Elbow curve plot</span>
+plt.<span class="fn">plot</span>(range_n_clusters, distortions, <span class="st">'gx-'</span>)
+plt.<span class="fn">xlabel</span>(<span class="st">'Number of Clusters K'</span>)
+plt.<span class="fn">ylabel</span>(<span class="st">'Distortion'</span>)
+plt.<span class="fn">title</span>(<span class="st">'Elbow Method'</span>)
+plt.<span class="fn">show</span>()</pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">ধাপ ৪: Final K-Means (K=4)</span>
+    </div>
+    <pre><span class="cm"># Optimal K=4 দিয়ে আবার train করা</span>
+kmeans = <span class="fn">KMeans</span>(n_clusters=<span class="nm">4</span>, random_state=<span class="nm">42</span>)
+kmeans.<span class="fn">fit</span>(df)
+
+<span class="cm"># Centroid positions এবং labels পাওয়া</span>
+centroids = kmeans.cluster_centers_  <span class="cm"># প্রতিটি cluster-এর কেন্দ্র</span>
+labels = kmeans.labels_              <span class="cm"># প্রতিটি point কোন cluster-এ</span>
+
+<span class="cm"># Visualization</span>
+colors = [<span class="st">"g."</span>, <span class="st">"r."</span>, <span class="st">"c."</span>, <span class="st">"y."</span>]  <span class="cm"># ৪টি রঙ ৪টি cluster-এর জন্য</span>
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(df)):
+    plt.<span class="fn">plot</span>(df.<span class="fn">iloc</span>[i, <span class="nm">0</span>], df.<span class="fn">iloc</span>[i, <span class="nm">1</span>], 
+             colors[labels[i]], markersize=<span class="nm">10</span>)
+
+<span class="cm"># Centroid গুলো নীল বিন্দু দিয়ে দেখানো</span>
+plt.<span class="fn">scatter</span>(centroids[:, <span class="nm">0</span>], centroids[:, <span class="nm">1</span>],
+            marker=<span class="st">"o"</span>, color=<span class="st">"blue"</span>, s=<span class="nm">100</span>, zorder=<span class="nm">10</span>)
+plt.<span class="fn">title</span>(<span class="st">'K-Means Clustering (K=4)'</span>)
+plt.<span class="fn">show</span>()
+
+<span class="fn">print</span>(<span class="st">f"Centroid positions:\n{centroids}"</span>)
+<span class="fn">print</span>(<span class="st">f"Labels: {labels}"</span>)</pre>
+  </div>
+
+  <!-- K-Means Exercise -->
+  <div class="exercise-section">
+    <div class="exercise-title">Section ২ — K-Means Interview + Coding Exercise</div>
+
+    <div class="q-item">
+      <span class="q-num">১</span>
+      <span class="q-text">K-Means কেন "non-deterministic"? এটি কোন সমস্যা তৈরি করে এবং কীভাবে সমাধান করা যায়?</span>
+      <div class="q-explain">ML interview-এ প্রায়ই জিজ্ঞেস করা হয়।</div>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      K-Means শুরুতে centroid এলোমেলোভাবে বেছে নেয়। ভিন্ন random initialization → ভিন্ন final cluster। সমস্যা: প্রতিবার run করলে ভিন্ন result পাওয়া যায়। সমাধান: (১) random_state=42 দিলে reproducible result পাওয়া যায়, (২) sklearn-এর KMeans-এ n_init=10 parameter দিলে ১০ বার চালিয়ে সেরাটা রাখে, (৩) KMeans++ initialization ব্যবহার করা।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">২</span>
+      <span class="q-text">K-Means-এর সীমাবদ্ধতাগুলো কী কী?</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      ১. K আগে থেকে জানতে হয়। ২. Spherical/circular cluster-ই ভালো detect করে — irregular shape-এ কাজ করে না। ৩. Outlier-এর প্রতি sensitive। ৪. Feature scaling না করলে ভুল result। ৫. বড় dataset-এ ধীর।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">৩</span>
+      <span class="q-text">🏭 ML Project Task: Customer Segmentation করো</span>
+      <div class="q-explain">একটি e-commerce company-তে customer-দের RFM (Recency, Frequency, Monetary) feature দিয়ে segment করো। নিচের code complete করো:</div>
+      <div class="q-answer">
+        <div class="q-answer-title">Solution Code</div>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-lang">Python</span>
+        <span class="code-label">Customer Segmentation — Real ML Project</span>
+      </div>
+      <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> silhouette_score
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># ── ১. Sample Data তৈরি ──</span>
+np.random.<span class="fn">seed</span>(<span class="nm">42</span>)
+n = <span class="nm">500</span>
+data = {
+    <span class="st">'recency'</span>: np.random.<span class="fn">exponential</span>(<span class="nm">30</span>, n),    <span class="cm"># শেষ কেনার কতদিন আগে</span>
+    <span class="st">'frequency'</span>: np.random.<span class="fn">poisson</span>(<span class="nm">10</span>, n),       <span class="cm"># কতবার কিনেছে</span>
+    <span class="st">'monetary'</span>: np.random.<span class="fn">lognormal</span>(<span class="nm">6</span>, <span class="nm">1</span>, n)    <span class="cm"># মোট কত টাকা খরচ করেছে</span>
+}
+df = pd.<span class="fn">DataFrame</span>(data)
+
+<span class="cm"># ── ২. Feature Scaling (অবশ্যই করতে হবে!) ──</span>
+<span class="cm"># KMeans distance-based, তাই সব feature same scale-এ আনা দরকার</span>
+scaler = <span class="fn">StandardScaler</span>()
+df_scaled = scaler.<span class="fn">fit_transform</span>(df)
+
+<span class="cm"># ── ৩. Optimal K খোঁজা ──</span>
+inertias = []
+sil_scores = []
+k_range = <span class="fn">range</span>(<span class="nm">2</span>, <span class="nm">9</span>)
+
+<span class="kw">for</span> k <span class="kw">in</span> k_range:
+    km = <span class="fn">KMeans</span>(n_clusters=k, random_state=<span class="nm">42</span>, n_init=<span class="nm">10</span>)
+    km.<span class="fn">fit</span>(df_scaled)
+    inertias.<span class="fn">append</span>(km.inertia_)
+    sil_scores.<span class="fn">append</span>(<span class="fn">silhouette_score</span>(df_scaled, km.labels_))
+
+<span class="cm"># ── ৪. Final Model ──</span>
+optimal_k = <span class="nm">4</span>  <span class="cm"># Elbow + Silhouette দেখে ঠিক করা</span>
+final_model = <span class="fn">KMeans</span>(n_clusters=optimal_k, random_state=<span class="nm">42</span>, n_init=<span class="nm">10</span>)
+df[<span class="st">'segment'</span>] = final_model.<span class="fn">fit_predict</span>(df_scaled)
+
+<span class="cm"># ── ৫. Segment Analysis ──</span>
+segment_profile = df.<span class="fn">groupby</span>(<span class="st">'segment'</span>).<span class="fn">agg</span>({
+    <span class="st">'recency'</span>: <span class="st">'mean'</span>,
+    <span class="st">'frequency'</span>: <span class="st">'mean'</span>,
+    <span class="st">'monetary'</span>: <span class="st">'mean'</span>,
+    <span class="st">'segment'</span>: <span class="st">'count'</span>
+}).<span class="fn">rename</span>(columns={<span class="st">'segment'</span>: <span class="st">'count'</span>})
+
+<span class="cm"># Segment naming (business interpretation)</span>
+segment_names = {<span class="nm">0</span>: <span class="st">"Champions 🏆"</span>, <span class="nm">1</span>: <span class="st">"At-Risk ⚠️"</span>,
+                 <span class="nm">2</span>: <span class="st">"Potential 🌱"</span>, <span class="nm">3</span>: <span class="st">"Lost 😢"</span>}
+df[<span class="st">'segment_name'</span>] = df[<span class="st">'segment'</span>].<span class="fn">map</span>(segment_names)
+
+<span class="fn">print</span>(segment_profile)
+<span class="fn">print</span>(<span class="st">f"\nSilhouette Score: {silhouette_score(df_scaled, df['segment']):.3f}"</span>)</pre>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">৪</span>
+      <span class="q-text">Inertia এবং Distortion-এর মধ্যে পার্থক্য কী?</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      Inertia = প্রতিটি point থেকে তার centroid-এর squared distance-এর sum (sklearn এটি দেয়)। Distortion = average distance (normalize করা, squared নয়)। Elbow method উভয় দিয়েই করা যায়, কিন্তু sklearn-এ inertia_ attribute সরাসরি পাওয়া যায়।
+      </div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 3: HCA
+═════════════════════════════════════════════════ -->
+<section class="section" id="hca">
+  <div class="section-header">
+    <div class="section-number red">৩</div>
+    <div>
+      <div class="section-title">Hierarchical Clustering (HCA)</div>
+      <div class="section-subtitle">গাছের মতো গোষ্ঠী তৈরি — Dendrogram দিয়ে বোঝা</div>
+    </div>
+  </div>
+
+  <h2 class="topic">HCA কী? — গাছের উপমা দিয়ে বুঝি</h2>
+
+  <div class="box box-explain">
+    <div class="box-title">🌳 পারিবারিক গাছের মতো</div>
+    <p>মনে করো একটি পরিবারের গাছ আঁকছো। নিচে সবাই আলাদা। তারপর ধীরে ধীরে ভাই-বোন একসাথে হয়, তারপর চাচাতো ভাই, তারপর পুরো পরিবার।</p>
+    <p>HCA-ও এভাবে কাজ করে: সব data point আলাদা। তারপর দুটো সবচেয়ে কাছের data মিলিয়ে একটি cluster। তারপর সেই cluster আর কাছের কারো সাথে মিলে বড় cluster। এভাবে একটিমাত্র বড় cluster না হওয়া পর্যন্ত চলে।</p>
+    <p><strong>এই process-এর diagram-কে বলা হয় Dendrogram বা Hierarchical Tree।</strong></p>
+  </div>
+
+  <!-- HCA Process SVG -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;" font-family="'Hind Siliguri', 'Tiro Bangla', sans-serif">
+      <!-- Title -->
+      <text x="400" y="22" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="14" font-weight="700">HCA-র ধাপ-বধাপ প্রক্রিয়া</text>
+
+      <!-- Step 1: All separate -->
+      <text x="100" y="55" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12">শুরু: সবাই আলাদা</text>
+      <circle cx="50" cy="100" r="8" fill="#ff6b6b" stroke="white" stroke-width="1.5"/>
+      <circle cx="80" cy="85" r="8" fill="#7c6af7" stroke="white" stroke-width="1.5"/>
+      <circle cx="110" cy="105" r="8" fill="#00d4aa" stroke="white" stroke-width="1.5"/>
+      <circle cx="140" cy="90" r="8" fill="#ffd166" stroke="white" stroke-width="1.5"/>
+      <text x="50" y="120" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="9">A</text>
+      <text x="80" y="120" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="9">B</text>
+      <text x="110" y="120" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="9">C</text>
+      <text x="140" y="120" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="9">D</text>
+
+      <!-- Arrow 1 -->
+      <text x="185" y="97" fill="#00d4aa" font-family="sans-serif" font-size="20">→</text>
+
+      <!-- Step 2: A,B merged -->
+      <text x="290" y="55" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12">ধাপ ১: A+B মিলেছে</text>
+      <ellipse cx="250" cy="95" rx="28" ry="18" fill="rgba(124,106,247,0.15)" stroke="#7c6af7" stroke-width="1.5"/>
+      <circle cx="240" cy="95" r="8" fill="#ff6b6b" stroke="white" stroke-width="1.5"/>
+      <circle cx="262" cy="88" r="8" fill="#7c6af7" stroke="white" stroke-width="1.5"/>
+      <circle cx="315" cy="100" r="8" fill="#00d4aa" stroke="white" stroke-width="1.5"/>
+      <circle cx="345" cy="88" r="8" fill="#ffd166" stroke="white" stroke-width="1.5"/>
+      <text x="250" y="120" text-anchor="middle" fill="#7c6af7" font-family="sans-serif" font-size="9">AB</text>
+      <text x="315" y="120" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="9">C</text>
+      <text x="345" y="120" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="9">D</text>
+
+      <!-- Arrow 2 -->
+      <text x="378" y="97" fill="#00d4aa" font-family="sans-serif" font-size="20">→</text>
+
+      <!-- Step 3: C,D merged -->
+      <text x="490" y="55" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12">ধাপ ২: C+D মিলেছে</text>
+      <ellipse cx="445" cy="92" rx="28" ry="18" fill="rgba(124,106,247,0.15)" stroke="#7c6af7" stroke-width="1.5"/>
+      <circle cx="435" cy="92" r="8" fill="#ff6b6b" stroke="white" stroke-width="1.5"/>
+      <circle cx="457" cy="85" r="8" fill="#7c6af7" stroke="white" stroke-width="1.5"/>
+      <ellipse cx="520" cy="92" rx="28" ry="18" fill="rgba(0,212,170,0.15)" stroke="#00d4aa" stroke-width="1.5"/>
+      <circle cx="510" cy="97" r="8" fill="#00d4aa" stroke="white" stroke-width="1.5"/>
+      <circle cx="530" cy="85" r="8" fill="#ffd166" stroke="white" stroke-width="1.5"/>
+      <text x="445" y="120" text-anchor="middle" fill="#7c6af7" font-family="sans-serif" font-size="9">AB</text>
+      <text x="520" y="120" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="9">CD</text>
+
+      <!-- Arrow 3 -->
+      <text x="567" y="97" fill="#00d4aa" font-family="sans-serif" font-size="20">→</text>
+
+      <!-- Step 4: All merged -->
+      <text x="685" y="55" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12">শেষ: সবাই এক</text>
+      <ellipse cx="680" cy="92" rx="65" ry="25" fill="rgba(255,209,102,0.12)" stroke="#ffd166" stroke-width="2"/>
+      <circle cx="638" cy="88" r="8" fill="#ff6b6b" stroke="white" stroke-width="1.5"/>
+      <circle cx="660" cy="80" r="8" fill="#7c6af7" stroke="white" stroke-width="1.5"/>
+      <circle cx="690" cy="97" r="8" fill="#00d4aa" stroke="white" stroke-width="1.5"/>
+      <circle cx="715" cy="85" r="8" fill="#ffd166" stroke="white" stroke-width="1.5"/>
+      <text x="680" y="128" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="9">ABCD</text>
+
+      <!-- DENDROGRAM -->
+      <text x="400" y="175" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="14" font-weight="700">↓ Dendrogram (এই process-টির চিত্র)</text>
+
+      <!-- Dendrogram SVG -->
+      <!-- Leaf nodes -->
+      <text x="150" y="390" text-anchor="middle" fill="#ff6b6b" font-family="sans-serif" font-size="13" font-weight="700">A</text>
+      <text x="240" y="390" text-anchor="middle" fill="#7c6af7" font-family="sans-serif" font-size="13" font-weight="700">B</text>
+      <text x="470" y="390" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="13" font-weight="700">C</text>
+      <text x="560" y="390" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="13" font-weight="700">D</text>
+
+      <!-- Vertical lines -->
+      <line x1="150" y1="375" x2="150" y2="305" stroke="#ff6b6b" stroke-width="2"/>
+      <line x1="240" y1="375" x2="240" y2="305" stroke="#7c6af7" stroke-width="2"/>
+      <line x1="470" y1="375" x2="470" y2="305" stroke="#00d4aa" stroke-width="2"/>
+      <line x1="560" y1="375" x2="560" y2="305" stroke="#ffd166" stroke-width="2"/>
+
+      <!-- A+B horizontal merge -->
+      <line x1="150" y1="305" x2="240" y2="305" stroke="#a0a0ff" stroke-width="2"/>
+      <line x1="195" y1="305" x2="195" y2="255" stroke="#a0a0ff" stroke-width="2"/>
+
+      <!-- C+D horizontal merge -->
+      <line x1="470" y1="305" x2="560" y2="305" stroke="#a0ffcc" stroke-width="2"/>
+      <line x1="515" y1="305" x2="515" y2="255" stroke="#a0ffcc" stroke-width="2"/>
+
+      <!-- AB + CD merge -->
+      <line x1="195" y1="255" x2="515" y2="255" stroke="#ffd166" stroke-width="2.5"/>
+      <line x1="355" y1="255" x2="355" y2="210" stroke="#ffd166" stroke-width="2.5"/>
+
+      <!-- Cut line annotation -->
+      <line x1="100" y1="270" x2="630" y2="270" stroke="#ff6b6b" stroke-width="1.5" stroke-dasharray="8,4"/>
+      <text x="650" y="275" fill="#ff6b6b" font-family="sans-serif" font-size="11">কাটো এখানে</text>
+      <text x="650" y="290" fill="#9ba3b8" font-family="sans-serif" font-size="10">= 2 cluster</text>
+
+      <!-- Height labels -->
+      <text x="90" y="262" fill="#9ba3b8" font-family="sans-serif" font-size="10">বড় দূরত্ব</text>
+      <text x="90" y="308" fill="#9ba3b8" font-family="sans-serif" font-size="10">ছোট দূরত্ব</text>
+
+      <!-- Axis label -->
+      <text x="72" y="200" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="11" transform="rotate(-90,72,300)">মিলনের দূরত্ব (Height)</text>
+    </svg>
+    <div class="diagram-caption">চিত্র ৫: HCA প্রক্রিয়া এবং Dendrogram — লাল দাগ কাটলে ২টি cluster পাওয়া যায়</div>
+  </div>
+
+  <h2 class="topic">Distance Metrics — দুই Cluster-এর মধ্যে দূরত্ব কীভাবে মাপা হয়?</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>বাংলায় মানে</th>
+          <th>কীভাবে হিসাব হয়</th>
+          <th>কখন ব্যবহার করবে</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="highlight">Single Linkage</span></td>
+          <td>সর্বনিম্ন দূরত্ব</td>
+          <td>দুই cluster-এর সবচেয়ে কাছের দুটি point-এর দূরত্ব</td>
+          <td>লম্বা, সরু cluster-এর জন্য</td>
+        </tr>
+        <tr>
+          <td><span class="highlight3">Complete Linkage</span></td>
+          <td>সর্বোচ্চ দূরত্ব</td>
+          <td>দুই cluster-এর সবচেয়ে দূরের দুটি point-এর দূরত্ব</td>
+          <td>গোলাকার, compact cluster-এর জন্য</td>
+        </tr>
+        <tr>
+          <td><span class="highlight2">Average Linkage</span></td>
+          <td>গড় দূরত্ব</td>
+          <td>দুই cluster-এর সব point জোড়ার গড় দূরত্ব</td>
+          <td>সাধারণত সবচেয়ে robust</td>
+        </tr>
+        <tr>
+          <td><span class="highlight">Ward Linkage</span></td>
+          <td>Variance কমানো</td>
+          <td>মিলানোর পর inertia কতটা বাড়ে তা minimize করে</td>
+          <td>সবচেয়ে সাধারণ choice ✓</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Linkage SVG -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;" font-family="'Hind Siliguri', 'Tiro Bangla', sans-serif">
+      <!-- Single Linkage -->
+      <text x="115" y="22" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="13" font-weight="700">Single Linkage</text>
+      <ellipse cx="80" cy="100" rx="40" ry="50" fill="rgba(255,107,107,0.1)" stroke="#ff6b6b" stroke-width="1.5"/>
+      <circle cx="65" cy="80" r="5" fill="#ff6b6b"/>
+      <circle cx="85" cy="65" r="5" fill="#ff6b6b"/>
+      <circle cx="70" cy="115" r="5" fill="#ff6b6b"/>
+      <circle cx="95" cy="95" r="5" fill="#ff6b6b"/>
+      <ellipse cx="155" cy="100" rx="40" ry="50" fill="rgba(0,212,170,0.1)" stroke="#00d4aa" stroke-width="1.5"/>
+      <circle cx="140" cy="85" r="5" fill="#00d4aa"/>
+      <circle cx="160" cy="70" r="5" fill="#00d4aa"/>
+      <circle cx="170" cy="110" r="5" fill="#00d4aa"/>
+      <!-- Min distance line (red to teal, closest pair) -->
+      <line x1="95" y1="95" x2="140" y2="85" stroke="#ffd166" stroke-width="2" stroke-dasharray="4,2"/>
+      <text x="117" y="78" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="10">min dist</text>
+
+      <!-- Complete Linkage -->
+      <text x="348" y="22" text-anchor="middle" fill="#7c6af7" font-family="sans-serif" font-size="13" font-weight="700">Complete Linkage</text>
+      <ellipse cx="300" cy="100" rx="40" ry="50" fill="rgba(255,107,107,0.1)" stroke="#ff6b6b" stroke-width="1.5"/>
+      <circle cx="285" cy="70" r="5" fill="#ff6b6b"/>
+      <circle cx="305" cy="85" r="5" fill="#ff6b6b"/>
+      <circle cx="270" cy="120" r="5" fill="#ff6b6b"/>
+      <circle cx="315" cy="110" r="5" fill="#ff6b6b"/>
+      <ellipse cx="385" cy="100" rx="40" ry="50" fill="rgba(0,212,170,0.1)" stroke="#00d4aa" stroke-width="1.5"/>
+      <circle cx="365" cy="75" r="5" fill="#00d4aa"/>
+      <circle cx="390" cy="90" r="5" fill="#00d4aa"/>
+      <circle cx="405" cy="130" r="5" fill="#00d4aa"/>
+      <!-- Max distance line -->
+      <line x1="270" y1="120" x2="405" y2="130" stroke="#ffd166" stroke-width="2" stroke-dasharray="4,2"/>
+      <text x="337" y="158" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="10">max dist</text>
+
+      <!-- Ward Linkage -->
+      <text x="575" y="22" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="13" font-weight="700">Ward Linkage</text>
+      <ellipse cx="535" cy="100" rx="40" ry="50" fill="rgba(255,107,107,0.1)" stroke="#ff6b6b" stroke-width="1.5"/>
+      <circle cx="520" cy="80" r="5" fill="#ff6b6b"/>
+      <circle cx="545" cy="95" r="5" fill="#ff6b6b"/>
+      <circle cx="530" cy="120" r="5" fill="#ff6b6b"/>
+      <circle cx="535" cy="98" r="3" fill="#ff6b6b" stroke="white" stroke-width="1"/> <!-- centroid -->
+      <ellipse cx="615" cy="100" rx="40" ry="50" fill="rgba(0,212,170,0.1)" stroke="#00d4aa" stroke-width="1.5"/>
+      <circle cx="600" cy="85" r="5" fill="#00d4aa"/>
+      <circle cx="625" cy="100" r="5" fill="#00d4aa"/>
+      <circle cx="605" cy="120" r="5" fill="#00d4aa"/>
+      <circle cx="610" cy="102" r="3" fill="#00d4aa" stroke="white" stroke-width="1"/> <!-- centroid -->
+      <!-- Variance arrow -->
+      <line x1="535" y1="98" x2="610" y2="102" stroke="#ffd166" stroke-width="2" stroke-dasharray="4,2"/>
+      <text x="573" y="92" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="10">variance ↓</text>
+    </svg>
+    <div class="diagram-caption">চিত্র ৬: বিভিন্ন Linkage পদ্ধতি — হলুদ দাগ দিয়ে distance দেখানো হয়েছে</div>
+  </div>
+
+  <h2 class="topic">Silhouette Score — Clustering কতটা ভালো?</h2>
+
+  <div class="box box-important">
+    <div class="box-title">📐 Silhouette Score বোঝা</div>
+    <p>প্রতিটি data point-এর জন্য হিসাব হয়:</p>
+    <div class="formula">s(i) = (b(i) − a(i)) / max(a(i), b(i))</div>
+    <ul class="bn-list">
+      <li><strong>a(i)</strong> = ওই point থেকে তার নিজের cluster-এর অন্য সব point-এর গড় দূরত্ব (intra-cluster distance)</li>
+      <li><strong>b(i)</strong> = ওই point থেকে পরের nearest cluster-এর গড় দূরত্ব (inter-cluster distance)</li>
+      <li><strong>s(i)</strong> range: -1 থেকে +1। +1 মানে perfect, 0 মানে border-এ, -1 মানে ভুল cluster-এ আছে</li>
+    </ul>
+  </div>
+
+  <!-- Silhouette Visual -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 650 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;" font-family="'Hind Siliguri', 'Tiro Bangla', sans-serif">
+      <!-- Point i -->
+      <circle cx="200" cy="100" r="8" fill="#ffd166" stroke="white" stroke-width="2"/>
+      <text x="200" y="135" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12">i (এই point)</text>
+
+      <!-- Cluster A -->
+      <ellipse cx="160" cy="95" rx="55" ry="50" fill="rgba(255,107,107,0.08)" stroke="#ff6b6b" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <circle cx="130" cy="80" r="5" fill="#ff6b6b"/><circle cx="145" cy="110" r="5" fill="#ff6b6b"/>
+      <circle cx="120" cy="100" r="5" fill="#ff6b6b"/><circle cx="150" cy="75" r="5" fill="#ff6b6b"/>
+      <circle cx="135" cy="125" r="5" fill="#ff6b6b"/>
+      <text x="130" y="155" text-anchor="middle" fill="#ff6b6b" font-family="sans-serif" font-size="12">নিজের Cluster A</text>
+
+      <!-- a(i) arrows -->
+      <line x1="200" y1="100" x2="130" y2="80" stroke="#ff6b6b" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="200" y1="100" x2="145" y2="110" stroke="#ff6b6b" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="160" y="60" fill="#ff6b6b" font-family="sans-serif" font-size="11">a(i) = গড় দূরত্ব</text>
+
+      <!-- Cluster B -->
+      <ellipse cx="430" cy="95" rx="55" ry="50" fill="rgba(0,212,170,0.08)" stroke="#00d4aa" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <circle cx="400" cy="80" r="5" fill="#00d4aa"/><circle cx="445" cy="70" r="5" fill="#00d4aa"/>
+      <circle cx="460" cy="110" r="5" fill="#00d4aa"/><circle cx="415" cy="115" r="5" fill="#00d4aa"/>
+      <circle cx="450" cy="90" r="5" fill="#00d4aa"/>
+      <text x="435" y="155" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="12">Nearest Cluster B</text>
+
+      <!-- b(i) arrow -->
+      <line x1="200" y1="100" x2="400" y2="80" stroke="#00d4aa" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="300" y="75" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="11">b(i) = গড় দূরত্ব</text>
+
+      <!-- Score -->
+      <rect x="240" y="30" width="170" height="40" rx="8" fill="#1a1f2e" stroke="#ffd166" stroke-width="1.5"/>
+      <text x="325" y="48" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12">b(i) &gt;&gt; a(i) হলে</text>
+      <text x="325" y="64" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="12">s(i) → +1 (ভালো!)</text>
+    </svg>
+    <div class="diagram-caption">চিত্র ৭: Silhouette Score — নিজের cluster কাছে, পরের cluster দূরে থাকলে score ভালো</div>
+  </div>
+
+  <h2 class="topic">Python Implementation</h2>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">HCA + Dendrogram + Silhouette Score</span>
+    </div>
+    <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> AgglomerativeClustering
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> silhouette_score
+<span class="kw">from</span> scipy.cluster.hierarchy <span class="kw">import</span> dendrogram, linkage
+
+<span class="cm"># ── ১. Data Load ──</span>
+df = pd.<span class="fn">read_csv</span>(<span class="st">"cheese.txt"</span>, sep=<span class="st">'\t'</span>, index_col=<span class="nm">0</span>)
+
+<span class="cm"># ── ২. Dendrogram আঁকা ──</span>
+plt.<span class="fn">figure</span>(figsize=(<span class="nm">20</span>, <span class="nm">8</span>))
+
+<span class="cm"># Ward method + Euclidean distance সবচেয়ে common</span>
+Z = <span class="fn">linkage</span>(df, method=<span class="st">'ward'</span>, metric=<span class="st">'euclidean'</span>)
+
+plt.<span class="fn">title</span>(<span class="st">"Cheese HCA Dendrogram"</span>)
+<span class="fn">dendrogram</span>(Z, labels=df.index, leaf_rotation=<span class="nm">90.</span>, 
+            color_threshold=<span class="nm">290</span>)  <span class="cm"># color_threshold দিয়ে কতটি cluster দেখাবে</span>
+plt.<span class="fn">show</span>()
+
+<span class="cm"># ── ৩. AgglomerativeClustering ──</span>
+cluster = <span class="fn">AgglomerativeClustering</span>(n_clusters=<span class="nm">4</span>)
+cluster.<span class="fn">fit</span>(df)
+labels = cluster.labels_
+
+<span class="cm"># ── ৪. Optimal K খোঁজা — Silhouette দিয়ে ──</span>
+range_n_clusters = <span class="fn">list</span>(<span class="fn">range</span>(<span class="nm">2</span>, <span class="nm">15</span>))
+s_scores = []
+
+<span class="kw">for</span> n_clusters <span class="kw">in</span> range_n_clusters:
+    clf = <span class="fn">AgglomerativeClustering</span>(n_clusters=n_clusters)
+    clf.<span class="fn">fit</span>(df)
+    score = <span class="fn">silhouette_score</span>(df, clf.labels_, metric=<span class="st">'sqeuclidean'</span>)
+    s_scores.<span class="fn">append</span>(score)
+
+<span class="cm"># সর্বোচ্চ silhouette score-এ optimal K</span>
+optimal_k = range_n_clusters[np.<span class="fn">argmax</span>(s_scores)]
+<span class="fn">print</span>(<span class="st">f"Optimal clusters: {optimal_k}"</span>)
+<span class="fn">print</span>(<span class="st">f"Best silhouette score: {max(s_scores):.4f}"</span>)
+
+<span class="cm"># Graph</span>
+plt.<span class="fn">plot</span>(range_n_clusters, s_scores, <span class="st">'bo-'</span>)
+plt.<span class="fn">xlabel</span>(<span class="st">'Number of Clusters'</span>)
+plt.<span class="fn">ylabel</span>(<span class="st">'Silhouette Score'</span>)
+plt.<span class="fn">title</span>(<span class="st">'Silhouette Analysis'</span>)
+plt.<span class="fn">show</span>()</pre>
+  </div>
+
+  <!-- HCA Exercise -->
+  <div class="exercise-section">
+    <div class="exercise-title">Section ৩ — HCA Interview + Coding Exercise</div>
+
+    <div class="q-item">
+      <span class="q-num">১</span>
+      <span class="q-text">K-Means এবং HCA-এর মধ্যে কখন কোনটা বেছে নেবে?</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      <strong>HCA বেছে নেবে যখন:</strong> (১) K আগে থেকে জানো না এবং Dendrogram দেখে decide করতে চাও, (২) Hierarchical structure বুঝতে চাও (কে কার সাথে বেশি মিল), (৩) Small-to-medium dataset। <strong>K-Means বেছে নেবে যখন:</strong> (১) Large dataset (হাজার হাজার data), (২) গোলাকার cluster আশা করছো, (৩) Speed দরকার। HCA O(n³) complexity, K-Means O(n·k·i)।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">২</span>
+      <span class="q-text">Silhouette Score -1 পেলে কী বুঝবে?</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      -1 মানে ওই data point ভুল cluster-এ আছে। তার নিজের cluster থেকে পার্শ্ববর্তী cluster বেশি উপযুক্ত ছিল। Overall silhouette score যদি 0-এর কাছে থাকে তার মানে clustering কোনো meaningful structure তৈরি করেনি। 0.5+ ভালো, 0.7+ খুব ভালো।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">৩</span>
+      <span class="q-text">🏭 ML Project: Anomaly Detection in Network Traffic</span>
+      <div class="q-explain">Network traffic data-তে HCA দিয়ে normal behavior cluster করো এবং outlier ধরো।</div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-lang">Python</span>
+        <span class="code-label">Network Anomaly Detection — HCA Real Project</span>
+      </div>
+      <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> AgglomerativeClustering
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> silhouette_score
+<span class="kw">from</span> scipy.cluster.hierarchy <span class="kw">import</span> dendrogram, linkage
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># ── ১. Network Traffic Data তৈরি ──</span>
+np.random.<span class="fn">seed</span>(<span class="nm">42</span>)
+
+<span class="cm"># Normal traffic</span>
+normal_data = {
+    <span class="st">'packets_per_sec'</span>: np.random.<span class="fn">normal</span>(<span class="nm">100</span>, <span class="nm">15</span>, <span class="nm">150</span>),
+    <span class="st">'bytes_per_packet'</span>: np.random.<span class="fn">normal</span>(<span class="nm">512</span>, <span class="nm">50</span>, <span class="nm">150</span>),
+    <span class="st">'connection_duration'</span>: np.random.<span class="fn">normal</span>(<span class="nm">30</span>, <span class="nm">5</span>, <span class="nm">150</span>)
+}
+<span class="cm"># Anomalous traffic (attack simulation)</span>
+anomaly_data = {
+    <span class="st">'packets_per_sec'</span>: np.random.<span class="fn">normal</span>(<span class="nm">2000</span>, <span class="nm">200</span>, <span class="nm">20</span>),  <span class="cm"># DDoS-like</span>
+    <span class="st">'bytes_per_packet'</span>: np.random.<span class="fn">normal</span>(<span class="nm">60</span>, <span class="nm">10</span>, <span class="nm">20</span>),
+    <span class="st">'connection_duration'</span>: np.random.<span class="fn">normal</span>(<span class="nm">0.5</span>, <span class="nm">0.2</span>, <span class="nm">20</span>)
+}
+
+<span class="cm"># Combine</span>
+df = pd.<span class="fn">DataFrame</span>({
+    k: np.<span class="fn">concatenate</span>([normal_data[k], anomaly_data[k]])
+    <span class="kw">for</span> k <span class="kw">in</span> normal_data
+})
+df[<span class="st">'true_label'</span>] = [<span class="st">'normal'</span>]*<span class="nm">150</span> + [<span class="st">'anomaly'</span>]*<span class="nm">20</span>
+
+<span class="cm"># ── ২. Preprocessing ──</span>
+scaler = <span class="fn">StandardScaler</span>()
+X_scaled = scaler.<span class="fn">fit_transform</span>(df.drop(<span class="st">'true_label'</span>, axis=<span class="nm">1</span>))
+
+<span class="cm"># ── ৩. HCA দিয়ে cluster ──</span>
+hca = <span class="fn">AgglomerativeClustering</span>(n_clusters=<span class="nm">2</span>, linkage=<span class="st">'ward'</span>)
+df[<span class="st">'cluster'</span>] = hca.<span class="fn">fit_predict</span>(X_scaled)
+
+<span class="cm"># ── ৪. Result Analysis ──</span>
+<span class="fn">print</span>(<span class="st">"Cluster distribution:"</span>)
+<span class="fn">print</span>(df.<span class="fn">groupby</span>([<span class="st">'cluster'</span>, <span class="st">'true_label'</span>]).<span class="fn">size</span>())
+
+score = <span class="fn">silhouette_score</span>(X_scaled, df[<span class="st">'cluster'</span>])
+<span class="fn">print</span>(<span class="st">f"\nSilhouette Score: {score:.3f}"</span>)
+<span class="fn">print</span>(<span class="st">"স্কোর 0.5+ হলে clustering ভালো কাজ করেছে"</span>)</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 4: MEAN SHIFT
+═════════════════════════════════════════════════ -->
+<section class="section" id="meanshift">
+  <div class="section-header">
+    <div class="section-number gold">৪</div>
+    <div>
+      <div class="section-title">Mean Shift Algorithm</div>
+      <div class="section-subtitle">Image Processing ও Density-based Clustering</div>
+    </div>
+  </div>
+
+  <h2 class="topic">Mean Shift কী? — বলের উপমা দিয়ে বুঝি</h2>
+
+  <div class="box box-explain">
+    <div class="box-title">⚽ একটি বল ছেড়ে দেওয়ার মতো</div>
+    <p>মনে করো একটি ঘরে অনেক মানুষ আছে কিন্তু কিছু জায়গায় বেশি, কিছু জায়গায় কম। তুমি একটি বল রাখলে — বলটি ধীরে ধীরে যেদিকে বেশি মানুষ, সেদিকে সরে যাবে (ঘনত্বের দিকে)। এই সরে যাওয়াই <strong>Mean Shift</strong>।</p>
+    <p>Algorithm একটি <strong>window</strong> (বৃত্ত) নেয়। সেই বৃত্তের মধ্যে সব point-এর গড় (mean) হিসাব করে। তারপর সেই গড় অবস্থানে shift করে। এটা করতে থাকে যতক্ষণ না বৃত্ত আর নড়ে।</p>
+    <p><strong>সুবিধা:</strong> K আগে থেকে দিতে হয় না — algorithm নিজেই K বের করে!</p>
+  </div>
+
+  <!-- Mean Shift Process SVG -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 750 300" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;" font-family="'Hind Siliguri', 'Tiro Bangla', sans-serif">
+      <defs>
+        <marker id="arrow-ms" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#ffd166"/>
+        </marker>
+      </defs>
+      <!-- Step 1: Window placed -->
+      <text x="120" y="22" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12" font-weight="700">শুরু: Window রাখো</text>
+      <rect x="10" y="30" width="220" height="250" rx="10" fill="#13161e" stroke="#2a3045"/>
+      <!-- Cluster 1 dots -->
+      <circle cx="60" cy="100" r="4" fill="#ff6b6b"/><circle cx="80" cy="85" r="4" fill="#ff6b6b"/>
+      <circle cx="70" cy="115" r="4" fill="#ff6b6b"/><circle cx="90" cy="100" r="4" fill="#ff6b6b"/>
+      <circle cx="75" cy="75" r="4" fill="#ff6b6b"/>
+      <!-- Cluster 2 dots -->
+      <circle cx="160" cy="180" r="4" fill="#00d4aa"/><circle cx="180" cy="165" r="4" fill="#00d4aa"/>
+      <circle cx="170" cy="200" r="4" fill="#00d4aa"/><circle cx="190" cy="185" r="4" fill="#00d4aa"/>
+      <circle cx="155" cy="165" r="4" fill="#00d4aa"/>
+      <!-- Isolated dots -->
+      <circle cx="130" cy="130" r="4" fill="#9ba3b8"/><circle cx="145" cy="240" r="4" fill="#9ba3b8"/>
+      <!-- Window (bandwidth circle) -->
+      <circle cx="140" cy="130" r="40" fill="none" stroke="#ffd166" stroke-width="2" stroke-dasharray="5,3"/>
+      <circle cx="140" cy="130" r="4" fill="#ffd166"/>
+      <text x="140" y="185" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="10">bandwidth</text>
+
+      <!-- Arrow -->
+      <text x="243" y="155" fill="#00d4aa" font-family="sans-serif" font-size="20">→</text>
+
+      <!-- Step 2: Window moves -->
+      <text x="380" y="22" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12" font-weight="700">Shift: Mean-এর দিকে</text>
+      <rect x="268" y="30" width="220" height="250" rx="10" fill="#13161e" stroke="#2a3045"/>
+      <circle cx="318" cy="100" r="4" fill="#ff6b6b"/><circle cx="338" cy="85" r="4" fill="#ff6b6b"/>
+      <circle cx="328" cy="115" r="4" fill="#ff6b6b"/><circle cx="348" cy="100" r="4" fill="#ff6b6b"/>
+      <circle cx="333" cy="75" r="4" fill="#ff6b6b"/>
+      <circle cx="418" cy="180" r="4" fill="#00d4aa"/><circle cx="438" cy="165" r="4" fill="#00d4aa"/>
+      <circle cx="428" cy="200" r="4" fill="#00d4aa"/><circle cx="448" cy="185" r="4" fill="#00d4aa"/>
+      <circle cx="413" cy="165" r="4" fill="#00d4aa"/>
+      <circle cx="388" cy="130" r="4" fill="#9ba3b8"/><circle cx="403" cy="240" r="4" fill="#9ba3b8"/>
+      <!-- Window shifted toward cluster 1 -->
+      <circle cx="340" cy="100" r="40" fill="none" stroke="#ffd166" stroke-width="2" stroke-dasharray="5,3"/>
+      <circle cx="340" cy="100" r="4" fill="#ffd166"/>
+      <!-- Arrow showing shift -->
+      <line x1="390" y1="128" x2="345" y2="104" stroke="#ffd166" stroke-width="1.5" marker-end="url(#arrow-ms)"/>
+      <text x="367" y="115" fill="#ffd166" font-family="sans-serif" font-size="10">shift!</text>
+
+      <!-- Arrow 2 -->
+      <text x="501" y="155" fill="#00d4aa" font-family="sans-serif" font-size="20">→</text>
+
+      <!-- Step 3: Converged -->
+      <text x="635" y="22" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12" font-weight="700">Converged: Cluster পাওয়া গেল</text>
+      <rect x="525" y="30" width="215" height="250" rx="10" fill="#13161e" stroke="#00d4aa" stroke-width="2"/>
+      <!-- Cluster 1 with window centered -->
+      <ellipse cx="590" cy="95" rx="45" ry="42" fill="rgba(255,107,107,0.1)" stroke="#ff6b6b" stroke-dasharray="4,2"/>
+      <circle cx="568" cy="100" r="4" fill="#ff6b6b"/><circle cx="588" cy="82" r="4" fill="#ff6b6b"/>
+      <circle cx="578" cy="112" r="4" fill="#ff6b6b"/><circle cx="598" cy="98" r="4" fill="#ff6b6b"/>
+      <circle cx="582" cy="72" r="4" fill="#ff6b6b"/>
+      <circle cx="588" cy="95" r="6" fill="#ff6b6b" stroke="white" stroke-width="2"/> <!-- centroid -->
+      <!-- Cluster 2 with window centered -->
+      <ellipse cx="682" cy="185" rx="42" ry="40" fill="rgba(0,212,170,0.1)" stroke="#00d4aa" stroke-dasharray="4,2"/>
+      <circle cx="662" cy="182" r="4" fill="#00d4aa"/><circle cx="685" cy="167" r="4" fill="#00d4aa"/>
+      <circle cx="672" cy="200" r="4" fill="#00d4aa"/><circle cx="698" cy="188" r="4" fill="#00d4aa"/>
+      <circle cx="665" cy="168" r="4" fill="#00d4aa"/>
+      <circle cx="680" cy="182" r="6" fill="#00d4aa" stroke="white" stroke-width="2"/> <!-- centroid -->
+      <!-- Isolated point stays alone -->
+      <circle cx="630" cy="240" r="4" fill="#9ba3b8"/>
+    </svg>
+    <div class="diagram-caption">চিত্র ৮: Mean Shift — Window ঘন জায়গায় shift করে centroid খোঁজে</div>
+  </div>
+
+  <h2 class="topic">Bandwidth — Mean Shift-এর সবচেয়ে গুরুত্বপূর্ণ Parameter</h2>
+
+  <div class="box box-warn">
+    <div class="box-title">⚡ Bandwidth কী?</div>
+    <p>Bandwidth হলো Window-র আকার (radius)। এটাই ঠিক করে কতগুলো cluster পাওয়া যাবে।</p>
+    <ul class="bn-list">
+      <li><strong>বড় bandwidth:</strong> বড় window → কম cluster (বেশি দূরের point একসাথে)</li>
+      <li><strong>ছোট bandwidth:</strong> ছোট window → বেশি cluster (শুধু কাছের point একসাথে)</li>
+    </ul>
+    <p><code>estimate_bandwidth(X, quantile=0.1)</code> — sklearn নিজেই data দেখে ভালো bandwidth suggest করে!</p>
+  </div>
+
+  <!-- Bandwidth SVG -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;" font-family="'Hind Siliguri', 'Tiro Bangla', sans-serif">
+      <text x="170" y="22" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="13" font-weight="700">বড় Bandwidth → কম Cluster</text>
+      <rect x="10" y="30" width="320" height="155" rx="10" fill="#13161e" stroke="#2a3045"/>
+      <!-- One big circle covering all -->
+      <circle cx="170" cy="107" r="90" fill="none" stroke="#ffd166" stroke-width="2" stroke-dasharray="6,3"/>
+      <!-- All dots same color = 1 cluster -->
+      <circle cx="100" cy="80" r="5" fill="#ffd166"/><circle cx="130" cy="70" r="5" fill="#ffd166"/>
+      <circle cx="115" cy="110" r="5" fill="#ffd166"/><circle cx="145" cy="95" r="5" fill="#ffd166"/>
+      <circle cx="200" cy="120" r="5" fill="#ffd166"/><circle cx="230" cy="100" r="5" fill="#ffd166"/>
+      <circle cx="215" cy="145" r="5" fill="#ffd166"/><circle cx="245" cy="130" r="5" fill="#ffd166"/>
+      <text x="170" y="175" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12">→ মাত্র ১টি Cluster</text>
+
+      <!-- Arrow -->
+      <text x="345" y="112" fill="#9ba3b8" font-family="sans-serif" font-size="18">→</text>
+
+      <text x="515" y="22" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="13" font-weight="700">ছোট Bandwidth → বেশি Cluster</text>
+      <rect x="360" y="30" width="310" height="155" rx="10" fill="#13161e" stroke="#2a3045"/>
+      <!-- Two separate circles = 2 clusters -->
+      <circle cx="450" cy="95" r="50" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="6,3"/>
+      <circle cx="100" cy="80" r="5" fill="#ff6b6b" transform="translate(350,0)"/><circle cx="130" cy="70" r="5" fill="#ff6b6b" transform="translate(350,0)"/>
+      <circle cx="115" cy="110" r="5" fill="#ff6b6b" transform="translate(350,0)"/><circle cx="145" cy="95" r="5" fill="#ff6b6b" transform="translate(350,0)"/>
+      <circle cx="600" cy="115" r="50" fill="none" stroke="#00d4aa" stroke-width="2" stroke-dasharray="6,3"/>
+      <circle cx="200" cy="120" r="5" fill="#00d4aa" transform="translate(385,0)"/><circle cx="230" cy="100" r="5" fill="#00d4aa" transform="translate(385,0)"/>
+      <circle cx="215" cy="145" r="5" fill="#00d4aa" transform="translate(385,0)"/><circle cx="245" cy="130" r="5" fill="#00d4aa" transform="translate(385,0)"/>
+      <text x="515" y="175" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">→ ২টি Cluster</text>
+    </svg>
+    <div class="diagram-caption">চিত্র ৯: Bandwidth ছোট হলে বেশি cluster, বড় হলে কম cluster</div>
+  </div>
+
+  <h2 class="topic">Image Compression — Mean Shift-এর অসাধারণ ব্যবহার</h2>
+
+  <div class="box box-important">
+    <div class="box-title">🖼️ Image Compression কীভাবে কাজ করে?</div>
+    <p>একটি ১২৮×১২৮ pixel RGB image-এ মোট ১৬,৩৮৪ টি pixel। প্রতিটি pixel = 3টি সংখ্যা (R, G, B)। মোট ১৬,৩৮৪×৩ = ৪৯,১৫২ টি সংখ্যা।</p>
+    <p>Mean Shift এই ৪৯,১৫২ সংখ্যাকে K টি রঙে কমিয়ে দেয়। প্রতিটি pixel-কে তার কাছের centroid রঙ দিয়ে replace করা হয়। ফলে image-এ K টি রঙ হয় → file size ছোট হয়।</p>
+  </div>
+
+  <!-- RGB Compression SVG -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;" font-family="'Hind Siliguri', 'Tiro Bangla', sans-serif">
+      <!-- Original Image representation -->
+      <text x="160" y="22" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="13" font-weight="700">Original Image (হাজার রঙ)</text>
+      <rect x="20" y="35" width="280" height="160" rx="10" fill="#13161e" stroke="#2a3045"/>
+
+      <!-- Colorful pixels -->
+      <rect x="30" y="45" width="18" height="18" fill="#e74c3c" rx="2"/>
+      <rect x="50" y="45" width="18" height="18" fill="#c0392b" rx="2"/>
+      <rect x="70" y="45" width="18" height="18" fill="#e84393" rx="2"/>
+      <rect x="90" y="45" width="18" height="18" fill="#d35400" rx="2"/>
+      <rect x="110" y="45" width="18" height="18" fill="#f39c12" rx="2"/>
+      <rect x="130" y="45" width="18" height="18" fill="#f1c40f" rx="2"/>
+      <rect x="150" y="45" width="18" height="18" fill="#2ecc71" rx="2"/>
+      <rect x="170" y="45" width="18" height="18" fill="#27ae60" rx="2"/>
+      <rect x="190" y="45" width="18" height="18" fill="#1abc9c" rx="2"/>
+      <rect x="210" y="45" width="18" height="18" fill="#3498db" rx="2"/>
+      <rect x="230" y="45" width="18" height="18" fill="#2980b9" rx="2"/>
+      <rect x="250" y="45" width="18" height="18" fill="#9b59b6" rx="2"/>
+      <rect x="270" y="45" width="18" height="18" fill="#8e44ad" rx="2"/>
+
+      <rect x="30" y="65" width="18" height="18" fill="#c0392b" rx="2"/>
+      <rect x="50" y="65" width="18" height="18" fill="#e74c3c" rx="2"/>
+      <rect x="70" y="65" width="18" height="18" fill="#ff7979" rx="2"/>
+      <rect x="90" y="65" width="18" height="18" fill="#e67e22" rx="2"/>
+      <rect x="110" y="65" width="18" height="18" fill="#f39c12" rx="2"/>
+      <rect x="130" y="65" width="18" height="18" fill="#ffd166" rx="2"/>
+      <rect x="150" y="65" width="18" height="18" fill="#06d6a0" rx="2"/>
+      <rect x="170" y="65" width="18" height="18" fill="#2ecc71" rx="2"/>
+      <rect x="190" y="65" width="18" height="18" fill="#26de81" rx="2"/>
+      <rect x="210" y="65" width="18" height="18" fill="#4fc3f7" rx="2"/>
+      <rect x="230" y="65" width="18" height="18" fill="#0288d1" rx="2"/>
+      <rect x="250" y="65" width="18" height="18" fill="#7c6af7" rx="2"/>
+      <rect x="270" y="65" width="18" height="18" fill="#673ab7" rx="2"/>
+      <text x="160" y="120" text-anchor="middle" fill="#546e7a" font-family="sans-serif" font-size="12">হাজার হাজার রঙ...</text>
+      <text x="160" y="185" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="11">128×128 = 16,384 pixels × 3 = 49,152 values</text>
+
+      <!-- Arrow -->
+      <text x="320" y="120" fill="#00d4aa" font-family="sans-serif" font-size="22">→</text>
+      <text x="320" y="140" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="10">Mean Shift</text>
+
+      <!-- Compressed Image representation -->
+      <text x="540" y="22" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="13" font-weight="700">Compressed Image (কম রঙ)</text>
+      <rect x="360" y="35" width="340" height="160" rx="10" fill="#13161e" stroke="#00d4aa" stroke-width="2"/>
+
+      <!-- Only K colors -->
+      <rect x="375" y="50" width="100" height="40" fill="#e74c3c" rx="5"/>
+      <rect x="485" y="50" width="100" height="40" fill="#2ecc71" rx="5"/>
+      <rect x="595" y="50" width="95" height="40" fill="#3498db" rx="5"/>
+      <rect x="375" y="100" width="100" height="40" fill="#f39c12" rx="5"/>
+      <rect x="485" y="100" width="100" height="40" fill="#9b59b6" rx="5"/>
+      <rect x="595" y="100" width="95" height="40" fill="#e74c3c" rx="5"/>
+
+      <text x="425" y="75" text-anchor="middle" fill="white" font-family="sans-serif" font-size="11">Cluster 1</text>
+      <text x="535" y="75" text-anchor="middle" fill="white" font-family="sans-serif" font-size="11">Cluster 2</text>
+      <text x="643" y="75" text-anchor="middle" fill="white" font-family="sans-serif" font-size="11">Cluster 3</text>
+      <text x="540" y="185" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="11">মাত্র K টি রঙ → ছোট file size!</text>
+    </svg>
+    <div class="diagram-caption">চিত্র ১০: Mean Shift Image Compression — হাজার রঙকে K টি রঙে কমানো</div>
+  </div>
+
+  <h2 class="topic">Python Implementation</h2>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">Mean Shift Image Compression</span>
+    </div>
+    <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> MeanShift, estimate_bandwidth
+
+<span class="cm"># ── ১. Image Load করা ──</span>
+img = plt.<span class="fn">imread</span>(<span class="st">"bird_small.png"</span>)
+<span class="fn">print</span>(<span class="st">f"Image shape: {img.shape}"</span>)  <span class="cm"># (128, 128, 3)</span>
+
+<span class="cm"># ── ২. 3D → 2D reshape ──</span>
+<span class="cm"># 128×128 pixels, প্রতিটিতে 3 color values (RGB)</span>
+<span class="cm"># (128, 128, 3) → (16384, 3)</span>
+X = img.<span class="fn">reshape</span>(img.shape[<span class="nm">0</span>] * img.shape[<span class="nm">1</span>], img.shape[<span class="nm">2</span>])
+<span class="fn">print</span>(<span class="st">f"Reshaped: {X.shape}"</span>)  <span class="cm"># (16384, 3)</span>
+
+<span class="cm"># ── ৩. Bandwidth Estimate ──</span>
+<span class="cm"># quantile=0.1 মানে KNN-এর ১০% neighbors দেখে bandwidth ঠিক করবে</span>
+<span class="cm"># n_samples=300 মানে calculation দ্রুত করতে ৩০০টি sample নেবে</span>
+bandwidth = <span class="fn">estimate_bandwidth</span>(X, quantile=<span class="nm">0.1</span>, n_samples=<span class="nm">300</span>)
+<span class="fn">print</span>(<span class="st">f"Estimated bandwidth: {bandwidth:.3f}"</span>)
+
+<span class="cm"># ── ৪. Mean Shift ──</span>
+ms = <span class="fn">MeanShift</span>(bandwidth=bandwidth)
+ms.<span class="fn">fit</span>(X)
+
+centroids = ms.cluster_centers_  <span class="cm"># K টি centroid রঙ</span>
+labels = ms.labels_               <span class="cm"># প্রতিটি pixel কোন cluster-এ</span>
+<span class="fn">print</span>(<span class="st">f"Number of clusters found: {len(centroids)}"</span>)
+
+<span class="cm"># ── ৫. Image Compress করা ──</span>
+<span class="cm"># প্রতিটি pixel-কে তার cluster-এর centroid রঙ দিয়ে replace</span>
+X_recovered = np.<span class="fn">zeros</span>(X.shape)
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(X)):
+    X_recovered[i] = centroids[labels[i]]
+
+<span class="cm"># ── ৬. Reshape back to image ──</span>
+X_recovered = X_recovered.<span class="fn">reshape</span>(img.shape[<span class="nm">0</span>], img.shape[<span class="nm">1</span>], img.shape[<span class="nm">2</span>])
+
+<span class="cm"># ── ৭. Original vs Compressed দেখা ──</span>
+fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">2</span>, figsize=(<span class="nm">12</span>, <span class="nm">5</span>))
+axes[<span class="nm">0</span>].<span class="fn">imshow</span>(img);  axes[<span class="nm">0</span>].<span class="fn">set_title</span>(<span class="st">'Original Image'</span>)
+axes[<span class="nm">1</span>].<span class="fn">imshow</span>(X_recovered); axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">'Compressed Image'</span>)
+plt.<span class="fn">show</span>()
+
+<span class="cm"># ── ৮. Compression Ratio ──</span>
+<span class="kw">import</span> imageio, os
+imageio.<span class="fn">imwrite</span>(<span class="st">'recovered.png'</span>, (X_recovered * <span class="nm">255</span>).<span class="fn">astype</span>(np.uint8))
+ratio = os.<span class="fn">stat</span>(<span class="st">'recovered.png'</span>).st_size / os.<span class="fn">stat</span>(<span class="st">'bird_small.png'</span>).st_size
+<span class="fn">print</span>(<span class="st">f"Compression ratio: {ratio:.2%}"</span>)  <span class="cm"># 100% এর কম মানে compress হয়েছে</span></pre>
+  </div>
+
+  <!-- Mean Shift Exercise -->
+  <div class="exercise-section">
+    <div class="exercise-title">Section ৪ — Mean Shift Interview + Coding Exercise</div>
+
+    <div class="q-item">
+      <span class="q-num">১</span>
+      <span class="q-text">Mean Shift-এর সবচেয়ে বড় সুবিধা এবং সীমাবদ্ধতা কী?</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      <strong>সুবিধা:</strong> K আগে থেকে দিতে হয় না, arbitrary shape-এর cluster ধরতে পারে, outlier-এ robust।<br><strong>সীমাবদ্ধতা:</strong> Quadratic complexity O(n²) — large dataset-এ অনেক ধীর। Bandwidth selection sensitive। High-dimensional data-তে কাজ করে না ভালো।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">২</span>
+      <span class="q-text">K-Means, HCA, এবং Mean Shift-এ K কীভাবে নির্ধারণ করা হয়?</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      K-Means: Elbow Method (distortion vs K), Silhouette Score। HCA: Dendrogram-এ সবচেয়ে বড় jump-এ কাটো, অথবা Silhouette Score। Mean Shift: K দিতেই হয় না — bandwidth ঠিক করলে algorithm নিজেই K বের করে। এটাই Mean Shift-এর সবচেয়ে বড় সুবিধা।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">৩</span>
+      <span class="q-text">🏭 ML Project: Medical Image Segmentation</span>
+      <div class="q-explain">একটি skin lesion image-এ Mean Shift দিয়ে region segment করো — dermatology AI-এর মতো।</div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-lang">Python</span>
+        <span class="code-label">Medical Image Segmentation — Real ML Project</span>
+      </div>
+      <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> MeanShift, estimate_bandwidth
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> MinMaxScaler
+
+<span class="kw">def</span> <span class="fn">segment_medical_image</span>(image_path, quantile=<span class="nm">0.08</span>, n_samples=<span class="nm">500</span>):
+    <span class="st">"""
+    Medical image-কে segment করে।
+    image_path: image file path
+    quantile: ছোট হলে বেশি segment (বেশি detail)
+    n_samples: bandwidth calculation-এ কতটি sample ব্যবহার
+    """</span>
+    <span class="cm"># ── Image Load ──</span>
+    img = plt.<span class="fn">imread</span>(image_path)
+    
+    <span class="cm"># Float হলে 0-255 scale করা</span>
+    <span class="kw">if</span> img.max() <= <span class="nm">1.0</span>:
+        img_255 = (img * <span class="nm">255</span>).<span class="fn">astype</span>(np.uint8)
+    <span class="kw">else</span>:
+        img_255 = img.copy()
+    
+    <span class="cm"># ── Reshape ──</span>
+    h, w = img.shape[:<span class="nm">2</span>]
+    X = img_255[:, :, :<span class="nm">3</span>].<span class="fn">reshape</span>(-<span class="nm">1</span>, <span class="nm">3</span>).<span class="fn">astype</span>(<span class="fn">float</span>)
+    
+    <span class="cm"># ── Normalization ──</span>
+    X_norm = X / <span class="nm">255.0</span>
+    
+    <span class="cm"># ── Bandwidth Estimate ──</span>
+    bandwidth = <span class="fn">estimate_bandwidth</span>(X_norm, quantile=quantile, 
+                                     n_samples=n_samples)
+    <span class="fn">print</span>(<span class="st">f"Bandwidth: {bandwidth:.4f}"</span>)
+    
+    <span class="cm"># ── Mean Shift ──</span>
+    ms = <span class="fn">MeanShift</span>(bandwidth=bandwidth, bin_seeding=<span class="bi">True</span>)
+    <span class="cm"># bin_seeding=True → faster computation</span>
+    ms.<span class="fn">fit</span>(X_norm)
+    
+    n_clusters = <span class="fn">len</span>(ms.cluster_centers_)
+    <span class="fn">print</span>(<span class="st">f"Segments found: {n_clusters}"</span>)
+    
+    <span class="cm"># ── Reconstruct Segmented Image ──</span>
+    labels = ms.labels_
+    segmented = ms.cluster_centers_[labels].<span class="fn">reshape</span>(h, w, <span class="nm">3</span>)
+    
+    <span class="cm"># ── Visualization ──</span>
+    fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">3</span>, figsize=(<span class="nm">15</span>, <span class="nm">5</span>))
+    axes[<span class="nm">0</span>].<span class="fn">imshow</span>(img[:, :, :<span class="nm">3</span>]); axes[<span class="nm">0</span>].<span class="fn">set_title</span>(<span class="st">'Original'</span>)
+    axes[<span class="nm">1</span>].<span class="fn">imshow</span>(segmented); axes[<span class="nm">1</span>].<span class="fn">set_title</span>(<span class="st">f'Segmented ({n_clusters} regions)'</span>)
+    
+    <span class="cm"># Label map</span>
+    label_map = labels.<span class="fn">reshape</span>(h, w)
+    axes[<span class="nm">2</span>].<span class="fn">imshow</span>(label_map, cmap=<span class="st">'tab20'</span>)
+    axes[<span class="nm">2</span>].<span class="fn">set_title</span>(<span class="st">'Segment Map'</span>)
+    plt.<span class="fn">tight_layout</span>()
+    plt.<span class="fn">show</span>()
+    
+    <span class="kw">return</span> segmented, label_map, n_clusters
+
+<span class="cm"># ব্যবহার:</span>
+<span class="cm"># segmented, label_map, k = segment_medical_image("skin_lesion.jpg", quantile=0.08)</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 5: EVALUATION COMPARISON
+═════════════════════════════════════════════════ -->
+<section class="section" id="evaluation">
+  <div class="section-header">
+    <div class="section-number green">৫</div>
+    <div>
+      <div class="section-title">Clustering Evaluation — কোনটা সেরা?</div>
+      <div class="section-subtitle">কীভাবে বুঝবো আমাদের Clustering ভালো হয়েছে?</div>
+    </div>
+  </div>
+
+  <h2 class="topic">Evaluation Metrics</h2>
+
+  <div class="box box-warn">
+    <div class="box-title">⚠️ Unsupervised Evaluation কঠিন কেন?</div>
+    <p>Supervised learning-এ সহজ — সঠিক উত্তর জানা আছে, accuracy মাপো। Unsupervised-এ কোনো "সঠিক উত্তর" নেই। তাই evaluation সূক্ষ্ম।</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>কী মাপে</th>
+          <th>Range</th>
+          <th>ভালো মানে</th>
+          <th>Algorithm</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="highlight">Inertia</span></td>
+          <td>Intra-cluster distance sum (squared)</td>
+          <td>0 → ∞</td>
+          <td>যত কম তত ভালো</td>
+          <td>K-Means</td>
+        </tr>
+        <tr>
+          <td><span class="highlight3">Silhouette Score</span></td>
+          <td>Intra vs Inter cluster তুলনা</td>
+          <td>-1 → +1</td>
+          <td>+1 সবচেয়ে ভালো</td>
+          <td>সব algorithm</td>
+        </tr>
+        <tr>
+          <td><span class="highlight2">Distortion</span></td>
+          <td>Average distance to centroid</td>
+          <td>0 → ∞</td>
+          <td>Elbow খোঁজতে</td>
+          <td>K-Means</td>
+        </tr>
+        <tr>
+          <td><span class="highlight">Davies-Bouldin</span></td>
+          <td>Cluster separation quality</td>
+          <td>0 → ∞</td>
+          <td>যত কম তত ভালো</td>
+          <td>সব algorithm</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">Complete Evaluation Pipeline</span>
+    </div>
+    <pre><span class="kw">from</span> sklearn.metrics <span class="kw">import</span> silhouette_score, davies_bouldin_score
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans, AgglomerativeClustering
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">evaluate_clustering</span>(X, labels, algorithm_name=<span class="st">"Algorithm"</span>):
+    <span class="st">"""সব metric একসাথে calculate করা"""</span>
+    results = {}
+    
+    <span class="cm"># Silhouette Score (-1 থেকে +1, বেশি হলে ভালো)</span>
+    results[<span class="st">'silhouette'</span>] = <span class="fn">silhouette_score</span>(X, labels)
+    
+    <span class="cm"># Davies-Bouldin Score (কম হলে ভালো)</span>
+    results[<span class="st">'davies_bouldin'</span>] = <span class="fn">davies_bouldin_score</span>(X, labels)
+    
+    <span class="cm"># Number of clusters</span>
+    results[<span class="st">'n_clusters'</span>] = <span class="fn">len</span>(np.<span class="fn">unique</span>(labels))
+    
+    <span class="fn">print</span>(<span class="st">f"\n{'='*40}"</span>)
+    <span class="fn">print</span>(<span class="st">f"  {algorithm_name} Evaluation"</span>)
+    <span class="fn">print</span>(<span class="st">f"{'='*40}"</span>)
+    <span class="fn">print</span>(<span class="st">f"  Clusters found:     {results['n_clusters']}"</span>)
+    <span class="fn">print</span>(<span class="st">f"  Silhouette Score:   {results['silhouette']:.4f}"</span>)
+    <span class="fn">print</span>(<span class="st">f"  Davies-Bouldin:     {results['davies_bouldin']:.4f}"</span>)
+    
+    <span class="cm"># Interpretation</span>
+    sil = results[<span class="st">'silhouette'</span>]
+    <span class="kw">if</span> sil > <span class="nm">0.7</span>: <span class="fn">print</span>(<span class="st">"  মূল্যায়ন: 🟢 চমৎকার clustering"</span>)
+    <span class="kw">elif</span> sil > <span class="nm">0.5</span>: <span class="fn">print</span>(<span class="st">"  মূল্যায়ন: 🟡 মোটামুটি ভালো"</span>)
+    <span class="kw">elif</span> sil > <span class="nm">0.25</span>: <span class="fn">print</span>(<span class="st">"  মূল্যায়ন: 🟠 দুর্বল structure"</span>)
+    <span class="kw">else</span>: <span class="fn">print</span>(<span class="st">"  মূল্যায়ন: 🔴 কোনো cluster structure নেই"</span>)
+    
+    <span class="kw">return</span> results</pre>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 6: ALL ALGORITHMS SUMMARY
+═════════════════════════════════════════════════ -->
+<section class="section" id="algorithms">
+  <div class="section-header">
+    <div class="section-number teal">৬</div>
+    <div>
+      <div class="section-title">সব Algorithm — Kindergarten থেকে Expert</div>
+      <div class="section-subtitle">সহজ ভাষায় তিনটি algorithm, সব একসাথে</div>
+    </div>
+  </div>
+
+  <!-- K-Means Summary -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-icon" style="background:rgba(0,212,170,0.15);border:1px solid rgba(0,212,170,0.3)">🎯</div>
+      <div>
+        <div class="algo-name" style="color:var(--accent)">K-Means</div>
+        <div class="algo-tagline">সবচেয়ে জনপ্রিয় · Centroid-based · Fast</div>
+      </div>
+    </div>
+
+    <h3 class="subtopic">🧒 ৫ বছরের শিশুকে বলো</h3>
+    <p>খেলনা রাখার বাক্সে সব খেলনা একসাথে আছে। তোমাকে বললো: "৩টি বাক্সে ভাগ করো।" তুমি প্রথমে ৩টি জায়গায় ৩টি খেলনা রাখলে (যেকোনো)। তারপর সব খেলনা যে যার কাছের জায়গায় গেল। তারপর প্রতিটি দলের মাঝখানের জায়গায় নতুন নেতা হলো। আবার সবাই নতুন নেতার কাছে গেল। যতক্ষণ না সবাই ঠিক হয়ে গেল।</p>
+
+    <h3 class="subtopic">⚙️ Technical Summary</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>বিষয়</th><th>K-Means</th></tr>
+        <tr><td>K দিতে হয়?</td><td>হ্যাঁ (Elbow Method দিয়ে খুঁজতে হয়)</td></tr>
+        <tr><td>Cluster Shape</td><td>Spherical/Convex — irregular shape-এ কাজ করে না</td></tr>
+        <tr><td>Complexity</td><td>O(n·k·i·d) — Fast</td></tr>
+        <tr><td>Outlier Sensitivity</td><td>Sensitive (outlier centroid টেনে নেয়)</td></tr>
+        <tr><td>কখন ব্যবহার</td><td>Large data, spherical clusters, speed দরকার</td></tr>
+        <tr><td>sklearn Class</td><td><code>KMeans(n_clusters=k)</code></td></tr>
+      </table>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Python</span><span class="code-label">K-Means — সম্পূর্ণ Template</span></div>
+      <pre><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> silhouette_score
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Step 1: Scale করা (অবশ্যই!)
+</span>scaler = <span class="fn">StandardScaler</span>()
+X_scaled = scaler.<span class="fn">fit_transform</span>(X)
+
+<span class="cm"># Step 2: Optimal K খোঁজা</span>
+best_k, best_score = <span class="nm">2</span>, -<span class="nm">1</span>
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">2</span>, <span class="nm">11</span>):
+    km = <span class="fn">KMeans</span>(n_clusters=k, random_state=<span class="nm">42</span>, n_init=<span class="nm">10</span>)
+    labels = km.<span class="fn">fit_predict</span>(X_scaled)
+    score = <span class="fn">silhouette_score</span>(X_scaled, labels)
+    <span class="kw">if</span> score > best_score:
+        best_k, best_score = k, score
+
+<span class="cm"># Step 3: Final Model</span>
+final_km = <span class="fn">KMeans</span>(n_clusters=best_k, random_state=<span class="nm">42</span>, n_init=<span class="nm">10</span>)
+labels = final_km.<span class="fn">fit_predict</span>(X_scaled)
+centroids = final_km.cluster_centers_
+
+<span class="fn">print</span>(<span class="st">f"Optimal K: {best_k}, Silhouette: {best_score:.3f}"</span>)</pre>
+    </div>
+  </div>
+
+  <!-- HCA Summary -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-icon" style="background:rgba(255,107,107,0.15);border:1px solid rgba(255,107,107,0.3)">🌳</div>
+      <div>
+        <div class="algo-name" style="color:var(--accent3)">Hierarchical Clustering (HCA)</div>
+        <div class="algo-tagline">Dendrogram · Agglomerative · No K needed visually</div>
+      </div>
+    </div>
+
+    <h3 class="subtopic">🧒 ৫ বছরের শিশুকে বলো</h3>
+    <p>তোমার সব বন্ধুরা আলাদা আলাদা দাঁড়িয়ে আছে। সবচেয়ে কাছের দুজন হাত ধরলো। তারপর সেই জোড়া আরেকজনের সাথে হাত ধরলো। এভাবে সবাই এক বড় বৃত্তে না আসা পর্যন্ত চললো। একটি গাছের মতো চিত্র হলো — এটাই Dendrogram। এখন তুমি বলো "এই উচ্চতায় কেটে দাও" — কতগুলো দল হবে বলে দেবে।</p>
+
+    <h3 class="subtopic">⚙️ Technical Summary</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>বিষয়</th><th>HCA</th></tr>
+        <tr><td>K দিতে হয়?</td><td>Dendrogram দেখে decide করা যায়</td></tr>
+        <tr><td>Cluster Shape</td><td>Arbitrary — irregular shape-ও ধরে</td></tr>
+        <tr><td>Complexity</td><td>O(n³) — Large data-তে ধীর</td></tr>
+        <tr><td>Outlier Sensitivity</td><td>Complete linkage-এ robust</td></tr>
+        <tr><td>কখন ব্যবহার</td><td>Small-medium data, hierarchy বুঝতে চাইলে</td></tr>
+        <tr><td>sklearn Class</td><td><code>AgglomerativeClustering(n_clusters=k)</code></td></tr>
+      </table>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Python</span><span class="code-label">HCA — সম্পূর্ণ Template</span></div>
+      <pre><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> AgglomerativeClustering
+<span class="kw">from</span> scipy.cluster.hierarchy <span class="kw">import</span> dendrogram, linkage
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> silhouette_score
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># Step 1: Dendrogram দেখো</span>
+Z = <span class="fn">linkage</span>(X_scaled, method=<span class="st">'ward'</span>)
+plt.<span class="fn">figure</span>(figsize=(<span class="nm">12</span>, <span class="nm">6</span>))
+<span class="fn">dendrogram</span>(Z, color_threshold=<span class="nm">0</span>)
+plt.<span class="fn">title</span>(<span class="st">"Dendrogram — সবচেয়ে বড় gap-এ কাটো"</span>)
+plt.<span class="fn">show</span>()
+
+<span class="cm"># Step 2: Silhouette দিয়ে optimal K</span>
+best_k, best_score = <span class="nm">2</span>, -<span class="nm">1</span>
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">2</span>, <span class="nm">11</span>):
+    hca = <span class="fn">AgglomerativeClustering</span>(n_clusters=k, linkage=<span class="st">'ward'</span>)
+    labels = hca.<span class="fn">fit_predict</span>(X_scaled)
+    score = <span class="fn">silhouette_score</span>(X_scaled, labels)
+    <span class="kw">if</span> score > best_score:
+        best_k, best_score = k, score
+
+<span class="cm"># Step 3: Final Model</span>
+final_hca = <span class="fn">AgglomerativeClustering</span>(n_clusters=best_k, linkage=<span class="st">'ward'</span>)
+labels = final_hca.<span class="fn">fit_predict</span>(X_scaled)
+
+<span class="fn">print</span>(<span class="st">f"Optimal K: {best_k}, Silhouette: {best_score:.3f}"</span>)</pre>
+    </div>
+  </div>
+
+  <!-- Mean Shift Summary -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-icon" style="background:rgba(255,209,102,0.15);border:1px solid rgba(255,209,102,0.3)">🌊</div>
+      <div>
+        <div class="algo-name" style="color:var(--accent4)">Mean Shift</div>
+        <div class="algo-tagline">Density-based · No K needed · Image Processing</div>
+      </div>
+    </div>
+
+    <h3 class="subtopic">🧒 ৫ বছরের শিশুকে বলো</h3>
+    <p>মাঠে অনেক বল ছড়ানো। তুমি একটি হুলা-হুপ (গোল রিং) এলোমেলো জায়গায় রাখলে। ভেতরে থাকা বলগুলোর মাঝখানে হুলা-হুপ সরিয়ে দিলে। আবার ভেতরের বলের মাঝখানে গেল। এভাবে যখন হুলা-হুপ আর নড়ে না, তখন সেটাই একটি দলের কেন্দ্র। সব বল যেখানে বেশি জমা, সেখানেই হুলা-হুপ থামে।</p>
+
+    <h3 class="subtopic">⚙️ Technical Summary</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>বিষয়</th><th>Mean Shift</th></tr>
+        <tr><td>K দিতে হয়?</td><td>না! Bandwidth ঠিক করলেই হয়</td></tr>
+        <tr><td>Cluster Shape</td><td>Arbitrary — যেকোনো shape</td></tr>
+        <tr><td>Complexity</td><td>O(n²) per iteration — Large data-তে ধীর</td></tr>
+        <tr><td>Outlier Sensitivity</td><td>Robust</td></tr>
+        <tr><td>কখন ব্যবহার</td><td>Image segmentation, unknown K, density-based</td></tr>
+        <tr><td>sklearn Class</td><td><code>MeanShift(bandwidth=bw)</code></td></tr>
+      </table>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Mean Shift — সম্পূর্ণ Template</span></div>
+      <pre><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> MeanShift, estimate_bandwidth
+
+<span class="cm"># Step 1: Bandwidth estimate করা</span>
+bandwidth = <span class="fn">estimate_bandwidth</span>(X_scaled, quantile=<span class="nm">0.2</span>, n_samples=<span class="nm">500</span>)
+<span class="cm"># quantile বাড়ালে bandwidth বাড়ে → কম cluster
+# quantile কমালে bandwidth কমে → বেশি cluster</span>
+
+<span class="cm"># Step 2: Mean Shift</span>
+ms = <span class="fn">MeanShift</span>(bandwidth=bandwidth, bin_seeding=<span class="bi">True</span>)
+<span class="cm"># bin_seeding=True → faster, approximate</span>
+labels = ms.<span class="fn">fit_predict</span>(X_scaled)
+centroids = ms.cluster_centers_
+
+<span class="cm"># Step 3: Result</span>
+n_clusters = <span class="fn">len</span>(centroids)
+<span class="fn">print</span>(<span class="st">f"Found {n_clusters} clusters automatically"</span>)
+<span class="fn">print</span>(<span class="st">f"Centroids shape: {centroids.shape}"</span>)</pre>
+    </div>
+  </div>
+
+  <!-- Algorithm Comparison -->
+  <h2 class="topic">সব Algorithm — পাশাপাশি তুলনা</h2>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 900 280" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;" font-family="'Hind Siliguri', 'Tiro Bangla', sans-serif">
+      <!-- Headers -->
+      <rect x="10" y="10" width="180" height="260" rx="10" fill="#13161e" stroke="#2a3045"/>
+      <rect x="200" y="10" width="220" height="260" rx="10" fill="rgba(0,212,170,0.05)" stroke="#00d4aa" stroke-width="1.5"/>
+      <rect x="430" y="10" width="220" height="260" rx="10" fill="rgba(255,107,107,0.05)" stroke="#ff6b6b" stroke-width="1.5"/>
+      <rect x="660" y="10" width="230" height="260" rx="10" fill="rgba(255,209,102,0.05)" stroke="#ffd166" stroke-width="1.5"/>
+
+      <!-- Column headers -->
+      <text x="100" y="35" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="13">বৈশিষ্ট্য</text>
+      <text x="310" y="30" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="15" font-weight="700">K-Means</text>
+      <text x="540" y="30" text-anchor="middle" fill="#ff6b6b" font-family="sans-serif" font-size="15" font-weight="700">HCA</text>
+      <text x="775" y="30" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="15" font-weight="700">Mean Shift</text>
+
+      <!-- Rows -->
+      <text x="100" y="65" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">K লাগে?</text>
+      <text x="310" y="65" text-anchor="middle" fill="#ff6b6b" font-family="sans-serif" font-size="12">✗ হ্যাঁ লাগে</text>
+      <text x="540" y="65" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12">△ Dendrogram দেখে</text>
+      <text x="775" y="65" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="12">✓ না লাগে</text>
+
+      <line x1="10" y1="75" x2="890" y2="75" stroke="#2a3045" stroke-width="0.5"/>
+
+      <text x="100" y="100" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">Speed</text>
+      <text x="310" y="100" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="12">✓ Fast O(nki)</text>
+      <text x="540" y="100" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12">△ Medium O(n³)</text>
+      <text x="775" y="100" text-anchor="middle" fill="#ff6b6b" font-family="sans-serif" font-size="12">✗ Slow O(n²)</text>
+
+      <line x1="10" y1="110" x2="890" y2="110" stroke="#2a3045" stroke-width="0.5"/>
+
+      <text x="100" y="135" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">Cluster Shape</text>
+      <text x="310" y="135" text-anchor="middle" fill="#ffd166" font-family="sans-serif" font-size="12">△ শুধু Spherical</text>
+      <text x="540" y="135" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="12">✓ Arbitrary</text>
+      <text x="775" y="135" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="12">✓ Arbitrary</text>
+
+      <line x1="10" y1="145" x2="890" y2="145" stroke="#2a3045" stroke-width="0.5"/>
+
+      <text x="100" y="170" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">Large Data</text>
+      <text x="310" y="170" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="12">✓ হ্যাঁ</text>
+      <text x="540" y="170" text-anchor="middle" fill="#ff6b6b" font-family="sans-serif" font-size="12">✗ না</text>
+      <text x="775" y="170" text-anchor="middle" fill="#ff6b6b" font-family="sans-serif" font-size="12">✗ না</text>
+
+      <line x1="10" y1="180" x2="890" y2="180" stroke="#2a3045" stroke-width="0.5"/>
+
+      <text x="100" y="205" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">Optimal Use</text>
+      <text x="310" y="205" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="11">Customer Seg</text>
+      <text x="540" y="205" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="11">Taxonomy/Gene</text>
+      <text x="775" y="205" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="11">Image Processing</text>
+
+      <line x1="10" y1="215" x2="890" y2="215" stroke="#2a3045" stroke-width="0.5"/>
+
+      <text x="100" y="240" text-anchor="middle" fill="#9ba3b8" font-family="sans-serif" font-size="12">Deterministic?</text>
+      <text x="310" y="240" text-anchor="middle" fill="#ff6b6b" font-family="sans-serif" font-size="12">✗ না (random init)</text>
+      <text x="540" y="240" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="12">✓ হ্যাঁ</text>
+      <text x="775" y="240" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="12">✓ হ্যাঁ</text>
+
+      <line x1="10" y1="250" x2="890" y2="250" stroke="#2a3045" stroke-width="0.5"/>
+      <text x="310" y="268" text-anchor="middle" fill="#00d4aa" font-family="sans-serif" font-size="10">random_state=42 দিলে হয়</text>
+    </svg>
+    <div class="diagram-caption">চিত্র ১১: তিনটি Clustering Algorithm-এর পাশাপাশি তুলনা</div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════
+     SECTION 7: FINAL INTERVIEW
+═════════════════════════════════════════════════ -->
+<section class="section" id="interview">
+  <div class="section-header">
+    <div class="section-number purple">৭</div>
+    <div>
+      <div class="section-title">চূড়ান্ত Interview Preparation</div>
+      <div class="section-subtitle">ML Engineer Level Questions — বাংলায় উত্তর সহ</div>
+    </div>
+  </div>
+
+  <div class="exercise-section">
+    <div class="exercise-title">সব Algorithm — Interview Questions</div>
+
+    <div class="q-item">
+      <span class="q-num">১</span>
+      <span class="q-text">Clustering কি একটি deterministic process?</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      নির্ভর করে algorithm-এর উপর। HCA এবং Mean Shift deterministic (একই data-তে সবসময় একই result)। K-Means non-deterministic কারণ random initialization — তবে random_state fix করলে reproducible হয়।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">২</span>
+      <span class="q-text">Feature scaling কেন করতে হয় Clustering-এ?</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      Clustering distance-based। যদি একটি feature 0-100 (বয়স) এবং আরেকটি 0-100,000 (বেতন) হয়, তাহলে বেতনই distance dominate করবে। StandardScaler বা MinMaxScaler দিয়ে সব feature একই scale-এ আনলে সবাই সমান importance পায়।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">৩</span>
+      <span class="q-text">একটি dataset-এ Clustering করার পর কীভাবে business value তৈরি করবে?</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      ১. প্রতিটি cluster-এর mean/median দেখো → profile বুঝতে। ২. Human-readable নাম দাও (Champions, At-Risk, etc.)। ৩. প্রতিটি cluster-এর জন্য আলাদা strategy: Champions → loyalty program, At-Risk → winback campaign। ৪. Cluster label নতুন data-তে predict করতে supervised model train করো।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">৪</span>
+      <span class="q-text">DBSCAN vs Mean Shift — কী পার্থক্য?</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      উভয়ই density-based এবং K দরকার নেই। পার্থক্য: DBSCAN outlier-কে "noise" হিসেবে mark করে (cluster-এ রাখে না), Mean Shift সব point-কে কোনো না কোনো cluster-এ দেয়। DBSCAN-এ ২টি parameter (eps, min_samples), Mean Shift-এ ১টি (bandwidth)। DBSCAN large data-তে faster।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">৫</span>
+      <span class="q-text">Production ML system-এ Clustering কীভাবে deploy করবে?</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      ১. Scaler এবং Model একসাথে pickle/joblib দিয়ে save করো। ২. নতুন data আসলে scaler.transform() → model.predict() (KMeans-এ predict আছে, HCA-তে নেই তাই KNN দিয়ে approximate করতে হয়)। ৩. Cluster drift monitor করো — cluster distribution কি সময়ের সাথে পরিবর্তন হচ্ছে? ৪. MLflow/Weights&Biases দিয়ে experiment track করো।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">৬</span>
+      <span class="q-text">🏭 চূড়ান্ত Project: Complete ML Clustering Pipeline</span>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-lang">Python</span>
+        <span class="code-label">Production-Ready Clustering Pipeline</span>
+      </div>
+      <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> joblib
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> silhouette_score, davies_bouldin_score
+<span class="kw">from</span> sklearn.neighbors <span class="kw">import</span> KNeighborsClassifier
+<span class="kw">import</span> warnings; warnings.<span class="fn">filterwarnings</span>(<span class="st">'ignore'</span>)
+
+<span class="kw">class</span> <span class="fn">ClusteringPipeline</span>:
+    <span class="st">"""
+    Production-ready Clustering Pipeline
+    - Auto optimal K selection
+    - Feature scaling
+    - Model persistence
+    - Prediction on new data
+    """</span>
+    
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, k_range=(<span class="nm">2</span>, <span class="nm">10</span>), algorithm=<span class="st">'kmeans'</span>):
+        self.k_range = k_range
+        self.algorithm = algorithm
+        self.scaler = <span class="fn">StandardScaler</span>()
+        self.model = <span class="bi">None</span>
+        self.knn = <span class="bi">None</span>  <span class="cm"># HCA prediction helper</span>
+        self.optimal_k = <span class="bi">None</span>
+        self.metrics = {}
+    
+    <span class="kw">def</span> <span class="fn">find_optimal_k</span>(self, X_scaled):
+        <span class="st">"""Silhouette Score দিয়ে optimal K খোঁজা"""</span>
+        best_k, best_score = <span class="nm">2</span>, -<span class="nm">1</span>
+        scores = []
+        
+        <span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(*self.k_range):
+            km = <span class="fn">KMeans</span>(n_clusters=k, random_state=<span class="nm">42</span>, n_init=<span class="nm">10</span>)
+            labels = km.<span class="fn">fit_predict</span>(X_scaled)
+            score = <span class="fn">silhouette_score</span>(X_scaled, labels)
+            scores.<span class="fn">append</span>((k, score))
+            
+            <span class="kw">if</span> score > best_score:
+                best_k, best_score = k, score
+        
+        <span class="fn">print</span>(<span class="st">f"✓ Optimal K: {best_k} (Silhouette: {best_score:.3f})"</span>)
+        <span class="kw">return</span> best_k
+    
+    <span class="kw">def</span> <span class="fn">fit</span>(self, X):
+        <span class="st">"""Training"""</span>
+        <span class="cm"># Scale</span>
+        X_scaled = self.scaler.<span class="fn">fit_transform</span>(X)
+        
+        <span class="cm"># Optimal K</span>
+        self.optimal_k = self.<span class="fn">find_optimal_k</span>(X_scaled)
+        
+        <span class="cm"># Final model</span>
+        self.model = <span class="fn">KMeans</span>(n_clusters=self.optimal_k, 
+                               random_state=<span class="nm">42</span>, n_init=<span class="nm">10</span>)
+        labels = self.model.<span class="fn">fit_predict</span>(X_scaled)
+        
+        <span class="cm"># KNN helper for new data prediction</span>
+        self.knn = <span class="fn">KNeighborsClassifier</span>(n_neighbors=<span class="nm">5</span>)
+        self.knn.<span class="fn">fit</span>(X_scaled, labels)
+        
+        <span class="cm"># Metrics</span>
+        self.metrics = {
+            <span class="st">'silhouette'</span>: <span class="fn">silhouette_score</span>(X_scaled, labels),
+            <span class="st">'davies_bouldin'</span>: <span class="fn">davies_bouldin_score</span>(X_scaled, labels),
+            <span class="st">'inertia'</span>: self.model.inertia_,
+            <span class="st">'n_clusters'</span>: self.optimal_k
+        }
+        
+        <span class="fn">print</span>(<span class="st">f"✓ Training complete!"</span>)
+        <span class="fn">print</span>(<span class="st">f"  Silhouette: {self.metrics['silhouette']:.3f}"</span>)
+        <span class="fn">print</span>(<span class="st">f"  Davies-Bouldin: {self.metrics['davies_bouldin']:.3f}"</span>)
+        <span class="kw">return</span> self
+    
+    <span class="kw">def</span> <span class="fn">predict</span>(self, X_new):
+        <span class="st">"""নতুন data-তে cluster predict করা"""</span>
+        X_scaled = self.scaler.<span class="fn">transform</span>(X_new)
+        <span class="kw">return</span> self.knn.<span class="fn">predict</span>(X_scaled)
+    
+    <span class="kw">def</span> <span class="fn">save</span>(self, path):
+        <span class="st">"""Model save করা"""</span>
+        joblib.<span class="fn">dump</span>(self, path)
+        <span class="fn">print</span>(<span class="st">f"✓ Model saved to {path}"</span>)
+    
+    <span class="kw">@staticmethod</span>
+    <span class="kw">def</span> <span class="fn">load</span>(path):
+        <span class="st">"""Saved model load করা"""</span>
+        <span class="kw">return</span> joblib.<span class="fn">load</span>(path)
+
+<span class="cm"># ────── ব্যবহার ──────</span>
+<span class="cm"># Training</span>
+pipeline = <span class="fn">ClusteringPipeline</span>(k_range=(<span class="nm">2</span>, <span class="nm">10</span>))
+pipeline.<span class="fn">fit</span>(X_train)
+pipeline.<span class="fn">save</span>(<span class="st">"clustering_model.pkl"</span>)
+
+<span class="cm"># Production-এ নতুন data predict</span>
+loaded_model = ClusteringPipeline.<span class="fn">load</span>(<span class="st">"clustering_model.pkl"</span>)
+new_labels = loaded_model.<span class="fn">predict</span>(X_new)
+<span class="fn">print</span>(<span class="st">f"New data clusters: {new_labels}"</span>)</pre>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">৭</span>
+      <span class="q-text">Clustering-এ Outlier detect করা যায়? কীভাবে?</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      হ্যাঁ। K-Means-এ: যে points তাদের centroid থেকে অনেক দূরে (high distance) তারা outlier। Threshold set করে flag করা যায়। DBSCAN-এ: "noise" point হিসেবে label (-1) পায়। Silhouette coefficient নেতিবাচক হলেও সন্দেহজনক।
+      </div></details>
+    </div>
+
+    <div class="q-item">
+      <span class="q-num">৮</span>
+      <span class="q-text">Compressed image-এর quality কমে কি? Compression ratio কীভাবে tradeoff হয়?</span>
+      <details><div class="q-answer"><div class="q-answer-title">উত্তর</div>
+      হ্যাঁ, quality কিছুটা কমে — lossy compression। K বাড়ালে বেশি রঙ → ভালো quality কিন্তু কম compression। K কমালে কম রঙ → বেশি compression কিন্তু কম quality। Medical imaging-এ K বড় রাখতে হবে কারণ detail গুরুত্বপূর্ণ। Social media thumbnail-এ K ছোট রাখলে file size কম হবে।
+      </div></details>
+    </div>
+  </div>
+
+  <!-- Quick Reference -->
+  <h2 class="topic">Quick Reference — চটজলদি মনে রাখো</h2>
+  <div class="box box-tip">
+    <div class="box-title">🚀 Decision Tree: কোন Algorithm বেছে নেবে?</div>
+    <ul class="bn-list">
+      <li>Large data (100k+ rows) + Spherical clusters + K জানো? → <strong>K-Means</strong></li>
+      <li>Small-medium data + Hierarchy জানতে চাও + K জানো না? → <strong>HCA (Ward)</strong></li>
+      <li>Image Processing + K জানো না + Density-based? → <strong>Mean Shift</strong></li>
+      <li>Arbitrary shape + Outlier আছে + K জানো না? → <strong>DBSCAN</strong> (এই module-এ নেই, তবে জেনে রাখো)</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <p>🧬 <strong>Clustering Master Guide</strong> — সম্পূর্ণ বাংলায়</p>
+  <p style="margin-top:0.5rem">K-Means · HCA · Mean Shift · Silhouette · Elbow · Production Pipeline</p>
+
+</footer>
+
+</body>
+</html>

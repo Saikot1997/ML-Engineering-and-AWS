@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux & Bash — বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --bg-code: #1e2329;
+  --border: #30363d;
+  --border-muted: #21262d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #6e7681;
+  --accent-blue: #58a6ff;
+  --accent-green: #3fb950;
+  --accent-orange: #f0883e;
+  --accent-purple: #bc8cff;
+  --accent-red: #ff7b72;
+  --accent-yellow: #e3b341;
+  --accent-teal: #39d353;
+  --sidebar-w: 280px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Noto Sans Bengali',sans-serif;
+  background:var(--bg-primary);
+  color:var(--text-primary);
+  display:flex;
+  min-height:100vh;
+  font-size:16px;
+  line-height:1.8;
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:var(--sidebar-w);
+  background:var(--bg-secondary);
+  border-right:1px solid var(--border);
+  position:fixed;
+  top:0;left:0;bottom:0;
+  overflow-y:auto;
+  z-index:100;
+  padding:0 0 40px 0;
+}
+.sidebar-header{
+  padding:20px 20px 16px;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;
+  background:var(--bg-secondary);
+  z-index:1;
+}
+.sidebar-title{
+  font-family:'Syne',sans-serif;
+  font-size:15px;
+  font-weight:800;
+  color:var(--accent-blue);
+  letter-spacing:0.5px;
+}
+.sidebar-sub{font-size:11px;color:var(--text-muted);margin-top:3px;}
+.nav-section{padding:12px 0 4px 20px;font-size:10px;font-weight:600;color:var(--text-muted);letter-spacing:1.5px;text-transform:uppercase;}
+.nav-link{
+  display:block;
+  padding:7px 20px;
+  font-size:13px;
+  color:var(--text-secondary);
+  text-decoration:none;
+  transition:all 0.15s;
+  border-left:2px solid transparent;
+}
+.nav-link:hover{color:var(--text-primary);background:var(--bg-tertiary);border-left-color:var(--accent-blue);}
+.nav-link.active{color:var(--accent-blue);border-left-color:var(--accent-blue);background:rgba(88,166,255,0.08);}
+
+/* MAIN */
+.main{
+  margin-left:var(--sidebar-w);
+  flex:1;
+  max-width:900px;
+  padding:48px 52px;
+}
+
+/* HERO */
+.hero{
+  background:linear-gradient(135deg,#0d1117 0%,#161b22 50%,#0d1117 100%);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:48px;
+  margin-bottom:56px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:radial-gradient(ellipse at 60% 40%,rgba(88,166,255,0.08) 0%,transparent 60%);
+  pointer-events:none;
+}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(88,166,255,0.1);border:1px solid rgba(88,166,255,0.3);border-radius:100px;padding:4px 14px;font-size:12px;color:var(--accent-blue);margin-bottom:20px;}
+.hero h1{font-family:'Syne',sans-serif;font-size:42px;font-weight:800;line-height:1.15;margin-bottom:16px;}
+.hero h1 span{color:var(--accent-blue);}
+.hero p{font-size:17px;color:var(--text-secondary);max-width:580px;line-height:1.75;}
+.hero-stats{display:flex;gap:32px;margin-top:32px;}
+.stat{text-align:center;}
+.stat-num{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600;color:var(--accent-blue);}
+.stat-label{font-size:12px;color:var(--text-muted);margin-top:2px;}
+
+/* SECTIONS */
+.section{margin-bottom:72px;}
+.section-header{display:flex;align-items:center;gap:16px;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.section-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;font-weight:600;
+  background:rgba(88,166,255,0.15);
+  color:var(--accent-blue);
+  border:1px solid rgba(88,166,255,0.3);
+  border-radius:8px;
+  padding:4px 10px;
+}
+.section-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;}
+
+h3{font-size:20px;font-weight:600;color:var(--accent-blue);margin:32px 0 14px;font-family:'Syne',sans-serif;}
+h4{font-size:16px;font-weight:600;color:var(--accent-orange);margin:24px 0 10px;}
+p{margin-bottom:14px;color:var(--text-primary);line-height:1.85;}
+
+/* CALLOUTS */
+.callout{border-radius:10px;padding:18px 20px;margin:20px 0;border-left:3px solid;display:flex;gap:14px;}
+.callout-icon{font-size:20px;flex-shrink:0;margin-top:1px;}
+.callout-body{}
+.callout-title{font-weight:600;font-size:14px;margin-bottom:5px;}
+.callout-text{font-size:14px;line-height:1.7;}
+.callout.info{background:rgba(88,166,255,0.08);border-color:var(--accent-blue);}.callout.info .callout-title{color:var(--accent-blue);}
+.callout.tip{background:rgba(63,185,80,0.08);border-color:var(--accent-green);}.callout.tip .callout-title{color:var(--accent-green);}
+.callout.warn{background:rgba(240,136,62,0.08);border-color:var(--accent-orange);}.callout.warn .callout-title{color:var(--accent-orange);}
+.callout.danger{background:rgba(255,123,114,0.08);border-color:var(--accent-red);}.callout.danger .callout-title{color:var(--accent-red);}
+
+/* CODE */
+.code-block{
+  background:var(--bg-code);
+  border:1px solid var(--border);
+  border-radius:10px;
+  margin:16px 0;
+  overflow:hidden;
+}
+.code-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 16px;
+  background:var(--bg-tertiary);
+  border-bottom:1px solid var(--border);
+  font-size:12px;color:var(--text-muted);font-family:'JetBrains Mono',monospace;
+}
+.code-body{padding:18px 20px;overflow-x:auto;}
+pre{font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.7;color:#e6edf3;}
+.cmd{color:var(--accent-blue);}
+.cmt{color:var(--text-muted);}
+.str{color:var(--accent-green);}
+.num{color:var(--accent-orange);}
+.kw{color:var(--accent-purple);}
+.out{color:var(--accent-teal);}
+.err{color:var(--accent-red);}
+
+/* INLINE CODE */
+code{font-family:'JetBrains Mono',monospace;font-size:13px;background:var(--bg-tertiary);color:var(--accent-blue);padding:2px 7px;border-radius:5px;border:1px solid var(--border);}
+
+/* TABLES */
+.table-wrap{overflow-x:auto;margin:20px 0;}
+table{width:100%;border-collapse:collapse;font-size:14px;}
+th{background:var(--bg-tertiary);color:var(--text-secondary);font-weight:600;padding:11px 16px;text-align:left;border:1px solid var(--border);font-size:13px;letter-spacing:0.3px;}
+td{padding:10px 16px;border:1px solid var(--border-muted);vertical-align:top;line-height:1.6;}
+tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+td code{font-size:12px;}
+
+/* SVG DIAGRAMS */
+.diagram{background:var(--bg-secondary);border:1px solid var(--border);border-radius:12px;padding:24px;margin:24px 0;text-align:center;}
+.diagram-title{font-size:13px;color:var(--text-muted);margin-bottom:16px;font-family:'JetBrains Mono',monospace;}
+
+/* STEP BOX */
+.steps{counter-reset:step;display:flex;flex-direction:column;gap:0;}
+.step{display:flex;gap:20px;position:relative;padding-bottom:28px;}
+.step:last-child{padding-bottom:0;}
+.step:not(:last-child)::after{content:'';position:absolute;left:17px;top:36px;bottom:0;width:2px;background:var(--border);}
+.step-num{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(88,166,255,0.15);
+  border:2px solid var(--accent-blue);
+  color:var(--accent-blue);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;
+  flex-shrink:0;
+}
+.step-content{padding-top:6px;flex:1;}
+.step-title{font-weight:600;color:var(--text-primary);margin-bottom:6px;font-size:15px;}
+.step-desc{font-size:14px;color:var(--text-secondary);line-height:1.7;}
+
+/* PERMISSION GRID */
+.perm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0;}
+.perm-card{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;}
+.perm-icon{font-size:28px;margin-bottom:8px;}
+.perm-name{font-weight:600;font-size:14px;color:var(--accent-blue);margin-bottom:4px;}
+.perm-desc{font-size:12px;color:var(--text-muted);line-height:1.5;}
+
+/* TAG BADGES */
+.tag{display:inline-block;padding:2px 10px;border-radius:100px;font-size:12px;font-weight:500;margin:2px;}
+.tag-blue{background:rgba(88,166,255,0.15);color:var(--accent-blue);border:1px solid rgba(88,166,255,0.3);}
+.tag-green{background:rgba(63,185,80,0.15);color:var(--accent-green);border:1px solid rgba(63,185,80,0.3);}
+.tag-orange{background:rgba(240,136,62,0.15);color:var(--accent-orange);border:1px solid rgba(240,136,62,0.3);}
+.tag-purple{background:rgba(188,140,255,0.15);color:var(--accent-purple);border:1px solid rgba(188,140,255,0.3);}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:48px 0;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--bg-primary);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* CHEATSHEET */
+.cheat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+.cheat-item{background:var(--bg-tertiary);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+.cheat-cmd{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--accent-blue);margin-bottom:4px;}
+.cheat-desc{font-size:12px;color:var(--text-secondary);}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .main{margin-left:0;padding:24px 20px;}
+  .cheat-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">🐧 Linux & Bash</div>
+    <div class="sidebar-sub">সম্পূর্ণ বাংলা গাইড</div>
+  </div>
+  <div class="nav-section">পরিচিতি</div>
+  <a class="nav-link" href="#s1">১. Linux-এর ইতিহাস</a>
+  <a class="nav-link" href="#s2">২. সিস্টেম আর্কিটেকচার</a>
+  <a class="nav-link" href="#s3">৩. প্রথম কমান্ডসমূহ</a>
+  <a class="nav-link" href="#s4">৪. Environment Variables</a>
+  <div class="nav-section">ফাইল ব্যবস্থাপনা</div>
+  <a class="nav-link" href="#s5">৫. ফাইল ও ফোল্ডার তৈরি</a>
+  <a class="nav-link" href="#s6">৬. ফাইল পড়া ও সম্পাদনা</a>
+  <a class="nav-link" href="#s7">৭. Redirection Flows</a>
+  <div class="nav-section">নিরাপত্তা</div>
+  <a class="nav-link" href="#s8">৮. Users ও Rights</a>
+  <div class="nav-section">প্রোগ্রামিং</div>
+  <a class="nav-link" href="#s9">৯. Shell Script / Bash</a>
+  <a class="nav-link" href="#s10">১০. Process ব্যবস্থাপনা</a>
+  <a class="nav-link" href="#s11">১১. Crontab</a>
+  <a class="nav-link" href="#s12">১২. JQ টুল</a>
+  <div class="nav-section">সারসংক্ষেপ</div>
+  <a class="nav-link" href="#s13">১৩. পরীক্ষা গাইড</a>
+  <a class="nav-link" href="#cheatsheet">🗒️ চিটশিট</a>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <a href="../Programming_Tools_DS.html" style="display:inline-block;margin-bottom:16px;padding:6px 18px;background:rgba(88,166,255,0.1);border:1px solid rgba(88,166,255,0.4);border-radius:8px;color:#58a6ff;text-decoration:none;font-size:13px;">← মূল পাতায় ফিরুন</a>
+  <div class="hero-badge">📖 সম্পূর্ণ বাংলায়</div>
+  <h1>Linux & <span>Bash</span><br>শিক্ষার গাইড</h1>
+  <p>একদম শুরু থেকে শেষ পর্যন্ত — Linux কীভাবে কাজ করে, কমান্ড লাইন ব্যবহার করতে, স্ক্রিপ্ট লিখতে এবং সিস্টেম পরিচালনা করতে শেখো।</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">৮</div><div class="stat-label">অধ্যায়</div></div>
+    <div class="stat"><div class="stat-num">১০০+</div><div class="stat-label">কমান্ড উদাহরণ</div></div>
+    <div class="stat"><div class="stat-num">∞</div><div class="stat-label">অনুশীলনী</div></div>
+  </div>
+</div>
+
+<!-- ============================== SECTION 1 ============================== -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০১</span>
+    <h2 class="section-title">Linux-এর ইতিহাস ও পরিচিতি</h2>
+  </div>
+
+  <p>Linux হলো একটি <strong>মুক্ত (Free) ও ওপেন সোর্স অপারেটিং সিস্টেম</strong>। এর মানে হলো যে কেউ এটি বিনামূল্যে ব্যবহার করতে পারে এবং এর কোড দেখতে ও পরিবর্তন করতে পারে।</p>
+
+  <div class="callout info">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body">
+      <div class="callout-title">অপারেটিং সিস্টেম কী?</div>
+      <div class="callout-text">তোমার কম্পিউটারে যে সফটওয়্যার প্রথমে চালু হয় এবং বাকি সব কাজ পরিচালনা করে — সেটাই Operating System। যেমন Windows, macOS, Linux।</div>
+    </div>
+  </div>
+
+  <h3>কীভাবে Linux তৈরি হলো?</h3>
+  <div class="diagram">
+    <div class="diagram-title">// Linux-এর জন্মের গল্প</div>
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <!-- Timeline line -->
+      <line x1="60" y1="100" x2="640" y2="100" stroke="#30363d" stroke-width="2"/>
+      <!-- 1983 -->
+      <circle cx="120" cy="100" r="10" fill="#58a6ff"/>
+      <text x="120" y="75" text-anchor="middle" fill="#8b949e" font-size="11" font-family="JetBrains Mono">১৯৮৩</text>
+      <text x="120" y="130" text-anchor="middle" fill="#e6edf3" font-size="12" font-family="Noto Sans Bengali">GNU Project</text>
+      <text x="120" y="148" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">Richard Stallman</text>
+      <!-- 1991 -->
+      <circle cx="320" cy="100" r="10" fill="#3fb950"/>
+      <text x="320" y="75" text-anchor="middle" fill="#8b949e" font-size="11" font-family="JetBrains Mono">১৯৯১</text>
+      <text x="320" y="130" text-anchor="middle" fill="#e6edf3" font-size="12" font-family="Noto Sans Bengali">Linux Kernel</text>
+      <text x="320" y="148" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">Linus Torvalds</text>
+      <!-- Merge -->
+      <circle cx="500" cy="100" r="14" fill="#bc8cff"/>
+      <text x="500" y="75" text-anchor="middle" fill="#8b949e" font-size="11" font-family="JetBrains Mono">একীভূত</text>
+      <text x="500" y="130" text-anchor="middle" fill="#e6edf3" font-size="13" font-family="Noto Sans Bengali">GNU/Linux</text>
+      <text x="500" y="148" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">= আজকের Linux</text>
+      <!-- Arrow between 1983 and 1991 -->
+      <line x1="130" y1="100" x2="308" y2="100" stroke="#8b949e" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <polygon points="308,96 316,100 308,104" fill="#8b949e"/>
+      <!-- Arrow between 1991 and merge -->
+      <path d="M 334 100 L 482 100" stroke="#bc8cff" stroke-width="1.5" stroke-dasharray="4,3" fill="none"/>
+      <polygon points="482,96 490,100 482,104" fill="#bc8cff"/>
+    </svg>
+  </div>
+
+  <h3>Linux Distribution (Distro) কী?</h3>
+  <p>Linux Kernel-এর উপরে বিভিন্ন কোম্পানি বা কমিউনিটি তাদের নিজস্ব সংস্করণ বানায় — এগুলোকে <strong>Distribution</strong> বা সংক্ষেপে <strong>Distro</strong> বলে।</p>
+
+  <div class="diagram">
+    <div class="diagram-title">// Linux Distribution পরিবার</div>
+    <svg viewBox="0 0 620 220" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <!-- Linux Kernel -->
+      <rect x="230" y="10" width="160" height="42" rx="8" fill="#21262d" stroke="#58a6ff" stroke-width="2"/>
+      <text x="310" y="28" text-anchor="middle" fill="#58a6ff" font-size="12" font-family="JetBrains Mono" font-weight="bold">Linux Kernel</text>
+      <text x="310" y="44" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">মূল কেন্দ্র</text>
+      <!-- Lines down -->
+      <line x1="250" y1="52" x2="130" y2="110" stroke="#30363d" stroke-width="1.5"/>
+      <line x1="310" y1="52" x2="310" y2="110" stroke="#30363d" stroke-width="1.5"/>
+      <line x1="370" y1="52" x2="490" y2="110" stroke="#30363d" stroke-width="1.5"/>
+      <!-- Debian -->
+      <rect x="60" y="110" width="140" height="40" rx="8" fill="#21262d" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="130" y="128" text-anchor="middle" fill="#f0883e" font-size="12" font-family="JetBrains Mono">Debian</text>
+      <text x="130" y="143" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">জনপ্রিয় ডিস্ট্রো</text>
+      <!-- Red Hat -->
+      <rect x="230" y="110" width="160" height="40" rx="8" fill="#21262d" stroke="#ff7b72" stroke-width="1.5"/>
+      <text x="310" y="128" text-anchor="middle" fill="#ff7b72" font-size="12" font-family="JetBrains Mono">Red Hat</text>
+      <text x="310" y="143" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">এন্টারপ্রাইজ</text>
+      <!-- Others -->
+      <rect x="420" y="110" width="140" height="40" rx="8" fill="#21262d" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="490" y="128" text-anchor="middle" fill="#3fb950" font-size="12" font-family="JetBrains Mono">Arch, Fedora</text>
+      <text x="490" y="143" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">আরও অনেক</text>
+      <!-- Ubuntu from Debian -->
+      <line x1="100" y1="150" x2="130" y2="185" stroke="#30363d" stroke-width="1.5"/>
+      <rect x="60" y="185" width="140" height="30" rx="6" fill="rgba(88,166,255,0.2)" stroke="#58a6ff" stroke-width="2"/>
+      <text x="130" y="205" text-anchor="middle" fill="#58a6ff" font-size="12" font-family="JetBrains Mono">Ubuntu ⭐</text>
+      <text x="208" y="202" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">← এটা ব্যবহার করব</text>
+    </svg>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-icon">✅</div>
+    <div class="callout-body">
+      <div class="callout-title">Ubuntu কেন?</div>
+      <div class="callout-text">Ubuntu সবচেয়ে জনপ্রিয় Linux distro। এর documentation অনেক ভালো, community বড়, এবং শেখার জন্য সবচেয়ে সহজ।</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 2 ============================== -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০২</span>
+    <h2 class="section-title">সিস্টেম আর্কিটেকচার — ফাইল সিস্টেম</h2>
+  </div>
+
+  <p>Linux-এ সব কিছু <strong>গাছের মতো (Tree Structure)</strong> সাজানো। সবচেয়ে উপরে আছে <strong>Root</strong> যাকে <code>/</code> দিয়ে বোঝানো হয়। এর নিচে সব ফাইল ও ফোল্ডার থাকে।</p>
+
+  <div class="callout info">
+    <div class="callout-icon">🌳</div>
+    <div class="callout-body">
+      <div class="callout-title">Windows vs Linux — পথের পার্থক্য</div>
+      <div class="callout-text">Windows-এ: <code>C:\Users\Chaiti\Documents\file.txt</code><br>Linux-এ: <code>/home/chaiti/documents/file.txt</code><br>Linux-এ backslash (<code>\</code>) নয়, forward slash (<code>/</code>) ব্যবহার হয়।</div>
+    </div>
+  </div>
+
+  <h3>Linux Filesystem Tree — সম্পূর্ণ চিত্র</h3>
+  <div class="diagram">
+    <div class="diagram-title">// Linux Root Directory Structure</div>
+    <svg viewBox="0 0 700 490" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#30363d"/>
+        </marker>
+      </defs>
+
+      <!-- Root -->
+      <rect x="280" y="10" width="100" height="36" rx="8" fill="#21262d" stroke="#58a6ff" stroke-width="2.5"/>
+      <text x="330" y="34" text-anchor="middle" fill="#58a6ff" font-size="18" font-family="JetBrains Mono" font-weight="bold">/</text>
+
+      <!-- Vertical trunk -->
+      <line x1="330" y1="46" x2="330" y2="70" stroke="#30363d" stroke-width="1.5"/>
+      <!-- Horizontal bar -->
+      <line x1="60" y1="70" x2="600" y2="70" stroke="#30363d" stroke-width="1.5"/>
+
+      <!-- Folders: /bin /boot /dev /etc /home /lib /media /mnt /opt /proc /root /run /sbin /srv /tmp /usr /var -->
+      <!-- Row 1 -->
+      <line x1="80" y1="70" x2="80" y2="95" stroke="#30363d" stroke-width="1.5"/>
+      <rect x="42" y="95" width="76" height="28" rx="6" fill="#21262d" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="80" y="114" text-anchor="middle" fill="#f0883e" font-size="12" font-family="JetBrains Mono">/bin</text>
+
+      <line x1="170" y1="70" x2="170" y2="95" stroke="#30363d" stroke-width="1.5"/>
+      <rect x="132" y="95" width="76" height="28" rx="6" fill="#21262d" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="170" y="114" text-anchor="middle" fill="#3fb950" font-size="12" font-family="JetBrains Mono">/boot</text>
+
+      <line x1="255" y1="70" x2="255" y2="95" stroke="#30363d" stroke-width="1.5"/>
+      <rect x="217" y="95" width="76" height="28" rx="6" fill="#21262d" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="255" y="114" text-anchor="middle" fill="#bc8cff" font-size="12" font-family="JetBrains Mono">/dev</text>
+
+      <line x1="340" y1="70" x2="340" y2="95" stroke="#30363d" stroke-width="1.5"/>
+      <rect x="302" y="95" width="76" height="28" rx="6" fill="#21262d" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="340" y="114" text-anchor="middle" fill="#58a6ff" font-size="12" font-family="JetBrains Mono">/etc</text>
+
+      <line x1="425" y1="70" x2="425" y2="95" stroke="#30363d" stroke-width="1.5"/>
+      <rect x="387" y="95" width="76" height="28" rx="6" fill="rgba(88,166,255,0.2)" stroke="#58a6ff" stroke-width="2"/>
+      <text x="425" y="114" text-anchor="middle" fill="#58a6ff" font-size="12" font-family="JetBrains Mono">/home</text>
+
+      <line x1="510" y1="70" x2="510" y2="95" stroke="#30363d" stroke-width="1.5"/>
+      <rect x="472" y="95" width="76" height="28" rx="6" fill="#21262d" stroke="#e3b341" stroke-width="1.5"/>
+      <text x="510" y="114" text-anchor="middle" fill="#e3b341" font-size="12" font-family="JetBrains Mono">/lib</text>
+
+      <!-- Row 2 -->
+      <line x1="600" y1="70" x2="600" y2="95" stroke="#30363d" stroke-width="1.5"/>
+      <rect x="562" y="95" width="76" height="28" rx="6" fill="#21262d" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="600" y="114" text-anchor="middle" fill="#f0883e" font-size="12" font-family="JetBrains Mono">/var</text>
+
+      <!-- Second horizontal bar -->
+      <line x1="60" y1="165" x2="600" y2="165" stroke="#30363d" stroke-width="1"/>
+      <line x1="80" y1="123" x2="80" y2="165" stroke="#30363d" stroke-width="1"/>
+      <line x1="170" y1="123" x2="170" y2="165" stroke="#30363d" stroke-width="1"/>
+      <line x1="255" y1="123" x2="255" y2="165" stroke="#30363d" stroke-width="1"/>
+      <line x1="340" y1="123" x2="340" y2="165" stroke="#30363d" stroke-width="1"/>
+      <line x1="425" y1="123" x2="425" y2="165" stroke="#30363d" stroke-width="1"/>
+      <line x1="510" y1="123" x2="510" y2="165" stroke="#30363d" stroke-width="1"/>
+      <line x1="600" y1="123" x2="600" y2="165" stroke="#30363d" stroke-width="1"/>
+
+      <!-- More dirs row 2 -->
+      <line x1="110" y1="165" x2="110" y2="190" stroke="#30363d" stroke-width="1"/>
+      <rect x="72" y="190" width="76" height="28" rx="6" fill="#21262d" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="110" y="209" text-anchor="middle" fill="#3fb950" font-size="12" font-family="JetBrains Mono">/mnt</text>
+
+      <line x1="210" y1="165" x2="210" y2="190" stroke="#30363d" stroke-width="1"/>
+      <rect x="172" y="190" width="76" height="28" rx="6" fill="#21262d" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="210" y="209" text-anchor="middle" fill="#bc8cff" font-size="12" font-family="JetBrains Mono">/opt</text>
+
+      <line x1="310" y1="165" x2="310" y2="190" stroke="#30363d" stroke-width="1"/>
+      <rect x="272" y="190" width="76" height="28" rx="6" fill="#21262d" stroke="#ff7b72" stroke-width="1.5"/>
+      <text x="310" y="209" text-anchor="middle" fill="#ff7b72" font-size="12" font-family="JetBrains Mono">/proc</text>
+
+      <line x1="410" y1="165" x2="410" y2="190" stroke="#30363d" stroke-width="1"/>
+      <rect x="372" y="190" width="76" height="28" rx="6" fill="rgba(255,123,114,0.15)" stroke="#ff7b72" stroke-width="2"/>
+      <text x="410" y="209" text-anchor="middle" fill="#ff7b72" font-size="12" font-family="JetBrains Mono">/root</text>
+
+      <line x1="510" y1="165" x2="510" y2="190" stroke="#30363d" stroke-width="1"/>
+      <rect x="472" y="190" width="76" height="28" rx="6" fill="#21262d" stroke="#e3b341" stroke-width="1.5"/>
+      <text x="510" y="209" text-anchor="middle" fill="#e3b341" font-size="12" font-family="JetBrains Mono">/tmp</text>
+
+      <line x1="600" y1="165" x2="600" y2="190" stroke="#30363d" stroke-width="1"/>
+      <rect x="562" y="190" width="76" height="28" rx="6" fill="#21262d" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="600" y="209" text-anchor="middle" fill="#58a6ff" font-size="12" font-family="JetBrains Mono">/usr</text>
+
+      <!-- /home example -->
+      <line x1="425" y1="218" x2="425" y2="250" stroke="#30363d" stroke-width="1.5"/>
+      <line x1="370" y1="250" x2="480" y2="250" stroke="#30363d" stroke-width="1.5"/>
+      <line x1="375" y1="250" x2="375" y2="275" stroke="#30363d" stroke-width="1.5"/>
+      <line x1="475" y1="250" x2="475" y2="275" stroke="#30363d" stroke-width="1.5"/>
+      <rect x="330" y="275" width="90" height="26" rx="5" fill="#21262d" stroke="#39d353" stroke-width="1.5"/>
+      <text x="375" y="292" text-anchor="middle" fill="#39d353" font-size="11" font-family="JetBrains Mono">/home/ubuntu</text>
+      <rect x="430" y="275" width="90" height="26" rx="5" fill="#21262d" stroke="#39d353" stroke-width="1.5"/>
+      <text x="475" y="292" text-anchor="middle" fill="#39d353" font-size="11" font-family="JetBrains Mono">/home/chaiti</text>
+
+      <!-- Legend -->
+      <rect x="20" y="320" width="620" height="148" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <text x="40" y="345" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">📁 গুরুত্বপূর্ণ ফোল্ডারের কাজ:</text>
+      <text x="40" y="368" fill="#f0883e" font-size="11" font-family="JetBrains Mono">/bin</text>
+      <text x="80" y="368" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">— মূল কমান্ডগুলো (ls, cd, bash ইত্যাদি)</text>
+      <text x="40" y="388" fill="#3fb950" font-size="11" font-family="JetBrains Mono">/home</text>
+      <text x="90" y="388" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">— প্রতিটি ব্যবহারকারীর নিজস্ব ফোল্ডার</text>
+      <text x="40" y="408" fill="#58a6ff" font-size="11" font-family="JetBrains Mono">/etc</text>
+      <text x="80" y="408" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">— সিস্টেম configuration ফাইল</text>
+      <text x="40" y="428" fill="#e3b341" font-size="11" font-family="JetBrains Mono">/tmp</text>
+      <text x="80" y="428" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">— অস্থায়ী ফাইল (restart-এ মুছে যায়)</text>
+      <text x="40" y="448" fill="#ff7b72" font-size="11" font-family="JetBrains Mono">/var</text>
+      <text x="80" y="448" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">— log ফাইল সংরক্ষিত থাকে</text>
+      <text x="300" y="368" fill="#bc8cff" font-size="11" font-family="JetBrains Mono">/dev</text>
+      <text x="340" y="368" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">— Hardware device ফাইল</text>
+      <text x="300" y="388" fill="#ff7b72" font-size="11" font-family="JetBrains Mono">/root</text>
+      <text x="345" y="388" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">— Root (superuser) এর home</text>
+      <text x="300" y="408" fill="#f0883e" font-size="11" font-family="JetBrains Mono">/proc</text>
+      <text x="345" y="408" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">— চলমান process তথ্য</text>
+      <text x="300" y="428" fill="#58a6ff" font-size="11" font-family="JetBrains Mono">/usr</text>
+      <text x="340" y="428" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">— ব্যবহারকারীর অ্যাপ্লিকেশন</text>
+    </svg>
+  </div>
+
+  <h3>প্রতিটি ফোল্ডারের বিস্তারিত</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>ফোল্ডার</th><th>পুরো নাম</th><th>কী থাকে</th></tr>
+      <tr><td><code>/bin</code></td><td>Binary</td><td>মূল সিস্টেম কমান্ড যেমন <code>ls</code>, <code>cp</code>, <code>bash</code></td></tr>
+      <tr><td><code>/boot</code></td><td>Boot</td><td>সিস্টেম চালু হওয়ার জন্য প্রয়োজনীয় ফাইল</td></tr>
+      <tr><td><code>/dev</code></td><td>Device</td><td>Hardware-এর virtual representation (হার্ডডিস্ক, USB ইত্যাদি)</td></tr>
+      <tr><td><code>/etc</code></td><td>Et cetera</td><td>সিস্টেম configuration — password, network settings ইত্যাদি</td></tr>
+      <tr><td><code>/home</code></td><td>Home</td><td>প্রতিটি user-এর নিজস্ব ডেটা। <code>/home/ubuntu</code> হলো ubuntu user-এর ঘর</td></tr>
+      <tr><td><code>/lib</code></td><td>Library</td><td>প্রোগ্রাম চালাতে দরকারি shared library ফাইল</td></tr>
+      <tr><td><code>/media</code></td><td>Media</td><td>USB, CD/DVD mount হওয়ার জায়গা</td></tr>
+      <tr><td><code>/mnt</code></td><td>Mount</td><td>অস্থায়ীভাবে mount করা directory</td></tr>
+      <tr><td><code>/opt</code></td><td>Optional</td><td>তৃতীয় পক্ষের সফটওয়্যার</td></tr>
+      <tr><td><code>/proc</code></td><td>Process</td><td>চলমান প্রক্রিয়া সম্পর্কে তথ্য (virtual filesystem)</td></tr>
+      <tr><td><code>/root</code></td><td>Root Home</td><td>Root user (superuser)-এর home directory</td></tr>
+      <tr><td><code>/sbin</code></td><td>System Binary</td><td>শুধু root user ব্যবহার করতে পারে এমন কমান্ড</td></tr>
+      <tr><td><code>/tmp</code></td><td>Temporary</td><td>অস্থায়ী ফাইল — restart দিলে সব মুছে যায়</td></tr>
+      <tr><td><code>/usr</code></td><td>User</td><td>User-level অ্যাপ্লিকেশন ও লাইব্রেরি</td></tr>
+      <tr><td><code>/var</code></td><td>Variable</td><td>Log ফাইল, database, email — যা নিয়মিত পরিবর্তন হয়</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============================== SECTION 3 ============================== -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৩</span>
+    <h2 class="section-title">প্রথম কমান্ডসমূহ — Terminal ব্যবহার</h2>
+  </div>
+
+  <p>Terminal বা Command Line হলো Linux-এর সাথে কথা বলার জায়গা। এখানে text দিয়ে কমান্ড টাইপ করো, Linux সেটা বাস্তবায়ন করে।</p>
+
+  <h3>Terminal Prompt বোঝা</h3>
+  <div class="diagram">
+    <div class="diagram-title">// Terminal Prompt-এর অংশগুলো</div>
+    <svg viewBox="0 0 600 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <rect x="10" y="10" width="580" height="50" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+      <!-- Prompt text -->
+      <text x="30" y="43" fill="#3fb950" font-size="16" font-family="JetBrains Mono">ubuntu</text>
+      <text x="100" y="43" fill="#8b949e" font-size="16" font-family="JetBrains Mono">@</text>
+      <text x="115" y="43" fill="#58a6ff" font-size="16" font-family="JetBrains Mono">my-machine</text>
+      <text x="235" y="43" fill="#8b949e" font-size="16" font-family="JetBrains Mono">:</text>
+      <text x="248" y="43" fill="#e3b341" font-size="16" font-family="JetBrains Mono">~</text>
+      <text x="262" y="43" fill="#f0883e" font-size="16" font-family="JetBrains Mono">$</text>
+      <text x="283" y="43" fill="#e6edf3" font-size="16" font-family="JetBrains Mono"> _</text>
+      <!-- Labels -->
+      <text x="30" y="82" fill="#3fb950" font-size="9" font-family="Noto Sans Bengali" text-anchor="middle">ব্যবহারকারীর নাম</text>
+      <line x1="55" y1="60" x2="55" y2="72" stroke="#3fb950" stroke-width="1"/>
+      <text x="185" y="82" fill="#58a6ff" font-size="9" font-family="Noto Sans Bengali" text-anchor="middle">মেশিনের নাম</text>
+      <line x1="185" y1="60" x2="185" y2="72" stroke="#58a6ff" stroke-width="1"/>
+      <text x="255" y="82" fill="#e3b341" font-size="9" font-family="Noto Sans Bengali" text-anchor="middle">বর্তমান অবস্থান (~=home)</text>
+      <line x1="255" y1="60" x2="255" y2="72" stroke="#e3b341" stroke-width="1"/>
+      <text x="355" y="82" fill="#f0883e" font-size="9" font-family="Noto Sans Bengali" text-anchor="middle">$ = সাধারণ user, # = root</text>
+      <line x1="265" y1="60" x2="265" y2="72" stroke="#f0883e" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <h3><code>pwd</code> — আমি এখন কোথায় আছি?</h3>
+  <p><code>pwd</code> মানে <strong>Print Working Directory</strong>। এটি চালালে তোমার বর্তমান অবস্থান দেখাবে।</p>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>উদাহরণ</span></div>
+    <div class="code-body"><pre><span class="cmd">pwd</span>
+<span class="out">/home/ubuntu</span>
+
+<span class="cmt"># মানে হলো: আমি এখন /home/ubuntu ফোল্ডারে আছি</span></pre></div>
+  </div>
+
+  <h3><code>ls</code> — ফোল্ডারের ভেতরে কী আছে?</h3>
+  <p><code>ls</code> মানে <strong>List</strong>। এটি দিয়ে কোনো ফোল্ডারে কী কী আছে তা দেখা যায়।</p>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>ls কমান্ড</span></div>
+    <div class="code-body"><pre><span class="cmd">ls</span>               <span class="cmt"># বর্তমান ফোল্ডার দেখো</span>
+<span class="cmd">ls /</span>             <span class="cmt"># root ফোল্ডার দেখো</span>
+<span class="cmd">ls /usr/bin</span>      <span class="cmt"># /usr/bin ফোল্ডার দেখো</span>
+
+<span class="cmt"># অপশন সহ:</span>
+<span class="cmd">ls -a</span>            <span class="cmt"># লুকানো ফাইলসহ দেখো (. দিয়ে শুরু ফাইল)</span>
+<span class="cmd">ls -l</span>            <span class="cmt"># বিস্তারিত তথ্যসহ দেখো</span>
+<span class="cmd">ls -lh</span>           <span class="cmt"># ফাইলের সাইজ মানুষের বোঝার মতো (KB, MB)</span>
+<span class="cmd">ls -R</span>            <span class="cmt"># সব subfolderও দেখো (Recursive)</span>
+<span class="cmd">ls -la</span>           <span class="cmt"># লুকানো ফাইলসহ বিস্তারিত</span>
+
+<span class="out">total 24
+drwxr-xr-x 3 ubuntu ubuntu 4096 Oct 16 14:00 Documents
+-rw-r--r-- 1 ubuntu ubuntu  512 Oct 16 13:50 file1.txt</span></pre></div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body">
+      <div class="callout-title">. এবং .. কী?</div>
+      <div class="callout-text"><code>ls -a</code> চালালে দেখবে <strong>.</strong> এবং <strong>..</strong> আছে।<br><strong>.</strong> মানে বর্তমান ফোল্ডার নিজেই।<br><strong>..</strong> মানে parent ফোল্ডার (এক ধাপ উপরে)।<br>যেমন তুমি <code>/home/ubuntu</code>-এ থাকলে, <code>..</code> হলো <code>/home</code>।</div>
+    </div>
+  </div>
+
+  <h3><code>cd</code> — স্থান পরিবর্তন</h3>
+  <p><code>cd</code> মানে <strong>Change Directory</strong>। এদিক ওদিক যাওয়ার কমান্ড।</p>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>cd কমান্ড</span></div>
+    <div class="code-body"><pre><span class="cmd">cd /</span>              <span class="cmt"># root-এ যাও</span>
+<span class="cmd">cd /home/ubuntu</span>   <span class="cmt"># সম্পূর্ণ path দিয়ে যাও</span>
+<span class="cmd">cd ~</span>              <span class="cmt"># নিজের home-এ ফিরে যাও</span>
+<span class="cmd">cd</span>                <span class="cmt"># শুধু cd লিখলেও home-এ যাবে</span>
+<span class="cmd">cd ..</span>             <span class="cmt"># এক ধাপ উপরে যাও</span>
+<span class="cmd">cd ../..</span>          <span class="cmt"># দুই ধাপ উপরে যাও</span>
+<span class="cmd">cd Documents</span>     <span class="cmt"># বর্তমান ফোল্ডারের Documents-এ যাও</span></pre></div>
+  </div>
+
+  <h3>Absolute Path vs Relative Path</h3>
+  <div class="diagram">
+    <div class="diagram-title">// দুই ধরনের পথ</div>
+    <svg viewBox="0 0 600 180" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <!-- Absolute -->
+      <rect x="10" y="10" width="280" height="155" rx="10" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="30" y="35" fill="#58a6ff" font-size="13" font-family="JetBrains Mono" font-weight="bold">Absolute Path</text>
+      <text x="30" y="57" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">সবসময় / থেকে শুরু হয়</text>
+      <text x="30" y="78" fill="#3fb950" font-size="12" font-family="JetBrains Mono">/home/ubuntu/docs/file.txt</text>
+      <text x="30" y="105" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">✅ যেকোনো জায়গা থেকে কাজ করে</text>
+      <text x="30" y="125" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">✅ সবসময় নির্ভরযোগ্য</text>
+      <text x="30" y="150" fill="#e3b341" font-size="11" font-family="Noto Sans Bengali">যেমন: GPS coordinate</text>
+
+      <!-- Relative -->
+      <rect x="310" y="10" width="280" height="155" rx="10" fill="#0d1117" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="330" y="35" fill="#f0883e" font-size="13" font-family="JetBrains Mono" font-weight="bold">Relative Path</text>
+      <text x="330" y="57" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">বর্তমান অবস্থান থেকে</text>
+      <text x="330" y="78" fill="#3fb950" font-size="12" font-family="JetBrains Mono">./docs/file.txt</text>
+      <text x="330" y="95" fill="#3fb950" font-size="12" font-family="JetBrains Mono">../../usr/bin</text>
+      <text x="330" y="120" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">⚠️ কোথায় আছো তার উপর নির্ভরশীল</text>
+      <text x="330" y="150" fill="#e3b341" font-size="11" font-family="Noto Sans Bengali">যেমন: "৩ ব্লক বামে যাও"</text>
+    </svg>
+  </div>
+
+  <h3><code>man</code> — যেকোনো কমান্ডের সাহায্য</h3>
+  <p>কোনো কমান্ড কীভাবে ব্যবহার করতে হয় জানতে <code>man</code> ব্যবহার করো।</p>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmd">man ls</span>           <span class="cmt"># ls কমান্ডের manual দেখো</span>
+<span class="cmd">ls --help</span>        <span class="cmt"># সংক্ষিপ্ত সাহায্য দেখো</span>
+<span class="cmt"># man থেকে বের হতে q চাপো</span></pre></div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 4 ============================== -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৪</span>
+    <h2 class="section-title">Environment Variables — পরিবেশ চলক</h2>
+  </div>
+
+  <p><strong>Environment Variable</strong> হলো সিস্টেমের বিশেষ চলক (variable) যা সিস্টেমের আচরণ নিয়ন্ত্রণ করে। যেমন PATH variable বলে দেয় কোথায় কমান্ড খুঁজতে হবে।</p>
+
+  <div class="callout info">
+    <div class="callout-icon">🔑</div>
+    <div class="callout-body">
+      <div class="callout-title">গুরুত্বপূর্ণ Environment Variables</div>
+      <div class="callout-text">
+        <code>PATH</code> — কমান্ড কোথায় খুঁজবে<br>
+        <code>HOME</code> — home directory-র পথ<br>
+        <code>USER</code> — বর্তমান user-এর নাম<br>
+        <code>PWD</code> — বর্তমান directory (pwd কমান্ড এটাই দেখায়)
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>Environment Variable তৈরি ও ব্যবহার</span></div>
+    <div class="code-body"><pre><span class="cmt"># Variable তৈরি করো</span>
+<span class="kw">export</span> MY_USERNAME=<span class="str">"chaiti.das"</span>
+
+<span class="cmt"># Variable-এর মান দেখো ($ ব্যবহার করো)</span>
+<span class="cmd">echo</span> <span class="str">$MY_USERNAME</span>
+<span class="out">chaiti.das</span>
+
+<span class="cmt"># সব Environment Variable দেখো</span>
+<span class="cmd">printenv</span>
+
+<span class="cmt"># Variable মুছে ফেলো</span>
+<span class="kw">unset</span> MY_USERNAME
+
+<span class="cmt"># এরপর echo করলে কিছু দেখাবে না</span>
+<span class="cmd">echo</span> <span class="str">$MY_USERNAME</span>
+<span class="out"></span></pre></div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-icon">⚠️</div>
+    <div class="callout-body">
+      <div class="callout-title">Session বন্ধ হলে Variable মুছে যায়!</div>
+      <div class="callout-text">উপরের পদ্ধতিতে তৈরি variable শুধু বর্তমান session-এ কাজ করে। Terminal বন্ধ করলে চলে যাবে। <strong>Permanent</strong> করতে হলে <code>.bashrc</code> ফাইল সম্পাদনা করতে হবে।</div>
+    </div>
+  </div>
+
+  <h3>.bashrc ফাইল — স্থায়ী সেটিংস</h3>
+  <p><code>.bashrc</code> হলো একটি hidden configuration ফাইল (নামের শুরুতে <code>.</code> আছে তাই hidden)। প্রতিবার terminal খুললে এটি স্বয়ংক্রিয়ভাবে চালু হয়।</p>
+
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>.bashrc সম্পাদনা করা</span></div>
+    <div class="code-body"><pre><span class="cmt"># home-এ যাও</span>
+<span class="cmd">cd</span>
+
+<span class="cmt"># nano দিয়ে .bashrc খোলো</span>
+<span class="cmd">nano .bashrc</span>
+
+<span class="cmt"># ফাইলের শেষে এই লাইন যোগ করো:</span>
+<span class="kw">export</span> my_var=<span class="str">"Hello"</span>
+<span class="kw">alias</span> graphic_card=<span class="str">'lspci -vnn | egrep "VGA|3D|Display"'</span>
+
+<span class="cmt"># Ctrl+X, তারপর Y, তারপর Enter চাপো</span>
+
+<span class="cmt"># বর্তমান session-এ apply করো</span>
+<span class="cmd">source .bashrc</span></pre></div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-icon">📝</div>
+    <div class="callout-body">
+      <div class="callout-title">alias কী?</div>
+      <div class="callout-text">Alias দিয়ে দীর্ঘ কমান্ডের জন্য সংক্ষিপ্ত নাম তৈরি করা যায়। উপরের উদাহরণে <code>graphic_card</code> টাইপ করলেই সেই দীর্ঘ কমান্ডটি চলবে।</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 5 ============================== -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৫</span>
+    <h2 class="section-title">ফাইল ও ফোল্ডার তৈরি, কপি, সরানো, মুছে ফেলা</h2>
+  </div>
+
+  <h3><code>touch</code> — খালি ফাইল তৈরি</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmd">touch my_file</span>           <span class="cmt"># my_file নামে ফাইল তৈরি</span>
+<span class="cmd">touch file1 file2 file3</span>  <span class="cmt"># একসাথে তিনটি ফাইল তৈরি</span>
+<span class="cmd">touch directory1/file4</span>  <span class="cmt"># নির্দিষ্ট folder-এ ফাইল তৈরি</span>
+
+<span class="cmt"># touch দিয়ে ইতিমধ্যে থাকা ফাইলের "last modified" তারিখ আপডেট হয়</span></pre></div>
+  </div>
+
+  <h3><code>mkdir</code> — ফোল্ডার তৈরি</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmd">mkdir my_directory</span>       <span class="cmt"># folder তৈরি</span>
+<span class="cmd">mkdir -p a/b/c</span>           <span class="cmt"># nested folder তৈরি (একসাথে সব)</span>
+<span class="cmd">mkdir dir1 dir2 dir3</span>    <span class="cmt"># একসাথে তিনটি folder</span></pre></div>
+  </div>
+
+  <h3><code>rm</code> — মুছে ফেলা</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmd">rm file3</span>                 <span class="cmt"># একটি ফাইল মুছো</span>
+<span class="cmd">rm -r directory1</span>         <span class="cmt"># folder ও তার সবকিছু মুছো (-r = recursive)</span>
+<span class="cmd">rm -f file.txt</span>           <span class="cmt"># জোর করে মুছো (confirmation ছাড়া)</span>
+<span class="cmd">rm -rf folder</span>           <span class="cmt"># folder জোর করে মুছো</span></pre></div>
+  </div>
+
+  <div class="callout danger">
+    <div class="callout-icon">🚨</div>
+    <div class="callout-body">
+      <div class="callout-title">rm -rf / — কখনো চালাবে না!</div>
+      <div class="callout-text"><code>rm -rf /</code> মানে root থেকে সব মুছে ফেলো। এটি পুরো সিস্টেম ধ্বংস করে দেবে! Linux-এ Recycle Bin নেই, মুছলে চলে যায়।</div>
+    </div>
+  </div>
+
+  <h3><code>cp</code> — কপি করা</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmd">cp file1 directory2/</span>          <span class="cmt"># file1 কে directory2-এ কপি করো</span>
+<span class="cmd">cp file1 directory2/new_file1</span> <span class="cmt"># নাম বদলে কপি করো</span>
+<span class="cmd">cp -r folder1 folder2</span>         <span class="cmt"># folder সহ কপি করো (-r দিতে হবে)</span></pre></div>
+  </div>
+
+  <h3><code>mv</code> — সরানো বা নাম বদলানো</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmd">mv file2 directory2/new_file2</span> <span class="cmt"># সরাও এবং নাম পরিবর্তন করো</span>
+<span class="cmd">mv old_name.txt new_name.txt</span>  <span class="cmt"># শুধু নাম বদলাও (একই জায়গায়)</span>
+<span class="cmd">mv folder1 /home/ubuntu/</span>     <span class="cmt"># অন্য জায়গায় সরাও</span></pre></div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 6 ============================== -->
+<section class="section" id="s6">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৬</span>
+    <h2 class="section-title">ফাইল পড়া, লেখা ও সম্পাদনা</h2>
+  </div>
+
+  <h3><code>echo</code> — Text প্রিন্ট করা</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmd">echo hello world</span>          <span class="cmt"># terminal-এ hello world দেখাবে</span>
+<span class="out">hello world</span>
+
+<span class="cmd">echo hello world > file1</span>  <span class="cmt"># file1-এ লিখবে (আগের সব মুছে দেবে)</span>
+<span class="cmd">echo more text >> file2</span>   <span class="cmt"># file2-এর শেষে যোগ করবে</span>
+
+<span class="cmt"># > vs >> পার্থক্য:</span>
+<span class="cmd">echo line1 > test.txt</span>    <span class="cmt"># test.txt তে "line1" লিখবে</span>
+<span class="cmd">echo line2 > test.txt</span>    <span class="cmt"># পূর্বের "line1" মুছে "line2" লিখবে ⚠️</span>
+<span class="cmd">echo line3 >> test.txt</span>   <span class="cmt"># "line2"-এর পরে "line3" যোগ করবে ✅</span></pre></div>
+  </div>
+
+  <h3><code>cat</code> — ফাইলের সম্পূর্ণ বিষয়বস্তু দেখা</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmd">cat file1</span>                  <span class="cmt"># file1-এর সব বিষয়বস্তু দেখো</span>
+<span class="out">hello world</span>
+
+<span class="cmd">cat file1 file2</span>            <span class="cmt"># দুটো ফাইল একসাথে দেখো</span></pre></div>
+  </div>
+
+  <h3><code>head</code> ও <code>tail</code> — শুরু ও শেষ দেখা</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmd">head root_content</span>          <span class="cmt"># প্রথম ১০ লাইন দেখো</span>
+<span class="cmd">head -n 2 root_content</span>     <span class="cmt"># প্রথম ২ লাইন দেখো</span>
+<span class="cmd">tail root_content</span>          <span class="cmt"># শেষ ১০ লাইন দেখো</span>
+<span class="cmd">tail -n 3 root_content</span>     <span class="cmt"># শেষ ৩ লাইন দেখো</span>
+<span class="cmd">tail -f logfile.log</span>        <span class="cmt"># realtime-এ log দেখো (Ctrl+C দিয়ে বের হও)</span></pre></div>
+  </div>
+
+  <h3>Nano — সহজ Text Editor</h3>
+  <p>Nano হলো terminal-এর মধ্যে একটি সহজ text editor। কোনো ফাইল খুলে সরাসরি লেখা যায়।</p>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>Nano ব্যবহার</span></div>
+    <div class="code-body"><pre><span class="cmd">nano filename.txt</span>     <span class="cmt"># nano-তে ফাইল খোলো</span></pre></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Shortcut</th><th>কাজ</th></tr>
+      <tr><td><code>Ctrl + O</code></td><td>ফাইল সেভ করো (Save)</td></tr>
+      <tr><td><code>Ctrl + X</code></td><td>Nano থেকে বের হও (Exit)</td></tr>
+      <tr><td><code>Ctrl + K</code></td><td>পুরো লাইন কাটো (Cut)</td></tr>
+      <tr><td><code>Ctrl + U</code></td><td>পেস্ট করো (Paste)</td></tr>
+      <tr><td><code>Ctrl + W</code></td><td>খোঁজো (Search/Where is)</td></tr>
+      <tr><td><code>Ctrl + Y</code></td><td>পাতা উপরে যাও (Page Up)</td></tr>
+      <tr><td><code>Ctrl + V</code></td><td>পাতা নিচে যাও (Page Down)</td></tr>
+      <tr><td><code>Ctrl + _</code></td><td>নির্দিষ্ট লাইনে যাও</td></tr>
+    </table>
+  </div>
+
+  <h3>Vim — শক্তিশালী Text Editor</h3>
+  <p>Vim অনেক শক্তিশালী কিন্তু শিখতে সময় লাগে। এটির বিভিন্ন <strong>mode</strong> আছে।</p>
+  <div class="diagram">
+    <div class="diagram-title">// Vim-এর Mode পরিবর্তন</div>
+    <svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <!-- Normal Mode -->
+      <rect x="30" y="50" width="130" height="60" rx="10" fill="#21262d" stroke="#58a6ff" stroke-width="2"/>
+      <text x="95" y="77" text-anchor="middle" fill="#58a6ff" font-size="13" font-family="JetBrains Mono" font-weight="bold">Normal</text>
+      <text x="95" y="96" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">শুরুতে এখানে থাকবে</text>
+      <!-- Insert Mode -->
+      <rect x="185" y="10" width="130" height="60" rx="10" fill="#21262d" stroke="#3fb950" stroke-width="2"/>
+      <text x="250" y="37" text-anchor="middle" fill="#3fb950" font-size="13" font-family="JetBrains Mono" font-weight="bold">Insert</text>
+      <text x="250" y="56" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">লেখার mode</text>
+      <!-- Command Mode -->
+      <rect x="185" y="90" width="130" height="60" rx="10" fill="#21262d" stroke="#f0883e" stroke-width="2"/>
+      <text x="250" y="117" text-anchor="middle" fill="#f0883e" font-size="13" font-family="JetBrains Mono" font-weight="bold">Command</text>
+      <text x="250" y="136" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">:w, :q কমান্ডের mode</text>
+      <!-- Visual Mode -->
+      <rect x="340" y="50" width="130" height="60" rx="10" fill="#21262d" stroke="#bc8cff" stroke-width="2"/>
+      <text x="405" y="77" text-anchor="middle" fill="#bc8cff" font-size="13" font-family="JetBrains Mono" font-weight="bold">Visual</text>
+      <text x="405" y="96" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">select করার mode</text>
+      <!-- Arrows -->
+      <path d="M 160 65 L 183 45" stroke="#3fb950" stroke-width="1.5" fill="none"/>
+      <text x="158" y="44" fill="#3fb950" font-size="9" font-family="JetBrains Mono">i/a/o</text>
+      <path d="M 183 55 L 160 68" stroke="#ff7b72" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+      <text x="158" y="72" fill="#ff7b72" font-size="9" font-family="JetBrains Mono">Esc</text>
+      <path d="M 160 85 L 183 110" stroke="#f0883e" stroke-width="1.5" fill="none"/>
+      <text x="148" y="108" fill="#f0883e" font-size="9" font-family="JetBrains Mono">:(colon)</text>
+      <path d="M 183 115 L 160 90" stroke="#ff7b72" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+      <text x="148" y="130" fill="#ff7b72" font-size="9" font-family="JetBrains Mono">Esc</text>
+      <path d="M 160 80 L 338 80" stroke="#bc8cff" stroke-width="1.5" fill="none"/>
+      <text x="220" y="75" fill="#bc8cff" font-size="9" font-family="JetBrains Mono">v</text>
+      <path d="M 338 90 L 160 90" stroke="#ff7b72" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+      <text x="220" y="102" fill="#ff7b72" font-size="9" font-family="JetBrains Mono">Esc</text>
+    </svg>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>কমান্ড</th><th>Mode</th><th>কাজ</th></tr>
+      <tr><td><code>i</code></td><td>Normal → Insert</td><td>cursor-এর আগে লেখা শুরু করো</td></tr>
+      <tr><td><code>a</code></td><td>Normal → Insert</td><td>cursor-এর পরে লেখা শুরু করো</td></tr>
+      <tr><td><code>Esc</code></td><td>যেকোনো → Normal</td><td>Normal mode-এ ফিরে যাও</td></tr>
+      <tr><td><code>:w</code></td><td>Normal</td><td>সেভ করো</td></tr>
+      <tr><td><code>:q</code></td><td>Normal</td><td>বের হও</td></tr>
+      <tr><td><code>:wq</code></td><td>Normal</td><td>সেভ করে বের হও</td></tr>
+      <tr><td><code>:q!</code></td><td>Normal</td><td>সেভ ছাড়াই জোর করে বের হও</td></tr>
+      <tr><td><code>dd</code></td><td>Normal</td><td>পুরো লাইন মুছো</td></tr>
+      <tr><td><code>yy</code></td><td>Normal</td><td>পুরো লাইন copy করো</td></tr>
+      <tr><td><code>p</code></td><td>Normal</td><td>paste করো</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ============================== SECTION 7 ============================== -->
+<section class="section" id="s7">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৭</span>
+    <h2 class="section-title">Redirection Flows — Input/Output পুনর্নির্দেশনা</h2>
+  </div>
+
+  <p>Linux-এ প্রতিটি প্রোগ্রামের তিনটি ডিফল্ট "নল" (stream) আছে:</p>
+
+  <div class="diagram">
+    <div class="diagram-title">// তিনটি Standard Stream</div>
+    <svg viewBox="0 0 620 140" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <!-- stdin -->
+      <rect x="10" y="45" width="140" height="50" rx="8" fill="#21262d" stroke="#3fb950" stroke-width="2"/>
+      <text x="80" y="68" text-anchor="middle" fill="#3fb950" font-size="12" font-family="JetBrains Mono">stdin (0)</text>
+      <text x="80" y="86" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">Input / প্রবেশ</text>
+
+      <!-- Program -->
+      <rect x="230" y="30" width="160" height="80" rx="10" fill="#21262d" stroke="#58a6ff" stroke-width="2"/>
+      <text x="310" y="68" text-anchor="middle" fill="#58a6ff" font-size="13" font-family="JetBrains Mono">Program</text>
+      <text x="310" y="88" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">তোমার কমান্ড</text>
+
+      <!-- stdout -->
+      <rect x="470" y="10" width="140" height="50" rx="8" fill="#21262d" stroke="#58a6ff" stroke-width="2"/>
+      <text x="540" y="33" text-anchor="middle" fill="#58a6ff" font-size="12" font-family="JetBrains Mono">stdout (1)</text>
+      <text x="540" y="51" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">Normal output</text>
+
+      <!-- stderr -->
+      <rect x="470" y="80" width="140" height="50" rx="8" fill="#21262d" stroke="#ff7b72" stroke-width="2"/>
+      <text x="540" y="103" text-anchor="middle" fill="#ff7b72" font-size="12" font-family="JetBrains Mono">stderr (2)</text>
+      <text x="540" y="121" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">Error output</text>
+
+      <!-- Arrows -->
+      <path d="M 150 70 L 228 70" stroke="#3fb950" stroke-width="2" marker-end="url(#arr2)"/>
+      <path d="M 390 55 L 468 35" stroke="#58a6ff" stroke-width="2" marker-end="url(#arr2)"/>
+      <path d="M 390 85 L 468 105" stroke="#ff7b72" stroke-width="2" marker-end="url(#arr2)"/>
+      <defs>
+        <marker id="arr2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#8b949e"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+
+  <h3>Output Redirection</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>Output Redirection</span></div>
+    <div class="code-body"><pre><span class="cmt"># > : stdout কে ফাইলে পাঠাও (আগের content মুছে)</span>
+<span class="cmd">ls /</span> > root_content
+<span class="cmd">echo</span> <span class="str">"hello"</span> > myfile.txt
+
+<span class="cmt"># >> : stdout কে ফাইলে যোগ করো</span>
+<span class="cmd">echo</span> <span class="str">"world"</span> >> myfile.txt
+
+<span class="cmt"># 2> : stderr (error) কে ফাইলে পাঠাও</span>
+<span class="cmd">cat no_file</span> 2> errors.txt
+<span class="cmt"># error terminal-এ দেখাবে না, errors.txt-এ যাবে</span>
+
+<span class="cmt"># 2>> : error ফাইলে যোগ করো</span>
+<span class="cmd">cat another_no_file</span> 2>> errors.txt
+
+<span class="cmt"># stdout ও stderr একই ফাইলে</span>
+<span class="cmd">ls -l</span> > output.txt 2>&1
+<span class="cmt"># 2>&1 মানে: stderr কে stdout-এর দিকে পাঠাও</span>
+
+<span class="cmt"># দুটো আলাদা ফাইলে</span>
+<span class="cmd">cat test</span> 1>output.txt 2>errors.txt</pre></div>
+  </div>
+
+  <h3>Input Redirection</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># < : ফাইল থেকে input নাও</span>
+<span class="cmd">head</span> < root_content
+<span class="cmt"># head root_content-এর মতোই কাজ করে</span>
+
+<span class="cmt"># ব্যবহারিক উদাহরণ: Python script-এ input দাও</span>
+<span class="cmd">python3 name.py</span> < firstname.txt
+<span class="cmt"># firstname.txt-এর বিষয়বস্তু keyboard input হিসেবে ব্যবহার হবে</span></pre></div>
+  </div>
+
+  <h3>Pipe Operator | — সবচেয়ে শক্তিশালী!</h3>
+  <p>Pipe (<code>|</code>) দিয়ে একটি কমান্ডের output সরাসরি অন্য কমান্ডের input হিসেবে দেওয়া যায়।</p>
+
+  <div class="diagram">
+    <div class="diagram-title">// Pipe Operator কীভাবে কাজ করে</div>
+    <svg viewBox="0 0 600 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <rect x="10" y="30" width="120" height="40" rx="8" fill="#21262d" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="70" y="55" text-anchor="middle" fill="#3fb950" font-size="12" font-family="JetBrains Mono">ls /</text>
+      <path d="M 130 50 L 195 50" stroke="#58a6ff" stroke-width="2"/>
+      <text x="162" y="43" fill="#58a6ff" font-size="12" font-family="JetBrains Mono">|</text>
+      <rect x="195" y="30" width="140" height="40" rx="8" fill="#21262d" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="265" y="55" text-anchor="middle" fill="#f0883e" font-size="12" font-family="JetBrains Mono">grep bin</text>
+      <path d="M 335 50 L 395 50" stroke="#58a6ff" stroke-width="2"/>
+      <text x="360" y="43" fill="#58a6ff" font-size="12" font-family="JetBrains Mono">|</text>
+      <rect x="395" y="30" width="140" height="40" rx="8" fill="#21262d" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="465" y="55" text-anchor="middle" fill="#bc8cff" font-size="12" font-family="JetBrains Mono">head -n 1</text>
+      <path d="M 535 50 L 590 50" stroke="#e3b341" stroke-width="2"/>
+      <rect x="556" y="35" width="36" height="30" rx="5" fill="rgba(227,179,65,0.1)" stroke="#e3b341" stroke-width="1"/>
+      <text x="574" y="54" text-anchor="middle" fill="#e3b341" font-size="9" font-family="Noto Sans Bengali">output</text>
+      <!-- Labels -->
+      <text x="70" y="85" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Noto Sans Bengali">/ এর সব দেখাও</text>
+      <text x="265" y="85" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Noto Sans Bengali">"bin" যুক্ত লাইন রাখো</text>
+      <text x="465" y="85" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Noto Sans Bengali">শুধু ১ম লাইন দেখাও</text>
+    </svg>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>Pipe উদাহরণ</span></div>
+    <div class="code-body"><pre><span class="cmt"># ls-এর output grep-এ দাও, grep "bin" খুঁজবে</span>
+<span class="cmd">ls /</span> | <span class="cmd">grep</span> bin
+<span class="out">bin
+sbin</span>
+
+<span class="cmt"># তিনটি কমান্ড chain করা</span>
+<span class="cmd">ls /</span> | <span class="cmd">grep</span> bin | <span class="cmd">head -n 1</span>
+<span class="out">bin</span>
+
+<span class="cmt"># file-এর কতটি লাইন আছে গোনো</span>
+<span class="cmd">cat file.txt</span> | <span class="cmd">wc -l</span>
+
+<span class="cmt"># চলমান process-এ কিছু খোঁজো</span>
+<span class="cmd">ps aux</span> | <span class="cmd">grep</span> python</pre></div>
+  </div>
+
+  <h3>&& Operator — ক্রমানুসারে কমান্ড</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># && মানে: আগেরটা সফল হলে পরেরটা চালাও</span>
+<span class="cmd">ls -l</span> && <span class="cmd">python3 --version</span> && <span class="cmd">mkdir Test</span>
+<span class="cmt"># যদি ls -l ব্যর্থ হয়, বাকি দুটো চলবে না</span></pre></div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 8 ============================== -->
+<section class="section" id="s8">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৮</span>
+    <h2 class="section-title">Users ও Rights — ব্যবহারকারী ও অনুমতি</h2>
+  </div>
+
+  <p>Linux একটি <strong>multi-user</strong> সিস্টেম — একই সময়ে অনেকে ব্যবহার করতে পারে। তাই নিরাপত্তার জন্য প্রতিটি ফাইলের মালিক ও অনুমতি ঠিক করা থাকে।</p>
+
+  <h3>তিন ধরনের মালিকানা</h3>
+  <div class="perm-grid">
+    <div class="perm-card">
+      <div class="perm-icon">👤</div>
+      <div class="perm-name">User (u)</div>
+      <div class="perm-desc">ফাইলের মালিক — যে তৈরি করেছে সে</div>
+    </div>
+    <div class="perm-card">
+      <div class="perm-icon">👥</div>
+      <div class="perm-name">Group (g)</div>
+      <div class="perm-desc">একটি গোষ্ঠীর সদস্যরা একই অনুমতি পায়</div>
+    </div>
+    <div class="perm-card">
+      <div class="perm-icon">🌍</div>
+      <div class="perm-name">Others (o)</div>
+      <div class="perm-desc">বাকি সবাই — সব বাইরের লোক</div>
+    </div>
+  </div>
+
+  <h3>তিন ধরনের অনুমতি</h3>
+  <div class="perm-grid">
+    <div class="perm-card">
+      <div class="perm-icon">📖</div>
+      <div class="perm-name">Read (r = 4)</div>
+      <div class="perm-desc">ফাইল পড়তে পারবে, ফোল্ডারের তালিকা দেখতে পারবে</div>
+    </div>
+    <div class="perm-card">
+      <div class="perm-icon">✏️</div>
+      <div class="perm-name">Write (w = 2)</div>
+      <div class="perm-desc">ফাইল পরিবর্তন করতে পারবে, ফোল্ডারে ফাইল যোগ/বাদ দিতে পারবে</div>
+    </div>
+    <div class="perm-card">
+      <div class="perm-icon">▶️</div>
+      <div class="perm-name">Execute (x = 1)</div>
+      <div class="perm-desc">প্রোগ্রাম চালাতে পারবে, ফোল্ডারে প্রবেশ করতে পারবে</div>
+    </div>
+  </div>
+
+  <h3><code>ls -l</code> — Permission পড়া</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmd">ls -l</span>
+<span class="out">-rw-rw-r-- 1 ubuntu ubuntu 7 Oct 16 14:23 firstname</span></pre></div>
+  </div>
+
+  <div class="diagram">
+    <div class="diagram-title">// Permission String বোঝা</div>
+    <svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <!-- Permission string display -->
+      <text x="30" y="50" fill="#e6edf3" font-size="22" font-family="JetBrains Mono" font-weight="bold">-rw-rw-r--</text>
+
+      <!-- Brackets/highlights -->
+      <rect x="28" y="28" width="16" height="30" rx="3" fill="rgba(188,140,255,0.2)" stroke="#bc8cff" stroke-width="1"/>
+      <rect x="44" y="28" width="48" height="30" rx="3" fill="rgba(88,166,255,0.2)" stroke="#58a6ff" stroke-width="1"/>
+      <rect x="92" y="28" width="48" height="30" rx="3" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1"/>
+      <rect x="140" y="28" width="48" height="30" rx="3" fill="rgba(240,136,62,0.2)" stroke="#f0883e" stroke-width="1"/>
+
+      <!-- Labels with lines -->
+      <line x1="36" y1="58" x2="36" y2="90" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="36" y="110" text-anchor="middle" fill="#bc8cff" font-size="11" font-family="Noto Sans Bengali">ধরন</text>
+      <text x="36" y="127" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">- = ফাইল</text>
+      <text x="36" y="143" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">d = folder</text>
+      <text x="36" y="159" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">l = link</text>
+
+      <line x1="68" y1="58" x2="68" y2="90" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="68" y="110" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="Noto Sans Bengali">rw-</text>
+      <text x="68" y="130" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">User এর</text>
+      <text x="68" y="147" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">অনুমতি</text>
+      <text x="68" y="164" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">r+w, no execute</text>
+
+      <line x1="116" y1="58" x2="116" y2="90" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="116" y="110" text-anchor="middle" fill="#3fb950" font-size="11" font-family="Noto Sans Bengali">rw-</text>
+      <text x="116" y="130" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">Group এর</text>
+      <text x="116" y="147" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">অনুমতি</text>
+
+      <line x1="164" y1="58" x2="164" y2="90" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="164" y="110" text-anchor="middle" fill="#f0883e" font-size="11" font-family="Noto Sans Bengali">r--</text>
+      <text x="164" y="130" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">Others এর</text>
+      <text x="164" y="147" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">অনুমতি</text>
+      <text x="164" y="164" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">শুধু পড়তে পারবে</text>
+
+      <!-- Number mapping -->
+      <rect x="310" y="10" width="290" height="180" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <text x="325" y="38" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">সংখ্যার মানে:</text>
+      <text x="325" y="60" fill="#e3b341" font-size="12" font-family="JetBrains Mono">0 = --- (কোনো অনুমতি নেই)</text>
+      <text x="325" y="80" fill="#3fb950" font-size="12" font-family="JetBrains Mono">1 = --x (execute মাত্র)</text>
+      <text x="325" y="100" fill="#3fb950" font-size="12" font-family="JetBrains Mono">2 = -w- (write মাত্র)</text>
+      <text x="325" y="120" fill="#3fb950" font-size="12" font-family="JetBrains Mono">4 = r-- (read মাত্র)</text>
+      <text x="325" y="140" fill="#58a6ff" font-size="12" font-family="JetBrains Mono">6 = rw- (r+w)</text>
+      <text x="325" y="160" fill="#58a6ff" font-size="12" font-family="JetBrains Mono">7 = rwx (সব অনুমতি)</text>
+      <text x="325" y="180" fill="#bc8cff" font-size="11" font-family="Noto Sans Bengali">777 = সবাই সব করতে পারবে</text>
+    </svg>
+  </div>
+
+  <h3><code>chmod</code> — Permission পরিবর্তন</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>chmod ব্যবহার</span></div>
+    <div class="code-body"><pre><span class="cmt"># সংখ্যা পদ্ধতিতে:</span>
+<span class="cmd">chmod 777 file</span>    <span class="cmt"># সবাইকে সব অনুমতি দাও</span>
+<span class="cmd">chmod 644 file</span>    <span class="cmt"># user=rw, group=r, others=r</span>
+<span class="cmd">chmod 755 file</span>    <span class="cmt"># user=rwx, group=rx, others=rx</span>
+
+<span class="cmt"># অক্ষর পদ্ধতিতে:</span>
+<span class="cmd">chmod +x script.sh</span>    <span class="cmt"># সবাইকে execute অনুমতি যোগ করো</span>
+<span class="cmd">chmod u+x script.sh</span>   <span class="cmt"># শুধু user-কে execute অনুমতি যোগ করো</span>
+<span class="cmd">chmod a+rwx file</span>      <span class="cmt"># a=all, সবাইকে সব অনুমতি</span>
+<span class="cmd">chmod g-w file</span>        <span class="cmt"># group থেকে write অনুমতি নাও</span>
+<span class="cmd">chmod o-r file</span>        <span class="cmt"># others থেকে read অনুমতি নাও</span>
+
+<span class="cmt"># u=user, g=group, o=others, a=all</span>
+<span class="cmt"># + দিয়ে যোগ করো, - দিয়ে নাও</span></pre></div>
+  </div>
+
+  <h3>Superuser (Root) ও sudo</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># Root হিসেবে login করো ($ থেকে # হয়ে যাবে)</span>
+<span class="cmd">sudo su</span>
+
+<span class="cmt"># Root থেকে বের হও</span>
+<span class="cmd">exit</span>
+
+<span class="cmt"># একটি কমান্ড root হিসেবে চালাও</span>
+<span class="cmd">sudo apt install htop</span>
+
+<span class="cmt"># Root-এ থাকলে home directory /root হয়</span></pre></div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 9 ============================== -->
+<section class="section" id="s9">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০৯</span>
+    <h2 class="section-title">Shell Script ও Bash Programming</h2>
+  </div>
+
+  <p>Bash Script হলো অনেকগুলো কমান্ড একটি ফাইলে সাজিয়ে রাখা যাতে একসাথে চালানো যায়।</p>
+
+  <h3>প্রথম Script তৈরি</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>script.sh</span></div>
+    <div class="code-body"><pre><span class="cmt">#!/bin/bash</span>
+<span class="cmt"># প্রথম লাইনে shebang — কোন shell ব্যবহার করবে বলছে</span>
+<span class="cmt"># এটা না দিলে script চলবে না</span>
+
+<span class="cmd">ls /</span>
+<span class="cmd">echo</span> <span class="str">"script চলে গেছে!"</span></pre></div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>Script চালানো</span></div>
+    <div class="code-body"><pre><span class="cmt"># পদ্ধতি ১: bash দিয়ে চালাও</span>
+<span class="cmd">bash script.sh</span>
+
+<span class="cmt"># পদ্ধতি ২: execute permission দিয়ে চালাও</span>
+<span class="cmd">chmod +x script.sh</span>
+<span class="cmd">./script.sh</span></pre></div>
+  </div>
+
+  <h3>Variable (চলক) তৈরি ও ব্যবহার</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># Variable তৈরি করো (= এর দুই পাশে কোনো space নেই!)</span>
+my_variable=hello
+name=<span class="str">"Chaiti Das"</span>
+
+<span class="cmt"># Variable ব্যবহার করো ($ ব্যবহার করো)</span>
+<span class="cmd">echo</span> <span class="str">$my_variable</span>
+<span class="out">hello</span>
+
+<span class="cmd">echo</span> <span class="str">$name</span>
+<span class="out">Chaiti Das</span>
+
+<span class="cmt"># সাবধান! echo my_variable ($ ছাড়া) লিখলে "my_variable" লেখাই দেখাবে</span>
+<span class="cmd">echo</span> my_variable
+<span class="out">my_variable</span>  <span class="cmt"># ভুল! $ ব্যবহার করতে ভুলে গেছো</span></pre></div>
+  </div>
+
+  <h3>Quotation Mark-এর পার্থক্য</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre>my_variable=<span class="str">"hello world"</span>
+
+<span class="cmt"># Single quote ' — হুবহু যা লেখো তাই দেখায়</span>
+<span class="cmd">echo</span> <span class="str">'The value is $my_variable'</span>
+<span class="out">The value is $my_variable</span>    <span class="cmt"># variable expand হয় না</span>
+
+<span class="cmt"># Double quote " — variable expand হয়</span>
+<span class="cmd">echo</span> <span class="str">"The value is $my_variable"</span>
+<span class="out">The value is hello world</span>    <span class="cmt"># variable-এর মান দেখায়</span>
+
+<span class="cmt"># Backtick ` — কমান্ডের result variable-এ রাখো</span>
+my_files=<span class="str">`ls -l`</span>
+<span class="cmd">echo</span> <span class="str">$my_files</span></pre></div>
+  </div>
+
+  <h3>Mathematical Operations</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="kw">let</span> <span class="str">"a=10"</span>
+<span class="kw">let</span> <span class="str">"b=3"</span>
+<span class="kw">let</span> <span class="str">"sum = a + b"</span>
+<span class="kw">let</span> <span class="str">"product = a * b"</span>
+<span class="kw">let</span> <span class="str">"quotient = a / b"</span>
+<span class="kw">let</span> <span class="str">"remainder = a % b"</span>
+<span class="kw">let</span> <span class="str">"power = a ** 2"</span>
+
+<span class="cmd">echo</span> <span class="str">$sum $product $quotient $remainder $power</span>
+<span class="out">13 30 3 1 100</span></pre></div>
+  </div>
+
+  <h3>Array (তালিকা)</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># Array তৈরি করো</span>
+my_array=(apple banana cherry)
+
+<span class="cmt"># নির্দিষ্ট element পাও (index 0 থেকে শুরু)</span>
+<span class="cmd">echo</span> <span class="str">${my_array[0]}</span>    <span class="cmt"># apple</span>
+<span class="cmd">echo</span> <span class="str">${my_array[1]}</span>    <span class="cmt"># banana</span>
+
+<span class="cmt"># সব element দেখো</span>
+<span class="cmd">echo</span> <span class="str">${my_array[*]}</span>    <span class="cmt"># apple banana cherry</span>
+
+<span class="cmt"># কতটি element আছে</span>
+<span class="cmd">echo</span> <span class="str">${#my_array[*]}</span>   <span class="cmt"># 3</span>
+
+<span class="cmt"># কোন index-গুলো আছে</span>
+<span class="cmd">echo</span> <span class="str">${!my_array[*]}</span>   <span class="cmt"># 0 1 2</span>
+
+<span class="cmt"># নতুন মান দাও</span>
+my_array[0]=mango
+<span class="cmd">echo</span> <span class="str">${my_array[*]}</span>    <span class="cmt"># mango banana cherry</span></pre></div>
+  </div>
+
+  <h3>If-Else — শর্ত পরীক্ষা</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>if-then-elif-else-fi</span></div>
+    <div class="code-body"><pre>firstname=<span class="str">"Chaiti"</span>
+
+<span class="kw">if</span> [ <span class="str">$firstname</span> = <span class="str">"Daniel"</span> ]
+<span class="kw">then</span>
+    <span class="cmd">echo</span> <span class="str">"Hi Daniel!"</span>
+<span class="kw">elif</span> [ <span class="str">$firstname</span> = <span class="str">"Chaiti"</span> ]
+<span class="kw">then</span>
+    <span class="cmd">echo</span> <span class="str">"নমস্কার Chaiti!"</span>
+<span class="kw">else</span>
+    <span class="cmd">echo</span> <span class="str">"Hello $firstname!"</span>
+<span class="kw">fi</span>
+
+<span class="out">নমস্কার Chaiti!</span></pre></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>Condition</th><th>মানে</th></tr>
+      <tr><td><code>$a = $b</code></td><td>text সমান কিনা</td></tr>
+      <tr><td><code>$a != $b</code></td><td>text অসমান</td></tr>
+      <tr><td><code>-z $a</code></td><td>খালি string কিনা</td></tr>
+      <tr><td><code>-n $a</code></td><td>খালি নয়</td></tr>
+      <tr><td><code>$a -eq $b</code></td><td>সংখ্যা সমান</td></tr>
+      <tr><td><code>$a -ne $b</code></td><td>সংখ্যা অসমান</td></tr>
+      <tr><td><code>$a -gt $b</code></td><td>a > b</td></tr>
+      <tr><td><code>$a -lt $b</code></td><td>a &lt; b</td></tr>
+      <tr><td><code>$a -ge $b</code></td><td>a >= b</td></tr>
+      <tr><td><code>$a -le $b</code></td><td>a &lt;= b</td></tr>
+    </table>
+  </div>
+
+  <h3>While Loop</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="kw">let</span> i=0
+<span class="kw">while</span> [ <span class="str">$i</span> -lt 5 ]    <span class="cmt"># i যতক্ষণ 5 এর কম</span>
+<span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="str">"i এখন: $i"</span>
+    <span class="kw">let</span> <span class="str">"i=i+1"</span>
+<span class="kw">done</span>
+<span class="out">i এখন: 0
+i এখন: 1
+i এখন: 2
+i এখন: 3
+i এখন: 4</span></pre></div>
+  </div>
+
+  <h3>For Loop</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># তালিকার উপর দিয়ে loop</span>
+<span class="kw">for</span> item <span class="kw">in</span> apple banana cherry
+<span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="str">"ফল: $item"</span>
+<span class="kw">done</span>
+
+<span class="cmt"># seq দিয়ে সংখ্যার উপর loop</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="str">$(seq 1 5)</span>
+<span class="kw">do</span>
+    <span class="cmd">echo</span> <span class="str">"সংখ্যা: $i"</span>
+<span class="kw">done</span>
+
+<span class="cmt"># seq 3 22 = 3 থেকে 22 পর্যন্ত সংখ্যার ক্রম</span>
+<span class="cmd">seq 3 22</span>
+<span class="out">3
+4
+5
+... (22 পর্যন্ত)</span></pre></div>
+  </div>
+
+  <h3>Function</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># Function সংজ্ঞায়িত করার দুটো পদ্ধতি:</span>
+
+<span class="cmt"># পদ্ধতি ১</span>
+greet () {
+    <span class="cmd">echo</span> <span class="str">"প্রথম argument: $1"</span>
+    <span class="cmd">echo</span> <span class="str">"দ্বিতীয় argument: $2"</span>
+}
+
+<span class="cmt"># পদ্ধতি ২</span>
+<span class="kw">function</span> greet {
+    <span class="cmd">echo</span> <span class="str">"নমস্কার $1! তোমার বয়স $2।"</span>
+}
+
+<span class="cmt"># Function ডাকো</span>
+greet <span class="str">"Chaiti"</span> <span class="str">"25"</span>
+<span class="out">নমস্কার Chaiti! তোমার বয়স 25।</span>
+
+<span class="cmt"># $1 = প্রথম argument, $2 = দ্বিতীয়, $0 = script-এর নাম</span></pre></div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 10 ============================== -->
+<section class="section" id="s10">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ১০</span>
+    <h2 class="section-title">Process — প্রক্রিয়া ব্যবস্থাপনা</h2>
+  </div>
+
+  <p>প্রতিটি চলমান প্রোগ্রাম একটি <strong>Process</strong>। Linux-এ একসাথে অনেক process চলতে পারে।</p>
+
+  <div class="diagram">
+    <div class="diagram-title">// Process-এর দুই প্রকার</div>
+    <svg viewBox="0 0 580 130" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <rect x="10" y="10" width="265" height="110" rx="10" fill="#0d1117" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="142" y="38" text-anchor="middle" fill="#58a6ff" font-size="13" font-family="Noto Sans Bengali" font-weight="bold">🖥️ Foreground Process</text>
+      <text x="142" y="60" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">Terminal দখল করে রাখে</text>
+      <text x="142" y="78" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">শেষ না হওয়া পর্যন্ত</text>
+      <text x="142" y="96" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">অন্য কমান্ড চলে না</text>
+      <text x="142" y="114" text-anchor="middle" fill="#e3b341" font-size="10" font-family="Noto Sans Bengali">যেমন: nano, vim, python3 script.py</text>
+
+      <rect x="305" y="10" width="265" height="110" rx="10" fill="#0d1117" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="437" y="38" text-anchor="middle" fill="#3fb950" font-size="13" font-family="Noto Sans Bengali" font-weight="bold">⚙️ Background Process</text>
+      <text x="437" y="60" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">Terminal মুক্ত রাখে</text>
+      <text x="437" y="78" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">লুকিয়ে চলতে থাকে</text>
+      <text x="437" y="96" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Noto Sans Bengali">অন্য কাজও করা যায়</text>
+      <text x="437" y="114" text-anchor="middle" fill="#e3b341" font-size="10" font-family="Noto Sans Bengali">যেমন: antivirus, web server</text>
+    </svg>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>Process Control কমান্ড</span></div>
+    <div class="code-body"><pre><span class="cmt"># Background-এ চালাও (& যোগ করো শেষে)</span>
+<span class="cmd">python3 script.py &</span>
+<span class="out">[1] 12345</span>    <span class="cmt"># [job number] PID</span>
+
+<span class="cmt"># Foreground process pause করো</span>
+<span class="cmt"># Ctrl + Z চাপো</span>
+<span class="out">[1]+ Stopped python3 script.py</span>
+
+<span class="cmt"># Paused process আবার foreground-এ আনো</span>
+<span class="cmd">fg</span>
+
+<span class="cmt"># Paused process background-এ চালাও</span>
+<span class="cmd">bg</span>
+
+<span class="cmt"># চলমান processes দেখো</span>
+<span class="cmd">ps aux</span>         <span class="cmt"># সব process</span>
+<span class="cmd">ps ux</span>          <span class="cmt"># তোমার user-এর process</span>
+
+<span class="cmt"># Interactive process viewer</span>
+<span class="cmd">htop</span>            <span class="cmt"># q দিয়ে বের হও</span>
+
+<span class="cmt"># Process-এর PID খোঁজো</span>
+<span class="cmd">pidof python3</span>
+
+<span class="cmt"># Process বন্ধ করো</span>
+<span class="cmd">kill 12345</span>     <span class="cmt"># PID দিয়ে বন্ধ করো</span>
+<span class="cmd">kill -9 12345</span>  <span class="cmt"># জোর করে বন্ধ করো</span></pre></div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-icon">🆔</div>
+    <div class="callout-body">
+      <div class="callout-title">PID কী?</div>
+      <div class="callout-text">PID = Process ID। প্রতিটি process-এর একটি অনন্য সংখ্যা। এই সংখ্যা দিয়ে process চিহ্নিত করা ও নিয়ন্ত্রণ করা যায়।</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 11 ============================== -->
+<section class="section" id="s11">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ১১</span>
+    <h2 class="section-title">Crontab — স্বয়ংক্রিয় কাজের সময়সূচী</h2>
+  </div>
+
+  <p>Cron = গ্রিক "Chronos" (সময়)। Crontab দিয়ে নির্দিষ্ট সময়ে স্বয়ংক্রিয়ভাবে কমান্ড চালানো যায়।</p>
+
+  <h3>Cron Job Syntax</h3>
+  <div class="diagram">
+    <div class="diagram-title">// Cron Job কাঠামো</div>
+    <svg viewBox="0 0 620 175" xmlns="http://www.w3.org/2000/svg" width="100%" height="auto">
+      <!-- Main cron string -->
+      <rect x="10" y="10" width="600" height="50" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+      <text x="30" y="43" fill="#e3b341" font-size="22" font-family="JetBrains Mono" font-weight="bold">*</text>
+      <text x="70" y="43" fill="#3fb950" font-size="22" font-family="JetBrains Mono" font-weight="bold">*</text>
+      <text x="110" y="43" fill="#58a6ff" font-size="22" font-family="JetBrains Mono" font-weight="bold">*</text>
+      <text x="150" y="43" fill="#f0883e" font-size="22" font-family="JetBrains Mono" font-weight="bold">*</text>
+      <text x="190" y="43" fill="#bc8cff" font-size="22" font-family="JetBrains Mono" font-weight="bold">*</text>
+      <text x="230" y="43" fill="#8b949e" font-size="18" font-family="JetBrains Mono"> command/script</text>
+
+      <!-- Labels below -->
+      <line x1="40" y1="60" x2="40" y2="85" stroke="#e3b341" stroke-width="1.5"/>
+      <text x="40" y="100" text-anchor="middle" fill="#e3b341" font-size="10" font-family="Noto Sans Bengali" font-weight="bold">মিনিট</text>
+      <text x="40" y="116" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Noto Sans Bengali">0-59</text>
+
+      <line x1="80" y1="60" x2="80" y2="85" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="80" y="100" text-anchor="middle" fill="#3fb950" font-size="10" font-family="Noto Sans Bengali" font-weight="bold">ঘণ্টা</text>
+      <text x="80" y="116" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Noto Sans Bengali">0-23</text>
+
+      <line x1="120" y1="60" x2="120" y2="85" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="120" y="100" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="Noto Sans Bengali" font-weight="bold">মাসের দিন</text>
+      <text x="120" y="116" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Noto Sans Bengali">1-31</text>
+
+      <line x1="160" y1="60" x2="160" y2="85" stroke="#f0883e" stroke-width="1.5"/>
+      <text x="160" y="100" text-anchor="middle" fill="#f0883e" font-size="10" font-family="Noto Sans Bengali" font-weight="bold">মাস</text>
+      <text x="160" y="116" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Noto Sans Bengali">1-12</text>
+
+      <line x1="200" y1="60" x2="200" y2="85" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="200" y="100" text-anchor="middle" fill="#bc8cff" font-size="10" font-family="Noto Sans Bengali" font-weight="bold">সপ্তাহের দিন</text>
+      <text x="200" y="116" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Noto Sans Bengali">0=রবি, 6=শনি</text>
+
+      <!-- Special symbols -->
+      <rect x="10" y="128" width="600" height="40" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+      <text x="30" y="148" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">বিশেষ চিহ্ন:</text>
+      <text x="110" y="148" fill="#e3b341" font-size="12" font-family="JetBrains Mono">*</text><text x="122" y="148" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">=সব মান</text>
+      <text x="210" y="148" fill="#e3b341" font-size="12" font-family="JetBrains Mono">-</text><text x="222" y="148" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">=পরিসর (1-5)</text>
+      <text x="315" y="148" fill="#e3b341" font-size="12" font-family="JetBrains Mono">,</text><text x="325" y="148" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">=তালিকা (1,3,5)</text>
+      <text x="430" y="148" fill="#e3b341" font-size="12" font-family="JetBrains Mono">/</text><text x="442" y="148" fill="#8b949e" font-size="10" font-family="Noto Sans Bengali">=ধাপ (*/5=প্রতি 5 ধাপে)</text>
+    </svg>
+  </div>
+
+  <h3>উদাহরণ সমূহ</h3>
+  <div class="code-block">
+    <div class="code-header"><span>crontab</span><span>উদাহরণ</span></div>
+    <div class="code-body"><pre><span class="cmt"># প্রতিদিন ভোর ৫:১৫ তে চালাও</span>
+<span class="num">15 5</span> * * * /home/ubuntu/script.sh
+
+<span class="cmt"># প্রতি মাসের ২ তারিখ ভোর ৫:১৫ তে</span>
+<span class="num">15 5 2</span> * * /home/ubuntu/script.sh
+
+<span class="cmt"># প্রতি ৫ ঘণ্টায়</span>
+<span class="num">0 */5</span> * * * /home/ubuntu/script.sh
+
+<span class="cmt"># জানুয়ারি ও ফেব্রুয়ারিতে সোম ও বুধবার মধ্যরাতে</span>
+<span class="num">0 0</span> * jan,feb mon,wed /home/ubuntu/script.sh
+
+<span class="cmt"># প্রতি মিনিটে</span>
+<span class="num">*/1</span> * * * * /home/ubuntu/script.sh
+
+<span class="cmt"># প্রতি রাত ১১:৩০ তে</span>
+<span class="num">30 23</span> * * * /home/ubuntu/backup.sh</pre></div>
+  </div>
+
+  <h3>Crontab ব্যবহার</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmd">crontab -e</span>    <span class="cmt"># crontab সম্পাদনা করো</span>
+<span class="cmd">crontab -l</span>    <span class="cmt"># বর্তমান crontab দেখো</span>
+<span class="cmd">crontab -r</span>    <span class="cmt"># crontab মুছে ফেলো</span>
+<span class="cmd">crontab -u username -e</span>   <span class="cmt"># অন্য user-এর crontab সম্পাদনা</span></pre></div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-icon">⚠️</div>
+    <div class="callout-body">
+      <div class="callout-title">Cron Job-এ Absolute Path ব্যবহার করো!</div>
+      <div class="callout-text">Cron Job-এ সবসময় ফাইলের সম্পূর্ণ পথ দাও। যেমন <code>/home/ubuntu/script.sh</code>, শুধু <code>script.sh</code> নয়।</div>
+    </div>
+  </div>
+
+  <h3>ব্যবহারিক উদাহরণ</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>test.sh</span></div>
+    <div class="code-body"><pre><span class="cmt">#!/bin/bash</span>
+<span class="cmd">echo</span> <span class="str">"Cron চলেছে"</span> >> /home/ubuntu/cron_log.txt
+
+<span class="cmt"># script-কে executable করো</span>
+<span class="cmd">chmod +x ~/test.sh</span>
+
+<span class="cmt"># crontab-এ যোগ করো (প্রতি মিনিটে)</span>
+<span class="cmd">crontab -e</span>
+<span class="cmt"># এই লাইন যোগ করো:</span>
+<span class="num">*/1</span> * * * * /home/ubuntu/test.sh
+
+<span class="cmt"># কয়েক মিনিট পর দেখো:</span>
+<span class="cmd">cat /home/ubuntu/cron_log.txt</span>
+<span class="out">Cron চলেছে
+Cron চলেছে
+Cron চলেছে</span></pre></div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 12 ============================== -->
+<section class="section" id="s12">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ১২</span>
+    <h2 class="section-title">JQ — JSON ডেটা প্রক্রিয়াকরণ</h2>
+  </div>
+
+  <p>JQ হলো command line-এ JSON data প্রক্রিয়া করার শক্তিশালী টুল। Data Engineering-এ খুবই ব্যবহৃত।</p>
+
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>JQ ইনস্টল ও ডেটা নামানো</span></div>
+    <div class="code-body"><pre><span class="cmt"># JQ ইনস্টল করো</span>
+<span class="cmd">sudo apt-get update</span>
+<span class="cmd">sudo apt install jq</span>
+
+<span class="cmt"># Star Wars চরিত্রের JSON নামাও</span>
+<span class="cmd">wget https://dst-de.s3.eu-west-3.amazonaws.com/bash_fr/people.json</span></pre></div>
+  </div>
+
+  <h3>Filter — নির্দিষ্ট তথ্য বের করা</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># পুরো JSON সুন্দরভাবে দেখাও</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> .
+
+<span class="cmt"># সব নাম বের করো</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> <span class="str">'.[].name'</span>
+<span class="out">"Luke Skywalker"
+"C-3PO"
+"R2-D2"</span>
+
+<span class="cmt"># প্রথম চরিত্রের নাম</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> <span class="str">'.[0].name'</span>
+<span class="out">"Luke Skywalker"</span>
+
+<span class="cmt"># জন্ম সাল বের করো (pipe দিয়ে)</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> <span class="str">'.[] | .birth_year'</span>
+
+<span class="cmt"># একসাথে নাম ও উচ্চতা (comma দিয়ে)</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> <span class="str">'.[].name, .[].height'</span>
+
+<span class="cmt"># প্রথম ৫ জন</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> <span class="str">'.[0:5]'</span>
+
+<span class="cmt"># Array তৈরি করো</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> .[] | <span class="cmd">jq</span> <span class="str">'[.name, .birth_year, .height]'</span>
+
+<span class="cmt"># Object তৈরি করো</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> <span class="str">'.[] | {name, height}'</span></pre></div>
+  </div>
+
+  <h3>JQ Operators ও Functions</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre><span class="cmt"># যোগ করা (+)</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> <span class="str">'.[0].name + .[1].name'</span>
+<span class="out">"Luke SkywalkerC-3PO"</span>  <span class="cmt"># string concatenation</span>
+
+<span class="cmt"># বাদ দেওয়া (-) — array থেকে element সরাও</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> <span class="str">'.[0].films - ["url1", "url2"]'</span>
+
+<span class="cmt"># গুণ করা (*)</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> <span class="str">'.[0].name * 3'</span>
+<span class="out">"Luke SkywalkerLuke SkywalkerLuke Skywalker"</span>
+
+<span class="cmt"># ভাগ করা (/) — string ভাগ করো</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> <span class="str">'.[0].name / "e"'</span>
+<span class="out">["Luk", "Skywalk", "r"]</span>  <span class="cmt"># "e" দিয়ে ভাগ</span>
+
+<span class="cmt"># group_by — গোষ্ঠীবদ্ধ করো</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> <span class="str">'group_by(.eye_color)'</span>
+
+<span class="cmt"># চোখের রঙ অনুযায়ী গণনা</span>
+<span class="cmd">cat people.json</span> | <span class="cmd">jq</span> <span class="str">'group_by(.eye_color)[] | {eye_color: .[0].eye_color, count: . | length}'</span></pre></div>
+  </div>
+</section>
+
+<!-- ============================== SECTION 13 ============================== -->
+<section class="section" id="s13">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ১৩</span>
+    <h2 class="section-title">পরীক্ষা গাইড ও অনুশীলনী</h2>
+  </div>
+
+  <h3>পরীক্ষার কাজ — Bash</h3>
+  <p>একটি API থেকে graphics card-এর বিক্রয় তথ্য সংগ্রহ করে ফাইলে সংরক্ষণ করার script লিখতে হবে।</p>
+
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>পরীক্ষার exam.sh উদাহরণ কাঠামো</span></div>
+    <div class="code-body"><pre><span class="cmt">#!/bin/bash</span>
+
+<span class="cmt"># ফাংশন সংজ্ঞায়িত করো</span>
+get_sales () {
+    <span class="cmt"># API থেকে তথ্য নাও</span>
+    local model=<span class="str">$1</span>
+    local result=<span class="str">$(curl -s "http://0.0.0.0:5000/$model")</span>
+    <span class="cmd">echo</span> <span class="str">"$model:$result"</span> >> sales.txt
+}
+
+<span class="cmt"># তারিখ লিখো</span>
+<span class="cmd">echo</span> <span class="str">"$(date)"</span> >> sales.txt
+
+<span class="cmt"># for loop দিয়ে সব model-এর তথ্য নাও</span>
+<span class="kw">for</span> model <span class="kw">in</span> rtx3060 rtx3070 rtx3080 rtx3090 rx6700
+<span class="kw">do</span>
+    get_sales <span class="str">"$model"</span>
+<span class="kw">done</span></pre></div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span>bash</span><span>পরীক্ষার Cron Job (cron.txt)</span></div>
+    <div class="code-body"><pre><span class="cmt"># সোম-শুক্র, সকাল ৭ থেকে রাত ৯, মার্চ, জুন ও নভেম্বরে, প্রতি মিনিটে</span>
+<span class="num">*/1 7-21</span> * 3,6,11 1-5 /home/ubuntu/exam_NAME/exam_bash/exam.sh</pre></div>
+  </div>
+
+  <h3>folder কাঠামো</h3>
+  <div class="code-block">
+    <div class="code-header"><span>bash</span></div>
+    <div class="code-body"><pre>exam_NAME/
+├── exam_bash/
+│   ├── exam.sh       <span class="cmt"># Bash script</span>
+│   ├── sales.txt     <span class="cmt"># বিক্রয় তথ্য</span>
+│   └── cron.txt      <span class="cmt"># Cron Job কোড</span>
+└── exam_jq/
+    ├── exam_jq.sh    <span class="cmt"># JQ script</span>
+    ├── res_jq.txt    <span class="cmt"># JQ output</span>
+    └── bonus/        <span class="cmt"># Bonus প্রশ্ন</span></pre></div>
+  </div>
+</section>
+
+<!-- ============================== CHEATSHEET ============================== -->
+<section class="section" id="cheatsheet">
+  <div class="section-header">
+    <span class="section-num">সারসংক্ষেপ</span>
+    <h2 class="section-title">🗒️ Linux & Bash চিটশিট</h2>
+  </div>
+
+  <h3>Navigation</h3>
+  <div class="cheat-grid">
+    <div class="cheat-item"><div class="cheat-cmd">pwd</div><div class="cheat-desc">বর্তমান অবস্থান দেখাও</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">ls -la</div><div class="cheat-desc">সব ফাইল বিস্তারিতসহ</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">cd /path</div><div class="cheat-desc">নির্দিষ্ট জায়গায় যাও</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">cd ~</div><div class="cheat-desc">home-এ ফিরে যাও</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">cd ..</div><div class="cheat-desc">এক ধাপ উপরে যাও</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">man cmd</div><div class="cheat-desc">কমান্ডের সাহায্য দেখো</div></div>
+  </div>
+
+  <h3>File Operations</h3>
+  <div class="cheat-grid">
+    <div class="cheat-item"><div class="cheat-cmd">touch file</div><div class="cheat-desc">ফাইল তৈরি</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">mkdir dir</div><div class="cheat-desc">ফোল্ডার তৈরি</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">rm file</div><div class="cheat-desc">ফাইল মুছো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">rm -r dir</div><div class="cheat-desc">ফোল্ডার মুছো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">cp src dst</div><div class="cheat-desc">ফাইল কপি</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">mv src dst</div><div class="cheat-desc">সরাও বা নাম বদলাও</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">cat file</div><div class="cheat-desc">ফাইল পড়ো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">nano file</div><div class="cheat-desc">ফাইল সম্পাদনা করো</div></div>
+  </div>
+
+  <h3>Redirection</h3>
+  <div class="cheat-grid">
+    <div class="cheat-item"><div class="cheat-cmd">cmd > file</div><div class="cheat-desc">output ফাইলে লিখো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">cmd >> file</div><div class="cheat-desc">output ফাইলে যোগ করো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">cmd 2> file</div><div class="cheat-desc">error ফাইলে পাঠাও</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">cmd1 | cmd2</div><div class="cheat-desc">pipe — output → input</div></div>
+  </div>
+
+  <h3>Permissions</h3>
+  <div class="cheat-grid">
+    <div class="cheat-item"><div class="cheat-cmd">chmod +x file</div><div class="cheat-desc">executable করো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">chmod 755 file</div><div class="cheat-desc">rwxr-xr-x সেট করো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">chmod 644 file</div><div class="cheat-desc">rw-r--r-- সেট করো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">ls -l</div><div class="cheat-desc">permission দেখো</div></div>
+  </div>
+
+  <h3>Process</h3>
+  <div class="cheat-grid">
+    <div class="cheat-item"><div class="cheat-cmd">cmd &</div><div class="cheat-desc">background-এ চালাও</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">Ctrl+Z</div><div class="cheat-desc">pause করো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">fg / bg</div><div class="cheat-desc">foreground/background</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">kill PID</div><div class="cheat-desc">process বন্ধ করো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">ps aux</div><div class="cheat-desc">সব process দেখো</div></div>
+    <div class="cheat-item"><div class="cheat-cmd">htop</div><div class="cheat-desc">interactive viewer</div></div>
+  </div>
+</section>
+
+<div style="text-align:center;padding:40px 0;color:var(--text-muted);font-size:13px;border-top:1px solid var(--border);">
+  🐧 Linux & Bash সম্পূর্ণ বাংলা গাইড
+</div>
+
+</main>
+
+<script>
+// Active nav link on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

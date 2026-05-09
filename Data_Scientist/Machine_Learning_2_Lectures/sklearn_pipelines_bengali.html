@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scikit-learn Pipelines — সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--bg4:#21262d;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--text3:#6e7681;--accent:#58a6ff;--a2:#79c0ff;--green:#3fb950;--orange:#d29922;--red:#f85149;--purple:#bc8cff;--pink:#f778ba;--yellow:#e3b341}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Hind Siliguri',sans-serif;font-size:16px;line-height:1.8;display:flex}
+#sb{width:265px;min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:100;padding:14px 0}
+#sb .logo{padding:8px 16px 14px;border-bottom:1px solid var(--border);margin-bottom:6px}
+#sb .logo h2{font-size:13px;color:var(--accent);font-weight:600;line-height:1.4}
+#sb .logo p{font-size:10.5px;color:var(--text3);margin-top:2px}
+.nst{padding:3px 16px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-weight:700;margin-top:6px}
+.ni{display:block;padding:5px 16px 5px 22px;color:var(--text2);text-decoration:none;font-size:12px;border-left:2px solid transparent;transition:all .2s;line-height:1.4}
+.ni:hover{color:var(--accent);background:rgba(88,166,255,.07);border-left-color:var(--accent)}
+#main{margin-left:265px;flex:1;max-width:calc(100% - 265px)}
+.hero{background:linear-gradient(135deg,#0d1117 0%,#161e2e 50%,#0d1117 100%);border-bottom:1px solid var(--border);padding:48px 52px 40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:340px;height:340px;background:radial-gradient(circle,rgba(88,166,255,.07) 0%,transparent 70%);border-radius:50%}
+.hbdg{display:inline-flex;align-items:center;background:rgba(88,166,255,.1);border:1px solid rgba(88,166,255,.3);border-radius:20px;padding:4px 13px;font-size:11.5px;color:var(--accent);margin-bottom:16px;font-weight:500}
+.hero h1{font-size:36px;font-weight:700;line-height:1.2;color:var(--text);margin-bottom:11px}
+.hero h1 span{color:var(--accent)}
+.hero>p{font-size:15.5px;color:var(--text2);max-width:660px;line-height:1.7}
+.hpills{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}
+.pill{padding:4px 11px;border-radius:5px;font-size:11px;font-weight:600;background:var(--bg3);border:1px solid var(--border);color:var(--text2)}
+.pill.g{color:var(--green);border-color:rgba(63,185,80,.3);background:rgba(63,185,80,.08)}
+.pill.b{color:var(--accent);border-color:rgba(88,166,255,.3);background:rgba(88,166,255,.08)}
+.pill.p{color:var(--purple);border-color:rgba(188,140,255,.3);background:rgba(188,140,255,.08)}
+.pill.o{color:var(--orange);border-color:rgba(210,153,34,.3);background:rgba(210,153,34,.08)}
+.content{padding:34px 52px;max-width:1060px}
+.sec{margin-bottom:52px;scroll-margin-top:20px}
+h2.st{font-size:25px;font-weight:700;padding-bottom:11px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;margin-bottom:8px}
+h2.st .n{background:var(--accent);color:var(--bg);width:29px;height:29px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
+h3.ss{font-size:18px;font-weight:600;color:var(--a2);margin:26px 0 9px;display:flex;align-items:center;gap:7px}
+h3.ss::before{content:'';width:3px;height:17px;background:var(--accent);border-radius:2px;display:block}
+h4.s2{font-size:14.5px;font-weight:600;color:var(--purple);margin:16px 0 6px}
+p{margin-bottom:11px;color:var(--text)}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:18px;margin:12px 0}
+.card.bl{border-left:3px solid var(--accent)}
+.card.gr{border-left:3px solid var(--green)}
+.card.or{border-left:3px solid var(--orange)}
+.card.pu{border-left:3px solid var(--purple)}
+.card.re{border-left:3px solid var(--red)}
+.card.pi{border-left:3px solid var(--pink)}
+.ct{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.card.bl .ct{color:var(--accent)}.card.gr .ct{color:var(--green)}.card.or .ct{color:var(--orange)}.card.pu .ct{color:var(--purple)}.card.re .ct{color:var(--red)}.card.pi .ct{color:var(--pink)}
+.cb{background:#010409;border:1px solid var(--border);border-radius:8px;margin:12px 0;overflow:hidden}
+.ch{background:var(--bg3);border-bottom:1px solid var(--border);padding:8px 13px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text3)}
+.lb{background:rgba(88,166,255,.15);color:var(--accent);padding:1px 7px;border-radius:3px;font-size:10.5px;font-weight:600}
+pre{padding:16px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.7}
+.kw{color:#ff79c6}.fn{color:#50fa7b}.cl{color:#8be9fd}.st{color:#f1fa8c}.cm{color:#6272a4}.nm{color:#bd93f9}.vr{color:#f8f8f2}
+code{font-family:'JetBrains Mono',monospace;background:rgba(88,166,255,.1);color:var(--a2);padding:1px 6px;border-radius:3px;font-size:.86em}
+.dw{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:18px;margin:16px 0;text-align:center;overflow-x:auto}
+.dc{font-size:11px;color:var(--text3);margin-top:9px;font-style:italic}
+.tw{overflow-x:auto;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:var(--bg3)}
+th{padding:9px 13px;text-align:left;color:var(--accent);font-weight:600;border-bottom:1px solid var(--border);font-size:12px}
+td{padding:9px 13px;border-bottom:1px solid rgba(48,54,61,.5);color:var(--text2);vertical-align:top}
+tr:hover td{background:rgba(88,166,255,.03)}
+.exb{background:var(--bg2);border:1px solid var(--border);border-radius:9px;margin:18px 0;overflow:hidden}
+.exh{background:linear-gradient(135deg,#1a2332,#1c2840);border-bottom:1px solid var(--border);padding:11px 17px;display:flex;align-items:center;gap:8px}
+.ebdg{background:var(--accent);color:var(--bg);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.exh h4{font-size:13.5px;color:var(--text);font-weight:600}
+.exbd{padding:16px}
+.exbd ol{padding-left:17px}
+.exbd ol li{margin-bottom:8px;color:var(--text2);font-size:13px}
+.stog{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 13px;cursor:pointer;color:var(--green);font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;margin-top:12px;width:fit-content;transition:all .2s;user-select:none}
+.stog:hover{background:rgba(63,185,80,.1);border-color:var(--green)}
+.sc{display:none;margin-top:9px}.sc.open{display:block}
+ul.sty{padding-left:0;list-style:none}
+ul.sty li{padding:5px 0 5px 19px;color:var(--text2);position:relative;font-size:14px}
+ul.sty li::before{content:'▸';position:absolute;left:0;color:var(--accent);font-size:11px;top:8px}
+.steps{margin:16px 0}
+.step{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start}
+.sn{width:25px;height:25px;background:var(--accent);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0;margin-top:2px}
+.sc2{flex:1}
+.stit{font-weight:600;color:var(--text);margin-bottom:2px;font-size:14.5px}
+.sdesc{color:var(--text2);font-size:13px}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.ci{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px}
+.ci h5{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.hl{background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.2);border-radius:6px;padding:11px 15px;margin:11px 0;font-size:14px}
+.hl.warn{background:rgba(210,153,34,.08);border-color:rgba(210,153,34,.3);color:var(--orange)}
+.hl.succ{background:rgba(63,185,80,.08);border-color:rgba(63,185,80,.3);color:var(--green)}
+.hl.dng{background:rgba(248,81,73,.08);border-color:rgba(248,81,73,.3);color:var(--red)}
+.isec{background:linear-gradient(135deg,rgba(188,140,255,.05),rgba(88,166,255,.05));border:1px solid rgba(188,140,255,.2);border-radius:9px;padding:18px;margin:18px 0}
+.isec h4{color:var(--purple);font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.qi{background:var(--bg3);border:1px solid var(--border);border-radius:6px;margin-bottom:9px;overflow:hidden}
+.qq{padding:10px 13px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:9px;font-size:13px;color:var(--text);font-weight:500}
+.qq:hover{background:rgba(88,166,255,.05)}
+.qa{display:none;padding:11px 13px;color:var(--text2);font-size:13px;border-top:1px solid var(--border);line-height:1.7}
+.qi.open .qa{display:block}
+.qi.open .arr{transform:rotate(90deg)}
+.arr{color:var(--accent);flex-shrink:0;transition:transform .2s;font-size:11px}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+#btt{position:fixed;bottom:22px;right:22px;background:var(--accent);color:var(--bg);border:none;width:38px;height:38px;border-radius:8px;cursor:pointer;font-size:15px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(88,166,255,.3);z-index:999}
+#btt.show{display:flex}
+@media(max-width:860px){#sb{transform:translateX(-100%)}#main{margin-left:0}.content{padding:16px}.hero{padding:26px 16px}.cg{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav id="sb">
+  <div class="logo"><h2>🐍 Scikit-learn Pipelines</h2><p>সম্পূর্ণ বাংলা গাইড • Beginner to Pro</p></div>
+  <div class="nst">ভূমিকা</div>
+  <a href="#intro" class="ni">০. পরিচয় ও কেন Pipeline?</a>
+  <div class="nst">মূল ধারণা</div>
+  <a href="#estimators" class="ni">১. Estimators</a>
+  <a href="#transformers" class="ni">২. Transformers</a>
+  <a href="#custom-tr" class="ni">২.১ Custom Transformer</a>
+  <a href="#feature-union" class="ni">৩. FeatureUnion</a>
+  <div class="nst">Pipeline ব্যবহার</div>
+  <a href="#build-pipeline" class="ni">৪. Pipeline তৈরি</a>
+  <a href="#gridsearch" class="ni">৫. GridSearchCV</a>
+  <a href="#custom-est" class="ni">৬. Custom Estimators</a>
+  <a href="#col-transformer" class="ni">৭. ColumnTransformer</a>
+  <div class="nst">Titanic Project</div>
+  <a href="#titanic-intro" class="ni">৮. Dataset পরিচয়</a>
+  <a href="#titanic-tr" class="ni">৯. Custom Transformers</a>
+  <a href="#titanic-pipes" class="ni">১০. Sub-Pipelines</a>
+  <a href="#titanic-final" class="ni">১১. Final Pipeline</a>
+  <div class="nst">Algorithm Reference</div>
+  <a href="#algorithms" class="ni">১২. সব Algorithm (সহজ ভাষায়)</a>
+  <a href="#linear" class="ni">Linear Models</a>
+  <a href="#trees" class="ni">Tree-based Models</a>
+  <a href="#ensemble-sec" class="ni">Ensemble Methods</a>
+  <a href="#svm-sec" class="ni">SVM</a>
+  <a href="#knn-sec" class="ni">KNN</a>
+  <a href="#nb-sec" class="ni">Naive Bayes</a>
+  <a href="#cluster-sec" class="ni">Clustering</a>
+  <div class="nst">Exercises</div>
+  <a href="#exercises" class="ni">১৩. ML Engineering Exercises</a>
+</nav>
+
+<main id="main">
+<div class="hero">
+  <div class="hbdg">🎓 সম্পূর্ণ বাংলা কোর্স</div>
+  <h1>Scikit-learn <span>Pipelines</span><br>সম্পূর্ণ গাইড</h1>
+  <p>Transformers ও Estimators থেকে Titanic end-to-end project পর্যন্ত — একদম শুরু থেকে। এই একটা ফাইল পড়লেই যথেষ্ট।</p>
+  <div class="hpills">
+    <span class="pill g">✓ Transformers &amp; Estimators</span>
+    <span class="pill b">✓ Pipeline Construction</span>
+    <span class="pill p">✓ GridSearchCV</span>
+    <span class="pill o">✓ Titanic End-to-End</span>
+    <span class="pill g">✓ সব Algorithm বাংলায়</span>
+    <span class="pill b">✓ Interview Q&amp;A</span>
+    <span class="pill p">✓ ML Engineering Exercises</span>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════════════════════
+     SECTION 0: INTRODUCTION
+══════════════════════════════════════════ -->
+<section class="sec" id="intro">
+<h2 class="st"><span class="n">০</span> পরিচয় — কেন Pipeline দরকার?</h2>
+
+<p>Machine Learning project এ আমরা সাধারণত এরকম code লিখি:</p>
+
+<div class="cb"><div class="ch"><span>সমস্যাযুক্ত code — Data Leakage!</span><span class="lb">Python</span></div>
+<pre><span class="cm"># ❌ এইভাবে করলে বড় ভুল হয়</span>
+<span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">StandardScaler</span>
+<span class="kw">from</span> <span class="cl">sklearn.linear_model</span> <span class="kw">import</span> <span class="fn">LogisticRegression</span>
+<span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">train_test_split</span>
+
+<span class="cm"># পুরো data normalize করলাম</span>
+<span class="vr">scaler</span> = <span class="fn">StandardScaler</span>()
+<span class="vr">X_scaled</span> = <span class="vr">scaler</span>.<span class="fn">fit_transform</span>(<span class="vr">X</span>)  <span class="cm"># ⚠️ পুরো dataset — test data সহ!</span>
+
+<span class="cm"># এখন train-test split</span>
+<span class="vr">X_train</span>, <span class="vr">X_test</span>, <span class="vr">y_train</span>, <span class="vr">y_test</span> = <span class="fn">train_test_split</span>(<span class="vr">X_scaled</span>, <span class="vr">y</span>)
+
+<span class="cm"># Model train</span>
+<span class="vr">model</span> = <span class="fn">LogisticRegression</span>()
+<span class="vr">model</span>.<span class="fn">fit</span>(<span class="vr">X_train</span>, <span class="vr">y_train</span>)
+<span class="vr">model</span>.<span class="fn">score</span>(<span class="vr">X_test</span>, <span class="vr">y_test</span>)  <span class="cm"># এই score টা বাস্তবের চেয়ে ভালো দেখাবে!</span></pre></div>
+
+<div class="card re"><div class="ct">⚠️ সমস্যা: Data Leakage!</div>
+<p>উপরের code এ <code>StandardScaler</code> পুরো dataset (X_train + X_test) দেখে mean ও standard deviation শিখেছে। এর মানে model পরোক্ষভাবে test data দেখে ফেলেছে। এটাকে বলে <strong>Data Leakage</strong> — যেন পরীক্ষার আগেই answer sheet দেখে নেওয়া। বাস্তব deployment এ এই পার্থক্য বিপজ্জনক হতে পারে।</p></div>
+
+<div class="card gr"><div class="ct">✅ সমাধান: Pipeline!</div>
+<p>Pipeline ব্যবহার করলে প্রতিটি cross-validation fold এ শুধু training data দিয়ে transformer fit হয়। Test data কখনো "দেখা" যায় না।</p></div>
+
+<h3 class="ss">Pipeline এর ৩টি মূল সুবিধা</h3>
+<div class="steps">
+  <div class="step"><div class="sn">১</div><div class="sc2"><div class="stit">Encapsulation — সব একসাথে</div><div class="sdesc"><code>fit()</code> একবার call করলেই সব transformer ও model train হয়। Deploy করতেও একটাই object।</div></div></div>
+  <div class="step"><div class="sn">২</div><div class="sc2"><div class="stit">Parameter Selection — সেরা parameter খোঁজা</div><div class="sdesc">GridSearchCV দিয়ে একসাথে সব transformer ও model এর optimal parameters খোঁজা যায়।</div></div></div>
+  <div class="step"><div class="sn">৩</div><div class="sc2"><div class="stit">Isolation — Data Leakage রোধ</div><div class="sdesc">Cross-validation এ প্রতিটি fold এ transformer শুধু training portion থেকে fit হয়।</div></div></div>
+</div>
+
+<div class="dw">
+<svg viewBox="0 0 760 160" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:760px;display:block;margin:0 auto">
+  <defs><marker id="a0" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L0,5 L7,2.5 z" fill="#58a6ff"/></marker></defs>
+  <rect x="8" y="55" width="150" height="52" rx="9" fill="#1c2128" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="83" y="77" text-anchor="middle" fill="#e6edf3" font-size="13" font-family="Hind Siliguri">Raw Data</text>
+  <text x="83" y="96" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">কাঁচা ডেটা</text>
+  <rect x="200" y="48" width="158" height="65" rx="9" fill="#1a2332" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="279" y="73" text-anchor="middle" fill="#3fb950" font-size="12" font-family="JetBrains Mono">StandardScaler</text>
+  <text x="279" y="89" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">Step 1: Normalize</text>
+  <text x="279" y="104" text-anchor="middle" fill="#6272a4" font-size="10" font-family="Hind Siliguri">fit+transform</text>
+  <rect x="400" y="48" width="158" height="65" rx="9" fill="#1a2332" stroke="#bc8cff" stroke-width="1.5"/>
+  <text x="479" y="73" text-anchor="middle" fill="#bc8cff" font-size="12" font-family="JetBrains Mono">PolyFeatures</text>
+  <text x="479" y="89" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">Step 2: Engineer</text>
+  <text x="479" y="104" text-anchor="middle" fill="#6272a4" font-size="10" font-family="Hind Siliguri">fit+transform</text>
+  <rect x="600" y="48" width="150" height="65" rx="9" fill="#1a2332" stroke="#f778ba" stroke-width="1.5"/>
+  <text x="675" y="73" text-anchor="middle" fill="#f778ba" font-size="12" font-family="JetBrains Mono">LogisticReg</text>
+  <text x="675" y="89" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">Step 3: Model</text>
+  <text x="675" y="104" text-anchor="middle" fill="#6272a4" font-size="10" font-family="Hind Siliguri">fit+predict</text>
+  <line x1="159" y1="81" x2="198" y2="81" stroke="#58a6ff" stroke-width="2" marker-end="url(#a0)"/>
+  <line x1="359" y1="81" x2="398" y2="81" stroke="#58a6ff" stroke-width="2" marker-end="url(#a0)"/>
+  <line x1="559" y1="81" x2="598" y2="81" stroke="#58a6ff" stroke-width="2" marker-end="url(#a0)"/>
+  <text x="380" y="148" text-anchor="middle" fill="#58a6ff" font-size="13" font-family="Hind Siliguri" font-weight="600">← Pipeline: ধাপে ধাপে processing, একটার output পরেরটার input →</text>
+</svg>
+<p class="dc">চিত্র ১: একটি সাধারণ Pipeline — প্রতিটি step sequential</p>
+</div>
+
+<div class="card or"><div class="ct">📚 Prerequisites — আগে কী জানতে হবে</div>
+<ul class="sty">
+  <li>Python OOP — class, inheritance, <code>__init__</code>, <code>self</code></li>
+  <li>NumPy — array operations, slicing</li>
+  <li>Pandas — DataFrame, Series, loc, iloc</li>
+  <li>Scikit-learn — basic fit/predict/score usage</li>
+</ul></div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 1: ESTIMATORS
+══════════════════════════════════════════ -->
+<section class="sec" id="estimators">
+<h2 class="st"><span class="n">১</span> Estimators — সবকিছুর Base Class</h2>
+
+<p>Scikit-learn এ সব object — classifier, regressor, transformer — একটাই base class থেকে আসে: <strong>Estimator</strong>। এই একটা concept বুঝলে বাকি সব সহজ।</p>
+
+<div class="hl">💡 <strong>সহজ ভাষায়:</strong> Estimator হল একজন "শিক্ষার্থী"। সে data দেখে শেখে (<code>fit</code>) এবং তারপর কাজ করে।</div>
+
+<div class="dw">
+<svg viewBox="0 0 680 250" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:680px;display:block;margin:0 auto">
+  <defs><marker id="a1" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L0,5 L7,2.5 z" fill="#58a6ff"/></marker></defs>
+  <rect x="210" y="10" width="260" height="70" rx="10" fill="#1a2332" stroke="#58a6ff" stroke-width="2"/>
+  <text x="340" y="38" text-anchor="middle" fill="#58a6ff" font-size="15" font-family="JetBrains Mono" font-weight="700">Estimator</text>
+  <text x="340" y="56" text-anchor="middle" fill="#8b949e" font-size="12" font-family="Hind Siliguri">একটাই method: fit()</text>
+  <text x="340" y="72" text-anchor="middle" fill="#6272a4" font-size="11" font-family="Hind Siliguri">data দেখে parameter শেখে</text>
+  <line x1="290" y1="80" x2="185" y2="145" stroke="#3fb950" stroke-width="1.8" marker-end="url(#a1)"/>
+  <line x1="390" y1="80" x2="495" y2="145" stroke="#bc8cff" stroke-width="1.8" marker-end="url(#a1)"/>
+  <text x="205" y="130" text-anchor="middle" fill="#3fb950" font-size="10" font-family="Hind Siliguri">inherits</text>
+  <text x="475" y="130" text-anchor="middle" fill="#bc8cff" font-size="10" font-family="Hind Siliguri">inherits</text>
+  <rect x="50" y="148" width="275" height="90" rx="10" fill="#1a2332" stroke="#3fb950" stroke-width="2"/>
+  <text x="187" y="172" text-anchor="middle" fill="#3fb950" font-size="14" font-family="JetBrains Mono" font-weight="700">Transformer</text>
+  <text x="187" y="190" text-anchor="middle" fill="#8b949e" font-size="12" font-family="Hind Siliguri">fit() + transform()</text>
+  <text x="187" y="207" text-anchor="middle" fill="#6272a4" font-size="11" font-family="Hind Siliguri">StandardScaler, OneHotEncoder</text>
+  <text x="187" y="224" text-anchor="middle" fill="#6272a4" font-size="11" font-family="Hind Siliguri">PCA, SelectKBest...</text>
+  <rect x="355" y="148" width="275" height="90" rx="10" fill="#1a2332" stroke="#bc8cff" stroke-width="2"/>
+  <text x="492" y="172" text-anchor="middle" fill="#bc8cff" font-size="14" font-family="JetBrains Mono" font-weight="700">Predictor/Model</text>
+  <text x="492" y="190" text-anchor="middle" fill="#8b949e" font-size="12" font-family="Hind Siliguri">fit() + predict()</text>
+  <text x="492" y="207" text-anchor="middle" fill="#6272a4" font-size="11" font-family="Hind Siliguri">LogisticRegression, SVC</text>
+  <text x="492" y="224" text-anchor="middle" fill="#6272a4" font-size="11" font-family="Hind Siliguri">RandomForest, Ridge...</text>
+</svg>
+<p class="dc">চিত্র ২: Estimator hierarchy — সব কিছুই Estimator এর উত্তরাধিকারী</p>
+</div>
+
+<h3 class="ss">fit() কী করে?</h3>
+<p><code>fit()</code> data থেকে কিছু parameter calculate করে object এর attribute এ store করে। ভিন্ন Estimator এ ভিন্ন কাজ:</p>
+
+<div class="tw"><table>
+<thead><tr><th>Estimator</th><th>fit() কী শেখে?</th><th>কোথায় store হয়?</th></tr></thead>
+<tbody>
+<tr><td><code>StandardScaler</code></td><td>প্রতিটি feature এর mean (μ) ও std (σ)</td><td><code>scaler.mean_</code>, <code>scaler.scale_</code></td></tr>
+<tr><td><code>LogisticRegression</code></td><td>regression coefficients (weights)</td><td><code>model.coef_</code>, <code>model.intercept_</code></td></tr>
+<tr><td><code>PCA</code></td><td>principal components (eigenvectors)</td><td><code>pca.components_</code></td></tr>
+<tr><td><code>KMeans</code></td><td>cluster centers</td><td><code>kmeans.cluster_centers_</code></td></tr>
+</tbody>
+</table></div>
+
+<div class="hl warn">⚠️ <strong>সোনার নিয়ম:</strong> <code>fit()</code> সবসময় শুধু <strong>X_train</strong> এ call করো। X_test এ কখনো <code>fit()</code> করা যাবে না।</div>
+
+<div class="cb"><div class="ch"><span>Estimator হাতে-কলমে — StandardScaler</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">StandardScaler</span>
+<span class="kw">from</span> <span class="cl">numpy.random</span> <span class="kw">import</span> <span class="fn">rand</span>
+
+<span class="cm"># 3 জন মানুষের 4টা feature — একটা ছোট dataset</span>
+<span class="vr">X</span> = <span class="fn">rand</span>(<span class="nm">3</span>, <span class="nm">4</span>)
+<span class="vr">print</span>(<span class="st">"Original X:\n"</span>, <span class="vr">X</span>)
+
+<span class="cm"># Scaler তৈরি</span>
+<span class="vr">scaler</span> = <span class="fn">StandardScaler</span>()
+
+<span class="cm"># fit() — training data দেখে mean ও std শেখা</span>
+<span class="vr">scaler</span>.<span class="fn">fit</span>(<span class="vr">X</span>)
+
+<span class="cm"># fit এর পর এই attributes পাওয়া যায়</span>
+<span class="vr">print</span>(<span class="st">"প্রতিটি column এর mean:"</span>, <span class="vr">scaler</span>.<span class="vr">mean_</span>)
+<span class="vr">print</span>(<span class="st">"প্রতিটি column এর std:"</span>,  <span class="vr">scaler</span>.<span class="vr">scale_</span>)
+<span class="vr">print</span>(<span class="st">"প্রতিটি column এর var:"</span>,  <span class="vr">scaler</span>.<span class="vr">var_</span>)
+
+<span class="cm"># fit এর আগে mean_ নেই — AttributeError হবে!</span>
+<span class="cm"># scaler2 = StandardScaler()
+# print(scaler2.mean_)  # ❌</span>
+
+<span class="cm"># transform() — শেখা mean/std দিয়ে normalize করা</span>
+<span class="vr">Y</span> = <span class="vr">scaler</span>.<span class="fn">transform</span>(<span class="vr">X</span>)
+<span class="vr">print</span>(<span class="st">"Normalized Y:\n"</span>, <span class="vr">Y</span>)
+
+<span class="cm"># Verify: Y এর প্রতিটি column এর mean ≈ 0, var ≈ 1</span>
+<span class="vr">scaler2</span> = <span class="fn">StandardScaler</span>()
+<span class="vr">scaler2</span>.<span class="fn">fit</span>(<span class="vr">Y</span>)
+<span class="vr">print</span>(<span class="st">"Y এর mean (≈ 0):"</span>, <span class="vr">scaler2</span>.<span class="vr">mean_</span>)
+<span class="vr">print</span>(<span class="st">"Y এর var  (≈ 1):"</span>, <span class="vr">scaler2</span>.<span class="vr">var_</span>)</pre></div>
+
+<div class="isec">
+<h4>🎯 Interview প্রশ্ন — Estimators</h4>
+<div class="qi"><div class="qq" onclick="tQ(this)"><span>প্রশ্ন ১: fit() কেন শুধু training data তে call করতে হয়? ★★★</span><span class="arr">▶</span></div><div class="qa">fit() method data এর statistics (mean, variance ইত্যাদি) calculate করে। Test data দিয়ে fit করলে model পরোক্ষভাবে test data "দেখে ফেলে" — এটা Data Leakage। বাস্তব deployment এ test/production data আগে থেকে দেখা সম্ভব না। তাই শুধু training data থেকে fit করলে model এর evaluation সৎ হয়।</div></div>
+<div class="qi"><div class="qq" onclick="tQ(this)"><span>প্রশ্ন ২: fit() এবং fit_transform() এর পার্থক্য কী?</span><span class="arr">▶</span></div><div class="qa"><code>fit()</code> শুধু parameter শেখে, data পরিবর্তন করে না। <code>transform()</code> শেখা parameter দিয়ে data বদলায়। <code>fit_transform()</code> দুটো একসাথে — <code>transformer.fit(X).transform(X)</code> এর সমতুল্য। Training data তে <code>fit_transform()</code>, test data তে শুধু <code>transform()</code> ব্যবহার করো।</div></div>
+<div class="qi"><div class="qq" onclick="tQ(this)"><span>প্রশ্ন ৩: Scikit-learn এর common interface কী? এটা কেন important?</span><span class="arr">▶</span></div><div class="qa">সব Estimator এ <code>fit(X, y)</code> আছে। Transformer এ আছে <code>transform(X)</code>। Model এ আছে <code>predict(X)</code>, <code>score(X, y)</code>। এই uniform interface এর কারণেই Pipeline যেকোনো Estimator নিতে পারে — আলাদা code লেখা লাগে না।</div></div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 2: TRANSFORMERS
+══════════════════════════════════════════ -->
+<section class="sec" id="transformers">
+<h2 class="st"><span class="n">২</span> Transformers — Data রূপান্তরকারী</h2>
+
+<p>Transformer হল Estimator এর বিশেষ উপশ্রেণী। এরা <code>fit()</code> করে parameter শেখে এবং <code>transform()</code> করে data বদলায়।</p>
+
+<div class="card bl"><div class="ct">📐 StandardScaler Formula</div>
+<div style="text-align:center;padding:14px 0;font-size:21px;font-family:'JetBrains Mono'">X_new[i,j] = (X[i,j] − μ[j]) / σ[j]</div>
+<p style="text-align:center;color:var(--text2)">μ = column এর mean, σ = column এর standard deviation</p>
+<p style="text-align:center;color:var(--text3);font-size:12px;margin-top:6px">ফলাফল: প্রতিটি column এর mean = 0, std = 1</p>
+</div>
+
+<h3 class="ss">কেন Standardization দরকার?</h3>
+<div class="card gr"><div class="ct">💡 Real Example</div>
+<p>ধরো dataset এ: <strong>বয়স</strong> (20–80) এবং <strong>বেতন</strong> (10,000–10,00,000)। বেতনের সংখ্যা অনেক বড়, তাই gradient descent এর সময় model বেতনকে অনেক বেশি গুরুত্ব দেবে। Standardization করলে দুটো feature একই scale এ আসে, model নিরপেক্ষভাবে শিখতে পারে।</p></div>
+
+<div class="cb"><div class="ch"><span>StandardScaler সম্পূর্ণ উদাহরণ</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">StandardScaler</span>
+<span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> <span class="vr">np</span>
+
+<span class="vr">X</span> = <span class="vr">np</span>.<span class="fn">array</span>([[<span class="nm">10</span>, <span class="nm">500</span>],
+               [<span class="nm">20</span>, <span class="nm">1000</span>],
+               [<span class="nm">30</span>, <span class="nm">750</span>]])
+
+<span class="vr">scaler</span> = <span class="fn">StandardScaler</span>()
+
+<span class="cm"># fit_transform = fit() তারপর transform()</span>
+<span class="vr">Y</span> = <span class="vr">scaler</span>.<span class="fn">fit_transform</span>(<span class="vr">X</span>)
+<span class="vr">print</span>(<span class="st">"Normalized:\n"</span>, <span class="vr">Y</span>)
+
+<span class="cm"># Test data তে শুধু transform() — fit() নয়!</span>
+<span class="vr">X_test</span> = <span class="vr">np</span>.<span class="fn">array</span>([[<span class="nm">25</span>, <span class="nm">800</span>]])
+<span class="vr">Y_test</span> = <span class="vr">scaler</span>.<span class="fn">transform</span>(<span class="vr">X_test</span>)  <span class="cm"># training এর mean/std ব্যবহার করে</span>
+<span class="vr">print</span>(<span class="st">"Test normalized:"</span>, <span class="vr">Y_test</span>)</pre></div>
+
+<!-- CUSTOM TRANSFORMER -->
+<section id="custom-tr">
+<h3 class="ss">নিজের Transformer বানানো</h3>
+
+<p>Scikit-learn এ custom Transformer বানাতে দুটো class inherit করতে হয়:</p>
+<ul class="sty">
+  <li><code>BaseEstimator</code> — <code>get_params()</code> ও <code>set_params()</code> দেয় (GridSearchCV এর জন্য দরকার)</li>
+  <li><code>TransformerMixin</code> — <code>fit_transform()</code> দেয় (শুধু <code>fit</code> ও <code>transform</code> লিখলেই কাজ হয়)</li>
+</ul>
+
+<div class="card or"><div class="ct">⚠️ Custom Transformer এর ৩টি অবশ্য মেনে চলার নিয়ম</div>
+<ul class="sty">
+  <li><code>fit()</code> অবশ্যই <code>return self</code> করতে হবে — নইলে <code>fit_transform()</code> কাজ করে না</li>
+  <li><code>transform()</code> original matrix modify না করে নতুন data return করতে হবে</li>
+  <li>Pipeline এ আগের step এর output পরের step এর input — তাই original নষ্ট করা যাবে না</li>
+</ul></div>
+
+<div class="cb"><div class="ch"><span>Inverter2x2 — 2x2 Matrix Inverse Transformer</span><span class="lb">Python</span></div>
+<pre><span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> <span class="vr">np</span>
+<span class="kw">from</span> <span class="cl">sklearn.base</span> <span class="kw">import</span> <span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>
+<span class="kw">from</span> <span class="cl">numpy.random</span> <span class="kw">import</span> <span class="fn">rand</span>
+
+<span class="kw">class</span> <span class="cl">Inverter2x2</span>(<span class="fn">TransformerMixin</span>):
+    <span class="st">"""2x2 matrix এর mathematical inverse বের করা।
+    
+    det(A) = ad - bc
+    A_inv = (1/det) * [[d, -b], [-c, a]]
+    """</span>
+    
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="vr">self</span>):
+        <span class="vr">self</span>.<span class="vr">det</span> = <span class="nm">0</span>  <span class="cm"># determinant শুরুতে 0</span>
+    
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="vr">self</span>, <span class="vr">X</span>):
+        <span class="cm"># "শেখার" ধাপ — determinant calculate করে store করা</span>
+        <span class="kw">if</span> <span class="vr">X</span>.<span class="vr">shape</span> != (<span class="nm">2</span>, <span class="nm">2</span>):
+            <span class="vr">print</span>(<span class="st">"এই matrix 2x2 নয়!"</span>)
+            <span class="kw">return</span> <span class="vr">self</span>
+        <span class="cm"># det = a*d - b*c</span>
+        <span class="vr">self</span>.<span class="vr">det</span> = <span class="vr">X</span>[<span class="nm">0</span>,<span class="nm">0</span>]*<span class="vr">X</span>[<span class="nm">1</span>,<span class="nm">1</span>] - <span class="vr">X</span>[<span class="nm">0</span>,<span class="nm">1</span>]*<span class="vr">X</span>[<span class="nm">1</span>,<span class="nm">0</span>]
+        <span class="kw">return</span> <span class="vr">self</span>  <span class="cm"># ⚠️ অবশ্যই self return করতে হবে!</span>
+    
+    <span class="kw">def</span> <span class="fn">transform</span>(<span class="vr">self</span>, <span class="vr">X</span>):
+        <span class="cm"># "প্রয়োগের" ধাপ — inverse calculate করা</span>
+        <span class="kw">if</span> <span class="vr">self</span>.<span class="vr">det</span> == <span class="nm">0</span>:
+            <span class="vr">print</span>(<span class="st">"Matrix invertible নয় (det=0)!"</span>)
+            <span class="kw">return</span>
+        <span class="cm"># নতুন matrix তৈরি — original X modify করছি না!</span>
+        <span class="vr">Y</span> = <span class="vr">np</span>.<span class="fn">zeros</span>((<span class="nm">2</span>, <span class="nm">2</span>))
+        <span class="vr">Y</span>[<span class="nm">0</span>,<span class="nm">0</span>] =  <span class="vr">X</span>[<span class="nm">1</span>,<span class="nm">1</span>]
+        <span class="vr">Y</span>[<span class="nm">1</span>,<span class="nm">1</span>] =  <span class="vr">X</span>[<span class="nm">0</span>,<span class="nm">0</span>]
+        <span class="vr">Y</span>[<span class="nm">0</span>,<span class="nm">1</span>] = -<span class="vr">X</span>[<span class="nm">0</span>,<span class="nm">1</span>]
+        <span class="vr">Y</span>[<span class="nm">1</span>,<span class="nm">0</span>] = -<span class="vr">X</span>[<span class="nm">1</span>,<span class="nm">0</span>]
+        <span class="kw">return</span> (<span class="nm">1</span>/<span class="vr">self</span>.<span class="vr">det</span>) * <span class="vr">Y</span>
+
+<span class="cm"># ব্যবহার</span>
+<span class="vr">inverter</span> = <span class="fn">Inverter2x2</span>()
+<span class="vr">X</span> = <span class="fn">rand</span>(<span class="nm">2</span>, <span class="nm">2</span>)
+
+<span class="cm"># fit_transform = fit() তারপর transform()</span>
+<span class="vr">Y</span> = <span class="vr">inverter</span>.<span class="fn">fit_transform</span>(<span class="vr">X</span>)
+<span class="vr">print</span>(<span class="st">"Original X:\n"</span>, <span class="vr">X</span>)
+<span class="vr">print</span>(<span class="st">"Inverse Y:\n"</span>, <span class="vr">Y</span>)
+
+<span class="cm"># Verify: X @ Y ≈ Identity matrix I</span>
+<span class="vr">print</span>(<span class="st">"X @ Y (≈ [[1,0],[0,1]]):\n"</span>, <span class="vr">X</span> @ <span class="vr">Y</span>)</pre></div>
+
+<div class="exb">
+<div class="exh"><span class="ebdg">Exercise 1</span><h4>নিজের MinMaxScaler বানাও</h4></div>
+<div class="exbd">
+<ol>
+  <li><code>MyMinMaxScaler</code> class বানাও (<code>BaseEstimator</code>, <code>TransformerMixin</code> inherit করে)।</li>
+  <li><code>fit()</code> এ: প্রতিটি column এর min ও max calculate করে <code>self.min_</code>, <code>self.max_</code> এ store করো।</li>
+  <li><code>transform()</code> এ: formula প্রয়োগ করো: <code>(X - min) / (max - min)</code> — কিন্তু original X modify করো না।</li>
+  <li>Check করো: transformed data এর min ≈ 0, max ≈ 1।</li>
+</ol>
+<div class="stog" onclick="tS(this)">▶ Solution দেখো</div>
+<div class="sc">
+<div class="cb"><div class="ch"><span>MyMinMaxScaler Solution</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.base</span> <span class="kw">import</span> <span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>
+<span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> <span class="vr">np</span>
+
+<span class="kw">class</span> <span class="cl">MyMinMaxScaler</span>(<span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="vr">self</span>):
+        <span class="vr">self</span>.<span class="vr">min_</span> = <span class="vr">None</span>
+        <span class="vr">self</span>.<span class="vr">max_</span> = <span class="vr">None</span>
+    
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="vr">self</span>, <span class="vr">X</span>, <span class="vr">y</span>=<span class="vr">None</span>):
+        <span class="vr">self</span>.<span class="vr">min_</span> = <span class="vr">X</span>.<span class="fn">min</span>(<span class="vr">axis</span>=<span class="nm">0</span>)  <span class="cm"># প্রতিটি column এর min</span>
+        <span class="vr">self</span>.<span class="vr">max_</span> = <span class="vr">X</span>.<span class="fn">max</span>(<span class="vr">axis</span>=<span class="nm">0</span>)  <span class="cm"># প্রতিটি column এর max</span>
+        <span class="kw">return</span> <span class="vr">self</span>  <span class="cm"># অবশ্যই self return করো!</span>
+    
+    <span class="kw">def</span> <span class="fn">transform</span>(<span class="vr">self</span>, <span class="vr">X</span>):
+        <span class="cm"># copy() করে নাও — original modify না করতে</span>
+        <span class="kw">return</span> (<span class="vr">X</span> - <span class="vr">self</span>.<span class="vr">min_</span>) / (<span class="vr">self</span>.<span class="vr">max_</span> - <span class="vr">self</span>.<span class="vr">min_</span>)
+
+<span class="cm"># Test করো</span>
+<span class="vr">X</span> = <span class="vr">np</span>.<span class="fn">array</span>([[<span class="nm">10</span>, <span class="nm">200</span>], [<span class="nm">20</span>, <span class="nm">400</span>], [<span class="nm">30</span>, <span class="nm">100</span>]])
+<span class="vr">sc</span> = <span class="fn">MyMinMaxScaler</span>()
+<span class="vr">result</span> = <span class="vr">sc</span>.<span class="fn">fit_transform</span>(<span class="vr">X</span>)
+<span class="vr">print</span>(<span class="vr">result</span>)
+<span class="vr">print</span>(<span class="st">"Min (should be 0):"</span>, <span class="vr">result</span>.<span class="fn">min</span>(<span class="vr">axis</span>=<span class="nm">0</span>))
+<span class="vr">print</span>(<span class="st">"Max (should be 1):"</span>, <span class="vr">result</span>.<span class="fn">max</span>(<span class="vr">axis</span>=<span class="nm">0</span>))</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 3: FEATURE UNION
+══════════════════════════════════════════ -->
+<section class="sec" id="feature-union">
+<h2 class="st"><span class="n">৩</span> FeatureUnion — সমান্তরাল Transformation</h2>
+
+<p>Pipeline এ transformation <strong>sequential</strong> (একটার পর একটা)। কিন্তু <strong>FeatureUnion</strong> এ transformation <strong>parallel</strong> — সব transformer একই input পায়, outputs concatenate হয়।</p>
+
+<div class="dw">
+<svg viewBox="0 0 680 270" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:680px;display:block;margin:0 auto">
+  <defs><marker id="a2" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L0,5 L7,2.5 z" fill="#58a6ff"/></marker></defs>
+  <rect x="265" y="10" width="150" height="44" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="340" y="28" text-anchor="middle" fill="#e6edf3" font-size="13" font-family="Hind Siliguri">Input Data X</text>
+  <text x="340" y="44" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">সবার কাছে একই data যায়</text>
+  <line x1="310" y1="54" x2="160" y2="108" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a2)"/>
+  <line x1="340" y1="54" x2="340" y2="108" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a2)"/>
+  <line x1="370" y1="54" x2="520" y2="108" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a2)"/>
+  <rect x="50" y="108" width="215" height="55" rx="8" fill="#1a2332" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="157" y="131" text-anchor="middle" fill="#3fb950" font-size="12" font-family="JetBrains Mono">PolynomialFeatures</text>
+  <text x="157" y="149" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">→ polynomial features</text>
+  <rect x="232" y="108" width="215" height="55" rx="8" fill="#1a2332" stroke="#bc8cff" stroke-width="1.5"/>
+  <text x="340" y="131" text-anchor="middle" fill="#bc8cff" font-size="12" font-family="JetBrains Mono">StandardScaler</text>
+  <text x="340" y="149" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">→ normalized features</text>
+  <rect x="415" y="108" width="215" height="55" rx="8" fill="#1a2332" stroke="#f778ba" stroke-width="1.5"/>
+  <text x="522" y="131" text-anchor="middle" fill="#f778ba" font-size="12" font-family="JetBrains Mono">MinMaxScaler</text>
+  <text x="522" y="149" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">→ [0,1] scaled features</text>
+  <line x1="157" y1="163" x2="300" y2="212" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a2)"/>
+  <line x1="340" y1="163" x2="340" y2="212" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a2)"/>
+  <line x1="522" y1="163" x2="380" y2="212" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a2)"/>
+  <rect x="190" y="212" width="300" height="44" rx="8" fill="#1a2332" stroke="#e3b341" stroke-width="1.5"/>
+  <text x="340" y="232" text-anchor="middle" fill="#e3b341" font-size="13" font-family="Hind Siliguri" font-weight="600">Concatenated Output</text>
+  <text x="340" y="248" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">সব transformer এর output জোড়া দেওয়া</text>
+</svg>
+<p class="dc">চিত্র ৩: FeatureUnion — parallel transformation, তারপর concatenation</p>
+</div>
+
+<div class="cb"><div class="ch"><span>FeatureUnion উদাহরণ</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.pipeline</span> <span class="kw">import</span> <span class="fn">FeatureUnion</span>
+<span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">PolynomialFeatures</span>, <span class="fn">StandardScaler</span>, <span class="fn">MinMaxScaler</span>
+<span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> <span class="vr">np</span>
+
+<span class="cm"># তিনটি transformer আলাদাভাবে তৈরি</span>
+<span class="vr">poly</span>       = <span class="fn">PolynomialFeatures</span>(<span class="nm">2</span>)
+<span class="vr">std_scaler</span> = <span class="fn">StandardScaler</span>()
+<span class="vr">mm_scaler</span>  = <span class="fn">MinMaxScaler</span>()
+
+<span class="cm"># FeatureUnion — ('নাম', transformer) pairs এর list</span>
+<span class="vr">union</span> = <span class="fn">FeatureUnion</span>([
+    (<span class="st">'poly'</span>, <span class="vr">poly</span>),
+    (<span class="st">'std'</span>,  <span class="vr">std_scaler</span>),
+    (<span class="st">'mm'</span>,   <span class="vr">mm_scaler</span>)
+])
+
+<span class="cm"># একটা single transformer হিসেবে ব্যবহার</span>
+<span class="vr">X</span> = <span class="vr">np</span>.<span class="fn">array</span>([[<span class="nm">1</span>, <span class="nm">2</span>], [<span class="nm">3</span>, <span class="nm">4</span>], [<span class="nm">5</span>, <span class="nm">6</span>]])
+<span class="vr">result</span> = <span class="vr">union</span>.<span class="fn">fit_transform</span>(<span class="vr">X</span>)
+<span class="vr">print</span>(<span class="st">f"Output shape: {result.shape}"</span>)
+<span class="cm"># poly: 6 col, std: 2 col, mm: 2 col = মোট 10 columns</span></pre></div>
+
+<div class="cg">
+<div class="ci"><h5 style="color:var(--accent)">🔵 Pipeline</h5><p style="font-size:13px;color:var(--text2)">Sequential। Step N এর output → Step N+1 এর input। Preprocessing chain + model এর জন্য।</p></div>
+<div class="ci"><h5 style="color:var(--purple)">🟣 FeatureUnion</h5><p style="font-size:13px;color:var(--text2)">Parallel। সব transformer একই input, outputs concatenate। একই data থেকে বিভিন্ন ধরনের feature।</p></div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 4: BUILD PIPELINE
+══════════════════════════════════════════ -->
+<section class="sec" id="build-pipeline">
+<h2 class="st"><span class="n">৪</span> Pipeline তৈরি — হাতে-কলমে</h2>
+
+<div class="card bl"><div class="ct">📋 Pipeline তৈরির নিয়ম</div>
+<ul class="sty">
+  <li><code>Pipeline(steps=[('নাম', estimator), ...])</code> format এ দাও</li>
+  <li>Last step ছাড়া সব step কে Transformer হতে হবে</li>
+  <li>Last step: Model (predict করবে) বা Transformer (transform করবে)</li>
+  <li>Name গুলো unique হতে হবে — GridSearch এ কাজে লাগবে</li>
+</ul></div>
+
+<div class="cb"><div class="ch"><span>Diabetes Dataset — LinearRegression Pipeline</span><span class="lb">Python</span></div>
+<pre><span class="kw">import</span> <span class="cl">pandas</span> <span class="kw">as</span> <span class="vr">pd</span>
+<span class="kw">from</span> <span class="cl">sklearn.datasets</span> <span class="kw">import</span> <span class="fn">load_diabetes</span>
+<span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">train_test_split</span>
+<span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">StandardScaler</span>, <span class="fn">PolynomialFeatures</span>
+<span class="kw">from</span> <span class="cl">sklearn.linear_model</span> <span class="kw">import</span> <span class="fn">LinearRegression</span>
+<span class="kw">from</span> <span class="cl">sklearn.pipeline</span> <span class="kw">import</span> <span class="fn">Pipeline</span>
+
+<span class="cm"># ১. Data load</span>
+<span class="vr">X</span> = <span class="vr">pd</span>.<span class="fn">DataFrame</span>(<span class="fn">load_diabetes</span>().<span class="vr">data</span>)
+<span class="vr">y</span> = <span class="fn">load_diabetes</span>().<span class="vr">target</span>
+
+<span class="cm"># ২. Train-test split</span>
+<span class="vr">X_train</span>, <span class="vr">X_test</span>, <span class="vr">y_train</span>, <span class="vr">y_test</span> = <span class="fn">train_test_split</span>(
+    <span class="vr">X</span>, <span class="vr">y</span>, <span class="vr">test_size</span>=<span class="nm">0.2</span>, <span class="vr">random_state</span>=<span class="nm">1</span>
+)
+
+<span class="cm"># ৩. Pipeline তৈরি — steps এর list</span>
+<span class="vr">linreg_pipe</span> = <span class="fn">Pipeline</span>(<span class="vr">steps</span>=[
+    (<span class="st">'standardization'</span>,  <span class="fn">StandardScaler</span>()),     <span class="cm"># Step 1</span>
+    (<span class="st">'poly_features'</span>,    <span class="fn">PolynomialFeatures</span>(<span class="nm">2</span>)), <span class="cm"># Step 2</span>
+    (<span class="st">'linear_regression'</span>, <span class="fn">LinearRegression</span>())    <span class="cm"># Step 3: model</span>
+])
+
+<span class="cm"># ৪. একটাই fit() — সব steps automatically run হবে</span>
+<span class="vr">linreg_pipe</span>.<span class="fn">fit</span>(<span class="vr">X_train</span>, <span class="vr">y_train</span>)
+<span class="vr">score_pipe</span> = <span class="vr">linreg_pipe</span>.<span class="fn">score</span>(<span class="vr">X_test</span>, <span class="vr">y_test</span>)
+
+<span class="cm"># তুলনার জন্য: basic LinearRegression (without pipeline)</span>
+<span class="vr">lr</span> = <span class="fn">LinearRegression</span>()
+<span class="vr">lr</span>.<span class="fn">fit</span>(<span class="vr">X_train</span>, <span class="vr">y_train</span>)
+<span class="vr">score_basic</span> = <span class="vr">lr</span>.<span class="fn">score</span>(<span class="vr">X_test</span>, <span class="vr">y_test</span>)
+
+<span class="vr">print</span>(<span class="st">f"Pipeline score:  {score_pipe:.4f}"</span>)
+<span class="vr">print</span>(<span class="st">f"Basic LR score:  {score_basic:.4f}"</span>)
+<span class="cm"># Pipeline এর score বেশি — polynomial features এর কারণে!</span></pre></div>
+
+<div class="isec">
+<h4>🎯 Interview প্রশ্ন — Pipeline</h4>
+<div class="qi"><div class="qq" onclick="tQ(this)"><span>প্রশ্ন ১: Pipeline এর last step এ model না দিলে কী হয়?</span><span class="arr">▶</span></div><div class="qa">Pipeline টা Transformer হিসেবে কাজ করে। তখন <code>fit()</code>, <code>transform()</code>, <code>fit_transform()</code> পাওয়া যাবে — কিন্তু <code>predict()</code> বা <code>score()</code> পাওয়া যাবে না। এটা useful যখন preprocessing pipeline আলাদা করে রাখতে চাও।</div></div>
+<div class="qi"><div class="qq" onclick="tQ(this)"><span>প্রশ্ন ২: Pipeline ছাড়া cross-validation এ কী data leakage হয়?</span><span class="arr">▶</span></div><div class="qa">Pipeline ছাড়া StandardScaler দিয়ে পুরো dataset normalize করলে, mean ও std পুরো dataset থেকে calculate হয় (test fold সহ)। Pipeline ব্যবহার করলে প্রতিটি CV fold এ শুধু training portion থেকে mean ও std calculate হয় — এটাই সঠিক।</div></div>
+<div class="qi"><div class="qq" onclick="tQ(this)"><span>প্রশ্ন ৩: Production এ Pipeline কেন এত valuable?</span><span class="arr">▶</span></div><div class="qa">(১) একটাই object joblib দিয়ে save/load করতে হয়। (২) নতুন data তে <code>pipeline.predict(X_new)</code> — আলাদাভাবে preprocess করতে হয় না। (৩) Data leakage automatically prevent হয়। (৪) Code readable ও maintainable। (৫) A/B testing সহজ।</div></div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 5: GRIDSEARCHCV
+══════════════════════════════════════════ -->
+<section class="sec" id="gridsearch">
+<h2 class="st"><span class="n">৫</span> GridSearchCV — সেরা Parameters খোঁজা</h2>
+
+<p>Model এর hyperparameters manually tune করা কঠিন। GridSearchCV সব combination automatically test করে সেরাটা বের করে।</p>
+
+<div class="hl">💡 <strong>সহজ ভাষায়:</strong> GridSearchCV হল একজন রাঁধুনি যে সব combination চেষ্টা করে (কম নুন-কম চিনি, কম নুন-বেশি চিনি...) এবং কোনটা সেরা রান্না হয়েছে তা বলে দেয়।</div>
+
+<div class="card or"><div class="ct">⚠️ Pipeline এ Parameter naming — দুটো underscore!</div>
+<div style="text-align:center;padding:10px 0;font-size:18px;font-family:'JetBrains Mono';color:var(--accent)">'step_name__param_name'</div>
+<p style="text-align:center;color:var(--text3);font-size:12px">দুটো underscore (__) দিয়ে step name এবং parameter name আলাদা করো</p></div>
+
+<div class="cb"><div class="ch"><span>GridSearchCV + Pipeline — Digits Dataset</span><span class="lb">Python</span></div>
+<pre><span class="kw">import</span> <span class="cl">pandas</span> <span class="kw">as</span> <span class="vr">pd</span>
+<span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> <span class="vr">np</span>
+<span class="kw">from</span> <span class="cl">sklearn.datasets</span> <span class="kw">import</span> <span class="fn">load_digits</span>
+<span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">StandardScaler</span>
+<span class="kw">from</span> <span class="cl">sklearn.feature_selection</span> <span class="kw">import</span> <span class="fn">SelectKBest</span>
+<span class="kw">from</span> <span class="cl">sklearn.svm</span> <span class="kw">import</span> <span class="fn">SVC</span>
+<span class="kw">from</span> <span class="cl">sklearn.pipeline</span> <span class="kw">import</span> <span class="fn">Pipeline</span>
+<span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">GridSearchCV</span>
+
+<span class="vr">X</span> = <span class="vr">pd</span>.<span class="fn">DataFrame</span>(<span class="fn">load_digits</span>().<span class="vr">data</span>)
+<span class="vr">y</span> = <span class="fn">load_digits</span>().<span class="vr">target</span>
+<span class="vr">X</span> = <span class="vr">X</span>.<span class="fn">drop</span>([<span class="nm">0</span>,<span class="nm">24</span>,<span class="nm">31</span>,<span class="nm">32</span>,<span class="nm">39</span>,<span class="nm">56</span>], <span class="vr">axis</span>=<span class="nm">1</span>)
+
+<span class="cm"># Pipeline — step names মনে রাখো!</span>
+<span class="vr">svc_pipe</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'scaling'</span>,   <span class="fn">StandardScaler</span>()),  <span class="cm"># step name: 'scaling'</span>
+    (<span class="st">'selection'</span>, <span class="fn">SelectKBest</span>()),     <span class="cm"># step name: 'selection'</span>
+    (<span class="st">'model'</span>,     <span class="fn">SVC</span>())               <span class="cm"># step name: 'model'</span>
+])
+
+<span class="cm"># Parameter grid — 'step_name__param_name' format!</span>
+<span class="vr">param_grid</span> = {
+    <span class="st">'selection__k'</span>   : [<span class="nm">10</span>, <span class="nm">20</span>, <span class="nm">30</span>, <span class="nm">40</span>, <span class="nm">50</span>, <span class="st">'all'</span>],
+    <span class="st">'model__kernel'</span>  : [<span class="st">'poly'</span>, <span class="st">'linear'</span>, <span class="st">'rbf'</span>]
+}
+<span class="cm"># মোট: 6 × 3 = 18 combinations × 5 folds = 90 fits!</span>
+
+<span class="vr">grid</span> = <span class="fn">GridSearchCV</span>(<span class="vr">svc_pipe</span>, <span class="vr">param_grid</span>, <span class="vr">cv</span>=<span class="nm">5</span>, <span class="vr">n_jobs</span>=-<span class="nm">1</span>)
+<span class="vr">grid</span>.<span class="fn">fit</span>(<span class="vr">X</span>, <span class="vr">y</span>)
+
+<span class="vr">print</span>(<span class="st">"সেরা Parameters:"</span>, <span class="vr">grid</span>.<span class="vr">best_params_</span>)
+<span class="vr">print</span>(<span class="st">"সেরা Score:     "</span>, <span class="vr">grid</span>.<span class="vr">best_score_</span>)</pre></div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 6: CUSTOM ESTIMATORS
+══════════════════════════════════════════ -->
+<section class="sec" id="custom-est">
+<h2 class="st"><span class="n">৬</span> Custom Estimators — GridSearchCV সহ</h2>
+
+<p>শুধু <code>TransformerMixin</code> inherit করলে GridSearchCV কাজ করে না। <code>BaseEstimator</code> ও দরকার — কারণ এটা <code>get_params()</code> ও <code>set_params()</code> দেয়।</p>
+
+<div class="cb"><div class="ch"><span>ColumnBucketer + ColumnDrop — Custom Transformers with GridSearch</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.base</span> <span class="kw">import</span> <span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>
+<span class="kw">from</span> <span class="cl">sklearn.pipeline</span> <span class="kw">import</span> <span class="fn">Pipeline</span>
+<span class="kw">from</span> <span class="cl">sklearn.linear_model</span> <span class="kw">import</span> <span class="fn">BayesianRidge</span>
+<span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">GridSearchCV</span>
+<span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> <span class="vr">np</span>
+
+<span class="kw">class</span> <span class="cl">ColumnBucketer</span>(<span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>):
+    <span class="st">"""Numeric column কে equal-width buckets এ ভাগ করে।
+    
+    Example: age=25, bucket_size=10 → age_bucket=20 (bucket [20,30))
+    Formula: (X // bucket_size) * bucket_size
+    """</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="vr">self</span>, <span class="vr">column_name</span>, <span class="vr">bucket_size</span>):
+        <span class="cm"># BaseEstimator এর requirement: __init__ এ সব params store করো</span>
+        <span class="vr">self</span>.<span class="vr">column_name</span> = <span class="vr">column_name</span>
+        <span class="vr">self</span>.<span class="vr">bucket_size</span>  = <span class="vr">bucket_size</span>
+    
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="vr">self</span>, <span class="vr">X</span>, <span class="vr">y</span>=<span class="vr">None</span>):
+        <span class="kw">return</span> <span class="vr">self</span>  <span class="cm"># কিছু শেখার নেই</span>
+    
+    <span class="kw">def</span> <span class="fn">transform</span>(<span class="vr">self</span>, <span class="vr">X</span>):
+        <span class="vr">X</span> = <span class="vr">X</span>.<span class="fn">copy</span>()  <span class="cm"># original modify না করতে copy করো</span>
+        <span class="vr">X</span>[<span class="vr">self</span>.<span class="vr">column_name</span> + <span class="st">"_bucket"</span>] = (
+            <span class="vr">X</span>[<span class="vr">self</span>.<span class="vr">column_name</span>] // <span class="vr">self</span>.<span class="vr">bucket_size</span>
+        ) * <span class="vr">self</span>.<span class="vr">bucket_size</span>
+        <span class="kw">return</span> <span class="vr">X</span>
+
+
+<span class="kw">class</span> <span class="cl">ColumnDrop</span>(<span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>):
+    <span class="st">"""DataFrame থেকে একটি column সরায়।"""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="vr">self</span>, <span class="vr">column_to_drop</span>):
+        <span class="vr">self</span>.<span class="vr">column_to_drop</span> = <span class="vr">column_to_drop</span>
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="vr">self</span>, <span class="vr">X</span>, <span class="vr">y</span>=<span class="vr">None</span>):
+        <span class="kw">return</span> <span class="vr">self</span>
+    <span class="kw">def</span> <span class="fn">transform</span>(<span class="vr">self</span>, <span class="vr">X</span>):
+        <span class="kw">return</span> <span class="vr">X</span>.<span class="fn">drop</span>(<span class="vr">self</span>.<span class="vr">column_to_drop</span>, <span class="vr">axis</span>=<span class="nm">1</span>)
+
+
+<span class="cm"># Pipeline তৈরি — custom transformers সহ</span>
+<span class="vr">pipe</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'bucket_age'</span>,  <span class="fn">ColumnBucketer</span>(<span class="st">'AGE'</span>,  <span class="vr">bucket_size</span>=<span class="nm">5</span>)),
+    (<span class="st">'bucket_crim'</span>, <span class="fn">ColumnBucketer</span>(<span class="st">'CRIM'</span>, <span class="vr">bucket_size</span>=<span class="nm">5</span>)),
+    (<span class="st">'drop_age'</span>,    <span class="fn">ColumnDrop</span>(<span class="st">'AGE'</span>)),
+    (<span class="st">'drop_crim'</span>,   <span class="fn">ColumnDrop</span>(<span class="st">'CRIM'</span>)),
+    (<span class="st">'model'</span>,       <span class="fn">BayesianRidge</span>())
+])
+
+<span class="cm"># GridSearch এ custom transformer এর parameter ব্যবহার!</span>
+<span class="vr">params</span> = {
+    <span class="st">'bucket_age__bucket_size'</span>  : [<span class="nm">3</span>, <span class="nm">5</span>, <span class="nm">10</span>],  <span class="cm"># 'bucket_age' step এর 'bucket_size'</span>
+    <span class="st">'bucket_crim__bucket_size'</span> : [<span class="nm">3</span>, <span class="nm">5</span>, <span class="nm">10</span>],
+    <span class="st">'model__alpha_1'</span>           : <span class="vr">np</span>.<span class="fn">logspace</span>(-<span class="nm">3</span>, <span class="nm">2</span>, <span class="nm">5</span>),
+    <span class="st">'model__alpha_2'</span>           : <span class="vr">np</span>.<span class="fn">logspace</span>(-<span class="nm">3</span>, <span class="nm">2</span>, <span class="nm">5</span>)
+}
+
+<span class="vr">grid</span> = <span class="fn">GridSearchCV</span>(<span class="vr">pipe</span>, <span class="vr">params</span>, <span class="vr">cv</span>=<span class="nm">5</span>)
+<span class="cm"># grid.fit(X, y)  # Boston dataset দরকার</span></pre></div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 7: COLUMN TRANSFORMER
+══════════════════════════════════════════ -->
+<section class="sec" id="col-transformer">
+<h2 class="st"><span class="n">৭</span> ColumnTransformer — আলাদা Column এ আলাদা Transformation</h2>
+
+<p>Real dataset এ numerical ও categorical column মিশিয়ে থাকে। Numerical গুলো normalize করতে হয়, categorical গুলো encode করতে হয়। <code>ColumnTransformer</code> এই কাজটা সহজ করে।</p>
+
+<div class="dw">
+<svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:680px;display:block;margin:0 auto">
+  <defs><marker id="a3" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L0,5 L7,2.5 z" fill="#58a6ff"/></marker></defs>
+  <rect x="240" y="10" width="200" height="44" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="340" y="28" text-anchor="middle" fill="#e6edf3" font-size="13" font-family="Hind Siliguri">DataFrame</text>
+  <text x="340" y="44" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">age, salary, gender, city</text>
+  <line x1="300" y1="54" x2="185" y2="110" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a3)"/>
+  <line x1="380" y1="54" x2="495" y2="110" stroke="#58a6ff" stroke-width="1.5" marker-end="url(#a3)"/>
+  <rect x="55" y="110" width="260" height="60" rx="8" fill="#1a2332" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="185" y="134" text-anchor="middle" fill="#3fb950" font-size="13" font-family="Hind Siliguri" font-weight="600">Numerical Columns</text>
+  <text x="185" y="152" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">age, salary → StandardScaler</text>
+  <rect x="365" y="110" width="260" height="60" rx="8" fill="#1a2332" stroke="#bc8cff" stroke-width="1.5"/>
+  <text x="495" y="134" text-anchor="middle" fill="#bc8cff" font-size="13" font-family="Hind Siliguri" font-weight="600">Categorical Columns</text>
+  <text x="495" y="152" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">gender, city → OneHotEncoder</text>
+  <line x1="185" y1="170" x2="300" y2="218" stroke="#3fb950" stroke-width="1.5" marker-end="url(#a3)"/>
+  <line x1="495" y1="170" x2="380" y2="218" stroke="#bc8cff" stroke-width="1.5" marker-end="url(#a3)"/>
+  <rect x="195" y="218" width="290" height="38" rx="8" fill="#1a2332" stroke="#e3b341" stroke-width="1.5"/>
+  <text x="340" y="241" text-anchor="middle" fill="#e3b341" font-size="12" font-family="Hind Siliguri" font-weight="600">Transformed Output (concatenated)</text>
+</svg>
+<p class="dc">চিত্র ৪: ColumnTransformer — ভিন্ন column এ ভিন্ন transformation, তারপর combine</p>
+</div>
+
+<div class="cb"><div class="ch"><span>ColumnTransformer vs make_column_transformer</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.compose</span> <span class="kw">import</span> <span class="fn">ColumnTransformer</span>, <span class="fn">make_column_transformer</span>
+<span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">StandardScaler</span>, <span class="fn">OneHotEncoder</span>
+
+<span class="vr">num_vars</span> = [<span class="st">'age'</span>, <span class="st">'salary'</span>]
+<span class="vr">cat_vars</span> = [<span class="st">'gender'</span>, <span class="st">'city'</span>]
+
+<span class="cm"># পদ্ধতি ১: ColumnTransformer — GridSearch করতে হলে এটা ব্যবহার করো</span>
+<span class="cm"># ('নাম', transformer, columns) format</span>
+<span class="vr">prepro1</span> = <span class="fn">ColumnTransformer</span>([
+    (<span class="st">'numerical'</span>,   <span class="fn">StandardScaler</span>(), <span class="vr">num_vars</span>),
+    (<span class="st">'categorical'</span>, <span class="fn">OneHotEncoder</span>(),   <span class="vr">cat_vars</span>)
+])
+<span class="cm"># GridSearch: 'numerical__with_mean': [True, False] এরকম করা যায়</span>
+
+<span class="cm"># পদ্ধতি ২: make_column_transformer — shortcut, নাম নেই</span>
+<span class="cm"># (transformer, columns) format</span>
+<span class="vr">prepro2</span> = <span class="fn">make_column_transformer</span>(
+    (<span class="fn">StandardScaler</span>(), <span class="vr">num_vars</span>),
+    (<span class="fn">OneHotEncoder</span>(),  <span class="vr">cat_vars</span>)
+)
+
+<span class="cm"># কোনটা ব্যবহার করব?
+# GridSearchCV করব → ColumnTransformer (step name দরকার)
+# শুধু preprocess করব → make_column_transformer (সহজ syntax)</span></pre></div>
+
+<div class="isec">
+<h4>🎯 Interview প্রশ্ন — ColumnTransformer</h4>
+<div class="qi"><div class="qq" onclick="tQ(this)"><span>প্রশ্ন: ColumnTransformer এ 'passthrough' কী করে?</span><span class="arr">▶</span></div><div class="qa"><code>'passthrough'</code> মানে ওই column গুলোতে কোনো transformation করবে না — সরাসরি output এ পাঠিয়ে দেবে। যেমন binary features (0/1) এ কোনো scaling দরকার নেই। কোড: <code>ColumnTransformer([('pass', 'passthrough', ['col1', 'col2'])])</code>।</div></div>
+<div class="qi"><div class="qq" onclick="tQ(this)"><span>প্রশ্ন: make_column_transformer এর সাথে GridSearchCV কেন কঠিন?</span><span class="arr">▶</span></div><div class="qa"><code>make_column_transformer</code> এ transformer এর নাম auto-generate হয় (যেমন <code>standardscaler</code>, <code>onehotencoder</code>)। GridSearchCV এ parameter লিখতে হয় <code>'standardscaler__with_mean'</code> এরকম — নাম জানতে হয়। <code>ColumnTransformer</code> এ নিজে নাম দেওয়া যায়, তাই GridSearch এ সুবিধা।</div></div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 8: TITANIC INTRO
+══════════════════════════════════════════ -->
+<section class="sec" id="titanic-intro">
+<h2 class="st"><span class="n">৮</span> Titanic Project — Dataset পরিচয়</h2>
+
+<p>এবার real project করব — Titanic passenger survival prediction। Raw, messy dataset → clean data → prediction, সবটাই Pipeline এর মধ্যে।</p>
+
+<div class="card bl"><div class="ct">🚢 Dataset Variables</div>
+<div class="tw"><table>
+<thead><tr><th>Variable</th><th>মানে</th><th>ধরন</th><th>সমস্যা</th></tr></thead>
+<tbody>
+<tr><td><code>Survived</code></td><td>১=বেঁচেছে, ০=মরেছে (Target)</td><td>Binary</td><td>—</td></tr>
+<tr><td><code>Pclass</code></td><td>টিকেটের শ্রেণী (১/২/৩)</td><td>Ordinal</td><td>—</td></tr>
+<tr><td><code>Name</code></td><td>নাম (Surname, Title, Firstname)</td><td>String</td><td>parsing দরকার</td></tr>
+<tr><td><code>Sex</code></td><td>লিঙ্গ (male/female)</td><td>Categorical</td><td>encode দরকার</td></tr>
+<tr><td><code>Age</code></td><td>বয়স</td><td>Numerical</td><td>missing values</td></tr>
+<tr><td><code>SibSp</code></td><td>ভাই/বোন/স্বামী/স্ত্রী সংখ্যা</td><td>Numerical</td><td>—</td></tr>
+<tr><td><code>Parch</code></td><td>বাবা/মা/সন্তান সংখ্যা</td><td>Numerical</td><td>—</td></tr>
+<tr><td><code>Cabin</code></td><td>কেবিন নম্বর</td><td>String</td><td>৭৭% missing!</td></tr>
+<tr><td><code>Embarked</code></td><td>বন্দর (C/Q/S)</td><td>Categorical</td><td>encode দরকার</td></tr>
+</tbody>
+</table></div></div>
+
+<div class="dw">
+<svg viewBox="0 0 780 380" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:780px;display:block;margin:0 auto">
+  <defs><marker id="a4" markerWidth="7" markerHeight="7" refX="5" refY="2.5" orient="auto"><path d="M0,0 L0,5 L7,2.5 z" fill="#58a6ff"/></marker></defs>
+  <text x="390" y="22" text-anchor="middle" fill="#58a6ff" font-size="15" font-family="Hind Siliguri" font-weight="700">Final Pipeline Architecture</text>
+  <rect x="270" y="32" width="240" height="38" rx="8" fill="#1c2128" stroke="#58a6ff" stroke-width="2"/>
+  <text x="390" y="56" text-anchor="middle" fill="#e6edf3" font-size="13" font-family="Hind Siliguri">Raw Titanic DataFrame (X)</text>
+  <line x1="390" y1="70" x2="390" y2="96" stroke="#58a6ff" stroke-width="2" marker-end="url(#a4)"/>
+  <rect x="30" y="96" width="720" height="204" rx="10" fill="#0d1117" stroke="#30363d" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="390" y="115" text-anchor="middle" fill="#e3b341" font-size="12" font-family="Hind Siliguri" font-weight="600">make_column_transformer (preprocessor)</text>
+  <rect x="42" y="122" width="138" height="100" rx="7" fill="#1a2332" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="111" y="142" text-anchor="middle" fill="#3fb950" font-size="11" font-family="Hind Siliguri" font-weight="600">NamePipeline</text>
+  <text x="111" y="158" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">PassengerId</text>
+  <text x="111" y="172" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">Name, Cabin</text>
+  <text x="111" y="188" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">SplitName→</text>
+  <text x="111" y="204" text-anchor="middle" fill="#3fb950" font-size="10" font-family="Hind Siliguri">FeatureUnion</text>
+  <text x="111" y="216" text-anchor="middle" fill="#3fb950" font-size="10" font-family="Hind Siliguri">→ 17 features</text>
+  <rect x="192" y="122" width="138" height="100" rx="7" fill="#1a2332" stroke="#bc8cff" stroke-width="1.5"/>
+  <text x="261" y="142" text-anchor="middle" fill="#bc8cff" font-size="11" font-family="Hind Siliguri" font-weight="600">SizeFamily</text>
+  <text x="261" y="158" text-anchor="middle" fill="#bc8cff" font-size="11" font-family="Hind Siliguri" font-weight="600">Pipeline</text>
+  <text x="261" y="175" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">SibSp, Parch</text>
+  <text x="261" y="191" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">→ family size</text>
+  <text x="261" y="216" text-anchor="middle" fill="#bc8cff" font-size="10" font-family="Hind Siliguri">→ 1 feature</text>
+  <rect x="342" y="122" width="130" height="100" rx="7" fill="#1a2332" stroke="#f778ba" stroke-width="1.5"/>
+  <text x="407" y="142" text-anchor="middle" fill="#f778ba" font-size="11" font-family="Hind Siliguri" font-weight="600">AgePipeline</text>
+  <text x="407" y="162" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">Age column</text>
+  <text x="407" y="178" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">→ age category</text>
+  <text x="407" y="194" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">→ OHE</text>
+  <text x="407" y="216" text-anchor="middle" fill="#f778ba" font-size="10" font-family="Hind Siliguri">→ 6 features</text>
+  <rect x="484" y="122" width="130" height="100" rx="7" fill="#1a2332" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="549" y="142" text-anchor="middle" fill="#3fb950" font-size="11" font-family="Hind Siliguri" font-weight="600">Numerical</text>
+  <text x="549" y="158" text-anchor="middle" fill="#3fb950" font-size="11" font-family="Hind Siliguri" font-weight="600">Pipeline</text>
+  <text x="549" y="175" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">Pclass, Fare</text>
+  <text x="549" y="191" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">→ StandardScaler</text>
+  <text x="549" y="216" text-anchor="middle" fill="#3fb950" font-size="10" font-family="Hind Siliguri">→ 2 features</text>
+  <rect x="626" y="122" width="112" height="100" rx="7" fill="#1a2332" stroke="#accent" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="682" y="142" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="Hind Siliguri" font-weight="600">Categorical</text>
+  <text x="682" y="158" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="Hind Siliguri" font-weight="600">Pipeline</text>
+  <text x="682" y="175" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">Sex, Embarked</text>
+  <text x="682" y="191" text-anchor="middle" fill="#8b949e" font-size="10" font-family="Hind Siliguri">→ OneHotEncoder</text>
+  <text x="682" y="216" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="Hind Siliguri">→ 5 features</text>
+  <line x1="390" y1="302" x2="390" y2="328" stroke="#58a6ff" stroke-width="2" marker-end="url(#a4)"/>
+  <text x="390" y="320" text-anchor="middle" fill="#6272a4" font-size="10" font-family="Hind Siliguri">মোট ≈ 31 features → Model</text>
+  <rect x="255" y="330" width="270" height="42" rx="8" fill="#1a2332" stroke="#e3b341" stroke-width="2"/>
+  <text x="390" y="350" text-anchor="middle" fill="#e3b341" font-size="13" font-family="Hind Siliguri">GradientBoostingClassifier</text>
+  <text x="390" y="365" text-anchor="middle" fill="#8b949e" font-size="11" font-family="Hind Siliguri">Survived? (1/0)</text>
+</svg>
+<p class="dc">চিত্র ৫: Titanic Final Pipeline — সব sub-pipeline একত্রিত</p>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 9: TITANIC TRANSFORMERS
+══════════════════════════════════════════ -->
+<section class="sec" id="titanic-tr">
+<h2 class="st"><span class="n">৯</span> Titanic Custom Transformers</h2>
+
+<div class="cb"><div class="ch"><span>AgeCat — বয়সকে Category তে রূপান্তর</span><span class="lb">Python</span></div>
+<pre><span class="kw">import</span> <span class="cl">pandas</span> <span class="kw">as</span> <span class="vr">pd</span>
+<span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> <span class="vr">np</span>
+<span class="kw">from</span> <span class="cl">sklearn.base</span> <span class="kw">import</span> <span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>
+
+<span class="kw">class</span> <span class="cl">AgeCat</span>(<span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>):
+    <span class="st">"""বয়স → 6টি category: Kid, Adolescent, Adult-, Adult, Adult+, Senior"""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="vr">self</span>): <span class="kw">pass</span>
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="vr">self</span>, <span class="vr">X</span>, <span class="vr">y</span>=<span class="vr">None</span>): <span class="kw">return</span> <span class="vr">self</span>
+    <span class="kw">def</span> <span class="fn">transform</span>(<span class="vr">self</span>, <span class="vr">X</span>):
+        <span class="kw">return</span> <span class="vr">pd</span>.<span class="fn">DataFrame</span>(
+            <span class="vr">pd</span>.<span class="fn">cut</span>(<span class="vr">X</span>[<span class="st">'Age'</span>],
+                   <span class="vr">bins</span>  =[<span class="nm">0</span>, <span class="nm">12</span>, <span class="nm">18</span>, <span class="nm">30</span>, <span class="nm">50</span>, <span class="nm">65</span>, <span class="vr">np</span>.<span class="vr">inf</span>],
+                   <span class="vr">labels</span>=[<span class="st">'Kid'</span>,<span class="st">'Adolescent'</span>,<span class="st">'Adult-'</span>,<span class="st">'Adult'</span>,<span class="st">'Adult+'</span>,<span class="st">'Senior'</span>])
+        )</pre></div>
+
+<div class="cb"><div class="ch"><span>FamilySize — পরিবারের আকার বের করা</span><span class="lb">Python</span></div>
+<pre><span class="kw">class</span> <span class="cl">FamilySize</span>(<span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>):
+    <span class="st">"""SibSp + Parch + 1(নিজে) = পরিবারের মোট সদস্য সংখ্যা"""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="vr">self</span>): <span class="kw">pass</span>
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="vr">self</span>, <span class="vr">X</span>, <span class="vr">y</span>=<span class="vr">None</span>): <span class="kw">return</span> <span class="vr">self</span>
+    <span class="kw">def</span> <span class="fn">transform</span>(<span class="vr">self</span>, <span class="vr">X</span>):
+        <span class="cm"># axis=1: প্রতিটি row এর সব column যোগ করা, তারপর +1 (নিজে)</span>
+        <span class="kw">return</span> <span class="vr">pd</span>.<span class="fn">DataFrame</span>(<span class="vr">X</span>.<span class="fn">sum</span>(<span class="vr">axis</span>=<span class="nm">1</span>) + <span class="nm">1</span>)</pre></div>
+
+<div class="cb"><div class="ch"><span>SplitName — নাম থেকে Surname, Title, Firstname</span><span class="lb">Python</span></div>
+<pre><span class="kw">import</span> <span class="cl">re</span>
+
+<span class="kw">def</span> <span class="fn">spliter</span>(<span class="vr">series</span>):
+    <span class="st">"""regex দিয়ে "Braund, Mr. Owen" → ['Braund', ' Mr', ' Owen']"""</span>
+    <span class="vr">chain</span> = <span class="vr">series</span>.<span class="fn">apply</span>(<span class="kw">lambda</span> <span class="vr">x</span>: <span class="vr">re</span>.<span class="fn">split</span>(<span class="st">r"[.,\((.*?)\)]"</span>, <span class="vr">x</span>))
+    <span class="kw">for</span> <span class="vr">elt</span> <span class="kw">in</span> <span class="vr">chain</span>:
+        <span class="kw">if</span> <span class="vr">elt</span>[-<span class="nm">1</span>] == <span class="st">''</span>: <span class="kw">del</span> <span class="vr">elt</span>[-<span class="nm">1</span>]
+    <span class="kw">return</span> <span class="vr">chain</span>
+
+<span class="kw">class</span> <span class="cl">SplitName</span>(<span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>):
+    <span class="st">"""Name column কে Surname, Title, Firstname(s) এ ভাগ করে।"""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="vr">self</span>, <span class="vr">column_name</span>): <span class="vr">self</span>.<span class="vr">column_name</span> = <span class="vr">column_name</span>
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="vr">self</span>, <span class="vr">X</span>, <span class="vr">y</span>=<span class="vr">None</span>): <span class="kw">return</span> <span class="vr">self</span>
+    <span class="kw">def</span> <span class="fn">transform</span>(<span class="vr">self</span>, <span class="vr">X</span>):
+        <span class="vr">X</span> = <span class="vr">X</span>.<span class="fn">copy</span>()
+        <span class="vr">chain</span> = <span class="fn">spliter</span>(<span class="vr">X</span>[<span class="vr">self</span>.<span class="vr">column_name</span>])
+        <span class="vr">X</span>[<span class="st">'Surname'</span>]     = <span class="vr">chain</span>.<span class="fn">apply</span>(<span class="kw">lambda</span> <span class="vr">x</span>: <span class="vr">x</span>[<span class="nm">0</span>].<span class="fn">strip</span>())
+        <span class="vr">X</span>[<span class="st">'Title'</span>]       = <span class="vr">chain</span>.<span class="fn">apply</span>(<span class="kw">lambda</span> <span class="vr">x</span>: <span class="vr">x</span>[<span class="nm">1</span>][<span class="nm">1</span>:])  <span class="cm"># space remove</span>
+        <span class="vr">X</span>[<span class="st">'Firstname(s)'</span>] = <span class="vr">chain</span>.<span class="fn">apply</span>(<span class="kw">lambda</span> <span class="vr">x</span>: <span class="vr">x</span>[<span class="nm">2</span>])
+        <span class="kw">return</span> <span class="vr">X</span></pre></div>
+
+<div class="cb"><div class="ch"><span>CategorizeTitle + SplitCabin Transformers</span><span class="lb">Python</span></div>
+<pre><span class="kw">class</span> <span class="cl">CategorizeTitle</span>(<span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>):
+    <span class="st">"""Title → 5 categories: Miss, Mrs, Mr, Master, Special"""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="vr">self</span>, <span class="vr">column_name</span>): <span class="vr">self</span>.<span class="vr">column_name</span> = <span class="vr">column_name</span>
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="vr">self</span>, <span class="vr">X</span>, <span class="vr">y</span>=<span class="vr">None</span>): <span class="kw">return</span> <span class="vr">self</span>
+    <span class="kw">def</span> <span class="fn">transform</span>(<span class="vr">self</span>, <span class="vr">X</span>):
+        <span class="vr">X</span> = <span class="vr">X</span>.<span class="fn">copy</span>()
+        <span class="vr">special</span> = [<span class="st">"Dr"</span>,<span class="st">"Don"</span>,<span class="st">"Mme"</span>,<span class="st">"Major"</span>,<span class="st">"Lady"</span>,<span class="st">"Sir"</span>,
+                    <span class="st">"Mlle"</span>,<span class="st">"Col"</span>,<span class="st">"Capt"</span>,<span class="st">"the Countess"</span>,<span class="st">"Jonkheer"</span>,<span class="st">"Dona"</span>]
+        <span class="vr">X</span>[<span class="vr">self</span>.<span class="vr">column_name</span>] = <span class="vr">X</span>[<span class="vr">self</span>.<span class="vr">column_name</span>].<span class="fn">replace</span>(<span class="vr">special</span>, <span class="st">'Special'</span>)
+        <span class="vr">X</span>[<span class="vr">self</span>.<span class="vr">column_name</span>] = <span class="vr">X</span>[<span class="vr">self</span>.<span class="vr">column_name</span>].<span class="fn">replace</span>([<span class="st">'Rev'</span>], <span class="st">'Mr'</span>)
+        <span class="vr">X</span>[<span class="vr">self</span>.<span class="vr">column_name</span>] = <span class="vr">X</span>[<span class="vr">self</span>.<span class="vr">column_name</span>].<span class="fn">replace</span>([<span class="st">'Ms'</span>], <span class="st">'Miss'</span>)
+        <span class="kw">return</span> <span class="vr">X</span>[[<span class="vr">self</span>.<span class="vr">column_name</span>]]
+
+<span class="kw">def</span> <span class="fn">babtri</span>(<span class="vr">x</span>):
+    <span class="st">"""Cabin number → 'Port' (even) বা 'Starboard' (odd)"""</span>
+    <span class="kw">if</span> <span class="vr">x</span> % <span class="nm">2</span> == <span class="nm">0.0</span>: <span class="kw">return</span> <span class="st">'Port'</span>
+    <span class="kw">if</span> <span class="vr">x</span> % <span class="nm">2</span> == <span class="nm">1.0</span>: <span class="kw">return</span> <span class="st">'Starboard'</span>
+    <span class="kw">return</span> <span class="vr">np</span>.<span class="vr">nan</span>
+
+<span class="kw">class</span> <span class="cl">SplitCabin</span>(<span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>):
+    <span class="st">"""Cabin string → letter (deck) এবং parity (port/starboard)"""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="vr">self</span>, <span class="vr">column_name</span>): <span class="vr">self</span>.<span class="vr">column_name</span> = <span class="vr">column_name</span>
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="vr">self</span>, <span class="vr">X</span>, <span class="vr">y</span>=<span class="vr">None</span>): <span class="kw">return</span> <span class="vr">self</span>
+    <span class="kw">def</span> <span class="fn">transform</span>(<span class="vr">self</span>, <span class="vr">X</span>):
+        <span class="vr">new_X</span> = <span class="vr">pd</span>.<span class="fn">DataFrame</span>()
+        <span class="vr">new_X</span>[<span class="vr">self</span>.<span class="vr">column_name</span>+<span class="st">'_letter'</span>] = <span class="vr">X</span>[<span class="vr">self</span>.<span class="vr">column_name</span>].<span class="vr">str</span>.<span class="fn">slice</span>(<span class="nm">0</span>,<span class="nm">1</span>)
+        <span class="vr">var</span> = <span class="vr">X</span>[<span class="vr">self</span>.<span class="vr">column_name</span>].<span class="vr">str</span>.<span class="fn">slice</span>(<span class="nm">1</span>,<span class="nm">5</span>).<span class="vr">str</span>.<span class="fn">extract</span>(<span class="st">"([0-9]+)"</span>).<span class="fn">astype</span>(<span class="st">'float'</span>)
+        <span class="vr">new_X</span>[<span class="vr">self</span>.<span class="vr">column_name</span>+<span class="st">'_parite'</span>] = <span class="vr">var</span>.<span class="fn">iloc</span>[:,<span class="nm">0</span>].<span class="fn">apply</span>(<span class="vr">babtri</span>)
+        <span class="kw">return</span> <span class="vr">new_X</span></pre></div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 10: TITANIC SUB-PIPELINES
+══════════════════════════════════════════ -->
+<section class="sec" id="titanic-pipes">
+<h2 class="st"><span class="n">১০</span> Sub-Pipelines — ধাপে ধাপে তৈরি</h2>
+
+<div class="cb"><div class="ch"><span>সব Sub-Pipelines একসাথে</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.pipeline</span> <span class="kw">import</span> <span class="fn">Pipeline</span>, <span class="fn">FeatureUnion</span>
+<span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">StandardScaler</span>, <span class="fn">OneHotEncoder</span>
+<span class="kw">from</span> <span class="cl">sklearn.impute</span> <span class="kw">import</span> <span class="fn">SimpleImputer</span>
+
+<span class="cm"># ══ ১. CabinsPipeline ══</span>
+<span class="cm"># Input: PassengerId, Surname, Cabin</span>
+<span class="cm"># Output: one-hot encoded cabin letter + parity (12 features)</span>
+<span class="vr">CabinsPipeline</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'complete'</span>, <span class="fn">AddCabins</span>(<span class="st">'PassengerId'</span>, <span class="st">'Cabin'</span>, <span class="st">'Surname'</span>)),
+    (<span class="st">'split'</span>,    <span class="fn">SplitCabin</span>(<span class="st">'Cabin'</span>)),
+    (<span class="st">'imputer'</span>,  <span class="fn">SimpleImputer</span>(<span class="vr">strategy</span>=<span class="st">'constant'</span>, <span class="vr">fill_value</span>=<span class="st">'missing'</span>)),
+    (<span class="st">'encoder'</span>,  <span class="fn">OneHotEncoder</span>())
+])
+
+<span class="cm"># ══ ২. TitlePipeline ══</span>
+<span class="cm"># Input: Title column</span>
+<span class="cm"># Output: one-hot encoded 5 title categories (5 features)</span>
+<span class="vr">TitlePipeline</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'categorize'</span>, <span class="fn">CategorizeTitle</span>(<span class="st">'Title'</span>)),
+    (<span class="st">'imputer'</span>,    <span class="fn">SimpleImputer</span>(<span class="vr">strategy</span>=<span class="st">'most_frequent'</span>)),
+    (<span class="st">'encoder'</span>,    <span class="fn">OneHotEncoder</span>())
+])
+
+<span class="cm"># ══ ৩. FeatureUnion: CabinsPipeline + TitlePipeline parallel ══</span>
+<span class="vr">FeatureUnionPipeline</span> = <span class="fn">FeatureUnion</span>([
+    (<span class="st">"Cabin"</span>, <span class="vr">CabinsPipeline</span>),
+    (<span class="st">"Title"</span>, <span class="vr">TitlePipeline</span>)
+])  <span class="cm"># একই data দুটোকে দেওয়া হয়, outputs concatenate হয় → 17 features</span>
+
+<span class="cm"># ══ ৪. NamePipeline: SplitName → FeatureUnion ══</span>
+<span class="vr">NamePipeline</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'split_name'</span>,    <span class="fn">SplitName</span>(<span class="st">'Name'</span>)),      <span class="cm"># নাম split করা</span>
+    (<span class="st">'feature_union'</span>, <span class="vr">FeatureUnionPipeline</span>)     <span class="cm"># Cabin ও Title parallel</span>
+])
+
+<span class="cm"># ══ ৫. SizeFamilyPipeline ══</span>
+<span class="vr">SizeFamilyPipeline</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'family_sum'</span>, <span class="fn">FamilySize</span>()),
+    (<span class="st">'imputer'</span>,    <span class="fn">SimpleImputer</span>(<span class="vr">strategy</span>=<span class="st">'mean'</span>)),
+    (<span class="st">'scaler'</span>,     <span class="fn">StandardScaler</span>())
+])
+
+<span class="cm"># ══ ৬. AgePipeline ══</span>
+<span class="vr">AgePipeline</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'age_cat'</span>, <span class="fn">AgeCat</span>()),
+    (<span class="st">'imputer'</span>, <span class="fn">SimpleImputer</span>(<span class="vr">strategy</span>=<span class="st">'most_frequent'</span>)),
+    (<span class="st">'encoder'</span>, <span class="fn">OneHotEncoder</span>())
+])
+
+<span class="cm"># ══ ৭. NumericalPipeline ও CategoricalPipeline ══</span>
+<span class="vr">NumericalPipeline</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'imputer'</span>, <span class="fn">SimpleImputer</span>()),       <span class="cm"># default: mean strategy</span>
+    (<span class="st">'scaler'</span>,  <span class="fn">StandardScaler</span>())
+])
+
+<span class="vr">CategoricalPipeline</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'imputer'</span>, <span class="fn">SimpleImputer</span>(<span class="vr">strategy</span>=<span class="st">'most_frequent'</span>)),
+    (<span class="st">'encoder'</span>, <span class="fn">OneHotEncoder</span>())
+])</pre></div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 11: FINAL PIPELINE
+══════════════════════════════════════════ -->
+<section class="sec" id="titanic-final">
+<h2 class="st"><span class="n">১১</span> Final Pipeline — সব একসাথে!</h2>
+
+<div class="cb"><div class="ch"><span>Final Titanic Pipeline — End to End</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.compose</span> <span class="kw">import</span> <span class="fn">make_column_transformer</span>
+<span class="kw">from</span> <span class="cl">sklearn.ensemble</span> <span class="kw">import</span> <span class="fn">GradientBoostingClassifier</span>
+<span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">train_test_split</span>
+<span class="kw">from</span> <span class="cl">sklearn.metrics</span> <span class="kw">import</span> <span class="fn">accuracy_score</span>
+
+<span class="cm"># ══ Preprocessor: কোন pipeline কোন columns এ apply হবে ══</span>
+<span class="vr">preprocessor</span> = <span class="fn">make_column_transformer</span>(
+    (<span class="vr">NamePipeline</span>,        [<span class="st">'PassengerId'</span>, <span class="st">'Name'</span>, <span class="st">'Cabin'</span>]),
+    (<span class="vr">SizeFamilyPipeline</span>,  [<span class="st">'SibSp'</span>, <span class="st">'Parch'</span>]),
+    (<span class="vr">AgePipeline</span>,         [<span class="st">'Age'</span>]),
+    (<span class="vr">NumericalPipeline</span>,   [<span class="st">'Pclass'</span>, <span class="st">'Fare'</span>]),
+    (<span class="vr">CategoricalPipeline</span>, [<span class="st">'Sex'</span>, <span class="st">'Embarked'</span>])
+)
+
+<span class="cm"># ══ Final Pipeline: preprocessor + GradientBoosting model ══</span>
+<span class="vr">final_pipeline</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'preprocessor'</span>, <span class="vr">preprocessor</span>),
+    (<span class="st">'model'</span>,        <span class="fn">GradientBoostingClassifier</span>(<span class="vr">random_state</span>=<span class="nm">42</span>))
+])
+
+<span class="cm"># ══ Train-test split ══</span>
+<span class="vr">X_train</span>, <span class="vr">X_test</span>, <span class="vr">y_train</span>, <span class="vr">y_test</span> = <span class="fn">train_test_split</span>(
+    <span class="vr">X</span>, <span class="vr">y</span>, <span class="vr">test_size</span>=<span class="nm">0.2</span>, <span class="vr">random_state</span>=<span class="nm">42</span>
+)
+
+<span class="cm"># ══ Train — একটাই fit() call! সব steps চলবে ══</span>
+<span class="vr">final_pipeline</span>.<span class="fn">fit</span>(<span class="vr">X_train</span>, <span class="vr">y_train</span>)
+
+<span class="cm"># ══ Predict ও Evaluate ══</span>
+<span class="vr">y_pred</span> = <span class="vr">final_pipeline</span>.<span class="fn">predict</span>(<span class="vr">X_test</span>)
+<span class="vr">print</span>(<span class="st">f"Accuracy: {accuracy_score(y_test, y_pred):.4f}"</span>)
+<span class="cm"># ~80-85% accuracy আশা করা যায়
+
+# ══ Save & Load — production deployment ══
+import joblib
+joblib.dump(final_pipeline, 'titanic_pipeline.pkl')
+loaded = joblib.load('titanic_pipeline.pkl')
+print("Pipeline saved and loaded successfully!")</span></pre></div>
+
+<div class="hl succ">✅ <strong>Pipeline এর শক্তি:</strong> একটাই <code>final_pipeline.fit(X_train, y_train)</code> call এ — Data cleaning, Feature engineering, Encoding, Scaling, এবং Model training — সবকিছু হয়ে যায়!</div>
+
+<div class="isec">
+<h4>🎯 Interview প্রশ্ন — Titanic Pipeline Level</h4>
+<div class="qi"><div class="qq" onclick="tQ(this)"><span>প্রশ্ন ১: FeatureUnion ও Pipeline কীভাবে আলাদা এবং Titanic এ কোথায় কোনটা ব্যবহার করলে?</span><span class="arr">▶</span></div><div class="qa">Pipeline sequential, FeatureUnion parallel। Titanic এ NamePipeline এর ভেতরে FeatureUnion ব্যবহার করলাম কারণ CabinsPipeline ও TitlePipeline উভয়কেই SplitName এর output দরকার। এরা independent — একটার output অন্যটার input নয়। তাই FeatureUnion দিয়ে parallel চালিয়ে outputs concatenate করলাম। কিন্তু SplitName আগে চালাতে হবে, তারপর FeatureUnion — এই sequential অংশটা Pipeline।</div></div>
+<div class="qi"><div class="qq" onclick="tQ(this)"><span>প্রশ্ন ২: SimpleImputer এ strategy='mean', 'most_frequent', 'constant' কখন কোনটা?</span><span class="arr">▶</span></div><div class="qa"><code>mean</code>: Numerical columns এ symmetric data তে (FamilySize, Fare)। <code>most_frequent</code>: Categorical columns এ বা numerical এ skewed data তে (Age category, Embarked)। <code>constant</code>: Missing কে specific value দিয়ে replace করতে চাইলে — যেমন cabin missing → 'missing' string, তারপর OneHotEncoder এ একটা আলাদা category হবে।</div></div>
+<div class="qi"><div class="qq" onclick="tQ(this)"><span>প্রশ্ন ৩: Production এ Pipeline save করার সময় কী কী মনে রাখতে হবে?</span><span class="arr">▶</span></div><div class="qa">(১) Custom transformer class গুলো deploy environment এ import করা হয়েছে কিনা। (২) Sklearn version compatible কিনা। (৩) Pipeline এ যে data types দিয়ে train হয়েছে, predict করার সময় সেই একই types দিতে হবে। (৪) joblib দিয়ে save করা ভালো (pickle এর চেয়ে fast)। (৫) Model version এ date/experiment ID include করো।</div></div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 12: ALGORITHMS
+══════════════════════════════════════════ -->
+<section class="sec" id="algorithms">
+<h2 class="st"><span class="n">১২</span> সব Algorithm — Kindergarten Level ব্যাখ্যা</h2>
+
+<p>Machine Learning এর প্রতিটি algorithm কে একদম সহজ ভাষায় ব্যাখ্যা করা হল। প্রতিটির Python implementation ও আছে।</p>
+
+<!-- LINEAR MODELS -->
+<h3 class="ss" id="linear">📈 Linear Models</h3>
+
+<div class="card bl"><div class="ct">🏠 Linear Regression — সরলরেখায় ভবিষ্যৎ বলা</div>
+<p><strong>সহজ ভাষায়:</strong> ধরো তুমি দেখছ, বাড়ির আকার বাড়লে দামও বাড়ে। Linear Regression সেই সরলরেখা খুঁজে বের করে যেটা সব data point এর সবচেয়ে কাছ দিয়ে যায়। তারপর নতুন বাড়ির আকার দিলে সেই রেখা দিয়ে দাম বলে দেয়।</p>
+<p><strong>গণিত:</strong> y = w₁x₁ + w₂x₂ + ... + b (OLS: minimize Σ(y_actual - y_pred)²)</p>
+<div class="cb"><div class="ch"><span>Linear Regression</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.linear_model</span> <span class="kw">import</span> <span class="fn">LinearRegression</span>
+<span class="kw">from</span> <span class="cl">sklearn.datasets</span> <span class="kw">import</span> <span class="fn">load_diabetes</span>
+<span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">train_test_split</span>
+<span class="kw">from</span> <span class="cl">sklearn.metrics</span> <span class="kw">import</span> <span class="fn">mean_squared_error</span>, <span class="fn">r2_score</span>
+<span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> <span class="vr">np</span>
+
+<span class="vr">X</span>, <span class="vr">y</span> = <span class="fn">load_diabetes</span>(<span class="vr">return_X_y</span>=<span class="vr">True</span>)
+<span class="vr">X_tr</span>, <span class="vr">X_te</span>, <span class="vr">y_tr</span>, <span class="vr">y_te</span> = <span class="fn">train_test_split</span>(<span class="vr">X</span>, <span class="vr">y</span>, <span class="vr">random_state</span>=<span class="nm">42</span>)
+
+<span class="vr">model</span> = <span class="fn">LinearRegression</span>()
+<span class="vr">model</span>.<span class="fn">fit</span>(<span class="vr">X_tr</span>, <span class="vr">y_tr</span>)
+<span class="vr">y_pred</span> = <span class="vr">model</span>.<span class="fn">predict</span>(<span class="vr">X_te</span>)
+
+<span class="vr">print</span>(<span class="st">f"R² Score: {r2_score(y_te, y_pred):.3f}"</span>)
+<span class="vr">print</span>(<span class="st">f"RMSE:     {np.sqrt(mean_squared_error(y_te, y_pred)):.2f}"</span>)
+<span class="vr">print</span>(<span class="st">f"Coefficients shape: {model.coef_.shape}"</span>)
+<span class="cm"># R² = 1.0: perfect, 0.0: কিছুই শেখেনি, negative: খুব খারাপ</span></pre></div></div>
+
+<div class="card gr"><div class="ct">🔀 Logistic Regression — Probability দিয়ে Classification</div>
+<p><strong>সহজ ভাষায়:</strong> নামে Regression থাকলেও এটা Classification! Email টা spam কিনা সিদ্ধান্ত নেয় এভাবে: "এই email spam হওয়ার probability ৮৫%।" একটা S-shaped curve (sigmoid function) ব্যবহার করে যেকোনো number কে 0-1 এর মধ্যে আনে। ৫০% এর বেশি হলে positive class।</p>
+<div class="cb"><div class="ch"><span>Logistic Regression</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.linear_model</span> <span class="kw">import</span> <span class="fn">LogisticRegression</span>
+<span class="kw">from</span> <span class="cl">sklearn.datasets</span> <span class="kw">import</span> <span class="fn">load_iris</span>
+<span class="kw">from</span> <span class="cl">sklearn.metrics</span> <span class="kw">import</span> <span class="fn">classification_report</span>
+
+<span class="vr">X</span>, <span class="vr">y</span> = <span class="fn">load_iris</span>(<span class="vr">return_X_y</span>=<span class="vr">True</span>)
+<span class="vr">X_tr</span>, <span class="vr">X_te</span>, <span class="vr">y_tr</span>, <span class="vr">y_te</span> = <span class="fn">train_test_split</span>(<span class="vr">X</span>, <span class="vr">y</span>, <span class="vr">random_state</span>=<span class="nm">42</span>)
+
+<span class="vr">model</span> = <span class="fn">LogisticRegression</span>(<span class="vr">max_iter</span>=<span class="nm">1000</span>, <span class="vr">C</span>=<span class="nm">1.0</span>)
+<span class="cm"># C = 1/regularization strength: বড় C = কম regularization</span>
+<span class="vr">model</span>.<span class="fn">fit</span>(<span class="vr">X_tr</span>, <span class="vr">y_tr</span>)
+
+<span class="vr">y_pred</span> = <span class="vr">model</span>.<span class="fn">predict</span>(<span class="vr">X_te</span>)
+<span class="vr">y_prob</span> = <span class="vr">model</span>.<span class="fn">predict_proba</span>(<span class="vr">X_te</span>)  <span class="cm"># প্রতিটি class এর probability</span>
+<span class="vr">print</span>(<span class="fn">classification_report</span>(<span class="vr">y_te</span>, <span class="vr">y_pred</span>))</pre></div></div>
+
+<div class="card pu"><div class="ct">⛰️ Ridge (L2) ও Lasso (L1) — Regularized Regression</div>
+<p><strong>সহজ ভাষায়:</strong> Regular linear regression এ কোনো coefficient অনেক বড় হয়ে গেলে model overfit করে। Ridge বড় coefficient কে "জরিমানা" করে — সব coefficient ছোট রাখতে বাধ্য করে। Lasso আরো কঠোর — অপ্রয়োজনীয় feature এর coefficient কে exactly 0 করে দেয় (feature selection)।</p>
+<div class="cb"><div class="ch"><span>Ridge ও Lasso</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.linear_model</span> <span class="kw">import</span> <span class="fn">Ridge</span>, <span class="fn">Lasso</span>, <span class="fn">ElasticNet</span>
+
+<span class="cm"># Ridge: L2 penalty = sum(w²) — সব coefficient ছোট রাখে</span>
+<span class="vr">ridge</span> = <span class="fn">Ridge</span>(<span class="vr">alpha</span>=<span class="nm">1.0</span>)  <span class="cm"># alpha বাড়লে regularization বাড়ে</span>
+<span class="vr">ridge</span>.<span class="fn">fit</span>(<span class="vr">X_tr</span>, <span class="vr">y_tr</span>)
+
+<span class="cm"># Lasso: L1 penalty = sum(|w|) — কিছু coefficient exactly 0 করে</span>
+<span class="vr">lasso</span> = <span class="fn">Lasso</span>(<span class="vr">alpha</span>=<span class="nm">0.1</span>)
+<span class="vr">lasso</span>.<span class="fn">fit</span>(<span class="vr">X_tr</span>, <span class="vr">y_tr</span>)
+<span class="vr">print</span>(<span class="st">"Non-zero features:"</span>, <span class="vr">sum</span>(<span class="vr">lasso</span>.<span class="vr">coef_</span> != <span class="nm">0</span>))  <span class="cm"># feature selection!</span>
+
+<span class="cm"># ElasticNet: Ridge + Lasso combined</span>
+<span class="vr">enet</span> = <span class="fn">ElasticNet</span>(<span class="vr">alpha</span>=<span class="nm">1.0</span>, <span class="vr">l1_ratio</span>=<span class="nm">0.5</span>)  <span class="cm"># l1_ratio: Lasso vs Ridge mix</span>
+<span class="vr">enet</span>.<span class="fn">fit</span>(<span class="vr">X_tr</span>, <span class="vr">y_tr</span>)</pre></div></div>
+
+<!-- TREE MODELS -->
+<h3 class="ss" id="trees">🌳 Tree-based Models</h3>
+
+<div class="card or"><div class="ct">🌲 Decision Tree — প্রশ্ন করে সিদ্ধান্ত নেওয়া</div>
+<p><strong>সহজ ভাষায়:</strong> "২০ প্রশ্নের খেলা"! ধরো animal guess করছ: "পাখি কিনা?" → হ্যাঁ → "উড়তে পারে কিনা?" → হ্যাঁ → Eagle। Decision Tree ঠিক এভাবে yes/no প্রশ্ন করে সিদ্ধান্তে পৌঁছায়। প্রতিটি প্রশ্ন এমনভাবে বেছে নেয় যাতে data সবচেয়ে ভালোভাবে ভাগ হয় (Gini impurity বা Information Gain minimize/maximize করে)।</p>
+<div class="cb"><div class="ch"><span>Decision Tree</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.tree</span> <span class="kw">import</span> <span class="fn">DecisionTreeClassifier</span>, <span class="fn">DecisionTreeRegressor</span>
+<span class="kw">from</span> <span class="cl">sklearn.datasets</span> <span class="kw">import</span> <span class="fn">load_iris</span>
+
+<span class="vr">X</span>, <span class="vr">y</span> = <span class="fn">load_iris</span>(<span class="vr">return_X_y</span>=<span class="vr">True</span>)
+<span class="vr">X_tr</span>, <span class="vr">X_te</span>, <span class="vr">y_tr</span>, <span class="vr">y_te</span> = <span class="fn">train_test_split</span>(<span class="vr">X</span>, <span class="vr">y</span>, <span class="vr">random_state</span>=<span class="nm">42</span>)
+
+<span class="vr">tree</span> = <span class="fn">DecisionTreeClassifier</span>(
+    <span class="vr">max_depth</span>        = <span class="nm">4</span>,   <span class="cm"># গভীরতা সীমিত করো — overfitting ঠেকাতে</span>
+    <span class="vr">min_samples_leaf</span> = <span class="nm">5</span>,  <span class="cm"># প্রতিটি leaf এ ন্যূনতম ৫টি sample</span>
+    <span class="vr">criterion</span>        = <span class="st">'gini'</span>,  <span class="cm"># বা 'entropy'</span>
+    <span class="vr">random_state</span>     = <span class="nm">42</span>
+)
+<span class="vr">tree</span>.<span class="fn">fit</span>(<span class="vr">X_tr</span>, <span class="vr">y_tr</span>)
+
+<span class="vr">print</span>(<span class="st">f"Train: {tree.score(X_tr, y_tr):.3f}"</span>)
+<span class="vr">print</span>(<span class="st">f"Test:  {tree.score(X_te, y_te):.3f}"</span>)
+<span class="cm"># যদি Train >> Test হয় → overfitting → max_depth কমাও</span>
+<span class="vr">print</span>(<span class="st">f"Feature importances: {tree.feature_importances_}"</span>)</pre></div></div>
+
+<!-- ENSEMBLE -->
+<h3 class="ss" id="ensemble-sec">🌳🌳 Ensemble Methods</h3>
+
+<div class="card bl"><div class="ct">🌲🌲 Random Forest — অনেক Tree এর ভোট</div>
+<p><strong>সহজ ভাষায়:</strong> একটা tree ভুল করতে পারে। কিন্তু ১০০টা tree যদি আলাদা আলাদা data দিয়ে তৈরি হয়, এবং সবার ভোট নিই — তাহলে সঠিক উত্তর পাওয়ার সম্ভাবনা অনেক বেশি। Random Forest এটাই করে। প্রতিটি tree বিভিন্ন random sample এবং random features দিয়ে তৈরি।</p>
+<p><strong>Bagging + Feature randomness = Random Forest।</strong></p>
+<div class="cb"><div class="ch"><span>Random Forest</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.ensemble</span> <span class="kw">import</span> <span class="fn">RandomForestClassifier</span>, <span class="fn">RandomForestRegressor</span>
+<span class="kw">import</span> <span class="cl">pandas</span> <span class="kw">as</span> <span class="vr">pd</span>
+
+<span class="vr">rf</span> = <span class="fn">RandomForestClassifier</span>(
+    <span class="vr">n_estimators</span> = <span class="nm">100</span>,   <span class="cm"># ১০০টা tree</span>
+    <span class="vr">max_depth</span>    = <span class="nm">10</span>,    <span class="cm"># প্রতিটি tree এর max depth</span>
+    <span class="vr">max_features</span> = <span class="st">'sqrt'</span>, <span class="cm"># প্রতিটি split এ √n features randomly</span>
+    <span class="vr">n_jobs</span>       = -<span class="nm">1</span>,    <span class="cm"># সব CPU core ব্যবহার (parallel)</span>
+    <span class="vr">random_state</span> = <span class="nm">42</span>
+)
+<span class="vr">rf</span>.<span class="fn">fit</span>(<span class="vr">X_tr</span>, <span class="vr">y_tr</span>)
+<span class="vr">print</span>(<span class="st">f"Test Accuracy: {rf.score(X_te, y_te):.3f}"</span>)
+
+<span class="cm"># Feature importance — কোন features সবচেয়ে গুরুত্বপূর্ণ?</span>
+<span class="vr">fi</span> = <span class="vr">pd</span>.<span class="fn">Series</span>(<span class="vr">rf</span>.<span class="vr">feature_importances_</span>).<span class="fn">sort_values</span>(<span class="vr">ascending</span>=<span class="vr">False</span>)
+<span class="vr">print</span>(<span class="st">"Top features:\n"</span>, <span class="vr">fi</span>.<span class="fn">head</span>())</pre></div></div>
+
+<div class="card gr"><div class="ct">🚀 Gradient Boosting — ধীরে ধীরে ভুল ঠিক করা</div>
+<p><strong>সহজ ভাষায়:</strong> ধরো একজন ছবি আঁকছে। প্রথমে মোটা sketch (১ম tree)। তারপর দেখলে কোথায় ভুল — সেটা ঠিক করলে (২য় tree এই residual এর উপর train)। আবার ভুল দেখলে, আবার ঠিক করলে। প্রতিটি tree আগের tree এর ভুল (residual) এর উপর train হয়।</p>
+<p><strong>XGBoost, LightGBM, CatBoost</strong> এই সবই Gradient Boosting এর powerful variants।</p>
+<div class="cb"><div class="ch"><span>Gradient Boosting — সব variants</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.ensemble</span> <span class="kw">import</span> <span class="fn">GradientBoostingClassifier</span>, <span class="fn">HistGradientBoostingClassifier</span>
+
+<span class="cm"># Sklearn Gradient Boosting</span>
+<span class="vr">gb</span> = <span class="fn">GradientBoostingClassifier</span>(
+    <span class="vr">n_estimators</span>  = <span class="nm">200</span>,  <span class="cm"># কতটি boosting round</span>
+    <span class="vr">learning_rate</span> = <span class="nm">0.1</span>, <span class="cm"># প্রতিটি tree এর contribution কমাও (regularize)</span>
+    <span class="vr">max_depth</span>     = <span class="nm">3</span>,   <span class="cm"># প্রতিটি tree shallow রাখো</span>
+    <span class="vr">subsample</span>     = <span class="nm">0.8</span>, <span class="cm"># প্রতিটি tree তে ৮০% data randomly</span>
+    <span class="vr">random_state</span>  = <span class="nm">42</span>
+)
+<span class="vr">gb</span>.<span class="fn">fit</span>(<span class="vr">X_tr</span>, <span class="vr">y_tr</span>)
+<span class="vr">print</span>(<span class="st">f"GB Score: {gb.score(X_te, y_te):.3f}"</span>)
+
+<span class="cm"># HistGradientBoosting — faster, handles missing values!</span>
+<span class="vr">hgb</span> = <span class="fn">HistGradientBoostingClassifier</span>(<span class="vr">max_iter</span>=<span class="nm">200</span>)
+<span class="vr">hgb</span>.<span class="fn">fit</span>(<span class="vr">X_tr</span>, <span class="vr">y_tr</span>)
+
+<span class="cm"># XGBoost (pip install xgboost)
+# from xgboost import XGBClassifier
+# xgb = XGBClassifier(n_estimators=200, learning_rate=0.1, use_label_encoder=False)
+
+# LightGBM — large data তে faster (pip install lightgbm)
+# from lightgbm import LGBMClassifier
+# lgbm = LGBMClassifier(n_estimators=200, num_leaves=31)</span></pre></div></div>
+
+<!-- SVM -->
+<h3 class="ss" id="svm-sec">⚔️ Support Vector Machine (SVM)</h3>
+<div class="card pi"><div class="ct">📐 SVM / SVC — Maximum Margin Classifier</div>
+<p><strong>সহজ ভাষায়:</strong> দুই দলের মানুষ একটা মাঠে আছে। SVM এমন একটা রেখা আঁকে যেটা দুই দলের মধ্যে সবচেয়ে বেশি ফাঁকা জায়গা রাখে (maximum margin)। এই দুই দলের সবচেয়ে কাছের points গুলোকে বলে <strong>Support Vectors</strong>।</p>
+<p><strong>Kernel Trick:</strong> Data linearly separable না হলে, kernel (RBF, Polynomial) দিয়ে higher dimension এ নিয়ে গিয়ে separate করা হয়।</p>
+<div class="cb"><div class="ch"><span>SVM / SVC</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.svm</span> <span class="kw">import</span> <span class="fn">SVC</span>, <span class="fn">SVR</span>
+<span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">StandardScaler</span>
+
+<span class="cm"># ⚠️ SVM এর আগে অবশ্যই scaling করো!</span>
+<span class="vr">scaler</span> = <span class="fn">StandardScaler</span>()
+<span class="vr">X_tr_s</span> = <span class="vr">scaler</span>.<span class="fn">fit_transform</span>(<span class="vr">X_tr</span>)
+<span class="vr">X_te_s</span> = <span class="vr">scaler</span>.<span class="fn">transform</span>(<span class="vr">X_te</span>)
+
+<span class="vr">svc</span> = <span class="fn">SVC</span>(
+    <span class="vr">kernel</span>      = <span class="st">'rbf'</span>,   <span class="cm"># 'linear', 'poly', 'rbf', 'sigmoid'</span>
+    <span class="vr">C</span>           = <span class="nm">1.0</span>,    <span class="cm"># C বড় → কম regularization, boundary কাছে fit</span>
+    <span class="vr">gamma</span>       = <span class="st">'scale'</span>, <span class="cm"># RBF kernel এর width</span>
+    <span class="vr">probability</span> = <span class="vr">True</span>   <span class="cm"># predict_proba() চাইলে True</span>
+)
+<span class="vr">svc</span>.<span class="fn">fit</span>(<span class="vr">X_tr_s</span>, <span class="vr">y_tr</span>)
+<span class="vr">print</span>(<span class="st">f"SVC Score: {svc.score(X_te_s, y_te):.3f}"</span>)
+<span class="vr">print</span>(<span class="st">f"Support vectors: {svc.n_support_}"</span>)  <span class="cm"># প্রতিটি class এর support vectors</span></pre></div></div>
+
+<!-- KNN -->
+<h3 class="ss" id="knn-sec">👫 K-Nearest Neighbors (KNN)</h3>
+<div class="card or"><div class="ct">🏘️ KNN — প্রতিবেশী দেখে সিদ্ধান্ত</div>
+<p><strong>সহজ ভাষায়:</strong> নতুন কোনো জায়গায় গেলে আশেপাশের মানুষ দেখে বুঝতে পারো এলাকাটা কেমন। KNN ঠিক এটাই করে — নতুন data point এর k টা সবচেয়ে কাছের training point খোঁজে, তাদের মধ্যে বেশিরভাগের label নিয়ে predict করে।</p>
+<p><strong>সুবিধা:</strong> Simple, কোনো training নেই। <strong>সমস্যা:</strong> Predict করতে সময় বেশি লাগে (সব training data search করতে হয়)।</p>
+<div class="cb"><div class="ch"><span>KNN</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.neighbors</span> <span class="kw">import</span> <span class="fn">KNeighborsClassifier</span>, <span class="fn">KNeighborsRegressor</span>
+
+<span class="cm"># ⚠️ KNN এরও আগে scaling দরকার!</span>
+<span class="vr">knn</span> = <span class="fn">KNeighborsClassifier</span>(
+    <span class="vr">n_neighbors</span> = <span class="nm">5</span>,           <span class="cm"># k এর মান — বড় k = smooth boundary</span>
+    <span class="vr">weights</span>     = <span class="st">'distance'</span>,  <span class="cm"># কাছের প্রতিবেশী বেশি গুরুত্ব পায়</span>
+    <span class="vr">metric</span>      = <span class="st">'euclidean'</span>,  <span class="cm"># distance measure</span>
+    <span class="vr">n_jobs</span>      = -<span class="nm">1</span>
+)
+<span class="vr">knn</span>.<span class="fn">fit</span>(<span class="vr">X_tr_s</span>, <span class="vr">y_tr</span>)
+<span class="vr">print</span>(<span class="st">f"KNN Score: {knn.score(X_te_s, y_te):.3f}"</span>)
+
+<span class="cm"># k এর optimal value খোঁজা</span>
+<span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">cross_val_score</span>
+<span class="kw">for</span> <span class="vr">k</span> <span class="kw">in</span> [<span class="nm">1</span>, <span class="nm">3</span>, <span class="nm">5</span>, <span class="nm">7</span>, <span class="nm">10</span>, <span class="nm">15</span>]:
+    <span class="vr">score</span> = <span class="fn">cross_val_score</span>(<span class="fn">KNeighborsClassifier</span>(<span class="vr">n_neighbors</span>=<span class="vr">k</span>), <span class="vr">X_tr_s</span>, <span class="vr">y_tr</span>, <span class="vr">cv</span>=<span class="nm">5</span>).<span class="fn">mean</span>()
+    <span class="vr">print</span>(<span class="st">f"k={k}: {score:.3f}"</span>)</pre></div></div>
+
+<!-- NAIVE BAYES -->
+<h3 class="ss" id="nb-sec">🎲 Naive Bayes</h3>
+<div class="card gr"><div class="ct">📧 Naive Bayes — Probability দিয়ে Classification</div>
+<p><strong>সহজ ভাষায়:</strong> Spam detection ভাবো। "lottery" শব্দটা spam email এ ৯৫% time দেখা যায়, normal email এ মাত্র ২%। Naive Bayes প্রতিটি শব্দের conditional probability হিসাব করে বলে: "এই শব্দগুলো একসাথে থাকলে spam হওয়ার probability কত?" <em>"Naive"</em> কারণ এটা ধরে নেয় সব features independent — বাস্তবে তা নয়, কিন্তু তবুও ভালো কাজ করে।</p>
+<div class="cb"><div class="ch"><span>Naive Bayes</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.naive_bayes</span> <span class="kw">import</span> <span class="fn">GaussianNB</span>, <span class="fn">MultinomialNB</span>, <span class="fn">BernoulliNB</span>
+
+<span class="cm"># GaussianNB — continuous features এর জন্য (assumes Gaussian distribution)</span>
+<span class="vr">gnb</span> = <span class="fn">GaussianNB</span>()
+<span class="vr">gnb</span>.<span class="fn">fit</span>(<span class="vr">X_tr</span>, <span class="vr">y_tr</span>)
+<span class="vr">print</span>(<span class="st">f"GNB Score: {gnb.score(X_te, y_te):.3f}"</span>)
+
+<span class="cm"># MultinomialNB — text/count data এর জন্য (TF-IDF, word counts)</span>
+<span class="cm"># from sklearn.feature_extraction.text import TfidfVectorizer
+# tfidf = TfidfVectorizer()
+# X_text = tfidf.fit_transform(texts)
+# mnb = MultinomialNB(alpha=1.0)  # alpha = Laplace smoothing
+# mnb.fit(X_text, y_text)</span>
+
+<span class="cm"># BernoulliNB — binary features এর জন্য (0/1)</span>
+<span class="vr">bnb</span> = <span class="fn">BernoulliNB</span>()
+<span class="vr">bnb</span>.<span class="fn">fit</span>(<span class="vr">X_tr</span>, <span class="vr">y_tr</span>)</pre></div></div>
+
+<!-- CLUSTERING -->
+<h3 class="ss" id="cluster-sec">🔵 Clustering — Unsupervised Learning</h3>
+<div class="card bl"><div class="ct">🎯 K-Means Clustering — দলে ভাগ করা</div>
+<p><strong>সহজ ভাষায়:</strong> ধরো ১০০০ গ্রাহকের data আছে, কোনো label নেই। K-Means বলবে: "এই গ্রাহকদের ৩ দলে ভাগ করা যায়।" Algorithm: (১) k টা random centroid রাখো। (২) প্রতিটি point সবচেয়ে কাছের centroid এর দলে। (৩) Centroid update করো। (৪) আর কোনো point দল না বদলানো পর্যন্ত ২-৩ চালাও।</p>
+<div class="cb"><div class="ch"><span>K-Means + Elbow Method</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.cluster</span> <span class="kw">import</span> <span class="fn">KMeans</span>
+<span class="kw">from</span> <span class="cl">sklearn.metrics</span> <span class="kw">import</span> <span class="fn">silhouette_score</span>
+<span class="kw">import</span> <span class="cl">matplotlib.pyplot</span> <span class="kw">as</span> <span class="vr">plt</span>
+
+<span class="cm"># Elbow Method — optimal k খোঁজা</span>
+<span class="vr">inertias</span> = []
+<span class="kw">for</span> <span class="vr">k</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">11</span>):
+    <span class="vr">km</span> = <span class="fn">KMeans</span>(<span class="vr">n_clusters</span>=<span class="vr">k</span>, <span class="vr">random_state</span>=<span class="nm">42</span>, <span class="vr">n_init</span>=<span class="nm">10</span>)
+    <span class="vr">km</span>.<span class="fn">fit</span>(<span class="vr">X</span>)
+    <span class="vr">inertias</span>.<span class="fn">append</span>(<span class="vr">km</span>.<span class="vr">inertia_</span>)  <span class="cm"># within-cluster sum of squares</span>
+
+<span class="cm"># plot করো — elbow point = optimal k</span>
+<span class="vr">plt</span>.<span class="fn">plot</span>(<span class="fn">range</span>(<span class="nm">1</span>,<span class="nm">11</span>), <span class="vr">inertias</span>, <span class="st">'bo-'</span>)
+<span class="vr">plt</span>.<span class="fn">xlabel</span>(<span class="st">'k'</span>); <span class="vr">plt</span>.<span class="fn">ylabel</span>(<span class="st">'Inertia'</span>); <span class="vr">plt</span>.<span class="fn">title</span>(<span class="st">'Elbow Method'</span>)
+<span class="vr">plt</span>.<span class="fn">show</span>()
+
+<span class="cm"># Final model</span>
+<span class="vr">kmeans</span> = <span class="fn">KMeans</span>(<span class="vr">n_clusters</span>=<span class="nm">3</span>, <span class="vr">random_state</span>=<span class="nm">42</span>, <span class="vr">n_init</span>=<span class="nm">10</span>)
+<span class="vr">labels</span> = <span class="vr">kmeans</span>.<span class="fn">fit_predict</span>(<span class="vr">X</span>)
+
+<span class="vr">print</span>(<span class="st">"Cluster centers:\n"</span>, <span class="vr">kmeans</span>.<span class="vr">cluster_centers_</span>)
+<span class="vr">sil</span> = <span class="fn">silhouette_score</span>(<span class="vr">X</span>, <span class="vr">labels</span>)
+<span class="vr">print</span>(<span class="st">f"Silhouette Score: {sil:.3f}"</span>)
+<span class="cm"># Silhouette: -1 থেকে 1, বেশি মানে ভালো clustering</span></pre></div></div>
+
+<!-- Algorithm Comparison Table -->
+<h3 class="ss">📊 Algorithm Quick Comparison</h3>
+<div class="tw"><table>
+<thead><tr><th>Algorithm</th><th>Type</th><th>কখন সেরা</th><th>সমস্যা</th><th>Speed</th></tr></thead>
+<tbody>
+<tr><td>Linear Regression</td><td>Regression</td><td>Linear rel., interpretable চাই</td><td>Non-linear data তে খারাপ</td><td>⚡⚡⚡</td></tr>
+<tr><td>Logistic Regression</td><td>Classification</td><td>Binary class., probability চাই</td><td>Complex patterns miss করে</td><td>⚡⚡⚡</td></tr>
+<tr><td>Ridge/Lasso</td><td>Regression</td><td>Overfitting আছে, feature selection</td><td>Still linear</td><td>⚡⚡⚡</td></tr>
+<tr><td>Decision Tree</td><td>Both</td><td>Interpretable, mixed types</td><td>Overfits easily</td><td>⚡⚡⚡</td></tr>
+<tr><td>Random Forest</td><td>Both</td><td>General purpose, robust</td><td>Large memory, slow predict</td><td>⚡⚡</td></tr>
+<tr><td>Gradient Boosting</td><td>Both</td><td>Best accuracy (tabular data)</td><td>Slow train, many hyperparams</td><td>⚡</td></tr>
+<tr><td>SVM</td><td>Both</td><td>High-dim data, small dataset</td><td>Slow on large data, needs scaling</td><td>⚡⚡</td></tr>
+<tr><td>KNN</td><td>Both</td><td>Simple baseline</td><td>Very slow predict, needs scaling</td><td>⚡⚡⚡ train / ❌ predict</td></tr>
+<tr><td>Naive Bayes</td><td>Classification</td><td>Text data, real-time</td><td>Independence assumption</td><td>⚡⚡⚡</td></tr>
+<tr><td>K-Means</td><td>Clustering</td><td>Customer segmentation</td><td>k নির্ধারণ করতে হয়</td><td>⚡⚡⚡</td></tr>
+</tbody>
+</table></div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION 13: EXERCISES
+══════════════════════════════════════════ -->
+<section class="sec" id="exercises">
+<h2 class="st"><span class="n">১৩</span> ML Engineering Project Exercises</h2>
+
+<p>Real ML engineering project এর মতো exercises — শুধু code লেখা নয়, চিন্তা করতে হবে কেন এবং কিভাবে।</p>
+
+<!-- EXERCISE 1 -->
+<div class="exb">
+<div class="exh"><span class="ebdg">Exercise 01</span><h4>Credit Risk Prediction Pipeline</h4></div>
+<div class="exbd">
+<div class="card or" style="margin-bottom:14px"><div class="ct">📋 Problem</div>
+<p>একটা bank এর credit risk assessment system বানাতে হবে। Dataset: age, income, loan_amount, credit_history, employment_type, num_dependents, has_property → predict: loan_default (1/0)।</p></div>
+<ol>
+  <li>Synthetic data তৈরি করো (নিচে দেওয়া code দিয়ে)।</li>
+  <li><strong>Custom Transformer:</strong> <code>DebtToIncomeRatio</code> — <code>loan_amount/income</code> নামে নতুন feature তৈরি করে।</li>
+  <li><strong>ColumnTransformer:</strong> Numerical → StandardScaler, Categorical (employment_type) → OneHotEncoder, Binary (credit_history, has_property) → passthrough।</li>
+  <li><strong>Full Pipeline:</strong> DebtToIncomeRatio → ColumnTransformer → RandomForestClassifier।</li>
+  <li><strong>GridSearchCV:</strong> <code>n_estimators</code> [50,100,200] এবং <code>max_depth</code> [3,5,None] test করো।</li>
+  <li><strong>Report:</strong> Best parameters, accuracy, precision, recall, f1-score।</li>
+</ol>
+<div class="stog" onclick="tS(this)">▶ Solution দেখো</div>
+<div class="sc">
+<div class="cb"><div class="ch"><span>Credit Risk Full Solution</span><span class="lb">Python</span></div>
+<pre><span class="kw">import</span> <span class="cl">numpy</span> <span class="kw">as</span> <span class="vr">np</span>
+<span class="kw">import</span> <span class="cl">pandas</span> <span class="kw">as</span> <span class="vr">pd</span>
+<span class="kw">from</span> <span class="cl">sklearn.base</span> <span class="kw">import</span> <span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>
+<span class="kw">from</span> <span class="cl">sklearn.pipeline</span> <span class="kw">import</span> <span class="fn">Pipeline</span>
+<span class="kw">from</span> <span class="cl">sklearn.compose</span> <span class="kw">import</span> <span class="fn">ColumnTransformer</span>
+<span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">StandardScaler</span>, <span class="fn">OneHotEncoder</span>
+<span class="kw">from</span> <span class="cl">sklearn.impute</span> <span class="kw">import</span> <span class="fn">SimpleImputer</span>
+<span class="kw">from</span> <span class="cl">sklearn.ensemble</span> <span class="kw">import</span> <span class="fn">RandomForestClassifier</span>
+<span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">train_test_split</span>, <span class="fn">GridSearchCV</span>
+<span class="kw">from</span> <span class="cl">sklearn.metrics</span> <span class="kw">import</span> <span class="fn">classification_report</span>
+
+<span class="cm"># ══ Step 1: Synthetic Data ══</span>
+<span class="vr">np</span>.<span class="vr">random</span>.<span class="fn">seed</span>(<span class="nm">42</span>)
+<span class="vr">n</span> = <span class="nm">1000</span>
+<span class="vr">df</span> = <span class="vr">pd</span>.<span class="fn">DataFrame</span>({
+    <span class="st">'age'</span>             : <span class="vr">np</span>.<span class="vr">random</span>.<span class="fn">randint</span>(<span class="nm">22</span>, <span class="nm">65</span>, <span class="vr">n</span>),
+    <span class="st">'income'</span>          : <span class="vr">np</span>.<span class="vr">random</span>.<span class="fn">lognormal</span>(<span class="nm">10</span>, <span class="nm">0.8</span>, <span class="vr">n</span>),
+    <span class="st">'loan_amount'</span>     : <span class="vr">np</span>.<span class="vr">random</span>.<span class="fn">lognormal</span>(<span class="nm">10</span>, <span class="nm">1.2</span>, <span class="vr">n</span>),
+    <span class="st">'credit_history'</span>  : <span class="vr">np</span>.<span class="vr">random</span>.<span class="fn">randint</span>(<span class="nm">0</span>, <span class="nm">2</span>, <span class="vr">n</span>),
+    <span class="st">'employment_type'</span> : <span class="vr">np</span>.<span class="vr">random</span>.<span class="fn">choice</span>([<span class="st">'salaried'</span>,<span class="st">'self_employed'</span>,<span class="st">'business'</span>], <span class="vr">n</span>),
+    <span class="st">'num_dependents'</span>  : <span class="vr">np</span>.<span class="vr">random</span>.<span class="fn">randint</span>(<span class="nm">0</span>, <span class="nm">5</span>, <span class="vr">n</span>),
+    <span class="st">'has_property'</span>    : <span class="vr">np</span>.<span class="vr">random</span>.<span class="fn">randint</span>(<span class="nm">0</span>, <span class="nm">2</span>, <span class="vr">n</span>),
+})
+<span class="vr">dti</span> = <span class="vr">df</span>[<span class="st">'loan_amount'</span>] / <span class="vr">df</span>[<span class="st">'income'</span>]
+<span class="vr">prob</span> = (<span class="nm">0.3</span> * (<span class="vr">dti</span> > <span class="nm">3</span>) + <span class="nm">0.4</span> * (<span class="nm">1</span> - <span class="vr">df</span>[<span class="st">'credit_history'</span>])).<span class="fn">clip</span>(<span class="nm">0</span>, <span class="nm">1</span>)
+<span class="vr">df</span>[<span class="st">'loan_default'</span>] = (<span class="vr">np</span>.<span class="vr">random</span>.<span class="fn">random</span>(<span class="vr">n</span>) < <span class="vr">prob</span>).<span class="fn">astype</span>(<span class="nm">int</span>)
+<span class="vr">df</span>.<span class="fn">loc</span>[<span class="vr">df</span>.<span class="fn">sample</span>(<span class="nm">50</span>).<span class="vr">index</span>, <span class="st">'income'</span>] = <span class="vr">np</span>.<span class="vr">nan</span>  <span class="cm"># missing values</span>
+<span class="vr">X</span> = <span class="vr">df</span>.<span class="fn">drop</span>(<span class="st">'loan_default'</span>, <span class="vr">axis</span>=<span class="nm">1</span>)
+<span class="vr">y</span> = <span class="vr">df</span>[<span class="st">'loan_default'</span>]
+
+<span class="cm"># ══ Step 2: Custom Transformer ══</span>
+<span class="kw">class</span> <span class="cl">DebtToIncomeRatio</span>(<span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>):
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="vr">self</span>, <span class="vr">X</span>, <span class="vr">y</span>=<span class="vr">None</span>): <span class="kw">return</span> <span class="vr">self</span>
+    <span class="kw">def</span> <span class="fn">transform</span>(<span class="vr">self</span>, <span class="vr">X</span>):
+        <span class="vr">X</span> = <span class="vr">X</span>.<span class="fn">copy</span>()
+        <span class="vr">income_safe</span> = <span class="vr">X</span>[<span class="st">'income'</span>].<span class="fn">fillna</span>(<span class="vr">X</span>[<span class="st">'income'</span>].<span class="fn">median</span>())
+        <span class="vr">X</span>[<span class="st">'dti_ratio'</span>] = <span class="vr">X</span>[<span class="st">'loan_amount'</span>] / income_safe
+        <span class="kw">return</span> <span class="vr">X</span>
+
+<span class="cm"># ══ Step 3: Column groups ══</span>
+<span class="vr">num_cols</span>  = [<span class="st">'age'</span>, <span class="st">'income'</span>, <span class="st">'loan_amount'</span>, <span class="st">'num_dependents'</span>, <span class="st">'dti_ratio'</span>]
+<span class="vr">cat_cols</span>  = [<span class="st">'employment_type'</span>]
+<span class="vr">pass_cols</span> = [<span class="st">'credit_history'</span>, <span class="st">'has_property'</span>]
+
+<span class="vr">num_pipe</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'imputer'</span>, <span class="fn">SimpleImputer</span>(<span class="vr">strategy</span>=<span class="st">'median'</span>)),
+    (<span class="st">'scaler'</span>,  <span class="fn">StandardScaler</span>())
+])
+
+<span class="vr">preprocessor</span> = <span class="fn">ColumnTransformer</span>([
+    (<span class="st">'num'</span>,  <span class="vr">num_pipe</span>,                                           <span class="vr">num_cols</span>),
+    (<span class="st">'cat'</span>,  <span class="fn">OneHotEncoder</span>(<span class="vr">handle_unknown</span>=<span class="st">'ignore'</span>),             <span class="vr">cat_cols</span>),
+    (<span class="st">'pass'</span>, <span class="st">'passthrough'</span>,                                       <span class="vr">pass_cols</span>)
+])
+
+<span class="cm"># ══ Step 4: Full Pipeline ══</span>
+<span class="vr">full_pipe</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'feature_eng'</span>,  <span class="fn">DebtToIncomeRatio</span>()),
+    (<span class="st">'preprocessor'</span>, <span class="vr">preprocessor</span>),
+    (<span class="st">'model'</span>,        <span class="fn">RandomForestClassifier</span>(<span class="vr">random_state</span>=<span class="nm">42</span>))
+])
+
+<span class="cm"># ══ Step 5: GridSearchCV ══</span>
+<span class="vr">X_tr</span>, <span class="vr">X_te</span>, <span class="vr">y_tr</span>, <span class="vr">y_te</span> = <span class="fn">train_test_split</span>(<span class="vr">X</span>, <span class="vr">y</span>, <span class="vr">random_state</span>=<span class="nm">42</span>)
+
+<span class="vr">param_grid</span> = {
+    <span class="st">'model__n_estimators'</span> : [<span class="nm">50</span>, <span class="nm">100</span>, <span class="nm">200</span>],
+    <span class="st">'model__max_depth'</span>    : [<span class="nm">3</span>, <span class="nm">5</span>, <span class="vr">None</span>],
+}
+<span class="vr">grid</span> = <span class="fn">GridSearchCV</span>(<span class="vr">full_pipe</span>, <span class="vr">param_grid</span>, <span class="vr">cv</span>=<span class="nm">5</span>, <span class="vr">scoring</span>=<span class="st">'f1'</span>, <span class="vr">n_jobs</span>=-<span class="nm">1</span>)
+<span class="vr">grid</span>.<span class="fn">fit</span>(<span class="vr">X_tr</span>, <span class="vr">y_tr</span>)
+
+<span class="vr">print</span>(<span class="st">"Best params:"</span>, <span class="vr">grid</span>.<span class="vr">best_params_</span>)
+<span class="vr">print</span>(<span class="st">"Best CV F1: "</span>, <span class="vr">grid</span>.<span class="vr">best_score_</span>)
+
+<span class="cm"># ══ Step 6: Final Report ══</span>
+<span class="vr">y_pred</span> = <span class="vr">grid</span>.<span class="vr">best_estimator_</span>.<span class="fn">predict</span>(<span class="vr">X_te</span>)
+<span class="vr">print</span>(<span class="fn">classification_report</span>(<span class="vr">y_te</span>, <span class="vr">y_pred</span>))</pre></div>
+</div>
+</div>
+</div>
+
+<!-- EXERCISE 2 -->
+<div class="exb">
+<div class="exh"><span class="ebdg">Exercise 02</span><h4>Model Comparison Framework</h4></div>
+<div class="exbd">
+<div class="card bl" style="margin-bottom:14px"><div class="ct">📋 Problem</div>
+<p>একই preprocessor দিয়ে multiple models automatically compare করার reusable function বানাও। Output: DataFrame with model name, mean CV score, std।</p></div>
+<ol>
+  <li>যেকোনো preprocessor তৈরি করো।</li>
+  <li>Models dict: <code>{'LogisticRegression': lr, 'RandomForest': rf, 'GradientBoosting': gb, 'SVC': svc}</code>।</li>
+  <li>প্রতিটির জন্য Pipeline তৈরি করে 5-fold CV score বের করো।</li>
+  <li>Results DataFrame এ organize করো, best model identify করো।</li>
+</ol>
+<div class="stog" onclick="tS(this)">▶ Solution দেখো</div>
+<div class="sc">
+<div class="cb"><div class="ch"><span>Model Comparison Framework</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.model_selection</span> <span class="kw">import</span> <span class="fn">cross_val_score</span>
+<span class="kw">from</span> <span class="cl">sklearn.linear_model</span> <span class="kw">import</span> <span class="fn">LogisticRegression</span>
+<span class="kw">from</span> <span class="cl">sklearn.ensemble</span> <span class="kw">import</span> <span class="fn">RandomForestClassifier</span>, <span class="fn">GradientBoostingClassifier</span>
+<span class="kw">from</span> <span class="cl">sklearn.svm</span> <span class="kw">import</span> <span class="fn">SVC</span>
+<span class="kw">import</span> <span class="cl">pandas</span> <span class="kw">as</span> <span class="vr">pd</span>
+
+<span class="kw">def</span> <span class="fn">compare_models</span>(<span class="vr">preprocessor</span>, <span class="vr">X</span>, <span class="vr">y</span>, <span class="vr">cv</span>=<span class="nm">5</span>, <span class="vr">scoring</span>=<span class="st">'accuracy'</span>):
+    <span class="st">"""একই preprocessor দিয়ে multiple models compare করো।
+    
+    Returns: DataFrame sorted by mean_score (best first)
+    """</span>
+    <span class="vr">models</span> = {
+        <span class="st">'LogisticRegression'</span>  : <span class="fn">LogisticRegression</span>(<span class="vr">max_iter</span>=<span class="nm">1000</span>),
+        <span class="st">'RandomForest'</span>        : <span class="fn">RandomForestClassifier</span>(<span class="vr">random_state</span>=<span class="nm">42</span>),
+        <span class="st">'GradientBoosting'</span>    : <span class="fn">GradientBoostingClassifier</span>(<span class="vr">random_state</span>=<span class="nm">42</span>),
+        <span class="st">'SVC'</span>                 : <span class="fn">SVC</span>(),
+    }
+    <span class="vr">results</span> = []
+    <span class="kw">for</span> <span class="vr">name</span>, <span class="vr">model</span> <span class="kw">in</span> <span class="vr">models</span>.<span class="fn">items</span>():
+        <span class="vr">pipe</span> = <span class="fn">Pipeline</span>([
+            (<span class="st">'preprocessor'</span>, <span class="vr">preprocessor</span>),
+            (<span class="st">'model'</span>,        <span class="vr">model</span>)
+        ])
+        <span class="vr">scores</span> = <span class="fn">cross_val_score</span>(<span class="vr">pipe</span>, <span class="vr">X</span>, <span class="vr">y</span>, <span class="vr">cv</span>=<span class="vr">cv</span>, <span class="vr">scoring</span>=<span class="vr">scoring</span>, <span class="vr">n_jobs</span>=-<span class="nm">1</span>)
+        <span class="vr">results</span>.<span class="fn">append</span>({
+            <span class="st">'model'</span>      : <span class="vr">name</span>,
+            <span class="st">'mean_score'</span> : <span class="vr">scores</span>.<span class="fn">mean</span>(),
+            <span class="st">'std'</span>        : <span class="vr">scores</span>.<span class="fn">std</span>(),
+            <span class="st">'min'</span>        : <span class="vr">scores</span>.<span class="fn">min</span>(),
+            <span class="st">'max'</span>        : <span class="vr">scores</span>.<span class="fn">max</span>(),
+        })
+        <span class="vr">print</span>(<span class="st">f"{name}: {scores.mean():.4f} ± {scores.std():.4f}"</span>)
+    <span class="vr">df</span> = <span class="vr">pd</span>.<span class="fn">DataFrame</span>(<span class="vr">results</span>).<span class="fn">sort_values</span>(<span class="st">'mean_score'</span>, <span class="vr">ascending</span>=<span class="vr">False</span>)
+    <span class="vr">print</span>(<span class="st">f"\n🏆 Best Model: {df.iloc[0]['model']} ({df.iloc[0]['mean_score']:.4f})"</span>)
+    <span class="kw">return</span> <span class="vr">df</span>
+
+<span class="cm"># ব্যবহার:</span>
+<span class="cm"># results = compare_models(my_preprocessor, X, y, cv=5, scoring='f1')
+# print(results)</span></pre></div>
+</div>
+</div>
+</div>
+
+<!-- EXERCISE 3 -->
+<div class="exb">
+<div class="exh"><span class="ebdg">Exercise 03</span><h4>Pipeline Save, Load ও Production Deployment</h4></div>
+<div class="exbd">
+<div class="card gr" style="margin-bottom:14px"><div class="ct">📋 Problem</div>
+<p>Trained pipeline কে save করো, load করো, এবং একটা production-ready prediction function বানাও যেটা dict input নিয়ে prediction ও risk level return করে।</p></div>
+<ol>
+  <li>যেকোনো pipeline train করো।</li>
+  <li><code>joblib</code> দিয়ে save করো।</li>
+  <li>Load করে নতুন data তে predict করো।</li>
+  <li><code>predict_single(customer_dict, pipeline) → dict</code> function লেখো।</li>
+</ol>
+<div class="stog" onclick="tS(this)">▶ Solution দেখো</div>
+<div class="sc">
+<div class="cb"><div class="ch"><span>Pipeline Deployment</span><span class="lb">Python</span></div>
+<pre><span class="kw">import</span> <span class="cl">joblib</span>
+<span class="kw">import</span> <span class="cl">pandas</span> <span class="kw">as</span> <span class="vr">pd</span>
+
+<span class="cm"># ══ Save ══</span>
+<span class="vr">joblib</span>.<span class="fn">dump</span>(<span class="vr">trained_pipeline</span>, <span class="st">'credit_risk_v1.pkl'</span>)
+<span class="vr">print</span>(<span class="st">"✅ Pipeline saved!"</span>)
+
+<span class="cm"># ══ Load ══</span>
+<span class="vr">loaded_pipeline</span> = <span class="vr">joblib</span>.<span class="fn">load</span>(<span class="st">'credit_risk_v1.pkl'</span>)
+<span class="vr">print</span>(<span class="st">"✅ Pipeline loaded!"</span>)
+
+<span class="cm"># ══ Production Prediction Function ══</span>
+<span class="kw">def</span> <span class="fn">predict_single</span>(<span class="vr">customer</span>: <span class="vr">dict</span>, <span class="vr">pipeline</span>) -> <span class="vr">dict</span>:
+    <span class="st">"""
+    Production-ready prediction function।
+    
+    Args:
+        customer: customer এর data dict হিসেবে
+        pipeline: trained sklearn Pipeline
+    Returns:
+        dict: {prediction, probability, risk_level}
+    """</span>
+    <span class="cm"># dict → DataFrame (Pipeline DataFrame expect করে)</span>
+    <span class="vr">df</span> = <span class="vr">pd</span>.<span class="fn">DataFrame</span>([<span class="vr">customer</span>])
+    
+    <span class="vr">pred</span>  = <span class="vr">pipeline</span>.<span class="fn">predict</span>(<span class="vr">df</span>)[<span class="nm">0</span>]
+    <span class="vr">proba</span> = <span class="vr">pipeline</span>.<span class="fn">predict_proba</span>(<span class="vr">df</span>)[<span class="nm">0</span>]
+    <span class="vr">default_prob</span> = <span class="vr">float</span>(<span class="vr">proba</span>[<span class="nm">1</span>])
+    
+    <span class="vr">risk</span> = <span class="st">'HIGH'</span> <span class="kw">if</span> <span class="vr">default_prob</span> > <span class="nm">0.7</span> <span class="kw">else</span> (<span class="st">'MEDIUM'</span> <span class="kw">if</span> <span class="vr">default_prob</span> > <span class="nm">0.4</span> <span class="kw">else</span> <span class="st">'LOW'</span>)
+    
+    <span class="kw">return</span> {
+        <span class="st">'will_default'</span>  : <span class="vr">bool</span>(<span class="vr">pred</span>),
+        <span class="st">'default_prob'</span>  : <span class="vr">round</span>(<span class="vr">default_prob</span>, <span class="nm">4</span>),
+        <span class="st">'safe_prob'</span>     : <span class="vr">round</span>(<span class="vr">float</span>(<span class="vr">proba</span>[<span class="nm">0</span>]), <span class="nm">4</span>),
+        <span class="st">'risk_level'</span>    : <span class="vr">risk</span>
+    }
+
+<span class="cm"># ব্যবহার</span>
+<span class="vr">customer</span> = {
+    <span class="st">'age'</span>             : <span class="nm">35</span>,
+    <span class="st">'income'</span>          : <span class="nm">50000</span>,
+    <span class="st">'loan_amount'</span>     : <span class="nm">200000</span>,
+    <span class="st">'credit_history'</span>  : <span class="nm">1</span>,
+    <span class="st">'employment_type'</span> : <span class="st">'salaried'</span>,
+    <span class="st">'num_dependents'</span>  : <span class="nm">2</span>,
+    <span class="st">'has_property'</span>    : <span class="nm">1</span>
+}
+<span class="vr">result</span> = <span class="fn">predict_single</span>(<span class="vr">customer</span>, <span class="vr">loaded_pipeline</span>)
+<span class="vr">print</span>(<span class="st">f"Risk Level:   {result['risk_level']}"</span>)
+<span class="vr">print</span>(<span class="st">f"Default Prob: {result['default_prob']:.1%}"</span>)</pre></div>
+</div>
+</div>
+</div>
+
+<!-- EXERCISE 4 -->
+<div class="exb">
+<div class="exh"><span class="ebdg">Exercise 04</span><h4>Text + Numerical Mixed Feature Pipeline</h4></div>
+<div class="exbd">
+<div class="card pu" style="margin-bottom:14px"><div class="ct">📋 Problem</div>
+<p>Product review classification — review text এবং numerical features (word_count, rating, has_image) দিয়ে sentiment (positive/negative) predict করতে হবে।</p></div>
+<ol>
+  <li>Custom transformers বানাও: <code>TextExtractor</code> ও <code>NumericExtractor</code> — DataFrame থেকে relevant columns বের করে।</li>
+  <li>Text pipeline: TextExtractor → TfidfVectorizer(max_features=5000, ngram_range=(1,2))।</li>
+  <li>Numeric pipeline: NumericExtractor → StandardScaler।</li>
+  <li>FeatureUnion দিয়ে দুটো combine করো।</li>
+  <li>LogisticRegression দিয়ে classify করো।</li>
+</ol>
+<div class="stog" onclick="tS(this)">▶ Solution দেখো</div>
+<div class="sc">
+<div class="cb"><div class="ch"><span>Text + Numerical Mixed Pipeline</span><span class="lb">Python</span></div>
+<pre><span class="kw">from</span> <span class="cl">sklearn.feature_extraction.text</span> <span class="kw">import</span> <span class="fn">TfidfVectorizer</span>
+<span class="kw">from</span> <span class="cl">sklearn.pipeline</span> <span class="kw">import</span> <span class="fn">Pipeline</span>, <span class="fn">FeatureUnion</span>
+<span class="kw">from</span> <span class="cl">sklearn.preprocessing</span> <span class="kw">import</span> <span class="fn">StandardScaler</span>
+<span class="kw">from</span> <span class="cl">sklearn.linear_model</span> <span class="kw">import</span> <span class="fn">LogisticRegression</span>
+<span class="kw">from</span> <span class="cl">sklearn.base</span> <span class="kw">import</span> <span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>
+
+<span class="cm"># DataFrame থেকে আলাদা অংশ বের করার extractors</span>
+<span class="kw">class</span> <span class="cl">TextExtractor</span>(<span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>):
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="vr">self</span>, <span class="vr">X</span>, <span class="vr">y</span>=<span class="vr">None</span>): <span class="kw">return</span> <span class="vr">self</span>
+    <span class="kw">def</span> <span class="fn">transform</span>(<span class="vr">self</span>, <span class="vr">X</span>):
+        <span class="kw">return</span> <span class="vr">X</span>[<span class="st">'review_text'</span>].<span class="fn">values</span>  <span class="cm"># TfidfVectorizer এর জন্য 1D</span>
+
+<span class="kw">class</span> <span class="cl">NumericExtractor</span>(<span class="fn">BaseEstimator</span>, <span class="fn">TransformerMixin</span>):
+    <span class="kw">def</span> <span class="fn">fit</span>(<span class="vr">self</span>, <span class="vr">X</span>, <span class="vr">y</span>=<span class="vr">None</span>): <span class="kw">return</span> <span class="vr">self</span>
+    <span class="kw">def</span> <span class="fn">transform</span>(<span class="vr">self</span>, <span class="vr">X</span>):
+        <span class="kw">return</span> <span class="vr">X</span>[[<span class="st">'word_count'</span>, <span class="st">'rating'</span>, <span class="st">'has_image'</span>]].<span class="fn">values</span>
+
+<span class="cm"># Pipelines</span>
+<span class="vr">text_pipe</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'extract'</span>, <span class="fn">TextExtractor</span>()),
+    (<span class="st">'tfidf'</span>,   <span class="fn">TfidfVectorizer</span>(<span class="vr">max_features</span>=<span class="nm">5000</span>, <span class="vr">ngram_range</span>=(<span class="nm">1</span>,<span class="nm">2</span>)))
+])
+
+<span class="vr">num_pipe</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'extract'</span>, <span class="fn">NumericExtractor</span>()),
+    (<span class="st">'scale'</span>,   <span class="fn">StandardScaler</span>())
+])
+
+<span class="cm"># FeatureUnion দিয়ে text + numeric combine</span>
+<span class="vr">combined</span> = <span class="fn">FeatureUnion</span>([
+    (<span class="st">'text'</span>,    <span class="vr">text_pipe</span>),
+    (<span class="st">'numeric'</span>, <span class="vr">num_pipe</span>)
+])
+
+<span class="cm"># Full pipeline</span>
+<span class="vr">pipeline</span> = <span class="fn">Pipeline</span>([
+    (<span class="st">'features'</span>, <span class="vr">combined</span>),
+    (<span class="st">'clf'</span>,      <span class="fn">LogisticRegression</span>(<span class="vr">max_iter</span>=<span class="nm">1000</span>, <span class="vr">C</span>=<span class="nm">1.0</span>))
+])
+<span class="cm"># pipeline.fit(X_train_df, y_train)
+# pipeline.predict(X_test_df)</span></pre></div>
+</div>
+</div>
+</div>
+
+</section><!-- end exercises -->
+
+</div><!-- end content -->
+
+<!-- Back to top button -->
+<button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// Toggle Q&A
+function tQ(el){el.parentElement.classList.toggle('open')}
+
+// Toggle Solution
+function tS(el){
+  var sc = el.nextElementSibling;
+  sc.classList.toggle('open');
+  el.textContent = sc.classList.contains('open') ? '▼ Solution লুকাও' : '▶ Solution দেখো';
+}
+
+// Back to top button
+window.addEventListener('scroll', function(){
+  var btn = document.getElementById('btt');
+  if(window.scrollY > 400) btn.classList.add('show');
+  else btn.classList.remove('show');
+});
+
+// Highlight active nav item
+var sections = document.querySelectorAll('.sec');
+var navItems = document.querySelectorAll('.ni');
+window.addEventListener('scroll', function(){
+  var scrollPos = window.scrollY + 100;
+  sections.forEach(function(sec){
+    if(sec.offsetTop <= scrollPos && sec.offsetTop + sec.offsetHeight > scrollPos){
+      var id = sec.getAttribute('id');
+      navItems.forEach(function(ni){
+        ni.classList.remove('active');
+        if(ni.getAttribute('href') === '#' + id) ni.classList.add('active');
+      });
+    }
+  });
+});
+</script>
+</main>
+</body>
+</html>

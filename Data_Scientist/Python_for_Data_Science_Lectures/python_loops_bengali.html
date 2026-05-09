@@ -1,0 +1,2174 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Loops — বাংলায় সম্পূর্ণ গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0d1117;
+    --bg2:       #161b22;
+    --bg3:       #1c2330;
+    --border:    #30363d;
+    --accent:    #f78166;
+    --accent2:   #79c0ff;
+    --accent3:   #56d364;
+    --accent4:   #e3b341;
+    --accent5:   #bc8cff;
+    --text:      #e6edf3;
+    --text2:     #8b949e;
+    --text3:     #cdd9e5;
+    --code-bg:   #161b22;
+    --red:       #f85149;
+    --green:     #56d364;
+    --blue:      #79c0ff;
+    --yellow:    #e3b341;
+    --purple:    #bc8cff;
+    --orange:    #f78166;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  /* ── TOP NAV ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,17,23,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; gap: 1rem;
+    height: 56px;
+  }
+  .topbar .logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem; font-weight: 600;
+    color: var(--accent3);
+  }
+  .topbar .logo span { color: var(--accent); }
+  .topbar nav { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-left: auto; }
+  .topbar nav a {
+    color: var(--text2); text-decoration: none;
+    font-size: 0.78rem; padding: 4px 10px;
+    border-radius: 6px; transition: all 0.2s;
+    border: 1px solid transparent;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .topbar nav a:hover {
+    color: var(--accent2); border-color: var(--accent2);
+    background: rgba(121,192,255,0.08);
+  }
+
+  /* ── LAYOUT ── */
+  .hero {
+    background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 50%, #0d1117 100%);
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(121,192,255,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 30%, rgba(247,129,102,0.07) 0%, transparent 60%);
+  }
+  .hero h1 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.3;
+    background: linear-gradient(135deg, var(--accent2), var(--accent3), var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+  }
+  .hero .subtitle {
+    color: var(--text2); font-size: 1.1rem;
+    margin-top: 1rem; position: relative;
+  }
+  .hero .tags {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    justify-content: center; margin-top: 1.5rem;
+    position: relative;
+  }
+  .hero .tags span {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 14px;
+    font-size: 0.8rem; font-family: 'JetBrains Mono', monospace;
+    color: var(--accent4);
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* ── SECTION HEADERS ── */
+  .section-header {
+    display: flex; align-items: center; gap: 1rem;
+    margin: 3.5rem 0 1.5rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; font-weight: 600;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 3px 10px; border-radius: 4px;
+    min-width: 36px; text-align: center;
+  }
+  .section-header h2 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: 1.7rem; color: var(--text);
+    font-weight: 400;
+  }
+  .section-header .en-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; color: var(--text2);
+    border: 1px solid var(--border);
+    padding: 2px 8px; border-radius: 4px;
+    margin-left: auto;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+  .card.highlight { border-left: 3px solid var(--accent2); }
+  .card.warning   { border-left: 3px solid var(--yellow); }
+  .card.success   { border-left: 3px solid var(--green); }
+  .card.danger    { border-left: 3px solid var(--red); }
+  .card.purple    { border-left: 3px solid var(--purple); }
+
+  .card-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--text2);
+    margin-bottom: 0.7rem;
+  }
+  .card-title.blue   { color: var(--blue); }
+  .card-title.yellow { color: var(--yellow); }
+  .card-title.green  { color: var(--green); }
+  .card-title.red    { color: var(--red); }
+  .card-title.purple { color: var(--purple); }
+
+  /* ── CODE BLOCKS ── */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    margin: 1rem 0;
+    position: relative;
+  }
+  pre .line-comment { color: #6e7681; font-style: italic; }
+  pre .kw   { color: #ff7b72; }
+  pre .fn   { color: #d2a8ff; }
+  pre .str  { color: #a5d6ff; }
+  pre .num  { color: #79c0ff; }
+  pre .op   { color: #ff7b72; }
+  pre .var  { color: #ffa657; }
+  pre .out  { color: #56d364; }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    background: rgba(121,192,255,0.1);
+    color: var(--accent2);
+    padding: 2px 6px; border-radius: 4px;
+  }
+
+  /* ── INLINE LABELS ── */
+  .label {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; padding: 2px 8px;
+    border-radius: 4px; margin: 0 2px;
+    vertical-align: middle;
+  }
+  .label.green  { background: rgba(86,211,100,0.15); color: var(--green); border: 1px solid rgba(86,211,100,0.3); }
+  .label.blue   { background: rgba(121,192,255,0.15); color: var(--blue); border: 1px solid rgba(121,192,255,0.3); }
+  .label.red    { background: rgba(248,81,73,0.15); color: var(--red); border: 1px solid rgba(248,81,73,0.3); }
+  .label.yellow { background: rgba(227,179,65,0.15); color: var(--yellow); border: 1px solid rgba(227,179,65,0.3); }
+  .label.purple { background: rgba(188,140,255,0.15); color: var(--purple); border: 1px solid rgba(188,140,255,0.3); }
+
+  /* ── COMPARISON TABLE ── */
+  .compare-table {
+    width: 100%; border-collapse: collapse; margin: 1rem 0;
+    font-size: 0.92rem;
+  }
+  .compare-table th {
+    background: var(--bg3); padding: 10px 14px;
+    text-align: left; font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem; color: var(--accent2);
+    border: 1px solid var(--border);
+  }
+  .compare-table td {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    vertical-align: top; line-height: 1.6;
+  }
+  .compare-table tr:nth-child(even) td { background: rgba(22,27,34,0.5); }
+
+  /* ── EXERCISE SECTION ── */
+  .exercise-block {
+    background: linear-gradient(135deg, rgba(22,27,34,0.9), rgba(28,35,48,0.9));
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--purple);
+    border-radius: 10px;
+    padding: 1.8rem;
+    margin: 2.5rem 0;
+  }
+  .exercise-block .ex-header {
+    display: flex; align-items: center; gap: 0.8rem;
+    margin-bottom: 1.2rem;
+  }
+  .ex-badge {
+    background: var(--purple);
+    color: var(--bg);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; font-weight: 700;
+    padding: 4px 10px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .ex-badge.hard { background: var(--red); }
+  .ex-badge.medium { background: var(--yellow); color: #000; }
+  .ex-badge.ml { background: var(--accent3); color: #000; }
+
+  .exercise-block h3 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: 1.2rem; color: var(--text);
+    font-weight: 400;
+  }
+  .ex-list { list-style: none; }
+  .ex-list li {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 1rem; align-items: flex-start;
+  }
+  .ex-list li:last-child { border-bottom: none; }
+  .ex-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; color: var(--purple);
+    min-width: 28px; margin-top: 4px;
+  }
+
+  /* ── ALGO SECTION ── */
+  .algo-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+  .algo-card .algo-head {
+    background: var(--bg3);
+    padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .algo-icon {
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+  .algo-card .algo-body { padding: 1.5rem; }
+
+  /* ── STEP BOX ── */
+  .steps { list-style: none; margin: 1rem 0; }
+  .steps li {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 0.6rem 0;
+  }
+  .step-num {
+    min-width: 28px; height: 28px;
+    background: var(--accent2); color: var(--bg);
+    border-radius: 50%;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px;
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    display: flex; gap: 1rem; align-items: flex-start;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+  }
+  .callout-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+  .callout p { margin: 0; }
+
+  /* ── SVG CONTAINER ── */
+  .svg-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .svg-wrap figcaption {
+    font-size: 0.82rem; color: var(--text2);
+    margin-top: 0.8rem; font-style: italic;
+  }
+
+  /* ── TOGGLE ANSWER ── */
+  details {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 0.8rem 0;
+    overflow: hidden;
+  }
+  summary {
+    padding: 0.9rem 1.2rem;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem; color: var(--accent4);
+    user-select: none;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: '▶'; font-size: 0.6rem; transition: transform 0.2s; }
+  details[open] summary::before { transform: rotate(90deg); }
+  details .answer { padding: 0 1.2rem 1.2rem; border-top: 1px solid var(--border); margin-top: 0.2rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 2.5rem;
+    color: var(--text2);
+    font-size: 0.85rem;
+    margin-top: 4rem;
+  }
+
+  /* ── FLOW INDICATOR ── */
+  .flow-row {
+    display: flex; align-items: center; gap: 0.5rem;
+    flex-wrap: wrap; margin: 0.8rem 0;
+  }
+  .flow-box {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 6px; padding: 6px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+  }
+  .flow-arrow { color: var(--text2); font-size: 1rem; }
+
+  p { margin: 0.6rem 0; }
+  h3 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: 1.2rem; color: var(--accent2);
+    margin: 1.5rem 0 0.5rem;
+    font-weight: 400;
+  }
+  h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem; color: var(--accent4);
+    margin: 1.2rem 0 0.4rem; text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  strong { color: var(--accent4); }
+  em { color: var(--accent); font-style: normal; }
+
+  .toc {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.5rem;
+    margin: 2rem 0;
+  }
+  .toc h3 { margin-top: 0; color: var(--accent4); }
+  .toc ol { padding-left: 1.5rem; }
+  .toc li { padding: 0.3rem 0; }
+  .toc a { color: var(--accent2); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    margin: 1rem 0;
+  }
+  @media(max-width:600px){ .two-col { grid-template-columns: 1fr; } }
+
+  .progress-bar-demo {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 6px; overflow: hidden; height: 8px; margin: 0.3rem 0;
+  }
+  .progress-bar-fill {
+    height: 100%; border-radius: 6px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent3));
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     TOP BAR
+══════════════════════════════════════════════ -->
+<header class="topbar">
+  <div class="logo"><span>py</span>Loops.bn</div>
+  <nav>
+    <a href="#while-loop">while</a>
+    <a href="#for-loop">for</a>
+    <a href="#range-fn">range()</a>
+    <a href="#nested">nested</a>
+    <a href="#listcomp">comprehension</a>
+    <a href="#enumerate">enumerate</a>
+    <a href="#zip-fn">zip</a>
+    <a href="#algorithms">Algorithms</a>
+  </nav>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════ -->
+<section class="hero">
+  <h1>Python Loops<br>বাংলায় সম্পূর্ণ গাইড</h1>
+  <p class="subtitle">Data Science এর জন্য Python — নতুনদের জন্য, একদম শূন্য থেকে</p>
+  <div class="tags">
+    <span>while loop</span>
+    <span>for loop</span>
+    <span>range()</span>
+    <span>nested loops</span>
+    <span>list comprehension</span>
+    <span>enumerate</span>
+    <span>zip</span>
+    <span>algorithms</span>
+  </div>
+</section>
+
+<div class="container">
+
+<!-- TOC -->
+<div class="toc">
+  <h3>📋 বিষয়সূচি</h3>
+  <ol>
+    <li><a href="#intro">Loop কী? — একেবারে সহজ ভাষায়</a></li>
+    <li><a href="#while-loop">while loop — যতক্ষণ শর্ত সত্য, ততক্ষণ চলবে</a></li>
+    <li><a href="#for-loop">for loop — নিয়ন্ত্রিত পুনরাবৃত্তি</a></li>
+    <li><a href="#range-fn">range() ফাংশন — সংখ্যার ক্রম তৈরি</a></li>
+    <li><a href="#nested">Nested Loops — লুপের ভেতরে লুপ</a></li>
+    <li><a href="#listcomp">List Comprehension — একলাইনে লিস্ট তৈরি</a></li>
+    <li><a href="#enumerate">enumerate() — index সহ iteration</a></li>
+    <li><a href="#zip-fn">zip() — একসাথে দুটো লিস্ট</a></li>
+    <li><a href="#for-vs-while">for বনাম while — কোনটা কখন?</a></li>
+    <li><a href="#algorithms">Algorithms — সব ধরনের অ্যালগরিদম</a></li>
+  </ol>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §0  INTRO
+══════════════════════════════════════════════ -->
+<div id="intro">
+  <div class="section-header">
+    <span class="section-num">০০</span>
+    <h2>Loop কী? — একেবারে সহজ ভাষায়</h2>
+    <span class="en-label">Introduction</span>
+  </div>
+
+  <p>কল্পনা করো তুমি ১ থেকে ১০০ পর্যন্ত সংখ্যাগুলো print করতে চাও। যদি loop না জানতে, তোমাকে লিখতে হতো —</p>
+
+  <pre><span class="fn">print</span>(<span class="num">1</span>)
+<span class="fn">print</span>(<span class="num">2</span>)
+<span class="fn">print</span>(<span class="num">3</span>)
+<span class="line-comment"># ... এভাবে ১০০ লাইন!</span></pre>
+
+  <p>এটা কতটা বাজে, তাই না? Loop হলো সেই জাদু যেটা দিয়ে তুমি <strong>একটাই কোড লিখে বারবার চালাতে</strong> পারো।</p>
+
+  <div class="callout">
+    <span class="callout-icon">🔄</span>
+    <p><strong>Loop মানে:</strong> একটা কাজ বারবার করা, যতক্ষণ দরকার। যেমন ওয়াশিং মেশিন — একই কাজ (ঘোরানো) বারবার করে যতক্ষণ কাপড় পরিষ্কার না হয়।</p>
+  </div>
+
+  <p>Python-এ দুই ধরনের loop আছে —</p>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 560 160" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:560px">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#8b949e"/>
+        </marker>
+      </defs>
+      <!-- Python Loops box -->
+      <rect x="190" y="20" width="180" height="44" rx="8" fill="#1c2330" stroke="#30363d"/>
+      <text x="280" y="38" text-anchor="middle" fill="#e6edf3" font-family="JetBrains Mono" font-size="11" font-weight="600">Python Loops</text>
+      <text x="280" y="54" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="9">(পুনরাবৃত্তির হাতিয়ার)</text>
+      <!-- while -->
+      <rect x="50" y="105" width="180" height="44" rx="8" fill="#1a1f2e" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="140" y="123" text-anchor="middle" fill="#79c0ff" font-family="JetBrains Mono" font-size="13" font-weight="600">while loop</text>
+      <text x="140" y="140" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri" font-size="10">শর্ত সত্য → চলতে থাকে</text>
+      <!-- for -->
+      <rect x="330" y="105" width="180" height="44" rx="8" fill="#1a1f2e" stroke="#56d364" stroke-width="1.5"/>
+      <text x="420" y="123" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="13" font-weight="600">for loop</text>
+      <text x="420" y="140" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri" font-size="10">ক্রম শেষ হলে থামে</text>
+      <!-- lines -->
+      <line x1="230" y1="64" x2="170" y2="105" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="330" y1="64" x2="390" y2="105" stroke="#30363d" stroke-width="1.5" marker-end="url(#arr)"/>
+    </svg>
+    <figcaption>Python-এর দুটো loop — while এবং for</figcaption>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §1  WHILE LOOP
+══════════════════════════════════════════════ -->
+<div id="while-loop">
+  <div class="section-header">
+    <span class="section-num">০১</span>
+    <h2>while loop</h2>
+    <span class="en-label">while loop</span>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title blue">সহজ কথায়</div>
+    <p><strong>while loop মানে:</strong> "যতক্ষণ এই শর্তটা সত্য, ততক্ষণ কাজটা করতে থাকো।"</p>
+    <p>উদাহরণ: তুমি ঘুমাচ্ছ। <em>"যতক্ষণ সকাল না হয়, ততক্ষণ ঘুমাও"</em> — এটাই while loop।</p>
+  </div>
+
+  <h3>গঠন (Structure)</h3>
+
+  <pre><span class="kw">while</span> <span class="var">শর্ত</span> == <span class="kw">True</span>:
+    <span class="line-comment"># এখানে যা লেখা আছে বারবার চলবে</span>
+    instruction1
+    instruction2
+<span class="line-comment"># এটা loop-এর বাইরে, শুধু একবার চলবে</span>
+other_instruction</pre>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 480 340" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:480px">
+      <defs>
+        <marker id="arw" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#8b949e"/>
+        </marker>
+        <marker id="arwG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#56d364"/>
+        </marker>
+        <marker id="arwR" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#f85149"/>
+        </marker>
+      </defs>
+      <!-- Start -->
+      <ellipse cx="240" cy="30" rx="60" ry="22" fill="#1c2330" stroke="#56d364" stroke-width="1.5"/>
+      <text x="240" y="35" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="11">START</text>
+      <!-- Arrow down -->
+      <line x1="240" y1="52" x2="240" y2="78" stroke="#8b949e" stroke-width="1.5" marker-end="url(#arw)"/>
+      <!-- Condition diamond -->
+      <polygon points="240,80 340,120 240,160 140,120" fill="#1a1f2e" stroke="#e3b341" stroke-width="1.5"/>
+      <text x="240" y="116" text-anchor="middle" fill="#e3b341" font-family="Hind Siliguri" font-size="12">শর্ত কি</text>
+      <text x="240" y="132" text-anchor="middle" fill="#e3b341" font-family="Hind Siliguri" font-size="12">সত্য?</text>
+      <!-- YES arrow right & down -->
+      <text x="348" y="118" fill="#56d364" font-family="JetBrains Mono" font-size="10">হ্যাঁ</text>
+      <line x1="340" y1="120" x2="395" y2="120" stroke="#56d364" stroke-width="1.5" marker-end="url(#arwG)"/>
+      <!-- Instruction box -->
+      <rect x="395" y="90" width="70" height="60" rx="6" fill="#1a1f2e" stroke="#56d364" stroke-width="1.5"/>
+      <text x="430" y="116" text-anchor="middle" fill="#56d364" font-family="Hind Siliguri" font-size="10">কাজটা</text>
+      <text x="430" y="132" text-anchor="middle" fill="#56d364" font-family="Hind Siliguri" font-size="10">করো</text>
+      <!-- Loop back arrow -->
+      <path d="M430,150 L430,210 L240,210 L240,160" stroke="#56d364" stroke-width="1.5" fill="none" marker-end="url(#arwG)"/>
+      <text x="335" y="228" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri" font-size="10">আবার শর্ত চেক করো</text>
+      <!-- NO arrow down -->
+      <text x="148" y="175" fill="#f85149" font-family="JetBrains Mono" font-size="10">না</text>
+      <line x1="140" y1="120" x2="80" y2="120" stroke="#f85149" stroke-width="1.5"/>
+      <line x1="80" y1="120" x2="80" y2="270" stroke="#f85149" stroke-width="1.5"/>
+      <line x1="80" y1="270" x2="190" y2="270" stroke="#f85149" stroke-width="1.5" marker-end="url(#arwR)"/>
+      <!-- End -->
+      <rect x="190" y="250" width="100" height="38" rx="8" fill="#1c2330" stroke="#f85149" stroke-width="1.5"/>
+      <text x="240" y="274" text-anchor="middle" fill="#f85149" font-family="JetBrains Mono" font-size="11">STOP</text>
+      <text x="240" y="310" text-anchor="middle" fill="#8b949e" font-family="Hind Siliguri" font-size="11">loop শেষ, পরের কাজে যাও</text>
+    </svg>
+    <figcaption>while loop-এর flow diagram — শর্ত সত্য হলে ঘুরতে থাকে, মিথ্যা হলে বের হয়</figcaption>
+  </div>
+
+  <h3>প্রথম উদাহরণ — ১ থেকে ১০ print করো</h3>
+
+  <div class="card">
+    <div class="card-title blue">লাইন বাই লাইন বিশ্লেষণ</div>
+    <pre><span class="var">i</span> = <span class="num">1</span>          <span class="line-comment"># i শুরু হচ্ছে 1 থেকে</span>
+
+<span class="kw">while</span> <span class="var">i</span> &lt;= <span class="num">10</span>:   <span class="line-comment"># যতক্ষণ i ≤ 10, চলতে থাকো</span>
+    <span class="fn">print</span>(<span class="var">i</span>)    <span class="line-comment"># i এর মান print করো</span>
+    <span class="var">i</span> += <span class="num">1</span>       <span class="line-comment"># i কে 1 বাড়াও (নইলে infinite loop!)</span>
+
+<span class="line-comment"># ফলাফল: 1 2 3 4 5 6 7 8 9 10</span></pre>
+  </div>
+
+  <div class="callout">
+    <span class="callout-icon">👁️</span>
+    <div>
+      <p><strong>কী হচ্ছে step by step?</strong></p>
+      <ul style="padding-left:1.2rem; margin-top:0.4rem">
+        <li>প্রথমবার: i=1 → 1≤10 সত্য → print(1) → i=2</li>
+        <li>দ্বিতীয়বার: i=2 → 2≤10 সত্য → print(2) → i=3</li>
+        <li>... এভাবে চলে ...</li>
+        <li>দশমবার: i=10 → 10≤10 সত্য → print(10) → i=11</li>
+        <li>এগারোতম: i=11 → 11≤10 <strong>মিথ্যা</strong> → loop বন্ধ!</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>⚠️ Infinite Loop — সবচেয়ে বড় বিপদ!</h3>
+
+  <div class="card danger">
+    <div class="card-title red">বিপজ্জনক কোড — কখনো এটা করো না!</div>
+    <pre><span class="var">i</span> = <span class="num">1</span>
+<span class="kw">while</span> <span class="var">i</span> &lt;= <span class="num">10</span>:
+    <span class="fn">print</span>(<span class="var">i</span>)
+    <span class="line-comment"># i += 1 ভুলে গেছি!</span>
+    <span class="line-comment"># i কখনো বাড়বে না → চিরকাল চলবে!</span></pre>
+    <p style="margin-top:0.8rem">যদি ভুলে infinite loop চালু হয়, Jupyter-এ <code>■ Stop</code> বাটন চাপো।</p>
+  </div>
+
+  <h3>দ্বিতীয় উদাহরণ — ১০০ মিটার রেসে ১০ সেকেন্ডের কম কতজন?</h3>
+
+  <pre><span class="var">results</span> = [<span class="num">9.81</span>, <span class="num">9.89</span>, <span class="num">9.91</span>, <span class="num">9.93</span>, <span class="num">9.94</span>, <span class="num">9.95</span>,
+           <span class="num">9.96</span>, <span class="num">9.97</span>, <span class="num">9.98</span>, <span class="num">10.03</span>, <span class="num">10.04</span> ...]
+<span class="var">n</span> = <span class="num">0</span>    <span class="line-comment"># counter: কতজন ১০ সেকেন্ডের কম</span>
+<span class="var">i</span> = <span class="num">0</span>    <span class="line-comment"># list এর index</span>
+
+<span class="kw">while</span> <span class="var">i</span> &lt; <span class="fn">len</span>(<span class="var">results</span>):       <span class="line-comment"># list শেষ না হওয়া পর্যন্ত</span>
+    <span class="kw">if</span> <span class="var">results</span>[<span class="var">i</span>] &lt; <span class="num">10</span>:       <span class="line-comment"># যদি সময় ১০-এর কম হয়</span>
+        <span class="var">n</span> += <span class="num">1</span>               <span class="line-comment"># counter বাড়াও</span>
+    <span class="var">i</span> += <span class="num">1</span>                   <span class="line-comment"># পরের athlete-এ যাও</span>
+
+<span class="fn">print</span>(<span class="str">"১০ সেকেন্ডের কম:"</span>, <span class="var">n</span>)   <span class="line-comment"># ফলাফল: 9</span></pre>
+
+  <div class="card success">
+    <div class="card-title green">len() ফাংশন কী করে?</div>
+    <p><code>len(my_list)</code> বলে দেয় list-এ কতগুলো element আছে। যেমন <code>len([10, 20, 30])</code> হবে <code>3</code>।</p>
+  </div>
+
+  <!-- EXERCISE: while loop -->
+  <div class="exercise-block" id="ex-while">
+    <div class="ex-header">
+      <span class="ex-badge">Interview Exercise</span>
+      <h3>while loop — প্র্যাকটিস প্রশ্ন</h3>
+    </div>
+    <ul class="ex-list">
+      <li>
+        <span class="ex-num">Q1</span>
+        <div>
+          <span class="label green">সহজ</span>
+          <p>একটা while loop লেখো যেটা ১ থেকে ৫০ পর্যন্ত শুধু <strong>বিজোড়</strong> (odd) সংখ্যাগুলো print করবে।</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">i</span> = <span class="num">1</span>
+<span class="kw">while</span> <span class="var">i</span> &lt;= <span class="num">50</span>:
+    <span class="kw">if</span> <span class="var">i</span> % <span class="num">2</span> != <span class="num">0</span>:   <span class="line-comment"># % মানে ভাগশেষ; বিজোড় হলে ভাগশেষ ১</span>
+        <span class="fn">print</span>(<span class="var">i</span>)
+    <span class="var">i</span> += <span class="num">1</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+      <li>
+        <span class="ex-num">Q2</span>
+        <div>
+          <span class="label yellow">মাঝারি</span>
+          <p>একটা list-এ students-এর marks আছে: <code>[45, 67, 89, 23, 56, 90, 12, 78]</code>। while loop দিয়ে বের করো কতজন <strong>pass</strong> করেছে (marks ≥ 50)।</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">marks</span> = [<span class="num">45</span>, <span class="num">67</span>, <span class="num">89</span>, <span class="num">23</span>, <span class="num">56</span>, <span class="num">90</span>, <span class="num">12</span>, <span class="num">78</span>]
+<span class="var">pass_count</span> = <span class="num">0</span>
+<span class="var">i</span> = <span class="num">0</span>
+<span class="kw">while</span> <span class="var">i</span> &lt; <span class="fn">len</span>(<span class="var">marks</span>):
+    <span class="kw">if</span> <span class="var">marks</span>[<span class="var">i</span>] &gt;= <span class="num">50</span>:
+        <span class="var">pass_count</span> += <span class="num">1</span>
+    <span class="var">i</span> += <span class="num">1</span>
+<span class="fn">print</span>(<span class="str">"Pass করেছে:"</span>, <span class="var">pass_count</span>)  <span class="line-comment"># 5</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+      <li>
+        <span class="ex-num">Q3</span>
+        <div>
+          <span class="label red">কঠিন</span>
+          <span class="label purple">ML প্রজেক্ট</span>
+          <p>ML-এ <strong>Gradient Descent</strong> একটা শর্ত পূরণ না হওয়া পর্যন্ত চলতে থাকে। একটা while loop লেখো যেটা <code>loss = 100.0</code> থেকে শুরু করে প্রতিবার <code>loss *= 0.9</code> করবে এবং যতক্ষণ <code>loss > 1.0</code> ততক্ষণ চলবে। প্রতিটা iteration print করো।</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">loss</span> = <span class="num">100.0</span>
+<span class="var">iteration</span> = <span class="num">0</span>
+<span class="kw">while</span> <span class="var">loss</span> &gt; <span class="num">1.0</span>:
+    <span class="var">iteration</span> += <span class="num">1</span>
+    <span class="var">loss</span> *= <span class="num">0.9</span>   <span class="line-comment"># প্রতিবার ১০% কমে</span>
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Iteration {iteration}: loss = {loss:.4f}"</span>)
+<span class="fn">print</span>(<span class="str">"Training complete!"</span>)
+<span class="line-comment"># এটাই real ML-এর training loop-এর basic idea!</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §2  FOR LOOP
+══════════════════════════════════════════════ -->
+<div id="for-loop">
+  <div class="section-header">
+    <span class="section-num">০২</span>
+    <h2>for loop</h2>
+    <span class="en-label">for loop</span>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title blue">সহজ কথায়</div>
+    <p><strong>for loop মানে:</strong> "এই list/sequence-এর প্রতিটা জিনিসের জন্য কাজটা করো।"</p>
+    <p>উদাহরণ: তোমার bag-এ ৫টা বই আছে। প্রতিটা বই বের করে নাম পড়ো — এটাই for loop।</p>
+  </div>
+
+  <h3>গঠন (Structure)</h3>
+
+  <pre><span class="kw">for</span> <span class="var">element</span> <span class="kw">in</span> <span class="var">sequence</span>:
+    <span class="line-comment"># প্রতিটা element-এর জন্য এই কাজ করো</span>
+    instruction1
+    instruction2
+<span class="line-comment"># loop শেষে এটা একবার চলবে</span>
+other_instruction</pre>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:560px">
+      <!-- sequence boxes -->
+      <text x="20" y="30" fill="#8b949e" font-family="JetBrains Mono" font-size="11">sequence = </text>
+      <rect x="120" y="14" width="50" height="28" rx="4" fill="#1a1f2e" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="145" y="33" text-anchor="middle" fill="#79c0ff" font-family="JetBrains Mono" font-size="12">'l'</text>
+      <rect x="178" y="14" width="50" height="28" rx="4" fill="#1a1f2e" stroke="#56d364" stroke-width="1.5"/>
+      <text x="203" y="33" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="12">'o'</text>
+      <rect x="236" y="14" width="50" height="28" rx="4" fill="#1a1f2e" stroke="#56d364" stroke-width="1.5"/>
+      <text x="261" y="33" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="12">'o'</text>
+      <rect x="294" y="14" width="50" height="28" rx="4" fill="#1a1f2e" stroke="#e3b341" stroke-width="1.5"/>
+      <text x="319" y="33" text-anchor="middle" fill="#e3b341" font-family="JetBrains Mono" font-size="12">'p'</text>
+      <!-- arrows down -->
+      <line x1="145" y1="42" x2="145" y2="80" stroke="#8b949e" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="203" y1="42" x2="203" y2="80" stroke="#8b949e" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="261" y1="42" x2="261" y2="80" stroke="#8b949e" stroke-width="1" stroke-dasharray="4"/>
+      <line x1="319" y1="42" x2="319" y2="80" stroke="#8b949e" stroke-width="1" stroke-dasharray="4"/>
+      <!-- print boxes -->
+      <rect x="108" y="80" width="74" height="28" rx="4" fill="#1c2330" stroke="#30363d"/>
+      <text x="145" y="99" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="10">print('l')</text>
+      <rect x="166" y="80" width="74" height="28" rx="4" fill="#1c2330" stroke="#30363d"/>
+      <text x="203" y="99" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="10">print('o')</text>
+      <rect x="224" y="80" width="74" height="28" rx="4" fill="#1c2330" stroke="#30363d"/>
+      <text x="261" y="99" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="10">print('o')</text>
+      <rect x="282" y="80" width="74" height="28" rx="4" fill="#1c2330" stroke="#30363d"/>
+      <text x="319" y="99" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="10">print('p')</text>
+      <!-- output -->
+      <text x="120" y="145" fill="#56d364" font-family="JetBrains Mono" font-size="11">>>> l</text>
+      <text x="178" y="145" fill="#56d364" font-family="JetBrains Mono" font-size="11">>>> o</text>
+      <text x="236" y="145" fill="#56d364" font-family="JetBrains Mono" font-size="11">>>> o</text>
+      <text x="294" y="145" fill="#56d364" font-family="JetBrains Mono" font-size="11">>>> p</text>
+      <text x="20" y="180" fill="#8b949e" font-family="Hind Siliguri" font-size="11">for letter in "loop": — প্রতিটা অক্ষর একে একে নেওয়া হচ্ছে</text>
+    </svg>
+    <figcaption>for loop "loop" শব্দের প্রতিটা অক্ষর একে একে process করছে</figcaption>
+  </div>
+
+  <h3>উদাহরণ ১ — ছাত্রদের marks বাড়ানো</h3>
+
+  <pre><span class="var">bad_marks</span> = [<span class="num">0</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span>, <span class="num">9</span>, <span class="num">10</span>, <span class="num">14</span>]
+
+<span class="line-comment"># ক) class average বের করো</span>
+<span class="var">total</span> = <span class="num">0</span>
+<span class="kw">for</span> <span class="var">mark</span> <span class="kw">in</span> <span class="var">bad_marks</span>:     <span class="line-comment"># প্রতিটা mark নাও</span>
+    <span class="var">total</span> += <span class="var">mark</span>             <span class="line-comment"># total-এ যোগ করো</span>
+<span class="var">average</span> = <span class="var">total</span> / <span class="num">30</span>
+<span class="fn">print</span>(<span class="str">"Average:"</span>, <span class="var">average</span>)  <span class="line-comment"># 6.7</span>
+
+<span class="line-comment"># খ) সবার marks 4 বাড়াও</span>
+<span class="var">good_marks</span> = []               <span class="line-comment"># খালি list তৈরি</span>
+<span class="kw">for</span> <span class="var">mark</span> <span class="kw">in</span> <span class="var">bad_marks</span>:
+    <span class="var">good_marks</span>.<span class="fn">append</span>(<span class="var">mark</span> + <span class="num">4</span>)  <span class="line-comment"># 4 যোগ করে নতুন list-এ রাখো</span>
+<span class="fn">print</span>(<span class="var">good_marks</span>)</pre>
+
+  <div class="card">
+    <div class="card-title green">append() কী করে?</div>
+    <p><code>list.append(value)</code> list-এর শেষে একটা নতুন element যোগ করে।</p>
+    <pre><span class="var">fruits</span> = [<span class="str">"আম"</span>, <span class="str">"কলা"</span>]
+<span class="var">fruits</span>.<span class="fn">append</span>(<span class="str">"লিচু"</span>)
+<span class="fn">print</span>(<span class="var">fruits</span>)  <span class="line-comment"># ["আম", "কলা", "লিচু"]</span></pre>
+  </div>
+
+  <h3>উদাহরণ ২ — সর্বোচ্চ ও সর্বনিম্ন খোঁজা</h3>
+
+  <pre><span class="var">l</span> = [<span class="num">2</span>, <span class="num">3</span>, <span class="num">8</span>, <span class="num">1</span>, <span class="num">4</span>]
+
+<span class="var">maxi</span> = <span class="var">l</span>[<span class="num">0</span>]  <span class="line-comment"># প্রথম element কেই maximum ধরে নাও</span>
+<span class="var">mini</span> = <span class="var">l</span>[<span class="num">0</span>]  <span class="line-comment"># প্রথম element কেই minimum ধরে নাও</span>
+
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="var">l</span>:
+    <span class="kw">if</span> <span class="var">i</span> &gt; <span class="var">maxi</span>:   <span class="line-comment"># যদি বড় পাই, update করো</span>
+        <span class="var">maxi</span> = <span class="var">i</span>
+    <span class="kw">if</span> <span class="var">i</span> &lt; <span class="var">mini</span>:   <span class="line-comment"># যদি ছোট পাই, update করো</span>
+        <span class="var">mini</span> = <span class="var">i</span>
+
+<span class="fn">print</span>(<span class="str">"সর্বোচ্চ:"</span>, <span class="var">maxi</span>)   <span class="line-comment"># 8</span>
+<span class="fn">print</span>(<span class="str">"সর্বনিম্ন:"</span>, <span class="var">mini</span>)   <span class="line-comment"># 1</span>
+
+<span class="line-comment"># Python-এ shortcut আছে:</span>
+<span class="fn">print</span>(<span class="fn">max</span>(<span class="var">l</span>), <span class="fn">min</span>(<span class="var">l</span>))   <span class="line-comment"># 8  1</span></pre>
+
+  <h3>break keyword — মাঝপথে বের হয়ে যাও</h3>
+
+  <div class="card warning">
+    <div class="card-title yellow">break কখন ব্যবহার করবে?</div>
+    <p>যখন তুমি খুঁজছো এবং খুঁজে পাওয়ার পরে আর loop চালাতে চাও না।</p>
+  </div>
+
+  <pre><span class="var">l</span> = [<span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>, <span class="num">4</span>]
+
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="var">l</span>:
+    <span class="kw">if</span> <span class="var">i</span> == <span class="num">4</span>:
+        <span class="fn">print</span>(<span class="str">"৪ পাওয়া গেছে!"</span>)
+        <span class="kw">break</span>   <span class="line-comment"># আর loop চালানো দরকার নেই, বের হও</span>
+
+<span class="line-comment"># ফলাফল: ৪ পাওয়া গেছে! (মাত্র একবার print হবে)</span></pre>
+
+  <!-- EXERCISE: for loop -->
+  <div class="exercise-block">
+    <div class="ex-header">
+      <span class="ex-badge">Interview Exercise</span>
+      <h3>for loop — প্র্যাকটিস প্রশ্ন</h3>
+    </div>
+    <ul class="ex-list">
+      <li>
+        <span class="ex-num">Q1</span>
+        <div>
+          <span class="label green">সহজ</span>
+          <p>একটা list-এ words আছে: <code>["python", "java", "rust", "go", "c"]</code>। for loop দিয়ে শুধু সেই words print করো যেগুলোর length ৩-এর বেশি।</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">words</span> = [<span class="str">"python"</span>, <span class="str">"java"</span>, <span class="str">"rust"</span>, <span class="str">"go"</span>, <span class="str">"c"</span>]
+<span class="kw">for</span> <span class="var">w</span> <span class="kw">in</span> <span class="var">words</span>:
+    <span class="kw">if</span> <span class="fn">len</span>(<span class="var">w</span>) &gt; <span class="num">3</span>:
+        <span class="fn">print</span>(<span class="var">w</span>)
+<span class="line-comment"># python, java, rust</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+      <li>
+        <span class="ex-num">Q2</span>
+        <div>
+          <span class="label yellow">মাঝারি</span>
+          <span class="label purple">ML প্রজেক্ট</span>
+          <p>একটা dataset-এ temperature readings আছে: <code>[36.5, 37.2, 38.9, 36.8, 39.5, 37.1, 38.3]</code>। for loop দিয়ে সব values normalize করো (0 থেকে 1 এর মধ্যে)। Formula: <code>(x - min) / (max - min)</code></p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">temps</span> = [<span class="num">36.5</span>, <span class="num">37.2</span>, <span class="num">38.9</span>, <span class="num">36.8</span>, <span class="num">39.5</span>, <span class="num">37.1</span>, <span class="num">38.3</span>]
+<span class="var">t_min</span> = <span class="fn">min</span>(<span class="var">temps</span>)
+<span class="var">t_max</span> = <span class="fn">max</span>(<span class="var">temps</span>)
+
+<span class="var">normalized</span> = []
+<span class="kw">for</span> <span class="var">t</span> <span class="kw">in</span> <span class="var">temps</span>:
+    <span class="var">n</span> = (<span class="var">t</span> - <span class="var">t_min</span>) / (<span class="var">t_max</span> - <span class="var">t_min</span>)
+    <span class="var">normalized</span>.<span class="fn">append</span>(<span class="fn">round</span>(<span class="var">n</span>, <span class="num">3</span>))
+
+<span class="fn">print</span>(<span class="var">normalized</span>)
+<span class="line-comment"># Min-Max Normalization — ML data preprocessing-এর standard step!</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+      <li>
+        <span class="ex-num">Q3</span>
+        <div>
+          <span class="label red">কঠিন</span>
+          <span class="label purple">ML প্রজেক্ট</span>
+          <p>দুটো list আছে — <code>predictions = [1, 0, 1, 1, 0]</code> এবং <code>actual = [1, 1, 1, 0, 0]</code>। for loop দিয়ে <strong>accuracy</strong> বের করো। (কতটা prediction সঠিক ছিল, তার শতকরা।)</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">predictions</span> = [<span class="num">1</span>, <span class="num">0</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>]
+<span class="var">actual</span>      = [<span class="num">1</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>, <span class="num">0</span>]
+<span class="var">correct</span> = <span class="num">0</span>
+
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(<span class="var">predictions</span>)):
+    <span class="kw">if</span> <span class="var">predictions</span>[<span class="var">i</span>] == <span class="var">actual</span>[<span class="var">i</span>]:
+        <span class="var">correct</span> += <span class="num">1</span>
+
+<span class="var">accuracy</span> = <span class="var">correct</span> / <span class="fn">len</span>(<span class="var">predictions</span>) * <span class="num">100</span>
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Accuracy: {accuracy}%"</span>)   <span class="line-comment"># 60.0%</span>
+<span class="line-comment"># এটাই ML model evaluation-এর সবচেয়ে basic metric!</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §3  RANGE FUNCTION
+══════════════════════════════════════════════ -->
+<div id="range-fn">
+  <div class="section-header">
+    <span class="section-num">০৩</span>
+    <h2>range() ফাংশন</h2>
+    <span class="en-label">range() function</span>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title blue">সহজ কথায়</div>
+    <p><code>range()</code> একটা <strong>সংখ্যার ক্রম তৈরি করে</strong>। যেমন তুমি বলতে পারো "১ থেকে ১০ পর্যন্ত" বা "০ থেকে ১০০ পর্যন্ত ২ করে বাড়তে বাড়তে"।</p>
+  </div>
+
+  <h3>তিনটা parameter</h3>
+
+  <pre><span class="fn">range</span>(<span class="var">start</span>, <span class="var">stop</span>, <span class="var">step</span>)
+<span class="line-comment">#      শুরু    শেষ    পদক্ষেপ</span>
+<span class="line-comment"># stop সংখ্যাটা বাদ দেওয়া হয়! (exclusive)</span></pre>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 560 130" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:560px">
+      <defs>
+        <marker id="arw" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#56d364"/>
+        </marker>
+      </defs>
+      <text x="20" y="25" fill="#e3b341" font-family="JetBrains Mono" font-size="12" font-weight="600">range(3, 11, 2):</text>
+      <!-- boxes -->
+      <rect x="20" y="38" width="44" height="36" rx="4" fill="#1a1f2e" stroke="#56d364" stroke-width="2"/>
+      <text x="42" y="61" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="14" font-weight="700">3</text>
+      <rect x="72" y="38" width="44" height="36" rx="4" fill="#1c2330" stroke="#30363d"/>
+      <text x="94" y="61" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="14">4</text>
+      <rect x="124" y="38" width="44" height="36" rx="4" fill="#1a1f2e" stroke="#56d364" stroke-width="2"/>
+      <text x="146" y="61" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="14" font-weight="700">5</text>
+      <rect x="176" y="38" width="44" height="36" rx="4" fill="#1c2330" stroke="#30363d"/>
+      <text x="198" y="61" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="14">6</text>
+      <rect x="228" y="38" width="44" height="36" rx="4" fill="#1a1f2e" stroke="#56d364" stroke-width="2"/>
+      <text x="250" y="61" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="14" font-weight="700">7</text>
+      <rect x="280" y="38" width="44" height="36" rx="4" fill="#1c2330" stroke="#30363d"/>
+      <text x="302" y="61" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="14">8</text>
+      <rect x="332" y="38" width="44" height="36" rx="4" fill="#1a1f2e" stroke="#56d364" stroke-width="2"/>
+      <text x="354" y="61" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="14" font-weight="700">9</text>
+      <rect x="384" y="38" width="44" height="36" rx="4" fill="#1c2330" stroke="#30363d"/>
+      <text x="406" y="61" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="14">10</text>
+      <rect x="436" y="38" width="44" height="36" rx="4" fill="#1c2330" stroke="#f85149" stroke-width="1.5" stroke-dasharray="4"/>
+      <text x="458" y="61" text-anchor="middle" fill="#f85149" font-family="JetBrains Mono" font-size="14">11</text>
+      <!-- labels -->
+      <text x="42" y="95" text-anchor="middle" fill="#56d364" font-family="Hind Siliguri" font-size="10">start</text>
+      <text x="250" y="95" text-anchor="middle" fill="#e3b341" font-family="JetBrains Mono" font-size="9">+2 step</text>
+      <text x="458" y="95" text-anchor="middle" fill="#f85149" font-family="Hind Siliguri" font-size="10">বাদ!</text>
+      <!-- arrows -->
+      <path d="M42,74 C94,100 146,74 146,74" stroke="#e3b341" fill="none" stroke-width="1" marker-end="url(#arw)"/>
+      <path d="M146,74 C198,100 250,74 250,74" stroke="#e3b341" fill="none" stroke-width="1"/>
+      <path d="M250,74 C302,100 354,74 354,74" stroke="#e3b341" fill="none" stroke-width="1"/>
+      <text x="20" y="118" fill="#8b949e" font-family="Hind Siliguri" font-size="10">সবুজ boxes = range-এ আছে | ধূসর = skip | লাল-dash = stop (বাদ দেওয়া হয়)</text>
+    </svg>
+    <figcaption>range(3, 11, 2) — ৩ থেকে শুরু, ১১-এর আগে শেষ, ২ করে বাড়ে → 3, 5, 7, 9</figcaption>
+  </div>
+
+  <h3>সব রকম range() উদাহরণ</h3>
+
+  <table class="compare-table">
+    <thead>
+      <tr><th>কোড</th><th>ফলাফল</th><th>মনে রাখার উপায়</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>range(5)</code></td>
+        <td><code>0, 1, 2, 3, 4</code></td>
+        <td>শুধু stop দিলে 0 থেকে শুরু</td>
+      </tr>
+      <tr>
+        <td><code>range(1, 10)</code></td>
+        <td><code>1, 2, 3, ..., 9</code></td>
+        <td>1 থেকে 9 (10 বাদ)</td>
+      </tr>
+      <tr>
+        <td><code>range(1, 10, 3)</code></td>
+        <td><code>1, 4, 7</code></td>
+        <td>3 করে লাফ</td>
+      </tr>
+      <tr>
+        <td><code>range(10, -1, -1)</code></td>
+        <td><code>10, 9, 8, ..., 0</code></td>
+        <td>উল্টো দিকে (countdown)</td>
+      </tr>
+      <tr>
+        <td><code>range(0, 101, 2)</code></td>
+        <td><code>0, 2, 4, ..., 100</code></td>
+        <td>শুধু জোড় সংখ্যা</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>ব্যবহারিক উদাহরণ</h3>
+
+  <pre><span class="line-comment"># ১ থেকে ১০০ পর্যন্ত সব সংখ্যার যোগফল</span>
+<span class="var">total</span> = <span class="num">0</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">101</span>):   <span class="line-comment"># 1, 2, 3, ..., 100</span>
+    <span class="var">total</span> += <span class="var">i</span>
+<span class="fn">print</span>(<span class="var">total</span>)   <span class="line-comment"># 5050</span>
+
+<span class="line-comment"># জমির area ১০ বছরে কত হবে (প্রতি বছর দ্বিগুণ)</span>
+<span class="var">area</span> = <span class="num">2000</span>
+<span class="kw">for</span> <span class="var">year</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>):   <span class="line-comment"># 10 বার চলবে</span>
+    <span class="var">area</span> = <span class="var">area</span> * <span class="num">2</span>
+<span class="fn">print</span>(<span class="var">area</span>)   <span class="line-comment"># 2048000</span>
+
+<span class="line-comment"># Fibonacci sequence (প্রথম ১০টা term)</span>
+<span class="var">u</span> = [<span class="num">0</span>, <span class="num">1</span>]
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, <span class="num">10</span>):
+    <span class="var">u</span>.<span class="fn">append</span>(<span class="var">u</span>[<span class="var">i</span>-<span class="num">1</span>] + <span class="var">u</span>[<span class="var">i</span>-<span class="num">2</span>])
+<span class="fn">print</span>(<span class="var">u</span>)   <span class="line-comment"># [0,1,1,2,3,5,8,13,21,34]</span></pre>
+
+  <h3>শব্দ উল্টানো — Slicing [::-1]</h3>
+
+  <div class="card">
+    <div class="card-title blue">[::-1] মানে কী?</div>
+    <p>এটা একটা shortcut। <code>word[::-1]</code> মানে "পুরো word টা, পেছন থেকে সামনে, ১ করে"।</p>
+    <pre><span class="var">word</span> = <span class="str">"cargo"</span>
+<span class="fn">print</span>(<span class="var">word</span>[::-<span class="num">1</span>])   <span class="line-comment"># "ograc"</span>
+
+<span class="var">l</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
+<span class="fn">print</span>(<span class="var">l</span>[::-<span class="num">1</span>])      <span class="line-comment"># [4, 3, 2, 1]</span></pre>
+  </div>
+
+  <!-- EXERCISE: range -->
+  <div class="exercise-block">
+    <div class="ex-header">
+      <span class="ex-badge">Interview Exercise</span>
+      <h3>range() — প্র্যাকটিস প্রশ্ন</h3>
+    </div>
+    <ul class="ex-list">
+      <li>
+        <span class="ex-num">Q1</span>
+        <div>
+          <span class="label green">সহজ</span>
+          <p>range() দিয়ে ৫০ থেকে ১ পর্যন্ত উল্টো print করো (countdown)।</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">50</span>, <span class="num">0</span>, -<span class="num">1</span>):
+    <span class="fn">print</span>(<span class="var">i</span>)</pre>
+            </div>
+          </details>
+        </div>
+      </li>
+      <li>
+        <span class="ex-num">Q2</span>
+        <div>
+          <span class="label yellow">মাঝারি</span>
+          <span class="label purple">ML প্রজেক্ট</span>
+          <p>Machine Learning-এ <strong>epoch</strong> মানে training-এর একটা পূর্ণ চক্র। range() দিয়ে ১০টা epoch simulate করো — প্রতিটায় <code>loss = 100 / (epoch + 1)</code> হিসাব করে print করো।</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="kw">for</span> <span class="var">epoch</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>):
+    <span class="var">loss</span> = <span class="num">100</span> / (<span class="var">epoch</span> + <span class="num">1</span>)
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Epoch {epoch+1}/10  |  Loss: {loss:.2f}"</span>)
+<span class="line-comment"># Epoch 1/10  |  Loss: 100.00</span>
+<span class="line-comment"># Epoch 2/10  |  Loss: 50.00</span>
+<span class="line-comment"># ...</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+      <li>
+        <span class="ex-num">Q3</span>
+        <div>
+          <span class="label red">কঠিন</span>
+          <span class="label purple">ML প্রজেক্ট</span>
+          <p><strong>Batch processing</strong> — ML-এ বড় dataset কে ছোট batch-এ ভাগ করে process করা হয়। একটা <code>dataset = list(range(100))</code> (0 থেকে 99) তৈরি করো। তারপর range() দিয়ে batch_size=10 করে প্রতিটা batch print করো।</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">dataset</span> = <span class="fn">list</span>(<span class="fn">range</span>(<span class="num">100</span>))
+<span class="var">batch_size</span> = <span class="num">10</span>
+
+<span class="kw">for</span> <span class="var">start</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>, <span class="fn">len</span>(<span class="var">dataset</span>), <span class="var">batch_size</span>):
+    <span class="var">batch</span> = <span class="var">dataset</span>[<span class="var">start</span> : <span class="var">start</span> + <span class="var">batch_size</span>]
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"Batch: {batch}"</span>)
+<span class="line-comment"># Batch: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]</span>
+<span class="line-comment"># Batch: [10, 11, 12, ...]</span>
+<span class="line-comment"># ... এটা real ML training loop-এর pattern!</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §4  NESTED LOOPS
+══════════════════════════════════════════════ -->
+<div id="nested">
+  <div class="section-header">
+    <span class="section-num">০৪</span>
+    <h2>Nested Loops — লুপের ভেতরে লুপ</h2>
+    <span class="en-label">Nested Loops</span>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title blue">সহজ কথায়</div>
+    <p>কল্পনা করো একটা স্কুলে ৩টা ক্লাস আছে, প্রতিটা ক্লাসে ৫ জন ছাত্র। সব ছাত্রের নাম বলতে হলে তোমাকে প্রতিটা ক্লাসে যেতে হবে, তারপর সেই ক্লাসের প্রতিটা ছাত্রের কাছে যেতে হবে — এটাই nested loop।</p>
+  </div>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:520px">
+      <!-- Outer loop label -->
+      <rect x="10" y="10" width="500" height="200" rx="8" fill="none" stroke="#79c0ff" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text x="22" y="28" fill="#79c0ff" font-family="JetBrains Mono" font-size="10">outer loop (ক্লাস)</text>
+      <!-- Rows -->
+      <!-- Class 1 -->
+      <rect x="30" y="40" width="460" height="48" rx="6" fill="#1a1f2e" stroke="#56d364" stroke-width="1.2"/>
+      <text x="46" y="58" fill="#56d364" font-family="Hind Siliguri" font-size="11" font-weight="600">ক্লাস ১</text>
+      <text x="46" y="76" fill="#8b949e" font-family="JetBrains Mono" font-size="10">→ ছাত্র_১  ছাত্র_২  ছাত্র_৩  ছাত্র_৪  ছাত্র_৫</text>
+      <!-- Class 2 -->
+      <rect x="30" y="96" width="460" height="48" rx="6" fill="#1a1f2e" stroke="#56d364" stroke-width="1.2"/>
+      <text x="46" y="114" fill="#56d364" font-family="Hind Siliguri" font-size="11" font-weight="600">ক্লাস ২</text>
+      <text x="46" y="132" fill="#8b949e" font-family="JetBrains Mono" font-size="10">→ ছাত্র_১  ছাত্র_২  ছাত্র_৩  ছাত্র_৪  ছাত্র_৫</text>
+      <!-- Class 3 -->
+      <rect x="30" y="152" width="460" height="48" rx="6" fill="#1a1f2e" stroke="#56d364" stroke-width="1.2"/>
+      <text x="46" y="170" fill="#56d364" font-family="Hind Siliguri" font-size="11" font-weight="600">ক্লাস ৩</text>
+      <text x="46" y="188" fill="#8b949e" font-family="JetBrains Mono" font-size="10">→ ছাত্র_১  ছাত্র_২  ছাত্র_৩  ছাত্র_৪  ছাত্র_৫</text>
+      <!-- inner label -->
+      <text x="410" y="208" fill="#e3b341" font-family="JetBrains Mono" font-size="9">inner loop (ছাত্র)</text>
+    </svg>
+    <figcaption>Outer loop ক্লাসের উপর, Inner loop ছাত্রদের উপর</figcaption>
+  </div>
+
+  <pre><span class="line-comment"># গঠন</span>
+<span class="kw">for</span> <span class="var">class_name</span> <span class="kw">in</span> <span class="var">list_of_classes</span>:       <span class="line-comment"># বাইরের loop</span>
+    <span class="kw">for</span> <span class="var">student</span> <span class="kw">in</span> <span class="var">class_name</span>:          <span class="line-comment"># ভেতরের loop</span>
+        <span class="fn">print</span>(<span class="var">student</span>)
+
+<span class="line-comment"># বাস্তব উদাহরণ: text-এ 'e' কতবার আছে?</span>
+<span class="var">text</span> = [<span class="str">'The'</span>, <span class="str">'while'</span>, <span class="str">'loop'</span>, <span class="str">'has'</span>, <span class="str">'been'</span>]
+<span class="var">n</span> = <span class="num">0</span>
+
+<span class="kw">for</span> <span class="var">word</span> <span class="kw">in</span> <span class="var">text</span>:       <span class="line-comment"># প্রতিটা word নাও</span>
+    <span class="kw">for</span> <span class="var">letter</span> <span class="kw">in</span> <span class="var">word</span>:   <span class="line-comment"># প্রতিটা অক্ষর নাও</span>
+        <span class="kw">if</span> <span class="var">letter</span> == <span class="str">'e'</span>:
+            <span class="var">n</span> += <span class="num">1</span>
+
+<span class="fn">print</span>(<span class="str">"'e' আছে"</span>, <span class="var">n</span>, <span class="str">"বার"</span>)</pre>
+
+  <div class="callout">
+    <span class="callout-icon">⚠️</span>
+    <div>
+      <p><strong>Indentation মনে রেখো!</strong> Python-এ Indentation (ফাঁকা জায়গা) দিয়ে বোঝা যায় কোনটা কোন loop-এর ভেতরে। ভুল indentation = ভুল কোড।</p>
+    </div>
+  </div>
+
+  <!-- EXERCISE: nested -->
+  <div class="exercise-block">
+    <div class="ex-header">
+      <span class="ex-badge">Interview Exercise</span>
+      <h3>Nested Loops — প্র্যাকটিস প্রশ্ন</h3>
+    </div>
+    <ul class="ex-list">
+      <li>
+        <span class="ex-num">Q1</span>
+        <div>
+          <span class="label green">সহজ</span>
+          <p>Nested loop দিয়ে একটা ৩×৩ multiplication table print করো।</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">4</span>):
+    <span class="kw">for</span> <span class="var">j</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">4</span>):
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"{i}×{j}={i*j}"</span>, <span class="var">end</span>=<span class="str">"  "</span>)
+    <span class="fn">print</span>()  <span class="line-comment"># নতুন line</span>
+<span class="line-comment"># 1×1=1  1×2=2  1×3=3</span>
+<span class="line-comment"># 2×1=2  2×2=4  2×3=6</span>
+<span class="line-comment"># 3×1=3  3×2=6  3×3=9</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+      <li>
+        <span class="ex-num">Q2</span>
+        <div>
+          <span class="label red">কঠিন</span>
+          <span class="label purple">ML প্রজেক্ট</span>
+          <p>ML-এ <strong>confusion matrix</strong> একটা 2D table। নিচের matrix-এ সব elements-এর যোগফল বের করো nested loop দিয়ে।<br><code>matrix = [[50, 5], [3, 42]]</code></p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">matrix</span> = [[<span class="num">50</span>, <span class="num">5</span>], [<span class="num">3</span>, <span class="num">42</span>]]
+<span class="var">total</span> = <span class="num">0</span>
+
+<span class="kw">for</span> <span class="var">row</span> <span class="kw">in</span> <span class="var">matrix</span>:         <span class="line-comment"># প্রতিটা সারি</span>
+    <span class="kw">for</span> <span class="var">val</span> <span class="kw">in</span> <span class="var">row</span>:          <span class="line-comment"># সারির প্রতিটা মান</span>
+        <span class="var">total</span> += <span class="var">val</span>
+
+<span class="fn">print</span>(<span class="str">"Total samples:"</span>, <span class="var">total</span>)  <span class="line-comment"># 100</span>
+<span class="fn">print</span>(<span class="str">"Accuracy:"</span>, (<span class="num">50</span>+<span class="num">42</span>)/<span class="var">total</span>*<span class="num">100</span>, <span class="str">"%"</span>)  <span class="line-comment"># 92%</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §5  LIST COMPREHENSION
+══════════════════════════════════════════════ -->
+<div id="listcomp">
+  <div class="section-header">
+    <span class="section-num">০৫</span>
+    <h2>List Comprehension</h2>
+    <span class="en-label">List Comprehension</span>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title blue">সহজ কথায়</div>
+    <p>এটা হলো list তৈরির <strong>shortcut</strong>। যে কাজ for loop দিয়ে ৩-৪ লাইনে করতে, সেটা মাত্র ১ লাইনে করা যায়।</p>
+  </div>
+
+  <div class="two-col">
+    <div class="card danger">
+      <div class="card-title red">পুরনো উপায় (for loop)</div>
+      <pre><span class="var">squares</span> = []
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>):
+    <span class="var">squares</span>.<span class="fn">append</span>(<span class="var">i</span>**<span class="num">2</span>)
+<span class="line-comment"># 4 লাইন</span></pre>
+    </div>
+    <div class="card success">
+      <div class="card-title green">নতুন উপায় (comprehension)</div>
+      <pre><span class="var">squares</span> = [<span class="var">i</span>**<span class="num">2</span> <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>)]
+<span class="line-comment"># মাত্র ১ লাইন!</span></pre>
+    </div>
+  </div>
+
+  <h3>গঠন (Structure)</h3>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 540 90" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:540px">
+      <text x="20" y="30" fill="#e6edf3" font-family="JetBrains Mono" font-size="14">[</text>
+      <!-- expression -->
+      <rect x="34" y="12" width="100" height="30" rx="4" fill="#1a2a1a" stroke="#56d364" stroke-width="1.5"/>
+      <text x="84" y="32" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="12">i ** 2</text>
+      <!-- for -->
+      <text x="140" y="30" fill="#ff7b72" font-family="JetBrains Mono" font-size="14" font-weight="600"> for </text>
+      <!-- variable -->
+      <rect x="178" y="12" width="40" height="30" rx="4" fill="#2a1a1a" stroke="#f78166" stroke-width="1.5"/>
+      <text x="198" y="32" text-anchor="middle" fill="#f78166" font-family="JetBrains Mono" font-size="12">i</text>
+      <!-- in -->
+      <text x="224" y="30" fill="#ff7b72" font-family="JetBrains Mono" font-size="14" font-weight="600"> in </text>
+      <!-- sequence -->
+      <rect x="262" y="12" width="110" height="30" rx="4" fill="#1a1a2a" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="317" y="32" text-anchor="middle" fill="#79c0ff" font-family="JetBrains Mono" font-size="12">range(10)</text>
+      <!-- if (optional) -->
+      <rect x="380" y="12" width="110" height="30" rx="4" fill="#2a2a1a" stroke="#e3b341" stroke-width="1" stroke-dasharray="4"/>
+      <text x="435" y="32" text-anchor="middle" fill="#e3b341" font-family="JetBrains Mono" font-size="11">if i%2==0</text>
+      <text x="496" y="30" fill="#e6edf3" font-family="JetBrains Mono" font-size="14">]</text>
+      <!-- labels below -->
+      <text x="84" y="60" text-anchor="middle" fill="#56d364" font-family="Hind Siliguri" font-size="9">কী করবে</text>
+      <text x="198" y="60" text-anchor="middle" fill="#f78166" font-family="Hind Siliguri" font-size="9">variable</text>
+      <text x="317" y="60" text-anchor="middle" fill="#79c0ff" font-family="Hind Siliguri" font-size="9">কোথা থেকে</text>
+      <text x="435" y="60" text-anchor="middle" fill="#e3b341" font-family="Hind Siliguri" font-size="9">filter (optional)</text>
+    </svg>
+    <figcaption>List Comprehension-এর চারটা অংশ — expression, variable, sequence, condition (optional)</figcaption>
+  </div>
+
+  <h3>উদাহরণ</h3>
+
+  <pre><span class="var">numbers_list</span> = [<span class="num">10</span>, <span class="num">12</span>, <span class="num">7</span>, <span class="num">3</span>, <span class="num">26</span>, <span class="num">2</span>, <span class="num">19</span>]
+
+<span class="line-comment"># ৩-এর প্রথম ১০টা power</span>
+<span class="var">powers_three</span> = [<span class="num">3</span>**<span class="var">k</span> <span class="kw">for</span> <span class="var">k</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>)]
+<span class="line-comment"># [1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683]</span>
+
+<span class="line-comment"># প্রতিটার দ্বিগুণ</span>
+<span class="var">double_list</span> = [<span class="var">n</span> * <span class="num">2</span> <span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">numbers_list</span>]
+
+<span class="line-comment"># জোড়/বিজোড় বলো (conditional)</span>
+<span class="var">even_list</span> = [<span class="str">"even"</span> <span class="kw">if</span> <span class="var">n</span>%<span class="num">2</span>==<span class="num">0</span> <span class="kw">else</span> <span class="str">"odd"</span> <span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">numbers_list</span>]
+
+<span class="line-comment"># palindrome খোঁজা</span>
+<span class="var">words</span> = [<span class="str">"level"</span>, <span class="str">"hello"</span>, <span class="str">"noon"</span>, <span class="str">"deed"</span>]
+<span class="var">palindromes</span> = [<span class="var">w</span> <span class="kw">for</span> <span class="var">w</span> <span class="kw">in</span> <span class="var">words</span> <span class="kw">if</span> <span class="var">w</span> == <span class="var">w</span>[::-<span class="num">1</span>]]
+<span class="line-comment"># ["level", "noon", "deed"]</span></pre>
+
+  <!-- EXERCISE: list comprehension -->
+  <div class="exercise-block">
+    <div class="ex-header">
+      <span class="ex-badge">Interview Exercise</span>
+      <h3>List Comprehension — প্র্যাকটিস প্রশ্ন</h3>
+    </div>
+    <ul class="ex-list">
+      <li>
+        <span class="ex-num">Q1</span>
+        <div>
+          <span class="label green">সহজ</span>
+          <p>List comprehension দিয়ে ১ থেকে ২০ পর্যন্ত শুধু ৩-এর গুণিতক (3, 6, 9, ...) নিয়ে একটা list তৈরি করো।</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">multiples_of_3</span> = [<span class="var">i</span> <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">21</span>) <span class="kw">if</span> <span class="var">i</span> % <span class="num">3</span> == <span class="num">0</span>]
+<span class="fn">print</span>(<span class="var">multiples_of_3</span>)  <span class="line-comment"># [3, 6, 9, 12, 15, 18]</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+      <li>
+        <span class="ex-num">Q2</span>
+        <div>
+          <span class="label yellow">মাঝারি</span>
+          <span class="label purple">ML প্রজেক্ট</span>
+          <p>একটা list-এ mixed data আছে: <code>[1, "hello", 2.5, None, 3, "world", 7, None]</code>। List comprehension দিয়ে শুধু সংখ্যা (int বা float) রাখো — এটাকে <strong>data cleaning</strong> বলে।</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">raw_data</span> = [<span class="num">1</span>, <span class="str">"hello"</span>, <span class="num">2.5</span>, <span class="kw">None</span>, <span class="num">3</span>, <span class="str">"world"</span>, <span class="num">7</span>, <span class="kw">None</span>]
+<span class="var">clean_data</span> = [<span class="var">x</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">raw_data</span> <span class="kw">if</span> <span class="fn">isinstance</span>(<span class="var">x</span>, (<span class="fn">int</span>, <span class="fn">float</span>))]
+<span class="fn">print</span>(<span class="var">clean_data</span>)  <span class="line-comment"># [1, 2.5, 3, 7]</span>
+<span class="line-comment"># isinstance() চেক করে variable কোন type-এর</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+      <li>
+        <span class="ex-num">Q3</span>
+        <div>
+          <span class="label red">কঠিন</span>
+          <span class="label purple">ML প্রজেক্ট</span>
+          <p>Feature extraction: একটা list of sentences থেকে প্রতিটা sentence-এর word count বের করো এবং শুধু সেই sentences রাখো যাদের ৪+ শব্দ আছে।<br><code>sentences = ["I love Python", "Machine learning is fascinating", "Hi", "Deep learning needs data", "OK"]</code></p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">sentences</span> = [<span class="str">"I love Python"</span>, <span class="str">"Machine learning is fascinating"</span>,
+             <span class="str">"Hi"</span>, <span class="str">"Deep learning needs data"</span>, <span class="str">"OK"</span>]
+
+<span class="var">long_sents</span> = [<span class="var">s</span> <span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">sentences</span> <span class="kw">if</span> <span class="fn">len</span>(<span class="var">s</span>.<span class="fn">split</span>()) >= <span class="num">4</span>]
+<span class="fn">print</span>(<span class="var">long_sents</span>)
+<span class="line-comment"># ['Machine learning is fascinating', 'Deep learning needs data']</span>
+<span class="line-comment"># .split() শব্দে ভাগ করে — NLP preprocessing-এ ব্যবহার হয়!</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §6  ENUMERATE
+══════════════════════════════════════════════ -->
+<div id="enumerate">
+  <div class="section-header">
+    <span class="section-num">০৬</span>
+    <h2>enumerate() ফাংশন</h2>
+    <span class="en-label">enumerate() function</span>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title blue">সহজ কথায়</div>
+    <p>সাধারণ for loop-এ তুমি শুধু value পাও। <code>enumerate()</code> দিলে তুমি একসাথে <strong>index (নম্বর)</strong> এবং <strong>value (মান)</strong> দুটোই পাও।</p>
+    <p>উদাহরণ: তুমি একটা class-এর roll call করছো — "১ নম্বর: রাহেলা, ২ নম্বর: করিম..." এটাই enumerate।</p>
+  </div>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:500px">
+      <!-- normal for -->
+      <text x="20" y="25" fill="#8b949e" font-family="JetBrains Mono" font-size="11">সাধারণ for loop:</text>
+      <rect x="20" y="34" width="60" height="28" rx="4" fill="#1a1f2e" stroke="#30363d"/>
+      <text x="50" y="53" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="11">"a"</text>
+      <rect x="88" y="34" width="60" height="28" rx="4" fill="#1a1f2e" stroke="#30363d"/>
+      <text x="118" y="53" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="11">"b"</text>
+      <rect x="156" y="34" width="60" height="28" rx="4" fill="#1a1f2e" stroke="#30363d"/>
+      <text x="186" y="53" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="11">"c"</text>
+      <text x="230" y="53" fill="#8b949e" font-family="JetBrains Mono" font-size="11">← শুধু value</text>
+      <!-- enumerate -->
+      <text x="20" y="100" fill="#79c0ff" font-family="JetBrains Mono" font-size="11">enumerate() সহ:</text>
+      <rect x="20" y="108" width="90" height="28" rx="4" fill="#1a1f2e" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="65" y="127" text-anchor="middle" fill="#79c0ff" font-family="JetBrains Mono" font-size="11">0, "a"</text>
+      <rect x="118" y="108" width="90" height="28" rx="4" fill="#1a1f2e" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="163" y="127" text-anchor="middle" fill="#79c0ff" font-family="JetBrains Mono" font-size="11">1, "b"</text>
+      <rect x="216" y="108" width="90" height="28" rx="4" fill="#1a1f2e" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="261" y="127" text-anchor="middle" fill="#79c0ff" font-family="JetBrains Mono" font-size="11">2, "c"</text>
+      <text x="320" y="127" fill="#56d364" font-family="Hind Siliguri" font-size="11">← index + value উভয়</text>
+    </svg>
+    <figcaption>enumerate() ব্যবহারে index এবং value একসাথে পাওয়া যায়</figcaption>
+  </div>
+
+  <pre><span class="var">L</span> = [<span class="num">22</span>, <span class="num">65</span>, <span class="num">75</span>, <span class="num">93</span>, <span class="num">64</span>, <span class="num">47</span>, <span class="num">91</span>, <span class="num">94</span>]
+
+<span class="var">maximum</span> = <span class="num">0</span>
+<span class="var">max_index</span> = <span class="num">0</span>
+
+<span class="kw">for</span> <span class="var">index</span>, <span class="var">element</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">L</span>):
+    <span class="kw">if</span> <span class="var">element</span> &gt; <span class="var">maximum</span>:
+        <span class="var">maximum</span> = <span class="var">element</span>
+        <span class="var">max_index</span> = <span class="var">index</span>
+
+<span class="fn">print</span>(<span class="str">"সর্বোচ্চ মান:"</span>, <span class="var">maximum</span>)        <span class="line-comment"># 94</span>
+<span class="fn">print</span>(<span class="str">"এটা আছে index-এ:"</span>, <span class="var">max_index</span>)  <span class="line-comment"># 7</span></pre>
+
+  <!-- EXERCISE: enumerate -->
+  <div class="exercise-block">
+    <div class="ex-header">
+      <span class="ex-badge">Interview Exercise</span>
+      <h3>enumerate() — প্র্যাকটিস প্রশ্ন</h3>
+    </div>
+    <ul class="ex-list">
+      <li>
+        <span class="ex-num">Q1</span>
+        <div>
+          <span class="label green">সহজ</span>
+          <p>একটা list <code>fruits = ["apple", "banana", "cherry", "date"]</code> আছে। enumerate() দিয়ে প্রতিটার নম্বর সহ print করো (1 থেকে শুরু)।</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">fruits</span> = [<span class="str">"apple"</span>, <span class="str">"banana"</span>, <span class="str">"cherry"</span>, <span class="str">"date"</span>]
+<span class="kw">for</span> <span class="var">i</span>, <span class="var">fruit</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">fruits</span>, <span class="var">start</span>=<span class="num">1</span>):
+    <span class="fn">print</span>(<span class="fn">f</span><span class="str">"{i}. {fruit}"</span>)
+<span class="line-comment"># enumerate(list, start=1) দিলে 1 থেকে শুরু হয়</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+      <li>
+        <span class="ex-num">Q2</span>
+        <div>
+          <span class="label red">কঠিন</span>
+          <span class="label purple">ML প্রজেক্ট</span>
+          <p><strong>Error analysis:</strong> দুটো list — <code>y_true = [1,0,1,1,0,1,0,0]</code> এবং <code>y_pred = [1,1,1,0,0,1,1,0]</code>। enumerate() দিয়ে বের করো কোন কোন index-এ prediction ভুল ছিল।</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">y_true</span> = [<span class="num">1</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">0</span>,<span class="num">0</span>]
+<span class="var">y_pred</span> = [<span class="num">1</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">0</span>]
+
+<span class="fn">print</span>(<span class="str">"ভুল predictions:"</span>)
+<span class="kw">for</span> <span class="var">i</span>, <span class="var">pred</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">y_pred</span>):
+    <span class="kw">if</span> <span class="var">pred</span> != <span class="var">y_true</span>[<span class="var">i</span>]:
+        <span class="fn">print</span>(<span class="fn">f</span><span class="str">"  Index {i}: predicted={pred}, actual={y_true[i]}"</span>)
+<span class="line-comment"># Model debugging-এ এটা কাজে লাগে!</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §7  ZIP
+══════════════════════════════════════════════ -->
+<div id="zip-fn">
+  <div class="section-header">
+    <span class="section-num">০৭</span>
+    <h2>zip() ফাংশন</h2>
+    <span class="en-label">zip() function</span>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title blue">সহজ কথায়</div>
+    <p><code>zip()</code> দিয়ে <strong>দুটো বা বেশি list একসাথে</strong> loop করা যায়। যেমন zip একটা জামার দুই দিক একসাথে বন্ধ করে — ঠিক তেমনি দুটো list-এর corresponding elements একসাথে নেওয়া হয়।</p>
+  </div>
+
+  <div class="svg-wrap">
+    <svg viewBox="0 0 500 140" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:500px">
+      <!-- list 1 -->
+      <text x="20" y="22" fill="#56d364" font-family="JetBrains Mono" font-size="10">incomes →</text>
+      <rect x="100" y="8" width="70" height="24" rx="4" fill="#1a1f2e" stroke="#56d364"/>
+      <text x="135" y="25" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="11">1200</text>
+      <rect x="178" y="8" width="70" height="24" rx="4" fill="#1a1f2e" stroke="#56d364"/>
+      <text x="213" y="25" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="11">2000</text>
+      <rect x="256" y="8" width="70" height="24" rx="4" fill="#1a1f2e" stroke="#56d364"/>
+      <text x="291" y="25" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="11">1500</text>
+      <!-- list 2 -->
+      <text x="20" y="62" fill="#79c0ff" font-family="JetBrains Mono" font-size="10">expenses →</text>
+      <rect x="100" y="48" width="70" height="24" rx="4" fill="#1a1f2e" stroke="#79c0ff"/>
+      <text x="135" y="65" text-anchor="middle" fill="#79c0ff" font-family="JetBrains Mono" font-size="11">1000</text>
+      <rect x="178" y="48" width="70" height="24" rx="4" fill="#1a1f2e" stroke="#79c0ff"/>
+      <text x="213" y="65" text-anchor="middle" fill="#79c0ff" font-family="JetBrains Mono" font-size="11">1700</text>
+      <rect x="256" y="48" width="70" height="24" rx="4" fill="#1a1f2e" stroke="#79c0ff"/>
+      <text x="291" y="65" text-anchor="middle" fill="#79c0ff" font-family="JetBrains Mono" font-size="11">2000</text>
+      <!-- zip result -->
+      <text x="20" y="105" fill="#e3b341" font-family="JetBrains Mono" font-size="10">zip() →</text>
+      <rect x="100" y="90" width="70" height="32" rx="4" fill="#2a2010" stroke="#e3b341" stroke-width="1.5"/>
+      <text x="135" y="106" text-anchor="middle" fill="#e3b341" font-family="JetBrains Mono" font-size="9">1200,</text>
+      <text x="135" y="118" text-anchor="middle" fill="#e3b341" font-family="JetBrains Mono" font-size="9">1000</text>
+      <rect x="178" y="90" width="70" height="32" rx="4" fill="#2a2010" stroke="#e3b341" stroke-width="1.5"/>
+      <text x="213" y="106" text-anchor="middle" fill="#e3b341" font-family="JetBrains Mono" font-size="9">2000,</text>
+      <text x="213" y="118" text-anchor="middle" fill="#e3b341" font-family="JetBrains Mono" font-size="9">1700</text>
+      <rect x="256" y="90" width="70" height="32" rx="4" fill="#2a2010" stroke="#e3b341" stroke-width="1.5"/>
+      <text x="291" y="106" text-anchor="middle" fill="#e3b341" font-family="JetBrains Mono" font-size="9">1500,</text>
+      <text x="291" y="118" text-anchor="middle" fill="#e3b341" font-family="JetBrains Mono" font-size="9">2000</text>
+      <text x="340" y="110" fill="#8b949e" font-family="Hind Siliguri" font-size="10">একসাথে pair তৈরি</text>
+    </svg>
+    <figcaption>zip() দুটো list-এর সমান index-এর elements একসাথে দেয়</figcaption>
+  </div>
+
+  <pre><span class="var">incomes</span>  = [<span class="num">1200</span>, <span class="num">2000</span>, <span class="num">1500</span>, <span class="num">0</span>, <span class="num">1000</span>]
+<span class="var">expenses</span> = [<span class="num">1000</span>, <span class="num">1700</span>, <span class="num">2000</span>, <span class="num">700</span>, <span class="num">1200</span>]
+
+<span class="var">savings</span> = []
+
+<span class="kw">for</span> <span class="var">income</span>, <span class="var">expense</span> <span class="kw">in</span> <span class="fn">zip</span>(<span class="var">incomes</span>, <span class="var">expenses</span>):
+    <span class="var">saving</span> = <span class="var">income</span> - <span class="var">expense</span>    <span class="line-comment"># সঞ্চয় = আয় - ব্যয়</span>
+    <span class="var">savings</span>.<span class="fn">append</span>(<span class="var">saving</span>)
+
+<span class="fn">print</span>(<span class="var">savings</span>)   <span class="line-comment"># [200, 300, -500, -700, -200]</span></pre>
+
+  <!-- EXERCISE: zip -->
+  <div class="exercise-block">
+    <div class="ex-header">
+      <span class="ex-badge">Interview Exercise</span>
+      <h3>zip() — প্র্যাকটিস প্রশ্ন</h3>
+    </div>
+    <ul class="ex-list">
+      <li>
+        <span class="ex-num">Q1</span>
+        <div>
+          <span class="label yellow">মাঝারি</span>
+          <span class="label purple">ML প্রজেক্ট</span>
+          <p>দুটো list আছে — <code>feature_names = ["age", "income", "score"]</code> এবং <code>feature_values = [25, 50000, 0.85]</code>। zip() দিয়ে একটা dictionary তৈরি করো।</p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">feature_names</span>  = [<span class="str">"age"</span>, <span class="str">"income"</span>, <span class="str">"score"</span>]
+<span class="var">feature_values</span> = [<span class="num">25</span>, <span class="num">50000</span>, <span class="num">0.85</span>]
+
+<span class="var">feature_dict</span> = {}
+<span class="kw">for</span> <span class="var">name</span>, <span class="var">val</span> <span class="kw">in</span> <span class="fn">zip</span>(<span class="var">feature_names</span>, <span class="var">feature_values</span>):
+    <span class="var">feature_dict</span>[<span class="var">name</span>] = <span class="var">val</span>
+
+<span class="fn">print</span>(<span class="var">feature_dict</span>)
+<span class="line-comment"># {'age': 25, 'income': 50000, 'score': 0.85}</span>
+<span class="line-comment"># ML feature vector তৈরিতে এই pattern ব্যবহার হয়</span>
+
+<span class="line-comment"># Shortcut: dict(zip(...)) </span>
+<span class="var">feature_dict</span> = <span class="fn">dict</span>(<span class="fn">zip</span>(<span class="var">feature_names</span>, <span class="var">feature_values</span>))</pre>
+            </div>
+          </details>
+        </div>
+      </li>
+      <li>
+        <span class="ex-num">Q2</span>
+        <div>
+          <span class="label red">কঠিন</span>
+          <span class="label purple">ML প্রজেক্ট</span>
+          <p><strong>MSE (Mean Squared Error)</strong> — ML-এর সবচেয়ে common loss function। Formula: <code>MSE = mean((y_true - y_pred)²)</code>। zip() দিয়ে calculate করো।<br><code>y_true = [3.0, 2.5, 4.0, 5.0]</code>, <code>y_pred = [2.8, 3.0, 3.5, 5.2]</code></p>
+          <details>
+            <summary>উত্তর দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">y_true</span> = [<span class="num">3.0</span>, <span class="num">2.5</span>, <span class="num">4.0</span>, <span class="num">5.0</span>]
+<span class="var">y_pred</span> = [<span class="num">2.8</span>, <span class="num">3.0</span>, <span class="num">3.5</span>, <span class="num">5.2</span>]
+
+<span class="var">squared_errors</span> = []
+<span class="kw">for</span> <span class="var">true</span>, <span class="var">pred</span> <span class="kw">in</span> <span class="fn">zip</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="var">error</span> = (<span class="var">true</span> - <span class="var">pred</span>) ** <span class="num">2</span>
+    <span class="var">squared_errors</span>.<span class="fn">append</span>(<span class="var">error</span>)
+
+<span class="var">mse</span> = <span class="fn">sum</span>(<span class="var">squared_errors</span>) / <span class="fn">len</span>(<span class="var">squared_errors</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"MSE: {mse:.4f}"</span>)
+<span class="line-comment"># এটা regression model evaluate করতে ব্যবহার হয়!</span></pre>
+            </div>
+          </details>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §8  FOR vs WHILE
+══════════════════════════════════════════════ -->
+<div id="for-vs-while">
+  <div class="section-header">
+    <span class="section-num">০৮</span>
+    <h2>for বনাম while — কোনটা কখন?</h2>
+    <span class="en-label">for vs while</span>
+  </div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th style="color: var(--green)">for loop</th>
+        <th style="color: var(--blue)">while loop</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>কখন ব্যবহার করবে</strong></td>
+        <td>যখন জানো কতবার চলবে (বা একটা sequence আছে)</td>
+        <td>যখন জানো না কতবার চলবে, শুধু একটা শর্ত আছে</td>
+      </tr>
+      <tr>
+        <td><strong>উদাহরণ</strong></td>
+        <td>একটা list-এর সব items process করো</td>
+        <td>যতক্ষণ user "quit" না বলে, চলতে থাকো</td>
+      </tr>
+      <tr>
+        <td><strong>ML উদাহরণ</strong></td>
+        <td>10টা epoch-এ train করো</td>
+        <td>যতক্ষণ loss > 0.001, train করো</td>
+      </tr>
+      <tr>
+        <td><strong>Infinite loop risk</strong></td>
+        <td>কম (sequence শেষ হলে থামে)</td>
+        <td>বেশি (শর্ত সত্য থাকলে চিরকাল চলে)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <span class="callout-icon">💡</span>
+    <p><strong>মনে রাখো:</strong> বেশিরভাগ সময় দুটো দিয়েই কাজ হয়। যেটা বেশি স্বাভাবিক মনে হয়, সেটা ব্যবহার করো।</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     §9  ALGORITHMS
+══════════════════════════════════════════════ -->
+<div id="algorithms">
+  <div class="section-header">
+    <span class="section-num">০৯</span>
+    <h2>Algorithms — সব ধরনের অ্যালগরিদম</h2>
+    <span class="en-label">Algorithms</span>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title blue">Algorithm কী? — শিশুদের মতো বোঝো</div>
+    <p>তুমি সকালে উঠে স্কুলে যাও। এই কাজটার steps হলো: উঠো → দাঁত মাজো → গোসল করো → জামা পরো → খাও → বাসে চড়ো। এই step-by-step নির্দেশনাই হলো algorithm। Computer-এও এভাবে step-by-step সমস্যা সমাধান করা হয়।</p>
+  </div>
+
+  <!-- ─── ALGO 1: LINEAR SEARCH ─── -->
+  <div class="algo-card">
+    <div class="algo-head">
+      <div class="algo-icon" style="background: rgba(121,192,255,0.15)">🔍</div>
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--blue)">Linear Search</div>
+        <div style="font-size: 0.82rem; color: var(--text2)">রৈখিক অনুসন্ধান</div>
+      </div>
+      <div style="margin-left:auto; text-align:right">
+        <span class="label blue">সহজ</span>
+        <div style="font-size:0.75rem; color:var(--text2); margin-top:4px">O(n) complexity</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> তুমি হারিয়ে যাওয়া খেলনা খুঁজছো। তুমি ঘরের এক কোণ থেকে শুরু করে প্রতিটা জায়গা দেখছো — পেলে থামো, না পেলে পরের জায়গায় যাও। এটাই Linear Search।</p>
+
+      <div class="svg-wrap" style="margin:1rem 0">
+        <svg viewBox="0 0 500 100" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:500px">
+          <text x="10" y="20" fill="#8b949e" font-family="Hind Siliguri" font-size="11">খুঁজছি: 7</text>
+          <rect x="10" y="30" width="50" height="36" rx="4" fill="#1c2330" stroke="#30363d"/>
+          <text x="35" y="53" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="14">3</text>
+          <rect x="68" y="30" width="50" height="36" rx="4" fill="#1c2330" stroke="#30363d"/>
+          <text x="93" y="53" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="14">9</text>
+          <rect x="126" y="30" width="50" height="36" rx="4" fill="#1c2330" stroke="#30363d"/>
+          <text x="151" y="53" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="14">1</text>
+          <rect x="184" y="30" width="50" height="36" rx="4" fill="#1a2a1a" stroke="#56d364" stroke-width="2"/>
+          <text x="209" y="53" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="14" font-weight="700">7</text>
+          <rect x="242" y="30" width="50" height="36" rx="4" fill="#1c2330" stroke="#30363d"/>
+          <text x="267" y="53" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="14">5</text>
+          <text x="35" y="82" text-anchor="middle" fill="#f85149" font-family="Hind Siliguri" font-size="9">✗ না</text>
+          <text x="93" y="82" text-anchor="middle" fill="#f85149" font-family="Hind Siliguri" font-size="9">✗ না</text>
+          <text x="151" y="82" text-anchor="middle" fill="#f85149" font-family="Hind Siliguri" font-size="9">✗ না</text>
+          <text x="209" y="82" text-anchor="middle" fill="#56d364" font-family="Hind Siliguri" font-size="9">✓ পেয়েছি!</text>
+          <text x="310" y="55" fill="#e3b341" font-family="Hind Siliguri" font-size="11">index 3-এ পাওয়া গেছে</text>
+        </svg>
+      </div>
+
+      <pre><span class="kw">def</span> <span class="fn">linear_search</span>(<span class="var">arr</span>, <span class="var">target</span>):
+    <span class="str">"""একটা list-এ target খোঁজে, পেলে index দেয়, না পেলে -1"""</span>
+    <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(<span class="var">arr</span>)):
+        <span class="kw">if</span> <span class="var">arr</span>[<span class="var">i</span>] == <span class="var">target</span>:
+            <span class="kw">return</span> <span class="var">i</span>   <span class="line-comment"># পেয়ে গেছি, index দিয়ে দাও</span>
+    <span class="kw">return</span> -<span class="num">1</span>          <span class="line-comment"># পুরো list দেখলাম, নেই</span>
+
+<span class="line-comment"># ব্যবহার</span>
+<span class="var">data</span> = [<span class="num">3</span>, <span class="num">9</span>, <span class="num">1</span>, <span class="num">7</span>, <span class="num">5</span>]
+<span class="fn">print</span>(<span class="fn">linear_search</span>(<span class="var">data</span>, <span class="num">7</span>))   <span class="line-comment"># 3</span>
+<span class="fn">print</span>(<span class="fn">linear_search</span>(<span class="var">data</span>, <span class="num">99</span>))  <span class="line-comment"># -1</span></pre>
+    </div>
+  </div>
+
+  <!-- ─── ALGO 2: BINARY SEARCH ─── -->
+  <div class="algo-card">
+    <div class="algo-head">
+      <div class="algo-icon" style="background: rgba(86,211,100,0.15)">⚡</div>
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--green)">Binary Search</div>
+        <div style="font-size: 0.82rem; color: var(--text2)">দ্বৈত বিভাজন অনুসন্ধান</div>
+      </div>
+      <div style="margin-left:auto; text-align:right">
+        <span class="label yellow">মাঝারি</span>
+        <div style="font-size:0.75rem; color:var(--text2); margin-top:4px">O(log n) complexity</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> একটা বই-এ পৃষ্ঠা খুঁজছো। তুমি মাঝখানে খোলো — যা খুঁজছো সেটা কি আগে নাকি পরে? এভাবে অর্ধেক করতে করতে খোঁজো। এটা Linear Search-এর চেয়ে অনেক দ্রুত!</p>
+      <div class="callout" style="margin:0.5rem 0">
+        <span class="callout-icon">⚠️</span>
+        <p><strong>গুরুত্বপূর্ণ:</strong> Binary Search কাজ করে শুধু <strong>sorted (সাজানো) list-এ</strong>।</p>
+      </div>
+      <pre><span class="kw">def</span> <span class="fn">binary_search</span>(<span class="var">arr</span>, <span class="var">target</span>):
+    <span class="var">left</span>  = <span class="num">0</span>                  <span class="line-comment"># বাম সীমা</span>
+    <span class="var">right</span> = <span class="fn">len</span>(<span class="var">arr</span>) - <span class="num">1</span>     <span class="line-comment"># ডান সীমা</span>
+
+    <span class="kw">while</span> <span class="var">left</span> &lt;= <span class="var">right</span>:
+        <span class="var">mid</span> = (<span class="var">left</span> + <span class="var">right</span>) // <span class="num">2</span>   <span class="line-comment"># মাঝের index</span>
+
+        <span class="kw">if</span> <span class="var">arr</span>[<span class="var">mid</span>] == <span class="var">target</span>:
+            <span class="kw">return</span> <span class="var">mid</span>             <span class="line-comment"># পাওয়া গেছে!</span>
+        <span class="kw">elif</span> <span class="var">arr</span>[<span class="var">mid</span>] &lt; <span class="var">target</span>:
+            <span class="var">left</span> = <span class="var">mid</span> + <span class="num">1</span>         <span class="line-comment"># ডান অর্ধে খোঁজো</span>
+        <span class="kw">else</span>:
+            <span class="var">right</span> = <span class="var">mid</span> - <span class="num">1</span>        <span class="line-comment"># বাম অর্ধে খোঁজো</span>
+
+    <span class="kw">return</span> -<span class="num">1</span>   <span class="line-comment"># নেই</span>
+
+<span class="var">sorted_data</span> = [<span class="num">1</span>, <span class="num">3</span>, <span class="num">5</span>, <span class="num">7</span>, <span class="num">9</span>, <span class="num">11</span>, <span class="num">15</span>, <span class="num">20</span>]
+<span class="fn">print</span>(<span class="fn">binary_search</span>(<span class="var">sorted_data</span>, <span class="num">7</span>))   <span class="line-comment"># 3</span></pre>
+    </div>
+  </div>
+
+  <!-- ─── ALGO 3: BUBBLE SORT ─── -->
+  <div class="algo-card">
+    <div class="algo-head">
+      <div class="algo-icon" style="background: rgba(247,129,102,0.15)">🫧</div>
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--orange)">Bubble Sort</div>
+        <div style="font-size: 0.82rem; color: var(--text2)">বুদবুদ সাজানো</div>
+      </div>
+      <div style="margin-left:auto; text-align:right">
+        <span class="label yellow">মাঝারি</span>
+        <div style="font-size:0.75rem; color:var(--text2); margin-top:4px">O(n²) complexity</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> বাচ্চারা উচ্চতা অনুযায়ী সারিতে দাঁড়াচ্ছে। দুজন পাশাপাশি দাঁড়িয়ে যদি লম্বাটা আগে থাকে, তাহলে জায়গা বদলাও। পুরো সারিতে এটা বারবার করো — এটাই Bubble Sort।</p>
+
+      <div class="svg-wrap">
+        <svg viewBox="0 0 500 190" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:500px">
+          <text x="10" y="18" fill="#8b949e" font-family="Hind Siliguri" font-size="10">প্রতিটা pass-এ সবচেয়ে বড় সংখ্যা শেষে চলে যায়:</text>
+          <!-- Pass 0 -->
+          <text x="10" y="45" fill="#e3b341" font-family="JetBrains Mono" font-size="9">Pass 1:</text>
+          <rect x="60" y="32" width="36" height="28" rx="3" fill="#2a1a1a" stroke="#f78166" stroke-width="1.5"/>
+          <text x="78" y="51" text-anchor="middle" fill="#f78166" font-family="JetBrains Mono" font-size="12">5</text>
+          <rect x="100" y="32" width="36" height="28" rx="3" fill="#2a1a1a" stroke="#f78166" stroke-width="1.5"/>
+          <text x="118" y="51" text-anchor="middle" fill="#f78166" font-family="JetBrains Mono" font-size="12">3</text>
+          <rect x="140" y="32" width="36" height="28" rx="3" fill="#1a1f2e" stroke="#30363d"/>
+          <text x="158" y="51" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="12">8</text>
+          <rect x="180" y="32" width="36" height="28" rx="3" fill="#1a1f2e" stroke="#30363d"/>
+          <text x="198" y="51" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="12">1</text>
+          <text x="225" y="51" fill="#56d364" font-family="JetBrains Mono" font-size="10">→</text>
+          <rect x="240" y="32" width="36" height="28" rx="3" fill="#1a1f2e" stroke="#30363d"/>
+          <text x="258" y="51" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="12">3</text>
+          <rect x="280" y="32" width="36" height="28" rx="3" fill="#1a1f2e" stroke="#30363d"/>
+          <text x="298" y="51" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="12">5</text>
+          <rect x="320" y="32" width="36" height="28" rx="3" fill="#1a1f2e" stroke="#30363d"/>
+          <text x="338" y="51" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="12">1</text>
+          <rect x="360" y="32" width="36" height="28" rx="3" fill="#1a2a1a" stroke="#56d364" stroke-width="2"/>
+          <text x="378" y="51" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="12" font-weight="700">8</text>
+          <text x="405" y="51" fill="#56d364" font-family="Hind Siliguri" font-size="10">← 8 শেষে</text>
+          <!-- Pass 1 -->
+          <text x="10" y="95" fill="#e3b341" font-family="JetBrains Mono" font-size="9">Pass 2:</text>
+          <rect x="60" y="82" width="36" height="28" rx="3" fill="#1a1f2e" stroke="#30363d"/>
+          <text x="78" y="101" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="12">3</text>
+          <rect x="100" y="82" width="36" height="28" rx="3" fill="#1a1f2e" stroke="#30363d"/>
+          <text x="118" y="101" text-anchor="middle" fill="#8b949e" font-family="JetBrains Mono" font-size="12">1</text>
+          <rect x="140" y="82" width="36" height="28" rx="3" fill="#1a2a1a" stroke="#56d364" stroke-width="2"/>
+          <text x="158" y="101" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="12" font-weight="700">5</text>
+          <rect x="180" y="82" width="36" height="28" rx="3" fill="#1a2a1a" stroke="#56d364" stroke-width="2"/>
+          <text x="198" y="101" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="12" font-weight="700">8</text>
+          <text x="225" y="101" fill="#56d364" font-family="JetBrains Mono" font-size="10">→</text>
+          <text x="240" y="101" fill="#8b949e" font-family="Hind Siliguri" font-size="10">1, 3, 5, 8 ← সাজানো!</text>
+          <!-- Final -->
+          <text x="10" y="150" fill="#56d364" font-family="Hind Siliguri" font-size="11" font-weight="600">চূড়ান্ত ফলাফল:</text>
+          <rect x="10" y="158" width="36" height="28" rx="3" fill="#1a2a1a" stroke="#56d364" stroke-width="2"/>
+          <text x="28" y="177" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="12">1</text>
+          <rect x="50" y="158" width="36" height="28" rx="3" fill="#1a2a1a" stroke="#56d364" stroke-width="2"/>
+          <text x="68" y="177" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="12">3</text>
+          <rect x="90" y="158" width="36" height="28" rx="3" fill="#1a2a1a" stroke="#56d364" stroke-width="2"/>
+          <text x="108" y="177" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="12">5</text>
+          <rect x="130" y="158" width="36" height="28" rx="3" fill="#1a2a1a" stroke="#56d364" stroke-width="2"/>
+          <text x="148" y="177" text-anchor="middle" fill="#56d364" font-family="JetBrains Mono" font-size="12">8</text>
+        </svg>
+      </div>
+
+      <pre><span class="kw">def</span> <span class="fn">bubble_sort</span>(<span class="var">arr</span>):
+    <span class="var">n</span> = <span class="fn">len</span>(<span class="var">arr</span>)
+    <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">n</span>):                    <span class="line-comment"># n বার pass</span>
+        <span class="kw">for</span> <span class="var">j</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>, <span class="var">n</span>-<span class="var">i</span>-<span class="num">1</span>):          <span class="line-comment"># প্রতিটা pair দেখো</span>
+            <span class="kw">if</span> <span class="var">arr</span>[<span class="var">j</span>] &gt; <span class="var">arr</span>[<span class="var">j</span>+<span class="num">1</span>]:        <span class="line-comment"># বড়টা আগে?</span>
+                <span class="line-comment"># জায়গা বদলাও (swap)</span>
+                <span class="var">arr</span>[<span class="var">j</span>], <span class="var">arr</span>[<span class="var">j</span>+<span class="num">1</span>] = <span class="var">arr</span>[<span class="var">j</span>+<span class="num">1</span>], <span class="var">arr</span>[<span class="var">j</span>]
+    <span class="kw">return</span> <span class="var">arr</span>
+
+<span class="var">data</span> = [<span class="num">64</span>, <span class="num">34</span>, <span class="num">25</span>, <span class="num">12</span>, <span class="num">22</span>, <span class="num">11</span>, <span class="num">90</span>]
+<span class="fn">print</span>(<span class="fn">bubble_sort</span>(<span class="var">data</span>))   <span class="line-comment"># [11, 12, 22, 25, 34, 64, 90]</span></pre>
+    </div>
+  </div>
+
+  <!-- ─── ALGO 4: SELECTION SORT ─── -->
+  <div class="algo-card">
+    <div class="algo-head">
+      <div class="algo-icon" style="background: rgba(188,140,255,0.15)">🎯</div>
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--purple)">Selection Sort</div>
+        <div style="font-size: 0.82rem; color: var(--text2)">বাছাই করে সাজানো</div>
+      </div>
+      <div style="margin-left:auto; text-align:right">
+        <span class="label yellow">মাঝারি</span>
+        <div style="font-size:0.75rem; color:var(--text2); margin-top:4px">O(n²) complexity</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> তোমার কাছে কিছু কার্ড আছে। তুমি সব কার্ড দেখে সবচেয়ে ছোটটা খুঁজে প্রথমে রাখো। বাকি কার্ড থেকে আবার সবচেয়ে ছোটটা খুঁজে দ্বিতীয়তে রাখো। এভাবে সব সাজাও।</p>
+      <pre><span class="kw">def</span> <span class="fn">selection_sort</span>(<span class="var">arr</span>):
+    <span class="var">n</span> = <span class="fn">len</span>(<span class="var">arr</span>)
+    <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">n</span>):
+        <span class="var">min_idx</span> = <span class="var">i</span>                       <span class="line-comment"># এখন পর্যন্ত সবচেয়ে ছোট</span>
+        <span class="kw">for</span> <span class="var">j</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">i</span>+<span class="num">1</span>, <span class="var">n</span>):
+            <span class="kw">if</span> <span class="var">arr</span>[<span class="var">j</span>] &lt; <span class="var">arr</span>[<span class="var">min_idx</span>]:
+                <span class="var">min_idx</span> = <span class="var">j</span>             <span class="line-comment"># আরো ছোট পেলাম</span>
+        <span class="line-comment"># সবচেয়ে ছোটটাকে সঠিক জায়গায় রাখো</span>
+        <span class="var">arr</span>[<span class="var">i</span>], <span class="var">arr</span>[<span class="var">min_idx</span>] = <span class="var">arr</span>[<span class="var">min_idx</span>], <span class="var">arr</span>[<span class="var">i</span>]
+    <span class="kw">return</span> <span class="var">arr</span>
+
+<span class="fn">print</span>(<span class="fn">selection_sort</span>([<span class="num">64</span>, <span class="num">25</span>, <span class="num">12</span>, <span class="num">22</span>, <span class="num">11</span>]))   <span class="line-comment"># [11, 12, 22, 25, 64]</span></pre>
+    </div>
+  </div>
+
+  <!-- ─── ALGO 5: INSERTION SORT ─── -->
+  <div class="algo-card">
+    <div class="algo-head">
+      <div class="algo-icon" style="background: rgba(227,179,65,0.15)">🃏</div>
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--yellow)">Insertion Sort</div>
+        <div style="font-size: 0.82rem; color: var(--text2)">ঢুকিয়ে সাজানো</div>
+      </div>
+      <div style="margin-left:auto; text-align:right">
+        <span class="label yellow">মাঝারি</span>
+        <div style="font-size:0.75rem; color:var(--text2); margin-top:4px">O(n²) / O(n) best</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> তাস খেলায় নতুন তাস পেলে তুমি সেটাকে সঠিক জায়গায় গুঁজে দাও হাতের সাজানো তাসগুলোর মধ্যে। এটাই Insertion Sort।</p>
+      <pre><span class="kw">def</span> <span class="fn">insertion_sort</span>(<span class="var">arr</span>):
+    <span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="fn">len</span>(<span class="var">arr</span>)):
+        <span class="var">key</span> = <span class="var">arr</span>[<span class="var">i</span>]         <span class="line-comment"># নতুন তাস</span>
+        <span class="var">j</span> = <span class="var">i</span> - <span class="num">1</span>
+
+        <span class="line-comment"># সঠিক জায়গা খুঁজে পিছনের সব বড়গুলো সরাও</span>
+        <span class="kw">while</span> <span class="var">j</span> &gt;= <span class="num">0</span> <span class="kw">and</span> <span class="var">arr</span>[<span class="var">j</span>] &gt; <span class="var">key</span>:
+            <span class="var">arr</span>[<span class="var">j</span> + <span class="num">1</span>] = <span class="var">arr</span>[<span class="var">j</span>]
+            <span class="var">j</span> -= <span class="num">1</span>
+
+        <span class="var">arr</span>[<span class="var">j</span> + <span class="num">1</span>] = <span class="var">key</span>    <span class="line-comment"># সঠিক জায়গায় রাখো</span>
+    <span class="kw">return</span> <span class="var">arr</span>
+
+<span class="fn">print</span>(<span class="fn">insertion_sort</span>([<span class="num">12</span>, <span class="num">11</span>, <span class="num">13</span>, <span class="num">5</span>, <span class="num">6</span>]))   <span class="line-comment"># [5, 6, 11, 12, 13]</span></pre>
+    </div>
+  </div>
+
+  <!-- ─── ALGO 6: FIBONACCI ─── -->
+  <div class="algo-card">
+    <div class="algo-head">
+      <div class="algo-icon" style="background: rgba(86,211,100,0.15)">🌀</div>
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--green)">Fibonacci Sequence</div>
+        <div style="font-size: 0.82rem; color: var(--text2)">ফিবোনাচি ক্রম</div>
+      </div>
+      <div style="margin-left:auto; text-align:right">
+        <span class="label green">সহজ</span>
+        <div style="font-size:0.75rem; color:var(--text2); margin-top:4px">O(n) complexity</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> তোমার কাছে ২টা খরগোশ আছে। প্রতি মাসে তারা বাচ্চা দেয়। নতুন বাচ্চার সংখ্যা = আগের দুই মাসের সংখ্যার যোগফল। ১, ১, ২, ৩, ৫, ৮, ১৩...</p>
+      <pre><span class="line-comment"># u₀=0, u₁=1, uᵢ = uᵢ₋₁ + uᵢ₋₂</span>
+<span class="var">u</span> = [<span class="num">0</span>, <span class="num">1</span>]
+
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, <span class="num">15</span>):   <span class="line-comment"># প্রথম ১৫টা term</span>
+    <span class="var">u</span>.<span class="fn">append</span>(<span class="var">u</span>[<span class="var">i</span>-<span class="num">1</span>] + <span class="var">u</span>[<span class="var">i</span>-<span class="num">2</span>])
+
+<span class="fn">print</span>(<span class="var">u</span>)
+<span class="line-comment"># [0,1,1,2,3,5,8,13,21,34,55,89,144,233,377]</span>
+
+<span class="line-comment"># একটা নির্দিষ্ট term-এর জন্য function</span>
+<span class="kw">def</span> <span class="fn">fibonacci</span>(<span class="var">n</span>):
+    <span class="kw">if</span> <span class="var">n</span> &lt;= <span class="num">1</span>: <span class="kw">return</span> <span class="var">n</span>
+    <span class="var">a</span>, <span class="var">b</span> = <span class="num">0</span>, <span class="num">1</span>
+    <span class="kw">for</span> <span class="var">_</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, <span class="var">n</span>+<span class="num">1</span>):
+        <span class="var">a</span>, <span class="var">b</span> = <span class="var">b</span>, <span class="var">a</span>+<span class="var">b</span>
+    <span class="kw">return</span> <span class="var">b</span>
+
+<span class="fn">print</span>(<span class="fn">fibonacci</span>(<span class="num">10</span>))   <span class="line-comment"># 55</span></pre>
+    </div>
+  </div>
+
+  <!-- ─── ALGO 7: COUNTING / FREQUENCY ─── -->
+  <div class="algo-card">
+    <div class="algo-head">
+      <div class="algo-icon" style="background: rgba(121,192,255,0.15)">📊</div>
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--blue)">Frequency Count</div>
+        <div style="font-size: 0.82rem; color: var(--text2)">গণনা অ্যালগরিদম</div>
+      </div>
+      <div style="margin-left:auto; text-align:right">
+        <span class="label green">সহজ</span>
+        <span class="label purple" style="margin-left:4px">ML</span>
+      </div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> ক্লাসে কার জন্মদিন কোন মাসে জিজ্ঞেস করে গণনা করো। প্রতিটা মাসে কতজন তার হিসাব রাখো।</p>
+      <pre><span class="kw">def</span> <span class="fn">frequency_count</span>(<span class="var">data</span>):
+    <span class="var">freq</span> = {}   <span class="line-comment"># dictionary-তে গণনা রাখবো</span>
+    <span class="kw">for</span> <span class="var">item</span> <span class="kw">in</span> <span class="var">data</span>:
+        <span class="kw">if</span> <span class="var">item</span> <span class="kw">in</span> <span class="var">freq</span>:
+            <span class="var">freq</span>[<span class="var">item</span>] += <span class="num">1</span>    <span class="line-comment"># আগে থাকলে বাড়াও</span>
+        <span class="kw">else</span>:
+            <span class="var">freq</span>[<span class="var">item</span>] = <span class="num">1</span>     <span class="line-comment"># নতুন হলে শুরু করো</span>
+    <span class="kw">return</span> <span class="var">freq</span>
+
+<span class="line-comment"># ML-এ class distribution দেখতে</span>
+<span class="var">labels</span> = [<span class="str">'cat'</span>, <span class="str">'dog'</span>, <span class="str">'cat'</span>, <span class="str">'bird'</span>, <span class="str">'dog'</span>, <span class="str">'cat'</span>, <span class="str">'dog'</span>]
+<span class="fn">print</span>(<span class="fn">frequency_count</span>(<span class="var">labels</span>))
+<span class="line-comment"># {'cat': 3, 'dog': 3, 'bird': 1}</span>
+<span class="line-comment"># এই ধরনের imbalance ML-এ বড় সমস্যা!</span></pre>
+    </div>
+  </div>
+
+  <!-- ─── ALGO 8: TWO POINTERS ─── -->
+  <div class="algo-card">
+    <div class="algo-head">
+      <div class="algo-icon" style="background: rgba(248,81,73,0.15)">👆</div>
+      <div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--red)">Two Pointer Technique</div>
+        <div style="font-size: 0.82rem; color: var(--text2)">দুই দিক থেকে</div>
+      </div>
+      <div style="margin-left:auto; text-align:right">
+        <span class="label red">কঠিন</span>
+        <div style="font-size:0.75rem; color:var(--text2); margin-top:4px">O(n) complexity</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> দুজন মানুষ একটা সেতুর দুই প্রান্ত থেকে হাঁটছে। একটা শর্ত পূরণ হলে থামো। এটা অনেক সমস্যা O(n²) থেকে O(n)-এ সমাধান করে।</p>
+      <pre><span class="line-comment"># Sorted list-এ দুটো সংখ্যার যোগফল = target কিনা</span>
+<span class="kw">def</span> <span class="fn">two_sum_sorted</span>(<span class="var">arr</span>, <span class="var">target</span>):
+    <span class="var">left</span>  = <span class="num">0</span>                   <span class="line-comment"># বাম প্রান্ত</span>
+    <span class="var">right</span> = <span class="fn">len</span>(<span class="var">arr</span>) - <span class="num">1</span>      <span class="line-comment"># ডান প্রান্ত</span>
+
+    <span class="kw">while</span> <span class="var">left</span> &lt; <span class="var">right</span>:
+        <span class="var">curr_sum</span> = <span class="var">arr</span>[<span class="var">left</span>] + <span class="var">arr</span>[<span class="var">right</span>]
+
+        <span class="kw">if</span> <span class="var">curr_sum</span> == <span class="var">target</span>:
+            <span class="kw">return</span> (<span class="var">arr</span>[<span class="var">left</span>], <span class="var">arr</span>[<span class="var">right</span>])   <span class="line-comment"># পেয়েছি!</span>
+        <span class="kw">elif</span> <span class="var">curr_sum</span> &lt; <span class="var">target</span>:
+            <span class="var">left</span> += <span class="num">1</span>    <span class="line-comment"># যোগফল বাড়াতে বাম সরাও</span>
+        <span class="kw">else</span>:
+            <span class="var">right</span> -= <span class="num">1</span>   <span class="line-comment"># যোগফল কমাতে ডান সরাও</span>
+    <span class="kw">return</span> <span class="kw">None</span>
+
+<span class="fn">print</span>(<span class="fn">two_sum_sorted</span>([<span class="num">1</span>,<span class="num">3</span>,<span class="num">5</span>,<span class="num">7</span>,<span class="num">9</span>], <span class="num">12</span>))   <span class="line-comment"># (3, 9)</span></pre>
+    </div>
+  </div>
+
+  <!-- ALGORITHM COMPLEXITY TABLE -->
+  <h3>Algorithm Complexity — চট করে দেখো</h3>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Algorithm</th>
+        <th>Best Case</th>
+        <th>Worst Case</th>
+        <th>কখন ব্যবহার</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Linear Search</td>
+        <td><span class="label green">O(1)</span></td>
+        <td><span class="label red">O(n)</span></td>
+        <td>Unsorted data, ছোট list</td>
+      </tr>
+      <tr>
+        <td>Binary Search</td>
+        <td><span class="label green">O(1)</span></td>
+        <td><span class="label blue">O(log n)</span></td>
+        <td>Sorted data, বড় list</td>
+      </tr>
+      <tr>
+        <td>Bubble Sort</td>
+        <td><span class="label blue">O(n)</span></td>
+        <td><span class="label red">O(n²)</span></td>
+        <td>শুধু পড়াশোনায়, practically না</td>
+      </tr>
+      <tr>
+        <td>Selection Sort</td>
+        <td><span class="label red">O(n²)</span></td>
+        <td><span class="label red">O(n²)</span></td>
+        <td>ছোট list, memory কম</td>
+      </tr>
+      <tr>
+        <td>Insertion Sort</td>
+        <td><span class="label blue">O(n)</span></td>
+        <td><span class="label red">O(n²)</span></td>
+        <td>প্রায়-সাজানো data</td>
+      </tr>
+      <tr>
+        <td>Python sort()</td>
+        <td><span class="label blue">O(n log n)</span></td>
+        <td><span class="label blue">O(n log n)</span></td>
+        <td>সবসময় এটাই ব্যবহার করো!</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <span class="callout-icon">💡</span>
+    <p><strong>O() notation (Big-O) মানে কী?</strong> n হলো data-র পরিমাণ। O(n) মানে n বাড়লে সময়ও সমানুপাতে বাড়ে। O(n²) মানে n দ্বিগুণ হলে সময় চারগুণ বাড়ে। O(log n) মানে n অনেক বাড়লেও সময় সামান্য বাড়ে — এটা সবচেয়ে ভালো।</p>
+  </div>
+
+  <!-- FINAL ML EXERCISES -->
+  <div class="exercise-block">
+    <div class="ex-header">
+      <span class="ex-badge ml">ML Engineering Project</span>
+      <h3>সমন্বিত ML Project Exercise</h3>
+    </div>
+    <p style="margin-bottom:1rem; color:var(--text2); font-size:0.9rem">এই exercises গুলো real ML engineering project-এ যে ধরনের কাজ করতে হয় সেটার simulation।</p>
+    <ul class="ex-list">
+      <li>
+        <span class="ex-num">P1</span>
+        <div>
+          <span class="label red">কঠিন</span>
+          <span class="label purple">ML Pipeline</span>
+          <p><strong>Data Preprocessing Pipeline:</strong> নিচের raw dataset থেকে: (১) None values সরাও, (২) values normalize করো (0-1), (৩) 0.5-এর বেশি values-এর list আলাদা করো।<br><code>data = [10, None, 30, None, 50, 20, None, 40, 60, 70]</code></p>
+          <details>
+            <summary>সম্পূর্ণ সমাধান দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">data</span> = [<span class="num">10</span>, <span class="kw">None</span>, <span class="num">30</span>, <span class="kw">None</span>, <span class="num">50</span>, <span class="num">20</span>, <span class="kw">None</span>, <span class="num">40</span>, <span class="num">60</span>, <span class="num">70</span>]
+
+<span class="line-comment"># Step 1: None সরাও</span>
+<span class="var">clean</span> = [<span class="var">x</span> <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">data</span> <span class="kw">if</span> <span class="var">x</span> <span class="kw">is not</span> <span class="kw">None</span>]
+<span class="fn">print</span>(<span class="str">"Clean:"</span>, <span class="var">clean</span>)
+
+<span class="line-comment"># Step 2: Normalize করো</span>
+<span class="var">min_v</span>, <span class="var">max_v</span> = <span class="fn">min</span>(<span class="var">clean</span>), <span class="fn">max</span>(<span class="var">clean</span>)
+<span class="var">normalized</span> = [(<span class="var">x</span> - <span class="var">min_v</span>) / (<span class="var">max_v</span> - <span class="var">min_v</span>) <span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">clean</span>]
+<span class="fn">print</span>(<span class="str">"Normalized:"</span>, [<span class="fn">round</span>(<span class="var">v</span>,<span class="num">2</span>) <span class="kw">for</span> <span class="var">v</span> <span class="kw">in</span> <span class="var">normalized</span>])
+
+<span class="line-comment"># Step 3: threshold filter</span>
+<span class="var">high_vals</span> = [<span class="var">v</span> <span class="kw">for</span> <span class="var">v</span> <span class="kw">in</span> <span class="var">normalized</span> <span class="kw">if</span> <span class="var">v</span> &gt; <span class="num">0.5</span>]
+<span class="fn">print</span>(<span class="str">"Above 0.5:"</span>, [<span class="fn">round</span>(<span class="var">v</span>,<span class="num">2</span>) <span class="kw">for</span> <span class="var">v</span> <span class="kw">in</span> <span class="var">high_vals</span>])</pre>
+            </div>
+          </details>
+        </div>
+      </li>
+      <li>
+        <span class="ex-num">P2</span>
+        <div>
+          <span class="label red">কঠিন</span>
+          <span class="label purple">Evaluation</span>
+          <p><strong>Classification Report:</strong> নিচের predictions এবং actual values থেকে True Positive, True Negative, False Positive, False Negative বের করো।<br><code>actual = [1,0,1,1,0,0,1,0,1,1]</code><br><code>preds  = [1,0,0,1,0,1,1,0,1,0]</code></p>
+          <details>
+            <summary>সম্পূর্ণ সমাধান দেখো</summary>
+            <div class="answer">
+              <pre><span class="var">actual</span> = [<span class="num">1</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">1</span>]
+<span class="var">preds</span>  = [<span class="num">1</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">1</span>,<span class="num">0</span>,<span class="num">1</span>,<span class="num">0</span>]
+
+<span class="var">tp</span> = <span class="var">tn</span> = <span class="var">fp</span> = <span class="var">fn</span> = <span class="num">0</span>
+
+<span class="kw">for</span> <span class="var">a</span>, <span class="var">p</span> <span class="kw">in</span> <span class="fn">zip</span>(<span class="var">actual</span>, <span class="var">preds</span>):
+    <span class="kw">if</span>   <span class="var">a</span>==<span class="num">1</span> <span class="kw">and</span> <span class="var">p</span>==<span class="num">1</span>: <span class="var">tp</span> += <span class="num">1</span>   <span class="line-comment"># সত্য Positive</span>
+    <span class="kw">elif</span> <span class="var">a</span>==<span class="num">0</span> <span class="kw">and</span> <span class="var">p</span>==<span class="num">0</span>: <span class="var">tn</span> += <span class="num">1</span>   <span class="line-comment"># সত্য Negative</span>
+    <span class="kw">elif</span> <span class="var">a</span>==<span class="num">0</span> <span class="kw">and</span> <span class="var">p</span>==<span class="num">1</span>: <span class="var">fp</span> += <span class="num">1</span>   <span class="line-comment"># মিথ্যা Positive</span>
+    <span class="kw">else</span>:                <span class="var">fn</span> += <span class="num">1</span>   <span class="line-comment"># মিথ্যা Negative</span>
+
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"TP={tp}  TN={tn}  FP={fp}  FN={fn}"</span>)
+<span class="var">precision</span> = <span class="var">tp</span>/(<span class="var">tp</span>+<span class="var">fp</span>) <span class="kw">if</span> (<span class="var">tp</span>+<span class="var">fp</span>) &gt; <span class="num">0</span> <span class="kw">else</span> <span class="num">0</span>
+<span class="var">recall</span>    = <span class="var">tp</span>/(<span class="var">tp</span>+<span class="var">fn</span>) <span class="kw">if</span> (<span class="var">tp</span>+<span class="var">fn</span>) &gt; <span class="num">0</span> <span class="kw">else</span> <span class="num">0</span>
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Precision: {precision:.2f}  Recall: {recall:.2f}"</span>)</pre>
+            </div>
+          </details>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- QUICK SUMMARY -->
+<div style="margin-top:3rem">
+  <div class="section-header">
+    <span class="section-num">১০</span>
+    <h2>সারসংক্ষেপ — মনে রাখার জন্য</h2>
+    <span class="en-label">Summary</span>
+  </div>
+
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin:1rem 0">
+    <div class="card" style="border-left: 3px solid var(--blue)">
+      <code style="font-size:1rem">while</code>
+      <p style="font-size:0.85rem; margin-top:0.4rem">শর্ত সত্য → চলো<br>শর্ত মিথ্যা → থামো</p>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--green)">
+      <code style="font-size:1rem">for</code>
+      <p style="font-size:0.85rem; margin-top:0.4rem">sequence-এর প্রতিটা element-এর জন্য কাজ করো</p>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--yellow)">
+      <code style="font-size:1rem">range()</code>
+      <p style="font-size:0.85rem; margin-top:0.4rem">start, stop, step দিয়ে সংখ্যার ক্রম তৈরি</p>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--orange)">
+      <code style="font-size:1rem">break</code>
+      <p style="font-size:0.85rem; margin-top:0.4rem">শর্ত পূরণ হলে loop থেকে বের হও</p>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--purple)">
+      <code style="font-size:1rem">[x for x in y]</code>
+      <p style="font-size:0.85rem; margin-top:0.4rem">list comprehension — এক লাইনে list তৈরি</p>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--blue)">
+      <code style="font-size:1rem">enumerate()</code>
+      <p style="font-size:0.85rem; margin-top:0.4rem">index + value একসাথে পাও</p>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--green)">
+      <code style="font-size:1rem">zip()</code>
+      <p style="font-size:0.85rem; margin-top:0.4rem">দুটো list একসাথে iterate করো</p>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--orange)">
+      <code style="font-size:1rem">[::-1]</code>
+      <p style="font-size:0.85rem; margin-top:0.4rem">উল্টো করো — list বা string</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<footer>
+  <p>🐍 Python for Data Science — বাংলায় সম্পূর্ণ গাইড</p>
+  <p style="margin-top:0.4rem; font-size:0.78rem">while loop · for loop · range() · nested loops · list comprehension · enumerate · zip · algorithms</p>
+  <p style="margin-top:0.8rem; color:#30363d; font-size:0.75rem">পরবর্তী অধ্যায়: Functions, Data Structures, File I/O</p>
+</footer>
+
+</body>
+</html>

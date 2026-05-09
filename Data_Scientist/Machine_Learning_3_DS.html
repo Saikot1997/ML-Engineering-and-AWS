@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine Learning 3 — বাংলায় সম্পূর্ণ কোর্স</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ===== CSS VARIABLES ===== */
+  :root {
+    --bg:        #07090f;
+    --bg-card:   #0e1220;
+    --bg-card2:  #131929;
+    --border:    #1e2a45;
+    --border-hi: #2c3f6a;
+
+    --ts-accent:   #4f8ef7;   /* Time Series  — blue      */
+    --ad-accent:   #f78166;   /* Anomaly Det. — coral     */
+    --dr-accent:   #38bdf8;   /* Dim Reduce   — sky       */
+    --rl-accent:   #00d4ff;   /* RL           — cyan      */
+    --mc-accent:   #a78bfa;   /* Masterclass  — purple    */
+
+    --text:      #e2e8f4;
+    --muted:     #7a85a8;
+    --code-bg:   #0b0f1c;
+
+    --radius:    14px;
+    --shadow:    0 8px 32px rgba(0,0,0,0.55);
+  }
+
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  a { text-decoration: none; color: inherit; }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    padding: 72px 24px 56px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(79,142,247,0.14) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 20% 110%, rgba(167,139,250,0.10) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    padding: 5px 16px;
+    border: 1px solid var(--border-hi);
+    border-radius: 100px;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #e2e8f4 0%, #8eaee8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 640px;
+    margin: 0 auto 40px;
+  }
+
+  /* Stats row */
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  /* ===== LEARNING PATH STRIP ===== */
+  .path-strip {
+    max-width: 900px;
+    margin: 0 auto 56px;
+    padding: 0 24px;
+  }
+  .path-title {
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .path-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    row-gap: 12px;
+  }
+  .path-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 100px;
+  }
+  .path-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    border: 2px solid transparent;
+    transition: transform .2s;
+  }
+  .path-node:hover .path-circle { transform: scale(1.12); }
+  .path-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    max-width: 90px;
+    line-height: 1.4;
+  }
+  .path-arrow {
+    color: var(--border-hi);
+    font-size: 22px;
+    margin: 0 4px;
+    padding-bottom: 20px;
+  }
+
+  /* node colors */
+  .pn-ts   { background: rgba(79,142,247,.15);  border-color: var(--ts-accent); }
+  .pn-dr   { background: rgba(56,189,248,.15);  border-color: var(--dr-accent); }
+  .pn-ad   { background: rgba(247,129,102,.15); border-color: var(--ad-accent); }
+  .pn-rl   { background: rgba(0,212,255,.15);   border-color: var(--rl-accent); }
+  .pn-mc   { background: rgba(167,139,250,.15); border-color: var(--mc-accent); }
+
+  /* ===== SECTION LABEL ===== */
+  .section-label {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  /* ===== LECTURE GRID ===== */
+  .lecture-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 28px;
+  }
+
+  /* ===== LECTURE CARD ===== */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 26px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+  }
+
+  /* Accent top border + hover glow per lecture */
+  .card-ts::before { background: var(--ts-accent); }
+  .card-ts:hover   { border-color: rgba(79,142,247,.5); box-shadow: 0 12px 40px rgba(79,142,247,.15); }
+
+  .card-dr::before { background: var(--dr-accent); }
+  .card-dr:hover   { border-color: rgba(56,189,248,.5); box-shadow: 0 12px 40px rgba(56,189,248,.15); }
+
+  .card-ad::before { background: var(--ad-accent); }
+  .card-ad:hover   { border-color: rgba(247,129,102,.5); box-shadow: 0 12px 40px rgba(247,129,102,.15); }
+
+  .card-rl::before { background: var(--rl-accent); }
+  .card-rl:hover   { border-color: rgba(0,212,255,.5);  box-shadow: 0 12px 40px rgba(0,212,255,.15); }
+
+  .card-mc::before { background: var(--mc-accent); }
+  .card-mc:hover   { border-color: rgba(167,139,250,.5); box-shadow: 0 12px 40px rgba(167,139,250,.15); }
+
+  /* Card number badge */
+  .card-num {
+    font-size: 11px;
+    font-family: 'Fira Code', monospace;
+    color: var(--muted);
+    margin-bottom: 14px;
+    letter-spacing: .06em;
+  }
+
+  /* Card icon */
+  .card-icon {
+    font-size: 36px;
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  /* Card title */
+  .card-title {
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+  .card-ts .card-title { color: var(--ts-accent); }
+  .card-dr .card-title { color: var(--dr-accent); }
+  .card-ad .card-title { color: var(--ad-accent); }
+  .card-rl .card-title { color: var(--rl-accent); }
+  .card-mc .card-title { color: var(--mc-accent); }
+
+  /* Card description */
+  .card-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 18px;
+    flex: 1;
+  }
+
+  /* Topics list */
+  .card-topics {
+    list-style: none;
+    margin-bottom: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .card-topics li {
+    font-size: 13px;
+    color: #9dacc8;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .card-topics li::before {
+    content: '›';
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .card-ts .card-topics li::before { color: var(--ts-accent); }
+  .card-dr .card-topics li::before { color: var(--dr-accent); }
+  .card-ad .card-topics li::before { color: var(--ad-accent); }
+  .card-rl .card-topics li::before { color: var(--rl-accent); }
+  .card-mc .card-topics li::before { color: var(--mc-accent); }
+
+  /* Meta row */
+  .card-meta {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .meta-chip {
+    font-size: 11px;
+    font-family: 'Fira Code', monospace;
+    color: var(--muted);
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 3px 9px;
+  }
+
+  /* Open button */
+  .card-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Hind Siliguri', sans-serif;
+    border: none;
+    cursor: pointer;
+    transition: opacity .15s, transform .15s;
+    text-align: center;
+  }
+  .card-btn:hover { opacity: .88; transform: translateY(-1px); }
+  .card-btn:active { transform: translateY(0); }
+
+  .card-ts .card-btn { background: linear-gradient(135deg, #2c5fcc, #4f8ef7); color: #fff; }
+  .card-dr .card-btn { background: linear-gradient(135deg, #0e5f8a, #38bdf8); color: #fff; }
+  .card-ad .card-btn { background: linear-gradient(135deg, #a03828, #f78166); color: #fff; }
+  .card-rl .card-btn { background: linear-gradient(135deg, #006680, #00d4ff); color: #fff; }
+  .card-mc .card-btn { background: linear-gradient(135deg, #5b3eb0, #a78bfa); color: #fff; }
+
+  /* ===== QUICKREF TABLE ===== */
+  .quickref-wrap {
+    max-width: 900px;
+    margin: 0 auto 64px;
+    padding: 0 24px;
+  }
+  .quickref-wrap h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+  .qr-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  .qr-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--bg-card2);
+    border-bottom: 2px solid var(--border-hi);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+  }
+  .qr-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .qr-table tr:hover td { background: var(--bg-card); }
+  .qr-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    text-align: center;
+    padding: 32px 24px 48px;
+    color: var(--muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+  footer span { color: #e2533a; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .lecture-grid { grid-template-columns: 1fr; }
+    .path-arrow { display: none; }
+    .stats { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-badge">Machine Learning 3 · বাংলা সিরিজ</div>
+  <h1>Advanced ML — সম্পূর্ণ বাংলা কোর্স</h1>
+  <p class="hero-sub">
+    টাইম সিরিজ থেকে Reinforcement Learning পর্যন্ত — প্রতিটি বিষয় বাংলায়, হাতে-কলমে কোড সহ।
+    ML Engineer ইন্টারভিউ থেকে Production Pipeline পর্যন্ত সব কভার করা হয়েছে।
+  </p>
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-num">৫</span>
+      <span class="stat-label">লেকচার ফাইল</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">৬৩+</span>
+      <span class="stat-label">সেকশন</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">১৪৪+</span>
+      <span class="stat-label">কোড ব্লক</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">৭১+</span>
+      <span class="stat-num" style="font-size:14px;margin-top:2px">SVG ডায়াগ্রাম</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LEARNING PATH ===== -->
+<div class="path-strip">
+  <p class="path-title">পড়ার ক্রম — Learning Path</p>
+  <div class="path-row">
+    <!-- 1: Time Series -->
+    <div class="path-node">
+      <div class="path-circle pn-ts">📈</div>
+      <span class="path-label">টাইম সিরিজ</span>
+    </div>
+    <div class="path-arrow">→</div>
+    <!-- 2: Dimensionality Reduction -->
+    <div class="path-node">
+      <div class="path-circle pn-dr">📉</div>
+      <span class="path-label">ডাইমেনশন রিডাকশন</span>
+    </div>
+    <div class="path-arrow">→</div>
+    <!-- 3: Anomaly Detection -->
+    <div class="path-node">
+      <div class="path-circle pn-ad">🔍</div>
+      <span class="path-label">Anomaly Detection</span>
+    </div>
+    <div class="path-arrow">→</div>
+    <!-- 4: RL -->
+    <div class="path-node">
+      <div class="path-circle pn-rl">🤖</div>
+      <span class="path-label">Reinforcement Learning</span>
+    </div>
+    <div class="path-arrow">→</div>
+    <!-- 5: Masterclass -->
+    <div class="path-node">
+      <div class="path-circle pn-mc">🎓</div>
+      <span class="path-label">মাস্টারক্লাস</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LECTURE CARDS ===== -->
+<p class="section-label">সব লেকচার — ক্লিক করে খোলো</p>
+
+<div class="lecture-grid">
+
+  <!-- ===== CARD 1: TIME SERIES ===== -->
+  <div class="card card-ts">
+    <span class="card-num">LECTURE 01</span>
+    <span class="card-icon">📈</span>
+    <h2 class="card-title">টাইম সিরিজ: বিশ্লেষণ ও পূর্বাভাস</h2>
+    <p class="card-desc">
+      সময়ের সাথে বদলানো ডেটা বিশ্লেষণ করতে শেখো। Trend, Seasonality, Stationarity
+      থেকে শুরু করে ARIMA, SARIMA ও Facebook Prophet পর্যন্ত — সব বাংলায়।
+    </p>
+    <ul class="card-topics">
+      <li>Trend · Seasonality · Residual decomposition</li>
+      <li>AR, MA, ARMA, ARIMA, SARIMA মডেল</li>
+      <li>ACF / PACF গ্রাফ ও parameter selection</li>
+      <li>Facebook Prophet ব্যবহার</li>
+      <li>Moving Average ও Regression forecasting</li>
+      <li>ADF Test ও Stationarity checking</li>
+    </ul>
+    <div class="card-meta">
+      <span class="meta-chip">h2: ১৫টি সেকশন</span>
+      <span class="meta-chip">কোড: ৩১টি</span>
+      <span class="meta-chip">SVG: ১১টি</span>
+    </div>
+    <a class="card-btn" href="Machine_Learning_3_Lectures/timeseries_bengali.html" target="_blank">
+      📖 লেকচার খোলো
+    </a>
+  </div>
+
+  <!-- ===== CARD 2: DIMENSIONALITY REDUCTION ===== -->
+  <div class="card card-dr">
+    <span class="card-num">LECTURE 02</span>
+    <span class="card-icon">📉</span>
+    <h2 class="card-title">ডাইমেনশনালিটি রিডাকশন</h2>
+    <p class="card-desc">
+      উচ্চ-মাত্রার ডেটাকে সরলীকরণ করার কৌশল শেখো। Feature Selection থেকে শুরু করে
+      PCA, LDA, UMAP, Isomap — সব algorithm বাংলায় গণিতসহ।
+    </p>
+    <ul class="card-topics">
+      <li>Curse of Dimensionality — মাত্রার অভিশাপ</li>
+      <li>Feature Selection: Filter · Wrapper · Embedded</li>
+      <li>PCA — গণিত ও হাতে-কলমে implementation</li>
+      <li>LDA বনাম PCA — পার্থক্য ও প্রয়োগ</li>
+      <li>UMAP · Isomap · Manifold Learning</li>
+      <li>Production-Grade ML Pipeline</li>
+    </ul>
+    <div class="card-meta">
+      <span class="meta-chip">h2: ১৭টি সেকশন</span>
+      <span class="meta-chip">কোড: ৫৯টি</span>
+      <span class="meta-chip">SVG: ২০টি</span>
+    </div>
+    <a class="card-btn" href="Machine_Learning_3_Lectures/dimension_reduction_bengali_COMPLETE.html" target="_blank">
+      📖 লেকচার খোলো
+    </a>
+  </div>
+
+  <!-- ===== CARD 3: ANOMALY DETECTION ===== -->
+  <div class="card card-ad">
+    <span class="card-num">LECTURE 03</span>
+    <span class="card-icon">🔍</span>
+    <h2 class="card-title">Anomaly Detection — সম্পূর্ণ গাইড</h2>
+    <p class="card-desc">
+      স্বাভাবিক ডেটার মধ্যে অস্বাভাবিক pattern খুঁজে বের করো। DBSCAN থেকে Variational
+      Autoencoder — সব algorithm ইন্টারভিউ ও production-level কোড সহ।
+    </p>
+    <ul class="card-topics">
+      <li>Supervised vs Unsupervised anomaly detection</li>
+      <li>DBSCAN — Density-Based Clustering</li>
+      <li>Variational Auto-Encoder (VAE)</li>
+      <li>KNN · LOF · Isolation Forest · One-Class SVM</li>
+      <li>Robust Covariance — Elliptic Envelope</li>
+      <li>Credit Card Fraud Detection — Full Project</li>
+    </ul>
+    <div class="card-meta">
+      <span class="meta-chip">h2: ১৫টি সেকশন</span>
+      <span class="meta-chip">কোড: ২১টি</span>
+      <span class="meta-chip">SVG: ১১টি</span>
+    </div>
+    <a class="card-btn" href="Machine_Learning_3_Lectures/anomaly_detection_bengali_complete.html" target="_blank">
+      📖 লেকচার খোলো
+    </a>
+  </div>
+
+  <!-- ===== CARD 4: REINFORCEMENT LEARNING ===== -->
+  <div class="card card-rl">
+    <span class="card-num">LECTURE 04</span>
+    <span class="card-icon">🤖</span>
+    <h2 class="card-title">Reinforcement Learning — সম্পূর্ণ গাইড</h2>
+    <p class="card-desc">
+      Agent কীভাবে Environment থেকে শেখে? Monte Carlo থেকে Q-Learning পর্যন্ত —
+      RL-এর পুরো গণিত ও Python implementation বাংলায়।
+    </p>
+    <ul class="card-topics">
+      <li>Agent · Environment · State · Reward · Policy</li>
+      <li>Value Functions — V(s) এবং Q(s,a)</li>
+      <li>Monte Carlo Learning — Episode-based</li>
+      <li>SARSA — Temporal Difference Learning</li>
+      <li>TD(λ) এবং Eligibility Trace</li>
+      <li>Q-Learning — Off-Policy TD Control</li>
+    </ul>
+    <div class="card-meta">
+      <span class="meta-chip">h2: ১০টি সেকশন</span>
+      <span class="meta-chip">কোড: ১৯টি</span>
+      <span class="meta-chip">SVG: ১৫টি</span>
+    </div>
+    <a class="card-btn" href="Machine_Learning_3_Lectures/rl_bengali_merged.html" target="_blank">
+      📖 লেকচার খোলো
+    </a>
+  </div>
+
+  <!-- ===== CARD 5: MASTERCLASS (full width-ish) ===== -->
+  <div class="card card-mc" style="grid-column: span 1;">
+    <span class="card-num">LECTURE 05 · মাস্টারক্লাস</span>
+    <span class="card-icon">🎓</span>
+    <h2 class="card-title">মাস্টারক্লাস: টাইম সিরিজ · ডাইমেনশন রিডাকশন · মডেল ইন্টারপ্রিটেবিলিটি</h2>
+    <p class="card-desc">
+      তিনটি বিষয়ের সংক্ষিপ্ত কিন্তু গভীর সমন্বয়। SHAP দিয়ে মডেল ব্যাখ্যা করা,
+      UMAP দিয়ে Fashion MNIST visualize করা, এবং Sunspots ARIMA — সব এক জায়গায়।
+    </p>
+    <ul class="card-topics">
+      <li>Time Series: ARIMA · Sunspots dataset হাতে-কলমে</li>
+      <li>Dimensionality Reduction: PCA + UMAP Chocolate ও Fashion MNIST</li>
+      <li>Model Interpretability: SHAP — আধুনিক ব্যাখ্যা পদ্ধতি</li>
+      <li>Traditional Techniques: Feature Importance · Partial Dependence</li>
+    </ul>
+    <div class="card-meta">
+      <span class="meta-chip">৩টি বিষয়</span>
+      <span class="meta-chip">কোড: ১৪টি</span>
+      <span class="meta-chip">SVG: ১৪টি</span>
+    </div>
+    <a class="card-btn" href="Machine_Learning_3_Lectures/masterclass_bengali.html" target="_blank">
+      📖 মাস্টারক্লাস খোলো
+    </a>
+  </div>
+
+</div>
+
+<!-- ===== QUICK REFERENCE TABLE ===== -->
+<div class="quickref-wrap">
+  <h2>Quick Reference — কোন লেকচারে কী আছে</h2>
+  <table class="qr-table">
+    <thead>
+      <tr>
+        <th>লেকচার</th>
+        <th>মূল বিষয়</th>
+        <th>ব্যবহার</th>
+        <th>Algorithm / টুল</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <span class="qr-dot" style="background:var(--ts-accent)"></span>
+          টাইম সিরিজ
+        </td>
+        <td>Sequential / temporal data</td>
+        <td>Stock price, weather, sales forecast</td>
+        <td>ARIMA · SARIMA · Prophet</td>
+      </tr>
+      <tr>
+        <td>
+          <span class="qr-dot" style="background:var(--dr-accent)"></span>
+          ডাইমেনশন রিডাকশন
+        </td>
+        <td>High-dimensional data simplification</td>
+        <td>Image compression, feature engineering</td>
+        <td>PCA · LDA · UMAP · Isomap</td>
+      </tr>
+      <tr>
+        <td>
+          <span class="qr-dot" style="background:var(--ad-accent)"></span>
+          Anomaly Detection
+        </td>
+        <td>Outlier / unusual pattern detection</td>
+        <td>Fraud detection, network security</td>
+        <td>DBSCAN · LOF · Isolation Forest · VAE</td>
+      </tr>
+      <tr>
+        <td>
+          <span class="qr-dot" style="background:var(--rl-accent)"></span>
+          Reinforcement Learning
+        </td>
+        <td>Agent learns from environment rewards</td>
+        <td>Games, robotics, recommendation</td>
+        <td>Q-Learning · SARSA · TD(λ) · MC</td>
+      </tr>
+      <tr>
+        <td>
+          <span class="qr-dot" style="background:var(--mc-accent)"></span>
+          মাস্টারক্লাস
+        </td>
+        <td>Integrated review + Interpretability</td>
+        <td>Model explanation, review</td>
+        <td>SHAP · PDP · UMAP · ARIMA</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  Machine Learning 3 — বাংলায় সম্পূর্ণ কোর্স &nbsp;·&nbsp;
+  তৈরি করা হয়েছে <span>♥</span> দিয়ে &nbsp;·&nbsp;
+  সমস্ত লেকচার ফাইল <code style="font-family:'Fira Code',monospace;font-size:12px;background:var(--bg-card);padding:2px 6px;border-radius:4px;">Machine_Learning_3_Lectures/</code> ফোল্ডারে আছে
+</footer>
+
+</body>
+</html>

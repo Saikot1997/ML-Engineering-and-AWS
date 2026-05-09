@@ -1,0 +1,2193 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>মেশিন লার্নিং: ক্লাসিফিকেশন — সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2330;
+    --card: #1e2635;
+    --border: #30363d;
+    --accent1: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --accent5: #ffa657;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #c9d1d9;
+    --yellow: #e3b341;
+    --teal: #39d0d8;
+    --pink: #ff7eb6;
+    --code-bg: #0d1117;
+    --radius: 12px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  /* ─── HERO ─────────────────────────────────────── */
+  .hero {
+    background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 40%, #0d1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 70px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(88,166,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(88,166,255,0.12);
+    border: 1px solid rgba(88,166,255,0.3);
+    color: var(--accent1);
+    font-size: 13px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    font-family: 'Fira Code', monospace;
+  }
+  .hero h1 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.3;
+    margin-bottom: 16px;
+  }
+  .hero h1 span { color: var(--accent1); }
+  .hero p {
+    font-size: 18px;
+    color: var(--text2);
+    max-width: 700px;
+    margin: 0 auto 30px;
+  }
+  .hero-tags { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .hero-tag {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--text2);
+    font-family: 'Fira Code', monospace;
+  }
+
+  /* ─── TOC ───────────────────────────────────────── */
+  .toc-wrapper {
+    max-width: 1000px; margin: 40px auto; padding: 0 20px;
+  }
+  .toc-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 30px 36px;
+  }
+  .toc-title {
+    font-size: 14px; font-family: 'Fira Code', monospace;
+    color: var(--accent2); text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+  .toc-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 10px;
+  }
+  .toc-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px;
+    text-decoration: none; color: var(--text3);
+    font-size: 14px; transition: all .2s;
+  }
+  .toc-item:hover { border-color: var(--accent1); color: var(--accent1); background: rgba(88,166,255,0.05); }
+  .toc-num { color: var(--accent1); font-family: 'Fira Code', monospace; font-size: 12px; opacity: .6; }
+
+  /* ─── LAYOUT ─────────────────────────────────────── */
+  .main { max-width: 1000px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* ─── SECTION ─────────────────────────────────────── */
+  .section {
+    margin-bottom: 60px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .section-header {
+    background: linear-gradient(90deg, var(--bg3) 0%, var(--bg2) 100%);
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .section-icon {
+    width: 38px; height: 38px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: 22px; color: #fff; font-weight: 600;
+  }
+  .section-num {
+    font-family: 'Fira Code', monospace;
+    font-size: 11px; color: var(--text2); letter-spacing: 1px;
+    margin-top: 2px;
+  }
+  .section-body { padding: 28px; background: var(--bg2); }
+
+  /* ─── CALLOUTS ─────────────────────────────────────── */
+  .callout {
+    border-radius: 8px; padding: 16px 20px; margin: 20px 0;
+    border-left: 3px solid;
+    font-size: 16px;
+  }
+  .callout-info { background: rgba(88,166,255,.08); border-color: var(--accent1); }
+  .callout-info .callout-title { color: var(--accent1); }
+  .callout-success { background: rgba(63,185,80,.08); border-color: var(--accent2); }
+  .callout-success .callout-title { color: var(--accent2); }
+  .callout-warn { background: rgba(255,166,87,.08); border-color: var(--accent5); }
+  .callout-warn .callout-title { color: var(--accent5); }
+  .callout-danger { background: rgba(247,129,102,.08); border-color: var(--accent3); }
+  .callout-danger .callout-title { color: var(--accent3); }
+  .callout-title { font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+
+  /* ─── CODE ─────────────────────────────────────── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+  .code-header {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: 'Fira Code', monospace;
+    font-size: 12px; color: var(--text2);
+  }
+  .code-dots { display: flex; gap: 6px; }
+  .code-dots span {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+  pre {
+    padding: 20px; overflow-x: auto;
+    font-family: 'Fira Code', monospace; font-size: 14px;
+    line-height: 1.7; color: #e6edf3;
+  }
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .st { color: #a5d6ff; }
+  .cm { color: #8b949e; font-style: italic; }
+  .nm { color: #79c0ff; }
+  .op { color: #ff7b72; }
+  .bo { color: #ffa657; }
+
+  /* ─── SVG DIAGRAMS ─────────────────────────────────── */
+  .diagram-wrap {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 20px 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .diagram-caption {
+    font-size: 13px; color: var(--text2); margin-top: 12px;
+    font-family: 'Fira Code', monospace;
+  }
+
+  /* ─── TABLE ─────────────────────────────────────── */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 15px;
+  }
+  th {
+    background: var(--bg3); color: var(--accent1);
+    font-family: 'Fira Code', monospace; font-size: 12px;
+    letter-spacing: .5px; text-transform: uppercase;
+    padding: 12px 16px; border-bottom: 2px solid var(--border);
+    text-align: left;
+  }
+  td {
+    padding: 11px 16px; border-bottom: 1px solid var(--border);
+    color: var(--text3);
+  }
+  tr:hover td { background: rgba(88,166,255,.04); }
+
+  /* ─── EXERCISE ─────────────────────────────────────── */
+  .exercise-block {
+    background: rgba(63,185,80,.05);
+    border: 1px solid rgba(63,185,80,.2);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin: 28px 0;
+  }
+  .exercise-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; font-family: 'Fira Code', monospace;
+    color: var(--accent2); text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 18px;
+  }
+  .exercise-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .exercise-item:last-child { margin-bottom: 0; }
+  .ex-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent2); color: #000; font-size: 12px;
+    font-weight: 700; margin-right: 8px; flex-shrink: 0; float: left;
+    margin-top: 2px;
+  }
+  .ex-q { color: var(--text); font-size: 15px; margin-bottom: 8px; }
+  .ex-hint { font-size: 13px; color: var(--text2); font-style: italic; }
+  .ex-code-note {
+    display: inline-block; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 2px 8px; font-family: 'Fira Code', monospace; font-size: 12px;
+    color: var(--accent4); margin: 4px 2px;
+  }
+
+  /* ─── ALGO CARD ─────────────────────────────────────── */
+  .algo-grid { display: grid; grid-template-columns: 1fr; gap: 28px; margin-top: 20px; }
+  .algo-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .algo-card-header {
+    padding: 18px 22px;
+    display: flex; align-items: center; gap: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .algo-icon-wrap {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .algo-card-title { font-size: 18px; font-weight: 600; color: #fff; }
+  .algo-card-subtitle { font-size: 13px; color: var(--text2); margin-top: 2px; }
+  .algo-card-body { padding: 22px; }
+
+  /* ─── METRIC CARDS ─────────────────────────────────── */
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 14px; margin: 16px 0; }
+  .metric-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 20px;
+  }
+  .metric-card-label { font-size: 12px; color: var(--text2); font-family: 'Fira Code', monospace; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+  .metric-card-value { font-size: 26px; font-weight: 700; }
+  .metric-card-desc { font-size: 13px; color: var(--text2); margin-top: 6px; line-height: 1.5; }
+
+  /* ─── TYPOGRAPHY ─────────────────────────────────── */
+  h3 { font-family: 'Tiro Bangla', serif; font-size: 18px; color: var(--accent4); margin: 22px 0 10px; }
+  h4 { font-size: 15px; color: var(--accent5); margin: 16px 0 8px; font-weight: 600; }
+  p { margin-bottom: 14px; color: var(--text3); }
+  strong { color: var(--text); }
+  em { color: var(--accent5); font-style: normal; font-weight: 500; }
+  ul, ol { padding-left: 22px; margin-bottom: 14px; }
+  li { margin-bottom: 6px; color: var(--text3); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+  /* formula */
+  .formula {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 20px; margin: 14px 0;
+    font-family: 'Fira Code', monospace; font-size: 15px; color: var(--accent4);
+    text-align: center; line-height: 2;
+  }
+
+  .pill {
+    display: inline-block; padding: 2px 10px; border-radius: 20px;
+    font-size: 13px; font-family: 'Fira Code', monospace;
+  }
+  .pill-blue { background: rgba(88,166,255,.15); color: var(--accent1); }
+  .pill-green { background: rgba(63,185,80,.15); color: var(--accent2); }
+  .pill-red { background: rgba(247,129,102,.15); color: var(--accent3); }
+  .pill-purple { background: rgba(210,168,255,.15); color: var(--accent4); }
+  .pill-orange { background: rgba(255,166,87,.15); color: var(--accent5); }
+
+  /* step flow */
+  .step-flow { display: flex; flex-direction: column; gap: 0; margin: 16px 0; }
+  .step { display: flex; gap: 16px; position: relative; }
+  .step-left { display: flex; flex-direction: column; align-items: center; }
+  .step-circle {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; font-family: 'Fira Code', monospace;
+  }
+  .step-line { width: 2px; flex: 1; background: var(--border); min-height: 20px; }
+  .step-content { padding: 4px 0 24px; }
+  .step-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .step-desc { font-size: 14px; color: var(--text2); }
+
+  /* comparison row */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+  .compare-card {
+    background: var(--bg3); border-radius: 8px; padding: 16px;
+    border: 1px solid var(--border);
+  }
+  .compare-card-title { font-size: 13px; font-family: 'Fira Code', monospace; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+
+  /* footer */
+  .footer {
+    border-top: 1px solid var(--border); padding: 30px 40px;
+    text-align: center; color: var(--text2); font-size: 13px;
+  }
+  .footer strong { color: var(--accent1); }
+
+  @media (max-width: 600px) {
+    .compare-grid { grid-template-columns: 1fr; }
+    .section-body { padding: 18px; }
+    .hero { padding: 50px 20px 40px; }
+    pre { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<div class="hero">
+  <div class="hero-badge">sklearn · Classification</div>
+  <h1>মেশিন লার্নিং:<br><span>ক্লাসিফিকেশন</span> — সম্পূর্ণ বাংলা গাইড</h1>
+  <p>শূন্য থেকে শুরু করো — কনসেপ্ট, কোড, ডায়াগ্রাম, সব কিছু একসাথে। ইন্টারনেটের দরকার নেই।</p>
+  <div class="hero-tags">
+    <span class="hero-tag">Python 3</span>
+    <span class="hero-tag">scikit-learn</span>
+    <span class="hero-tag">Logistic Regression</span>
+    <span class="hero-tag">Confusion Matrix</span>
+    <span class="hero-tag">Accuracy · Precision · Recall</span>
+    <span class="hero-tag">Decision Tree · KNN · SVM · Random Forest</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TOC ═══════════════════════════ -->
+<div class="toc-wrapper">
+  <div class="toc-card">
+    <div class="toc-title">📋 বিষয়বস্তু</div>
+    <div class="toc-grid">
+      <a href="#s1" class="toc-item"><span class="toc-num">01</span> ক্লাসিফিকেশন কী?</a>
+      <a href="#s2" class="toc-item"><span class="toc-num">02</span> রিগ্রেশন vs ক্লাসিফিকেশন</a>
+      <a href="#s3" class="toc-item"><span class="toc-num">03</span> লিনিয়ার সেপারেশন</a>
+      <a href="#s4" class="toc-item"><span class="toc-num">04</span> ডেটা প্রস্তুতি</a>
+      <a href="#s5" class="toc-item"><span class="toc-num">05</span> Train/Test Split</a>
+      <a href="#s6" class="toc-item"><span class="toc-num">06</span> Logistic Regression</a>
+      <a href="#s7" class="toc-item"><span class="toc-num">07</span> মডেল মূল্যায়ন</a>
+      <a href="#s8" class="toc-item"><span class="toc-num">08</span> Confusion Matrix</a>
+      <a href="#s9" class="toc-item"><span class="toc-num">09</span> সব Algorithm এর গল্প</a>
+      <a href="#s10" class="toc-item"><span class="toc-num">10</span> ML প্রজেক্ট Exercise</a>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ═══════════════════════════ SECTION 1 ═══════════════════════════ -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(88,166,255,.15)">🎯</div>
+    <div>
+      <div class="section-num">SECTION 01</div>
+      <h2>ক্লাসিফিকেশন কী? (Classification কী?)</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <p>কল্পনা করো তুমি একজন ডাক্তার। রোগী এসেছে, তুমি রক্ত পরীক্ষা করলে। এখন তোমাকে সিদ্ধান্ত নিতে হবে — <strong>রোগীর ক্যান্সার আছে কি নেই?</strong> এই "আছে" বা "নেই" — এটাই হলো ক্লাসিফিকেশন।</p>
+
+    <div class="callout callout-info">
+      <div class="callout-title">💡 সহজ ভাষায়</div>
+      ক্লাসিফিকেশন মানে হলো কোনো জিনিস কোন <strong>দলে (class)</strong> পড়ে সেটা বলে দেওয়া। যেমন — ইমেইলটা Spam নাকি Not Spam, ছবিতে বিড়াল নাকি কুকুর, রোগ আছে নাকি নেই।
+    </div>
+
+    <h3>Supervised Learning এর দুটো ধরন</h3>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:700px">
+        <!-- BG -->
+        <rect width="700" height="320" fill="#161b22" rx="10"/>
+
+        <!-- Title -->
+        <text x="350" y="36" text-anchor="middle" fill="#e6edf3" font-size="16" font-weight="bold" font-family="sans-serif">Supervised Learning</text>
+
+        <!-- Root box -->
+        <rect x="250" y="50" width="200" height="50" rx="8" fill="#1c2330" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="350" y="70" text-anchor="middle" fill="#58a6ff" font-size="13" font-family="sans-serif" font-weight="bold">Supervised Learning</text>
+        <text x="350" y="88" text-anchor="middle" fill="#8b949e" font-size="11" font-family="sans-serif">লেবেল করা ডেটা দিয়ে শেখা</text>
+
+        <!-- Lines -->
+        <line x1="350" y1="100" x2="350" y2="130" stroke="#30363d" stroke-width="1.5"/>
+        <line x1="350" y1="130" x2="160" y2="130" stroke="#30363d" stroke-width="1.5"/>
+        <line x1="350" y1="130" x2="540" y2="130" stroke="#30363d" stroke-width="1.5"/>
+        <line x1="160" y1="130" x2="160" y2="155" stroke="#30363d" stroke-width="1.5"/>
+        <line x1="540" y1="130" x2="540" y2="155" stroke="#30363d" stroke-width="1.5"/>
+
+        <!-- Regression Box -->
+        <rect x="60" y="155" width="200" height="55" rx="8" fill="#1c2330" stroke="#ffa657" stroke-width="1.5"/>
+        <text x="160" y="177" text-anchor="middle" fill="#ffa657" font-size="13" font-family="sans-serif" font-weight="bold">Regression</text>
+        <text x="160" y="196" text-anchor="middle" fill="#8b949e" font-size="11" font-family="sans-serif">সংখ্যা বলে দেওয়া</text>
+
+        <!-- Classification Box -->
+        <rect x="440" y="155" width="200" height="55" rx="8" fill="#1c2330" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="540" y="177" text-anchor="middle" fill="#3fb950" font-size="13" font-family="sans-serif" font-weight="bold">Classification</text>
+        <text x="540" y="196" text-anchor="middle" fill="#8b949e" font-size="11" font-family="sans-serif">দল/শ্রেণী বলে দেওয়া</text>
+
+        <!-- Examples Regression -->
+        <rect x="60" y="228" width="200" height="72" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+        <text x="80" y="248" fill="#c9d1d9" font-size="11" font-family="sans-serif">• বাড়ির দাম: ৳৫০ লাখ</text>
+        <text x="80" y="265" fill="#c9d1d9" font-size="11" font-family="sans-serif">• কাল বৃষ্টি হবে ১২mm</text>
+        <text x="80" y="282" fill="#c9d1d9" font-size="11" font-family="sans-serif">• শেয়ার দাম: ৳৩২০</text>
+
+        <!-- Examples Classification -->
+        <rect x="440" y="228" width="200" height="72" rx="6" fill="#0d1117" stroke="#30363d" stroke-width="1"/>
+        <text x="460" y="248" fill="#c9d1d9" font-size="11" font-family="sans-serif">• ইমেইল: Spam/Not Spam</text>
+        <text x="460" y="265" fill="#c9d1d9" font-size="11" font-family="sans-serif">• রোগ: আছে/নেই</text>
+        <text x="460" y="282" fill="#c9d1d9" font-size="11" font-family="sans-serif">• দল: Democrat/Republican</text>
+
+        <!-- Lines to examples -->
+        <line x1="160" y1="210" x2="160" y2="228" stroke="#30363d" stroke-width="1"/>
+        <line x1="540" y1="210" x2="540" y2="228" stroke="#30363d" stroke-width="1"/>
+      </svg>
+      <div class="diagram-caption">// চিত্র: Supervised Learning এর দুটো প্রধান ধরন</div>
+    </div>
+
+    <h3>ক্লাসিফিকেশনের ধরন</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>ধরন</th><th>ক্লাসের সংখ্যা</th><th>উদাহরণ</th><th>বাংলায়</th></tr>
+        <tr>
+          <td><span class="pill pill-blue">Binary</span></td>
+          <td>২টি</td>
+          <td>Spam/Not Spam, Cancer/No Cancer</td>
+          <td>দুটো দলের মধ্যে বেছে নেওয়া</td>
+        </tr>
+        <tr>
+          <td><span class="pill pill-green">Multi-class</span></td>
+          <td>৩+ টি</td>
+          <td>ফুল চেনা: গোলাপ/টিউলিপ/সূর্যমুখী</td>
+          <td>তিন বা তার বেশি দলের মধ্যে বেছে নেওয়া</td>
+        </tr>
+        <tr>
+          <td><span class="pill pill-purple">Multi-label</span></td>
+          <td>একাধিক একসাথে</td>
+          <td>ছবিতে বিড়াল আছে এবং কুকুরও আছে</td>
+          <td>একটা জিনিস একসাথে অনেক দলে থাকতে পারে</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Exercise -->
+    <div class="exercise-block">
+      <div class="exercise-title">🎓 Interview Exercise — Section 01</div>
+      <div class="exercise-item">
+        <div class="ex-num">1</div>
+        <div class="ex-q"><strong>প্রশ্ন:</strong> নিচের কোনটি Regression আর কোনটি Classification সমস্যা? প্রতিটার কারণ বলো।<br>
+        (a) আগামীকাল তাপমাত্রা কত হবে? &nbsp; (b) ইমেইলটা Spam কিনা? &nbsp; (c) গ্রাহক পণ্যটা কিনবে কিনা? &nbsp; (d) কত বিক্রি হবে?</div>
+        <div class="ex-hint">💡 Hint: আউটপুট কি একটা নির্দিষ্ট সংখ্যা (→ Regression), নাকি একটা দল/লেবেল (→ Classification)?</div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">2</div>
+        <div class="ex-q"><strong>প্রশ্ন:</strong> একটি ব্যাংক চায় লোন আবেদনকারী লোন পরিশোধ করবে কিনা বলতে। এটা Binary না Multi-class Classification? Target variable টা কী হবে?</div>
+        <div class="ex-hint">💡 Hint: ফলাফল কতগুলো হতে পারে — "পরিশোধ করবে" অথবা "করবে না"?</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SECTION 2 ═══════════════════════════ -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(255,166,87,.15)">⚖️</div>
+    <div>
+      <div class="section-num">SECTION 02</div>
+      <h2>Regression বনাম Classification — পার্থক্য</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <p>দুটো সবচেয়ে বেশি বিভ্রান্তিকর টার্ম! চলো একবারে পরিষ্কার করে ফেলি।</p>
+
+    <div class="compare-grid">
+      <div class="compare-card" style="border-color:rgba(255,166,87,.3)">
+        <div class="compare-card-title" style="color:var(--accent5)">📈 Regression</div>
+        <ul>
+          <li>আউটপুট <strong>একটি সংখ্যা</strong></li>
+          <li>অসীম মানের মধ্যে যেকোনো একটি</li>
+          <li>যেমন: ৳৪৫,২৩০ (বাড়ির দাম)</li>
+          <li>সঠিক/ভুল নয় — কাছাকাছি হওয়া গুরুত্বপূর্ণ</li>
+        </ul>
+      </div>
+      <div class="compare-card" style="border-color:rgba(63,185,80,.3)">
+        <div class="compare-card-title" style="color:var(--accent2)">🏷️ Classification</div>
+        <ul>
+          <li>আউটপুট একটি <strong>লেবেল/দল</strong></li>
+          <li>সীমিত, নির্দিষ্ট কয়েকটি মান</li>
+          <li>যেমন: "Spam" বা "Not Spam"</li>
+          <li>হয় সঠিক, নয় ভুল — মাঝামাঝি নেই</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:680px">
+        <rect width="680" height="260" fill="#161b22" rx="10"/>
+
+        <!-- Regression side -->
+        <text x="170" y="30" text-anchor="middle" fill="#ffa657" font-size="14" font-weight="bold" font-family="sans-serif">Regression</text>
+        <!-- Axes -->
+        <line x1="50" y1="200" x2="300" y2="200" stroke="#30363d" stroke-width="1.5"/>
+        <line x1="50" y1="200" x2="50" y2="50" stroke="#30363d" stroke-width="1.5"/>
+        <text x="175" y="225" text-anchor="middle" fill="#8b949e" font-size="11" font-family="sans-serif">বাড়ির আকার (m²)</text>
+        <text x="22" y="130" text-anchor="middle" fill="#8b949e" font-size="11" font-family="sans-serif" transform="rotate(-90,22,130)">দাম (লক্ষ)</text>
+        <!-- Points -->
+        <circle cx="80" cy="175" r="4" fill="#ffa657" opacity=".8"/>
+        <circle cx="110" cy="165" r="4" fill="#ffa657" opacity=".8"/>
+        <circle cx="140" cy="150" r="4" fill="#ffa657" opacity=".8"/>
+        <circle cx="170" cy="135" r="4" fill="#ffa657" opacity=".8"/>
+        <circle cx="200" cy="120" r="4" fill="#ffa657" opacity=".8"/>
+        <circle cx="230" cy="100" r="4" fill="#ffa657" opacity=".8"/>
+        <circle cx="260" cy="85" r="4" fill="#ffa657" opacity=".8"/>
+        <!-- Regression line -->
+        <line x1="65" y1="182" x2="275" y2="78" stroke="#ffa657" stroke-width="2" opacity=".6"/>
+        <text x="170" y="240" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif" font-style="italic">আউটপুট: যেকোনো সংখ্যা</text>
+
+        <!-- Divider -->
+        <line x1="340" y1="20" x2="340" y2="250" stroke="#30363d" stroke-width="1" stroke-dasharray="4"/>
+
+        <!-- Classification side -->
+        <text x="510" y="30" text-anchor="middle" fill="#3fb950" font-size="14" font-weight="bold" font-family="sans-serif">Classification</text>
+        <!-- Axes -->
+        <line x1="370" y1="200" x2="640" y2="200" stroke="#30363d" stroke-width="1.5"/>
+        <line x1="370" y1="200" x2="370" y2="50" stroke="#30363d" stroke-width="1.5"/>
+        <text x="505" y="225" text-anchor="middle" fill="#8b949e" font-size="11" font-family="sans-serif">টক্সিক পদার্থ</text>
+        <text x="350" y="130" text-anchor="middle" fill="#8b949e" font-size="11" font-family="sans-serif" transform="rotate(-90,350,130)">মিনারেল লবণ</text>
+        <!-- Orange (drinkable) -->
+        <circle cx="400" cy="75" r="5" fill="#ffa657" opacity=".85"/>
+        <circle cx="415" cy="90" r="5" fill="#ffa657" opacity=".85"/>
+        <circle cx="430" cy="80" r="5" fill="#ffa657" opacity=".85"/>
+        <circle cx="445" cy="100" r="5" fill="#ffa657" opacity=".85"/>
+        <circle cx="420" cy="65" r="5" fill="#ffa657" opacity=".85"/>
+        <circle cx="460" cy="85" r="5" fill="#ffa657" opacity=".85"/>
+        <!-- Blue (non-drinkable) -->
+        <circle cx="540" cy="155" r="5" fill="#58a6ff" opacity=".85"/>
+        <circle cx="560" cy="165" r="5" fill="#58a6ff" opacity=".85"/>
+        <circle cx="575" cy="148" r="5" fill="#58a6ff" opacity=".85"/>
+        <circle cx="590" cy="170" r="5" fill="#58a6ff" opacity=".85"/>
+        <circle cx="555" cy="175" r="5" fill="#58a6ff" opacity=".85"/>
+        <circle cx="610" cy="158" r="5" fill="#58a6ff" opacity=".85"/>
+        <!-- Decision boundary -->
+        <line x1="470" y1="55" x2="510" y2="200" stroke="#3fb950" stroke-width="2" stroke-dasharray="5,3" opacity=".7"/>
+        <!-- Labels -->
+        <text x="415" y="120" fill="#ffa657" font-size="10" font-family="sans-serif">পানযোগ্য ✓</text>
+        <text x="550" y="135" fill="#58a6ff" font-size="10" font-family="sans-serif">অপানযোগ্য ✗</text>
+        <text x="505" y="240" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif" font-style="italic">আউটপুট: নির্দিষ্ট লেবেল</text>
+      </svg>
+      <div class="diagram-caption">// বাম: Regression (সংখ্যা বের করা) &nbsp;|&nbsp; ডান: Classification (দল বের করা)</div>
+    </div>
+
+    <div class="exercise-block">
+      <div class="exercise-title">🎓 Interview Exercise — Section 02</div>
+      <div class="exercise-item">
+        <div class="ex-num">1</div>
+        <div class="ex-q"><strong>প্রশ্ন:</strong> তুমি একটি ML সিস্টেম বানাচ্ছো যেটা বলবে একটি টুমার Benign (সাধারণ) নাকি Malignant (ক্যান্সার)। কোন ধরনের সমস্যা এটা? কোন metric দিয়ে মূল্যায়ন করবে এবং কেন Accuracy যথেষ্ট নয়?</div>
+        <div class="ex-hint">💡 Hint: ক্যান্সার রোগীকে ভুলভাবে "সুস্থ" বলা কতটা বিপজ্জনক? এটা ভাবো। False Negative এর কী পরিণতি?</div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">2</div>
+        <div class="ex-q"><strong>কোডিং প্রশ্ন:</strong> নিচের লিস্ট দেখো। এটা Regression সমস্যা নাকি Classification?
+        <span class="ex-code-note">y = [234000, 178000, 320000, 150000]</span> বনাম <span class="ex-code-note">y = ['cat', 'dog', 'cat', 'bird']</span> — Python এ কীভাবে বুঝবে?</div>
+        <div class="ex-hint">💡 Hint: <code>y.dtype</code> বা <code>type(y[0])</code> চেক করো। সংখ্যা হলে Regression, string/category হলে Classification।</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SECTION 3 ═══════════════════════════ -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(210,168,255,.15)">📐</div>
+    <div>
+      <div class="section-num">SECTION 03</div>
+      <h2>লিনিয়ার সেপারেশন — একটি রেখা দিয়ে ভাগ করা</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <p>পানীয় জলের উদাহরণটা মনে আছে? দুটো দল — <em>পানযোগ্য (drinkable)</em> আর <em>অপানযোগ্য (non-drinkable)</em>। এখন আমরা এই দুটো দলকে একটা <strong>সরল রেখা</strong> দিয়ে ভাগ করতে চাই।</p>
+
+    <h3>Vector w কী?</h3>
+    <p>ভেক্টর <strong>w = (w₁, w₂)</strong> হলো একটি তীর যেটা বলে দেয় বিভাজন রেখাটা কোন দিকে থাকবে। রেখাটা সবসময় এই ভেক্টরের <strong>লম্ব (perpendicular)</strong> হয়।</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 660 320" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:660px">
+        <rect width="660" height="320" fill="#161b22" rx="10"/>
+
+        <!-- Title -->
+        <text x="330" y="28" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="bold" font-family="sans-serif">লিনিয়ার ক্লাসিফিকেশন: Vector w দিয়ে ভাগ করা</text>
+
+        <!-- LEFT: bad separation -->
+        <text x="150" y="55" text-anchor="middle" fill="#f78166" font-size="12" font-family="sans-serif">❌ খারাপ বিভাজন</text>
+        <line x1="40" y1="285" x2="280" y2="285" stroke="#30363d" stroke-width="1"/>
+        <line x1="40" y1="285" x2="40" y2="65" stroke="#30363d" stroke-width="1"/>
+        <!-- Points orange (drinkable) -->
+        <circle cx="65" cy="105" r="6" fill="#ffa657" opacity=".9"/>
+        <circle cx="85" cy="90" r="6" fill="#ffa657" opacity=".9"/>
+        <circle cx="105" cy="115" r="6" fill="#ffa657" opacity=".9"/>
+        <circle cx="75" cy="80" r="6" fill="#ffa657" opacity=".9"/>
+        <circle cx="95" cy="100" r="6" fill="#ffa657" opacity=".9"/>
+        <circle cx="120" cy="95" r="6" fill="#ffa657" opacity=".9"/>
+        <!-- Points blue (non-drinkable) -->
+        <circle cx="190" cy="210" r="6" fill="#58a6ff" opacity=".9"/>
+        <circle cx="215" cy="225" r="6" fill="#58a6ff" opacity=".9"/>
+        <circle cx="235" cy="205" r="6" fill="#58a6ff" opacity=".9"/>
+        <circle cx="200" cy="240" r="6" fill="#58a6ff" opacity=".9"/>
+        <circle cx="220" cy="195" r="6" fill="#58a6ff" opacity=".9"/>
+        <circle cx="250" cy="220" r="6" fill="#58a6ff" opacity=".9"/>
+        <!-- Bad decision boundary (doesn't separate well) -->
+        <line x1="50" y1="90" x2="270" y2="200" stroke="#f78166" stroke-width="2" stroke-dasharray="6,3"/>
+        <!-- Some misclassified -->
+        <circle cx="130" cy="175" r="6" fill="#58a6ff" opacity=".9"/>
+        <circle cx="160" cy="140" r="6" fill="#ffa657" opacity=".9"/>
+        <text x="150" y="305" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">অনেক পয়েন্ট ভুল দিকে</text>
+
+        <!-- Divider -->
+        <line x1="330" y1="45" x2="330" y2="300" stroke="#30363d" stroke-dasharray="4"/>
+
+        <!-- RIGHT: good separation -->
+        <text x="500" y="55" text-anchor="middle" fill="#3fb950" font-size="12" font-family="sans-serif">✅ ভালো বিভাজন</text>
+        <line x1="370" y1="285" x2="640" y2="285" stroke="#30363d" stroke-width="1"/>
+        <line x1="370" y1="285" x2="370" y2="65" stroke="#30363d" stroke-width="1"/>
+        <!-- Points orange -->
+        <circle cx="390" cy="105" r="6" fill="#ffa657" opacity=".9"/>
+        <circle cx="415" cy="90" r="6" fill="#ffa657" opacity=".9"/>
+        <circle cx="405" cy="120" r="6" fill="#ffa657" opacity=".9"/>
+        <circle cx="430" cy="100" r="6" fill="#ffa657" opacity=".9"/>
+        <circle cx="395" cy="80" r="6" fill="#ffa657" opacity=".9"/>
+        <circle cx="445" cy="110" r="6" fill="#ffa657" opacity=".9"/>
+        <!-- Points blue -->
+        <circle cx="540" cy="210" r="6" fill="#58a6ff" opacity=".9"/>
+        <circle cx="565" cy="225" r="6" fill="#58a6ff" opacity=".9"/>
+        <circle cx="585" cy="200" r="6" fill="#58a6ff" opacity=".9"/>
+        <circle cx="555" cy="240" r="6" fill="#58a6ff" opacity=".9"/>
+        <circle cx="575" cy="215" r="6" fill="#58a6ff" opacity=".9"/>
+        <circle cx="610" cy="230" r="6" fill="#58a6ff" opacity=".9"/>
+        <!-- Good boundary -->
+        <line x1="460" y1="68" x2="510" y2="285" stroke="#3fb950" stroke-width="2.5"/>
+        <!-- w vector -->
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#d2a8ff"/>
+          </marker>
+        </defs>
+        <line x1="485" y1="176" x2="545" y2="130" stroke="#d2a8ff" stroke-width="2.5" marker-end="url(#arr)"/>
+        <text x="548" y="128" fill="#d2a8ff" font-size="11" font-family="sans-serif" font-weight="bold">w⃗</text>
+        <text x="500" y="305" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">সব পয়েন্ট সঠিক দিকে ✓</text>
+
+        <!-- Labels -->
+        <text x="400" y="150" fill="#ffa657" font-size="11" font-family="sans-serif">পানযোগ্য</text>
+        <text x="555" y="190" fill="#58a6ff" font-size="11" font-family="sans-serif">অপানযোগ্য</text>
+      </svg>
+      <div class="diagram-caption">// ভেক্টর w⃗ নির্ধারণ করে — কোথায় বিভাজন রেখা আঁকতে হবে</div>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠️ মনে রাখো</div>
+      <strong>w = (-1.47, 0.84)</strong> এবং <strong>w = (1.47, -0.84)</strong> — দুটোই একই রেখা তৈরি করে! কারণ রেখাটা ভেক্টরের লম্ব দিকে থাকে, এবং বিপরীত দিকের ভেক্টরও একই লম্ব রেখা দেয়। শুধু দুটো দলের "ইতিবাচক" আর "নেতিবাচক" দিক বদলে যায়।
+    </div>
+
+    <h3>লিনিয়ার বনাম নন-লিনিয়ার</h3>
+    <div class="compare-grid">
+      <div class="compare-card" style="border-color:rgba(88,166,255,.3)">
+        <div class="compare-card-title" style="color:var(--accent1)">Linear Classification</div>
+        <p style="font-size:14px">একটা সরল রেখা দিয়ে দুটো দল আলাদা করা যায়। যেমন — পানীয় জলের উদাহরণ।</p>
+        <span class="pill pill-blue">Simple</span> <span class="pill pill-green">Fast</span>
+      </div>
+      <div class="compare-card" style="border-color:rgba(247,129,102,.3)">
+        <div class="compare-card-title" style="color:var(--accent3)">Non-Linear Classification</div>
+        <p style="font-size:14px">সরল রেখা দিয়ে আলাদা করা সম্ভব না, বাঁকা বা জটিল সীমারেখা দরকার।</p>
+        <span class="pill pill-red">Complex</span> <span class="pill pill-purple">Powerful</span>
+      </div>
+    </div>
+
+    <div class="exercise-block">
+      <div class="exercise-title">🎓 Interview Exercise — Section 03</div>
+      <div class="exercise-item">
+        <div class="ex-num">1</div>
+        <div class="ex-q"><strong>ধারণাগত প্রশ্ন:</strong> "Linearly separable" মানে কী? XOR সমস্যা কি Linearly separable? কেন কেন না?</div>
+        <div class="ex-hint">💡 Hint: XOR: input (0,0)→0, (0,1)→1, (1,0)→1, (1,1)→0 — এই চারটা পয়েন্ট কি একটা সরলরেখা দিয়ে ভাগ করা যায়? কাগজে এঁকে দেখো।</div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">2</div>
+        <div class="ex-q"><strong>কোডিং:</strong> Python এ <span class="ex-code-note">numpy</span> ব্যবহার করে দেখাও যে point (3, 5) কোন দিকে পড়ে যখন <span class="ex-code-note">w = [-1.47, 0.84]</span>। মানে <span class="ex-code-note">np.dot(w, x)</span> ধনাত্মক না ঋণাত্মক?</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SECTION 4 ═══════════════════════════ -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(57,208,216,.15)">🗂️</div>
+    <div>
+      <div class="section-num">SECTION 04</div>
+      <h2>ডেটা প্রস্তুতি — Congressional Votes Dataset</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <p>এই উদাহরণে আমরা <strong>আমেরিকার কংগ্রেস ভোটিং ডেটা</strong> ব্যবহার করব। লক্ষ্য: ভোট দেখে বলা — এই সদস্য <em>Democrat</em> নাকি <em>Republican</em>?</p>
+
+    <h3>ডেটাসেটের কাঠামো</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Column</th><th>মানে</th><th>ধরন</th><th>উদাহরণ</th></tr>
+        <tr><td><code>party</code></td><td>রাজনৈতিক দল <em>(Target Variable 🎯)</em></td><td>string</td><td>democrat, republican</td></tr>
+        <tr><td><code>infants</code></td><td>শিশু বিষয়ক বিলে ভোট</td><td>y/n → 1/0</td><td>y বা n</td></tr>
+        <tr><td><code>water</code></td><td>পানি বিষয়ক বিলে ভোট</td><td>y/n → 1/0</td><td>y বা n</td></tr>
+        <tr><td><code>budget</code></td><td>বাজেট বিলে ভোট</td><td>y/n → 1/0</td><td>y বা n</td></tr>
+        <tr><td>... (মোট ১৬টি ভোট কলাম)</td><td>বিভিন্ন বিষয়ে ভোট</td><td>y/n → 1/0</td><td>—</td></tr>
+      </table>
+    </div>
+
+    <h3>ধাপ ১: ডেটা লোড করা</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        <span>data_loading.py</span>
+      </div>
+      <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># CSV ফাইল থেকে ডেটা পড়ছি</span>
+<span class="cm"># sep="," মানে কলামগুলো কমা দিয়ে আলাদা</span>
+votes <span class="op">=</span> pd<span class="op">.</span>read_csv(<span class="st">"votes.csv"</span>, sep<span class="op">=</span><span class="st">","</span>)
+
+<span class="cm"># প্রথম ৫ সারি দেখো</span>
+<span class="fn">print</span>(votes<span class="op">.</span>head(<span class="bo">5</span>))
+
+<span class="cm"># ডেটার আকার (rows, columns)</span>
+<span class="fn">print</span>(<span class="st">"Shape:"</span>, votes<span class="op">.</span>shape)
+<span class="cm"># Output: (435, 17) → ৪৩৫ জন সদস্য, ১৭টি কলাম</span></pre>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-title">📖 বিস্তারিত ব্যাখ্যা</div>
+      <strong>pd.read_csv()</strong> — এটা CSV ফাইলকে একটা টেবিলে (DataFrame) রূপান্তর করে। মনে করো Excel এর মতো একটা টেবিল।<br>
+      <strong>.head(5)</strong> — প্রথম ৫টি সারি দেখায়। এটা করো কারণ ডেটা হাজার হাজার সারির হলে সব দেখা সম্ভব নয়।<br>
+      <strong>.shape</strong> — (rows, columns) — কতটা বড় ডেটা আছে বোঝায়।
+    </div>
+
+    <h3>ধাপ ২: y/n কে ১/০ তে রূপান্তর করা</h3>
+    <p>Machine Learning মডেল <strong>শুধু সংখ্যা বোঝে</strong>। "y" বা "n" দিলে সে বুঝবে না। তাই "y" → 1 এবং "n" → 0 করতে হবে।</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        <span>encoding.py</span>
+      </div>
+      <pre><span class="cm"># votes.replace() → ডেটার মধ্যে মান বদলায়</span>
+<span class="cm"># {'y': 1, 'n': 0} → y কে 1 বানাও, n কে 0 বানাও</span>
+<span class="cm"># inplace=True → মূল DataFrame এই পরিবর্তন রাখো</span>
+
+votes<span class="op">.</span>replace({<span class="st">'y'</span>: <span class="bo">1</span>, <span class="st">'n'</span>: <span class="bo">0</span>}, inplace<span class="op">=</span><span class="kw">True</span>)
+
+<span class="fn">print</span>(votes<span class="op">.</span>head(<span class="bo">3</span>))
+<span class="cm"># এখন y/n এর বদলে 1/0 দেখাবে</span>
+<span class="cm"># party    infants  water  budget ...</span>
+<span class="cm"># republican  0       1      0   ...</span>
+<span class="cm"># democrat    1       1      1   ...</span></pre>
+    </div>
+
+    <h3>ধাপ ৩: X এবং y আলাদা করা</h3>
+    <p>ML এ সবসময় দুটো ভাগ:</p>
+    <ul>
+      <li><strong>X (Features/Explanatory Variables)</strong>: যে তথ্য দেখে সিদ্ধান্ত নেবে। এখানে — ১৬টি ভোট কলাম।</li>
+      <li><strong>y (Target Variable)</strong>: যেটা predict করতে চাই। এখানে — "party" কলাম।</li>
+    </ul>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        <span>feature_target_split.py</span>
+      </div>
+      <pre><span class="cm"># X = সব কলাম, 'party' ছাড়া</span>
+<span class="cm"># drop() → নির্দিষ্ট কলাম বাদ দেয়</span>
+<span class="cm"># axis=1 → কলাম বাদ দেওয়া (axis=0 হলে সারি বাদ দেওয়া)</span>
+X <span class="op">=</span> votes<span class="op">.</span>drop(<span class="st">'party'</span>, axis<span class="op">=</span><span class="bo">1</span>)
+
+<span class="cm"># y = শুধু 'party' কলাম</span>
+y <span class="op">=</span> votes[<span class="st">'party'</span>]
+
+<span class="fn">print</span>(<span class="st">"X shape:"</span>, X<span class="op">.</span>shape)   <span class="cm"># (435, 16)</span>
+<span class="fn">print</span>(<span class="st">"y shape:"</span>, y<span class="op">.</span>shape)   <span class="cm"># (435,)</span>
+<span class="fn">print</span>(<span class="st">"y values:"</span>, y<span class="op">.</span>unique())  <span class="cm"># ['republican' 'democrat']</span></pre>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 660 200" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:660px">
+        <rect width="660" height="200" fill="#161b22" rx="10"/>
+        <text x="330" y="25" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="bold" font-family="sans-serif">DataFrame থেকে X এবং y আলাদা করা</text>
+
+        <!-- Full DataFrame -->
+        <rect x="20" y="40" width="200" height="140" rx="6" fill="#1c2330" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="120" y="60" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif" font-weight="bold">DataFrame: votes</text>
+        <rect x="30" y="68" width="60" height="20" rx="3" fill="#3fb950" opacity=".3"/>
+        <text x="60" y="82" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif">party</text>
+        <rect x="95" y="68" width="115" height="20" rx="3" fill="#58a6ff" opacity=".3"/>
+        <text x="152" y="82" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="sans-serif">16 vote columns</text>
+        <!-- Data rows hint -->
+        <text x="120" y="108" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">republican | 0 1 0 1 1 1 ...</text>
+        <text x="120" y="124" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">democrat   | 1 1 1 0 0 1 ...</text>
+        <text x="120" y="140" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">democrat   | 0 1 1 0 1 1 ...</text>
+        <text x="120" y="155" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">... (435 rows)</text>
+
+        <!-- Arrow -->
+        <defs>
+          <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#8b949e"/>
+          </marker>
+        </defs>
+        <line x1="230" y1="90" x2="295" y2="75" stroke="#8b949e" stroke-width="1.5" marker-end="url(#arr2)"/>
+        <line x1="230" y1="130" x2="295" y2="150" stroke="#8b949e" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+        <!-- y box -->
+        <rect x="300" y="45" width="130" height="70" rx="6" fill="#1c2330" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="365" y="65" text-anchor="middle" fill="#3fb950" font-size="11" font-family="sans-serif" font-weight="bold">y (Target)</text>
+        <text x="365" y="84" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">republican</text>
+        <text x="365" y="100" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">democrat</text>
+
+        <!-- X box -->
+        <rect x="300" y="130" width="130" height="45" rx="6" fill="#1c2330" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="365" y="150" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif" font-weight="bold">X (Features)</text>
+        <text x="365" y="167" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">16 vote columns</text>
+
+        <!-- Arrows to model -->
+        <defs>
+          <marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#d2a8ff"/>
+          </marker>
+        </defs>
+        <line x1="435" y1="80" x2="500" y2="105" stroke="#d2a8ff" stroke-width="1.5" marker-end="url(#arr3)"/>
+        <line x1="435" y1="155" x2="500" y2="120" stroke="#d2a8ff" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+        <!-- Model box -->
+        <rect x="505" y="80" width="130" height="65" rx="6" fill="#1c2330" stroke="#d2a8ff" stroke-width="1.5"/>
+        <text x="570" y="103" text-anchor="middle" fill="#d2a8ff" font-size="11" font-family="sans-serif" font-weight="bold">ML Model</text>
+        <text x="570" y="120" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">X দিয়ে শেখে</text>
+        <text x="570" y="136" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">y predict করে</text>
+      </svg>
+      <div class="diagram-caption">// DataFrame → X (features) + y (target) → ML Model</div>
+    </div>
+
+    <div class="exercise-block">
+      <div class="exercise-title">🎓 Interview Exercise — Section 04</div>
+      <div class="exercise-item">
+        <div class="ex-num">1</div>
+        <div class="ex-q"><strong>Encoding প্রশ্ন:</strong> Categorical variable encode করার ৩টি পদ্ধতি বলো: Label Encoding, One-Hot Encoding, এবং Binary Encoding। কোনটা কখন ব্যবহার করবে এবং কেন?</div>
+        <div class="ex-hint">💡 Hint: "ছোট/মাঝারি/বড়" মানে Label Encoding ঠিক আছে। কিন্তু "লাল/নীল/সবুজ" তে Label Encoding ভুল — কারণ সংখ্যার মধ্যে মিথ্যা ক্রম তৈরি হয়।</div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">2</div>
+        <div class="ex-q"><strong>প্রজেক্ট কোডিং:</strong> একটি ডেটাসেটে NaN (missing value) আছে। <span class="ex-code-note">votes.isnull().sum()</span> দিয়ে চেক করো এবং তারপর <span class="ex-code-note">fillna()</span> বা <span class="ex-code-note">dropna()</span> দিয়ে handle করার কোড লিখো।</div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">3</div>
+        <div class="ex-q"><strong>Class Imbalance:</strong> যদি ডেটায় ৯০% Democrat এবং ১০% Republican থাকে, তাহলে কী সমস্যা হবে? কীভাবে সমাধান করবে? <span class="ex-code-note">value_counts(normalize=True)</span> কোড লিখো।</div>
+        <div class="ex-hint">💡 Hint: এটাকে Class Imbalance বলে। মডেল সবসময় majority class বলবে এবং তবুও ৯০% accuracy পাবে — কিন্তু এটা আসলে কাজের না!</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SECTION 5 ═══════════════════════════ -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(255,126,182,.15)">✂️</div>
+    <div>
+      <div class="section-num">SECTION 05</div>
+      <h2>Train/Test Split — ডেটা ভাগ করা</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <p>একটু ভাবো — তুমি পরীক্ষার প্রস্তুতি নিচ্ছো। যদি একই প্রশ্ন দিয়ে পড়ো এবং পরীক্ষা দাও — সেটা কি আসল দক্ষতা প্রমাণ করে? না! তাই <strong>Training এবং Testing ডেটা আলাদা রাখতে হয়।</strong></p>
+
+    <div class="compare-grid">
+      <div class="compare-card" style="border-color:rgba(88,166,255,.3)">
+        <div class="compare-card-title" style="color:var(--accent1)">🏋️ Training Set (৮০%)</div>
+        <p style="font-size:14px">মডেল এই ডেটা দেখে শেখে। Pattern খোঁজে, parameter adjust করে।</p>
+        <p style="font-size:13px; color:var(--text2)">মনে করো: পাঠ্যবই পড়া</p>
+      </div>
+      <div class="compare-card" style="border-color:rgba(63,185,80,.3)">
+        <div class="compare-card-title" style="color:var(--accent2)">🧪 Test Set (২০%)</div>
+        <p style="font-size:14px">মডেল এই ডেটা আগে কখনো দেখেনি। এটা দিয়ে বোঝা যায় নতুন ডেটায় কতটা ভালো কাজ করে।</p>
+        <p style="font-size:13px; color:var(--text2)">মনে করো: আসল পরীক্ষা</p>
+      </div>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 640 160" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:640px">
+        <rect width="640" height="160" fill="#161b22" rx="10"/>
+        <text x="320" y="25" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="bold" font-family="sans-serif">Train/Test Split (80% / 20%)</text>
+
+        <!-- Full data bar -->
+        <text x="30" y="52" fill="#8b949e" font-size="11" font-family="sans-serif">মূল ডেটা (৪৩৫ rows)</text>
+        <rect x="30" y="60" width="580" height="30" rx="4" fill="#1c2330" stroke="#30363d"/>
+        <!-- Individual dots suggestion -->
+        <rect x="32" y="62" width="464" height="26" rx="3" fill="rgba(88,166,255,0.2)"/>
+        <rect x="498" y="62" width="110" height="26" rx="3" fill="rgba(63,185,80,0.2)"/>
+        <text x="264" y="80" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif" font-weight="bold">Training Set — ৩৪৮ rows (80%)</text>
+        <text x="553" y="80" text-anchor="middle" fill="#3fb950" font-size="11" font-family="sans-serif" font-weight="bold">Test — ৮৭ rows (20%)</text>
+
+        <!-- Arrows and labels -->
+        <line x1="264" y1="93" x2="200" y2="120" stroke="#58a6ff" stroke-width="1.5"/>
+        <line x1="553" y1="93" x2="553" y2="120" stroke="#3fb950" stroke-width="1.5"/>
+
+        <rect x="80" y="120" width="240" height="28" rx="5" fill="#1c2330" stroke="#58a6ff" stroke-width="1"/>
+        <text x="200" y="138" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif">model.fit(X_train, y_train) → শেখা</text>
+
+        <rect x="430" y="120" width="190" height="28" rx="5" fill="#1c2330" stroke="#3fb950" stroke-width="1"/>
+        <text x="525" y="138" text-anchor="middle" fill="#3fb950" font-size="11" font-family="sans-serif">model.predict(X_test) → পরীক্ষা</text>
+      </svg>
+      <div class="diagram-caption">// মূল ডেটার ৮০% দিয়ে শেখো, ২০% দিয়ে পরীক্ষা করো</div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        <span>train_test_split.py</span>
+      </div>
+      <pre><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+
+<span class="cm"># train_test_split() চারটা জিনিস return করে:</span>
+<span class="cm"># X_train → training এর features</span>
+<span class="cm"># X_test  → testing এর features</span>
+<span class="cm"># y_train → training এর labels</span>
+<span class="cm"># y_test  → testing এর labels (এটা model কখনো দেখেনি)</span>
+
+X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(
+    X,                <span class="cm"># features</span>
+    y,                <span class="cm"># target</span>
+    test_size<span class="op">=</span><span class="bo">0.2</span>,    <span class="cm"># ২০% test এ যাবে</span>
+    random_state<span class="op">=</span><span class="bo">2</span>   <span class="cm"># প্রতিবার একই ভাগ হওয়ার জন্য</span>
+)
+
+<span class="fn">print</span>(<span class="st">f"Training: {X_train.shape[0]} rows"</span>)  <span class="cm"># 348</span>
+<span class="fn">print</span>(<span class="st">f"Testing:  {X_test.shape[0]} rows"</span>)   <span class="cm"># 87</span></pre>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠️ random_state কেন দরকার?</div>
+      ডেটা যখন ভাগ হয় তখন কোনটা train আর কোনটা test — এটা random হয়। <strong>random_state=2</strong> মানে সবসময় একই random ক্রম ব্যবহার হবে। এতে তুমি এবং তোমার সহকর্মী একই result পাবে। Production এ এটা খুব গুরুত্বপূর্ণ।
+    </div>
+
+    <div class="exercise-block">
+      <div class="exercise-title">🎓 Interview Exercise — Section 05</div>
+      <div class="exercise-item">
+        <div class="ex-num">1</div>
+        <div class="ex-q"><strong>Data Leakage প্রশ্ন:</strong> "Data Leakage" কী? Train/Test split করার আগে <span class="ex-code-note">StandardScaler</span> fit করলে কী সমস্যা হয়?</div>
+        <div class="ex-hint">💡 Hint: Scaler যদি test ডেটার তথ্য দেখে fit হয়, তাহলে test ডেটা "অপরিচিত" থাকে না। মডেল test এ ভালো করবে কিন্তু real-world এ ব্যর্থ হবে।</div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">2</div>
+        <div class="ex-q"><strong>Cross Validation:</strong> শুধু একটা Train/Test split কেন যথেষ্ট না? <span class="ex-code-note">cross_val_score(model, X, y, cv=5)</span> কী করে এবং এটা কেন বেশি নির্ভরযোগ্য?</div>
+        <div class="ex-hint">💡 Hint: এক ভাগে ভালো, অন্য ভাগে খারাপ হতে পারে। ৫-fold মানে ৫ বার ভিন্নভাবে ভাগ করে গড় নেওয়া।</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SECTION 6 ═══════════════════════════ -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(210,168,255,.15)">📊</div>
+    <div>
+      <div class="section-num">SECTION 06</div>
+      <h2>Logistic Regression — সিগময়েড ফাংশন দিয়ে সম্ভাবনা বের করা</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <p><strong>সতর্কতা!</strong> নামে "Regression" থাকলেও এটা একটি <em>Classification</em> মডেল। এটা সম্ভাবনা (probability) বের করে এবং সেই সম্ভাবনা দেখে দল নির্ধারণ করে।</p>
+
+    <h3>Linear Regression বনাম Logistic Regression</h3>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <div class="compare-card-title" style="color:var(--accent5)">Linear Regression সূত্র</div>
+        <div class="formula" style="text-align:left; padding:12px">ŷ = β₀ + β₁x₁ + β₂x₂ + ... + βₚxₚ<br>
+        <span style="color:#8b949e;font-size:12px">(যেকোনো সংখ্যা বের করে: -∞ থেকে +∞)</span></div>
+      </div>
+      <div class="compare-card">
+        <div class="compare-card-title" style="color:var(--accent4)">Logistic Regression সূত্র</div>
+        <div class="formula" style="text-align:left; padding:12px">P(y=1) = σ(β₀ + β₁x₁ + ... + βₚxₚ)<br>
+        <span style="color:#8b949e;font-size:12px">(সম্ভাবনা বের করে: 0 থেকে 1)</span></div>
+      </div>
+    </div>
+
+    <h3>Sigmoid / Logistic Function</h3>
+    <p>এই ফাংশনটা যেকোনো সংখ্যাকে 0 থেকে 1 এর মধ্যে নিয়ে আসে — মানে সম্ভাবনায় রূপান্তর করে।</p>
+
+    <div class="formula">
+      σ(x) = 1 / (1 + e⁻ˣ)
+      <br><span style="color:#8b949e; font-size:13px">যখন x → +∞, σ(x) → 1 &nbsp;&nbsp; | &nbsp;&nbsp; যখন x → -∞, σ(x) → 0 &nbsp;&nbsp; | &nbsp;&nbsp; যখন x = 0, σ(x) = 0.5</span>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:620px">
+        <rect width="620" height="280" fill="#161b22" rx="10"/>
+        <text x="310" y="25" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="bold" font-family="sans-serif">Sigmoid ফাংশন — যেকোনো সংখ্যাকে সম্ভাবনায় রূপান্তর</text>
+
+        <!-- Axes -->
+        <line x1="80" y1="230" x2="560" y2="230" stroke="#30363d" stroke-width="1.5"/>
+        <line x1="320" y1="250" x2="320" y2="40" stroke="#30363d" stroke-width="1.5"/>
+
+        <!-- Axis labels -->
+        <text x="555" y="245" fill="#8b949e" font-size="11" font-family="sans-serif">x</text>
+        <text x="325" y="38" fill="#8b949e" font-size="11" font-family="sans-serif">σ(x)</text>
+
+        <!-- Axis ticks x -->
+        <text x="140" y="245" fill="#8b949e" font-size="10" font-family="sans-serif" text-anchor="middle">-6</text>
+        <text x="200" y="245" fill="#8b949e" font-size="10" font-family="sans-serif" text-anchor="middle">-4</text>
+        <text x="260" y="245" fill="#8b949e" font-size="10" font-family="sans-serif" text-anchor="middle">-2</text>
+        <text x="320" y="245" fill="#8b949e" font-size="10" font-family="sans-serif" text-anchor="middle">0</text>
+        <text x="380" y="245" fill="#8b949e" font-size="10" font-family="sans-serif" text-anchor="middle">2</text>
+        <text x="440" y="245" fill="#8b949e" font-size="10" font-family="sans-serif" text-anchor="middle">4</text>
+        <text x="500" y="245" fill="#8b949e" font-size="10" font-family="sans-serif" text-anchor="middle">6</text>
+
+        <!-- y labels -->
+        <text x="72" y="233" fill="#8b949e" font-size="10" font-family="sans-serif" text-anchor="end">0</text>
+        <text x="72" y="173" fill="#8b949e" font-size="10" font-family="sans-serif" text-anchor="end">0.5</text>
+        <text x="72" y="63" fill="#8b949e" font-size="10" font-family="sans-serif" text-anchor="end">1.0</text>
+
+        <!-- 0.5 line -->
+        <line x1="80" y1="172" x2="560" y2="172" stroke="#30363d" stroke-dasharray="4,3" stroke-width="1"/>
+
+        <!-- Sigmoid curve approximation using polyline -->
+        <polyline points="
+          80,227
+          100,226
+          120,224
+          140,221
+          160,216
+          180,208
+          200,198
+          220,186
+          240,175
+          260,164
+          280,154
+          300,147
+          320,141
+          340,133
+          360,125
+          380,116
+          400,106
+          420,98
+          440,91
+          460,86
+          480,80
+          500,76
+          520,73
+          540,71
+          560,70
+        " fill="none" stroke="#d2a8ff" stroke-width="2.5"/>
+
+        <!-- Decision threshold annotation -->
+        <circle cx="320" cy="141" r="5" fill="#3fb950" opacity=".9"/>
+        <text x="335" y="138" fill="#3fb950" font-size="11" font-family="sans-serif">x=0 → P=0.5</text>
+        <text x="335" y="152" fill="#3fb950" font-size="10" font-family="sans-serif">(নিরপেক্ষ বিন্দু)</text>
+
+        <!-- Regions -->
+        <rect x="82" y="180" width="235" height="18" rx="3" fill="rgba(88,166,255,0.1)"/>
+        <text x="200" y="193" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="sans-serif">P(y=1) &lt; 0.5 → class = 0 (Democrat)</text>
+        <rect x="322" y="180" width="235" height="18" rx="3" fill="rgba(63,185,80,0.1)"/>
+        <text x="440" y="193" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif">P(y=1) &gt; 0.5 → class = 1 (Republican)</text>
+      </svg>
+      <div class="diagram-caption">// Sigmoid curve: x যত বড়, Republican হওয়ার সম্ভাবনা তত বেশি</div>
+    </div>
+
+    <h3>সিদ্ধান্তের নিয়ম</h3>
+    <ul>
+      <li>যদি linear combination <strong>ধনাত্মক (+)</strong> হয় → P(y=1) > 0.5 → predicted class = 1 (Republican)</li>
+      <li>যদি linear combination <strong>ঋণাত্মক (-)</strong> হয় → P(y=1) &lt; 0.5 → predicted class = 0 (Democrat)</li>
+    </ul>
+
+    <h3>Scikit-learn এ Logistic Regression কীভাবে চালাবে</h3>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        <span>logistic_regression.py</span>
+      </div>
+      <pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+
+<span class="cm"># ধাপ ১: মডেল তৈরি করো (instantiate)</span>
+logreg <span class="op">=</span> LogisticRegression()
+
+<span class="cm"># ধাপ ২: মডেলকে train করো</span>
+<span class="cm"># fit() মানে: "এই data দেখে pattern শেখো"</span>
+logreg<span class="op">.</span>fit(X_train, y_train)
+
+<span class="cm"># ধাপ ৩: নতুন data তে predict করো</span>
+y_pred <span class="op">=</span> logreg<span class="op">.</span>predict(X_test)
+<span class="fn">print</span>(y_pred[:<span class="bo">5</span>])
+<span class="cm"># ['democrat', 'republican', 'democrat', ...]</span>
+
+<span class="cm"># সম্ভাবনা দেখতে চাইলে predict_proba() ব্যবহার করো</span>
+proba <span class="op">=</span> logreg<span class="op">.</span>predict_proba(X_test)
+<span class="fn">print</span>(proba[:<span class="bo">3</span>])
+<span class="cm"># [[0.87, 0.13],  ← ৮৭% Democrat, ১৩% Republican</span>
+<span class="cm">#  [0.22, 0.78],  ← ২২% Democrat, ৭৮% Republican</span>
+<span class="cm">#  [0.91, 0.09]]  ← ৯১% Democrat, ৯% Republican</span></pre>
+    </div>
+
+    <div class="callout callout-success">
+      <div class="callout-title">✅ Scikit-learn API Pattern — সব মডেলে একই!</div>
+      এটা Scikit-learn এর সবচেয়ে সুন্দর দিক — সব মডেলে একই ৩টি ধাপ:<br>
+      <strong>1. model = ModelName()</strong> → তৈরি করা<br>
+      <strong>2. model.fit(X_train, y_train)</strong> → শেখানো<br>
+      <strong>3. model.predict(X_test)</strong> → prediction নেওয়া<br>
+      LogisticRegression, DecisionTree, RandomForest, SVM — সব একই!
+    </div>
+
+    <div class="exercise-block">
+      <div class="exercise-title">🎓 Interview Exercise — Section 06</div>
+      <div class="exercise-item">
+        <div class="ex-num">1</div>
+        <div class="ex-q"><strong>ধারণাগত:</strong> Logistic Regression এর <span class="ex-code-note">C</span> parameter কী? <span class="ex-code-note">C=0.01</span> বনাম <span class="ex-code-note">C=100</span> এর মধ্যে পার্থক্য কী? Overfitting এবং Underfitting এর সাথে এর সম্পর্ক কী?</div>
+        <div class="ex-hint">💡 Hint: C = 1/regularization_strength। বড় C → কম regularization → overfit হওয়ার সম্ভাবনা বেশি।</div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">2</div>
+        <div class="ex-q"><strong>কোডিং:</strong> Logistic Regression এর <strong>coefficients (β)</strong> বের করো এবং কোন ভোট বিষয়টা সবচেয়ে বেশি Republican হওয়ার indication দেয় সেটা বের করো।</div>
+        <div class="ex-hint">💡 Code hint: <code>pd.Series(logreg.coef_[0], index=X.columns).sort_values(ascending=False)</code></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SECTION 7 ═══════════════════════════ -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(63,185,80,.15)">📏</div>
+    <div>
+      <div class="section-num">SECTION 07</div>
+      <h2>মডেল মূল্যায়ন — Accuracy, Precision, Recall</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <p>মডেল বানানোর পরে সবচেয়ে গুরুত্বপূর্ণ প্রশ্ন: <strong>"কতটা ভালো কাজ করছে?"</strong> এর জন্য তিনটি প্রধান metric আছে।</p>
+
+    <h3>প্রথমে বুঝতে হবে: TP, TN, FP, FN</h3>
+    <p>এই উদাহরণে <span class="pill pill-green">Republican = Positive (1)</span> এবং <span class="pill pill-blue">Democrat = Negative (0)</span></p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 580 280" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:580px">
+        <rect width="580" height="280" fill="#161b22" rx="10"/>
+        <text x="290" y="25" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="bold" font-family="sans-serif">TP, TN, FP, FN — চারটি সম্ভাব্য ফলাফল</text>
+
+        <!-- Column headers (Predictions) -->
+        <text x="290" y="52" text-anchor="middle" fill="#d2a8ff" font-size="12" font-weight="bold" font-family="sans-serif">← Model এর Prediction →</text>
+        <rect x="200" y="58" width="150" height="26" rx="4" fill="rgba(88,166,255,0.15)"/>
+        <text x="275" y="75" text-anchor="middle" fill="#58a6ff" font-size="12" font-family="sans-serif" font-weight="bold">Predict: Democrat (0)</text>
+        <rect x="360" y="58" width="155" height="26" rx="4" fill="rgba(63,185,80,0.15)"/>
+        <text x="437" y="75" text-anchor="middle" fill="#3fb950" font-size="12" font-family="sans-serif" font-weight="bold">Predict: Republican (1)</text>
+
+        <!-- Row headers (Reality) -->
+        <text x="95" y="130" text-anchor="middle" fill="#d2a8ff" font-size="11" font-weight="bold" font-family="sans-serif" transform="rotate(-90,95,130)">← বাস্তবতা (Reality) →</text>
+        <rect x="105" y="90" width="85" height="75" rx="4" fill="rgba(88,166,255,0.1)"/>
+        <text x="147" y="127" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif">Actually</text>
+        <text x="147" y="143" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif">Democrat</text>
+        <text x="147" y="157" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">(Reality = 0)</text>
+
+        <rect x="105" y="175" width="85" height="75" rx="4" fill="rgba(63,185,80,0.1)"/>
+        <text x="147" y="212" text-anchor="middle" fill="#3fb950" font-size="11" font-family="sans-serif">Actually</text>
+        <text x="147" y="228" text-anchor="middle" fill="#3fb950" font-size="11" font-family="sans-serif">Republican</text>
+        <text x="147" y="242" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">(Reality = 1)</text>
+
+        <!-- TN cell -->
+        <rect x="200" y="90" width="150" height="75" rx="4" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="275" y="118" text-anchor="middle" fill="#3fb950" font-size="14" font-weight="bold" font-family="sans-serif">✅ TN</text>
+        <text x="275" y="137" text-anchor="middle" fill="#c9d1d9" font-size="11" font-family="sans-serif">True Negative</text>
+        <text x="275" y="155" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">সঠিকভাবে Democrat বলা</text>
+
+        <!-- FP cell -->
+        <rect x="360" y="90" width="155" height="75" rx="4" fill="rgba(247,129,102,0.15)" stroke="#f78166" stroke-width="1.5"/>
+        <text x="437" y="118" text-anchor="middle" fill="#f78166" font-size="14" font-weight="bold" font-family="sans-serif">❌ FP</text>
+        <text x="437" y="137" text-anchor="middle" fill="#c9d1d9" font-size="11" font-family="sans-serif">False Positive</text>
+        <text x="437" y="155" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">ভুলভাবে Republican বলা</text>
+
+        <!-- FN cell -->
+        <rect x="200" y="175" width="150" height="75" rx="4" fill="rgba(247,129,102,0.15)" stroke="#f78166" stroke-width="1.5"/>
+        <text x="275" y="203" text-anchor="middle" fill="#f78166" font-size="14" font-weight="bold" font-family="sans-serif">❌ FN</text>
+        <text x="275" y="222" text-anchor="middle" fill="#c9d1d9" font-size="11" font-family="sans-serif">False Negative</text>
+        <text x="275" y="240" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">ভুলভাবে Democrat বলা</text>
+
+        <!-- TP cell -->
+        <rect x="360" y="175" width="155" height="75" rx="4" fill="rgba(63,185,80,0.2)" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="437" y="203" text-anchor="middle" fill="#3fb950" font-size="14" font-weight="bold" font-family="sans-serif">✅ TP</text>
+        <text x="437" y="222" text-anchor="middle" fill="#c9d1d9" font-size="11" font-family="sans-serif">True Positive</text>
+        <text x="437" y="240" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">সঠিকভাবে Republican বলা</text>
+      </svg>
+      <div class="diagram-caption">// সবুজ = সঠিক ভবিষ্যদ্বাণী | লাল = ভুল ভবিষ্যদ্বাণী</div>
+    </div>
+
+    <h3>তিনটি মূল Metric</h3>
+
+    <div class="metric-grid">
+      <div class="metric-card" style="border-color:rgba(88,166,255,.3)">
+        <div class="metric-card-label">Accuracy</div>
+        <div class="metric-card-value" style="color:var(--accent1)">93.1%</div>
+        <div class="metric-card-desc">সব সঠিক prediction এর হার।<br><strong>= (TP + TN) / n</strong></div>
+      </div>
+      <div class="metric-card" style="border-color:rgba(210,168,255,.3)">
+        <div class="metric-card-label">Precision</div>
+        <div class="metric-card-value" style="color:var(--accent4)">88.9%</div>
+        <div class="metric-card-desc">যাকে Republican বললাম, তার মধ্যে কতজন সত্যি Republican?<br><strong>= TP / (TP + FP)</strong></div>
+      </div>
+      <div class="metric-card" style="border-color:rgba(63,185,80,.3)">
+        <div class="metric-card-label">Recall</div>
+        <div class="metric-card-value" style="color:var(--accent2)">94.1%</div>
+        <div class="metric-card-desc">সব আসল Republican এর মধ্যে কতজনকে ধরতে পারলাম?<br><strong>= TP / (TP + FN)</strong></div>
+      </div>
+      <div class="metric-card" style="border-color:rgba(255,166,87,.3)">
+        <div class="metric-card-label">F1-Score</div>
+        <div class="metric-card-value" style="color:var(--accent5)">~91.4%</div>
+        <div class="metric-card-desc">Precision ও Recall এর ভারসাম্য।<br><strong>= 2 × (P × R) / (P + R)</strong></div>
+      </div>
+    </div>
+
+    <div class="callout callout-danger">
+      <div class="callout-title">⚡ কখন কোন Metric ব্যবহার করবে?</div>
+      <strong>Precision বেশি গুরুত্বপূর্ণ</strong> যখন False Positive খুব ক্ষতিকর। যেমন: Spam ফিল্টার — গুরুত্বপূর্ণ ইমেইল ভুলভাবে Spam বললে সমস্যা।<br><br>
+      <strong>Recall বেশি গুরুত্বপূর্ণ</strong> যখন False Negative খুব ক্ষতিকর। যেমন: ক্যান্সার ধরা — রোগী থাকলেও "নেই" বললে মারাত্মক।
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        <span>evaluation_metrics.py</span>
+      </div>
+      <pre><span class="kw">from</span> sklearn.metrics <span class="kw">import</span> (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    classification_report
+)
+
+<span class="cm"># Accuracy: সহজ সঠিক হওয়ার হার</span>
+acc <span class="op">=</span> accuracy_score(y_test, y_pred)
+<span class="fn">print</span>(<span class="st">f"Accuracy: {acc:.4f}"</span>)   <span class="cm"># 0.9310</span>
+
+<span class="cm"># Precision: Republican বললে কতজন সত্যিই Republican?</span>
+<span class="cm"># pos_label বলে দিচ্ছি — কোন class = "Positive"</span>
+prec <span class="op">=</span> precision_score(y_test, y_pred, pos_label<span class="op">=</span><span class="st">'republican'</span>)
+<span class="fn">print</span>(<span class="st">f"Precision: {prec:.4f}"</span>)  <span class="cm"># 0.8889</span>
+
+<span class="cm"># Recall: সব Republican এর মধ্যে কতজনকে ধরলাম?</span>
+rec <span class="op">=</span> recall_score(y_test, y_pred, pos_label<span class="op">=</span><span class="st">'republican'</span>)
+<span class="fn">print</span>(<span class="st">f"Recall: {rec:.4f}"</span>)     <span class="cm"># 0.9412</span>
+
+<span class="cm"># একসাথে সব দেখতে — classification_report</span>
+<span class="fn">print</span>(classification_report(y_test, y_pred))</pre>
+    </div>
+
+    <div class="exercise-block">
+      <div class="exercise-title">🎓 Interview Exercise — Section 07</div>
+      <div class="exercise-item">
+        <div class="ex-num">1</div>
+        <div class="ex-q"><strong>Imbalanced Dataset:</strong> একটি fraud detection সিস্টেমে ১০,০০০ transaction এর মধ্যে ৯,৯০০টি legit এবং ১০০টি fraud। একটি দুর্বল মডেল সবসময় "legit" বলে। তার Accuracy কত? এটা কি ভালো মডেল? কোন metric ব্যবহার করা উচিত?</div>
+        <div class="ex-hint">💡 Accuracy = 9900/10000 = 99%! কিন্তু সব fraud মিস করছে। এখানে Recall সবচেয়ে গুরুত্বপূর্ণ।</div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">2</div>
+        <div class="ex-q"><strong>Threshold Tuning:</strong> Default threshold 0.5। যদি <span class="ex-code-note">threshold = 0.3</span> করো (মানে ৩০% সম্ভাবনাতেই Positive বলবে), তাহলে Precision বাড়বে নাকি Recall? কেন?</div>
+        <div class="ex-hint">💡 Hint: Threshold কমালে বেশি জিনিস Positive বলবে → বেশি TP কিন্তু বেশি FP → Recall বাড়বে, Precision কমবে।</div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">3</div>
+        <div class="ex-q"><strong>কোডিং:</strong> <span class="ex-code-note">classification_report</span> এর output এ "macro avg" এবং "weighted avg" এর পার্থক্য কী? কোনটা Imbalanced data তে বেশি উপযোগী?</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SECTION 8 ═══════════════════════════ -->
+<div class="section" id="s8">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(247,129,102,.15)">🔲</div>
+    <div>
+      <div class="section-num">SECTION 08</div>
+      <h2>Confusion Matrix — ভুল-ঠিকের পূর্ণ চিত্র</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <p>Confusion Matrix হলো একটা টেবিল যেটা দেখায় মডেল কতটা "confused" (বিভ্রান্ত)। এটা TP, TN, FP, FN সব একসাথে দেখায়।</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+        <span>confusion_matrix.py</span>
+      </div>
+      <pre><span class="kw">from</span> sklearn.metrics <span class="kw">import</span> confusion_matrix
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># পদ্ধতি ১: pd.crosstab দিয়ে</span>
+<span class="cm"># rownames=['Reality'] → সারি মানে আসল মান</span>
+<span class="cm"># colnames=['Prediction'] → কলাম মানে মডেলের ভবিষ্যদ্বাণী</span>
+matrix <span class="op">=</span> pd<span class="op">.</span>crosstab(
+    y_test,
+    y_pred,
+    rownames<span class="op">=</span>[<span class="st">'Reality'</span>],
+    colnames<span class="op">=</span>[<span class="st">'Prediction'</span>]
+)
+<span class="fn">print</span>(matrix)
+
+<span class="cm"># পদ্ধতি ২: sklearn confusion_matrix</span>
+cm <span class="op">=</span> confusion_matrix(y_test, y_pred)
+<span class="fn">print</span>(cm)
+<span class="cm"># [[TN  FP]</span>
+<span class="cm">#  [FN  TP]]</span>
+
+<span class="cm"># হাতে হাতে calculate:</span>
+TN, FP <span class="op">=</span> cm[<span class="bo">0</span>][<span class="bo">0</span>], cm[<span class="bo">0</span>][<span class="bo">1</span>]
+FN, TP <span class="op">=</span> cm[<span class="bo">1</span>][<span class="bo">0</span>], cm[<span class="bo">1</span>][<span class="bo">1</span>]
+<span class="fn">print</span>(<span class="st">f"TP={TP}, TN={TN}, FP={FP}, FN={FN}"</span>)
+
+<span class="cm"># সুন্দর visualization</span>
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+sns<span class="op">.</span>heatmap(cm, annot<span class="op">=</span><span class="kw">True</span>, fmt<span class="op">=</span><span class="st">'d'</span>, cmap<span class="op">=</span><span class="st">'Blues'</span>)
+plt<span class="op">.</span>xlabel(<span class="st">'Predicted'</span>)
+plt<span class="op">.</span>ylabel(<span class="st">'Actual'</span>)
+plt<span class="op">.</span>show()</pre>
+    </div>
+
+    <h3>ফলাফলের ব্যাখ্যা (Logistic Regression এর ক্ষেত্রে)</h3>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Metric</th><th>মান</th><th>মানে কী?</th></tr>
+        <tr><td>Accuracy</td><td style="color:var(--accent1)">93.1%</td><td>৮৭টির মধ্যে ৮১টি সঠিকভাবে বলা হয়েছে</td></tr>
+        <tr><td>Precision</td><td style="color:var(--accent4)">88.9%</td><td>যাকে Republican বলা হয়েছে তার ৮৯% সত্যিই Republican</td></tr>
+        <tr><td>Recall</td><td style="color:var(--accent2)">94.1%</td><td>সব আসল Republican এর ৯৪% ধরা পড়েছে</td></tr>
+      </table>
+    </div>
+
+    <div class="exercise-block">
+      <div class="exercise-title">🎓 Interview Exercise — Section 08</div>
+      <div class="exercise-item">
+        <div class="ex-num">1</div>
+        <div class="ex-q"><strong>Matrix পড়া:</strong> নিচের Confusion Matrix দেখো। TP, TN, FP, FN বের করো এবং Accuracy, Precision, Recall হিসাব করো।
+        <div class="formula" style="font-size:13px; text-align:left; padding:10px">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predicted 0 &nbsp; Predicted 1<br>
+          Actual 0: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 45 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5<br>
+          Actual 1: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 42
+        </div>
+        </div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">2</div>
+        <div class="ex-q"><strong>Multi-class Confusion Matrix:</strong> ৩-class problem (cat/dog/bird) এ Confusion Matrix কেমন দেখাবে? সেখানে Precision আর Recall কীভাবে calculate হবে?</div>
+        <div class="ex-hint">💡 Hint: ৩×৩ matrix হবে। প্রতিটা class এর জন্য আলাদাভাবে one-vs-rest পদ্ধতিতে calculate করা হয়।</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SECTION 9 — ALL ALGORITHMS ═══════════════════════════ -->
+<div class="section" id="s9">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(57,208,216,.15)">🧠</div>
+    <div>
+      <div class="section-num">SECTION 09</div>
+      <h2>সব Classification Algorithm — কিন্ডারগার্টেন স্তরের ব্যাখ্যা</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="callout callout-info">
+      <div class="callout-title">📚 কীভাবে পড়বে</div>
+      প্রতিটি Algorithm এর জন্য: (১) একদম সহজ গল্প, (২) কীভাবে কাজ করে, (৩) সুবিধা-অসুবিধা, (৪) Python কোড।
+    </div>
+
+    <div class="algo-grid">
+
+      <!-- ── LOGISTIC REGRESSION ── -->
+      <div class="algo-card">
+        <div class="algo-card-header">
+          <div class="algo-icon-wrap" style="background:rgba(210,168,255,.15)">📈</div>
+          <div>
+            <div class="algo-card-title">Logistic Regression</div>
+            <div class="algo-card-subtitle">সম্ভাবনা দিয়ে সিদ্ধান্ত নেওয়া</div>
+          </div>
+        </div>
+        <div class="algo-card-body">
+          <h4>🧒 গল্প: আম পাকা কিনা বলা</h4>
+          <p>তুমি আমের রঙ, গন্ধ, নরমতা দেখে বলতে পারো — এটা পাকা (১) না কাঁচা (০)। Logistic Regression ঠিক এটাই করে — প্রতিটা feature দেখে সম্ভাবনা হিসাব করে।</p>
+          <div class="code-block">
+            <div class="code-header"><div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span>logistic_regression_full.py</span></div>
+            <pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report
+
+<span class="cm"># Pipeline: scale করো তারপর classify করো</span>
+<span class="cm"># StandardScaler: সব feature কে একই scale এ আনে</span>
+pipeline <span class="op">=</span> Pipeline([
+    (<span class="st">'scaler'</span>, StandardScaler()),
+    (<span class="st">'model'</span>, LogisticRegression(
+        C<span class="op">=</span><span class="bo">1.0</span>,           <span class="cm"># regularization (বড় = কম regularize)</span>
+        max_iter<span class="op">=</span><span class="bo">1000</span>,  <span class="cm"># convergence এর জন্য max iterations</span>
+        random_state<span class="op">=</span><span class="bo">42</span>
+    ))
+])
+
+pipeline<span class="op">.</span>fit(X_train, y_train)
+y_pred <span class="op">=</span> pipeline<span class="op">.</span>predict(X_test)
+<span class="fn">print</span>(classification_report(y_test, y_pred))</pre>
+          </div>
+          <div class="table-wrap"><table>
+            <tr><th>সুবিধা</th><th>অসুবিধা</th></tr>
+            <tr><td>দ্রুত, interpret করা সহজ</td><td>শুধু linear boundary</td></tr>
+            <tr><td>probability দেয়</td><td>complex pattern ধরতে পারে না</td></tr>
+            <tr><td>কম overfitting</td><td>feature scaling দরকার</td></tr>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ── DECISION TREE ── -->
+      <div class="algo-card">
+        <div class="algo-card-header">
+          <div class="algo-icon-wrap" style="background:rgba(63,185,80,.15)">🌳</div>
+          <div>
+            <div class="algo-card-title">Decision Tree</div>
+            <div class="algo-card-subtitle">প্রশ্নের গাছ দিয়ে সিদ্ধান্ত</div>
+          </div>
+        </div>
+        <div class="algo-card-body">
+          <h4>🧒 গল্প: "২০ প্রশ্নের খেলা"</h4>
+          <p>মনে করো তুমি কোনো প্রাণী ভাবছো এবং বন্ধু হ্যাঁ/না প্রশ্ন করে বলবে। "পাখনা আছে?" → হ্যাঁ → "উড়তে পারে?" → না → "পেঙ্গুইন!" — এটাই Decision Tree। একটার পর একটা প্রশ্ন করে শেষে দলে ফেলে।</p>
+
+          <div class="diagram-wrap" style="margin: 16px 0">
+            <svg viewBox="0 0 560 240" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:560px">
+              <rect width="560" height="240" fill="#0d1117" rx="8"/>
+              <!-- Root -->
+              <rect x="190" y="15" width="180" height="36" rx="6" fill="#1c2330" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="280" y="33" text-anchor="middle" fill="#3fb950" font-size="11" font-family="sans-serif" font-weight="bold">budget vote = 1?</text>
+              <text x="280" y="46" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">(বাজেটে ভোট দিয়েছে?)</text>
+              <!-- Lines -->
+              <line x1="240" y1="51" x2="140" y2="90" stroke="#30363d" stroke-width="1.5"/>
+              <line x1="320" y1="51" x2="420" y2="90" stroke="#30363d" stroke-width="1.5"/>
+              <text x="185" y="78" fill="#58a6ff" font-size="10" font-family="sans-serif">না (0)</text>
+              <text x="345" y="78" fill="#f78166" font-size="10" font-family="sans-serif">হ্যাঁ (1)</text>
+              <!-- Left node -->
+              <rect x="60" y="90" width="160" height="36" rx="6" fill="#1c2330" stroke="#58a6ff" stroke-width="1.5"/>
+              <text x="140" y="108" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif" font-weight="bold">physician vote = 0?</text>
+              <text x="140" y="121" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">(চিকিৎসায় না?)</text>
+              <!-- Right node -->
+              <rect x="340" y="90" width="160" height="36" rx="6" fill="#1c2330" stroke="#f78166" stroke-width="1.5"/>
+              <text x="420" y="108" text-anchor="middle" fill="#f78166" font-size="11" font-family="sans-serif" font-weight="bold">salvador vote = 1?</text>
+              <text x="420" y="121" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">(এল সালভাদরে হ্যাঁ?)</text>
+              <!-- Leaf nodes -->
+              <line x1="100" y1="126" x2="70" y2="168" stroke="#30363d"/>
+              <line x1="180" y1="126" x2="210" y2="168" stroke="#30363d"/>
+              <line x1="380" y1="126" x2="350" y2="168" stroke="#30363d"/>
+              <line x1="460" y1="126" x2="490" y2="168" stroke="#30363d"/>
+              <rect x="30" y="168" width="80" height="30" rx="5" fill="rgba(88,166,255,0.2)" stroke="#58a6ff"/>
+              <text x="70" y="187" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif" font-weight="bold">Democrat</text>
+              <rect x="170" y="168" width="80" height="30" rx="5" fill="rgba(63,185,80,0.2)" stroke="#3fb950"/>
+              <text x="210" y="187" text-anchor="middle" fill="#3fb950" font-size="11" font-family="sans-serif" font-weight="bold">Republican</text>
+              <rect x="310" y="168" width="80" height="30" rx="5" fill="rgba(63,185,80,0.2)" stroke="#3fb950"/>
+              <text x="350" y="187" text-anchor="middle" fill="#3fb950" font-size="11" font-family="sans-serif" font-weight="bold">Republican</text>
+              <rect x="450" y="168" width="80" height="30" rx="5" fill="rgba(88,166,255,0.2)" stroke="#58a6ff"/>
+              <text x="490" y="187" text-anchor="middle" fill="#58a6ff" font-size="11" font-family="sans-serif" font-weight="bold">Democrat</text>
+            </svg>
+            <div class="diagram-caption">// একটি Decision Tree উদাহরণ — প্রশ্নের গাছ</div>
+          </div>
+
+          <div class="code-block">
+            <div class="code-header"><div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span>decision_tree.py</span></div>
+            <pre><span class="kw">from</span> sklearn.tree <span class="kw">import</span> DecisionTreeClassifier, export_text
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report
+
+dt <span class="op">=</span> DecisionTreeClassifier(
+    max_depth<span class="op">=</span><span class="bo">5</span>,         <span class="cm"># গাছ কত গভীর হবে (overfitting থামায়)</span>
+    min_samples_split<span class="op">=</span><span class="bo">10</span>, <span class="cm"># ভাগ করতে কমপক্ষে কত sample লাগবে</span>
+    criterion<span class="op">=</span><span class="st">'gini'</span>,    <span class="cm"># Gini impurity দিয়ে ভাগ</span>
+    random_state<span class="op">=</span><span class="bo">42</span>
+)
+
+dt<span class="op">.</span>fit(X_train, y_train)
+y_pred_dt <span class="op">=</span> dt<span class="op">.</span>predict(X_test)
+
+<span class="cm"># গাছের কাঠামো দেখো (text হিসেবে)</span>
+rules <span class="op">=</span> export_text(dt, feature_names<span class="op">=</span><span class="fn">list</span>(X<span class="op">.</span>columns))
+<span class="fn">print</span>(rules[:<span class="bo">500</span>])
+
+<span class="fn">print</span>(classification_report(y_test, y_pred_dt))</pre>
+          </div>
+          <div class="table-wrap"><table>
+            <tr><th>সুবিধা</th><th>অসুবিধা</th></tr>
+            <tr><td>দেখা যায়, ব্যাখ্যা করা সহজ</td><td>Overfitting এর সম্ভাবনা বেশি</td></tr>
+            <tr><td>feature scaling দরকার নেই</td><td>ছোট পরিবর্তনে অনেক বদলায়</td></tr>
+            <tr><td>non-linear boundary পারে</td><td>বড় dataset এ ধীর</td></tr>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ── K-NEAREST NEIGHBORS ── -->
+      <div class="algo-card">
+        <div class="algo-card-header">
+          <div class="algo-icon-wrap" style="background:rgba(88,166,255,.15)">👥</div>
+          <div>
+            <div class="algo-card-title">K-Nearest Neighbors (KNN)</div>
+            <div class="algo-card-subtitle">কাছের প্রতিবেশী দেখে সিদ্ধান্ত</div>
+          </div>
+        </div>
+        <div class="algo-card-body">
+          <h4>🧒 গল্প: নতুন পাড়ায় বাড়ি</h4>
+          <p>তুমি নতুন শহরে এলে। কোন এলাকায় বাড়ি নেবে? তুমি দেখো — কাছের ৫টা বাড়িতে কারা থাকে। যদি ৪টায় পরিবার থাকে, ১টায় ব্যাচেলর — তুমি বলবে এটা "পারিবারিক" এলাকা। KNN ঠিক এটাই করে — K টা কাছের প্রতিবেশী দেখে সংখ্যাগরিষ্ঠের দল বলে।</p>
+          <div class="diagram-wrap" style="margin:14px 0">
+            <svg viewBox="0 0 440 220" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:440px">
+              <rect width="440" height="220" fill="#0d1117" rx="8"/>
+              <!-- Points -->
+              <circle cx="80" cy="80" r="7" fill="#58a6ff" opacity=".9"/>
+              <circle cx="110" cy="65" r="7" fill="#58a6ff" opacity=".9"/>
+              <circle cx="95" cy="100" r="7" fill="#58a6ff" opacity=".9"/>
+              <circle cx="130" cy="85" r="7" fill="#58a6ff" opacity=".9"/>
+              <circle cx="300" cy="140" r="7" fill="#f78166" opacity=".9"/>
+              <circle cx="330" cy="155" r="7" fill="#f78166" opacity=".9"/>
+              <circle cx="310" cy="120" r="7" fill="#f78166" opacity=".9"/>
+              <circle cx="350" cy="135" r="7" fill="#f78166" opacity=".9"/>
+              <!-- New point -->
+              <circle cx="200" cy="110" r="9" fill="#ffa657" stroke="#fff" stroke-width="2"/>
+              <text x="212" y="107" fill="#ffa657" font-size="10" font-family="sans-serif">? (নতুন)</text>
+              <!-- K=3 circle -->
+              <circle cx="200" cy="110" r="85" fill="none" stroke="#d2a8ff" stroke-width="1.5" stroke-dasharray="5,3" opacity=".7"/>
+              <text x="200" y="205" text-anchor="middle" fill="#d2a8ff" font-size="10" font-family="sans-serif">K=3 এর বৃত্ত</text>
+              <!-- Closest 3 -->
+              <circle cx="130" cy="85" r="7" fill="#58a6ff" stroke="#d2a8ff" stroke-width="2.5" opacity=".9"/>
+              <circle cx="300" cy="140" r="7" fill="#f78166" stroke="#d2a8ff" stroke-width="2.5" opacity=".9"/>
+              <circle cx="310" cy="120" r="7" fill="#f78166" stroke="#d2a8ff" stroke-width="2.5" opacity=".9"/>
+              <!-- Lines to nearest -->
+              <line x1="200" y1="110" x2="130" y2="85" stroke="#d2a8ff" stroke-width="1" stroke-dasharray="3"/>
+              <line x1="200" y1="110" x2="300" y2="140" stroke="#d2a8ff" stroke-width="1" stroke-dasharray="3"/>
+              <line x1="200" y1="110" x2="310" y2="120" stroke="#d2a8ff" stroke-width="1" stroke-dasharray="3"/>
+              <!-- Decision -->
+              <rect x="140" y="10" width="160" height="35" rx="5" fill="#1c2330" stroke="#f78166" stroke-width="1.5"/>
+              <text x="220" y="26" text-anchor="middle" fill="#f78166" font-size="11" font-family="sans-serif">K=3: ২টি লাল + ১টি নীল</text>
+              <text x="220" y="40" text-anchor="middle" fill="#f78166" font-size="11" font-family="sans-serif">→ লাল দলে ফেলা হবে</text>
+            </svg>
+            <div class="diagram-caption">// নতুন পয়েন্টের কাছের K=3 প্রতিবেশী দেখে সিদ্ধান্ত</div>
+          </div>
+          <div class="code-block">
+            <div class="code-header"><div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span>knn.py</span></div>
+            <pre><span class="kw">from</span> sklearn.neighbors <span class="kw">import</span> KNeighborsClassifier
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+
+<span class="cm"># KNN এর আগে scaling MUST করতে হবে!</span>
+<span class="cm"># কারণ distance based — scale না হলে বড় feature dominates করবে</span>
+knn_pipeline <span class="op">=</span> Pipeline([
+    (<span class="st">'scaler'</span>, StandardScaler()),
+    (<span class="st">'knn'</span>, KNeighborsClassifier(
+        n_neighbors<span class="op">=</span><span class="bo">5</span>,     <span class="cm"># K = কতটা প্রতিবেশী দেখবে</span>
+        metric<span class="op">=</span><span class="st">'euclidean'</span> <span class="cm"># দূরত্ব মাপার পদ্ধতি</span>
+    ))
+])
+
+knn_pipeline<span class="op">.</span>fit(X_train, y_train)
+y_pred_knn <span class="op">=</span> knn_pipeline<span class="op">.</span>predict(X_test)
+
+<span class="cm"># সেরা K খুঁজে বের করা</span>
+k_scores <span class="op">=</span> []
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="bo">1</span>, <span class="bo">21</span>):
+    knn <span class="op">=</span> KNeighborsClassifier(n_neighbors<span class="op">=</span>k)
+    knn<span class="op">.</span>fit(X_train, y_train)
+    k_scores<span class="op">.</span>append(knn<span class="op">.</span>score(X_test, y_test))
+best_k <span class="op">=</span> k_scores<span class="op">.</span>index(<span class="fn">max</span>(k_scores)) <span class="op">+</span> <span class="bo">1</span>
+<span class="fn">print</span>(<span class="st">f"Best K: {best_k}"</span>)</pre>
+          </div>
+          <div class="table-wrap"><table>
+            <tr><th>সুবিধা</th><th>অসুবিধা</th></tr>
+            <tr><td>সহজ, কোনো training নেই</td><td>বড় dataset এ ধীর</td></tr>
+            <tr><td>non-linear pattern পারে</td><td>feature scaling অবশ্যই দরকার</td></tr>
+            <tr><td>multi-class এ ভালো</td><td>high dimension এ দুর্বল</td></tr>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ── SVM ── -->
+      <div class="algo-card">
+        <div class="algo-card-header">
+          <div class="algo-icon-wrap" style="background:rgba(255,166,87,.15)">📏</div>
+          <div>
+            <div class="algo-card-title">Support Vector Machine (SVM)</div>
+            <div class="algo-card-subtitle">সর্বোচ্চ margin এর বিভাজন</div>
+          </div>
+        </div>
+        <div class="algo-card-body">
+          <h4>🧒 গল্প: রাস্তার মাঝখানে হাঁটা</h4>
+          <p>ধরো দুটো দল দুই দিকে দাঁড়িয়ে। তুমি মাঝখানে একটা রেখা আঁকবে — কিন্তু রেখাটা এমনভাবে আঁকবে যেন দুই দল থেকে সমান দূরত্ব থাকে। SVM এই "সমান দূরত্বের রেখা" খোঁজে। এই দূরত্বকে বলে <strong>margin</strong>।</p>
+          <div class="diagram-wrap" style="margin:14px 0">
+            <svg viewBox="0 0 460 220" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:460px">
+              <defs>
+                <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L8,3 z" fill="#ffa657"/>
+                </marker>
+              </defs>
+              <rect width="460" height="220" fill="#0d1117" rx="8"/>
+              <!-- Blue points -->
+              <circle cx="80" cy="70" r="6" fill="#58a6ff" opacity=".9"/>
+              <circle cx="100" cy="95" r="6" fill="#58a6ff" opacity=".9"/>
+              <circle cx="70" cy="115" r="6" fill="#58a6ff" opacity=".9"/>
+              <circle cx="120" cy="80" r="6" fill="#58a6ff" opacity=".9"/>
+              <circle cx="90" cy="140" r="6" fill="#58a6ff" opacity=".9"/>
+              <!-- Orange points -->
+              <circle cx="330" cy="75" r="6" fill="#f78166" opacity=".9"/>
+              <circle cx="360" cy="100" r="6" fill="#f78166" opacity=".9"/>
+              <circle cx="340" cy="130" r="6" fill="#f78166" opacity=".9"/>
+              <circle cx="380" cy="80" r="6" fill="#f78166" opacity=".9"/>
+              <circle cx="370" cy="145" r="6" fill="#f78166" opacity=".9"/>
+              <!-- Support vectors (circled) -->
+              <circle cx="120" cy="80" r="11" fill="none" stroke="#58a6ff" stroke-width="2" stroke-dasharray="3"/>
+              <circle cx="330" cy="75" r="11" fill="none" stroke="#f78166" stroke-width="2" stroke-dasharray="3"/>
+              <!-- Hyperplane -->
+              <line x1="225" y1="20" x2="225" y2="200" stroke="#3fb950" stroke-width="2.5"/>
+              <!-- Margin lines -->
+              <line x1="160" y1="20" x2="160" y2="200" stroke="#3fb950" stroke-width="1" stroke-dasharray="5,4" opacity=".5"/>
+              <line x1="290" y1="20" x2="290" y2="200" stroke="#3fb950" stroke-width="1" stroke-dasharray="5,4" opacity=".5"/>
+              <!-- Margin annotation -->
+              <line x1="160" y1="110" x2="290" y2="110" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arr2)"/>
+              <text x="225" y="105" text-anchor="middle" fill="#ffa657" font-size="10" font-family="sans-serif">margin</text>
+              <!-- Labels -->
+              <text x="70" y="175" fill="#58a6ff" font-size="11" font-family="sans-serif">Democrat</text>
+              <text x="330" y="175" fill="#f78166" font-size="11" font-family="sans-serif">Republican</text>
+              <text x="225" y="210" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif">Hyperplane (maximum margin)</text>
+              <!-- Support vector label -->
+              <text x="75" y="55" fill="#8b949e" font-size="9" font-family="sans-serif">Support Vectors</text>
+              <text x="300" y="55" fill="#8b949e" font-size="9" font-family="sans-serif">Support Vectors</text>
+            </svg>
+            <div class="diagram-caption">// SVM সর্বোচ্চ margin সহ hyperplane খোঁজে — Support Vectors সীমানায়</div>
+          </div>
+          <div class="code-block">
+            <div class="code-header"><div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span>svm.py</span></div>
+            <pre><span class="kw">from</span> sklearn.svm <span class="kw">import</span> SVC
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+
+svm_pipeline <span class="op">=</span> Pipeline([
+    (<span class="st">'scaler'</span>, StandardScaler()),
+    (<span class="st">'svm'</span>, SVC(
+        kernel<span class="op">=</span><span class="st">'rbf'</span>,   <span class="cm"># 'linear', 'rbf', 'poly', 'sigmoid'</span>
+                         <span class="cm"># rbf = Radial Basis Function (non-linear)</span>
+        C<span class="op">=</span><span class="bo">1.0</span>,           <span class="cm"># regularization</span>
+        gamma<span class="op">=</span><span class="st">'scale'</span>,  <span class="cm"># RBF kernel এর প্রশস্ততা</span>
+        probability<span class="op">=</span><span class="kw">True</span> <span class="cm"># predict_proba() চাইলে True করো</span>
+    ))
+])
+
+svm_pipeline<span class="op">.</span>fit(X_train, y_train)
+y_pred_svm <span class="op">=</span> svm_pipeline<span class="op">.</span>predict(X_test)
+
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+<span class="fn">print</span>(<span class="st">"SVM Accuracy:"</span>, accuracy_score(y_test, y_pred_svm))</pre>
+          </div>
+          <div class="table-wrap"><table>
+            <tr><th>সুবিধা</th><th>অসুবিধা</th></tr>
+            <tr><td>High-dimensional data তে ভালো</td><td>বড় dataset এ ধীর</td></tr>
+            <tr><td>kernel trick দিয়ে non-linear</td><td>ব্যাখ্যা করা কঠিন</td></tr>
+            <tr><td>overfitting কম</td><td>hyperparameter tuning দরকার</td></tr>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ── RANDOM FOREST ── -->
+      <div class="algo-card">
+        <div class="algo-card-header">
+          <div class="algo-icon-wrap" style="background:rgba(57,208,216,.15)">🌲🌲🌲</div>
+          <div>
+            <div class="algo-card-title">Random Forest</div>
+            <div class="algo-card-subtitle">অনেক গাছের দলগত সিদ্ধান্ত</div>
+          </div>
+        </div>
+        <div class="algo-card-body">
+          <h4>🧒 গল্প: ১০০ জন বিচারকের রায়</h4>
+          <p>একটা সিদ্ধান্তের জন্য ১ জন বিচারক না — ১০০ জন বিচারক! প্রত্যেকে আলাদা আলাদাভাবে সিদ্ধান্ত নেয়, তারপর সংখ্যাগরিষ্ঠের রায় চূড়ান্ত। এটাই Random Forest — অনেকগুলো Decision Tree মিলে কাজ করে।</p>
+          <div class="diagram-wrap" style="margin:14px 0">
+            <svg viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:560px">
+              <defs>
+                <marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L8,3 z" fill="#8b949e"/>
+                </marker>
+              </defs>
+              <rect width="560" height="200" fill="#0d1117" rx="8"/>
+              <!-- Input -->
+              <rect x="20" y="80" width="80" height="40" rx="6" fill="#1c2330" stroke="#8b949e" stroke-width="1.5"/>
+              <text x="60" y="104" text-anchor="middle" fill="#c9d1d9" font-size="11" font-family="sans-serif">New Data</text>
+              <!-- Trees -->
+              <rect x="140" y="30" width="70" height="40" rx="6" fill="#1c2330" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="175" y="46" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif">Tree 1</text>
+              <text x="175" y="61" text-anchor="middle" fill="#58a6ff" font-size="10" font-family="sans-serif">Democrat</text>
+              <rect x="140" y="80" width="70" height="40" rx="6" fill="#1c2330" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="175" y="96" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif">Tree 2</text>
+              <text x="175" y="111" text-anchor="middle" fill="#f78166" font-size="10" font-family="sans-serif">Republican</text>
+              <rect x="140" y="130" width="70" height="40" rx="6" fill="#1c2330" stroke="#3fb950" stroke-width="1.5"/>
+              <text x="175" y="146" text-anchor="middle" fill="#3fb950" font-size="10" font-family="sans-serif">Tree 3</text>
+              <text x="175" y="161" text-anchor="middle" fill="#f78166" font-size="10" font-family="sans-serif">Republican</text>
+              <!-- Lines from input to trees -->
+              <line x1="100" y1="100" x2="140" y2="50" stroke="#30363d" stroke-width="1"/>
+              <line x1="100" y1="100" x2="140" y2="100" stroke="#30363d" stroke-width="1"/>
+              <line x1="100" y1="100" x2="140" y2="150" stroke="#30363d" stroke-width="1"/>
+              <!-- Lines to voting -->
+              <rect x="260" y="70" width="100" height="60" rx="6" fill="#1c2330" stroke="#ffa657" stroke-width="1.5"/>
+              <text x="310" y="90" text-anchor="middle" fill="#ffa657" font-size="11" font-family="sans-serif" font-weight="bold">Voting</text>
+              <text x="310" y="108" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Dem: 1 vote</text>
+              <text x="310" y="122" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">Rep: 2 votes ✓</text>
+              <line x1="210" y1="50" x2="260" y2="95" stroke="#30363d" stroke-width="1"/>
+              <line x1="210" y1="100" x2="260" y2="100" stroke="#30363d" stroke-width="1"/>
+              <line x1="210" y1="150" x2="260" y2="115" stroke="#30363d" stroke-width="1"/>
+              <!-- Final output -->
+              <rect x="400" y="75" width="130" height="50" rx="6" fill="rgba(247,129,102,0.2)" stroke="#f78166" stroke-width="1.5"/>
+              <text x="465" y="97" text-anchor="middle" fill="#f78166" font-size="12" font-weight="bold" font-family="sans-serif">🏆 Republican</text>
+              <text x="465" y="114" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">সংখ্যাগরিষ্ঠ রায়</text>
+              <line x1="360" y1="100" x2="400" y2="100" stroke="#ffa657" stroke-width="1.5" marker-end="url(#arr3)"/>
+            </svg>
+            <div class="diagram-caption">// Random Forest: অনেক Tree মিলে ভোট দিয়ে সিদ্ধান্ত</div>
+          </div>
+          <div class="code-block">
+            <div class="code-header"><div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span>random_forest.py</span></div>
+            <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+rf <span class="op">=</span> RandomForestClassifier(
+    n_estimators<span class="op">=</span><span class="bo">100</span>,     <span class="cm"># কতটা Tree (বেশি = ভালো কিন্তু ধীর)</span>
+    max_depth<span class="op">=</span><span class="bo">10</span>,         <span class="cm"># প্রতিটা Tree কত গভীর</span>
+    max_features<span class="op">=</span><span class="st">'sqrt'</span>, <span class="cm"># প্রতিটা split এ কত feature দেখবে</span>
+    n_jobs<span class="op">=</span><span class="op">-</span><span class="bo">1</span>,           <span class="cm"># সব CPU core ব্যবহার করো</span>
+    random_state<span class="op">=</span><span class="bo">42</span>
+)
+
+rf<span class="op">.</span>fit(X_train, y_train)
+y_pred_rf <span class="op">=</span> rf<span class="op">.</span>predict(X_test)
+
+<span class="cm"># Feature Importance — কোন ভোট সবচেয়ে গুরুত্বপূর্ণ?</span>
+importance <span class="op">=</span> pd<span class="op">.</span>Series(
+    rf<span class="op">.</span>feature_importances_,
+    index<span class="op">=</span>X<span class="op">.</span>columns
+)<span class="op">.</span>sort_values(ascending<span class="op">=</span><span class="kw">False</span>)
+<span class="fn">print</span>(<span class="st">"Top 5 features:"</span>)
+<span class="fn">print</span>(importance<span class="op">.</span>head(<span class="bo">5</span>))
+
+<span class="fn">print</span>(classification_report(y_test, y_pred_rf))</pre>
+          </div>
+          <div class="table-wrap"><table>
+            <tr><th>সুবিধা</th><th>অসুবিধা</th></tr>
+            <tr><td>অনেক শক্তিশালী ও নির্ভরযোগ্য</td><td>ব্যাখ্যা করা কঠিন (Black Box)</td></tr>
+            <tr><td>overfitting কম</td><td>অনেক memory লাগে</td></tr>
+            <tr><td>feature importance দেয়</td><td>real-time prediction এ ধীর</td></tr>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- ── NAIVE BAYES ── -->
+      <div class="algo-card">
+        <div class="algo-card-header">
+          <div class="algo-icon-wrap" style="background:rgba(255,126,182,.15)">🎲</div>
+          <div>
+            <div class="algo-card-title">Naive Bayes</div>
+            <div class="algo-card-subtitle">সম্ভাবনা তত্ত্ব দিয়ে শ্রেণীবদ্ধ</div>
+          </div>
+        </div>
+        <div class="algo-card-body">
+          <h4>🧒 গল্প: ইমেইল Spam চেনা</h4>
+          <p>"বিনামূল্যে জিতুন", "টাকা পাঠান" — এই শব্দগুলো Spam ইমেইলে বেশি দেখা যায়। Naive Bayes প্রতিটা শব্দ আলাদাভাবে দেখে সম্ভাবনা হিসাব করে। "Naive" মানে সরলীকরণ — ধরে নেওয়া হয় প্রতিটা feature স্বাধীন।</p>
+          <div class="code-block">
+            <div class="code-header"><div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span>naive_bayes.py</span></div>
+            <pre><span class="kw">from</span> sklearn.naive_bayes <span class="kw">import</span> GaussianNB, BernoulliNB
+
+<span class="cm"># GaussianNB: continuous feature এর জন্য</span>
+gnb <span class="op">=</span> GaussianNB()
+gnb<span class="op">.</span>fit(X_train, y_train)
+y_pred_gnb <span class="op">=</span> gnb<span class="op">.</span>predict(X_test)
+
+<span class="cm"># BernoulliNB: binary feature এর জন্য (0/1 vote)</span>
+<span class="cm"># ← এই Congressional voting dataset এর জন্য এটা বেশি উপযুক্ত!</span>
+bnb <span class="op">=</span> BernoulliNB()
+bnb<span class="op">.</span>fit(X_train, y_train)
+y_pred_bnb <span class="op">=</span> bnb<span class="op">.</span>predict(X_test)
+
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+<span class="fn">print</span>(<span class="st">"Gaussian NB:"</span>, accuracy_score(y_test, y_pred_gnb))
+<span class="fn">print</span>(<span class="st">"Bernoulli NB:"</span>, accuracy_score(y_test, y_pred_bnb))</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── GRADIENT BOOSTING ── -->
+      <div class="algo-card">
+        <div class="algo-card-header">
+          <div class="algo-icon-wrap" style="background:rgba(63,185,80,.15)">🚀</div>
+          <div>
+            <div class="algo-card-title">Gradient Boosting (XGBoost)</div>
+            <div class="algo-card-subtitle">ভুল থেকে শিক্ষা নিয়ে উন্নতি</div>
+          </div>
+        </div>
+        <div class="algo-card-body">
+          <h4>🧒 গল্প: ধাপে ধাপে উন্নতি</h4>
+          <p>একজন শিক্ষার্থী প্রথমবার পরীক্ষা দেয়, ভুলগুলো চিহ্নিত করে। পরের বার ভুলগুলো ঠিক করে আবার দেয়। এভাবে প্রতিবার আগের ভুলের উপর ফোকাস করে। Gradient Boosting এই ভাবে কাজ করে — প্রতিটা নতুন Tree আগেরটার ভুল কমাতে চেষ্টা করে।</p>
+          <div class="code-block">
+            <div class="code-header"><div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span>xgboost.py</span></div>
+            <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> GradientBoostingClassifier
+
+<span class="cm"># sklearn এর GradientBoosting</span>
+gb <span class="op">=</span> GradientBoostingClassifier(
+    n_estimators<span class="op">=</span><span class="bo">100</span>,   <span class="cm"># কতটা tree</span>
+    learning_rate<span class="op">=</span><span class="bo">0.1</span>, <span class="cm"># প্রতিবার কতটা শিখবে (ছোট = stable)</span>
+    max_depth<span class="op">=</span><span class="bo">3</span>,       <span class="cm"># প্রতিটা tree কত গভীর</span>
+    random_state<span class="op">=</span><span class="bo">42</span>
+)
+gb<span class="op">.</span>fit(X_train, y_train)
+<span class="fn">print</span>(<span class="st">"GB Accuracy:"</span>, gb<span class="op">.</span>score(X_test, y_test))
+
+<span class="cm"># XGBoost (আলাদা install করতে হবে: pip install xgboost)</span>
+<span class="kw">from</span> xgboost <span class="kw">import</span> XGBClassifier
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> LabelEncoder
+
+<span class="cm"># XGBoost এ numeric label দরকার</span>
+le <span class="op">=</span> LabelEncoder()
+y_train_enc <span class="op">=</span> le<span class="op">.</span>fit_transform(y_train)
+y_test_enc <span class="op">=</span> le<span class="op">.</span>transform(y_test)
+
+xgb <span class="op">=</span> XGBClassifier(
+    n_estimators<span class="op">=</span><span class="bo">100</span>,
+    learning_rate<span class="op">=</span><span class="bo">0.05</span>,
+    max_depth<span class="op">=</span><span class="bo">4</span>,
+    use_label_encoder<span class="op">=</span><span class="kw">False</span>,
+    eval_metric<span class="op">=</span><span class="st">'logloss'</span>,
+    random_state<span class="op">=</span><span class="bo">42</span>
+)
+xgb<span class="op">.</span>fit(X_train, y_train_enc)
+<span class="fn">print</span>(<span class="st">"XGBoost Accuracy:"</span>, xgb<span class="op">.</span>score(X_test, y_test_enc))</pre>
+          </div>
+          <div class="callout callout-success">
+            <div class="callout-title">🏆 Kaggle তে সবচেয়ে বেশি জেতে</div>
+            XGBoost, LightGBM, এবং CatBoost — এই তিনটি Gradient Boosting model বেশিরভাগ Kaggle competition জেতে। Real-world tabular data তে এদের performance অসাধারণ।
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end algo-grid -->
+
+    <h3>কোন Algorithm কখন ব্যবহার করবে?</h3>
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:700px">
+        <rect width="700" height="320" fill="#161b22" rx="10"/>
+        <text x="350" y="28" text-anchor="middle" fill="#e6edf3" font-size="14" font-weight="bold" font-family="sans-serif">কোন Algorithm কবে ব্যবহার করবো?</text>
+
+        <rect x="280" y="45" width="140" height="40" rx="6" fill="#1c2330" stroke="#58a6ff" stroke-width="1.5"/>
+        <text x="350" y="68" text-anchor="middle" fill="#58a6ff" font-size="12" font-family="sans-serif" font-weight="bold">শুরু</text>
+
+        <line x1="350" y1="85" x2="350" y2="110" stroke="#30363d" stroke-width="1.5"/>
+        <rect x="240" y="110" width="220" height="36" rx="6" fill="#1c2330" stroke="#ffa657" stroke-width="1.5"/>
+        <text x="350" y="133" text-anchor="middle" fill="#ffa657" font-size="11" font-family="sans-serif">Interpretability দরকার?</text>
+        <text x="300" y="155" fill="#3fb950" font-size="10" font-family="sans-serif">হ্যাঁ ↙</text>
+        <text x="385" y="155" fill="#f78166" font-size="10" font-family="sans-serif">না ↘</text>
+        <line x1="310" y1="146" x2="200" y2="180" stroke="#30363d"/>
+        <line x1="395" y1="146" x2="500" y2="180" stroke="#30363d"/>
+
+        <rect x="110" y="180" width="180" height="36" rx="6" fill="#1c2330" stroke="#3fb950" stroke-width="1.5"/>
+        <text x="200" y="203" text-anchor="middle" fill="#3fb950" font-size="11" font-family="sans-serif">Logistic Regression</text>
+        <rect x="110" y="226" width="180" height="30" rx="5" fill="#0d1117" stroke="#30363d"/>
+        <text x="200" y="246" text-anchor="middle" fill="#8b949e" font-size="10" font-family="sans-serif">সহজ, ব্যাখ্যা করা যায়</text>
+
+        <rect x="415" y="180" width="200" height="36" rx="6" fill="#1c2330" stroke="#ffa657" stroke-width="1.5"/>
+        <text x="515" y="198" text-anchor="middle" fill="#ffa657" font-size="11" font-family="sans-serif">ডেটা বড় বা জটিল?</text>
+
+        <line x1="465" y1="216" x2="380" y2="255" stroke="#30363d"/>
+        <line x1="565" y1="216" x2="575" y2="255" stroke="#30363d"/>
+        <text x="415" y="240" fill="#3fb950" font-size="10" font-family="sans-serif">না ↙</text>
+        <text x="550" y="240" fill="#f78166" font-size="10" font-family="sans-serif">হ্যাঁ ↘</text>
+
+        <rect x="295" y="255" width="155" height="36" rx="6" fill="#1c2330" stroke="#d2a8ff" stroke-width="1.5"/>
+        <text x="372" y="278" text-anchor="middle" fill="#d2a8ff" font-size="11" font-family="sans-serif">SVM / KNN</text>
+
+        <rect x="490" y="255" width="175" height="36" rx="6" fill="#1c2330" stroke="#39d0d8" stroke-width="1.5"/>
+        <text x="577" y="278" text-anchor="middle" fill="#39d0d8" font-size="11" font-family="sans-serif">Random Forest / XGBoost</text>
+      </svg>
+      <div class="diagram-caption">// Algorithm নির্বাচনের সরল গাইড</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <tr><th>Algorithm</th><th>ডেটার আকার</th><th>Scaling দরকার?</th><th>Interpretable?</th><th>Typical Accuracy</th></tr>
+        <tr><td>Logistic Regression</td><td>যেকোনো</td><td>✅ হ্যাঁ</td><td>✅ হ্যাঁ</td><td>ভালো</td></tr>
+        <tr><td>Decision Tree</td><td>ছোট-মাঝারি</td><td>❌ না</td><td>✅ হ্যাঁ</td><td>মাঝারি</td></tr>
+        <tr><td>KNN</td><td>ছোট</td><td>✅ অবশ্যই</td><td>✅ হ্যাঁ</td><td>ভালো</td></tr>
+        <tr><td>SVM</td><td>মাঝারি</td><td>✅ হ্যাঁ</td><td>❌ না</td><td>খুব ভালো</td></tr>
+        <tr><td>Random Forest</td><td>যেকোনো</td><td>❌ না</td><td>⚠️ আংশিক</td><td>অনেক ভালো</td></tr>
+        <tr><td>XGBoost</td><td>বড়</td><td>❌ না</td><td>⚠️ আংশিক</td><td>সেরা</td></tr>
+        <tr><td>Naive Bayes</td><td>যেকোনো</td><td>❌ না</td><td>✅ হ্যাঁ</td><td>ঠিকঠাক</td></tr>
+      </table>
+    </div>
+
+    <div class="exercise-block">
+      <div class="exercise-title">🎓 Interview Exercise — Section 09</div>
+      <div class="exercise-item">
+        <div class="ex-num">1</div>
+        <div class="ex-q"><strong>Bias-Variance Tradeoff:</strong> Decision Tree এর <span class="ex-code-note">max_depth=1</span> বনাম <span class="ex-code-note">max_depth=100</span> — কোনটায় Underfitting, কোনটায় Overfitting? এই ট্রেডঅফ ব্যাখ্যা করো।</div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">2</div>
+        <div class="ex-q"><strong>Hyperparameter Tuning:</strong> Random Forest এ <span class="ex-code-note">GridSearchCV</span> ব্যবহার করে সেরা <span class="ex-code-note">n_estimators</span> এবং <span class="ex-code-note">max_depth</span> খুঁজে বের করার সম্পূর্ণ কোড লিখো।</div>
+        <div class="ex-hint">💡 Code hint: <code>GridSearchCV(RandomForestClassifier(), param_grid={'n_estimators':[50,100,200], 'max_depth':[5,10,None]}, cv=5)</code></div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">3</div>
+        <div class="ex-q"><strong>Ensemble এর ধারণা:</strong> Bagging (Random Forest) এবং Boosting (XGBoost) এর মূলগত পার্থক্য কী? কোনটা parallel আর কোনটা sequential?</div>
+        <div class="ex-hint">💡 Bagging: সব Tree একসাথে স্বাধীনভাবে তৈরি হয়। Boosting: প্রতিটা Tree আগেরটার ভুলের উপর নির্ভর করে।</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SECTION 10 — ML PROJECT EXERCISES ═══════════════════════════ -->
+<div class="section" id="s10">
+  <div class="section-header">
+    <div class="section-icon" style="background:rgba(88,166,255,.15)">💼</div>
+    <div>
+      <div class="section-num">SECTION 10</div>
+      <h2>ML Engineering প্রজেক্ট Exercise</h2>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="callout callout-warn">
+      <div class="callout-title">🏭 Real-world ML Project Level</div>
+      এই exercises গুলো production-level ML engineering কাজের মতো — শুধু কোড লেখা না, সম্পূর্ণ ML pipeline বানানো।
+    </div>
+
+    <h3>🔥 প্রজেক্ট ১: সম্পূর্ণ ML Pipeline</h3>
+    <p>Congressional Votes ডেটাসেট দিয়ে একটি সম্পূর্ণ, production-ready classification pipeline তৈরি করো।</p>
+
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span>ml_pipeline_complete.py</span></div>
+      <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split, cross_val_score, GridSearchCV
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, LabelEncoder
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report, confusion_matrix
+<span class="kw">import</span> warnings
+warnings<span class="op">.</span>filterwarnings(<span class="st">'ignore'</span>)
+
+<span class="cm"># ═══ STEP 1: DATA LOADING ═══</span>
+df <span class="op">=</span> pd<span class="op">.</span>read_csv(<span class="st">'votes.csv'</span>)
+<span class="fn">print</span>(<span class="st">f"Dataset shape: {df.shape}"</span>)
+<span class="fn">print</span>(<span class="st">f"Class distribution:\n{df['party'].value_counts()}"</span>)
+
+<span class="cm"># ═══ STEP 2: DATA VALIDATION ═══</span>
+<span class="fn">print</span>(<span class="st">f"\nMissing values:\n{df.isnull().sum()}"</span>)
+<span class="fn">print</span>(<span class="st">f"\nData types:\n{df.dtypes}"</span>)
+
+<span class="cm"># ═══ STEP 3: PREPROCESSING ═══</span>
+df<span class="op">.</span>replace({<span class="st">'y'</span>: <span class="bo">1</span>, <span class="st">'n'</span>: <span class="bo">0</span>}, inplace<span class="op">=</span><span class="kw">True</span>)
+
+X <span class="op">=</span> df<span class="op">.</span>drop(<span class="st">'party'</span>, axis<span class="op">=</span><span class="bo">1</span>)
+y <span class="op">=</span> df[<span class="st">'party'</span>]
+
+X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(
+    X, y, test_size<span class="op">=</span><span class="bo">0.2</span>, random_state<span class="op">=</span><span class="bo">42</span>, stratify<span class="op">=</span>y
+)
+
+<span class="cm"># ═══ STEP 4: MODEL COMPARISON ═══</span>
+models <span class="op">=</span> {
+    <span class="st">'Logistic Regression'</span>: Pipeline([
+        (<span class="st">'scaler'</span>, StandardScaler()),
+        (<span class="st">'clf'</span>, LogisticRegression(max_iter<span class="op">=</span><span class="bo">1000</span>, random_state<span class="op">=</span><span class="bo">42</span>))
+    ]),
+    <span class="st">'Random Forest'</span>: RandomForestClassifier(
+        n_estimators<span class="op">=</span><span class="bo">100</span>, random_state<span class="op">=</span><span class="bo">42</span>
+    )
+}
+
+results <span class="op">=</span> {}
+<span class="kw">for</span> name, model <span class="kw">in</span> models<span class="op">.</span>items():
+    <span class="cm"># 5-fold Cross Validation</span>
+    cv_scores <span class="op">=</span> cross_val_score(model, X_train, y_train, cv<span class="op">=</span><span class="bo">5</span>)
+    results[name] <span class="op">=</span> {
+        <span class="st">'cv_mean'</span>: cv_scores<span class="op">.</span>mean(),
+        <span class="st">'cv_std'</span>: cv_scores<span class="op">.</span>std()
+    }
+    <span class="fn">print</span>(<span class="st">f"{name}: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})"</span>)
+
+<span class="cm"># ═══ STEP 5: BEST MODEL TRAINING ═══</span>
+best_model <span class="op">=</span> models[<span class="st">'Random Forest'</span>]
+best_model<span class="op">.</span>fit(X_train, y_train)
+y_pred <span class="op">=</span> best_model<span class="op">.</span>predict(X_test)
+
+<span class="fn">print</span>(<span class="st">"\n=== FINAL EVALUATION ==="</span>)
+<span class="fn">print</span>(classification_report(y_test, y_pred))
+
+<span class="cm"># ═══ STEP 6: SAVE MODEL ═══</span>
+<span class="kw">import</span> joblib
+joblib<span class="op">.</span>dump(best_model, <span class="st">'classifier_model.pkl'</span>)
+<span class="fn">print</span>(<span class="st">"\nModel saved!"</span>)
+
+<span class="cm"># ═══ STEP 7: LOAD AND PREDICT (Inference) ═══</span>
+loaded_model <span class="op">=</span> joblib<span class="op">.</span>load(<span class="st">'classifier_model.pkl'</span>)
+new_sample <span class="op">=</span> X_test<span class="op">.</span>iloc[:<span class="bo">1</span>]  <span class="cm"># একটি নতুন sample</span>
+prediction <span class="op">=</span> loaded_model<span class="op">.</span>predict(new_sample)
+<span class="fn">print</span>(<span class="st">f"\nNew prediction: {prediction[0]}"</span>)</pre>
+    </div>
+
+    <h3>🔥 প্রজেক্ট ২: Hyperparameter Tuning</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span>hyperparameter_tuning.py</span></div>
+      <pre><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> GridSearchCV, RandomizedSearchCV
+
+<span class="cm"># GridSearchCV: সব combination চেষ্টা করে</span>
+param_grid <span class="op">=</span> {
+    <span class="st">'n_estimators'</span>: [<span class="bo">50</span>, <span class="bo">100</span>, <span class="bo">200</span>],
+    <span class="st">'max_depth'</span>: [<span class="bo">5</span>, <span class="bo">10</span>, <span class="kw">None</span>],
+    <span class="st">'min_samples_split'</span>: [<span class="bo">2</span>, <span class="bo">5</span>, <span class="bo">10</span>]
+}
+
+grid_search <span class="op">=</span> GridSearchCV(
+    RandomForestClassifier(random_state<span class="op">=</span><span class="bo">42</span>),
+    param_grid,
+    cv<span class="op">=</span><span class="bo">5</span>,
+    scoring<span class="op">=</span><span class="st">'f1_weighted'</span>,  <span class="cm"># F1 optimize করবো</span>
+    n_jobs<span class="op">=</span><span class="op">-</span><span class="bo">1</span>,
+    verbose<span class="op">=</span><span class="bo">1</span>
+)
+
+grid_search<span class="op">.</span>fit(X_train, y_train)
+
+<span class="fn">print</span>(<span class="st">f"Best params: {grid_search.best_params_}"</span>)
+<span class="fn">print</span>(<span class="st">f"Best CV score: {grid_search.best_score_:.4f}"</span>)
+
+<span class="cm"># সেরা মডেল দিয়ে test করো</span>
+best_rf <span class="op">=</span> grid_search<span class="op">.</span>best_estimator_
+<span class="fn">print</span>(classification_report(y_test, best_rf<span class="op">.</span>predict(X_test)))</pre>
+    </div>
+
+    <h3>🔥 প্রজেক্ট ৩: মডেল তুলনা Dashboard</h3>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div><span>model_comparison.py</span></div>
+      <pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.tree <span class="kw">import</span> DecisionTreeClassifier
+<span class="kw">from</span> sklearn.neighbors <span class="kw">import</span> KNeighborsClassifier
+<span class="kw">from</span> sklearn.svm <span class="kw">import</span> SVC
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier, GradientBoostingClassifier
+<span class="kw">from</span> sklearn.naive_bayes <span class="kw">import</span> BernoulliNB
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># সব মডেল একটা dict তে</span>
+classifiers <span class="op">=</span> {
+    <span class="st">'Logistic Regression'</span>: Pipeline([
+        (<span class="st">'s'</span>, StandardScaler()), (<span class="st">'m'</span>, LogisticRegression(max_iter<span class="op">=</span><span class="bo">1000</span>))]),
+    <span class="st">'Decision Tree'</span>: DecisionTreeClassifier(random_state<span class="op">=</span><span class="bo">42</span>),
+    <span class="st">'KNN'</span>: Pipeline([
+        (<span class="st">'s'</span>, StandardScaler()), (<span class="st">'m'</span>, KNeighborsClassifier(n_neighbors<span class="op">=</span><span class="bo">7</span>))]),
+    <span class="st">'SVM'</span>: Pipeline([
+        (<span class="st">'s'</span>, StandardScaler()), (<span class="st">'m'</span>, SVC(kernel<span class="op">=</span><span class="st">'rbf'</span>))]),
+    <span class="st">'Random Forest'</span>: RandomForestClassifier(n_estimators<span class="op">=</span><span class="bo">100</span>, random_state<span class="op">=</span><span class="bo">42</span>),
+    <span class="st">'Gradient Boosting'</span>: GradientBoostingClassifier(random_state<span class="op">=</span><span class="bo">42</span>),
+    <span class="st">'Naive Bayes'</span>: BernoulliNB(),
+}
+
+<span class="cm"># সব মডেল test করো</span>
+results <span class="op">=</span> []
+<span class="kw">for</span> name, clf <span class="kw">in</span> classifiers<span class="op">.</span>items():
+    scores <span class="op">=</span> cross_val_score(clf, X, y, cv<span class="op">=</span><span class="bo">10</span>, scoring<span class="op">=</span><span class="st">'accuracy'</span>)
+    results<span class="op">.</span>append({
+        <span class="st">'Model'</span>: name,
+        <span class="st">'Mean Accuracy'</span>: <span class="st">f"{scores.mean():.4f}"</span>,
+        <span class="st">'Std Dev'</span>: <span class="st">f"{scores.std():.4f}"</span>
+    })
+
+results_df <span class="op">=</span> pd<span class="op">.</span>DataFrame(results)<span class="op">.</span>sort_values(<span class="st">'Mean Accuracy'</span>, ascending<span class="op">=</span><span class="kw">False</span>)
+<span class="fn">print</span>(results_df<span class="op">.</span>to_string(index<span class="op">=</span><span class="kw">False</span>))</pre>
+    </div>
+
+    <div class="exercise-block">
+      <div class="exercise-title">🎓 Final ML Engineer Level Exercise</div>
+      <div class="exercise-item">
+        <div class="ex-num">1</div>
+        <div class="ex-q"><strong>SMOTE প্রয়োগ:</strong> একটি imbalanced dataset (90:10 ratio) তে SMOTE ব্যবহার করে balance করো এবং before/after accuracy ও recall তুলনা করো।</div>
+        <div class="ex-hint">💡 <code>from imblearn.over_sampling import SMOTE; X_res, y_res = SMOTE().fit_resample(X_train, y_train)</code></div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">2</div>
+        <div class="ex-q"><strong>Custom Threshold:</strong> একটি fraud detection সিস্টেমে threshold কে 0.5 থেকে 0.2 তে নামিয়ে দেখো কীভাবে Precision এবং Recall পরিবর্তন হয়। ROC curve এবং AUC score বের করো।</div>
+        <div class="ex-hint">💡 <code>from sklearn.metrics import roc_auc_score, roc_curve</code> ব্যবহার করো।</div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">3</div>
+        <div class="ex-q"><strong>Feature Engineering:</strong> Congressional votes dataset এ নতুন feature বানাও — যেমন "total_yes_votes" (সব ভোটের যোগফল)। এই নতুন feature মডেলের accuracy বাড়ায় কিনা দেখো।</div>
+      </div>
+      <div class="exercise-item">
+        <div class="ex-num">4</div>
+        <div class="ex-q"><strong>Model Deployment (Inference API):</strong> Trained model টাকে <span class="ex-code-note">joblib</span> দিয়ে save করো এবং একটি simple FastAPI endpoint বানাও যেখানে JSON input পাঠালে prediction return করবে।</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- end .main -->
+
+<!-- ─── FOOTER ─────────────────────────────────────── -->
+<div class="footer">
+  <strong>মেশিন লার্নিং: Classification — সম্পূর্ণ বাংলা গাইড</strong><br>
+  scikit-learn · Classification &nbsp;|&nbsp; এই ফাইলটি সম্পূর্ণ — ইন্টারনেটের দরকার নেই
+</div>
+
+</body>
+</html>

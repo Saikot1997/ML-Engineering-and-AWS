@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ডেটা ভিজুয়ালাইজেশন — সম্পূর্ণ বাংলা কোর্স</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Baloo+Da+2:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2128;
+    --bg4: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #6e7681;
+    --blue: #58a6ff;
+    --green: #3fb950;
+    --purple: #bc8cff;
+    --orange: #f78166;
+    --yellow: #e3b341;
+    --pink: #f47067;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Hero Section ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 24px 80px;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(88,166,255,.12) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 10% 80%, rgba(63,185,80,.08) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 90% 80%, rgba(188,140,255,.08) 0%, transparent 60%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(88,166,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(88,166,255,.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 900px; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(88,166,255,.12); border: 1px solid rgba(88,166,255,.3);
+    color: var(--blue); padding: 6px 18px; border-radius: 100px;
+    font-size: 13px; font-weight: 600; letter-spacing: .5px; margin-bottom: 28px;
+  }
+  .badge-dot { width: 7px; height: 7px; background: var(--blue); border-radius: 50%; animation: pulse 2s infinite; }
+
+  h1.hero-title {
+    font-family: 'Baloo Da 2', cursive;
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 18px;
+    background: linear-gradient(135deg, #e6edf3 0%, #58a6ff 40%, #bc8cff 80%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-sub {
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    color: var(--text2); max-width: 640px; margin: 0 auto 36px; line-height: 1.7;
+  }
+  .stats-row {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 52px;
+  }
+  .stat-pill {
+    background: var(--bg2); border: 1px solid var(--border);
+    padding: 10px 22px; border-radius: 10px;
+    display: flex; flex-direction: column; align-items: center; min-width: 110px;
+  }
+  .stat-pill .num { font-family: 'Baloo Da 2', cursive; font-size: 1.6rem; font-weight: 800; }
+  .stat-pill .lbl { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+  .scroll-hint {
+    position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: var(--text3); font-size: 12px; animation: bounce 2s infinite;
+  }
+  .scroll-arrow { font-size: 18px; }
+
+  /* ── Lectures Section ── */
+  .lectures-section { padding: 60px 24px 100px; max-width: 1100px; margin: 0 auto; }
+  .section-header { text-align: center; margin-bottom: 48px; }
+  .section-header h2 {
+    font-family: 'Baloo Da 2', cursive; font-size: 2rem; font-weight: 700;
+    margin-bottom: 10px; color: var(--text);
+  }
+  .section-header p { color: var(--text2); font-size: 15px; }
+
+  .lectures-grid { display: flex; flex-direction: column; gap: 20px; }
+
+  .lecture-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+    position: relative;
+  }
+  .lecture-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(0,0,0,.4);
+  }
+  .lecture-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    background: var(--card-color);
+    border-radius: 4px 0 0 4px;
+  }
+
+  .card-inner {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    align-items: center;
+    gap: 0;
+    padding: 24px 28px;
+  }
+
+  .lecture-num {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 64px; height: 64px; border-radius: 14px;
+    background: color-mix(in srgb, var(--card-color) 18%, transparent);
+    border: 1.5px solid color-mix(in srgb, var(--card-color) 35%, transparent);
+    font-family: 'Baloo Da 2', cursive;
+    flex-shrink: 0;
+  }
+  .lecture-num .lbl { font-size: 10px; color: var(--card-color); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .lecture-num .n { font-size: 1.8rem; font-weight: 800; color: var(--card-color); line-height: 1; }
+
+  .card-body { padding: 0 24px; }
+  .card-library { font-size: 11px; color: var(--card-color); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; }
+  .card-title { font-family: 'Baloo Da 2', cursive; font-size: 1.3rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .card-desc { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 14px; }
+
+  .topics-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .topic-chip {
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    background: color-mix(in srgb, var(--card-color) 12%, transparent);
+    color: var(--card-color);
+    border: 1px solid color-mix(in srgb, var(--card-color) 25%, transparent);
+    font-weight: 500;
+  }
+
+  .card-action { flex-shrink: 0; padding-left: 16px; }
+  .btn-open {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--card-color); color: #0d1117;
+    padding: 12px 22px; border-radius: 10px;
+    font-weight: 700; font-size: 14px; text-decoration: none;
+    font-family: 'Hind Siliguri', sans-serif;
+    transition: opacity .2s, transform .2s; white-space: nowrap;
+  }
+  .btn-open:hover { opacity: .88; transform: scale(1.03); }
+  .btn-icon { font-size: 16px; }
+
+  /* ── Progress Track ── */
+  .progress-section { padding: 0 24px 80px; max-width: 1100px; margin: 0 auto; }
+  .progress-track {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 32px 36px;
+  }
+  .progress-track h3 { font-family: 'Baloo Da 2', cursive; font-size: 1.3rem; font-weight: 700; margin-bottom: 24px; }
+  .track-steps { display: flex; align-items: center; gap: 0; }
+  .step {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    position: relative;
+  }
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute; top: 18px; left: calc(50% + 18px); right: calc(-50% + 18px);
+    height: 2px; background: var(--border);
+  }
+  .step-dot {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; position: relative; z-index: 1;
+    border: 2px solid var(--step-color);
+    background: color-mix(in srgb, var(--step-color) 15%, transparent);
+    color: var(--step-color);
+  }
+  .step-label { font-size: 11px; color: var(--text2); text-align: center; max-width: 80px; line-height: 1.3; }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+    color: var(--text3); font-size: 13px;
+  }
+  footer strong { color: var(--text2); }
+
+  /* ── Animations ── */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+  @keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+  .lecture-card { animation: fadeInUp .5s ease both; }
+  .lecture-card:nth-child(1) { animation-delay: .1s; }
+  .lecture-card:nth-child(2) { animation-delay: .2s; }
+  .lecture-card:nth-child(3) { animation-delay: .3s; }
+  .lecture-card:nth-child(4) { animation-delay: .4s; }
+  .lecture-card:nth-child(5) { animation-delay: .5s; }
+
+  @media (max-width: 640px) {
+    .card-inner { grid-template-columns: 1fr; gap: 16px; }
+    .lecture-num { flex-direction: row; width: auto; height: auto; padding: 8px 16px; gap: 8px; }
+    .card-action { padding-left: 0; }
+    .btn-open { width: 100%; justify-content: center; }
+    .track-steps { flex-direction: column; gap: 16px; }
+    .step::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════ HERO ══════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      সম্পূর্ণ বাংলা কোর্স — ৫টি লেকচার
+    </div>
+    <h1 class="hero-title">ডেটা ভিজুয়ালাইজেশন<br>মাস্টারক্লাস</h1>
+    <p class="hero-sub">
+      Matplotlib থেকে Plotly — সম্পূর্ণ বাংলায়। 
+      নতুনদের জন্য লেখা, ML Engineer-দের মতো শেখার সুযোগ।
+      প্রতিটি লেকচারে কোড, ডায়াগ্রাম এবং বাস্তব উদাহরণ।
+    </p>
+    <div class="stats-row">
+      <div class="stat-pill">
+        <span class="num" style="color:var(--blue)">৫টি</span>
+        <span class="lbl">লেকচার</span>
+      </div>
+      <div class="stat-pill">
+        <span class="num" style="color:var(--green)">৩টি</span>
+        <span class="lbl">লাইব্রেরি</span>
+      </div>
+      <div class="stat-pill">
+        <span class="num" style="color:var(--purple)">৫০+</span>
+        <span class="lbl">কোড উদাহরণ</span>
+      </div>
+      <div class="stat-pill">
+        <span class="num" style="color:var(--orange)">৩০+</span>
+        <span class="lbl">SVG ডায়াগ্রাম</span>
+      </div>
+      <div class="stat-pill">
+        <span class="num" style="color:var(--yellow)">বাংলা</span>
+        <span class="lbl">মাধ্যম</span>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>লেকচার দেখো</span>
+    <span class="scroll-arrow">↓</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ LECTURES ══════════════════════════════ -->
+<main class="lectures-section" id="lectures">
+  <div class="section-header">
+    <h2>📚 কোর্সের লেকচার সমূহ</h2>
+    <p>নিচের ক্রম অনুযায়ী পড়লে শেখা সবচেয়ে সহজ হবে</p>
+  </div>
+
+  <div class="lectures-grid">
+
+    <!-- Lecture 01 -->
+    <div class="lecture-card" style="--card-color: #58a6ff">
+      <div class="card-inner">
+        <div class="lecture-num">
+          <span class="lbl">লেকচার</span>
+          <span class="n">01</span>
+        </div>
+        <div class="card-body">
+          <div class="card-library">Matplotlib</div>
+          <div class="card-title">Matplotlib বেসিক মাস্টারক্লাস</div>
+          <div class="card-desc">
+            Matplotlib-এর প্রথম পদক্ষেপ থেকে শুরু। Figure anatomy, 
+            Line/Bar/Scatter/Histogram/Box/Pie chart, Subplots, Annotation 
+            এবং ইন্টারভিউ প্রশ্ন — সব একসাথে।
+          </div>
+          <div class="topics-row">
+            <span class="topic-chip">Figure &amp; Axes</span>
+            <span class="topic-chip">Line Plot</span>
+            <span class="topic-chip">Bar Chart</span>
+            <span class="topic-chip">Scatter Plot</span>
+            <span class="topic-chip">Histogram</span>
+            <span class="topic-chip">Subplots</span>
+            <span class="topic-chip">Annotation</span>
+            <span class="topic-chip">Interview Q&amp;A</span>
+            <span class="topic-chip">ML Algorithms</span>
+          </div>
+        </div>
+        <div class="card-action">
+          <a href="Data_Visualisation_Lectures/Lecture_01_Matplotlib_Basics.html" class="btn-open">
+            <span class="btn-icon">📖</span> পড়া শুরু করো
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lecture 02 -->
+    <div class="lecture-card" style="--card-color: #3fb950">
+      <div class="card-inner">
+        <div class="lecture-num">
+          <span class="lbl">লেকচার</span>
+          <span class="n">02</span>
+        </div>
+        <div class="card-body">
+          <div class="card-library">Matplotlib Advanced</div>
+          <div class="card-title">Matplotlib অ্যাডভান্সড — OOP ও Subplots</div>
+          <div class="card-desc">
+            OOP পদ্ধতিতে Matplotlib। Figure ও Axes object, add_subplot(), 
+            twinx() দিয়ে dual y-axis, Multiple Figures এবং plt.subplots() 
+            shortcut — পেশাদার কোড লেখার পথ।
+          </div>
+          <div class="topics-row">
+            <span class="topic-chip">OOP vs Procedural</span>
+            <span class="topic-chip">Figure &amp; Axes Object</span>
+            <span class="topic-chip">add_subplot()</span>
+            <span class="topic-chip">twinx()</span>
+            <span class="topic-chip">Multiple Figures</span>
+            <span class="topic-chip">plt.subplots()</span>
+            <span class="topic-chip">Sorting Algorithms</span>
+          </div>
+        </div>
+        <div class="card-action">
+          <a href="Data_Visualisation_Lectures/Lecture_02_Matplotlib_Advanced.html" class="btn-open">
+            <span class="btn-icon">📖</span> পড়া শুরু করো
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lecture 03 -->
+    <div class="lecture-card" style="--card-color: #bc8cff">
+      <div class="card-inner">
+        <div class="lecture-num">
+          <span class="lbl">লেকচার</span>
+          <span class="n">03</span>
+        </div>
+        <div class="card-body">
+          <div class="card-library">Seaborn</div>
+          <div class="card-title">Seaborn সম্পূর্ণ গাইড — ৫টি Notebook</div>
+          <div class="card-desc">
+            Statistical visualization-এর রাজা Seaborn। Univariate থেকে Multivariate 
+            analysis, Linear relationships, Categorical data এবং বাস্তব জীবনের 
+            সড়ক দুর্ঘটনা case study।
+          </div>
+          <div class="topics-row">
+            <span class="topic-chip">Univariate Distribution</span>
+            <span class="topic-chip">Multivariate Analysis</span>
+            <span class="topic-chip">lmplot &amp; pairplot</span>
+            <span class="topic-chip">Heatmap</span>
+            <span class="topic-chip">Categorical Plots</span>
+            <span class="topic-chip">Real-world Case Study</span>
+          </div>
+        </div>
+        <div class="card-action">
+          <a href="Data_Visualisation_Lectures/Lecture_03_Seaborn_Complete.html" class="btn-open">
+            <span class="btn-icon">📖</span> পড়া শুরু করো
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lecture 04 -->
+    <div class="lecture-card" style="--card-color: #f78166">
+      <div class="card-inner">
+        <div class="lecture-num">
+          <span class="lbl">লেকচার</span>
+          <span class="n">04</span>
+        </div>
+        <div class="card-body">
+          <div class="card-library">Plotly</div>
+          <div class="card-title">Plotly সম্পূর্ণ গাইড — Interactive Visualization</div>
+          <div class="card-desc">
+            ইন্টারেক্টিভ চার্টের জগতে প্রবেশ। Plotly Express ও Graph Objects, 
+            Univariate ও Multivariate analysis, Quantitative vs Qualitative variables, 
+            Buttons, Sliders ও Annotations সহ।
+          </div>
+          <div class="topics-row">
+            <span class="topic-chip">Plotly Express</span>
+            <span class="topic-chip">Univariate Analysis</span>
+            <span class="topic-chip">Multivariate Analysis</span>
+            <span class="topic-chip">Quant vs Qual</span>
+            <span class="topic-chip">Buttons &amp; Sliders</span>
+            <span class="topic-chip">Animations</span>
+            <span class="topic-chip">Annotations</span>
+          </div>
+        </div>
+        <div class="card-action">
+          <a href="Data_Visualisation_Lectures/Lecture_04_Plotly_Full.html" class="btn-open">
+            <span class="btn-icon">📖</span> পড়া শুরু করো
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lecture 05 -->
+    <div class="lecture-card" style="--card-color: #e3b341">
+      <div class="card-inner">
+        <div class="lecture-num">
+          <span class="lbl">লেকচার</span>
+          <span class="n">05</span>
+        </div>
+        <div class="card-body">
+          <div class="card-library">Plotly + Seaborn</div>
+          <div class="card-title">Plotly ও Seaborn মাস্টারক্লাস — বাস্তব প্রজেক্ট</div>
+          <div class="card-desc">
+            চূড়ান্ত লেকচার — বাস্তব ডেটাসেট দিয়ে Plotly ও Seaborn একসাথে। 
+            Video Game Sales analysis, Netflix ও IMDB combined analysis, 
+            পরীক্ষার প্রশ্নভিত্তিক step-by-step সমাধান।
+          </div>
+          <div class="topics-row">
+            <span class="topic-chip">Video Game Sales</span>
+            <span class="topic-chip">Netflix Analysis</span>
+            <span class="topic-chip">IMDB Dataset</span>
+            <span class="topic-chip">DataFrame Merge</span>
+            <span class="topic-chip">Animated Charts</span>
+            <span class="topic-chip">Exam-style Q&amp;A</span>
+          </div>
+        </div>
+        <div class="card-action">
+          <a href="Data_Visualisation_Lectures/Lecture_05_Plotly_Seaborn_Masterclass.html" class="btn-open">
+            <span class="btn-icon">📖</span> পড়া শুরু করো
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /lectures-grid -->
+</main>
+
+<!-- ══════════════════════════════ PROGRESS TRACK ══════════════════════════════ -->
+<div class="progress-section">
+  <div class="progress-track">
+    <h3>🗺️ শেখার পথনকশা</h3>
+    <div class="track-steps">
+      <div class="step" style="--step-color:#58a6ff">
+        <div class="step-dot">01</div>
+        <div class="step-label">Matplotlib<br>বেসিক</div>
+      </div>
+      <div class="step" style="--step-color:#3fb950">
+        <div class="step-dot">02</div>
+        <div class="step-label">Matplotlib<br>Advanced</div>
+      </div>
+      <div class="step" style="--step-color:#bc8cff">
+        <div class="step-dot">03</div>
+        <div class="step-label">Seaborn<br>সম্পূর্ণ</div>
+      </div>
+      <div class="step" style="--step-color:#f78166">
+        <div class="step-dot">04</div>
+        <div class="step-label">Plotly<br>পূর্ণ গাইড</div>
+      </div>
+      <div class="step" style="--step-color:#e3b341">
+        <div class="step-dot">05</div>
+        <div class="step-label">Real-world<br>Projects</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ QUICK REFERENCE ══════════════════════════════ -->
+<div style="max-width:1100px;margin:0 auto 80px;padding:0 24px;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px 36px;">
+    <h3 style="font-family:'Baloo Da 2',cursive;font-size:1.3rem;font-weight:700;margin-bottom:24px;">⚡ দ্রুত রেফারেন্স — কোন লাইব্রেরি কখন?</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
+      <div style="background:var(--bg3);border:1px solid rgba(88,166,255,.2);border-radius:10px;padding:20px;">
+        <div style="color:#58a6ff;font-weight:700;font-size:1rem;margin-bottom:10px;">🔵 Matplotlib</div>
+        <ul style="color:var(--text2);font-size:13px;line-height:1.8;padding-left:16px;">
+          <li>Static publication-quality charts</li>
+          <li>Full customization control</li>
+          <li>Academic papers ও reports</li>
+          <li>ML model performance visualization</li>
+          <li>সব ধরনের চার্টের ভিত্তি</li>
+        </ul>
+      </div>
+      <div style="background:var(--bg3);border:1px solid rgba(188,140,255,.2);border-radius:10px;padding:20px;">
+        <div style="color:#bc8cff;font-weight:700;font-size:1rem;margin-bottom:10px;">🟣 Seaborn</div>
+        <ul style="color:var(--text2);font-size:13px;line-height:1.8;padding-left:16px;">
+          <li>Statistical analysis ও visualization</li>
+          <li>Distribution ও relationship দেখা</li>
+          <li>DataFrame সাথে সরাসরি কাজ</li>
+          <li>EDA (Exploratory Data Analysis)</li>
+          <li>Beautiful defaults সহ</li>
+        </ul>
+      </div>
+      <div style="background:var(--bg3);border:1px solid rgba(247,129,102,.2);border-radius:10px;padding:20px;">
+        <div style="color:#f78166;font-weight:700;font-size:1rem;margin-bottom:10px;">🟠 Plotly</div>
+        <ul style="color:var(--text2);font-size:13px;line-height:1.8;padding-left:16px;">
+          <li>Interactive web dashboards</li>
+          <li>Hover tooltips, zoom, pan</li>
+          <li>Animations ও animated charts</li>
+          <li>Business reports ও presentations</li>
+          <li>Web-এ embed করার জন্য</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>ডেটা ভিজুয়ালাইজেশন মাস্টারক্লাস — <strong>সম্পূর্ণ বাংলায়</strong></p>
+  <p style="margin-top:8px;">Matplotlib · Seaborn · Plotly · Python · বাংলা শিক্ষার্থীদের জন্য</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="Deep Learning বাংলা লেকচার সিরিজ">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CNN মাস্টারক্লাস — বয়স, লিঙ্গ ও জাতিসত্তা শনাক্তকরণ</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f1a;
+    --bg2: #13162a;
+    --bg3: #1a1e35;
+    --card: #1e2340;
+    --card2: #242848;
+    --border: #2e3560;
+    --accent: #6c8fff;
+    --accent2: #a78bfa;
+    --accent3: #34d399;
+    --accent4: #fb923c;
+    --accent5: #f472b6;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --code-bg: #0f1629;
+    --gold: #fbbf24;
+    --red: #f87171;
+    --cyan: #22d3ee;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 17px;
+    line-height: 1.85;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0d0f1a 0%, #0f1535 40%, #1a0d35 100%);
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(108,143,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(108,143,255,0.15);
+    border: 1px solid rgba(108,143,255,0.4);
+    color: var(--accent);
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: 14px;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: clamp(28px, 4vw, 52px);
+    font-weight: 400;
+    color: #fff;
+    line-height: 1.3;
+    margin-bottom: 16px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    color: var(--text2);
+    font-size: 18px;
+    max-width: 700px;
+    margin: 0 auto 36px;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num { font-size: 28px; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 13px; color: var(--text3); }
+
+  /* TOC */
+  .toc {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 40px;
+  }
+  .toc h2 { color: var(--accent2); font-size: 18px; margin-bottom: 20px; }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+  }
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--card);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text2);
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .toc-item:hover { border-color: var(--accent); color: var(--accent); background: var(--card2); }
+  .toc-num {
+    background: rgba(108,143,255,0.2);
+    color: var(--accent);
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0;
+  }
+
+  /* MAIN LAYOUT */
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* SECTIONS */
+  .section {
+    padding: 60px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  .section-num {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 8px;
+    white-space: nowrap;
+    margin-top: 6px;
+  }
+  .section h2 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: 32px;
+    font-weight: 400;
+    color: #fff;
+    line-height: 1.3;
+  }
+  .section h3 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 36px 0 16px;
+  }
+  .section h4 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--accent3);
+    margin: 24px 0 10px;
+  }
+  .section p { color: var(--text2); margin-bottom: 16px; }
+  .section p strong { color: var(--text); }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin: 20px 0;
+  }
+  .card.highlight {
+    border-color: rgba(108,143,255,0.4);
+    background: linear-gradient(135deg, var(--card) 0%, rgba(108,143,255,0.06) 100%);
+  }
+  .card.warning {
+    border-color: rgba(251,191,36,0.4);
+    background: linear-gradient(135deg, var(--card) 0%, rgba(251,191,36,0.04) 100%);
+  }
+  .card.success {
+    border-color: rgba(52,211,153,0.4);
+    background: linear-gradient(135deg, var(--card) 0%, rgba(52,211,153,0.04) 100%);
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card.warning .card-title { color: var(--gold); }
+  .card.success .card-title { color: var(--accent3); }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+  .code-header {
+    background: var(--card);
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-size: 12px;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-weight: 600;
+  }
+  .code-label { font-size: 12px; color: var(--text3); }
+  .code-body {
+    padding: 20px;
+    overflow-x: auto;
+  }
+  pre {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre;
+  }
+  .kw { color: #c792ea; }
+  .fn { color: #82aaff; }
+  .str { color: #c3e88d; }
+  .num { color: #f78c6c; }
+  .cm { color: #546e7a; font-style: italic; }
+  .op { color: #89ddff; }
+  .cls { color: #ffcb6b; }
+  .var { color: #eeffff; }
+
+  /* INLINE CODE */
+  code {
+    background: rgba(108,143,255,0.15);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 13px;
+  }
+
+  /* SVG DIAGRAM CONTAINERS */
+  .diagram-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 24px;
+    margin: 28px 0;
+    text-align: center;
+  }
+  .diagram-caption {
+    font-size: 13px;
+    color: var(--text3);
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  /* STEP GRID */
+  .steps {
+    display: grid;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .step-icon {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: white;
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700; flex-shrink: 0;
+  }
+  .step-content h5 { color: var(--text); font-size: 16px; margin-bottom: 4px; }
+  .step-content p { margin: 0; font-size: 14px; }
+
+  /* COMPARISON TABLE */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 24px 0;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--card2); }
+  th {
+    padding: 14px 18px;
+    text-align: left;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 18px;
+    color: var(--text2);
+    font-size: 14px;
+    border-bottom: 1px solid rgba(46,53,96,0.5);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(108,143,255,0.04); }
+
+  /* CALLOUT */
+  .callout {
+    display: flex;
+    gap: 14px;
+    padding: 18px 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    align-items: flex-start;
+  }
+  .callout.info { background: rgba(108,143,255,0.1); border-left: 3px solid var(--accent); }
+  .callout.tip { background: rgba(52,211,153,0.1); border-left: 3px solid var(--accent3); }
+  .callout.warn { background: rgba(251,191,36,0.1); border-left: 3px solid var(--gold); }
+  .callout-icon { font-size: 20px; flex-shrink: 0; line-height: 1.6; }
+  .callout-body { font-size: 15px; color: var(--text2); }
+  .callout-body strong { color: var(--text); }
+
+  /* PILL TAGS */
+  .pills { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+  .pill {
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .pill.blue { background: rgba(108,143,255,0.15); color: var(--accent); border: 1px solid rgba(108,143,255,0.3); }
+  .pill.green { background: rgba(52,211,153,0.15); color: var(--accent3); border: 1px solid rgba(52,211,153,0.3); }
+  .pill.purple { background: rgba(167,139,250,0.15); color: var(--accent2); border: 1px solid rgba(167,139,250,0.3); }
+  .pill.orange { background: rgba(251,146,60,0.15); color: var(--accent4); border: 1px solid rgba(251,146,60,0.3); }
+  .pill.pink { background: rgba(244,114,182,0.15); color: var(--accent5); border: 1px solid rgba(244,114,182,0.3); }
+
+  /* FORMULA BOX */
+  .formula {
+    background: var(--code-bg);
+    border: 1px solid rgba(108,143,255,0.3);
+    border-radius: 12px;
+    padding: 20px 24px;
+    text-align: center;
+    margin: 20px 0;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 15px;
+    color: var(--accent2);
+    letter-spacing: 0.5px;
+  }
+
+  /* NOTEBOOK NOTE */
+  .nb-note {
+    background: rgba(52,211,153,0.08);
+    border: 1px solid rgba(52,211,153,0.25);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--accent3);
+  }
+  .nb-note strong { font-weight: 700; }
+
+  /* QUIZ SECTION */
+  .quiz-box {
+    background: var(--card);
+    border: 1px solid rgba(167,139,250,0.3);
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin: 24px 0;
+  }
+  .quiz-q { color: var(--accent2); font-size: 17px; font-weight: 600; margin-bottom: 14px; }
+  .quiz-a {
+    background: rgba(167,139,250,0.1);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: var(--text2);
+    font-size: 14px;
+  }
+
+  /* SCROLLSPY NAV */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,15,26,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 40px;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+  }
+  .nav-link {
+    text-decoration: none;
+    color: var(--text3);
+    font-size: 13px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .nav-link:hover { background: var(--card); color: var(--accent); }
+
+  /* FOOTER */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    text-align: center;
+    color: var(--text3);
+    font-size: 14px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .hero { padding: 48px 20px 40px; }
+    .toc, .sticky-nav { padding-left: 20px; padding-right: 20px; }
+    .container { padding: 0 16px; }
+    .section { padding: 40px 0; }
+    .section h2 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">🎓 CNN মাস্টারক্লাস · বাংলা</div>
+  <h1>মুখের ছবি থেকে<br><span>বয়স · লিঙ্গ · জাতিসত্তা</span> শনাক্তকরণ</h1>
+  <p>Convolutional Neural Network দিয়ে ফেস ইমেজ অ্যানালাইসিস — শূন্য থেকে সম্পূর্ণ বোঝাপড়া, কোনো কিছু বাদ নেই</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">৩টি</div><div class="stat-label">নোটবুক কভার</div></div>
+    <div class="stat"><div class="stat-num">৪৮×৪৮</div><div class="stat-label">ইমেজ সাইজ</div></div>
+    <div class="stat"><div class="stat-num">CNN</div><div class="stat-label">আর্কিটেকচার</div></div>
+    <div class="stat"><div class="stat-num">Multi-output</div><div class="stat-label">শেষ মডেল</div></div>
+  </div>
+</div>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <a href="#s0" class="nav-link">🗺️ রোডম্যাপ</a>
+  <a href="#s1" class="nav-link">📦 ডেটাসেট</a>
+  <a href="#s2" class="nav-link">🖼️ CNN কী</a>
+  <a href="#s3" class="nav-link">⚧ লিঙ্গ মডেল</a>
+  <a href="#s4" class="nav-link">🎂 বয়স মডেল</a>
+  <a href="#s5" class="nav-link">🔀 Multi-output</a>
+  <a href="#s6" class="nav-link">📉 Loss Function</a>
+  <a href="#s7" class="nav-link">📊 মূল্যায়ন</a>
+  <a href="#s8" class="nav-link">📷 Webcam</a>
+</nav>
+
+<!-- TOC -->
+<div class="toc">
+  <h2>📋 বিষয়সূচি</h2>
+  <div class="toc-grid">
+    <a href="#s0" class="toc-item"><span class="toc-num">০</span>সামগ্রিক রোডম্যাপ</a>
+    <a href="#s1" class="toc-item"><span class="toc-num">১</span>age_gender.csv ডেটাসেট</a>
+    <a href="#s2" class="toc-item"><span class="toc-num">২</span>CNN কী ও কেন?</a>
+    <a href="#s3" class="toc-item"><span class="toc-num">৩</span>Notebook ০১ — লিঙ্গ শনাক্তকরণ</a>
+    <a href="#s4" class="toc-item"><span class="toc-num">৪</span>Notebook ০২ — বয়স অনুমান</a>
+    <a href="#s5" class="toc-item"><span class="toc-num">৫</span>Notebook ০৩ — একসাথে সব</a>
+    <a href="#s6" class="toc-item"><span class="toc-num">৬</span>Custom Loss Function</a>
+    <a href="#s7" class="toc-item"><span class="toc-num">৭</span>মডেল মূল্যায়ন পদ্ধতি</a>
+    <a href="#s8" class="toc-item"><span class="toc-num">৮</span>Webcam ইন্টিগ্রেশন</a>
+  </div>
+</div>
+
+<!-- ==================== SECTION 0: ROADMAP ==================== -->
+<div id="s0" class="section">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ০</span>
+    <h2>সামগ্রিক রোডম্যাপ — আমরা কী করব?</h2>
+  </div>
+
+  <p>এই তিনটি নোটবুক একটি বড় প্রজেক্টের তিনটি ধাপ। প্রথমে বুঝে নাও পুরো ছবিটা:</p>
+
+  <!-- SVG ROADMAP -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 820 200" xmlns="http://www.w3.org/2000/svg" style="max-width:820px;width:100%;" overflow="visible">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#6c8fff"/>
+        </marker>
+      </defs>
+      <!-- Box 1 -->
+      <rect x="10" y="50" width="200" height="100" rx="14" fill="#1e2340" stroke="#6c8fff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="110" y="82" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#6c8fff" font-weight="700">Notebook 01</text>
+      <text dominant-baseline="middle" x="110" y="102" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#94a3b8">লিঙ্গ শনাক্তকরণ</text>
+      <text dominant-baseline="middle" x="110" y="120" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">Binary Classification</text>
+      <text dominant-baseline="middle" x="110" y="138" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">Male / Female</text>
+      <!-- Arrow 1 -->
+      <line x1="214" y1="100" x2="258" y2="100" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- Box 2 -->
+      <rect x="260" y="50" width="200" height="100" rx="14" fill="#1e2340" stroke="#a78bfa" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="360" y="82" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#a78bfa" font-weight="700">Notebook 02</text>
+      <text dominant-baseline="middle" x="360" y="102" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#94a3b8">বয়স অনুমান</text>
+      <text dominant-baseline="middle" x="360" y="120" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">Regression</text>
+      <text dominant-baseline="middle" x="360" y="138" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">0 থেকে 80 বছর</text>
+      <!-- Arrow 2 -->
+      <line x1="464" y1="100" x2="508" y2="100" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- Box 3 -->
+      <rect x="510" y="30" width="300" height="140" rx="14" fill="#1e2340" stroke="#34d399" stroke-width="2"/>
+      <text dominant-baseline="middle" x="660" y="60" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#34d399" font-weight="700">Notebook 03</text>
+      <text dominant-baseline="middle" x="660" y="80" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#94a3b8">সব একসাথে — Multi-output</text>
+      <text dominant-baseline="middle" x="660" y="100" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">বয়স (Regression)</text>
+      <text dominant-baseline="middle" x="660" y="118" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">লিঙ্গ (Binary Classification)</text>
+      <text dominant-baseline="middle" x="660" y="136" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">জাতিসত্তা (5-class Classification)</text>
+      <text dominant-baseline="middle" x="660" y="154" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#34d399">Custom Loss Function ✓</text>
+    </svg>
+    <p class="diagram-caption">তিনটি নোটবুকের ক্রমবর্ধমান জটিলতা</p>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body"><strong>একটু ব্যাখ্যা:</strong> প্রথম দুটো নোটবুকে আলাদা আলাদা মডেল বানানো হয়। তৃতীয়টিতে প্রশ্ন করা হয় — এই দুটো কাজ কি একই মডেল দিয়ে করা যায়? এবং উত্তর হলো: হ্যাঁ, এবং এটাই বেশি কার্যকর!</div>
+  </div>
+</div>
+</div>
+
+<!-- ==================== SECTION 1: DATASET ==================== -->
+<div id="s1" class="section">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ১</span>
+    <h2>age_gender.csv — ডেটাসেট পরিচয়</h2>
+  </div>
+
+  <p><strong>age_gender.csv</strong> হলো একটি CSV ফাইল যেখানে মানুষের মুখের ছোট কালো-সাদা ছবি এবং তাদের বৈশিষ্ট্য সংরক্ষিত আছে।</p>
+
+  <h3>📊 ডেটাসেটে কী কী আছে?</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>কলামের নাম</th><th>কী ধরনের ডেটা</th><th>উদাহরণ</th><th>ব্যাখ্যা</th></tr></thead>
+      <tbody>
+        <tr><td><code>age</code></td><td>সংখ্যা</td><td>27, 45, 8</td><td>ব্যক্তির বয়স (বছরে)</td></tr>
+        <tr><td><code>gender</code></td><td>0 বা 1</td><td>0 = Male, 1 = Female</td><td>লিঙ্গ, সংখ্যায় কোড করা</td></tr>
+        <tr><td><code>ethnicity</code></td><td>0 থেকে 4</td><td>0=White, 1=Black, 2=Asian, 3=Indian, 4=Hispanic</td><td>জাতিসত্তা</td></tr>
+        <tr><td><code>pixels</code></td><td>লম্বা স্ট্রিং</td><td>"120 133 145 ..."</td><td>48×48 = 2304টি পিক্সেল মান, স্পেসে আলাদা</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>🖼️ পিক্সেল ডেটা কীভাবে কাজ করে?</h3>
+
+  <p>এই অংশটা অনেকেই প্রথমে বুঝতে পারে না, তাই একদম সহজ করে বলছি:</p>
+
+  <!-- SVG pixel explanation -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;width:100%;" overflow="visible">
+      <!-- Pixel grid (6x6 to represent 48x48) -->
+      <text dominant-baseline="middle" x="60" y="25" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#6c8fff">ছবিটি আসলে একটি গ্রিড</text>
+      <text dominant-baseline="middle" x="60" y="42" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">48 × 48 = 2304 ঘর</text>
+      <!-- Grid cells -->
+      <g transform="translate(10,55)">
+        <!-- row 0 -->
+        <rect x="0" y="0" width="18" height="18" fill="rgb(20,20,20)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="20" y="0" width="18" height="18" fill="rgb(40,40,40)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="40" y="0" width="18" height="18" fill="rgb(80,80,80)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="60" y="0" width="18" height="18" fill="rgb(120,120,120)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="80" y="0" width="18" height="18" fill="rgb(160,160,160)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="100" y="0" width="18" height="18" fill="rgb(200,200,200)" stroke="#2e3560" stroke-width="0.5"/>
+        <!-- row 1 -->
+        <rect x="0" y="20" width="18" height="18" fill="rgb(30,30,30)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="20" y="20" width="18" height="18" fill="rgb(100,100,100)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="40" y="20" width="18" height="18" fill="rgb(180,180,180)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="60" y="20" width="18" height="18" fill="rgb(220,220,220)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="80" y="20" width="18" height="18" fill="rgb(190,190,190)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="100" y="20" width="18" height="18" fill="rgb(90,90,90)" stroke="#2e3560" stroke-width="0.5"/>
+        <!-- row 2 -->
+        <rect x="0" y="40" width="18" height="18" fill="rgb(50,50,50)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="20" y="40" width="18" height="18" fill="rgb(150,150,150)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="40" y="40" width="18" height="18" fill="rgb(240,240,240)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="60" y="40" width="18" height="18" fill="rgb(255,255,255)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="80" y="40" width="18" height="18" fill="rgb(230,230,230)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="100" y="40" width="18" height="18" fill="rgb(110,110,110)" stroke="#2e3560" stroke-width="0.5"/>
+        <!-- row 3 -->
+        <rect x="0" y="60" width="18" height="18" fill="rgb(60,60,60)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="20" y="60" width="18" height="18" fill="rgb(140,140,140)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="40" y="60" width="18" height="18" fill="rgb(210,210,210)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="60" y="60" width="18" height="18" fill="rgb(245,245,245)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="80" y="60" width="18" height="18" fill="rgb(220,220,220)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="100" y="60" width="18" height="18" fill="rgb(100,100,100)" stroke="#2e3560" stroke-width="0.5"/>
+        <!-- row 4 -->
+        <rect x="0" y="80" width="18" height="18" fill="rgb(35,35,35)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="20" y="80" width="18" height="18" fill="rgb(90,90,90)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="40" y="80" width="18" height="18" fill="rgb(170,170,170)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="60" y="80" width="18" height="18" fill="rgb(200,200,200)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="80" y="80" width="18" height="18" fill="rgb(175,175,175)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="100" y="80" width="18" height="18" fill="rgb(70,70,70)" stroke="#2e3560" stroke-width="0.5"/>
+        <!-- row 5 -->
+        <rect x="0" y="100" width="18" height="18" fill="rgb(15,15,15)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="20" y="100" width="18" height="18" fill="rgb(45,45,45)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="40" y="100" width="18" height="18" fill="rgb(75,75,75)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="60" y="100" width="18" height="18" fill="rgb(65,65,65)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="80" y="100" width="18" height="18" fill="rgb(55,55,55)" stroke="#2e3560" stroke-width="0.5"/>
+        <rect x="100" y="100" width="18" height="18" fill="rgb(25,25,25)" stroke="#2e3560" stroke-width="0.5"/>
+        <text dominant-baseline="middle" x="60" y="138" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">6×6 উদাহরণ</text>
+        <text dominant-baseline="middle" x="60" y="155" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">(আসলে 48×48)</text>
+      </g>
+      <!-- Arrow -->
+      <text x="190" y="120" font-family="Hind Siliguri" font-size="22" fill="#6c8fff">→</text>
+      <!-- String representation -->
+      <rect x="215" y="55" width="470" height="180" rx="10" fill="#0f1629" stroke="#2e3560" stroke-width="1"/>
+      <text x="230" y="80" font-family="JetBrains Mono" font-size="12" fill="#94a3b8">CSV-তে সংরক্ষিত থাকে এভাবে:</text>
+      <text x="230" y="105" font-family="JetBrains Mono" font-size="11" fill="#c3e88d">"20 40 80 120 160 200 30 100</text>
+      <text x="230" y="122" font-family="JetBrains Mono" font-size="11" fill="#c3e88d"> 180 220 190 90 50 150 240</text>
+      <text x="230" y="139" font-family="JetBrains Mono" font-size="11" fill="#c3e88d"> 255 230 110 60 140 210..."</text>
+      <text x="230" y="165" font-family="Hind Siliguri" font-size="12" fill="#64748b">👆 এটি একটি লম্বা স্ট্রিং</text>
+      <text x="230" y="183" font-family="Hind Siliguri" font-size="12" fill="#64748b">2304টি সংখ্যা, স্পেস দিয়ে আলাদা</text>
+      <text x="230" y="201" font-family="Hind Siliguri" font-size="12" fill="#64748b">প্রতিটি সংখ্যা 0-255 এর মধ্যে</text>
+      <text x="230" y="219" font-family="Hind Siliguri" font-size="12" fill="#64748b">0 = সম্পূর্ণ কালো, 255 = সম্পূর্ণ সাদা</text>
+    </svg>
+    <p class="diagram-caption">পিক্সেল ডেটা কীভাবে CSV-তে স্ট্রিং হিসেবে সংরক্ষিত থাকে</p>
+  </div>
+
+  <h3>📥 ডেটা লোড করা</h3>
+  <p>নিচের কোডটি প্রতিটি নোটবুকের শুরুতে চালানো হয়:</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">ডেটা লোড ও পিক্সেল রূপান্তর</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="kw">import</span> <span class="var">pandas</span> <span class="kw">as</span> <span class="var">pd</span>
+<span class="kw">import</span> <span class="var">numpy</span> <span class="kw">as</span> <span class="var">np</span>
+
+<span class="var">df</span> <span class="op">=</span> <span class="var">pd</span>.<span class="fn">read_csv</span>(<span class="str">'age_gender.csv'</span>, sep<span class="op">=</span><span class="str">','</span>)
+
+<span class="cm"># 'pixels' কলামে এখন স্ট্রিং আছে যেমন "120 133 145 ..."</span>
+<span class="cm"># আমরা সেটিকে numpy array-এ রূপান্তর করছি</span>
+<span class="var">df</span>[<span class="str">'pixels'</span>] <span class="op">=</span> <span class="var">df</span>[<span class="str">'pixels'</span>].<span class="fn">apply</span>(<span class="kw">lambda</span> <span class="var">x</span> : 
+    <span class="var">np</span>.<span class="fn">array</span>(<span class="var">x</span>.<span class="fn">split</span>()).<span class="fn">astype</span>(<span class="var">np</span>.<span class="var">int16</span>))</pre></div>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title">🔍 lambda লাইনটি কী করছে?</div>
+    <p style="margin:0;color:var(--text2);font-size:14px;">
+      <code>x.split()</code> → স্ট্রিং "120 133 145"-কে ["120", "133", "145"] লিস্টে ভাগ করে<br>
+      <code>np.array(...)</code> → লিস্টটিকে numpy array করে<br>
+      <code>.astype(np.int16)</code> → স্ট্রিং থেকে int16 সংখ্যায় রূপান্তর করে<br><br>
+      <strong>ফলাফল:</strong> প্রতিটি সারিতে <code>pixels</code> কলামে এখন <code>array([120, 133, 145, ...])</code> আছে — 2304টি সংখ্যার একটি array।
+    </p>
+  </div>
+
+  <h3>🔢 int16 কী?</h3>
+  <p>পিক্সেল মান 0 থেকে 255 — এটি একটি ছোট সংখ্যা। <code>int16</code> মানে 16-bit integer, যা -32768 থেকে 32767 পর্যন্ত ধরতে পারে। এটি <code>int64</code> থেকে কম মেমোরি নেয়। 2304 × ১ লক্ষ সারি = অনেক ডেটা, তাই মেমোরি বাঁচানো জরুরি।</p>
+
+  <h3>📐 X-এর shape কেন (-1, 48, 48, 1)?</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">X তৈরি করা</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="var">X</span> <span class="op">=</span> <span class="var">np</span>.<span class="fn">array</span>(<span class="var">df</span>[<span class="str">'pixels'</span>].<span class="fn">tolist</span>())
+<span class="cm"># এখন X.shape = (n_samples, 2304)  → 2D array</span>
+
+<span class="var">X</span> <span class="op">=</span> <span class="var">X</span>.<span class="fn">reshape</span>(<span class="op">-</span><span class="num">1</span>, <span class="num">48</span>, <span class="num">48</span>, <span class="num">1</span>)
+<span class="cm"># এখন X.shape = (n_samples, 48, 48, 1)  → 4D array</span></pre></div>
+  </div>
+
+  <!-- SVG shape explanation -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 760 190" xmlns="http://www.w3.org/2000/svg" style="max-width:760px;width:100%;" overflow="visible">
+      <!-- 2D array -->
+      <rect x="10" y="60" width="180" height="70" rx="10" fill="#1e2340" stroke="#6c8fff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="100" y="88" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#6c8fff" font-weight="700">আগে: 2D</text>
+      <text dominant-baseline="middle" x="100" y="108" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#94a3b8">(n_samples, 2304)</text>
+      <text dominant-baseline="middle" x="100" y="125" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">একটি লম্বা সারি</text>
+      <!-- Arrow -->
+      <text x="215" y="105" font-family="sans-serif" font-size="18" fill="#6c8fff">→</text>
+      <text dominant-baseline="middle" x="210" y="125" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">reshape</text>
+      <!-- 4D array -->
+      <rect x="245" y="40" width="220" height="110" rx="10" fill="#1e2340" stroke="#34d399" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="355" y="68" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#34d399" font-weight="700">পরে: 4D</text>
+      <text dominant-baseline="middle" x="355" y="88" text-anchor="middle" font-family="JetBrains Mono" font-size="12" fill="#94a3b8">(n, 48, 48, 1)</text>
+      <text dominant-baseline="middle" x="355" y="110" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">n = নমুনার সংখ্যা</text>
+      <text dominant-baseline="middle" x="355" y="128" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">48, 48 = ছবির উচ্চতা ও প্রস্থ</text>
+      <text dominant-baseline="middle" x="355" y="143" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">1 = রঙের চ্যানেল (কালো-সাদা)</text>
+      <!-- Explanation -->
+      <rect x="495" y="30" width="255" height="130" rx="10" fill="#0f1629" stroke="#2e3560" stroke-width="1"/>
+      <text x="510" y="58" font-family="Hind Siliguri" font-size="13" fill="#fbbf24" font-weight="700">কেন এই shape দরকার?</text>
+      <text x="510" y="78" font-family="Hind Siliguri" font-size="12" fill="#94a3b8">CNN মডেল 2D ছবি চেনে।</text>
+      <text x="510" y="96" font-family="Hind Siliguri" font-size="12" fill="#94a3b8">এর কাছে 48×48 গ্রিড দিতে হবে।</text>
+      <text x="510" y="116" font-family="Hind Siliguri" font-size="12" fill="#94a3b8">রঙিন ছবিতে চ্যানেল = 3 (RGB)।</text>
+      <text x="510" y="134" font-family="Hind Siliguri" font-size="12" fill="#94a3b8">কালো-সাদায় চ্যানেল = 1।</text>
+      <text x="510" y="152" font-family="Hind Siliguri" font-size="12" fill="#64748b">-1 মানে numpy নিজেই হিসাব করবে।</text>
+    </svg>
+    <p class="diagram-caption">reshape করার কারণ ও 4D array-এর মানে</p>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== SECTION 2: CNN ==================== -->
+<div id="s2" class="section">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ২</span>
+    <h2>CNN কী এবং কেন?</h2>
+  </div>
+
+  <p>CNN মানে <strong>Convolutional Neural Network</strong>। এটি সাধারণ নিউরাল নেটওয়ার্ক থেকে আলাদা কারণ এটি ছবির স্থানিক (spatial) তথ্য ধরে রাখতে পারে।</p>
+
+  <h3>🤔 সাধারণ NN দিয়ে ছবি বিশ্লেষণ করলে কী সমস্যা?</h3>
+
+  <div class="card warning">
+    <div class="card-title">⚠️ সমস্যা: Flatten করলে প্রতিবেশিত্ব হারিয়ে যায়</div>
+    <p style="color:var(--text2);font-size:14px;margin:0;">ধরো একটি মুখের ছবিতে নাক মাঝখানে আছে। যদি 48×48 ছবিকে সরাসরি 2304 সংখ্যার সারি বানিয়ে দেই, তাহলে মডেল জানবে না যে দুটো পিক্সেল পাশাপাশি ছিল কি না। এটি সেলাই ছেড়ে দিয়ে সুতো গুনলে কাপড় চিনতে না পারার মতো।</p>
+  </div>
+
+  <h3>✅ CNN কীভাবে সমাধান করে?</h3>
+
+  <p>CNN ছবির উপর দিয়ে একটি ছোট ফিল্টার (kernel) স্লাইড করে। এই ফিল্টার একবারে একটি ছোট অংশ (যেমন 3×3 বা 5×5 পিক্সেল) দেখে এবং প্যাটার্ন খোঁজে।</p>
+
+  <!-- SVG CNN Architecture -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 820 320" xmlns="http://www.w3.org/2000/svg" style="max-width:820px;width:100%;" overflow="visible">
+      <defs>
+        <marker id="arr2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L7,3 z" fill="#6c8fff" opacity="0.7"/>
+        </marker>
+      </defs>
+
+      <!-- Input image -->
+      <rect x="10" y="110" width="80" height="100" rx="8" fill="#1e2340" stroke="#6c8fff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="50" y="148" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#94a3b8">Input</text>
+      <text dominant-baseline="middle" x="50" y="164" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#6c8fff">48×48×1</text>
+      <!-- grid lines inside input -->
+      <line x1="10" y1="130" x2="90" y2="130" stroke="#2e3560" stroke-width="0.5"/>
+      <line x1="10" y1="148" x2="90" y2="148" stroke="#2e3560" stroke-width="0.5"/>
+      <line x1="10" y1="165" x2="90" y2="165" stroke="#2e3560" stroke-width="0.5"/>
+      <line x1="10" y1="182" x2="90" y2="182" stroke="#2e3560" stroke-width="0.5"/>
+      <line x1="27" y1="110" x2="27" y2="210" stroke="#2e3560" stroke-width="0.5"/>
+      <line x1="50" y1="110" x2="50" y2="210" stroke="#2e3560" stroke-width="0.5"/>
+      <line x1="70" y1="110" x2="70" y2="210" stroke="#2e3560" stroke-width="0.5"/>
+
+      <line x1="95" y1="160" x2="120" y2="160" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr2)" opacity="0.7"/>
+
+      <!-- Conv2D block -->
+      <rect x="125" y="80" width="85" height="160" rx="8" fill="#1a1e35" stroke="#a78bfa" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="167" y="108" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#a78bfa" font-weight="700">Conv2D</text>
+      <text dominant-baseline="middle" x="167" y="123" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#64748b">16 filters</text>
+      <text dominant-baseline="middle" x="167" y="137" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#64748b">5×5 kernel</text>
+      <text dominant-baseline="middle" x="167" y="153" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#34d399">relu</text>
+      <!-- feature maps -->
+      <rect x="132" y="165" width="15" height="55" rx="3" fill="rgba(167,139,250,0.4)" stroke="#a78bfa" stroke-width="0.5"/>
+      <rect x="149" y="165" width="15" height="55" rx="3" fill="rgba(167,139,250,0.3)" stroke="#a78bfa" stroke-width="0.5"/>
+      <rect x="166" y="165" width="15" height="55" rx="3" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="0.5"/>
+      <text dominant-baseline="middle" x="167" y="235" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#64748b">44×44×16</text>
+
+      <line x1="214" y1="160" x2="238" y2="160" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr2)" opacity="0.7"/>
+
+      <!-- MaxPool -->
+      <rect x="243" y="100" width="75" height="120" rx="8" fill="#1a1e35" stroke="#22d3ee" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="280" y="125" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#22d3ee" font-weight="700">MaxPool</text>
+      <text dominant-baseline="middle" x="280" y="140" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#64748b">2×2</text>
+      <!-- Pool illustration -->
+      <rect x="253" y="153" width="55" height="45" rx="3" fill="rgba(34,211,238,0.1)" stroke="#22d3ee" stroke-width="0.5"/>
+      <line x1="280" y1="153" x2="280" y2="198" stroke="#22d3ee" stroke-width="0.5" opacity="0.5"/>
+      <line x1="253" y1="175" x2="308" y2="175" stroke="#22d3ee" stroke-width="0.5" opacity="0.5"/>
+      <text dominant-baseline="middle" x="280" y="214" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#64748b">22×22×16</text>
+
+      <line x1="321" y1="160" x2="345" y2="160" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr2)" opacity="0.7"/>
+
+      <!-- Conv2D 2 -->
+      <rect x="350" y="85" width="75" height="150" rx="8" fill="#1a1e35" stroke="#a78bfa" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="387" y="108" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#a78bfa" font-weight="700">Conv2D</text>
+      <text dominant-baseline="middle" x="387" y="123" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#64748b">32 filters</text>
+      <text dominant-baseline="middle" x="387" y="138" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#64748b">3×3 kernel</text>
+      <!-- deeper features -->
+      <rect x="358" y="148" width="10" height="60" rx="2" fill="rgba(167,139,250,0.5)" stroke="#a78bfa" stroke-width="0.5"/>
+      <rect x="370" y="148" width="10" height="60" rx="2" fill="rgba(167,139,250,0.4)" stroke="#a78bfa" stroke-width="0.5"/>
+      <rect x="382" y="148" width="10" height="60" rx="2" fill="rgba(167,139,250,0.3)" stroke="#a78bfa" stroke-width="0.5"/>
+      <rect x="394" y="148" width="10" height="60" rx="2" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="0.5"/>
+      <text dominant-baseline="middle" x="387" y="222" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#64748b">20×20×32</text>
+
+      <line x1="429" y1="160" x2="453" y2="160" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr2)" opacity="0.7"/>
+
+      <!-- Conv2D 3 -->
+      <rect x="458" y="90" width="75" height="140" rx="8" fill="#1a1e35" stroke="#a78bfa" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="495" y="112" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#a78bfa" font-weight="700">Conv2D</text>
+      <text dominant-baseline="middle" x="495" y="127" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#64748b">64 filters</text>
+      <text dominant-baseline="middle" x="495" y="168" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#64748b">9×9×64</text>
+
+      <line x1="537" y1="160" x2="561" y2="160" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr2)" opacity="0.7"/>
+
+      <!-- Flatten -->
+      <rect x="566" y="110" width="65" height="100" rx="8" fill="#1a1e35" stroke="#fb923c" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="598" y="145" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#fb923c" font-weight="700">Flatten</text>
+      <text dominant-baseline="middle" x="598" y="162" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#64748b">5184</text>
+      <!-- flatten illustration -->
+      <path d="M578,118 Q570,160 590,195" fill="none" stroke="#fb923c" stroke-width="0.8" opacity="0.5"/>
+      <path d="M598,118 Q595,160 598,195" fill="none" stroke="#fb923c" stroke-width="0.8" opacity="0.5"/>
+
+      <line x1="635" y1="160" x2="659" y2="160" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr2)" opacity="0.7"/>
+
+      <!-- Dense + Output -->
+      <rect x="664" y="100" width="140" height="120" rx="8" fill="#1a1e35" stroke="#34d399" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="734" y="122" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#34d399" font-weight="700">Dense Layers</text>
+      <text dominant-baseline="middle" x="734" y="140" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#64748b">64 units (relu)</text>
+      <text dominant-baseline="middle" x="734" y="158" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#64748b">Dropout(0.2)</text>
+      <text dominant-baseline="middle" x="734" y="176" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#fbbf24">1 unit (sigmoid)</text>
+      <text dominant-baseline="middle" x="734" y="194" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#64748b">← Output</text>
+      <text dominant-baseline="middle" x="734" y="212" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#34d399">0 বা 1</text>
+
+      <!-- Labels below -->
+      <text dominant-baseline="middle" x="50" y="270" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#6c8fff">ছবি</text>
+      <text dominant-baseline="middle" x="167" y="270" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#a78bfa">প্যাটার্ন খোঁজা</text>
+      <text dominant-baseline="middle" x="280" y="270" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#22d3ee">সংকোচন</text>
+      <text dominant-baseline="middle" x="387" y="270" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#a78bfa">গভীর প্যাটার্ন</text>
+      <text dominant-baseline="middle" x="495" y="270" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#a78bfa">আরও গভীর</text>
+      <text dominant-baseline="middle" x="598" y="270" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#fb923c">সমতল করা</text>
+      <text dominant-baseline="middle" x="734" y="270" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#34d399">সিদ্ধান্ত</text>
+    </svg>
+    <p class="diagram-caption">CNN আর্কিটেকচার — ছবি থেকে সিদ্ধান্ত পর্যন্ত</p>
+  </div>
+
+  <h3>🔧 প্রতিটি Layer কী করে?</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-icon">C</div>
+      <div class="step-content">
+        <h5>Conv2D — Convolutional Layer</h5>
+        <p>একটি ছোট ফিল্টার (যেমন 5×5) পুরো ছবির উপর দিয়ে স্লাইড করে। প্রতিটি অবস্থানে ফিল্টার ও ছবির পিক্সেলের গুণফলের যোগফল হিসাব করে। ফলে প্যাটার্ন (কোণা, রেখা, বক্র) খুঁজে পাওয়া যায়। <code>filters=16</code> মানে ১৬টি ভিন্ন প্যাটার্ন খোঁজার চেষ্টা হবে।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-icon">M</div>
+      <div class="step-content">
+        <h5>MaxPooling2D — সংকোচন Layer</h5>
+        <p>2×2 উইন্ডোর মধ্যে সর্বোচ্চ মানটি রাখে, বাকিগুলো ছেড়ে দেয়। ফলে ছবির সাইজ অর্ধেক হয়ে যায়। কম ডেটা, বেশি গুরুত্বপূর্ণ তথ্য। এছাড়া মডেলকে ছবিতে জিনিসটি ঠিক কোথায় আছে তার প্রতি কম সংবেদনশীল করে (translation invariance)।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-icon">D</div>
+      <div class="step-content">
+        <h5>Dropout — অতিরিক্ত শেখা রোধ</h5>
+        <p>প্রতি training step-এ এলোমেলোভাবে কিছু নিউরন বন্ধ করে দেয়। <code>rate=0.2</code> মানে ২০% নিউরন সাময়িকভাবে বন্ধ থাকবে। এতে মডেল নির্দিষ্ট নিউরনের উপর নির্ভর করতে পারে না — ফলে overfitting কমে।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-icon">F</div>
+      <div class="step-content">
+        <h5>Flatten — সমতল করা</h5>
+        <p>3D feature map (যেমন 9×9×64) কে একটি 1D vector-এ পরিণত করে (5184 সংখ্যা)। এরপর Dense layer ব্যবহার করা যায়।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-icon">Δ</div>
+      <div class="step-content">
+        <h5>Dense — সংযুক্ত Layer</h5>
+        <p>প্রতিটি ইনপুট প্রতিটি নিউরনের সাথে সংযুক্ত। এটি ফিচারগুলিকে সমন্বিত করে চূড়ান্ত সিদ্ধান্তে পৌঁছায়।</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>🎯 Activation Functions</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>নাম</th><th>সূত্র</th><th>ব্যবহার</th><th>বাংলায়</th></tr></thead>
+      <tbody>
+        <tr><td><code>relu</code></td><td>max(0, x)</td><td>Hidden layers</td><td>ঋণাত্মক মান শূন্য করে দেয়, ধনাত্মক রাখে</td></tr>
+        <tr><td><code>sigmoid</code></td><td>1/(1+e⁻ˣ)</td><td>Binary output</td><td>যেকোনো সংখ্যাকে 0-1 এর মধ্যে আনে (সম্ভাবনা)</td></tr>
+        <tr><td><code>softmax</code></td><td>eˣⁱ/Σeˣʲ</td><td>Multi-class output</td><td>সব ক্লাসের সম্ভাবনার যোগফল = 1 করে</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== SECTION 3: GENDER NOTEBOOK ==================== -->
+<div id="s3" class="section">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ৩</span>
+    <h2>Notebook ০১ — লিঙ্গ শনাক্তকরণ (Binary Classification)</h2>
+  </div>
+
+  <div class="pills">
+    <span class="pill blue">Binary Classification</span>
+    <span class="pill green">sigmoid output</span>
+    <span class="pill purple">binary_crossentropy loss</span>
+    <span class="pill orange">accuracy metric</span>
+  </div>
+
+  <p style="margin-top:16px;">এই নোটবুকে একটি মডেল বানানো হয় যা মুখের ছবি দেখে বলবে: ব্যক্তিটি পুরুষ (0) নাকি মহিলা (1)।</p>
+
+  <h3>I. ডেটাসেট প্রস্তুতি</h3>
+
+  <h4>ধাপ (d): ১০ বছরের কম বয়সীদের বাদ দেওয়া</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">ফিল্টারিং</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># ১০ বছরের নিচের শিশুদের লিঙ্গ ছবি থেকে আলাদা করা কঠিন</span>
+<span class="cm"># তাই তাদের বাদ দিই</span>
+<span class="var">df</span> <span class="op">=</span> <span class="var">df</span>[<span class="var">df</span>[<span class="str">'age'</span>] <span class="op">&gt;</span> <span class="num">10</span>].<span class="fn">reset_index</span>(drop<span class="op">=</span><span class="kw">True</span>)</pre></div>
+  </div>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body"><strong>reset_index(drop=True) কেন?</strong> ফিল্টারিং করার পর index এলোমেলো হয়ে যায় (যেমন 0, 5, 12, 23...)। reset_index করলে আবার 0, 1, 2, 3... হয়। পরে <code>df['pixels'][indice]</code> দিয়ে অ্যাক্সেস করার সময় এটা জরুরি।</div>
+  </div>
+
+  <h4>ধাপ (e): লিঙ্গ বিতরণ দেখানো</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Pie chart</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="var">plt</span>.<span class="fn">figure</span>(figsize<span class="op">=</span>(<span class="num">12</span>,<span class="num">6</span>))
+<span class="var">plt</span>.<span class="fn">pie</span>(<span class="var">df</span>.<span class="var">gender</span>.<span class="fn">value_counts</span>(),
+        labels<span class="op">=</span>[<span class="str">'male'</span>, <span class="str">'female'</span>],
+        colors<span class="op">=</span>[<span class="str">'paleturquoise'</span>, <span class="str">'blueviolet'</span>],
+        autopct<span class="op">=</span><span class="str">'%1.1f%%'</span>,   <span class="cm"># শতাংশ দেখাবে</span>
+        pctdistance<span class="op">=</span><span class="num">0.7</span>)       <span class="cm"># কেন্দ্র থেকে দূরত্ব</span>
+<span class="var">plt</span>.<span class="fn">title</span>(<span class="str">'Repartition of gender in the dataset'</span>)</pre></div>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">📊</span>
+    <div class="callout-body"><strong>কেন distribution দেখি?</strong> যদি ডেটাতে 90% পুরুষ ও 10% মহিলা থাকে, তাহলে মডেল সবসময় "পুরুষ" বললেও 90% accuracy পাবে — কিন্তু এটা ভালো মডেল নয়। ভারসাম্যহীন (imbalanced) ডেটা সমস্যার কথা আগেই জানা দরকার।</div>
+  </div>
+
+  <h4>ধাপ (g): Train-Test Split</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">ডেটা ভাগ করা</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="var">X_train</span>, <span class="var">X_test</span>, <span class="var">y_train</span>, <span class="var">y_test</span> <span class="op">=</span> <span class="fn">train_test_split</span>(
+    <span class="var">X</span>, <span class="var">y</span>, 
+    test_size<span class="op">=</span><span class="num">0.2</span>,      <span class="cm"># ২০% test-এ, ৮০% train-এ</span>
+    random_state<span class="op">=</span><span class="num">123</span>   <span class="cm"># এলোমেলো ভাগ, কিন্তু পুনরায় চালালে একই ফলাফল</span>
+)</pre></div>
+  </div>
+
+  <!-- SVG train test split -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 100" xmlns="http://www.w3.org/2000/svg" style="max-width:600px;width:100%;" overflow="visible">
+      <rect x="10" y="30" width="580" height="40" rx="8" fill="#1e2340" stroke="#2e3560" stroke-width="1"/>
+      <rect x="10" y="30" width="464" height="40" rx="8" fill="rgba(108,143,255,0.3)" stroke="#6c8fff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="237" y="56" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#6c8fff" font-weight="700">Train Set — ৮০%</text>
+      <rect x="476" y="30" width="114" height="40" rx="8" fill="rgba(52,211,153,0.3)" stroke="#34d399" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="533" y="56" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#34d399" font-weight="700">Test — ২০%</text>
+      <text dominant-baseline="middle" x="237" y="92" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">মডেল এখান থেকে শেখে</text>
+      <text dominant-baseline="middle" x="533" y="92" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">পারফরম্যান্স মাপে</text>
+    </svg>
+    <p class="diagram-caption">Train-Test Split — ডেটা ভাগ করার পদ্ধতি</p>
+  </div>
+
+  <h3>II. মডেল তৈরি করা</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">লিঙ্গ শনাক্তকরণ CNN আর্কিটেকচার</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="var">input_shape</span> <span class="op">=</span> (<span class="num">48</span>, <span class="num">48</span>, <span class="num">1</span>)
+
+<span class="var">model</span> <span class="op">=</span> <span class="cls">Sequential</span>()
+
+<span class="cm"># ব্লক ১: বড় ফিল্টার দিয়ে মোটা প্যাটার্ন ধরা</span>
+<span class="var">model</span>.<span class="fn">add</span>(<span class="cls">Conv2D</span>(filters<span class="op">=</span><span class="num">16</span>, kernel_size<span class="op">=</span>(<span class="num">5</span>, <span class="num">5</span>), padding<span class="op">=</span><span class="str">'valid'</span>, 
+              input_shape<span class="op">=</span><span class="var">input_shape</span>, activation<span class="op">=</span><span class="str">'relu'</span>))
+<span class="var">model</span>.<span class="fn">add</span>(<span class="cls">MaxPooling2D</span>(pool_size<span class="op">=</span>(<span class="num">2</span>, <span class="num">2</span>)))
+<span class="var">model</span>.<span class="fn">add</span>(<span class="cls">Dropout</span>(rate<span class="op">=</span><span class="num">0.2</span>))
+
+<span class="cm"># ব্লক ২: ছোট ফিল্টার দিয়ে সূক্ষ্ম প্যাটার্ন</span>
+<span class="var">model</span>.<span class="fn">add</span>(<span class="cls">Conv2D</span>(filters<span class="op">=</span><span class="num">32</span>, kernel_size<span class="op">=</span>(<span class="num">3</span>, <span class="num">3</span>), padding<span class="op">=</span><span class="str">'valid'</span>, 
+              activation<span class="op">=</span><span class="str">'relu'</span>))
+<span class="var">model</span>.<span class="fn">add</span>(<span class="cls">MaxPooling2D</span>(pool_size<span class="op">=</span>(<span class="num">2</span>, <span class="num">2</span>)))
+
+<span class="cm"># ব্লক ৩: আরও গভীর প্যাটার্ন</span>
+<span class="var">model</span>.<span class="fn">add</span>(<span class="cls">Conv2D</span>(filters<span class="op">=</span><span class="num">64</span>, kernel_size<span class="op">=</span>(<span class="num">3</span>, <span class="num">3</span>), padding<span class="op">=</span><span class="str">'valid'</span>, 
+              activation<span class="op">=</span><span class="str">'relu'</span>))
+<span class="var">model</span>.<span class="fn">add</span>(<span class="cls">MaxPooling2D</span>(pool_size<span class="op">=</span>(<span class="num">2</span>, <span class="num">2</span>)))
+<span class="var">model</span>.<span class="fn">add</span>(<span class="cls">Dropout</span>(rate<span class="op">=</span><span class="num">0.2</span>))
+
+<span class="cm"># সমতল করে Dense layer-এ পাঠানো</span>
+<span class="var">model</span>.<span class="fn">add</span>(<span class="cls">Flatten</span>())
+<span class="var">model</span>.<span class="fn">add</span>(<span class="cls">Dense</span>(units<span class="op">=</span><span class="num">64</span>, activation<span class="op">=</span><span class="str">'relu'</span>))
+<span class="var">model</span>.<span class="fn">add</span>(<span class="cls">Dropout</span>(rate<span class="op">=</span><span class="num">0.2</span>))
+
+<span class="cm"># Output layer — ১টি নিউরন, sigmoid → 0 থেকে 1</span>
+<span class="var">model</span>.<span class="fn">add</span>(<span class="cls">Dense</span>(units<span class="op">=</span><span class="num">1</span>, activation<span class="op">=</span><span class="str">'sigmoid'</span>))</pre></div>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title">🔍 'valid' padding মানে কী?</div>
+    <p style="margin:0;color:var(--text2);font-size:14px;">
+      <strong>padding='valid'</strong> মানে ছবির কিনারায় কোনো অতিরিক্ত পিক্সেল যোগ করা হবে না। ফলে output ছোট হয়ে যায়।<br>
+      <strong>padding='same'</strong> মানে কিনারায় শূন্য (0) যোগ করা হবে যাতে output আর input একই সাইজ থাকে।<br><br>
+      48×48 → Conv2D(5×5, valid) → 44×44 → MaxPool(2×2) → 22×22 → Conv2D(3×3, valid) → 20×20 → MaxPool → 10×10 → Conv2D(3×3, valid) → 8×8 → MaxPool → 4×4
+    </p>
+  </div>
+
+  <h4>মডেল compile করা</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Compile</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="var">model</span>.<span class="fn">compile</span>(
+    optimizer<span class="op">=</span><span class="str">'adam'</span>,             <span class="cm"># Adam optimizer — সবচেয়ে জনপ্রিয়</span>
+    loss<span class="op">=</span><span class="str">'binary_crossentropy'</span>,    <span class="cm"># Binary classification এর জন্য</span>
+    metrics<span class="op">=</span>[<span class="str">'accuracy'</span>]           <span class="cm"># কত % সঠিক?</span>
+)</pre></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>সমস্যার ধরন</th><th>Loss Function</th><th>Output Activation</th></tr></thead>
+      <tbody>
+        <tr><td>Binary Classification (০/১)</td><td><code>binary_crossentropy</code></td><td><code>sigmoid</code></td></tr>
+        <tr><td>Multi-class Classification</td><td><code>categorical_crossentropy</code> বা <code>sparse_categorical</code></td><td><code>softmax</code></td></tr>
+        <tr><td>Regression (সংখ্যা অনুমান)</td><td><code>mse</code> (mean squared error)</td><td>কোনো activation নেই (linear)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>মডেল train করা</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Training</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="var">history</span> <span class="op">=</span> <span class="var">model</span>.<span class="fn">fit</span>(
+    <span class="var">X_train</span>, <span class="var">y_train</span>,               <span class="cm"># training ডেটা</span>
+    validation_data<span class="op">=</span>(<span class="var">X_test</span>, <span class="var">y_test</span>),  <span class="cm"># প্রতি epoch-এ test মূল্যায়ন</span>
+    epochs<span class="op">=</span><span class="num">20</span>,                       <span class="cm"># ২০ বার পুরো ডেটা দেখবে</span>
+    batch_size<span class="op">=</span><span class="num">32</span>                    <span class="cm"># একবারে ৩২টি নমুনা</span>
+)</pre></div>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title">🔍 epoch ও batch_size কী?</div>
+    <p style="margin:0;color:var(--text2);font-size:14px;">
+      ধরো ১০,০০০ ছবি আছে। <br>
+      <strong>batch_size=32</strong> → প্রতিবার ৩২টি ছবি দেখে weight update করে। ১০,০০০÷৩২ = ~৩১৩ বার update হবে।<br>
+      <strong>epoch=20</strong> → এই ৩১৩ বার update-এর প্রক্রিয়া ২০ বার পুনরাবৃত্তি হবে।<br>
+      <strong>history</strong> → প্রতি epoch-এর loss ও accuracy সংরক্ষণ করে, যা পরে গ্রাফ করা হয়।
+    </p>
+  </div>
+
+  <h4>Learning Curve দেখানো</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Loss ও Accuracy গ্রাফ</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="var">plt</span>.<span class="fn">figure</span>(figsize<span class="op">=</span>(<span class="num">12</span>, <span class="num">4</span>))
+
+<span class="cm"># বাম: Loss curve</span>
+<span class="var">plt</span>.<span class="fn">subplot</span>(<span class="num">121</span>)
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'loss'</span>])
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'val_loss'</span>])
+<span class="var">plt</span>.<span class="fn">title</span>(<span class="str">'Model loss by epoch'</span>)
+<span class="var">plt</span>.<span class="fn">legend</span>([<span class="str">'train'</span>, <span class="str">'test'</span>])
+
+<span class="cm"># ডান: Accuracy curve</span>
+<span class="var">plt</span>.<span class="fn">subplot</span>(<span class="num">122</span>)
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'accuracy'</span>])
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'val_accuracy'</span>])
+<span class="var">plt</span>.<span class="fn">title</span>(<span class="str">'Model accuracy by epoch'</span>)
+<span class="var">plt</span>.<span class="fn">legend</span>([<span class="str">'train'</span>, <span class="str">'test'</span>])</pre></div>
+  </div>
+
+  <!-- SVG Learning Curve diagram -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;" overflow="visible">
+      <!-- Good learning -->
+      <rect x="10" y="10" width="310" height="190" rx="10" fill="#1e2340" stroke="#2e3560" stroke-width="1"/>
+      <text dominant-baseline="middle" x="165" y="35" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#34d399" font-weight="700">✓ ভালো Learning Curve</text>
+      <!-- Axes -->
+      <line x1="40" y1="160" x2="290" y2="160" stroke="#2e3560" stroke-width="1"/>
+      <line x1="40" y1="50" x2="40" y2="160" stroke="#2e3560" stroke-width="1"/>
+      <text dominant-baseline="middle" x="165" y="180" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">epoch →</text>
+      <text dominant-baseline="middle" x="20" y="100" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b" transform="rotate(-90,20,100)">loss ↓</text>
+      <!-- train loss -->
+      <polyline points="40,130 75,105 110,90 145,80 180,74 215,70 250,67 290,65" fill="none" stroke="#6c8fff" stroke-width="2"/>
+      <!-- val loss -->
+      <polyline points="40,135 75,112 110,98 145,89 180,83 215,80 250,78 290,76" fill="none" stroke="#34d399" stroke-width="2" stroke-dasharray="5,3"/>
+      <circle cx="120" cy="195" r="5" fill="#6c8fff"/>
+      <text x="130" y="199" font-family="Hind Siliguri" font-size="10" fill="#6c8fff">Train</text>
+      <circle cx="175" cy="195" r="5" fill="#34d399"/>
+      <text x="185" y="199" font-family="Hind Siliguri" font-size="10" fill="#34d399">Validation</text>
+
+      <!-- Bad learning (overfitting) -->
+      <rect x="355" y="10" width="310" height="190" rx="10" fill="#1e2340" stroke="#2e3560" stroke-width="1"/>
+      <text dominant-baseline="middle" x="510" y="35" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#f87171" font-weight="700">✗ Overfitting</text>
+      <!-- Axes -->
+      <line x1="385" y1="160" x2="640" y2="160" stroke="#2e3560" stroke-width="1"/>
+      <line x1="385" y1="50" x2="385" y2="160" stroke="#2e3560" stroke-width="1"/>
+      <!-- train loss down -->
+      <polyline points="385,130 420,100 455,80 490,65 525,55 560,50 595,47 635,45" fill="none" stroke="#6c8fff" stroke-width="2"/>
+      <!-- val loss goes up after a point -->
+      <polyline points="385,133 420,108 455,95 490,90 525,92 560,98 595,108 635,118" fill="none" stroke="#f87171" stroke-width="2" stroke-dasharray="5,3"/>
+      <text dominant-baseline="middle" x="510" y="155" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#f87171">val loss বাড়ছে → overfit!</text>
+      <circle cx="460" cy="195" r="5" fill="#6c8fff"/>
+      <text x="470" y="199" font-family="Hind Siliguri" font-size="10" fill="#6c8fff">Train</text>
+      <circle cx="520" cy="195" r="5" fill="#f87171"/>
+      <text x="530" y="199" font-family="Hind Siliguri" font-size="10" fill="#f87171">Validation</text>
+    </svg>
+    <p class="diagram-caption">ভালো ও খারাপ learning curve চেনার উপায়</p>
+  </div>
+
+  <h4>Prediction ও Confusion Matrix</h4>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Prediction ও Confusion Matrix</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># Prediction — .round() দিয়ে 0 বা 1 বানানো হয়</span>
+<span class="var">y_pred</span> <span class="op">=</span> <span class="var">model</span>.<span class="fn">predict</span>(<span class="var">X_test</span>).<span class="fn">round</span>()
+
+<span class="cm"># Confusion Matrix — pandas দিয়ে</span>
+<span class="var">pd</span>.<span class="fn">crosstab</span>(<span class="var">y_test</span>, <span class="var">y_pred</span>[:,<span class="num">0</span>], 
+            rownames<span class="op">=</span>[<span class="str">'True gender'</span>], 
+            colnames<span class="op">=</span>[<span class="str">'Predicted gender'</span>])</pre></div>
+  </div>
+
+  <!-- Confusion Matrix SVG -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 500 280" xmlns="http://www.w3.org/2000/svg" style="max-width:500px;width:100%;" overflow="visible">
+      <text dominant-baseline="middle" x="250" y="28" text-anchor="middle" font-family="Hind Siliguri" font-size="14" fill="#e2e8f0" font-weight="700">Confusion Matrix — লিঙ্গ শনাক্তকরণ</text>
+      <!-- Predicted labels -->
+      <text dominant-baseline="middle" x="290" y="60" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#6c8fff">Predicted: Male (0)</text>
+      <text dominant-baseline="middle" x="410" y="60" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#6c8fff">Predicted: Female (1)</text>
+      <!-- True labels -->
+      <text dominant-baseline="middle" x="110" y="120" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#a78bfa" transform="rotate(-90,110,120)">True: Male (0)</text>
+      <text dominant-baseline="middle" x="110" y="210" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#a78bfa" transform="rotate(-90,110,210)">True: Female (1)</text>
+      <!-- TP box -->
+      <rect x="140" y="70" width="140" height="80" rx="8" fill="rgba(52,211,153,0.25)" stroke="#34d399" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="210" y="106" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#34d399" font-weight="700">TN</text>
+      <text dominant-baseline="middle" x="210" y="126" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#34d399">সঠিকভাবে Male বলা</text>
+      <!-- FP box -->
+      <rect x="290" y="70" width="140" height="80" rx="8" fill="rgba(248,113,113,0.15)" stroke="#f87171" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="360" y="106" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#f87171" font-weight="700">FP</text>
+      <text dominant-baseline="middle" x="360" y="126" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#f87171">Male কিন্তু Female বলা</text>
+      <!-- FN box -->
+      <rect x="140" y="160" width="140" height="80" rx="8" fill="rgba(248,113,113,0.15)" stroke="#f87171" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="210" y="196" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#f87171" font-weight="700">FN</text>
+      <text dominant-baseline="middle" x="210" y="216" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#f87171">Female কিন্তু Male বলা</text>
+      <!-- TP2 box -->
+      <rect x="290" y="160" width="140" height="80" rx="8" fill="rgba(52,211,153,0.25)" stroke="#34d399" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="360" y="196" text-anchor="middle" font-family="JetBrains Mono" font-size="22" fill="#34d399" font-weight="700">TP</text>
+      <text dominant-baseline="middle" x="360" y="216" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#34d399">সঠিকভাবে Female বলা</text>
+      <!-- Diagonal label -->
+      <text dominant-baseline="middle" x="250" y="265" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">✓ সবুজ বাক্সে বেশি সংখ্যা = ভালো মডেল</text>
+    </svg>
+    <p class="diagram-caption">Confusion Matrix পড়ার পদ্ধতি</p>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== SECTION 4: AGE NOTEBOOK ==================== -->
+<div id="s4" class="section">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ৪</span>
+    <h2>Notebook ০২ — বয়স অনুমান (Regression)</h2>
+  </div>
+
+  <div class="pills">
+    <span class="pill orange">Regression</span>
+    <span class="pill blue">Linear output (no activation)</span>
+    <span class="pill purple">MSE loss</span>
+    <span class="pill green">MAE metric</span>
+  </div>
+
+  <p style="margin-top:16px;">এবার লক্ষ্য হলো একটি সংখ্যা অনুমান করা — ব্যক্তির বয়স। এটি classification নয়, regression সমস্যা।</p>
+
+  <h3>Classification বনাম Regression</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th></th><th>Classification</th><th>Regression</th></tr></thead>
+      <tbody>
+        <tr><td>লক্ষ্য</td><td>শ্রেণী বলা (Male/Female)</td><td>সংখ্যা বলা (বয়স: 27)</td></tr>
+        <tr><td>Output layer</td><td><code>Dense(1, sigmoid)</code></td><td><code>Dense(1)</code> — কোনো activation নেই</td></tr>
+        <tr><td>Loss</td><td><code>binary_crossentropy</code></td><td><code>mse</code></td></tr>
+        <tr><td>Metric</td><td><code>accuracy</code></td><td><code>mae</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Output layer-এ activation নেই কেন?</h3>
+  <div class="card warning">
+    <div class="card-title">⚠️ গুরুত্বপূর্ণ পার্থক্য</div>
+    <p style="color:var(--text2);font-size:14px;margin:0;">
+      লিঙ্গ শনাক্তকরণে <code>Dense(units=1, activation='sigmoid')</code> ছিল — কারণ 0 থেকে 1 এর মধ্যে উত্তর দরকার (সম্ভাবনা)।<br><br>
+      বয়স অনুমানে <code>Dense(units=1)</code> — কোনো activation নেই! কারণ বয়স যেকোনো ধনাত্মক সংখ্যা হতে পারে (0, 25, 79...)। Sigmoid দিলে সর্বোচ্চ 1 দিত, যেটা বয়স হিসেবে অর্থহীন।
+    </p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">বয়স অনুমানের মডেল compile</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="var">model</span>.<span class="fn">compile</span>(
+    optimizer<span class="op">=</span><span class="str">'adam'</span>,
+    loss<span class="op">=</span><span class="str">'mse'</span>,    <span class="cm"># Mean Squared Error = গড় বর্গ ত্রুটি</span>
+    metrics<span class="op">=</span>[<span class="str">'mae'</span>]  <span class="cm"># Mean Absolute Error = গড় পরম ত্রুটি</span>
+)</pre></div>
+  </div>
+
+  <h3>MSE ও MAE কী?</h3>
+
+  <div class="formula">MSE = (1/n) × Σ(y_true - y_pred)²</div>
+  <div class="formula">MAE = (1/n) × Σ|y_true - y_pred|</div>
+
+  <div class="card highlight">
+    <div class="card-title">📐 সহজ উদাহরণ</div>
+    <p style="color:var(--text2);font-size:14px;margin:0;">
+      ধরো সত্যিকার বয়স = 30, মডেলের অনুমান = 25।<br>
+      ত্রুটি = 30 - 25 = 5<br>
+      <strong>MAE contribution:</strong> |5| = 5 বছর<br>
+      <strong>MSE contribution:</strong> 5² = 25<br><br>
+      MAE বোঝা সহজ ("গড়ে ৫ বছর ভুল")। MSE বড় ত্রুটিকে বেশি শাস্তি দেয়।
+    </p>
+  </div>
+
+  <h3>Scatter Plot — ভবিষ্যদ্বাণী মূল্যায়ন</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Scatter plot দিয়ে মূল্যায়ন</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="var">sns</span>.<span class="fn">scatterplot</span>(<span class="var">y_pred</span>[:,<span class="num">0</span>], <span class="var">y_test</span>)
+
+<span class="cm"># y=x রেখা যোগ করা — নিখুঁত মডেল এই রেখায় থাকত</span>
+<span class="var">plt</span>.<span class="fn">plot</span>(
+    (<span class="var">y_test</span>.<span class="fn">min</span>(), <span class="var">y_test</span>.<span class="fn">max</span>()), 
+    (<span class="var">y_test</span>.<span class="fn">min</span>(), <span class="var">y_test</span>.<span class="fn">max</span>()), 
+    <span class="str">'r'</span>   <span class="cm"># লাল রেখা</span>
+)</pre></div>
+  </div>
+
+  <!-- SVG scatter plot explanation -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 500 280" xmlns="http://www.w3.org/2000/svg" style="max-width:500px;width:100%;" overflow="visible">
+      <!-- Axes -->
+      <line x1="60" y1="240" x2="460" y2="240" stroke="#2e3560" stroke-width="1.5"/>
+      <line x1="60" y1="240" x2="60" y2="30" stroke="#2e3560" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="260" y="270" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#94a3b8">y_pred (মডেলের অনুমান)</text>
+      <text dominant-baseline="middle" x="25" y="140" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#94a3b8" transform="rotate(-90,25,140)">y_true (সত্যিকার বয়স)</text>
+      <!-- y=x line -->
+      <line x1="60" y1="240" x2="460" y2="30" stroke="#f87171" stroke-width="2" stroke-dasharray="8,4"/>
+      <text x="430" y="50" font-family="Hind Siliguri" font-size="11" fill="#f87171">y=x</text>
+      <text x="430" y="65" font-family="Hind Siliguri" font-size="10" fill="#64748b">(আদর্শ রেখা)</text>
+      <!-- scatter points near the line -->
+      <circle cx="100" cy="210" r="4" fill="rgba(108,143,255,0.7)"/>
+      <circle cx="130" cy="195" r="4" fill="rgba(108,143,255,0.7)"/>
+      <circle cx="160" cy="172" r="4" fill="rgba(108,143,255,0.7)"/>
+      <circle cx="190" cy="160" r="4" fill="rgba(108,143,255,0.7)"/>
+      <circle cx="220" cy="148" r="4" fill="rgba(108,143,255,0.7)"/>
+      <circle cx="250" cy="135" r="4" fill="rgba(108,143,255,0.7)"/>
+      <circle cx="140" cy="185" r="4" fill="rgba(108,143,255,0.7)"/>
+      <circle cx="170" cy="165" r="4" fill="rgba(108,143,255,0.7)"/>
+      <circle cx="200" cy="142" r="4" fill="rgba(108,143,255,0.7)"/>
+      <circle cx="280" cy="118" r="4" fill="rgba(108,143,255,0.7)"/>
+      <circle cx="310" cy="110" r="4" fill="rgba(108,143,255,0.7)"/>
+      <circle cx="340" cy="92" r="4" fill="rgba(108,143,255,0.7)"/>
+      <circle cx="370" cy="78" r="4" fill="rgba(108,143,255,0.7)"/>
+      <circle cx="400" cy="68" r="4" fill="rgba(108,143,255,0.7)"/>
+      <!-- axis labels -->
+      <text x="80" y="256" font-family="Hind Siliguri" font-size="10" fill="#64748b">0</text>
+      <text x="255" y="256" font-family="Hind Siliguri" font-size="10" fill="#64748b">40</text>
+      <text x="435" y="256" font-family="Hind Siliguri" font-size="10" fill="#64748b">80</text>
+      <text x="45" y="244" font-family="Hind Siliguri" font-size="10" fill="#64748b">0</text>
+      <text x="38" y="137" font-family="Hind Siliguri" font-size="10" fill="#64748b">40</text>
+      <text x="38" y="34" font-family="Hind Siliguri" font-size="10" fill="#64748b">80</text>
+      <!-- annotation -->
+      <text x="80" y="130" font-family="Hind Siliguri" font-size="11" fill="#34d399">বিন্দুগুলি লাল রেখার</text>
+      <text x="80" y="146" font-family="Hind Siliguri" font-size="11" fill="#34d399">কাছাকাছি = ভালো মডেল ✓</text>
+    </svg>
+    <p class="diagram-caption">Scatter plot — নিখুঁত হলে সব বিন্দু লাল y=x রেখায় থাকত</p>
+  </div>
+
+  <div class="nb-note">
+    <strong>📓 নোট:</strong> <code>y_pred[:,0]</code> মানে y_pred array-এর প্রথম (0তম) কলাম। y_pred-এর shape হলো (n_samples, 1), তাই [:,0] দিয়ে 1D করা হয় scatter plot-এর জন্য।
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== SECTION 5: MULTI-OUTPUT NOTEBOOK ==================== -->
+<div id="s5" class="section">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ৫</span>
+    <h2>Notebook ০৩ — একটিই মডেল, সব কিছু একসাথে</h2>
+  </div>
+
+  <div class="pills">
+    <span class="pill green">Multi-output</span>
+    <span class="pill blue">Functional API</span>
+    <span class="pill orange">Age normalization</span>
+    <span class="pill purple">Custom loss</span>
+    <span class="pill pink">5-class ethnicity</span>
+  </div>
+
+  <p style="margin-top:16px;">এই নোটবুকটি সবচেয়ে জটিল — কিন্তু সবচেয়ে সুন্দরও। এখানে একটিই CNN মডেল একসাথে তিনটি কাজ করে।</p>
+
+  <h3>কেন একটি মডেল?</h3>
+
+  <div class="card success">
+    <div class="card-title">✨ Multi-task Learning-এর সুবিধা</div>
+    <p style="color:var(--text2);font-size:14px;margin:0;">
+      একই মুখের ছবি থেকে বয়স, লিঙ্গ ও জাতিসত্তা — এগুলো কি সত্যিই স্বাধীন? না! তরুণ মুখের বৈশিষ্ট্য জানলে বয়সও সহজে বোঝা যায়, এবং এটি লিঙ্গ বোঝাতেও সাহায্য করে। একটি shared backbone (CNN অংশ) ব্যবহার করলে মডেল এই সম্পর্কগুলি শিখতে পারে। এছাড়া কম প্যারামিটার, দ্রুত প্রশিক্ষণ।
+    </p>
+  </div>
+
+  <h3>বয়স normalize করা</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Age normalization</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># সর্বোচ্চ বয়স সংরক্ষণ (পরে denormalize করতে লাগবে)</span>
+<span class="var">max_age</span> <span class="op">=</span> <span class="var">df</span>[<span class="str">'age'</span>].<span class="fn">max</span>()   <span class="cm"># এখানে 79</span>
+
+<span class="cm"># বয়সকে 0-1 এর মধ্যে আনা</span>
+<span class="var">df</span>[<span class="str">'age'</span>] <span class="op">=</span> <span class="var">df</span>[<span class="str">'age'</span>] <span class="op">/</span> <span class="var">max_age</span></pre></div>
+  </div>
+
+  <div class="callout info">
+    <span class="callout-icon">📐</span>
+    <div class="callout-body"><strong>কেন normalize করা হচ্ছে?</strong> gender (0/1) ও ethnicity (0-4) ছোট মান, কিন্তু age (0-79) অনেক বড়। যদি loss function-এ একসাথে ব্যবহার করা হয়, তাহলে age-এর বড় মান loss-এ বেশি প্রভাব ফেলবে। সব মান 0-1 এর মধ্যে আনলে loss function ভারসাম্যপূর্ণ হয়।</div>
+  </div>
+
+  <h3>Target variable y তৈরি করা</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Multi-output target</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># আগের নোটবুকগুলোতে y ছিল একটি মাত্র কলাম</span>
+<span class="cm"># এবার y হবে তিনটি কলামের একটি 2D array</span>
+<span class="var">y</span> <span class="op">=</span> <span class="var">df</span>[[<span class="str">'age'</span>, <span class="str">'gender'</span>, <span class="str">'ethnicity'</span>]].<span class="var">values</span>
+
+<span class="cm"># y.shape = (n_samples, 3)</span>
+<span class="cm"># y[0] = [0.34, 0, 2]  → বয়স 0.34 (normalize), পুরুষ, Asian</span></pre></div>
+  </div>
+
+  <h3>Functional API — নতুন মডেল তৈরির পদ্ধতি</h3>
+
+  <p>আগের দুটি নোটবুকে <code>Sequential</code> ব্যবহার হয়েছিল — একটি সরলরেখার মতো layer। এবার <strong>Functional API</strong> ব্যবহার হচ্ছে, কারণ মডেলের শেষে তিনটি আলাদা output শাখা তৈরি করতে হবে।</p>
+
+  <!-- SVG Functional API diagram -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;" overflow="visible">
+      <defs>
+        <marker id="arr3" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 z" fill="#6c8fff" opacity="0.8"/>
+        </marker>
+      </defs>
+
+      <!-- Input -->
+      <rect x="260" y="10" width="160" height="50" rx="10" fill="#1e2340" stroke="#6c8fff" stroke-width="2"/>
+      <text dominant-baseline="middle" x="340" y="32" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#6c8fff" font-weight="700">Input Layer</text>
+      <text dominant-baseline="middle" x="340" y="50" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#64748b">(None, 48, 48, 1)</text>
+      <line x1="340" y1="62" x2="340" y2="82" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <!-- Shared CNN -->
+      <rect x="230" y="84" width="220" height="90" rx="10" fill="#1a1e35" stroke="#a78bfa" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="340" y="108" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#a78bfa" font-weight="700">Shared CNN Backbone</text>
+      <text dominant-baseline="middle" x="340" y="126" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">Conv2D(16) → MaxPool → Dropout</text>
+      <text dominant-baseline="middle" x="340" y="142" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">Conv2D(32) → MaxPool</text>
+      <text dominant-baseline="middle" x="340" y="158" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">Conv2D(64) → MaxPool → Dropout → Flatten</text>
+      <line x1="340" y1="176" x2="340" y2="196" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <!-- Dense shared -->
+      <rect x="250" y="198" width="180" height="50" rx="10" fill="#1a1e35" stroke="#22d3ee" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="340" y="220" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#22d3ee" font-weight="700">Shared Dense</text>
+      <text dominant-baseline="middle" x="340" y="238" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#64748b">Dense(128) + Dense(64)</text>
+
+      <!-- Three branches -->
+      <line x1="250" y1="248" x2="120" y2="275" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arr3)"/>
+      <line x1="340" y1="250" x2="340" y2="275" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr3)"/>
+      <line x1="430" y1="248" x2="560" y2="275" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr3)"/>
+
+      <!-- Age output -->
+      <rect x="30" y="277" width="180" height="55" rx="10" fill="#1e2340" stroke="#fb923c" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="120" y="298" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#fb923c" font-weight="700">বয়স output</text>
+      <text dominant-baseline="middle" x="120" y="315" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#64748b">Dense(1, sigmoid)</text>
+      <text dominant-baseline="middle" x="120" y="328" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#64748b">0-1 (normalize)</text>
+
+      <!-- Gender output -->
+      <rect x="250" y="277" width="180" height="55" rx="10" fill="#1e2340" stroke="#6c8fff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="340" y="298" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#6c8fff" font-weight="700">লিঙ্গ output</text>
+      <text dominant-baseline="middle" x="340" y="315" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#64748b">Dense(1, sigmoid)</text>
+      <text dominant-baseline="middle" x="340" y="328" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#64748b">0 বা 1</text>
+
+      <!-- Ethnicity output -->
+      <rect x="470" y="277" width="180" height="55" rx="10" fill="#1e2340" stroke="#34d399" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="560" y="298" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#34d399" font-weight="700">জাতিসত্তা output</text>
+      <text dominant-baseline="middle" x="560" y="315" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#64748b">Dense(5, softmax)</text>
+      <text dominant-baseline="middle" x="560" y="328" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#64748b">5টি ক্লাস</text>
+    </svg>
+    <p class="diagram-caption">Multi-output মডেলের আর্কিটেকচার — একটি shared backbone, তিনটি output শাখা</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Functional API দিয়ে Multi-output মডেল</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="kw">from</span> <span class="var">tensorflow.keras</span> <span class="kw">import</span> <span class="cls">Model</span>
+<span class="kw">from</span> <span class="var">tensorflow.keras.layers</span> <span class="kw">import</span> <span class="cls">Input</span>, <span class="cls">Dense</span>, <span class="cls">Dropout</span>, <span class="cls">Flatten</span>, <span class="cls">Conv2D</span>, <span class="cls">MaxPooling2D</span>
+
+<span class="var">input_model</span> <span class="op">=</span> <span class="cls">Input</span>((<span class="num">48</span>, <span class="num">48</span>, <span class="num">1</span>))  <span class="cm"># Input layer তৈরি</span>
+
+<span class="cm"># --- Shared CNN backbone ---</span>
+<span class="var">x</span> <span class="op">=</span> <span class="cls">Conv2D</span>(<span class="num">16</span>, (<span class="num">5</span>, <span class="num">5</span>), activation<span class="op">=</span><span class="str">'relu'</span>)(<span class="var">input_model</span>)
+<span class="var">x</span> <span class="op">=</span> <span class="cls">MaxPooling2D</span>((<span class="num">2</span>, <span class="num">2</span>))(<span class="var">x</span>)
+<span class="var">x</span> <span class="op">=</span> <span class="cls">Dropout</span>(<span class="num">0.2</span>)(<span class="var">x</span>)
+<span class="var">x</span> <span class="op">=</span> <span class="cls">Conv2D</span>(<span class="num">32</span>, (<span class="num">3</span>, <span class="num">3</span>), activation<span class="op">=</span><span class="str">'relu'</span>)(<span class="var">x</span>)
+<span class="var">x</span> <span class="op">=</span> <span class="cls">MaxPooling2D</span>((<span class="num">2</span>, <span class="num">2</span>))(<span class="var">x</span>)
+<span class="var">x</span> <span class="op">=</span> <span class="cls">Conv2D</span>(<span class="num">64</span>, (<span class="num">3</span>, <span class="num">3</span>), activation<span class="op">=</span><span class="str">'relu'</span>)(<span class="var">x</span>)
+<span class="var">x</span> <span class="op">=</span> <span class="cls">MaxPooling2D</span>((<span class="num">2</span>, <span class="num">2</span>))(<span class="var">x</span>)
+<span class="var">x</span> <span class="op">=</span> <span class="cls">Dropout</span>(<span class="num">0.2</span>)(<span class="var">x</span>)
+<span class="var">x</span> <span class="op">=</span> <span class="cls">Flatten</span>()(<span class="var">x</span>)
+<span class="var">x</span> <span class="op">=</span> <span class="cls">Dense</span>(<span class="num">128</span>, activation<span class="op">=</span><span class="str">'relu'</span>)(<span class="var">x</span>)
+<span class="var">x</span> <span class="op">=</span> <span class="cls">Dropout</span>(<span class="num">0.2</span>)(<span class="var">x</span>)
+<span class="var">x</span> <span class="op">=</span> <span class="cls">Dense</span>(<span class="num">64</span>, activation<span class="op">=</span><span class="str">'relu'</span>)(<span class="var">x</span>)
+
+<span class="cm"># --- তিনটি আলাদা output ---</span>
+<span class="var">age</span> <span class="op">=</span> <span class="cls">Dense</span>(<span class="num">1</span>, activation<span class="op">=</span><span class="str">'sigmoid'</span>)(<span class="var">x</span>)      <span class="cm"># normalized বয়স</span>
+<span class="var">gender</span> <span class="op">=</span> <span class="cls">Dense</span>(<span class="num">1</span>, activation<span class="op">=</span><span class="str">'sigmoid'</span>)(<span class="var">x</span>)  <span class="cm"># 0 বা 1</span>
+<span class="var">ethnicity</span> <span class="op">=</span> <span class="cls">Dense</span>(<span class="num">5</span>, activation<span class="op">=</span><span class="str">'softmax'</span>)(<span class="var">x</span>)<span class="cm"># 5 ক্লাস</span>
+
+<span class="cm"># তিনটি output জোড়া লাগানো</span>
+<span class="var">model</span> <span class="op">=</span> <span class="cls">Model</span>(
+    inputs<span class="op">=</span><span class="var">input_model</span>, 
+    outputs<span class="op">=</span><span class="var">tf</span>.<span class="fn">concat</span>([<span class="var">age</span>, <span class="var">gender</span>, <span class="var">ethnicity</span>], axis<span class="op">=</span><span class="op">-</span><span class="num">1</span>)
+)</pre></div>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title">🔍 tf.concat মানে কী?</div>
+    <p style="color:var(--text2);font-size:14px;margin:0;">
+      <code>age</code> → shape: (batch, 1)<br>
+      <code>gender</code> → shape: (batch, 1)<br>
+      <code>ethnicity</code> → shape: (batch, 5)<br>
+      <code>tf.concat([age, gender, ethnicity], axis=-1)</code> → shape: (batch, 7)<br><br>
+      এই 7টি মান হলো: [age_pred, gender_pred, eth0, eth1, eth2, eth3, eth4]। y-এর সাথে তুলনা করলে y-এর shape হওয়া উচিত (batch, 3), কিন্তু ethnicity-র জন্য one-hot encoding না হওয়ায় custom loss function-ই সঠিকভাবে বিভাজন করে।
+    </p>
+  </div>
+
+  <h3>Sequential API বনাম Functional API</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th></th><th>Sequential API</th><th>Functional API</th></tr></thead>
+      <tbody>
+        <tr><td>ব্যবহার</td><td>সরল, একটি পথ</td><td>জটিল, একাধিক পথ/শাখা</td></tr>
+        <tr><td>কোড</td><td><code>model.add(Layer())</code></td><td><code>x = Layer()(x)</code></td></tr>
+        <tr><td>Multi-output?</td><td>❌ সম্ভব নয়</td><td>✅ সম্ভব</td></tr>
+        <tr><td>Shared layer?</td><td>❌</td><td>✅</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Prediction decode করা</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Output decode করার function</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="var">gender_mapping</span> <span class="op">=</span> {<span class="num">0</span>: <span class="str">"Male"</span>, <span class="num">1</span>: <span class="str">"Female"</span>}
+<span class="var">ethnicity_mapping</span> <span class="op">=</span> {<span class="num">0</span>:<span class="str">"White"</span>, <span class="num">1</span>:<span class="str">"Black"</span>, <span class="num">2</span>:<span class="str">"Asian"</span>, <span class="num">3</span>:<span class="str">"Indian"</span>, <span class="num">4</span>:<span class="str">"Hispanic"</span>}
+
+<span class="kw">def</span> <span class="fn">prediction</span>(<span class="var">y_pred</span>):
+    <span class="kw">return</span> (
+        (<span class="var">y_pred</span>[<span class="num">0</span>] <span class="op">*</span> <span class="var">max_age</span>).<span class="fn">round</span>(),     <span class="cm"># বয়স — denormalize</span>
+        <span class="var">gender_mapping</span>[<span class="var">y_pred</span>[<span class="num">1</span>].<span class="fn">round</span>()], <span class="cm"># লিঙ্গ</span>
+        <span class="var">ethnicity_mapping</span>[<span class="var">np</span>.<span class="fn">argmax</span>(<span class="var">y_pred</span>[<span class="num">2</span>:], axis<span class="op">=</span><span class="op">-</span><span class="num">1</span>)]  <span class="cm"># সর্বোচ্চ সম্ভাবনার ক্লাস</span>
+    )</pre></div>
+  </div>
+
+  <div class="callout tip">
+    <span class="callout-icon">💡</span>
+    <div class="callout-body"><strong>np.argmax কী করে?</strong> softmax দেয় [0.1, 0.05, 0.7, 0.1, 0.05] — ৫টি সম্ভাবনা। <code>np.argmax</code> সর্বোচ্চটির index দেয় → 2 → ethnicity_mapping[2] = "Asian"।</div>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== SECTION 6: LOSS FUNCTION ==================== -->
+<div id="s6" class="section">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ৬</span>
+    <h2>Custom Loss Function — সবচেয়ে জটিল অংশ</h2>
+  </div>
+
+  <p>এটি এই পুরো প্রজেক্টের সবচেয়ে সৃজনশীল অংশ। একটি মডেল তিনটি ভিন্ন ধরনের কাজ করছে — তাহলে কীভাবে তাদের performance মাপা যাবে?</p>
+
+  <h3>সমস্যাটি কী?</h3>
+
+  <div class="card warning">
+    <div class="card-title">⚠️ তিনটি আলাদা সমস্যা, তিনটি আলাদা loss</div>
+    <p style="color:var(--text2);font-size:14px;margin:0;">
+      <strong>বয়স (Regression):</strong> MSE ব্যবহার করা উচিত → কিন্তু মান 0-1 (normalize করা)<br>
+      <strong>লিঙ্গ (Binary Classification):</strong> Binary Crossentropy ব্যবহার করা উচিত<br>
+      <strong>জাতিসত্তা (5-class Classification):</strong> Sparse Categorical Crossentropy ব্যবহার করা উচিত<br><br>
+      এই তিনটিকে একটি সংখ্যায় মিলিয়ে মডেলকে একটিই সংকেত দিতে হবে।
+    </p>
+  </div>
+
+  <h3>সমাধান: Weighted Sum</h3>
+
+  <div class="formula">
+    L_total = λ_age × L_age + λ_gender × L_gender + λ_ethnicity × L_ethnicity
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Custom Loss Function সম্পূর্ণ কোড</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># Weight coefficients — হাতে ঠিক করা (tuning করা যায়)</span>
+<span class="var">lambda_age</span> <span class="op">=</span> <span class="num">10</span>         <span class="cm"># বয়স loss-কে 10 গুণ বেশি গুরুত্ব</span>
+<span class="var">lambda_gender</span> <span class="op">=</span> <span class="num">1</span>      <span class="cm"># লিঙ্গ loss — স্বাভাবিক</span>
+<span class="var">lambda_ethnicity</span> <span class="op">=</span> <span class="num">2</span>   <span class="cm"># জাতিসত্তা loss — দ্বিগুণ</span>
+
+<span class="cm"># বয়সের loss: MSE নিজে লেখা</span>
+<span class="kw">def</span> <span class="fn">loss_age</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="kw">return</span> <span class="var">tf</span>.<span class="fn">reduce_mean</span>(<span class="var">tf</span>.<span class="fn">square</span>(<span class="var">y_true</span> <span class="op">-</span> <span class="var">y_pred</span>), axis<span class="op">=</span><span class="op">-</span><span class="num">1</span>)
+
+<span class="cm"># লিঙ্গের loss: Binary Crossentropy</span>
+<span class="kw">def</span> <span class="fn">loss_gender</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="kw">return</span> <span class="var">tf</span>.<span class="var">keras</span>.<span class="var">losses</span>.<span class="cls">BinaryCrossentropy</span>()(<span class="var">y_true</span>, <span class="var">y_pred</span>)
+
+<span class="cm"># জাতিসত্তার loss: Sparse Categorical (label integer, softmax output)</span>
+<span class="kw">def</span> <span class="fn">loss_ethnicity</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="kw">return</span> <span class="var">tf</span>.<span class="var">keras</span>.<span class="var">losses</span>.<span class="cls">SparseCategoricalCrossentropy</span>()(<span class="var">y_true</span>, <span class="var">y_pred</span>)
+
+<span class="cm"># মূল loss function — সব একসাথে</span>
+<span class="kw">def</span> <span class="fn">loss_function</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="kw">return</span> (
+        <span class="var">lambda_age</span> <span class="op">*</span> <span class="fn">loss_age</span>(
+            <span class="var">tf</span>.<span class="fn">cast</span>(<span class="var">y_true</span>[:,<span class="num">0</span>], <span class="var">tf</span>.<span class="var">float32</span>),  <span class="cm"># column 0 = বয়স</span>
+            <span class="var">y_pred</span>[:,<span class="num">0</span>]
+        ) <span class="op">+</span>
+        <span class="var">lambda_gender</span> <span class="op">*</span> <span class="fn">loss_gender</span>(
+            <span class="var">y_true</span>[:,<span class="num">1</span>],   <span class="cm"># column 1 = লিঙ্গ</span>
+            <span class="var">y_pred</span>[:,<span class="num">1</span>]
+        ) <span class="op">+</span>
+        <span class="var">lambda_ethnicity</span> <span class="op">*</span> <span class="fn">loss_ethnicity</span>(
+            <span class="var">y_true</span>[:,<span class="num">2</span>],   <span class="cm"># column 2 = জাতিসত্তা</span>
+            <span class="var">y_pred</span>[:,<span class="num">2</span>:]  <span class="cm"># column 2 থেকে শেষ পর্যন্ত (5টি)= softmax output</span>
+        )
+    )</pre></div>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title">🔍 tf.cast কেন দরকার?</div>
+    <p style="color:var(--text2);font-size:14px;margin:0;">
+      <code>y_true</code> array-এ age column হয়তো float64 বা int64 হিসেবে সংরক্ষিত। কিন্তু <code>y_pred</code> সবসময় float32। TensorFlow এই দুটোর মধ্যে গণনা করতে পারে না যদি type ভিন্ন হয়। তাই <code>tf.cast(..., tf.float32)</code> দিয়ে float32-এ রূপান্তর করতে হয়।
+    </p>
+  </div>
+
+  <h3>λ (lambda) এর মান কেন এভাবে?</h3>
+
+  <!-- SVG lambda explanation -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 640 180" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%;" overflow="visible">
+      <text dominant-baseline="middle" x="320" y="25" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#e2e8f0" font-weight="700">Loss scale comparison (approximate)</text>
+      <!-- Age bar -->
+      <text dominant-baseline="middle" x="100" y="58" text-anchor="right" font-family="Hind Siliguri" font-size="12" fill="#fb923c">Age MSE</text>
+      <rect x="170" y="44" width="40" height="24" rx="5" fill="rgba(251,146,60,0.5)" stroke="#fb923c" stroke-width="1"/>
+      <text x="215" y="60" font-family="JetBrains Mono" font-size="11" fill="#fb923c">~0.05</text>
+      <text x="310" y="60" font-family="Hind Siliguri" font-size="11" fill="#64748b">× λ=10 →</text>
+      <rect x="370" y="44" width="120" height="24" rx="5" fill="rgba(251,146,60,0.8)" stroke="#fb923c" stroke-width="1"/>
+      <text x="490" y="60" font-family="JetBrains Mono" font-size="11" fill="#fb923c">~0.5</text>
+      <!-- Gender bar -->
+      <text dominant-baseline="middle" x="100" y="103" text-anchor="right" font-family="Hind Siliguri" font-size="12" fill="#6c8fff">Gender BCE</text>
+      <rect x="170" y="90" width="200" height="24" rx="5" fill="rgba(108,143,255,0.5)" stroke="#6c8fff" stroke-width="1"/>
+      <text x="375" y="106" font-family="JetBrains Mono" font-size="11" fill="#6c8fff">~0.5</text>
+      <text x="420" y="106" font-family="Hind Siliguri" font-size="11" fill="#64748b">× λ=1 →</text>
+      <rect x="480" y="90" width="60" height="24" rx="5" fill="rgba(108,143,255,0.8)" stroke="#6c8fff" stroke-width="1"/>
+      <!-- Ethnicity bar -->
+      <text dominant-baseline="middle" x="100" y="148" text-anchor="right" font-family="Hind Siliguri" font-size="12" fill="#a78bfa">Ethnicity SCE</text>
+      <rect x="170" y="135" width="140" height="24" rx="5" fill="rgba(167,139,250,0.5)" stroke="#a78bfa" stroke-width="1"/>
+      <text x="315" y="151" font-family="JetBrains Mono" font-size="11" fill="#a78bfa">~0.3</text>
+      <text x="355" y="151" font-family="Hind Siliguri" font-size="11" fill="#64748b">× λ=2 →</text>
+      <rect x="420" y="135" width="100" height="24" rx="5" fill="rgba(167,139,250,0.8)" stroke="#a78bfa" stroke-width="1"/>
+      <text x="525" y="151" font-family="JetBrains Mono" font-size="11" fill="#a78bfa">~0.6</text>
+      <text dominant-baseline="middle" x="320" y="175" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">λ দিয়ে তিনটি loss-কে সমতুল্য স্কেলে আনা হয়</text>
+    </svg>
+    <p class="diagram-caption">Lambda coefficient দিয়ে loss scaling ভারসাম্য করা</p>
+  </div>
+
+  <h3>Custom Metrics</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Custom metrics — প্রতিটি কাজের আলাদা মূল্যায়ন</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="kw">def</span> <span class="fn">metric_age</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="cm"># MAE × max_age → বছরে ত্রুটি ফিরিয়ে দেয়</span>
+    <span class="kw">return</span> <span class="var">tf</span>.<span class="var">keras</span>.<span class="var">metrics</span>.<span class="fn">MAE</span>(<span class="var">y_true</span>[:,<span class="num">0</span>], <span class="var">y_pred</span>[:,<span class="num">0</span>]) <span class="op">*</span> <span class="var">max_age</span>
+
+<span class="kw">def</span> <span class="fn">metric_gender</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="cm"># Binary accuracy</span>
+    <span class="kw">return</span> <span class="var">tf</span>.<span class="var">keras</span>.<span class="var">metrics</span>.<span class="fn">binary_accuracy</span>(<span class="var">y_true</span>[:,<span class="num">1</span>], <span class="var">y_pred</span>[:,<span class="num">1</span>])
+
+<span class="kw">def</span> <span class="fn">metric_ethnicity</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="cm"># Sparse categorical accuracy</span>
+    <span class="kw">return</span> <span class="var">tf</span>.<span class="var">keras</span>.<span class="var">metrics</span>.<span class="fn">sparse_categorical_accuracy</span>(
+        <span class="var">y_true</span>[:,<span class="num">2</span>], <span class="var">y_pred</span>[:,<span class="num">2</span>:]
+    )</pre></div>
+  </div>
+
+  <div class="nb-note">
+    <strong>📓 নোট:</strong> metric_age-এ <code>* max_age</code> কেন? কারণ মডেল normalized বয়স (0-1) অনুমান করে। MAE-ও তাহলে 0-1 স্কেলে। পড়তে সুবিধার জন্য max_age গুণ করলে MAE বছরে পাওয়া যায়। যেমন MAE = 0.08, max_age = 79 → 0.08 × 79 ≈ 6.3 বছর ত্রুটি।
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== SECTION 7: EVALUATION ==================== -->
+<div id="s7" class="section">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ৭</span>
+    <h2>মডেল মূল্যায়ন — সব metrics বোঝা</h2>
+  </div>
+
+  <h3>Multi-output Learning Curve</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">চারটি subplot — সব metric একসাথে</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="var">plt</span>.<span class="fn">figure</span>(figsize<span class="op">=</span>(<span class="num">16</span>, <span class="num">10</span>))
+
+<span class="cm"># বয়স MAE</span>
+<span class="var">plt</span>.<span class="fn">subplot</span>(<span class="num">221</span>)  <span class="cm"># ২ rows, ২ cols, position ১</span>
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'metric_age'</span>])
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'val_metric_age'</span>])
+<span class="var">plt</span>.<span class="fn">title</span>(<span class="str">'Age MAE by epoch'</span>)
+
+<span class="cm"># লিঙ্গ accuracy</span>
+<span class="var">plt</span>.<span class="fn">subplot</span>(<span class="num">222</span>)  <span class="cm"># position ২</span>
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'metric_gender'</span>])
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'val_metric_gender'</span>])
+<span class="var">plt</span>.<span class="fn">title</span>(<span class="str">'Gender accuracy by epoch'</span>)
+
+<span class="cm"># জাতিসত্তা accuracy</span>
+<span class="var">plt</span>.<span class="fn">subplot</span>(<span class="num">223</span>)  <span class="cm"># position ৩</span>
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'metric_ethnicity'</span>])
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'val_metric_ethnicity'</span>])
+<span class="var">plt</span>.<span class="fn">title</span>(<span class="str">'Ethnicity accuracy by epoch'</span>)
+
+<span class="cm"># Total loss</span>
+<span class="var">plt</span>.<span class="fn">subplot</span>(<span class="num">224</span>)  <span class="cm"># position ৪</span>
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'loss'</span>])
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'val_loss'</span>])
+<span class="var">plt</span>.<span class="fn">title</span>(<span class="str">'Model loss by epoch'</span>)</pre></div>
+  </div>
+
+  <h3>Ethnicity Confusion Matrix</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Ethnicity confusion matrix</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># জাতিসত্তা: softmax output থেকে argmax দিয়ে class বের করা</span>
+<span class="var">pd</span>.<span class="fn">crosstab</span>(
+    <span class="var">y_test</span>[:,<span class="num">2</span>],                          <span class="cm"># true ethnicity</span>
+    <span class="var">np</span>.<span class="fn">argmax</span>(<span class="var">y_pred</span>[:,<span class="num">2</span>:], axis<span class="op">=</span><span class="op">-</span><span class="num">1</span>),    <span class="cm"># predicted ethnicity</span>
+    rownames<span class="op">=</span>[<span class="str">'True ethnicity'</span>],
+    colnames<span class="op">=</span>[<span class="str">'Predicted ethnicity'</span>]
+)</pre></div>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-body"><strong>Bias সম্পর্কে সতর্কতা:</strong> নোটবুকেই বলা আছে — কিছু বয়স গোষ্ঠী ও কিছু জাতিসত্তা under-represented। যেমন White 45%, Hispanic মাত্র 5%। তাহলে মডেল Hispanic মানুষের জন্য খারাপ কাজ করবে। এটি বাস্তব দুনিয়ায় গুরুতর সমস্যা। Confusion matrix দেখলে এই bias ধরা পড়ে।</div>
+  </div>
+
+  <h3>Performance উন্নয়নের পথ</h3>
+
+  <p>তিনটি নোটবুকেই "To go further" অংশে একই পরামর্শ:</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-icon">🔍</div>
+      <div class="step-content">
+        <h5>খারাপ prediction বিশ্লেষণ</h5>
+        <p>কোন ছবিগুলোতে মডেল ভুল করছে সেগুলো দেখো। প্যাটার্ন খোঁজো — হয়তো একটি নির্দিষ্ট আলোক অবস্থা বা বয়স সীমায় ভুল বেশি।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-icon">🏗️</div>
+      <div class="step-content">
+        <h5>Model architecture পরিবর্তন</h5>
+        <p>বেশি Conv2D layer যোগ করো, বা BatchNormalization ব্যবহার করো, বা pre-trained model (transfer learning) চেষ্টা করো।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-icon">📸</div>
+      <div class="step-content">
+        <h5>Data Augmentation</h5>
+        <p>ছবি flip, rotate, zoom করে training set বড় করো। Keras-এর <code>ImageDataGenerator</code> বা <code>tf.keras.layers.RandomFlip</code> ব্যবহার করা যায়।</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== SECTION 8: WEBCAM ==================== -->
+<div id="s8" class="section">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">অধ্যায় ৮</span>
+    <h2>Webcam Integration — Real-time Prediction</h2>
+  </div>
+
+  <p>তিনটি নোটবুকেরই শেষে একটি webcam demo আছে। এটি একটু জটিল কিন্তু বোঝা দরকার।</p>
+
+  <!-- SVG Webcam flow -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 720 130" xmlns="http://www.w3.org/2000/svg" style="max-width:720px;width:100%;" overflow="visible">
+      <defs>
+        <marker id="arr4" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L7,3 z" fill="#6c8fff" opacity="0.7"/>
+        </marker>
+      </defs>
+      <rect x="10" y="30" width="120" height="60" rx="10" fill="#1e2340" stroke="#6c8fff" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="70" y="56" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#6c8fff" font-weight="700">Webcam</text>
+      <text dominant-baseline="middle" x="70" y="74" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">Video stream</text>
+      <line x1="133" y1="60" x2="155" y2="60" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="158" y="30" width="120" height="60" rx="10" fill="#1e2340" stroke="#a78bfa" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="218" y="52" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#a78bfa" font-weight="700">Canvas</text>
+      <text dominant-baseline="middle" x="218" y="68" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">ছবি আঁকা</text>
+      <text dominant-baseline="middle" x="218" y="82" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">+ লাল বক্স</text>
+      <line x1="281" y1="60" x2="303" y2="60" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="306" y="30" width="120" height="60" rx="10" fill="#1e2340" stroke="#22d3ee" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="366" y="52" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#22d3ee" font-weight="700">Base64</text>
+      <text dominant-baseline="middle" x="366" y="68" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">PNG → string</text>
+      <text dominant-baseline="middle" x="366" y="82" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">Kernel-এ পাঠানো</text>
+      <line x1="429" y1="60" x2="451" y2="60" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="454" y="30" width="120" height="60" rx="10" fill="#1e2340" stroke="#fb923c" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="514" y="52" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#fb923c" font-weight="700">PIL → numpy</text>
+      <text dominant-baseline="middle" x="514" y="68" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">Decode → resize</text>
+      <text dominant-baseline="middle" x="514" y="82" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">grayscale → 48×48</text>
+      <line x1="577" y1="60" x2="599" y2="60" stroke="#6c8fff" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <rect x="602" y="30" width="110" height="60" rx="10" fill="#1e2340" stroke="#34d399" stroke-width="1.5"/>
+      <text dominant-baseline="middle" x="657" y="52" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#34d399" font-weight="700">CNN Model</text>
+      <text dominant-baseline="middle" x="657" y="68" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">Prediction</text>
+      <text dominant-baseline="middle" x="657" y="82" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#64748b">ফলাফল দেখানো</text>
+
+      <text dominant-baseline="middle" x="360" y="118" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#64748b">Snap বোতাম চাপলে এই পুরো প্রক্রিয়া চলে</text>
+    </svg>
+    <p class="diagram-caption">Webcam থেকে prediction পর্যন্ত ডেটার পথ</p>
+  </div>
+
+  <h3>কোডটি বিশ্লেষণ</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python + JavaScript</span><span class="code-label">show_prediction_webcam function</span></div>
+    <div class="code-body"><pre style="overflow-x: auto; tab-size: 2;"><span class="kw">def</span> <span class="fn">show_prediction_webcam</span>(<span class="var">model</span>, faceArea<span class="op">=</span><span class="num">300</span>):
+    <span class="cm"># imageWebCam = JavaScript থেকে আসা base64 string (PNG ছবি)</span>
+    
+    <span class="cm"># base64 decode করে numpy array-এ রূপান্তর</span>
+    <span class="var">img</span> <span class="op">=</span> <span class="var">np</span>.<span class="fn">array</span>(
+        <span class="cls">Image</span>.<span class="fn">open</span>(
+            <span class="var">io</span>.<span class="cls">BytesIO</span>(
+                <span class="var">base64</span>.<span class="fn">b64decode</span>(<span class="var">imageWebCam</span>.<span class="fn">split</span>(<span class="str">','</span>)[<span class="num">1</span>])
+            )
+        )
+    )[:,:,<span class="num">0</span>:<span class="num">3</span>]  <span class="cm"># Alpha channel বাদ দিয়ে RGB রাখা</span>
+    
+    <span class="cm"># মুখের অংশ (মাঝখানের 300×300) crop করা</span>
+    <span class="var">pX</span> <span class="op">=</span> <span class="fn">int</span>((<span class="var">img</span>.<span class="var">shape</span>[<span class="num">1</span>] <span class="op">-</span> <span class="var">faceArea</span>) <span class="op">/</span> <span class="num">2</span>)
+    <span class="var">pY</span> <span class="op">=</span> <span class="fn">int</span>((<span class="var">img</span>.<span class="var">shape</span>[<span class="num">0</span>] <span class="op">-</span> <span class="var">faceArea</span>) <span class="op">/</span> <span class="num">2</span>)
+    <span class="var">img</span> <span class="op">=</span> <span class="var">img</span>[<span class="var">pY</span>:<span class="var">pY</span><span class="op">+</span><span class="var">faceArea</span>, <span class="var">pX</span>:<span class="var">pX</span><span class="op">+</span><span class="var">faceArea</span>]
+    
+    <span class="cm"># 300×300 থেকে 48×48 এ resize</span>
+    <span class="var">img</span> <span class="op">=</span> <span class="var">tf</span>.<span class="var">image</span>.<span class="fn">resize</span>(<span class="var">img</span>, (<span class="num">48</span>, <span class="num">48</span>))
+    
+    <span class="cm"># রঙিন (RGB) থেকে কালো-সাদায় রূপান্তর</span>
+    <span class="var">img</span> <span class="op">=</span> <span class="var">tf</span>.<span class="var">image</span>.<span class="fn">rgb_to_grayscale</span>(<span class="var">img</span>)
+    
+    <span class="fn">show_img</span>(<span class="var">img</span>)  <span class="cm"># prediction দেখানো</span></pre></div>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title">🔍 imageWebCam.split(',')[1] কেন?</div>
+    <p style="color:var(--text2);font-size:14px;margin:0;">
+      base64 PNG string সাধারণত এভাবে আসে:<br>
+      <code>"data:image/png;base64,iVBORw0KGgoAAAA..."</code><br><br>
+      <code>split(',')[0]</code> → <code>"data:image/png;base64"</code> (header — দরকার নেই)<br>
+      <code>split(',')[1]</code> → <code>"iVBORw0KGgoAAAA..."</code> (আসল base64 ডেটা)
+    </p>
+  </div>
+
+  <div class="card highlight">
+    <div class="card-title">🔍 tf.expand_dims কী করে?</div>
+    <p style="color:var(--text2);font-size:14px;margin:0;">
+      মডেল একটি ছবি নয়, batch নেয়। একটি ছবির shape হলো (48, 48, 1)। কিন্তু মডেলের দরকার (1, 48, 48, 1) — অর্থাৎ 1টি ছবির batch।<br>
+      <code>tf.expand_dims(img, axis=0)</code> → (48,48,1) থেকে (1,48,48,1) হয়।
+    </p>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== BONUS: QUIZ ==================== -->
+<div class="section" style="background:var(--bg2);">
+<div class="container">
+  <div class="section-header">
+    <span class="section-num">বোনাস</span>
+    <h2>নিজেকে পরীক্ষা করো</h2>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-q">১. বয়স অনুমানে output layer-এ activation function কোনটি এবং কেন?</div>
+    <div class="quiz-a">কোনো activation নেই (linear)। কারণ বয়স যেকোনো ধনাত্মক সংখ্যা হতে পারে। sigmoid দিলে 0-1 সীমিত হয়ে যেত।</div>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-q">২. reset_index(drop=True) কেন করা হয়?</div>
+    <div class="quiz-a">ফিল্টারিং করার পর index এলোমেলো হয়। reset করলে 0, 1, 2, 3... ক্রমানুসারে হয়, যা পরে random indexing-এর সময় প্রয়োজন।</div>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-q">৩. Sequential API ও Functional API-এর মূল পার্থক্য কী?</div>
+    <div class="quiz-a">Sequential একটি সরলরেখার মতো layer। Functional API-তে শাখা (branches), shared layers এবং multiple inputs/outputs সম্ভব।</div>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-q">৪. lambda_age = 10 কেন? lambda_gender = 1 কেন?</div>
+    <div class="quiz-a">বয়সের MSE loss অনেক ছোট (normalized হওয়ায়) — তাই 10 গুণ বাড়ানো হয়েছে যাতে সব loss একই স্কেলে থাকে।</div>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-q">৫. y_pred[:,2:] দিয়ে ethnicity কেন পাওয়া যায়?</div>
+    <div class="quiz-a">concat করার পর output = [age, gender, eth0, eth1, eth2, eth3, eth4]। index 0=age, 1=gender, 2: থেকে শেষ = ethnicity 5 probabilities।</div>
+  </div>
+
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p style="color:var(--accent);font-size:16px;margin-bottom:8px;">CNN মাস্টারক্লাস — সম্পূর্ণ বাংলায়</p>
+  <p>Notebook 01 (লিঙ্গ) · Notebook 02 (বয়স) · Notebook 03 (Multi-output) · age_gender.csv Dataset</p>
+  <p style="margin-top:12px;font-size:12px;">এই নোটবুকগুলোর সমস্ত ধারণা কভার করা হয়েছে। কোনো প্রশ্ন থাকলে যেকোনো section-এ ফিরে যাও।</p>
+</footer>
+
+</body>
+</html>

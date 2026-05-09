@@ -1,0 +1,2490 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="Deep Learning বাংলা লেকচার সিরিজ">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CNN দিয়ে বয়স, লিঙ্গ ও জাতিসত্তা শনাক্তকরণ — সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #f78166;
+    --accent3: #3fb950;
+    --accent4: #d2a8ff;
+    --accent5: #ffa657;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --code-bg: #161b22;
+    --highlight: #388bfd1a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0d1117 0%, #1a1f35 50%, #0d1117 100%);
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% 0%, #388bfd22 0%, transparent 70%);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: #388bfd22;
+    border: 1px solid #388bfd44;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    line-height: 1.2;
+    background: linear-gradient(135deg, #58a6ff, #d2a8ff, #f78166);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+  }
+  .hero p {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 700px;
+    margin: 0 auto 30px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent);
+    display: block;
+  }
+  .stat-label { font-size: 13px; color: var(--text-dim); }
+
+  /* LAYOUT */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 40px auto;
+    max-width: 1100px;
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+  .toc h2 {
+    font-size: 20px;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 8px;
+  }
+  .toc a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 15px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: block;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+  }
+  .toc a:hover {
+    color: var(--accent);
+    background: var(--highlight);
+    border-left-color: var(--accent);
+  }
+  .toc-num {
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 12px;
+    margin-right: 6px;
+  }
+
+  /* SECTIONS */
+  .section {
+    max-width: 1100px;
+    margin: 0 auto 60px;
+    padding: 0 24px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .card-accent { border-left: 3px solid var(--accent); }
+  .card-green { border-left: 3px solid var(--accent3); }
+  .card-orange { border-left: 3px solid var(--accent5); }
+  .card-purple { border-left: 3px solid var(--accent4); }
+  .card-red { border-left: 3px solid var(--accent2); }
+
+  .card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card p { color: var(--text-muted); margin-bottom: 12px; }
+  .card p:last-child { margin-bottom: 0; }
+
+  /* INFO BOX */
+  .info-box {
+    background: #388bfd0d;
+    border: 1px solid #388bfd33;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .info-box.warning {
+    background: #ffa6570d;
+    border-color: #ffa65733;
+  }
+  .info-box.success {
+    background: #3fb9500d;
+    border-color: #3fb95033;
+  }
+  .info-box.purple {
+    background: #d2a8ff0d;
+    border-color: #d2a8ff33;
+  }
+  .info-box .label {
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .info-box.warning .label { color: var(--accent5); }
+  .info-box .label { color: var(--accent); }
+  .info-box.success .label { color: var(--accent3); }
+  .info-box.purple .label { color: var(--accent4); }
+
+  /* CODE */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  .code-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .code-lang {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .code-title { font-size: 13px; color: var(--text-muted); }
+  pre {
+    padding: 20px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    line-height: 1.7;
+  }
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .num { color: #79c0ff; }
+  .cm { color: #8b949e; font-style: italic; }
+  .cls { color: #ffa657; }
+  .var { color: #e6edf3; }
+  .op { color: #ff7b72; }
+
+  /* SVG diagrams */
+  .diagram-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    text-align: center;
+    overflow-x: auto;
+  }
+  .diagram-title {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+
+  /* STEP */
+  .step-list { list-style: none; }
+  .step-item {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+    align-items: flex-start;
+  }
+  .step-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent4));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-content h4 { font-size: 17px; margin-bottom: 6px; color: var(--text); }
+  .step-content p { color: var(--text-muted); }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; margin: 20px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  th {
+    background: var(--surface2);
+    color: var(--accent);
+    font-weight: 600;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+  tr:hover td { background: var(--highlight); }
+  td code, th code {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 12px;
+    background: var(--surface2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent3);
+  }
+
+  /* INLINE CODE */
+  p code, li code {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 13px;
+    background: var(--surface2);
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: var(--accent3);
+  }
+
+  /* QUIZ */
+  .quiz-box {
+    background: var(--surface2);
+    border: 1px solid #d2a8ff33;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  .quiz-q { font-weight: 600; margin-bottom: 14px; color: var(--accent4); }
+  .quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text-muted);
+    font-size: 15px;
+  }
+  .quiz-opt:hover { border-color: var(--accent4); color: var(--text); }
+  .quiz-opt.correct { background: #3fb9500d; border-color: var(--accent3); color: var(--accent3); }
+  .quiz-opt.wrong { background: #f781660d; border-color: var(--accent2); color: var(--accent2); }
+  .quiz-feedback {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: #3fb9500d; color: var(--accent3); }
+  .quiz-feedback.no { background: #f781660d; color: var(--accent2); }
+
+  /* ANALOGY */
+  .analogy {
+    background: linear-gradient(135deg, #1a1f35, #1c2333);
+    border: 1px solid #388bfd33;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    position: relative;
+  }
+  .analogy::before {
+    content: '💡 বাস্তব উদাহরণ';
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: var(--bg);
+    color: var(--accent5);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 10px;
+    border: 1px solid #ffa65733;
+    letter-spacing: 0.5px;
+  }
+
+  /* COMPARISON */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+  .compare-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .compare-col h4 {
+    font-size: 15px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-col.left h4 { color: var(--accent3); }
+  .compare-col.right h4 { color: var(--accent5); }
+  .compare-col ul { list-style: none; }
+  .compare-col li {
+    padding: 5px 0;
+    color: var(--text-muted);
+    font-size: 15px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .compare-col li::before { content: '→'; color: var(--text-dim); flex-shrink: 0; margin-top: 2px; }
+
+  /* PROGRESS */
+  .progress-bar {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    margin: 6px 0 14px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent4));
+  }
+
+  /* PIXEL GRID DEMO */
+  .pixel-grid {
+    display: inline-grid;
+    gap: 1px;
+    background: #000;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .pixel-cell {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* CHAPTER DIVIDER */
+  .chapter-divider {
+    text-align: center;
+    margin: 60px 0 40px;
+    position: relative;
+  }
+  .chapter-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+  .chapter-divider span {
+    position: relative;
+    background: var(--bg);
+    padding: 0 20px;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  h2.sub {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 32px 0 16px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2.sub::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 22px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  h3.sub2 {
+    font-size: 18px;
+    color: var(--accent5);
+    margin: 24px 0 12px;
+  }
+
+  p { margin-bottom: 14px; color: var(--text-muted); }
+  ul, ol { margin-left: 20px; margin-bottom: 14px; }
+  li { margin-bottom: 6px; color: var(--text-muted); }
+  strong { color: var(--text); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-top: 60px;
+  }
+
+  /* STICKY NAV */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,17,23,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+  }
+  .nav-brand { color: var(--accent); font-weight: 700; }
+  .nav-links { display: flex; gap: 12px; flex-wrap: wrap; }
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav class="sticky-nav">
+  <span class="nav-brand">🧠 CNN টিউটোরিয়াল</span>
+  <div class="nav-links">
+    <a href="#intro">ভূমিকা</a>
+    <a href="#dataset">ডেটাসেট</a>
+    <a href="#cnn-concept">CNN কী</a>
+    <a href="#nb1">Notebook ১</a>
+    <a href="#nb2">Notebook ২</a>
+    <a href="#nb3">Notebook ৩</a>
+    <a href="#summary">সারসংক্ষেপ</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">সম্পূর্ণ বাংলা গাইড</div>
+  <h1>CNN দিয়ে মুখ দেখে বয়স, লিঙ্গ ও জাতিসত্তা শনাক্ত করা</h1>
+  <p>তিনটি Jupyter Notebook-এর সম্পূর্ণ ব্যাখ্যা — একদম শুরু থেকে, বাংলায়, নতুনদের জন্য</p>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">৩</span><span class="stat-label">Notebook</span></div>
+    <div class="stat"><span class="stat-num">৪৮×৪৮</span><span class="stat-label">ছবির সাইজ</span></div>
+    <div class="stat"><span class="stat-num">৩</span><span class="stat-label">কাজ একসাথে</span></div>
+    <div class="stat"><span class="stat-num">CNN</span><span class="stat-label">ব্যবহৃত মডেল</span></div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h2>📚 বিষয়সূচি</h2>
+  <div class="toc-grid">
+    <a href="#intro"><span class="toc-num">০১</span> এই প্রজেক্টটা কী করে?</a>
+    <a href="#dataset"><span class="toc-num">০২</span> ডেটাসেট পরিচিতি</a>
+    <a href="#pixel"><span class="toc-num">০৩</span> পিক্সেল কী? ছবি কীভাবে সংরক্ষিত হয়?</a>
+    <a href="#cnn-concept"><span class="toc-num">০৪</span> CNN কী ও কীভাবে কাজ করে?</a>
+    <a href="#layers"><span class="toc-num">০৫</span> CNN-এর প্রতিটি স্তর (Layer) বিস্তারিত</a>
+    <a href="#nb1"><span class="toc-num">০৬</span> Notebook ১: লিঙ্গ শনাক্তকরণ</a>
+    <a href="#nb1-preprocess"><span class="toc-num">০৭</span> ডেটা প্রিপ্রসেসিং</a>
+    <a href="#nb1-model"><span class="toc-num">০৮</span> মডেল তৈরি ও ট্রেনিং</a>
+    <a href="#nb2"><span class="toc-num">০৯</span> Notebook ২: বয়স অনুমান</a>
+    <a href="#regression"><span class="toc-num">১০</span> Classification বনাম Regression</a>
+    <a href="#nb3"><span class="toc-num">১১</span> Notebook ৩: সব একসাথে!</a>
+    <a href="#custom-loss"><span class="toc-num">১২</span> কাস্টম Loss Function</a>
+    <a href="#metrics"><span class="toc-num">১৩</span> কাস্টম Metrics</a>
+    <a href="#webcam"><span class="toc-num">১৪</span> ওয়েবক্যাম দিয়ে টেস্ট</a>
+    <a href="#summary"><span class="toc-num">১৫</span> সারসংক্ষেপ ও পরবর্তী পদক্ষেপ</a>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 0: INTRO -->
+<!-- ============================================================ -->
+<section class="section" id="intro">
+  <div class="section-header">
+    <span class="section-num">§ ০১</span>
+    <h1 class="section-title">এই প্রজেক্টটা কী করে?</h1>
+  </div>
+
+  <div class="card card-accent">
+    <h3>🎯 মূল লক্ষ্য</h3>
+    <p>একটি মানুষের মুখের ছবি দেখে কম্পিউটার নিজে নিজে বলতে পারবে:</p>
+    <div class="compare-grid">
+      <div class="compare-col left">
+        <h4>✅ কম্পিউটার বলতে পারবে</h4>
+        <ul>
+          <li>এই মানুষটির বয়স আনুমানিক ২৭ বছর</li>
+          <li>এই ব্যক্তি পুরুষ</li>
+          <li>এই ব্যক্তি এশিয়ান</li>
+        </ul>
+      </div>
+      <div class="compare-col right">
+        <h4>❌ কম্পিউটারকে করতে হবে না</h4>
+        <ul>
+          <li>কোনো নিয়ম মুখস্থ করানো</li>
+          <li>হাতে কোড লেখা "যদি চোখ এরকম হয়..."</li>
+          <li>মানুষের ব্যাখ্যা দরকার নেই</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="analogy">
+    <p><strong>মনে করো তুমি একটি শিশু।</strong> তুমি হাজারটা মুখ দেখেছ — বাবা, মা, দাদু, বন্ধু। কেউ তোমাকে শেখায়নি "চুলের রঙ সাদা হলে বুড়ো"। তুমি নিজেই শিখে গেছ। CNN-ও ঠিক এভাবেই শেখে — হাজারো মুখের ছবি দেখে দেখে নিজেই প্যাটার্ন খুঁজে বের করে।</p>
+  </div>
+
+  <h2 class="sub">প্রজেক্টটা তিন ভাগে ভাগ</h2>
+
+  <div class="card card-green">
+    <h3>📓 Notebook ১ — লিঙ্গ শনাক্তকরণ (Gender Detection)</h3>
+    <p>শুধু একটাই প্রশ্ন: ছবিতে যে মানুষটা আছে, সে কি পুরুষ নাকি মহিলা?</p>
+    <p>এটা <strong>Binary Classification</strong> — মানে শুধু দুটো উত্তরের মধ্যে একটা।</p>
+  </div>
+
+  <div class="card card-orange">
+    <h3>📓 Notebook ২ — বয়স অনুমান (Age Prediction)</h3>
+    <p>ছবিতে যে মানুষটা আছে, তার বয়স কত? এটা একটা সংখ্যা বের করা।</p>
+    <p>এটা <strong>Regression</strong> — মানে যেকোনো সংখ্যা হতে পারে, যেমন ২৩.৫ বছর।</p>
+  </div>
+
+  <div class="card card-purple">
+    <h3>📓 Notebook ৩ — সব একসাথে (Multi-task Learning)</h3>
+    <p>একটাই মডেল একসাথে তিনটা কাজ করবে: বয়স + লিঙ্গ + জাতিসত্তা।</p>
+    <p>এটা <strong>Multi-task Learning</strong> — একটা মডেল থেকে তিনটা আউটপুট।</p>
+  </div>
+
+  <div class="info-box warning">
+    <div class="label">⚠️ মনে রাখো</div>
+    <p>Azure-এর ছবিতে দেখা যাচ্ছে একজন মানুষের মুখে বাক্স আঁকা এবং তার পাশে তথ্য লেখা — বয়স, রাগ, খুশি ইত্যাদি। আমরাও ঠিক এই ধরনের কাজ করব, তবে বয়স ও লিঙ্গের উপর ফোকাস করব।</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION: DATASET -->
+<!-- ============================================================ -->
+<section class="section" id="dataset">
+  <div class="section-header">
+    <span class="section-num">§ ০২</span>
+    <h1 class="section-title">ডেটাসেট: age_gender.csv</h1>
+  </div>
+
+  <div class="card card-accent">
+    <h3>📊 ডেটাসেট কী?</h3>
+    <p><strong>ডেটাসেট</strong> মানে হলো একটা বিশাল টেবিল। যেমন Excel-এর মতো। প্রতিটি সারিতে (row) একটি মানুষের তথ্য আছে।</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>কলামের নাম</th>
+          <th>মানে কী</th>
+          <th>উদাহরণ</th>
+          <th>ধরন</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>age</code></td>
+          <td>মানুষটির বয়স</td>
+          <td>25, 43, 7...</td>
+          <td>সংখ্যা (0 থেকে ~100)</td>
+        </tr>
+        <tr>
+          <td><code>gender</code></td>
+          <td>লিঙ্গ</td>
+          <td>0 = পুরুষ, 1 = মহিলা</td>
+          <td>0 বা 1</td>
+        </tr>
+        <tr>
+          <td><code>ethnicity</code></td>
+          <td>জাতিসত্তা</td>
+          <td>0=White, 1=Black, 2=Asian, 3=Indian, 4=Hispanic</td>
+          <td>0 থেকে 4</td>
+        </tr>
+        <tr>
+          <td><code>pixels</code></td>
+          <td>মুখের ছবির পিক্সেল</td>
+          <td>"128 130 145 122..."</td>
+          <td>Text (সংখ্যার string)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box warning">
+    <div class="label">⚠️ গুরুত্বপূর্ণ</div>
+    <p><strong>pixels কলামটা একটু অদ্ভুত।</strong> ছবিটা সরাসরি রাখা নেই — বরং ছবির সব পিক্সেলের মান একটা লম্বা text হিসেবে রাখা আছে, যেমন: <code>"128 130 145 122 100..."</code>। আমাদের এটাকে সংখ্যার অ্যারেতে রূপান্তর করতে হবে।</p>
+  </div>
+
+  <h2 class="sub" id="pixel">পিক্সেল কী? ছবি কীভাবে সংরক্ষিত হয়?</h2>
+
+  <div class="analogy">
+    <p><strong>কল্পনা করো একটা ছবি আসলে হাজারো ছোট ছোট বর্গক্ষেত্রের সমষ্টি।</strong> প্রতিটি বর্গক্ষেত্রকে বলে <strong>পিক্সেল</strong>। প্রতিটি পিক্সেলে একটা সংখ্যা থাকে — কালো-সাদা ছবিতে সেই সংখ্যাটা 0 থেকে 255 পর্যন্ত। 0 মানে একদম কালো, 255 মানে একদম সাদা।</p>
+  </div>
+
+  <!-- SVG: Pixel explanation -->
+  <div class="diagram-wrap">
+    <div class="diagram-title">চিত্র: একটি ছোট 6×6 কালো-সাদা ছবি এবং তার পিক্সেল মান</div>
+    <svg viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg" style="max-width:600px;width:100%" overflow="visible">
+      <defs>
+        <style>
+          .px-label { font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 11px; fill: #8b949e; }
+          .px-title { font-family: 'Hind Siliguri', sans-serif; font-size: 14px; fill: #e6edf3; font-weight: 600; }
+          .arrow-line { stroke: #58a6ff; stroke-width: 1.5; fill: none; marker-end: url(#arr); }
+        </style>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#58a6ff"/>
+        </marker>
+      </defs>
+
+      <!-- Title -->
+      <text dominant-baseline="middle" font-family="'Hind Siliguri', sans-serif" x="300" y="24" text-anchor="middle" class="px-title">পিক্সেল = ছবির ক্ষুদ্রতম অংশ</text>
+
+      <!-- Left: pixel grid visual -->
+      <text dominant-baseline="middle" x="90" y="55" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#8b949e">ছবি (6×6 পিক্সেল)</text>
+      <!-- pixel cells -->
+      <rect x="10" y="65" width="35" height="35" fill="#000000" rx="2"/>
+      <rect x="47" y="65" width="35" height="35" fill="#404040" rx="2"/>
+      <rect x="84" y="65" width="35" height="35" fill="#808080" rx="2"/>
+      <rect x="121" y="65" width="35" height="35" fill="#c0c0c0" rx="2"/>
+      <rect x="158" y="65" width="35" height="35" fill="#e0e0e0" rx="2"/>
+      <rect x="10" y="102" width="35" height="35" fill="#202020" rx="2"/>
+      <rect x="47" y="102" width="35" height="35" fill="#606060" rx="2"/>
+      <rect x="84" y="102" width="35" height="35" fill="#a0a0a0" rx="2"/>
+      <rect x="121" y="102" width="35" height="35" fill="#d0d0d0" rx="2"/>
+      <rect x="158" y="102" width="35" height="35" fill="#f0f0f0" rx="2"/>
+      <rect x="10" y="139" width="35" height="35" fill="#101010" rx="2"/>
+      <rect x="47" y="139" width="35" height="35" fill="#505050" rx="2"/>
+      <rect x="84" y="139" width="35" height="35" fill="#909090" rx="2"/>
+      <rect x="121" y="139" width="35" height="35" fill="#b0b0b0" rx="2"/>
+      <rect x="158" y="139" width="35" height="35" fill="#ffffff" rx="2"/>
+      <rect x="10" y="176" width="35" height="35" fill="#303030" rx="2"/>
+      <rect x="47" y="176" width="35" height="35" fill="#707070" rx="2"/>
+      <rect x="84" y="176" width="35" height="35" fill="#989898" rx="2"/>
+      <rect x="121" y="176" width="35" height="35" fill="#c8c8c8" rx="2"/>
+      <rect x="158" y="176" width="35" height="35" fill="#e8e8e8" rx="2"/>
+
+      <!-- highlight one pixel -->
+      <rect x="84" y="65" width="35" height="35" fill="none" stroke="#58a6ff" stroke-width="2.5" rx="2"/>
+      <text dominant-baseline="middle" x="101" y="87" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#58a6ff">128</text>
+
+      <!-- Arrow from highlighted pixel to explanation -->
+      <path d="M119,82 L220,82" class="arrow-line"/>
+
+      <!-- Right: number explanation -->
+      <rect x="220" y="55" width="260" height="140" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+      <text dominant-baseline="middle" x="350" y="78" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#58a6ff" font-weight="600">এই একটি পিক্সেলের মান</text>
+      <text dominant-baseline="middle" x="350" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="36" fill="#e6edf3" font-weight="700">128</text>
+      <text dominant-baseline="middle" x="350" y="128" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#8b949e">0 = কালো → 255 = সাদা</text>
+      <!-- color bar -->
+      <defs>
+        <linearGradient id="gray-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#000000"/>
+          <stop offset="100%" stop-color="#ffffff"/>
+        </linearGradient>
+      </defs>
+      <rect x="240" y="138" width="220" height="16" rx="4" fill="url(#gray-grad)"/>
+      <line x1="350" y1="136" x2="350" y2="156" stroke="#58a6ff" stroke-width="2"/>
+      <text x="240" y="172" font-family="JetBrains Mono,monospace" font-size="10" fill="#8b949e">0</text>
+      <text dominant-baseline="middle" x="450" y="172" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="10" fill="#8b949e">255</text>
+      <text dominant-baseline="middle" x="350" y="172" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#58a6ff">128</text>
+
+      <!-- Bottom: shape explanation -->
+      <text dominant-baseline="middle" x="300" y="230" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#8b949e">আমাদের ছবি: 48×48 পিক্সেল = 2304টি সংখ্যা</text>
+      <text dominant-baseline="middle" x="300" y="252" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#6e7681">কালো-সাদা বলে শুধু একটি চ্যানেল → shape: (48, 48, 1)</text>
+    </svg>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">pixels কলামকে অ্যারেতে রূপান্তর — ব্যাখ্যা সহ</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># ডেটা লোড করা</span>
+<span class="var">df</span> = <span class="fn">pd</span>.<span class="fn">read_csv</span>(<span class="str">'age_gender.csv'</span>, sep=<span class="str">','</span>)
+
+<span class="cm"># 'pixels' কলামে এখন আছে: "128 130 145 122 ..."  (একটা text)</span>
+<span class="cm"># আমরা সেটাকে সংখ্যার অ্যারেতে বদলাব</span>
+<span class="var">df</span>[<span class="str">'pixels'</span>] = <span class="var">df</span>[<span class="str">'pixels'</span>].<span class="fn">apply</span>(
+    <span class="kw">lambda</span> <span class="var">x</span> : <span class="fn">np</span>.<span class="fn">array</span>(<span class="var">x</span>.<span class="fn">split</span>()).<span class="fn">astype</span>(<span class="fn">np</span>.<span class="var">int16</span>)
+)
+<span class="cm"># x.split() → ["128", "130", "145", ...] (list of strings)</span>
+<span class="cm"># np.array(...) → numpy array তৈরি</span>
+<span class="cm"># .astype(np.int16) → সংখ্যায় রূপান্তর (int16 = ছোট সংখ্যা, মেমরি কম লাগে)</span></pre>
+  </div>
+
+  <div class="info-box">
+    <div class="label">🔍 lambda কী?</div>
+    <p><code>lambda x: ...</code> মানে হলো একটি ছোট্ট একলাইন ফাংশন। <code>apply()</code> মানে হলো "প্রতিটি সারিতে এই কাজটা করো।" একসাথে মানে: "প্রতিটি সারির pixels কলামের জন্য x.split() করে numpy array বানাও।"</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION: CNN CONCEPT -->
+<!-- ============================================================ -->
+<section class="section" id="cnn-concept">
+  <div class="section-header">
+    <span class="section-num">§ ০৩</span>
+    <h1 class="section-title">CNN কী এবং কীভাবে কাজ করে?</h1>
+  </div>
+
+  <div class="card card-accent">
+    <h3>🧠 CNN = Convolutional Neural Network</h3>
+    <p>CNN হলো এক বিশেষ ধরনের কৃত্রিম নিউরাল নেটওয়ার্ক যেটা ছবি বোঝার জন্য তৈরি। এটা ছবির মধ্যে <strong>প্যাটার্ন</strong> খোঁজে — প্রথমে ছোট প্যাটার্ন (যেমন রেখা, বাঁক), তারপর বড় প্যাটার্ন (যেমন চোখ, নাক, মুখ)।</p>
+  </div>
+
+  <div class="analogy">
+    <p><strong>মানুষ কীভাবে ছবি দেখে?</strong> তুমি প্রথমে দেখো রেখা আর রঙ, তারপর সেই রেখা মিলিয়ে চোখ-নাক চিনতে পারো, তারপর মুখের পুরো অবয়ব বোঝো। CNN-ও ঠিক তাই করে — স্তরে স্তরে।</p>
+  </div>
+
+  <!-- SVG: CNN overview -->
+  <div class="diagram-wrap">
+    <div class="diagram-title">চিত্র: CNN-এর সামগ্রিক কার্যপ্রণালী</div>
+    <svg viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg" style="max-width:760px;width:100%" overflow="visible">
+      <defs>
+        <style>.cnn-label { font-family: 'Hind Siliguri', sans-serif; font-size: 11px; fill: #8b949e; text-anchor: middle; }</style>
+        <marker id="a2" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#58a6ff"/>
+        </marker>
+      </defs>
+
+      <!-- Input image -->
+      <rect x="10" y="50" width="60" height="100" rx="6" fill="#1c2333" stroke="#30363d"/>
+      <text dominant-baseline="middle" x="40" y="30" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#58a6ff">ইনপুট</text>
+      <text font-family="'Hind Siliguri', sans-serif" x="40" y="165" class="cnn-label">48×48×1</text>
+      <text dominant-baseline="middle" x="40" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6e7681">ছবি</text>
+
+      <!-- Arrow -->
+      <path d="M72,100 L100,100" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+
+      <!-- Conv1 -->
+      <rect x="102" y="40" width="50" height="120" rx="6" fill="#162032" stroke="#388bfd55"/>
+      <text dominant-baseline="middle" x="127" y="25" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#58a6ff">Conv2D</text>
+      <text font-family="'Hind Siliguri', sans-serif" x="127" y="175" class="cnn-label">16 ফিল্টার</text>
+      <text font-family="'Hind Siliguri', sans-serif" x="127" y="185" class="cnn-label">5×5</text>
+      <!-- filter lines -->
+      <line x1="102" y1="60" x2="152" y2="60" stroke="#388bfd44" stroke-width="0.5"/>
+      <line x1="102" y1="80" x2="152" y2="80" stroke="#388bfd44" stroke-width="0.5"/>
+      <line x1="102" y1="100" x2="152" y2="100" stroke="#388bfd44" stroke-width="0.5"/>
+      <line x1="102" y1="120" x2="152" y2="120" stroke="#388bfd44" stroke-width="0.5"/>
+      <line x1="102" y1="140" x2="152" y2="140" stroke="#388bfd44" stroke-width="0.5"/>
+
+      <!-- Arrow -->
+      <path d="M154,100 L175,100" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+
+      <!-- Pool1 -->
+      <rect x="177" y="55" width="40" height="90" rx="6" fill="#1a2a1a" stroke="#3fb95055"/>
+      <text dominant-baseline="middle" x="197" y="42" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#3fb950">MaxPool</text>
+      <text font-family="'Hind Siliguri', sans-serif" x="197" y="175" class="cnn-label">2×2</text>
+      <text font-family="'Hind Siliguri', sans-serif" x="197" y="185" class="cnn-label">↓ সাইজ কমে</text>
+
+      <!-- Arrow -->
+      <path d="M219,100 L240,100" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+
+      <!-- Conv2 -->
+      <rect x="242" y="50" width="45" height="100" rx="6" fill="#162032" stroke="#388bfd55"/>
+      <text dominant-baseline="middle" x="264" y="38" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#58a6ff">Conv2D</text>
+      <text font-family="'Hind Siliguri', sans-serif" x="264" y="175" class="cnn-label">32 ফিল্টার</text>
+      <text font-family="'Hind Siliguri', sans-serif" x="264" y="185" class="cnn-label">3×3</text>
+
+      <!-- Arrow -->
+      <path d="M289,100 L310,100" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+
+      <!-- Pool2 -->
+      <rect x="312" y="60" width="38" height="80" rx="6" fill="#1a2a1a" stroke="#3fb95055"/>
+      <text dominant-baseline="middle" x="331" y="48" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#3fb950">MaxPool</text>
+      <text font-family="'Hind Siliguri', sans-serif" x="331" y="175" class="cnn-label">আবার কমে</text>
+
+      <!-- Arrow -->
+      <path d="M352,100 L372,100" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+
+      <!-- Conv3 -->
+      <rect x="374" y="55" width="45" height="90" rx="6" fill="#162032" stroke="#388bfd55"/>
+      <text dominant-baseline="middle" x="396" y="43" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#58a6ff">Conv2D</text>
+      <text font-family="'Hind Siliguri', sans-serif" x="396" y="175" class="cnn-label">64 ফিল্টার</text>
+      <text font-family="'Hind Siliguri', sans-serif" x="396" y="185" class="cnn-label">3×3</text>
+
+      <!-- Arrow -->
+      <path d="M421,100 L442,100" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+
+      <!-- Pool3 -->
+      <rect x="444" y="65" width="35" height="70" rx="6" fill="#1a2a1a" stroke="#3fb95055"/>
+      <text dominant-baseline="middle" x="461" y="53" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#3fb950">MaxPool</text>
+
+      <!-- Arrow -->
+      <path d="M481,100 L500,100" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+
+      <!-- Flatten -->
+      <rect x="502" y="70" width="40" height="60" rx="6" fill="#2a1a2a" stroke="#d2a8ff55"/>
+      <text dominant-baseline="middle" x="522" y="58" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#d2a8ff">Flatten</text>
+      <text font-family="'Hind Siliguri', sans-serif" x="522" y="175" class="cnn-label">1D তে পরিণত</text>
+
+      <!-- Arrow -->
+      <path d="M544,100 L562,100" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+
+      <!-- Dense -->
+      <rect x="564" y="65" width="40" height="70" rx="6" fill="#2a1a10" stroke="#ffa65755"/>
+      <text dominant-baseline="middle" x="584" y="53" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#ffa657">Dense</text>
+      <text font-family="'Hind Siliguri', sans-serif" x="584" y="175" class="cnn-label">64 নোড</text>
+
+      <!-- Arrow -->
+      <path d="M606,100 L624,100" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a2)"/>
+
+      <!-- Output -->
+      <rect x="626" y="75" width="50" height="50" rx="6" fill="#1a1a2a" stroke="#f7816655"/>
+      <text dominant-baseline="middle" x="651" y="63" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#f78166">আউটপুট</text>
+      <text dominant-baseline="middle" x="651" y="98" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#e6edf3">পুরুষ</text>
+      <text dominant-baseline="middle" x="651" y="114" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#e6edf3">/ মহিলা</text>
+    </svg>
+  </div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION: LAYERS -->
+<!-- ============================================================ -->
+<section class="section" id="layers">
+  <div class="section-header">
+    <span class="section-num">§ ০৪</span>
+    <h1 class="section-title">CNN-এর প্রতিটি স্তর বিস্তারিত</h1>
+  </div>
+
+  <!-- Conv2D -->
+  <h2 class="sub">🔎 Conv2D — Convolutional Layer</h2>
+
+  <div class="analogy">
+    <p><strong>কল্পনা করো একটা ম্যাগনিফাইং গ্লাস।</strong> তুমি সেটা দিয়ে ছবির উপর দিয়ে ধীরে ধীরে সরাও এবং প্রতিটি ছোট অংশ দেখো। Conv2D ঠিক এভাবে একটা "ফিল্টার" (কার্নেল) ছবির উপর দিয়ে স্লাইড করে এবং প্রতিটি জায়গায় একটা সংখ্যা বের করে।</p>
+  </div>
+
+  <!-- SVG: Convolution operation -->
+  <div class="diagram-wrap">
+    <div class="diagram-title">চিত্র: Convolution অপারেশন — ফিল্টার ছবির উপর দিয়ে স্লাইড করছে</div>
+    <svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%" overflow="visible">
+      <defs>
+        <marker id="a3" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L7,3 z" fill="#ffa657"/>
+        </marker>
+      </defs>
+
+      <!-- Input 5x5 -->
+      <text dominant-baseline="middle" x="60" y="30" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#8b949e">ইনপুট ম্যাট্রিক্স (5×5)</text>
+      <!-- grid -->
+      <g transform="translate(10,40)">
+        <!-- cells -->
+        <rect x="0" y="0" width="38" height="38" fill="#1c2333" stroke="#30363d" rx="3"/>
+        <text dominant-baseline="middle" x="19" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e6edf3">1</text>
+        <rect x="40" y="0" width="38" height="38" fill="#1c2333" stroke="#30363d" rx="3"/>
+        <text dominant-baseline="middle" x="59" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e6edf3">2</text>
+        <rect x="80" y="0" width="38" height="38" fill="#162032" stroke="#388bfd" stroke-width="2" rx="3"/>
+        <text dominant-baseline="middle" x="99" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#58a6ff">0</text>
+        <rect x="120" y="0" width="38" height="38" fill="#1c2333" stroke="#30363d" rx="3"/>
+        <text dominant-baseline="middle" x="139" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e6edf3">1</text>
+        <rect x="160" y="0" width="38" height="38" fill="#1c2333" stroke="#30363d" rx="3"/>
+        <text dominant-baseline="middle" x="179" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e6edf3">0</text>
+
+        <rect x="0" y="40" width="38" height="38" fill="#1c2333" stroke="#30363d" rx="3"/>
+        <text dominant-baseline="middle" x="19" y="64" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e6edf3">3</text>
+        <rect x="40" y="40" width="38" height="38" fill="#162032" stroke="#388bfd" stroke-width="2" rx="3"/>
+        <text dominant-baseline="middle" x="59" y="64" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#58a6ff">1</text>
+        <rect x="80" y="40" width="38" height="38" fill="#162032" stroke="#388bfd" stroke-width="2" rx="3"/>
+        <text dominant-baseline="middle" x="99" y="64" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#58a6ff">2</text>
+        <rect x="120" y="40" width="38" height="38" fill="#162032" stroke="#388bfd" stroke-width="2" rx="3"/>
+        <text dominant-baseline="middle" x="139" y="64" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#58a6ff">1</text>
+        <rect x="160" y="40" width="38" height="38" fill="#1c2333" stroke="#30363d" rx="3"/>
+        <text dominant-baseline="middle" x="179" y="64" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e6edf3">2</text>
+
+        <rect x="0" y="80" width="38" height="38" fill="#1c2333" stroke="#30363d" rx="3"/>
+        <text dominant-baseline="middle" x="19" y="104" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e6edf3">2</text>
+        <rect x="40" y="80" width="38" height="38" fill="#162032" stroke="#388bfd" stroke-width="2" rx="3"/>
+        <text dominant-baseline="middle" x="59" y="104" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#58a6ff">0</text>
+        <rect x="80" y="80" width="38" height="38" fill="#162032" stroke="#388bfd" stroke-width="2" rx="3"/>
+        <text dominant-baseline="middle" x="99" y="104" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#58a6ff">1</text>
+        <rect x="120" y="80" width="38" height="38" fill="#162032" stroke="#388bfd" stroke-width="2" rx="3"/>
+        <text dominant-baseline="middle" x="139" y="104" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#58a6ff">3</text>
+        <rect x="160" y="80" width="38" height="38" fill="#1c2333" stroke="#30363d" rx="3"/>
+        <text dominant-baseline="middle" x="179" y="104" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e6edf3">1</text>
+
+        <rect x="0" y="120" width="38" height="38" fill="#1c2333" stroke="#30363d" rx="3"/>
+        <text dominant-baseline="middle" x="19" y="144" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e6edf3">1</text>
+        <rect x="40" y="120" width="38" height="38" fill="#1c2333" stroke="#30363d" rx="3"/>
+        <text dominant-baseline="middle" x="59" y="144" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e6edf3">0</text>
+        <rect x="80" y="120" width="38" height="38" fill="#1c2333" stroke="#30363d" rx="3"/>
+        <text dominant-baseline="middle" x="99" y="144" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e6edf3">2</text>
+        <rect x="120" y="120" width="38" height="38" fill="#1c2333" stroke="#30363d" rx="3"/>
+        <text dominant-baseline="middle" x="139" y="144" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e6edf3">1</text>
+        <rect x="160" y="120" width="38" height="38" fill="#1c2333" stroke="#30363d" rx="3"/>
+        <text dominant-baseline="middle" x="179" y="144" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e6edf3">0</text>
+      </g>
+      <text x="10" y="215" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#388bfd">নীল বর্ডার = ফিল্টার যেখানে আছে এখন</text>
+
+      <!-- Kernel 3x3 -->
+      <text dominant-baseline="middle" x="295" y="30" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#8b949e">ফিল্টার (3×3)</text>
+      <g transform="translate(250,40)">
+        <rect x="0" y="0" width="38" height="38" fill="#2a1a10" stroke="#ffa657" stroke-width="1.5" rx="3"/>
+        <text dominant-baseline="middle" x="19" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#ffa657">1</text>
+        <rect x="40" y="0" width="38" height="38" fill="#2a1a10" stroke="#ffa657" stroke-width="1.5" rx="3"/>
+        <text dominant-baseline="middle" x="59" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#ffa657">0</text>
+        <rect x="80" y="0" width="38" height="38" fill="#2a1a10" stroke="#ffa657" stroke-width="1.5" rx="3"/>
+        <text dominant-baseline="middle" x="99" y="24" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#ffa657">-1</text>
+        <rect x="0" y="40" width="38" height="38" fill="#2a1a10" stroke="#ffa657" stroke-width="1.5" rx="3"/>
+        <text dominant-baseline="middle" x="19" y="64" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#ffa657">1</text>
+        <rect x="40" y="40" width="38" height="38" fill="#2a1a10" stroke="#ffa657" stroke-width="1.5" rx="3"/>
+        <text dominant-baseline="middle" x="59" y="64" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#ffa657">0</text>
+        <rect x="80" y="40" width="38" height="38" fill="#2a1a10" stroke="#ffa657" stroke-width="1.5" rx="3"/>
+        <text dominant-baseline="middle" x="99" y="64" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#ffa657">-1</text>
+        <rect x="0" y="80" width="38" height="38" fill="#2a1a10" stroke="#ffa657" stroke-width="1.5" rx="3"/>
+        <text dominant-baseline="middle" x="19" y="104" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#ffa657">1</text>
+        <rect x="40" y="80" width="38" height="38" fill="#2a1a10" stroke="#ffa657" stroke-width="1.5" rx="3"/>
+        <text dominant-baseline="middle" x="59" y="104" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#ffa657">0</text>
+        <rect x="80" y="80" width="38" height="38" fill="#2a1a10" stroke="#ffa657" stroke-width="1.5" rx="3"/>
+        <text dominant-baseline="middle" x="99" y="104" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#ffa657">-1</text>
+      </g>
+      <text dominant-baseline="middle" x="300" y="175" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#ffa657">ফিল্টার = শেখার যোগ্য ওজন</text>
+      <text dominant-baseline="middle" x="300" y="190" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#6e7681">(Training-এ স্বয়ংক্রিয়ভাবে পরিবর্তিত হয়)</text>
+
+      <!-- Arrow -->
+      <path d="M390,110 L430,110" stroke="#ffa657" stroke-width="2" fill="none" marker-end="url(#a3)"/>
+      <text dominant-baseline="middle" x="410" y="102" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#ffa657">গুণ করে</text>
+      <text dominant-baseline="middle" x="410" y="130" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#ffa657">যোগ করে</text>
+
+      <!-- Output value -->
+      <rect x="432" y="80" width="80" height="60" rx="8" fill="#162032" stroke="#58a6ff" stroke-width="2"/>
+      <text dominant-baseline="middle" x="472" y="108" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="20" fill="#58a6ff" font-weight="700">7</text>
+      <text dominant-baseline="middle" x="472" y="125" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#8b949e">ফিচার ম্যাপ</text>
+      <text dominant-baseline="middle" x="472" y="165" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#6e7681">এক পয়েন্টের মান</text>
+
+      <!-- Calculation -->
+      <text x="540" y="60" font-family="JetBrains Mono,monospace" font-size="11" fill="#6e7681">1×1+2×0+0×(-1)</text>
+      <text x="540" y="78" font-family="JetBrains Mono,monospace" font-size="11" fill="#6e7681">+1×1+2×0+1×(-1)</text>
+      <text x="540" y="96" font-family="JetBrains Mono,monospace" font-size="11" fill="#6e7681">+0×1+1×0+3×(-1)</text>
+      <text x="540" y="114" font-family="JetBrains Mono,monospace" font-size="11" fill="#ffa657">= 7</text>
+    </svg>
+  </div>
+
+  <div class="card card-green">
+    <h3><code>Conv2D(filters=16, kernel_size=(5, 5), activation='relu')</code> এর মানে</h3>
+    <ul>
+      <li><strong>filters=16</strong> → ১৬টি আলাদা ফিল্টার ব্যবহার হবে। প্রতিটি ফিল্টার আলাদা ধরনের প্যাটার্ন খোঁজে (কেউ রেখা খোঁজে, কেউ বাঁক খোঁজে)।</li>
+      <li><strong>kernel_size=(5,5)</strong> → প্রতিটি ফিল্টার ৫×৫ সাইজের ছোট বর্গাকার।</li>
+      <li><strong>activation='relu'</strong> → ReLU অ্যাক্টিভেশন: নেগেটিভ মান শূন্য করে দেয়, পজিটিভ রাখে।</li>
+      <li><strong>padding='valid'</strong> → ছবির কিনারায় কোনো padding নেই — ফলে আউটপুট সাইজ একটু ছোট হয়।</li>
+    </ul>
+  </div>
+
+  <!-- MaxPooling -->
+  <h2 class="sub">⬇️ MaxPooling2D — ছবি সংকোচন</h2>
+
+  <div class="analogy">
+    <p><strong>কল্পনা করো তুমি একটা বড় ছবিকে ছোট thumbnail বানাচ্ছ।</strong> MaxPooling ঠিক তাই করে — প্রতি 2×2 ব্লক থেকে সবচেয়ে বড় সংখ্যাটা রাখে, বাকি তিনটা ফেলে দেয়। এতে ছবি ছোট হয়, কিন্তু গুরুত্বপূর্ণ তথ্য থাকে।</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">চিত্র: MaxPooling — প্রতিটি 2×2 এলাকা থেকে সর্বোচ্চ মান নেওয়া হচ্ছে</div>
+    <svg viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg" style="max-width:500px;width:100%" overflow="visible">
+      <defs>
+        <marker id="a4" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L7,3 z" fill="#3fb950"/>
+        </marker>
+      </defs>
+      <!-- Input 4x4 -->
+      <text dominant-baseline="middle" x="90" y="20" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#8b949e">ইনপুট (4×4)</text>
+      <g transform="translate(10,30)">
+        <!-- row 1 -->
+        <rect x="0" y="0" width="40" height="40" fill="#2a1a10" stroke="#ffa657" stroke-width="2" rx="2"/>
+        <text dominant-baseline="middle" x="20" y="25" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#ffa657" font-weight="700">4</text>
+        <rect x="42" y="0" width="40" height="40" fill="#2a1a10" stroke="#ffa65755" rx="2"/>
+        <text dominant-baseline="middle" x="62" y="25" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#ffa657">2</text>
+        <rect x="84" y="0" width="40" height="40" fill="#162032" stroke="#388bfd" stroke-width="2" rx="2"/>
+        <text dominant-baseline="middle" x="104" y="25" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#58a6ff" font-weight="700">5</text>
+        <rect x="126" y="0" width="40" height="40" fill="#162032" stroke="#388bfd55" rx="2"/>
+        <text dominant-baseline="middle" x="146" y="25" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#58a6ff">1</text>
+        <!-- row 2 -->
+        <rect x="0" y="42" width="40" height="40" fill="#2a1a10" stroke="#ffa65755" rx="2"/>
+        <text dominant-baseline="middle" x="20" y="67" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#ffa657">3</text>
+        <rect x="42" y="42" width="40" height="40" fill="#2a1a10" stroke="#ffa65755" rx="2"/>
+        <text dominant-baseline="middle" x="62" y="67" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#ffa657">1</text>
+        <rect x="84" y="42" width="40" height="40" fill="#162032" stroke="#388bfd55" rx="2"/>
+        <text dominant-baseline="middle" x="104" y="67" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#58a6ff">2</text>
+        <rect x="126" y="42" width="40" height="40" fill="#162032" stroke="#388bfd55" rx="2"/>
+        <text dominant-baseline="middle" x="146" y="67" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#58a6ff">3</text>
+        <!-- row 3 -->
+        <rect x="0" y="84" width="40" height="40" fill="#1a2a1a" stroke="#3fb95055" rx="2"/>
+        <text dominant-baseline="middle" x="20" y="109" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#3fb950">7</text>
+        <rect x="42" y="84" width="40" height="40" fill="#1a2a1a" stroke="#3fb95055" rx="2"/>
+        <text dominant-baseline="middle" x="62" y="109" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#3fb950">1</text>
+        <rect x="84" y="84" width="40" height="40" fill="#2a1a2a" stroke="#d2a8ff55" rx="2"/>
+        <text dominant-baseline="middle" x="104" y="109" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#d2a8ff">6</text>
+        <rect x="126" y="84" width="40" height="40" fill="#2a1a2a" stroke="#d2a8ff55" rx="2"/>
+        <text dominant-baseline="middle" x="146" y="109" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#d2a8ff">4</text>
+        <!-- row 4 -->
+        <rect x="0" y="126" width="40" height="40" fill="#1a2a1a" stroke="#3fb95055" rx="2"/>
+        <text dominant-baseline="middle" x="20" y="151" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#3fb950">2</text>
+        <rect x="42" y="126" width="40" height="40" fill="#1a2a1a" stroke="#3fb95055" rx="2"/>
+        <text dominant-baseline="middle" x="62" y="151" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#3fb950">5</text>
+        <rect x="84" y="126" width="40" height="40" fill="#2a1a2a" stroke="#d2a8ff55" rx="2"/>
+        <text dominant-baseline="middle" x="104" y="151" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#d2a8ff">2</text>
+        <rect x="126" y="126" width="40" height="40" fill="#2a1a2a" stroke="#d2a8ff55" rx="2"/>
+        <text dominant-baseline="middle" x="146" y="151" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#d2a8ff">8</text>
+      </g>
+
+      <!-- Arrow -->
+      <path d="M185,90 L240,90" stroke="#3fb950" stroke-width="2" fill="none" marker-end="url(#a4)"/>
+      <text dominant-baseline="middle" x="212" y="80" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#3fb950">max নাও</text>
+      <text dominant-baseline="middle" x="212" y="104" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#3fb950">2×2 এলাকা</text>
+
+      <!-- Output 2x2 -->
+      <text dominant-baseline="middle" x="330" y="20" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#8b949e">আউটপুট (2×2)</text>
+      <g transform="translate(250,30)">
+        <rect x="0" y="0" width="70" height="70" fill="#2a1a10" stroke="#ffa657" stroke-width="2" rx="4"/>
+        <text dominant-baseline="middle" x="35" y="42" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" fill="#ffa657" font-weight="700">4</text>
+        <rect x="80" y="0" width="70" height="70" fill="#162032" stroke="#388bfd" stroke-width="2" rx="4"/>
+        <text dominant-baseline="middle" x="115" y="42" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" fill="#58a6ff" font-weight="700">5</text>
+        <rect x="0" y="80" width="70" height="70" fill="#1a2a1a" stroke="#3fb950" stroke-width="2" rx="4"/>
+        <text dominant-baseline="middle" x="35" y="122" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" fill="#3fb950" font-weight="700">7</text>
+        <rect x="80" y="80" width="70" height="70" fill="#2a1a2a" stroke="#d2a8ff" stroke-width="2" rx="4"/>
+        <text dominant-baseline="middle" x="115" y="122" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" fill="#d2a8ff" font-weight="700">8</text>
+      </g>
+      <text dominant-baseline="middle" x="330" y="165" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#6e7681">প্রতিটি রঙিন গ্রুপ থেকে সর্বোচ্চ মান</text>
+    </svg>
+  </div>
+
+  <!-- Dropout -->
+  <h2 class="sub">🎲 Dropout — অতিরিক্ত মুখস্থ থেকে বাঁচা</h2>
+  <div class="analogy">
+    <p><strong>Dropout মানে হলো পরীক্ষার আগে কিছু পড়া বন্ধ করে দেওয়া — ইচ্ছে করে।</strong> Training-এর সময় এলোমেলোভাবে কিছু নিউরন "বন্ধ" করে দেওয়া হয়। এতে মডেল মুখস্থ করার বদলে সত্যিকারের প্যাটার্ন শিখতে বাধ্য হয়। <code>rate=0.2</code> মানে ২০% নিউরন বন্ধ।</p>
+  </div>
+
+  <!-- Flatten -->
+  <h2 class="sub">📐 Flatten — 3D থেকে 1D</h2>
+  <div class="analogy">
+    <p><strong>Flatten মানে হলো একটা বহুতল ভবনকে একটা লম্বা সারিতে সাজানো।</strong> Conv2D-এর পর ডেটা থাকে 3D (উচ্চতা × প্রস্থ × ফিল্টার)। Dense layer-এর দরকার 1D। Flatten সেটাই করে।</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">চিত্র: Flatten — 3D টেনসর → 1D ভেক্টর</div>
+    <svg viewBox="0 0 500 140" xmlns="http://www.w3.org/2000/svg" style="max-width:500px;width:100%" overflow="visible">
+      <defs>
+        <marker id="a5" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L7,3 z" fill="#d2a8ff"/>
+        </marker>
+      </defs>
+      <!-- 3D tensor representation -->
+      <text dominant-baseline="middle" x="80" y="20" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#8b949e">3D ফিচার ম্যাপ</text>
+      <rect x="20" y="35" width="50" height="50" fill="#162032" stroke="#388bfd" rx="3" opacity="0.6"/>
+      <rect x="30" y="45" width="50" height="50" fill="#162032" stroke="#388bfd" rx="3" opacity="0.7"/>
+      <rect x="40" y="55" width="50" height="50" fill="#162032" stroke="#388bfd" rx="3"/>
+      <text dominant-baseline="middle" x="65" y="85" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#58a6ff">2×2×64</text>
+      <text dominant-baseline="middle" x="65" y="120" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#6e7681">= 256টি সংখ্যা</text>
+
+      <!-- Arrow -->
+      <path d="M120,80 L200,80" stroke="#d2a8ff" stroke-width="2" fill="none" marker-end="url(#a5)"/>
+      <text dominant-baseline="middle" x="160" y="70" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#d2a8ff">Flatten</text>
+
+      <!-- 1D vector -->
+      <text dominant-baseline="middle" x="340" y="20" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#8b949e">1D ভেক্টর</text>
+      <g transform="translate(210,35)">
+        <rect x="0" y="0" width="22" height="90" fill="#2a1a2a" stroke="#d2a8ff" rx="2"/>
+        <rect x="24" y="0" width="22" height="90" fill="#2a1a2a" stroke="#d2a8ff55" rx="2"/>
+        <rect x="48" y="0" width="22" height="90" fill="#2a1a2a" stroke="#d2a8ff55" rx="2"/>
+        <rect x="72" y="0" width="22" height="90" fill="#2a1a2a" stroke="#d2a8ff55" rx="2"/>
+        <text dominant-baseline="middle" x="50" y="48" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6e7681">...</text>
+        <rect x="96" y="0" width="22" height="90" fill="#2a1a2a" stroke="#d2a8ff" rx="2"/>
+        <rect x="120" y="0" width="22" height="90" fill="#2a1a2a" stroke="#d2a8ff55" rx="2"/>
+      </g>
+      <text dominant-baseline="middle" x="340" y="120" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#6e7681">256 × 1 = একটা লম্বা সারি</text>
+    </svg>
+  </div>
+
+  <!-- Dense -->
+  <h2 class="sub">🔗 Dense Layer — সিদ্ধান্ত নেওয়া</h2>
+  <div class="analogy">
+    <p><strong>Dense Layer হলো মস্তিষ্কের সিদ্ধান্ত নেওয়ার অংশ।</strong> প্রতিটি নিউরন আগের সব নিউরনের সাথে যুক্ত। এটি Flatten-এর আউটপুট থেকে চূড়ান্ত উত্তর বের করে।</p>
+  </div>
+
+  <h2 class="sub">⚡ Activation Functions — সিদ্ধান্তের ভাষা</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Activation</th><th>আউটপুট রেঞ্জ</th><th>কোথায় ব্যবহার</th><th>কেন</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>relu</code></td>
+          <td>0 থেকে ∞</td>
+          <td>Hidden layers</td>
+          <td>নেগেটিভ বাদ, পজিটিভ রাখে। দ্রুত শেখে।</td>
+        </tr>
+        <tr>
+          <td><code>sigmoid</code></td>
+          <td>0 থেকে 1</td>
+          <td>Binary output (লিঙ্গ)</td>
+          <td>0 = পুরুষ, 1 = মহিলা হিসেবে ব্যাখ্যা সহজ</td>
+        </tr>
+        <tr>
+          <td><code>softmax</code></td>
+          <td>0 থেকে 1 (যোগফল=1)</td>
+          <td>Multi-class (জাতিসত্তা)</td>
+          <td>৫টা সম্ভাবনা, যোগ করলে ১০০%</td>
+        </tr>
+        <tr>
+          <td>কোনো activation নেই</td>
+          <td>যেকোনো সংখ্যা</td>
+          <td>Regression (বয়স)</td>
+          <td>বয়স যেকোনো সংখ্যা হতে পারে</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="chapter-divider"><span>NOTEBOOK ১</span></div>
+
+<!-- ============================================================ -->
+<!-- SECTION: NOTEBOOK 1 -->
+<!-- ============================================================ -->
+<section class="section" id="nb1">
+  <div class="section-header">
+    <span class="section-num">§ ০৫</span>
+    <h1 class="section-title">Notebook ১: লিঙ্গ শনাক্তকরণ</h1>
+  </div>
+
+  <div class="card card-accent">
+    <h3>🎯 লক্ষ্য</h3>
+    <p>ছবি দেখে বলতে হবে: পুরুষ (0) নাকি মহিলা (1)?</p>
+    <p>এটা <strong>Binary Classification</strong> — দুটো সম্ভাব্য উত্তরের মধ্যে একটা।</p>
+  </div>
+
+  <h2 class="sub" id="nb1-preprocess">ধাপ (a): ডেটা লোড ও পিক্সেল রূপান্তর</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">ডেটা লোড</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">df</span> = <span class="fn">pd</span>.<span class="fn">read_csv</span>(<span class="str">'age_gender.csv'</span>, sep=<span class="str">','</span>)
+<span class="var">df</span>[<span class="str">'pixels'</span>] = <span class="var">df</span>[<span class="str">'pixels'</span>].<span class="fn">apply</span>(
+    <span class="kw">lambda</span> <span class="var">x</span> : <span class="fn">np</span>.<span class="fn">array</span>(<span class="var">x</span>.<span class="fn">split</span>()).<span class="fn">astype</span>(<span class="fn">np</span>.<span class="var">int16</span>)
+)
+<span class="var">df</span>.<span class="fn">head</span>()</pre>
+  </div>
+
+  <h2 class="sub">ধাপ (b): ডেটাসেটের তথ্য দেখা</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">shape ও প্রথম ৫ সারি</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="fn">print</span>(<span class="str">"মোট সারি: {}"</span>.<span class="fn">format</span>(<span class="var">df</span>.<span class="var">shape</span>[<span class="num">0</span>]))
+<span class="fn">print</span>(<span class="str">"মোট কলাম: {}"</span>.<span class="fn">format</span>(<span class="var">df</span>.<span class="var">shape</span>[<span class="num">1</span>]))
+<span class="var">df</span>.<span class="fn">head</span>()
+
+<span class="cm"># shape[0] = সারির সংখ্যা (মানুষের সংখ্যা)</span>
+<span class="cm"># shape[1] = কলামের সংখ্যা (age, gender, ethnicity, pixels = 4টি)</span></pre>
+  </div>
+
+  <h2 class="sub">ধাপ (c): ছবি দেখানো</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">এলোমেলো ছবি দেখানো (4×5 গ্রিড)</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">dict</span> = {<span class="num">0</span> : <span class="str">'M'</span>, <span class="num">1</span> : <span class="str">'F'</span>}  <span class="cm"># 0=পুরুষ, 1=মহিলা</span>
+
+<span class="var">fig</span>, <span class="var">axs</span> = <span class="fn">plt</span>.<span class="fn">subplots</span>(<span class="num">4</span>, <span class="num">5</span>, figsize=(<span class="num">11</span>, <span class="num">7</span>))
+<span class="cm"># 4 সারি, 5 কলাম = মোট 20টি ছবি</span>
+
+<span class="kw">for</span> <span class="var">row</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">4</span>):
+    <span class="kw">for</span> <span class="var">col</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>):
+        <span class="var">indice</span> = <span class="fn">np</span>.<span class="fn">random</span>.<span class="fn">randint</span>(<span class="var">df</span>.<span class="var">shape</span>[<span class="num">0</span>])  <span class="cm"># এলোমেলো ইন্ডেক্স</span>
+        <span class="var">axs</span>[<span class="var">row</span>, <span class="var">col</span>].<span class="fn">imshow</span>(
+            <span class="var">df</span>[<span class="str">'pixels'</span>][<span class="var">indice</span>].<span class="fn">reshape</span>((<span class="num">48</span>, <span class="num">48</span>)),  <span class="cm"># 2304 → 48×48</span>
+            cmap=<span class="str">"gray"</span>  <span class="cm"># কালো-সাদায় দেখাবে</span>
+        )
+        <span class="var">axs</span>[<span class="var">row</span>, <span class="var">col</span>].<span class="fn">set_title</span>(<span class="var">dict</span>[<span class="var">df</span>[<span class="str">'gender'</span>][<span class="var">indice</span>]])  <span class="cm"># M বা F</span>
+        <span class="var">axs</span>[<span class="var">row</span>, <span class="var">col</span>].<span class="fn">axis</span>(<span class="str">'off'</span>)  <span class="cm"># অক্ষ লুকানো</span></pre>
+  </div>
+
+  <div class="info-box">
+    <div class="label">💡 reshape কেন?</div>
+    <p>pixels কলামে ডেটা আছে 1D অ্যারে হিসেবে — ২৩০৪টি সংখ্যার একটা সারি। কিন্তু ছবি দেখাতে হলে দরকার 2D: ৪৮ সারি × ৪৮ কলাম। <code>.reshape((48, 48))</code> সেই রূপান্তরটাই করে। 48 × 48 = 2304 ✓</p>
+  </div>
+
+  <h2 class="sub">ধাপ (d): ১০ বছরের কম বয়সীদের বাদ দেওয়া</h2>
+
+  <div class="card card-orange">
+    <h3>⚠️ কেন বাদ দেওয়া হচ্ছে?</h3>
+    <p>ছোট শিশুদের ক্ষেত্রে লিঙ্গ শনাক্ত করা কঠিন — চেহারায় পুরুষ ও মহিলার পার্থক্য বয়ঃসন্ধির আগে স্পষ্ট নয়। এটা মডেলকে বিভ্রান্ত করতে পারে।</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">বাচ্চাদের বাদ দেওয়া ও index reset</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># age > 10 শর্তে ফিল্টার করা</span>
+<span class="var">df</span> = <span class="var">df</span>[<span class="var">df</span>[<span class="str">'age'</span>] > <span class="num">10</span>].<span class="fn">reset_index</span>(drop=<span class="kw">True</span>)
+
+<span class="cm"># df['age'] > 10 → প্রতিটি সারির জন্য True/False</span>
+<span class="cm"># df[...] → শুধু True সারিগুলো রাখো</span>
+<span class="cm"># .reset_index(drop=True) → index আবার 0,1,2,3... করো</span>
+<span class="cm">#   কারণ: বাদ দেওয়ার পর index 0,1,5,6,8... এভাবে হয়ে যায়</span>
+<span class="cm">#   drop=True মানে পুরনো index ফেলে দাও</span></pre>
+  </div>
+
+  <h2 class="sub">ধাপ (e): লিঙ্গের বিতরণ দেখা</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">Pie chart</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">plt</span>.<span class="fn">figure</span>(figsize=(<span class="num">12</span>,<span class="num">6</span>))
+<span class="var">plt</span>.<span class="fn">pie</span>(
+    <span class="var">df</span>.<span class="var">gender</span>.<span class="fn">value_counts</span>(),  <span class="cm"># প্রতিটি মানের গণনা</span>
+    labels=[<span class="str">'male'</span>, <span class="str">'female'</span>],
+    colors=[<span class="str">'paleturquoise'</span>, <span class="str">'blueviolet'</span>],
+    autopct=<span class="str">'%1.1f%%'</span>,  <span class="cm"># শতাংশ দেখাও, ১ দশমিক পর্যন্ত</span>
+    pctdistance=<span class="num">0.7</span>  <span class="cm"># কেন্দ্র থেকে দূরত্ব</span>
+)
+<span class="var">plt</span>.<span class="fn">title</span>(<span class="str">'লিঙ্গের বিতরণ'</span>)</pre>
+  </div>
+
+  <div class="info-box warning">
+    <div class="label">⚠️ ডেটা ইমব্যালেন্স কী?</div>
+    <p>যদি ডেটাসেটে ৯০% পুরুষ এবং ১০% মহিলা থাকে, তাহলে মডেল সবকিছুকে পুরুষ বলেও ৯০% accuracy পাবে — কিন্তু সেটা আসলে ভুল মডেল। Pie chart দেখে বোঝা যাবে ডেটা balanced কিনা।</p>
+  </div>
+
+  <h2 class="sub">ধাপ (f): X এবং y তৈরি</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">Feature (X) ও Target (y) আলাদা করা</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># X = ইনপুট (ছবি)</span>
+<span class="var">X</span> = <span class="fn">np</span>.<span class="fn">array</span>(<span class="var">df</span>[<span class="str">'pixels'</span>].<span class="fn">tolist</span>())
+<span class="cm"># এখন X-এর shape: (মানুষের সংখ্যা, 2304)</span>
+
+<span class="var">X</span> = <span class="var">X</span>.<span class="fn">reshape</span>(-<span class="num">1</span>, <span class="num">48</span>, <span class="num">48</span>, <span class="num">1</span>)
+<span class="cm"># -1 মানে: এই মাত্রাটা numpy নিজে বের করুক</span>
+<span class="cm"># 48, 48 = ছবির উচ্চতা ও প্রস্থ</span>
+<span class="cm"># 1 = চ্যানেল (কালো-সাদা = ১ চ্যানেল; রঙিন হলে ৩)</span>
+<span class="cm"># নতুন shape: (মানুষের সংখ্যা, 48, 48, 1)</span>
+
+<span class="cm"># y = আউটপুট (লিঙ্গ)</span>
+<span class="var">y</span> = <span class="var">df</span>[<span class="str">'gender'</span>].<span class="var">values</span>
+<span class="cm"># .values → pandas Series থেকে numpy array</span></pre>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">চিত্র: X-এর shape পরিবর্তন</div>
+    <svg viewBox="0 0 560 120" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;width:100%" overflow="visible">
+      <defs>
+        <marker id="a6" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L7,3 z" fill="#58a6ff"/>
+        </marker>
+      </defs>
+      <rect x="10" y="30" width="140" height="60" rx="8" fill="#162032" stroke="#388bfd"/>
+      <text dominant-baseline="middle" x="80" y="55" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#58a6ff">(N, 2304)</text>
+      <text dominant-baseline="middle" x="80" y="75" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#8b949e">1D পিক্সেল</text>
+      <text dominant-baseline="middle" x="80" y="20" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#8b949e">আগে</text>
+
+      <path d="M155,60 L200,60" stroke="#58a6ff" stroke-width="2" fill="none" marker-end="url(#a6)"/>
+      <text dominant-baseline="middle" x="177" y="50" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#ffa657">reshape</text>
+      <text dominant-baseline="middle" x="177" y="75" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6e7681">(-1,48,48,1)</text>
+
+      <rect x="205" y="20" width="160" height="80" rx="8" fill="#162032" stroke="#388bfd"/>
+      <text dominant-baseline="middle" x="285" y="50" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#58a6ff">(N, 48, 48, 1)</text>
+      <text dominant-baseline="middle" x="285" y="73" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#8b949e">N = মানুষের সংখ্যা</text>
+      <text dominant-baseline="middle" x="285" y="90" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#8b949e">48×48 = ছবির সাইজ, 1 = channel</text>
+      <text dominant-baseline="middle" x="285" y="15" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#8b949e">পরে</text>
+
+      <!-- Explanation boxes -->
+      <rect x="380" y="25" width="80" height="28" rx="5" fill="#1c2333" stroke="#ffa65755"/>
+      <text dominant-baseline="middle" x="420" y="44" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#ffa657">N</text>
+      <text x="465" y="44" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#6e7681">= ব্যাচ সাইজ</text>
+
+      <rect x="380" y="60" width="80" height="28" rx="5" fill="#1c2333" stroke="#3fb95055"/>
+      <text dominant-baseline="middle" x="420" y="79" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#3fb950">48, 48</text>
+      <text x="465" y="79" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#6e7681">= H × W</text>
+
+      <rect x="380" y="95" width="80" height="28" rx="5" fill="#1c2333" stroke="#d2a8ff55"/>
+      <text dominant-baseline="middle" x="420" y="114" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#d2a8ff">1</text>
+      <text x="465" y="114" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#6e7681">= channel</text>
+    </svg>
+  </div>
+
+  <h2 class="sub">ধাপ (g): Train/Test Split</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">ডেটা ভাগ করা</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">X_train</span>, <span class="var">X_test</span>, <span class="var">y_train</span>, <span class="var">y_test</span> = <span class="fn">train_test_split</span>(
+    <span class="var">X</span>, <span class="var">y</span>,
+    test_size=<span class="num">0.2</span>,     <span class="cm"># ২০% টেস্ট, ৮০% ট্রেনিং</span>
+    random_state=<span class="num">123</span>  <span class="cm"># এলোমেলো করার বীজ (পুনরুৎপাদনযোগ্য)</span>
+)</pre>
+  </div>
+
+  <div class="analogy">
+    <p><strong>কল্পনা করো পরীক্ষার প্রস্তুতি।</strong> তোমার কাছে ১০০০টি প্রশ্ন আছে। ৮০০টি দিয়ে পড়াশোনা করো (training), আর ২০০টি দিয়ে পরীক্ষা দাও (testing)। পরীক্ষার প্রশ্ন আগে দেখোনি — এতেই বোঝা যাবে সত্যিই শিখেছ কিনা।</p>
+  </div>
+
+  <h2 class="sub" id="nb1-model">ধাপ (a-II): মডেল তৈরি</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">CNN মডেল আর্কিটেকচার — লিঙ্গ শনাক্তকরণ</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">input_shape</span> = (<span class="num">48</span>, <span class="num">48</span>, <span class="num">1</span>)  <span class="cm"># ইনপুটের আকার</span>
+
+<span class="var">model</span> = <span class="fn">Sequential</span>()  <span class="cm"># স্তরগুলো একের পর এক সাজানো</span>
+
+<span class="cm"># ব্লক ১: ছোট প্যাটার্ন ধরা</span>
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">Conv2D</span>(filters=<span class="num">16</span>, kernel_size=(<span class="num">5</span>, <span class="num">5</span>),
+              padding=<span class="str">'valid'</span>, input_shape=input_shape,
+              activation=<span class="str">'relu'</span>))
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">MaxPooling2D</span>(pool_size=(<span class="num">2</span>, <span class="num">2</span>)))
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">Dropout</span>(rate=<span class="num">0.2</span>))
+
+<span class="cm"># ব্লক ২: মাঝারি প্যাটার্ন</span>
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">Conv2D</span>(filters=<span class="num">32</span>, kernel_size=(<span class="num">3</span>, <span class="num">3</span>),
+              padding=<span class="str">'valid'</span>, activation=<span class="str">'relu'</span>))
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">MaxPooling2D</span>(pool_size=(<span class="num">2</span>, <span class="num">2</span>)))
+
+<span class="cm"># ব্লক ৩: জটিল প্যাটার্ন</span>
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">Conv2D</span>(filters=<span class="num">64</span>, kernel_size=(<span class="num">3</span>, <span class="num">3</span>),
+              padding=<span class="str">'valid'</span>, activation=<span class="str">'relu'</span>))
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">MaxPooling2D</span>(pool_size=(<span class="num">2</span>, <span class="num">2</span>)))
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">Dropout</span>(rate=<span class="num">0.2</span>))
+
+<span class="cm"># 3D → 1D</span>
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">Flatten</span>())
+
+<span class="cm"># সিদ্ধান্ত নেওয়া</span>
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">Dense</span>(units=<span class="num">64</span>, activation=<span class="str">'relu'</span>))
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">Dropout</span>(rate=<span class="num">0.2</span>))
+
+<span class="cm"># আউটপুট: ১টি নিউরন, sigmoid → 0 বা 1</span>
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">Dense</span>(units=<span class="num">1</span>, activation=<span class="str">'sigmoid'</span>))</pre>
+  </div>
+
+  <div class="info-box warning">
+    <div class="label">⚠️ ফিল্টার সংখ্যা কেন বাড়ে?</div>
+    <p>লক্ষ্য করো: ১৬ → ৩২ → ৬৪। প্রতিটি Conv block-এ ফিল্টার সংখ্যা দ্বিগুণ হচ্ছে। কারণ: গভীরে গেলে আরও জটিল প্যাটার্ন শিখতে হয়, তাই বেশি ফিল্টার দরকার। কিন্তু ছবির সাইজ MaxPooling-এ ছোট হয়, তাই মোট গণনার পরিমাণ অনেকটাই নিয়ন্ত্রণে থাকে।</p>
+  </div>
+
+  <h2 class="sub">ধাপ (b-II): মডেল Compile করা</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">Compile</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">model</span>.<span class="fn">compile</span>(
+    optimizer=<span class="str">'adam'</span>,           <span class="cm"># শেখার অ্যালগরিদম</span>
+    loss=<span class="str">'binary_crossentropy'</span>, <span class="cm"># Binary classification-এর জন্য</span>
+    metrics=[<span class="str">'accuracy'</span>]        <span class="cm"># কতটা সঠিক তা দেখার মাপকাঠি</span>
+)</pre>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>প্যারামিটার</th><th>মানে কী</th><th>কেন এটা?</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>optimizer='adam'</code></td>
+          <td>Adaptive Moment Estimation — একটি স্মার্ট gradient descent</td>
+          <td>সবচেয়ে জনপ্রিয়, বেশিরভাগ ক্ষেত্রে ভালো কাজ করে</td>
+        </tr>
+        <tr>
+          <td><code>loss='binary_crossentropy'</code></td>
+          <td>Binary classification-এর জন্য loss function</td>
+          <td>দুটো ক্লাস (পুরুষ/মহিলা) → binary cross-entropy</td>
+        </tr>
+        <tr>
+          <td><code>metrics=['accuracy']</code></td>
+          <td>শতাংশে সঠিক ভবিষ্যদ্বাণীর হার</td>
+          <td>সহজে বোঝা যায়: ৯০% মানে ১০০টার মধ্যে ৯০টা সঠিক</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="analogy">
+    <p><strong>Loss function কী?</strong> এটা মডেলের ভুলের পরিমাপ। Loss কমানোই লক্ষ্য। মডেল ভুল করলে loss বড়, সঠিক করলে ছোট। Optimizer হলো সেই ইঞ্জিন যেটা loss কমানোর জন্য model-এর ওজন পরিবর্তন করে।</p>
+  </div>
+
+  <h2 class="sub">ধাপ (c-II): মডেল Train করা</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">Training</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">history</span> = <span class="var">model</span>.<span class="fn">fit</span>(
+    <span class="var">X_train</span>, <span class="var">y_train</span>,           <span class="cm"># ট্রেনিং ডেটা</span>
+    validation_data=(<span class="var">X_test</span>, <span class="var">y_test</span>),  <span class="cm"># ভ্যালিডেশন ডেটা</span>
+    epochs=<span class="num">20</span>,                  <span class="cm"># ২০ বার পুরো ডেটা দেখবে</span>
+    batch_size=<span class="num">32</span>              <span class="cm"># একবারে ৩২টা ছবি প্রক্রিয়া করবে</span>
+)</pre>
+  </div>
+
+  <div class="card card-purple">
+    <h3>📖 গুরুত্বপূর্ণ শব্দ</h3>
+    <ul>
+      <li><strong>epoch</strong>: পুরো training ডেটাসেট একবার দেখা। ২০ epochs মানে ২০ বার পুরোটা দেখবে।</li>
+      <li><strong>batch_size</strong>: একসাথে কতটা ডেটা প্রক্রিয়া হবে। ৩২ মানে ৩২টা ছবি একসাথে।</li>
+      <li><strong>validation_data</strong>: ট্রেনিং-এর সময় টেস্ট ডেটায় performance দেখা — overfitting ধরতে।</li>
+      <li><strong>history</strong>: প্রতিটি epoch-এর loss ও accuracy সংরক্ষণ করে।</li>
+    </ul>
+  </div>
+
+  <h2 class="sub">ধাপ (d-II): Loss ও Accuracy Curve</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">Training curve plot করা</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">plt</span>.<span class="fn">figure</span>(figsize=(<span class="num">12</span>, <span class="num">4</span>))
+
+<span class="cm"># বাম গ্রাফ: Loss</span>
+<span class="var">plt</span>.<span class="fn">subplot</span>(<span class="num">121</span>)  <span class="cm"># 1 সারি, 2 কলাম, প্রথম গ্রাফ</span>
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'loss'</span>])      <span class="cm"># ট্রেন loss</span>
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'val_loss'</span>])  <span class="cm"># টেস্ট loss</span>
+<span class="var">plt</span>.<span class="fn">title</span>(<span class="str">'Loss প্রতি epoch-এ'</span>)
+<span class="var">plt</span>.<span class="fn">legend</span>([<span class="str">'train'</span>, <span class="str">'test'</span>])
+
+<span class="cm"># ডান গ্রাফ: Accuracy</span>
+<span class="var">plt</span>.<span class="fn">subplot</span>(<span class="num">122</span>)  <span class="cm"># 1 সারি, 2 কলাম, দ্বিতীয় গ্রাফ</span>
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'accuracy'</span>])
+<span class="var">plt</span>.<span class="fn">plot</span>(<span class="var">history</span>.<span class="var">history</span>[<span class="str">'val_accuracy'</span>])</pre>
+  </div>
+
+  <!-- SVG: Training curve example -->
+  <div class="diagram-wrap">
+    <div class="diagram-title">চিত্র: ভালো Training vs Overfitting</div>
+    <svg viewBox="0 0 620 200" xmlns="http://www.w3.org/2000/svg" style="max-width:620px;width:100%" overflow="visible">
+      <!-- Good training -->
+      <text dominant-baseline="middle" x="130" y="18" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#3fb950">✅ ভালো Training</text>
+      <rect x="10" y="25" width="240" height="160" rx="8" fill="#161b22" stroke="#30363d"/>
+      <!-- Axes -->
+      <line x1="30" y1="165" x2="230" y2="165" stroke="#30363d" stroke-width="1"/>
+      <line x1="30" y1="165" x2="30" y2="35" stroke="#30363d" stroke-width="1"/>
+      <text x="230" y="178" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#6e7681">epoch→</text>
+      <text x="32" y="40" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#6e7681">loss</text>
+      <!-- Train loss curve (good) -->
+      <polyline points="30,140 55,115 80,95 105,80 130,68 155,60 180,54 205,50 230,47" fill="none" stroke="#3fb950" stroke-width="2"/>
+      <!-- Val loss curve (good - close to train) -->
+      <polyline points="30,145 55,122 80,102 105,88 130,78 155,72 180,67 205,64 230,62" fill="none" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4"/>
+      <text dominant-baseline="middle" x="130" y="185" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#8b949e">দুটো curve কাছাকাছি → ভালো</text>
+      <!-- Legend -->
+      <line x1="35" y1="155" x2="55" y2="155" stroke="#3fb950" stroke-width="2"/>
+      <text x="58" y="158" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#3fb950">train</text>
+      <line x1="90" y1="155" x2="110" y2="155" stroke="#58a6ff" stroke-width="2" stroke-dasharray="4"/>
+      <text x="113" y="158" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#58a6ff">val</text>
+
+      <!-- Overfitting -->
+      <text dominant-baseline="middle" x="430" y="18" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#f78166">❌ Overfitting</text>
+      <rect x="310" y="25" width="240" height="160" rx="8" fill="#161b22" stroke="#30363d"/>
+      <line x1="330" y1="165" x2="530" y2="165" stroke="#30363d" stroke-width="1"/>
+      <line x1="330" y1="165" x2="330" y2="35" stroke="#30363d" stroke-width="1"/>
+      <text x="332" y="40" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#6e7681">loss</text>
+      <!-- Train loss (keeps going down) -->
+      <polyline points="330,140 355,110 380,85 405,65 430,50 455,38 480,30 505,24 530,20" fill="none" stroke="#3fb950" stroke-width="2"/>
+      <!-- Val loss (goes down then up) -->
+      <polyline points="330,145 355,118 380,100 405,90 430,88 455,95 480,108 505,122 530,138" fill="none" stroke="#f78166" stroke-width="2" stroke-dasharray="4"/>
+      <text dominant-baseline="middle" x="430" y="185" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#8b949e">val loss বেড়ে যাচ্ছে → মুখস্থ করছে</text>
+      <line x1="335" y1="155" x2="355" y2="155" stroke="#3fb950" stroke-width="2"/>
+      <text x="358" y="158" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#3fb950">train</text>
+      <line x1="390" y1="155" x2="410" y2="155" stroke="#f78166" stroke-width="2" stroke-dasharray="4"/>
+      <text x="413" y="158" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#f78166">val</text>
+    </svg>
+  </div>
+
+  <h2 class="sub">ধাপ (e-f): Prediction ও ছবি দেখানো</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">ভবিষ্যদ্বাণী করা</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># টেস্ট ডেটায় ভবিষ্যদ্বাণী</span>
+<span class="var">y_pred</span> = <span class="var">model</span>.<span class="fn">predict</span>(<span class="var">X_test</span>).<span class="fn">round</span>()
+<span class="cm"># .predict() → 0.0 থেকে 1.0 এর মধ্যে সংখ্যা দেয়</span>
+<span class="cm">#   যেমন: 0.73 → মহিলা হওয়ার সম্ভাবনা ৭৩%</span>
+<span class="cm"># .round() → 0.5 বা বেশি হলে 1 (মহিলা), নইলে 0 (পুরুষ)</span></pre>
+  </div>
+
+  <h2 class="sub">ধাপ (g): Confusion Matrix</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">Confusion Matrix</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">pd</span>.<span class="fn">crosstab</span>(
+    <span class="var">y_test</span>,         <span class="cm"># আসল উত্তর (সারি)</span>
+    <span class="var">y_pred</span>[:,<span class="num">0</span>],   <span class="cm"># মডেলের উত্তর (কলাম)</span>
+    rownames=[<span class="str">'True gender'</span>],
+    colnames=[<span class="str">'Predicted gender'</span>]
+)</pre>
+  </div>
+
+  <!-- SVG: Confusion Matrix -->
+  <div class="diagram-wrap">
+    <div class="diagram-title">চিত্র: Confusion Matrix বোঝা</div>
+    <svg viewBox="0 0 560 260" xmlns="http://www.w3.org/2000/svg" style="max-width:560px;width:100%" overflow="visible">
+      <text dominant-baseline="middle" x="280" y="20" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="14" fill="#8b949e">মডেলের ভবিষ্যদ্বাণী</text>
+      <text dominant-baseline="middle" x="370" y="45" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#8b949e">পুরুষ (0)</text>
+      <text dominant-baseline="middle" x="480" y="45" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#8b949e">মহিলা (1)</text>
+
+      <text dominant-baseline="middle" x="60" y="110" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#8b949e" transform="rotate(-90,60,120)">আসল উত্তর</text>
+      <text dominant-baseline="middle" x="100" y="110" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#8b949e">পুরুষ</text>
+      <text dominant-baseline="middle" x="100" y="185" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#8b949e">মহিলা</text>
+
+      <!-- TP -->
+      <rect x="320" y="55" width="100" height="80" rx="6" fill="#1a2a1a" stroke="#3fb950" stroke-width="2"/>
+      <text dominant-baseline="middle" x="370" y="90" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" fill="#3fb950" font-weight="700">850</text>
+      <text dominant-baseline="middle" x="370" y="110" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#3fb950">✓ সঠিক পুরুষ</text>
+      <text dominant-baseline="middle" x="370" y="125" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#3fb950">True Positive</text>
+
+      <!-- FN -->
+      <rect x="430" y="55" width="100" height="80" rx="6" fill="#2a1010" stroke="#f78166" stroke-width="2"/>
+      <text dominant-baseline="middle" x="480" y="90" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" fill="#f78166" font-weight="700">80</text>
+      <text dominant-baseline="middle" x="480" y="110" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#f78166">✗ পুরুষকে মহিলা বলা</text>
+      <text dominant-baseline="middle" x="480" y="125" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#f78166">False Negative</text>
+
+      <!-- FP -->
+      <rect x="320" y="137" width="100" height="80" rx="6" fill="#2a1010" stroke="#f78166" stroke-width="2"/>
+      <text dominant-baseline="middle" x="370" y="172" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" fill="#f78166" font-weight="700">60</text>
+      <text dominant-baseline="middle" x="370" y="192" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#f78166">✗ মহিলাকে পুরুষ বলা</text>
+      <text dominant-baseline="middle" x="370" y="207" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#f78166">False Positive</text>
+
+      <!-- TN -->
+      <rect x="430" y="137" width="100" height="80" rx="6" fill="#1a2a1a" stroke="#3fb950" stroke-width="2"/>
+      <text dominant-baseline="middle" x="480" y="172" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" fill="#3fb950" font-weight="700">780</text>
+      <text dominant-baseline="middle" x="480" y="192" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#3fb950">✓ সঠিক মহিলা</text>
+      <text dominant-baseline="middle" x="480" y="207" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#3fb950">True Negative</text>
+
+      <!-- Explanation -->
+      <text dominant-baseline="middle" x="160" y="240" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#3fb950">সবুজ = সঠিক</text>
+      <text dominant-baseline="middle" x="320" y="240" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#f78166">লাল = ভুল</text>
+      <text dominant-baseline="middle" x="480" y="240" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#8b949e">Accuracy = (850+780)/(850+780+80+60)</text>
+    </svg>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-q">🧠 মিনি কুইজ: Confusion Matrix-এ "False Positive" মানে কী?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="checkQuiz(this, false)">মডেল সঠিক উত্তর দিয়েছে</div>
+      <div class="quiz-opt" onclick="checkQuiz(this, true)">মডেল ভুলভাবে Positive (মহিলা) বলেছে — আসলে পুরুষ ছিল</div>
+      <div class="quiz-opt" onclick="checkQuiz(this, false)">মডেল Negative বলেছে, কিন্তু আসলে Positive ছিল</div>
+      <div class="quiz-opt" onclick="checkQuiz(this, false)">মডেল কিছুই বলতে পারেনি</div>
+    </div>
+    <div class="quiz-feedback" id="qf1"></div>
+  </div>
+</section>
+
+<div class="chapter-divider"><span>NOTEBOOK ২</span></div>
+
+<!-- ============================================================ -->
+<!-- SECTION: NOTEBOOK 2 -->
+<!-- ============================================================ -->
+<section class="section" id="nb2">
+  <div class="section-header">
+    <span class="section-num">§ ০৬</span>
+    <h1 class="section-title">Notebook ২: বয়স অনুমান</h1>
+  </div>
+
+  <div class="card card-orange">
+    <h3>🎯 লক্ষ্য</h3>
+    <p>ছবি দেখে বলতে হবে: এই মানুষটির বয়স কত বছর?</p>
+    <p>এটা <strong>Regression</strong> — ফলাফল যেকোনো সংখ্যা হতে পারে (১৫.৩, ২৮, ৬৭...)।</p>
+  </div>
+
+  <h2 class="sub" id="regression">Classification বনাম Regression</h2>
+
+  <div class="compare-grid">
+    <div class="compare-col left">
+      <h4>🏷️ Classification (Notebook ১)</h4>
+      <ul>
+        <li>প্রশ্ন: "কোন ক্যাটাগরিতে?"</li>
+        <li>উত্তর: পুরুষ বা মহিলা</li>
+        <li>Loss: binary_crossentropy</li>
+        <li>Metric: accuracy</li>
+        <li>Output activation: sigmoid</li>
+      </ul>
+    </div>
+    <div class="compare-col right">
+      <h4>📊 Regression (Notebook ২)</h4>
+      <ul>
+        <li>প্রশ্ন: "কত?"</li>
+        <li>উত্তর: ২৩ বছর, ৪৫ বছর...</li>
+        <li>Loss: MSE (mean squared error)</li>
+        <li>Metric: MAE (mean absolute error)</li>
+        <li>Output activation: নেই (linear)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <div class="label">💡 MSE ও MAE কী?</div>
+    <p><strong>MSE (Mean Squared Error)</strong>: প্রতিটি ভবিষ্যদ্বাণী ও আসল মানের পার্থক্যের বর্গের গড়। বড় ভুলকে বেশি শাস্তি দেয়।</p>
+    <p><strong>MAE (Mean Absolute Error)</strong>: প্রতিটি পার্থক্যের নিরঙ্কুশ মানের গড়। MAE = ৫ মানে গড়ে ৫ বছর এদিক-ওদিক।</p>
+  </div>
+
+  <h2 class="sub">ধাপ (d): ৮০ বছরের বেশি বাদ দেওয়া</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">৮০+ বাদ</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">df</span> = <span class="var">df</span>[<span class="var">df</span>[<span class="str">'age'</span>] < <span class="num">80</span>].<span class="fn">reset_index</span>(drop=<span class="kw">True</span>)
+<span class="cm"># ৮০+ বয়সের মানুষ কম → imbalanced data → bias তৈরি করে</span>
+<span class="cm"># তাই বাদ দেওয়া হলো</span></pre>
+  </div>
+
+  <h2 class="sub">মডেলের পার্থক্য: শেষ Dense layer</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">Regression output layer</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="cm"># Notebook 1 (লিঙ্গ): sigmoid দিয়ে 0-1 পাওয়া</span>
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">Dense</span>(units=<span class="num">1</span>, activation=<span class="str">'sigmoid'</span>))
+
+<span class="cm"># Notebook 2 (বয়স): কোনো activation নেই</span>
+<span class="var">model</span>.<span class="fn">add</span>(<span class="fn">Dense</span>(units=<span class="num">1</span>))  <span class="cm"># linear → যেকোনো সংখ্যা</span></pre>
+  </div>
+
+  <h2 class="sub">Compile: MSE ও MAE দিয়ে</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">Regression compile</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">model</span>.<span class="fn">compile</span>(
+    optimizer=<span class="str">'adam'</span>,
+    loss=<span class="str">'mse'</span>,       <span class="cm"># Mean Squared Error — regression-এর জন্য</span>
+    metrics=[<span class="str">'mae'</span>]  <span class="cm"># Mean Absolute Error — সহজে বোঝার জন্য</span>
+)</pre>
+  </div>
+
+  <h2 class="sub">Scatter Plot: আসল বনাম ভবিষ্যদ্বাণী</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">Scatter plot ও y=x রেখা</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">sns</span>.<span class="fn">scatterplot</span>(<span class="var">y_pred</span>[:,<span class="num">0</span>], <span class="var">y_test</span>)  <span class="cm"># বিন্দু চিত্র</span>
+<span class="var">plt</span>.<span class="fn">plot</span>(
+    (<span class="var">y_test</span>.<span class="fn">min</span>(), <span class="var">y_test</span>.<span class="fn">max</span>()),  <span class="cm"># x-অক্ষের সীমা</span>
+    (<span class="var">y_test</span>.<span class="fn">min</span>(), <span class="var">y_test</span>.<span class="fn">max</span>()),  <span class="cm"># y-অক্ষের সীমা (একই)</span>
+    <span class="str">'r'</span>  <span class="cm"># লাল রেখা = y=x</span>
+)
+<span class="cm"># যদি মডেল নিখুঁত হয়, সব বিন্দু y=x রেখায় থাকবে</span></pre>
+  </div>
+
+  <!-- SVG: Scatter plot explanation -->
+  <div class="diagram-wrap">
+    <div class="diagram-title">চিত্র: Scatter Plot ব্যাখ্যা — বিন্দু y=x-এর কাছে থাকলে মডেল ভালো</div>
+    <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" style="max-width:400px;width:100%" overflow="visible">
+      <rect x="40" y="20" width="240" height="220" rx="6" fill="#161b22" stroke="#30363d"/>
+      <!-- axes -->
+      <line x1="55" y1="220" x2="265" y2="220" stroke="#30363d" stroke-width="1"/>
+      <line x1="55" y1="220" x2="55" y2="30" stroke="#30363d" stroke-width="1"/>
+      <text dominant-baseline="middle" x="160" y="245" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#8b949e">y_pred (ভবিষ্যদ্বাণী)</text>
+      <text dominant-baseline="middle" x="18" y="130" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#8b949e" transform="rotate(-90,18,130)">y_true (আসল)</text>
+      <!-- y=x line -->
+      <line x1="55" y1="220" x2="265" y2="30" stroke="#f78166" stroke-width="2" stroke-dasharray="5"/>
+      <text x="270" y="35" font-family="JetBrains Mono,monospace" font-size="11" fill="#f78166">y=x</text>
+      <!-- scatter points near the line -->
+      <circle cx="75" cy="200" r="4" fill="#58a6ff" opacity="0.7"/>
+      <circle cx="90" cy="185" r="4" fill="#58a6ff" opacity="0.7"/>
+      <circle cx="110" cy="168" r="4" fill="#58a6ff" opacity="0.7"/>
+      <circle cx="130" cy="152" r="4" fill="#58a6ff" opacity="0.7"/>
+      <circle cx="100" cy="178" r="4" fill="#58a6ff" opacity="0.7"/>
+      <circle cx="150" cy="133" r="4" fill="#58a6ff" opacity="0.7"/>
+      <circle cx="170" cy="115" r="4" fill="#58a6ff" opacity="0.7"/>
+      <circle cx="190" cy="98" r="4" fill="#58a6ff" opacity="0.7"/>
+      <circle cx="210" cy="82" r="4" fill="#58a6ff" opacity="0.7"/>
+      <circle cx="230" cy="65" r="4" fill="#58a6ff" opacity="0.7"/>
+      <circle cx="118" cy="180" r="4" fill="#58a6ff" opacity="0.7"/>
+      <circle cx="145" cy="148" r="4" fill="#58a6ff" opacity="0.7"/>
+      <circle cx="165" cy="130" r="4" fill="#58a6ff" opacity="0.7"/>
+      <!-- axis labels -->
+      <text dominant-baseline="middle" x="55" y="233" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6e7681">0</text>
+      <text dominant-baseline="middle" x="160" y="233" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6e7681">40</text>
+      <text dominant-baseline="middle" x="265" y="233" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6e7681">80</text>
+
+      <!-- Explanation -->
+      <text x="310" y="60" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#58a6ff">• = একটি</text>
+      <text x="310" y="76" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#58a6ff">  মানুষ</text>
+      <text x="310" y="105" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#8b949e">বিন্দু যত</text>
+      <text x="310" y="121" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#8b949e">কাছে তত</text>
+      <text x="310" y="137" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#3fb950">ভালো</text>
+      <text x="310" y="160" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#8b949e">বিন্দু দূরে</text>
+      <text x="310" y="176" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#f78166">→ ভুল</text>
+    </svg>
+  </div>
+</section>
+
+<div class="chapter-divider"><span>NOTEBOOK ৩</span></div>
+
+<!-- ============================================================ -->
+<!-- SECTION: NOTEBOOK 3 -->
+<!-- ============================================================ -->
+<section class="section" id="nb3">
+  <div class="section-header">
+    <span class="section-num">§ ০৭</span>
+    <h1 class="section-title">Notebook ৩: সব একসাথে — Multi-task Learning</h1>
+  </div>
+
+  <div class="card card-purple">
+    <h3>🎯 বড় প্রশ্ন</h3>
+    <p>Notebook ১ শুধু লিঙ্গ বলে। Notebook ২ শুধু বয়স বলে। এগুলো কি সত্যিই আলাদা? হয়তো একটাই মডেল সবকিছু শিখলে ভালো করবে! এটাই Multi-task Learning।</p>
+  </div>
+
+  <!-- SVG: Multi-task model -->
+  <div class="diagram-wrap">
+    <div class="diagram-title">চিত্র: Notebook ৩-এর Multi-output মডেল আর্কিটেকচার</div>
+    <svg viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%" overflow="visible">
+      <defs>
+        <marker id="a7" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L7,3 z" fill="#58a6ff"/>
+        </marker>
+        <marker id="a8" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L7,3 z" fill="#ffa657"/>
+        </marker>
+        <marker id="a9" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L7,3 z" fill="#3fb950"/>
+        </marker>
+        <marker id="a10" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L7,3 z" fill="#d2a8ff"/>
+        </marker>
+      </defs>
+
+      <!-- Input -->
+      <rect x="10" y="120" width="60" height="60" rx="8" fill="#1c2333" stroke="#30363d"/>
+      <text dominant-baseline="middle" x="40" y="155" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#8b949e">ছবি</text>
+      <text dominant-baseline="middle" x="40" y="170" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6e7681">48×48</text>
+
+      <!-- Arrow to shared -->
+      <path d="M72,150 L120,150" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#a7)"/>
+
+      <!-- Shared backbone -->
+      <rect x="122" y="60" width="160" height="180" rx="10" fill="#162032" stroke="#388bfd" stroke-width="2"/>
+      <text dominant-baseline="middle" x="202" y="85" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#58a6ff" font-weight="600">ভাগ করা অংশ</text>
+      <text dominant-baseline="middle" x="202" y="102" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#6e7681">(Shared Backbone)</text>
+      <!-- layers inside -->
+      <rect x="135" y="112" width="134" height="22" rx="4" fill="#0d1117" stroke="#388bfd55"/>
+      <text dominant-baseline="middle" x="202" y="127" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#58a6ff">Conv2D(16) + Pool</text>
+      <rect x="135" y="138" width="134" height="22" rx="4" fill="#0d1117" stroke="#388bfd55"/>
+      <text dominant-baseline="middle" x="202" y="153" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#58a6ff">Conv2D(32) + Pool</text>
+      <rect x="135" y="164" width="134" height="22" rx="4" fill="#0d1117" stroke="#388bfd55"/>
+      <text dominant-baseline="middle" x="202" y="179" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#58a6ff">Conv2D(64) + Pool</text>
+      <rect x="135" y="190" width="134" height="22" rx="4" fill="#0d1117" stroke="#388bfd55"/>
+      <text dominant-baseline="middle" x="202" y="205" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#58a6ff">Flatten + Dense(128)</text>
+      <rect x="135" y="216" width="134" height="22" rx="4" fill="#0d1117" stroke="#388bfd55"/>
+      <text dominant-baseline="middle" x="202" y="231" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#58a6ff">Dense(64)</text>
+
+      <!-- Arrow to 3 outputs -->
+      <path d="M284,120 L370,80" stroke="#ffa657" stroke-width="1.5" fill="none" marker-end="url(#a8)"/>
+      <path d="M284,150 L370,150" stroke="#3fb950" stroke-width="1.5" fill="none" marker-end="url(#a9)"/>
+      <path d="M284,190 L370,220" stroke="#d2a8ff" stroke-width="1.5" fill="none" marker-end="url(#a10)"/>
+
+      <!-- Output 1: Age -->
+      <rect x="372" y="50" width="140" height="60" rx="8" fill="#2a1a10" stroke="#ffa657"/>
+      <text dominant-baseline="middle" x="442" y="72" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#ffa657" font-weight="600">বয়স (Regression)</text>
+      <text dominant-baseline="middle" x="442" y="90" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#ffa657">Dense(1, sigmoid)</text>
+      <text dominant-baseline="middle" x="442" y="104" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#6e7681">আউটপুট: 0~1 (normalize)</text>
+
+      <!-- Output 2: Gender -->
+      <rect x="372" y="125" width="140" height="60" rx="8" fill="#1a2a1a" stroke="#3fb950"/>
+      <text dominant-baseline="middle" x="442" y="147" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#3fb950" font-weight="600">লিঙ্গ (Binary Class.)</text>
+      <text dominant-baseline="middle" x="442" y="165" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#3fb950">Dense(1, sigmoid)</text>
+      <text dominant-baseline="middle" x="442" y="179" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#6e7681">আউটপুট: 0 বা 1</text>
+
+      <!-- Output 3: Ethnicity -->
+      <rect x="372" y="200" width="140" height="68" rx="8" fill="#1a1a2a" stroke="#d2a8ff"/>
+      <text dominant-baseline="middle" x="442" y="220" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#d2a8ff" font-weight="600">জাতিসত্তা (Multi-class)</text>
+      <text dominant-baseline="middle" x="442" y="238" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#d2a8ff">Dense(5, softmax)</text>
+      <text dominant-baseline="middle" x="442" y="256" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#6e7681">আউটপুট: ৫টা সম্ভাবনা</text>
+
+      <!-- concat -->
+      <rect x="530" y="110" width="100" height="80" rx="8" fill="#1c2333" stroke="#388bfd55"/>
+      <text dominant-baseline="middle" x="580" y="140" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#8b949e">tf.concat()</text>
+      <text dominant-baseline="middle" x="580" y="158" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#6e7681">৭টি মান একসাথে</text>
+      <text dominant-baseline="middle" x="580" y="172" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6e7681">[age,gender,eth×5]</text>
+      <path d="M514,80 L530,130" stroke="#ffa657" stroke-width="1" fill="none" marker-end="url(#a7)"/>
+      <path d="M514,155 L530,150" stroke="#3fb950" stroke-width="1" fill="none" marker-end="url(#a7)"/>
+      <path d="M514,230 L530,172" stroke="#d2a8ff" stroke-width="1" fill="none" marker-end="url(#a7)"/>
+    </svg>
+  </div>
+
+  <h2 class="sub">Functional API — Sequential-এর বিকল্প</h2>
+
+  <div class="info-box purple">
+    <div class="label">💡 Functional API কী?</div>
+    <p>Notebook ১ ও ২ ব্যবহার করেছে <code>Sequential</code> — যেখানে স্তরগুলো একের পর এক সাজানো। কিন্তু Notebook ৩-এ তিনটা আউটপুট আছে — Sequential এটা পারে না। তাই ব্যবহার করা হলো <strong>Functional API</strong>।</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">Functional API দিয়ে Multi-output মডেল</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">from</span> <span class="var">tensorflow</span>.<span class="var">keras</span> <span class="kw">import</span> <span class="cls">Model</span>
+<span class="kw">from</span> <span class="var">tensorflow</span>.<span class="var">keras</span>.<span class="var">layers</span> <span class="kw">import</span> ..., <span class="cls">Input</span>
+
+<span class="var">input_model</span> = <span class="fn">Input</span>(<span class="num">48</span>, <span class="num">48</span>, <span class="num">1</span>)  <span class="cm"># ইনপুট নোড</span>
+
+<span class="cm"># ভাগ করা অংশ (shared backbone)</span>
+<span class="var">x</span> = <span class="fn">Conv2D</span>(<span class="num">16</span>, (<span class="num">5</span>,<span class="num">5</span>), activation=<span class="str">'relu'</span>)(<span class="var">input_model</span>)
+<span class="var">x</span> = <span class="fn">MaxPooling2D</span>(<span class="num">2</span>,<span class="num">2</span>)(<span class="var">x</span>)
+<span class="var">x</span> = <span class="fn">Dropout</span>(<span class="num">0.2</span>)(<span class="var">x</span>)
+<span class="cm"># ... আরও স্তর ...</span>
+<span class="var">x</span> = <span class="fn">Dense</span>(<span class="num">128</span>, activation=<span class="str">'relu'</span>)(<span class="var">x</span>)
+<span class="var">x</span> = <span class="fn">Dropout</span>(<span class="num">0.2</span>)(<span class="var">x</span>)
+<span class="var">x</span> = <span class="fn">Dense</span>(<span class="num">64</span>, activation=<span class="str">'relu'</span>)(<span class="var">x</span>)
+
+<span class="cm"># তিনটা আলাদা আউটপুট — একই x থেকে</span>
+<span class="var">age</span>       = <span class="fn">Dense</span>(<span class="num">1</span>, activation=<span class="str">'sigmoid'</span>)(<span class="var">x</span>)  <span class="cm"># বয়স (normalize করা)</span>
+<span class="var">gender</span>    = <span class="fn">Dense</span>(<span class="num">1</span>, activation=<span class="str">'sigmoid'</span>)(<span class="var">x</span>)  <span class="cm"># লিঙ্গ (0 বা 1)</span>
+<span class="var">ethnicity</span> = <span class="fn">Dense</span>(<span class="num">5</span>, activation=<span class="str">'softmax'</span>)(<span class="var">x</span>)  <span class="cm"># জাতিসত্তা (5 ক্লাস)</span>
+
+<span class="cm"># মডেল তৈরি: ইনপুট → আউটপুট (concat করা)</span>
+<span class="var">model</span> = <span class="fn">Model</span>(
+    inputs=<span class="var">input_model</span>,
+    outputs=<span class="var">tf</span>.<span class="fn">concat</span>([<span class="var">age</span>, <span class="var">gender</span>, <span class="var">ethnicity</span>], axis=-<span class="num">1</span>)
+)
+<span class="cm"># tf.concat → age(1) + gender(1) + ethnicity(5) = মোট 7টি মান</span></pre>
+  </div>
+
+  <h2 class="sub">Age Normalization: কেন?</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">বয়স normalize করা</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">max_age</span> = <span class="var">df</span>[<span class="str">'age'</span>].<span class="fn">max</span>()  <span class="cm"># সর্বোচ্চ বয়স (ধরো ৭৯)</span>
+<span class="var">df</span>[<span class="str">'age'</span>] = <span class="var">df</span>[<span class="str">'age'</span>] / <span class="var">max_age</span>
+<span class="cm"># এখন বয়স 0.0 থেকে 1.0 এর মধ্যে</span>
+<span class="cm"># কারণ: sigmoid activation 0-1 দেয়</span>
+<span class="cm"># আর loss একই scale-এ থাকে gender-এর মতো</span></pre>
+  </div>
+
+  <div class="info-box warning">
+    <div class="label">⚠️ পরে আসল বয়সে ফিরে আসতে:</div>
+    <p><code>আসল_বয়স = normalize_বয়স × max_age</code> — metric ফাংশনেও এটাই করা হয়েছে।</p>
+  </div>
+
+  <h2 class="sub">Target Variable y তৈরি</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">তিনটি কলাম একসাথে y হিসেবে নেওয়া</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">y</span> = <span class="var">df</span>[[<span class="str">'age'</span>, <span class="str">'gender'</span>, <span class="str">'ethnicity'</span>]].<span class="var">values</span>
+<span class="cm"># .values → numpy array</span>
+<span class="cm"># shape: (N, 3) — প্রতিটি সারিতে ৩টা মান</span>
+<span class="cm"># যেমন: [0.34, 0, 2] মানে বয়স ০.৩৪ (normalize), পুরুষ, Asian</span></pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION: CUSTOM LOSS -->
+<!-- ============================================================ -->
+<section class="section" id="custom-loss">
+  <div class="section-header">
+    <span class="section-num">§ ০৮</span>
+    <h1 class="section-title">কাস্টম Loss Function</h1>
+  </div>
+
+  <div class="card card-red">
+    <h3>❓ সমস্যা কী?</h3>
+    <p>তিনটি কাজে তিনটি আলাদা loss দরকার। Keras-এর একটা বিল্ট-ইন loss দিয়ে কাজ হবে না। তাই আমরা নিজেরাই তৈরি করব।</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">চিত্র: কাস্টম Loss — তিনটির যোগফল</div>
+    <svg viewBox="0 0 620 130" xmlns="http://www.w3.org/2000/svg" style="max-width:620px;width:100%" overflow="visible">
+      <text dominant-baseline="middle" x="310" y="20" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="14" fill="#e6edf3">L_total = λ_age × L_age + λ_gender × L_gender + λ_ethnicity × L_ethnicity</text>
+
+      <rect x="10" y="35" width="130" height="70" rx="8" fill="#2a1a10" stroke="#ffa657"/>
+      <text dominant-baseline="middle" x="75" y="62" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#ffa657">λ_age = 10</text>
+      <text dominant-baseline="middle" x="75" y="80" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6e7681">MSE(বয়স)</text>
+      <text dominant-baseline="middle" x="75" y="98" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#8b949e">বেশি গুরুত্ব</text>
+
+      <text dominant-baseline="middle" x="168" y="72" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="20" fill="#8b949e">+</text>
+
+      <rect x="185" y="35" width="140" height="70" rx="8" fill="#1a2a1a" stroke="#3fb950"/>
+      <text dominant-baseline="middle" x="255" y="62" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#3fb950">λ_gender = 1</text>
+      <text dominant-baseline="middle" x="255" y="80" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6e7681">BinaryCrossEnt.</text>
+      <text dominant-baseline="middle" x="255" y="98" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#8b949e">স্বাভাবিক গুরুত্ব</text>
+
+      <text dominant-baseline="middle" x="347" y="72" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="20" fill="#8b949e">+</text>
+
+      <rect x="365" y="35" width="160" height="70" rx="8" fill="#1a1a2a" stroke="#d2a8ff"/>
+      <text dominant-baseline="middle" x="445" y="62" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#d2a8ff">λ_ethnicity = 2</text>
+      <text dominant-baseline="middle" x="445" y="80" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#6e7681">SparseCatCrossEnt.</text>
+      <text dominant-baseline="middle" x="445" y="98" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#8b949e">মাঝারি গুরুত্ব</text>
+
+      <text dominant-baseline="middle" x="547" y="72" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="20" fill="#8b949e">=</text>
+      <rect x="563" y="42" width="50" height="54" rx="6" fill="#162032" stroke="#58a6ff"/>
+      <text dominant-baseline="middle" x="588" y="73" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#58a6ff">মোট</text>
+      <text dominant-baseline="middle" x="588" y="88" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#58a6ff">Loss</text>
+    </svg>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">কাস্টম Loss Function — সম্পূর্ণ কোড</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="var">lambda_age</span>       = <span class="num">10</span>  <span class="cm"># বয়সের loss-কে ১০ গুণ গুরুত্ব</span>
+<span class="var">lambda_gender</span>    = <span class="num">1</span>
+<span class="var">lambda_ethnicity</span> = <span class="num">2</span>
+
+<span class="kw">def</span> <span class="fn">loss_age</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="cm"># MSE: (আসল - ভবিষ্যদ্বাণী)² এর গড়</span>
+    <span class="kw">return</span> <span class="var">tf</span>.<span class="fn">reduce_mean</span>(<span class="var">tf</span>.<span class="fn">square</span>(<span class="var">y_true</span> - <span class="var">y_pred</span>), axis=-<span class="num">1</span>)
+
+<span class="kw">def</span> <span class="fn">loss_gender</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="kw">return</span> <span class="var">tf</span>.<span class="var">keras</span>.<span class="var">losses</span>.<span class="fn">BinaryCrossentropy</span>()(<span class="var">y_true</span>, <span class="var">y_pred</span>)
+
+<span class="kw">def</span> <span class="fn">loss_ethnicity</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="kw">return</span> <span class="var">tf</span>.<span class="var">keras</span>.<span class="var">losses</span>.<span class="fn">SparseCategoricalCrossentropy</span>()(<span class="var">y_true</span>, <span class="var">y_pred</span>)
+    <span class="cm"># Sparse = ক্লাস লেবেল সংখ্যা হিসেবে দেওয়া (0,1,2,3,4)</span>
+    <span class="cm"># Categorical = one-hot encoded হলে (তখন [1,0,0,0,0] ইত্যাদি)</span>
+
+<span class="kw">def</span> <span class="fn">loss_function</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="kw">return</span> (
+        <span class="var">lambda_age</span>       * <span class="fn">loss_age</span>(<span class="fn">tf</span>.<span class="fn">cast</span>(<span class="var">y_true</span>[:,<span class="num">0</span>], tf.float32), <span class="var">y_pred</span>[:,<span class="num">0</span>])
+        + <span class="var">lambda_gender</span>    * <span class="fn">loss_gender</span>(<span class="var">y_true</span>[:,<span class="num">1</span>], <span class="var">y_pred</span>[:,<span class="num">1</span>])
+        + <span class="var">lambda_ethnicity</span> * <span class="fn">loss_ethnicity</span>(<span class="var">y_true</span>[:,<span class="num">2</span>], <span class="var">y_pred</span>[:,<span class="num">2</span>:])
+    )
+    <span class="cm"># y_true[:,0] → সব সারির ০ নম্বর কলাম (বয়স)</span>
+    <span class="cm"># y_true[:,1] → সব সারির ১ নম্বর কলাম (লিঙ্গ)</span>
+    <span class="cm"># y_true[:,2] → সব সারির ২ নম্বর কলাম (জাতিসত্তা)</span>
+    <span class="cm"># y_pred[:,2:] → ৩ থেকে শেষ পর্যন্ত (জাতিসত্তার ৫টা মান)</span></pre>
+  </div>
+
+  <div class="info-box">
+    <div class="label">💡 tf.cast কেন?</div>
+    <p><code>tf.cast(y_true[:,0], tf.float32)</code> — বয়সের মান হয়তো integer হিসেবে সংরক্ষিত। MSE গণনায় float দরকার। <code>cast</code> টাইপ বদলায়।</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION: CUSTOM METRICS -->
+<!-- ============================================================ -->
+<section class="section" id="metrics">
+  <div class="section-header">
+    <span class="section-num">§ ০৯</span>
+    <h1 class="section-title">কাস্টম Metrics</h1>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">তিনটি কাস্টম metric</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">def</span> <span class="fn">metric_age</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="cm"># MAE × max_age → আসল বছরে রূপান্তর</span>
+    <span class="kw">return</span> <span class="var">tf</span>.<span class="var">keras</span>.<span class="var">metrics</span>.<span class="fn">MAE</span>(<span class="var">y_true</span>[:,<span class="num">0</span>], <span class="var">y_pred</span>[:,<span class="num">0</span>]) * <span class="var">max_age</span>
+
+<span class="kw">def</span> <span class="fn">metric_gender</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="cm"># Binary accuracy: ০ বা ১ সঠিক হলে True</span>
+    <span class="kw">return</span> <span class="var">tf</span>.<span class="var">keras</span>.<span class="var">metrics</span>.<span class="fn">binary_accuracy</span>(<span class="var">y_true</span>[:,<span class="num">1</span>], <span class="var">y_pred</span>[:,<span class="num">1</span>])
+
+<span class="kw">def</span> <span class="fn">metric_ethnicity</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="cm"># Sparse categorical accuracy: সঠিক ক্লাস কতবার?</span>
+    <span class="kw">return</span> <span class="var">tf</span>.<span class="var">keras</span>.<span class="var">metrics</span>.<span class="fn">sparse_categorical_accuracy</span>(
+        <span class="var">y_true</span>[:,<span class="num">2</span>], <span class="var">y_pred</span>[:,<span class="num">2</span>:]
+    )
+
+<span class="cm"># সব একসাথে compile</span>
+<span class="var">model</span>.<span class="fn">compile</span>(
+    loss=<span class="var">loss_function</span>,
+    optimizer=<span class="str">'adam'</span>,
+    metrics=[<span class="var">metric_age</span>, <span class="var">metric_gender</span>, <span class="var">metric_ethnicity</span>]
+)</pre>
+  </div>
+
+  <h2 class="sub">Prediction থেকে আসল মান বের করা</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">prediction() ফাংশন</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">def</span> <span class="fn">prediction</span>(<span class="var">y_pred</span>):
+    <span class="kw">return</span> (
+        (<span class="var">y_pred</span>[<span class="num">0</span>] * <span class="var">max_age</span>).<span class="fn">round</span>(),           <span class="cm"># বয়স: × max_age করে আসল বছর</span>
+        <span class="var">gender_mapping</span>[<span class="var">y_pred</span>[<span class="num">1</span>].<span class="fn">round</span>()],       <span class="cm"># লিঙ্গ: 0→"Male", 1→"Female"</span>
+        <span class="var">ethnicity_mapping</span>[<span class="fn">np</span>.<span class="fn">argmax</span>(<span class="var">y_pred</span>[<span class="num">2</span>:])]  <span class="cm"># জাতিসত্তা: সর্বোচ্চ index</span>
+    )
+
+<span class="cm"># np.argmax([0.05, 0.02, 0.78, 0.10, 0.05]) → 2 (Asian)</span>
+<span class="cm"># সবচেয়ে বেশি সম্ভাবনার ক্লাসটি বেছে নেওয়া</span></pre>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION: WEBCAM -->
+<!-- ============================================================ -->
+<section class="section" id="webcam">
+  <div class="section-header">
+    <span class="section-num">§ ১০</span>
+    <h1 class="section-title">ওয়েবক্যাম দিয়ে রিয়েল-টাইম টেস্ট</h1>
+  </div>
+
+  <div class="card card-accent">
+    <h3>📷 কীভাবে কাজ করে?</h3>
+    <p>তিনটি Notebook-এর শেষে একটা মজার অংশ আছে — ওয়েবক্যাম ব্যবহার করে মডেল পরীক্ষা করা।</p>
+  </div>
+
+  <!-- SVG: Webcam pipeline -->
+  <div class="diagram-wrap">
+    <div class="diagram-title">চিত্র: ওয়েবক্যাম → মডেল → ভবিষ্যদ্বাণী</div>
+    <svg viewBox="0 0 660 130" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%" overflow="visible">
+      <defs>
+        <marker id="aw" markerWidth="7" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L7,3 z" fill="#58a6ff"/>
+        </marker>
+      </defs>
+      <rect x="5" y="25" width="100" height="70" rx="8" fill="#1c2333" stroke="#388bfd"/>
+      <text dominant-baseline="middle" x="55" y="55" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#58a6ff">📷 ওয়েবক্যাম</text>
+      <text dominant-baseline="middle" x="55" y="73" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#6e7681">লাইভ ভিডিও</text>
+
+      <path d="M107,60 L135,60" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#aw)"/>
+
+      <rect x="137" y="25" width="110" height="70" rx="8" fill="#2a1a10" stroke="#ffa657"/>
+      <text dominant-baseline="middle" x="192" y="52" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#ffa657">ছবি কাটা</text>
+      <text dominant-baseline="middle" x="192" y="68" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6e7681">300×300 → crop</text>
+      <text dominant-baseline="middle" x="192" y="84" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#6e7681">মাঝখান থেকে</text>
+
+      <path d="M249,60 L277,60" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#aw)"/>
+
+      <rect x="279" y="25" width="120" height="70" rx="8" fill="#1a2a1a" stroke="#3fb950"/>
+      <text dominant-baseline="middle" x="339" y="52" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#3fb950">রূপান্তর</text>
+      <text dominant-baseline="middle" x="339" y="68" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6e7681">→ 48×48</text>
+      <text dominant-baseline="middle" x="339" y="84" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6e7681">RGB → Grayscale</text>
+
+      <path d="M401,60 L429,60" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#aw)"/>
+
+      <rect x="431" y="25" width="100" height="70" rx="8" fill="#1a1a2a" stroke="#d2a8ff"/>
+      <text dominant-baseline="middle" x="481" y="52" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#d2a8ff">মডেল</text>
+      <text dominant-baseline="middle" x="481" y="68" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#6e7681">model.predict()</text>
+
+      <path d="M533,60 L561,60" stroke="#58a6ff" stroke-width="1.5" fill="none" marker-end="url(#aw)"/>
+
+      <rect x="563" y="25" width="95" height="70" rx="8" fill="#162032" stroke="#58a6ff"/>
+      <text dominant-baseline="middle" x="610" y="50" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#58a6ff">ফলাফল</text>
+      <text dominant-baseline="middle" x="610" y="66" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#ffa657">বয়স: ২৫</text>
+      <text dominant-baseline="middle" x="610" y="80" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#3fb950">লিঙ্গ: Male</text>
+      <text dominant-baseline="middle" x="610" y="94" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#d2a8ff">জাতি: Asian</text>
+    </svg>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">ওয়েবক্যাম থেকে ছবি নিয়ে প্রক্রিয়া করা</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;"><span class="kw">def</span> <span class="fn">show_prediction_webcam</span>(<span class="var">model</span>, <span class="var">faceArea</span>=<span class="num">300</span>):
+    <span class="cm"># base64 encoded image → numpy array</span>
+    <span class="var">img</span> = <span class="fn">np</span>.<span class="fn">array</span>(
+        <span class="fn">Image</span>.<span class="fn">open</span>(<span class="var">io</span>.<span class="fn">BytesIO</span>(<span class="var">base64</span>.<span class="fn">b64decode</span>(
+            <span class="var">imageWebCam</span>.<span class="fn">split</span>(<span class="str">','</span>)[<span class="num">1</span>]  <span class="cm"># data:image/png;base64,... থেকে data অংশ</span>
+        )))
+    )[:,:,<span class="num">0</span>:<span class="num">3</span>]  <span class="cm"># শুধু RGB চ্যানেল (alpha বাদ)</span>
+
+    <span class="cm"># মাঝখান থেকে 300×300 কাটা</span>
+    <span class="var">pX</span> = <span class="fn">int</span>((<span class="var">img</span>.<span class="var">shape</span>[<span class="num">1</span>] - <span class="var">faceArea</span>) / <span class="num">2</span>)
+    <span class="var">pY</span> = <span class="fn">int</span>((<span class="var">img</span>.<span class="var">shape</span>[<span class="num">0</span>] - <span class="var">faceArea</span>) / <span class="num">2</span>)
+    <span class="var">img</span> = <span class="var">img</span>[<span class="var">pY</span>:<span class="var">pY</span>+<span class="var">faceArea</span>, <span class="var">pX</span>:<span class="var">pX</span>+<span class="var">faceArea</span>]
+
+    <span class="cm"># 48×48 তে resize</span>
+    <span class="var">img</span> = <span class="var">tf</span>.<span class="var">image</span>.<span class="fn">resize</span>(<span class="var">img</span>, (<span class="num">48</span>, <span class="num">48</span>))
+
+    <span class="cm"># রঙিন → কালো-সাদা</span>
+    <span class="var">img</span> = <span class="var">tf</span>.<span class="var">image</span>.<span class="fn">rgb_to_grayscale</span>(<span class="var">img</span>)</pre>
+  </div>
+
+  <div class="info-box">
+    <div class="label">💡 JavaScript অংশ কী করে?</div>
+    <p>Jupyter Notebook-এ JavaScript কোড ব্রাউজারের ওয়েবক্যাম অ্যাক্সেস করে। "Snap Photo" বাটন চাপলে ক্যানভাস থেকে ছবি তোলা হয় এবং Python ভেরিয়েবল <code>imageWebCam</code>-এ base64 format-এ সংরক্ষিত হয়। তারপর Python সেটা decode করে মডেলে পাঠায়।</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SUMMARY -->
+<!-- ============================================================ -->
+<section class="section" id="summary">
+  <div class="section-header">
+    <span class="section-num">§ ১১</span>
+    <h1 class="section-title">সারসংক্ষেপ ও পরবর্তী পদক্ষেপ</h1>
+  </div>
+
+  <h2 class="sub">তিনটি Notebook-এর তুলনা</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>বিষয়</th>
+          <th>Notebook ১ (লিঙ্গ)</th>
+          <th>Notebook ২ (বয়স)</th>
+          <th>Notebook ৩ (সব)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>কাজের ধরন</strong></td>
+          <td>Binary Classification</td>
+          <td>Regression</td>
+          <td>Multi-task</td>
+        </tr>
+        <tr>
+          <td><strong>Loss Function</strong></td>
+          <td><code>binary_crossentropy</code></td>
+          <td><code>mse</code></td>
+          <td>কাস্টম (তিনটি মিলিয়ে)</td>
+        </tr>
+        <tr>
+          <td><strong>Metric</strong></td>
+          <td><code>accuracy</code></td>
+          <td><code>mae</code></td>
+          <td>তিনটি কাস্টম metric</td>
+        </tr>
+        <tr>
+          <td><strong>Output layer</strong></td>
+          <td><code>Dense(1, sigmoid)</code></td>
+          <td><code>Dense(1)</code></td>
+          <td>তিনটি আলাদা head</td>
+        </tr>
+        <tr>
+          <td><strong>Model API</strong></td>
+          <td>Sequential</td>
+          <td>Sequential</td>
+          <td>Functional</td>
+        </tr>
+        <tr>
+          <td><strong>বাদ দেওয়া ডেটা</strong></td>
+          <td>বয়স ≤ ১০</td>
+          <td>বয়স ≥ ৮০</td>
+          <td>বয়স ≥ ৮০, normalize করা</td>
+        </tr>
+        <tr>
+          <td><strong>ভিজ্যুয়ালাইজেশন</strong></td>
+          <td>Confusion Matrix</td>
+          <td>Scatter Plot</td>
+          <td>দুটো Confusion + Scatter</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="sub">পুরো প্রজেক্টের ধাপগুলো</h2>
+
+  <ul class="step-list">
+    <li class="step-item">
+      <div class="step-dot">১</div>
+      <div class="step-content">
+        <h4>ডেটা লোড ও পিক্সেল রূপান্তর</h4>
+        <p><code>pd.read_csv()</code> দিয়ে CSV লোড, <code>lambda + np.array</code> দিয়ে পিক্সেল string → numpy array।</p>
+      </div>
+    </li>
+    <li class="step-item">
+      <div class="step-dot">২</div>
+      <div class="step-content">
+        <h4>EDA ও পরিষ্কার</h4>
+        <p>ছবি দেখানো, distribution চেক, চরম বয়সের ডেটা বাদ, index reset।</p>
+      </div>
+    </li>
+    <li class="step-item">
+      <div class="step-dot">৩</div>
+      <div class="step-content">
+        <h4>Feature Preparation</h4>
+        <p>X: reshape(-1, 48, 48, 1); y: target column; train_test_split।</p>
+      </div>
+    </li>
+    <li class="step-item">
+      <div class="step-dot">৪</div>
+      <div class="step-content">
+        <h4>মডেল তৈরি</h4>
+        <p>Conv2D + MaxPool + Dropout + Flatten + Dense। Nb3-এ Functional API।</p>
+      </div>
+    </li>
+    <li class="step-item">
+      <div class="step-dot">৫</div>
+      <div class="step-content">
+        <h4>Compile</h4>
+        <p>Loss function + optimizer + metrics নির্ধারণ।</p>
+      </div>
+    </li>
+    <li class="step-item">
+      <div class="step-dot">৬</div>
+      <div class="step-content">
+        <h4>Training</h4>
+        <p><code>model.fit()</code> দিয়ে ২০ epoch, validation_data সহ।</p>
+      </div>
+    </li>
+    <li class="step-item">
+      <div class="step-dot">৭</div>
+      <div class="step-content">
+        <h4>Evaluation</h4>
+        <p>Loss curve, accuracy curve, confusion matrix, scatter plot।</p>
+      </div>
+    </li>
+    <li class="step-item">
+      <div class="step-dot">৮</div>
+      <div class="step-content">
+        <h4>Real-world Test</h4>
+        <p>ওয়েবক্যাম দিয়ে নিজের ছবিতে পরীক্ষা।</p>
+      </div>
+    </li>
+  </ul>
+
+  <h2 class="sub">কোড চালানোর আগে কী লাগবে?</h2>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-title">প্রয়োজনীয় লাইব্রেরি</span>
+      <span class="code-lang">bash</span>
+    </div>
+    <pre style="overflow-x: auto; tab-size: 2;">pip install tensorflow pandas numpy matplotlib seaborn scikit-learn pillow</pre>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>লাইব্রেরি</th><th>কাজ</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>tensorflow / keras</code></td><td>CNN মডেল তৈরি ও training</td></tr>
+        <tr><td><code>pandas</code></td><td>CSV পড়া, DataFrame ম্যানিপুলেশন</td></tr>
+        <tr><td><code>numpy</code></td><td>সংখ্যার অ্যারে, reshape, argmax</td></tr>
+        <tr><td><code>matplotlib</code></td><td>ছবি ও গ্রাফ দেখানো</td></tr>
+        <tr><td><code>seaborn</code></td><td>সুন্দর statistical plot</td></tr>
+        <tr><td><code>sklearn</code></td><td>train_test_split</td></tr>
+        <tr><td><code>PIL (Pillow)</code></td><td>ওয়েবক্যাম ছবি প্রক্রিয়া</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="sub">আরও ভালো করার উপায়</h2>
+
+  <div class="card card-green">
+    <h3>🚀 Performance উন্নতির পথ</h3>
+    <ul>
+      <li><strong>Data Augmentation</strong>: ছবি ঘোরানো, উল্টানো, উজ্জ্বলতা পরিবর্তন — কৃত্রিমভাবে ডেটা বাড়ানো।</li>
+      <li><strong>Deeper Architecture</strong>: আরও Conv layer যোগ করা।</li>
+      <li><strong>Bias Analysis</strong>: ভুল ভবিষ্যদ্বাণীগুলো কোথায়? কোনো নির্দিষ্ট গোষ্ঠীতে বেশি ভুল?</li>
+      <li><strong>Face Detection</strong>: প্রথমে মুখ শনাক্ত করে তারপর classify করলে ভালো হবে।</li>
+      <li><strong>Transfer Learning</strong>: আগে থেকে train করা মডেল (VGG, ResNet) ব্যবহার করা।</li>
+      <li><strong>BatchNormalization</strong>: প্রতিটি layer-এর পর normalize করলে দ্রুত শেখে।</li>
+    </ul>
+  </div>
+
+  <!-- Final quiz -->
+  <div class="quiz-box">
+    <div class="quiz-q">🧠 শেষ কুইজ: Notebook ৩-এ Functional API কেন ব্যবহার করা হলো?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt" onclick="checkQuiz2(this, false)">Sequential API কাজ করে না</div>
+      <div class="quiz-opt" onclick="checkQuiz2(this, true)">একটি মডেল থেকে তিনটি আলাদা আউটপুট দরকার, Sequential সেটা পারে না</div>
+      <div class="quiz-opt" onclick="checkQuiz2(this, false)">Functional API দ্রুত শেখে</div>
+      <div class="quiz-opt" onclick="checkQuiz2(this, false)">Tensorflow শুধু Functional API সাপোর্ট করে</div>
+    </div>
+    <div class="quiz-feedback" id="qf2"></div>
+  </div>
+
+  <div class="info-box success">
+    <div class="label">🎉 অভিনন্দন!</div>
+    <p>তুমি এখন জানো: পিক্সেল কী, CNN কীভাবে স্তরে স্তরে ছবি বোঝে, Classification ও Regression-এর পার্থক্য, Multi-task Learning, কাস্টম loss function এবং metrics কীভাবে লেখে। এটুকু বুঝলেই Deep Learning-এর একটা শক্ত ভিত্তি তৈরি হয়ে গেছে!</p>
+  </div>
+</section>
+
+<footer>
+  <p>🧠 CNN দিয়ে বয়স, লিঙ্গ ও জাতিসত্তা শনাক্তকরণ — সম্পূর্ণ বাংলা গাইড</p>
+  <p style="margin-top:8px">Deep Learning · Computer Vision · বাংলা ভাষায় সম্পূর্ণ গাইড</p>
+</footer>
+
+<script>
+function checkQuiz(el, correct) {
+  const opts = el.parentElement.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('qf1');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  if (correct) {
+    el.classList.add('correct');
+    fb.textContent = '✅ একদম সঠিক! False Positive মানে মডেল ভুলভাবে Positive (মহিলা) বলেছে — কিন্তু আসল উত্তর ছিল Negative (পুরুষ)।';
+    fb.className = 'quiz-feedback show ok';
+  } else {
+    el.classList.add('wrong');
+    fb.textContent = '❌ ঠিক নয়। সঠিক উত্তর: মডেল ভুলভাবে Positive (মহিলা) বলেছে — আসলে পুরুষ ছিল।';
+    fb.className = 'quiz-feedback show no';
+  }
+}
+
+function checkQuiz2(el, correct) {
+  const opts = el.parentElement.querySelectorAll('.quiz-opt');
+  const fb = document.getElementById('qf2');
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  if (correct) {
+    el.classList.add('correct');
+    fb.textContent = '✅ দারুণ! Functional API দিয়ে একটি shared backbone থেকে age, gender, ethnicity — তিনটি আলাদা আউটপুট বের করা সম্ভব।';
+    fb.className = 'quiz-feedback show ok';
+  } else {
+    el.classList.add('wrong');
+    fb.textContent = '❌ ঠিক নয়। সঠিক উত্তর: তিনটি আলাদা আউটপুট দরকার বলে Functional API লাগে।';
+    fb.className = 'quiz-feedback show no';
+  }
+}
+</script>
+</body>
+</html>

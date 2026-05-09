@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Machine Learning for Data Scientists — বাংলায় সম্পূর্ণ কোর্স">
+<title>Machine Learning 4 DS — বাংলা কোর্স হাব</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ===== DESIGN TOKENS ===== */
+:root {
+  --bg:       #080c12;
+  --bg2:      #0d1117;
+  --bg3:      #161b22;
+  --bg4:      #1c2230;
+  --border:   #21293a;
+  --border2:  #30363d;
+  --text:     #e6edf3;
+  --text2:    #8b949e;
+  --text3:    #b1bac4;
+
+  /* Accent palette per lesson */
+  --c1: #6ee7f7;   /* Web Scraping    — cyan     */
+  --c2: #f78166;   /* Text Mining     — coral    */
+  --c3: #75dfc1;   /* NetworkX        — teal     */
+  --c4: #d2a8ff;   /* Deep Learning   — violet   */
+  --c5: #ffa657;   /* AI Bias         — amber    */
+  --c6: #3fb950;   /* MLflow          — green    */
+
+  --radius:   14px;
+  --card-bg:  #0d1421;
+  --glow-str: 0.15;
+}
+
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Hind Siliguri', 'Space Grotesk', sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== ANIMATED BACKGROUND ===== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 20%, rgba(110,231,247,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 35% at 85% 80%, rgba(210,168,255,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(63,185,80,0.02) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===== TOP NAV ===== */
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: rgba(8,12,18,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.nav-brand-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #6ee7f7, #d2a8ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.nav-brand-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.05em;
+}
+
+.nav-brand-text span {
+  color: var(--c1);
+}
+
+.nav-stats {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+.nav-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text2);
+}
+
+.nav-stat .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c6);
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ===== HERO ===== */
+.hero {
+  position: relative;
+  z-index: 1;
+  padding: 90px 40px 80px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(33,41,58,0.4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(33,41,58,0.4) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 16px;
+  background: rgba(110,231,247,0.08);
+  border: 1px solid rgba(110,231,247,0.2);
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c1);
+  margin-bottom: 28px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c1);
+  animation: blink 2s ease-in-out infinite;
+}
+
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+
+.hero h1 .hl-cyan   { color: var(--c1); }
+.hero h1 .hl-violet { color: var(--c4); }
+
+.hero-desc {
+  font-size: 1.05rem;
+  color: var(--text2);
+  max-width: 580px;
+  margin: 0 auto 44px;
+  line-height: 1.9;
+}
+
+/* Progress path indicator */
+.path-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 0 auto 56px;
+  max-width: 720px;
+  flex-wrap: wrap;
+  row-gap: 12px;
+}
+
+.path-step {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.path-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  border: 2px solid;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  z-index: 1;
+}
+
+.path-dot:hover {
+  transform: scale(1.15);
+}
+
+.path-connector {
+  width: 48px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--from-color), var(--to-color));
+  opacity: 0.4;
+  position: relative;
+}
+
+.path-connector::after {
+  content: '›';
+  position: absolute;
+  right: -4px;
+  top: -9px;
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+/* ===== SECTION HEADINGS ===== */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.section-label-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.section-label-text {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text2);
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+}
+
+/* ===== MAIN GRID ===== */
+.main {
+  position: relative;
+  z-index: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px 100px;
+}
+
+.lessons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
+}
+
+/* ===== LESSON CARD ===== */
+.lesson-card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+}
+
+.lesson-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--card-accent);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px var(--card-accent);
+}
+
+/* Top accent stripe */
+.card-stripe {
+  height: 3px;
+  background: var(--card-accent);
+  opacity: 0.9;
+}
+
+.card-body {
+  padding: 24px 28px 20px;
+}
+
+/* Number + icon row */
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.card-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--card-accent);
+  background: rgba(255,255,255,0.04);
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.card-icon {
+  font-size: 26px;
+  line-height: 1;
+}
+
+/* Title */
+.card-title-bn {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.card-title-en {
+  font-size: 0.78rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--card-accent);
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+  opacity: 0.85;
+}
+
+.card-subtitle {
+  font-size: 0.82rem;
+  color: var(--text2);
+  margin-bottom: 14px;
+  font-style: italic;
+}
+
+.card-desc {
+  font-size: 0.88rem;
+  color: var(--text3);
+  line-height: 1.75;
+  margin-bottom: 20px;
+  min-height: 54px;
+}
+
+/* Topics list */
+.card-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 22px;
+}
+
+.topic-pill {
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border2);
+  color: var(--text2);
+  white-space: nowrap;
+}
+
+/* Footer row */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.card-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.badge-beginner     { background: rgba(63,185,80,0.1);  color: #3fb950; border: 1px solid rgba(63,185,80,0.25); }
+.badge-intermediate { background: rgba(255,166,87,0.1); color: #ffa657; border: 1px solid rgba(255,166,87,0.25); }
+.badge-advanced     { background: rgba(248,81,73,0.1);  color: #ff7b72; border: 1px solid rgba(248,81,73,0.25); }
+
+.card-duration {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text2);
+}
+
+.card-cta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--card-accent);
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.lesson-card:hover .card-cta {
+  opacity: 1;
+}
+
+.card-cta svg {
+  transition: transform 0.2s;
+}
+
+.lesson-card:hover .card-cta svg {
+  transform: translateX(3px);
+}
+
+/* ===== LEARNING PATH TIMELINE ===== */
+.timeline-section {
+  margin-top: 72px;
+  margin-bottom: 72px;
+}
+
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 27px;
+  top: 28px;
+  bottom: 28px;
+  width: 2px;
+  background: linear-gradient(to bottom,
+    var(--c1) 0%,
+    var(--c2) 20%,
+    var(--c3) 40%,
+    var(--c4) 60%,
+    var(--c5) 80%,
+    var(--c6) 100%
+  );
+  opacity: 0.35;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 16px 0;
+  position: relative;
+}
+
+.timeline-bullet {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid var(--bullet-color);
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 0 6px rgba(var(--bullet-rgb), 0.06);
+}
+
+.timeline-content {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+  min-height: 56px;
+}
+
+.timeline-content:hover {
+  border-color: var(--bullet-color);
+  background: var(--bg4);
+}
+
+.timeline-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timeline-num {
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--bullet-color);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.timeline-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.timeline-sub {
+  font-size: 0.8rem;
+  color: var(--text2);
+}
+
+.timeline-arrow {
+  color: var(--bullet-color);
+  opacity: 0.5;
+  font-size: 18px;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.timeline-content:hover .timeline-arrow {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+/* ===== STATS ROW ===== */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 64px;
+}
+
+.stat-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  text-align: center;
+}
+
+.stat-num {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(135deg, var(--c1), var(--c4));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--text2);
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+
+/* ===== FOOTER ===== */
+.site-footer {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--border);
+  padding: 32px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text2);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.footer-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-badge span {
+  color: var(--c1);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .topnav { padding: 0 20px; }
+  .topnav .nav-stats { display: none; }
+  .hero { padding: 60px 20px 50px; }
+  .main { padding: 0 20px 60px; }
+  .lessons-grid { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .path-bar { gap: 4px; }
+  .path-connector { width: 20px; }
+  .site-footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== TOP NAV ===== -->
+<nav class="topnav">
+  <a class="nav-brand" href="#">
+    <div class="nav-brand-icon">🎓</div>
+    <span class="nav-brand-text">ML<span>4</span>DS</span>
+  </a>
+  <div class="nav-stats">
+    <div class="nav-stat">
+      <div class="dot"></div>
+      <span>৬টি লেকচার</span>
+    </div>
+    <div class="nav-stat">
+      <span>বাংলায় ML শিক্ষা</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="hero-grid"></div>
+
+  <div class="hero-eyebrow">Machine Learning 4 Data Scientists</div>
+
+  <h1>
+    <span class="hl-cyan">ডেটা সায়েন্স</span> শিখুন<br>
+    বাংলায়, শূন্য থেকে <span class="hl-violet">বিশেষজ্ঞ</span> পর্যন্ত
+  </h1>
+
+  <p class="hero-desc">
+    Web Scraping থেকে শুরু করে MLOps পর্যন্ত — ৬টি বিস্তারিত লেকচারে 
+    Machine Learning-এর সম্পূর্ণ যাত্রা, সম্পূর্ণ বাংলায়।
+  </p>
+
+  <!-- Visual path indicator -->
+  <div class="path-bar" role="navigation" aria-label="কোর্স পথ">
+    <div class="path-step">
+      <a class="path-dot" href="Machine_Learning_4_Lectures/webscraping_bengali_complete_guide.html"
+         title="Web Scraping"
+         style="color:#6ee7f7; border-color:#6ee7f7; background:rgba(110,231,247,0.08);"
+         aria-label="Lecture 1: Web Scraping">01</a>
+    </div>
+    <div class="path-connector" style="--from-color:#6ee7f7; --to-color:#f78166;" aria-hidden="true"></div>
+    <div class="path-step">
+      <a class="path-dot" href="Machine_Learning_4_Lectures/text_mining_bengali_final.html"
+         title="Text Mining & NLP"
+         style="color:#f78166; border-color:#f78166; background:rgba(247,129,102,0.08);"
+         aria-label="Lecture 2: Text Mining">02</a>
+    </div>
+    <div class="path-connector" style="--from-color:#f78166; --to-color:#75dfc1;" aria-hidden="true"></div>
+    <div class="path-step">
+      <a class="path-dot" href="Machine_Learning_4_Lectures/networkx_bangla_complete.html"
+         title="Graph Theory & NetworkX"
+         style="color:#75dfc1; border-color:#75dfc1; background:rgba(117,223,193,0.08);"
+         aria-label="Lecture 3: NetworkX">03</a>
+    </div>
+    <div class="path-connector" style="--from-color:#75dfc1; --to-color:#d2a8ff;" aria-hidden="true"></div>
+    <div class="path-step">
+      <a class="path-dot" href="Machine_Learning_4_Lectures/deep_learning_masterclass.html"
+         title="Deep Learning"
+         style="color:#d2a8ff; border-color:#d2a8ff; background:rgba(210,168,255,0.08);"
+         aria-label="Lecture 4: Deep Learning">04</a>
+    </div>
+    <div class="path-connector" style="--from-color:#d2a8ff; --to-color:#ffa657;" aria-hidden="true"></div>
+    <div class="path-step">
+      <a class="path-dot" href="Machine_Learning_4_Lectures/bias_guide_.html"
+         title="AI Bias & Fairness"
+         style="color:#ffa657; border-color:#ffa657; background:rgba(255,166,87,0.08);"
+         aria-label="Lecture 5: AI Bias">05</a>
+    </div>
+    <div class="path-connector" style="--from-color:#ffa657; --to-color:#3fb950;" aria-hidden="true"></div>
+    <div class="path-step">
+      <a class="path-dot" href="Machine_Learning_4_Lectures/mlflow.html"
+         title="MLflow & MLOps"
+         style="color:#3fb950; border-color:#3fb950; background:rgba(63,185,80,0.08);"
+         aria-label="Lecture 6: MLflow">06</a>
+    </div>
+  </div>
+</header>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main">
+
+  <!-- Stats -->
+  <div class="stats-row" role="region" aria-label="কোর্স পরিসংখ্যান">
+    <div class="stat-card">
+      <div class="stat-num">৬</div>
+      <div class="stat-label">লেকচার মডিউল</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">৩২+</div>
+      <div class="stat-label">ঘণ্টার কন্টেন্ট</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">৮৮</div>
+      <div class="stat-label">SVG ডায়াগ্রাম</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">১৯৫+</div>
+      <div class="stat-label">কোড উদাহরণ</div>
+    </div>
+  </div>
+
+  <!-- Lesson Cards Section -->
+  <div class="section-label" role="heading" aria-level="2">
+    <div class="section-label-line"></div>
+    <div class="section-label-text">// লেকচার সিরিজ — ক্রমানুসারে</div>
+    <div class="section-label-line"></div>
+  </div>
+
+  <div class="lessons-grid" role="list">
+
+    <!-- ── LECTURE 01: Web Scraping ── -->
+    <a class="lesson-card"
+       href="Machine_Learning_4_Lectures/webscraping_bengali_complete_guide.html"
+       role="listitem"
+       style="--card-accent: #6ee7f7;"
+       aria-label="Lecture 1: Web Scraping">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-num">LECTURE // 01</span>
+          <span class="card-icon" aria-hidden="true">🌐</span>
+        </div>
+        <div class="card-title-bn">ওয়েব স্ক্র্যাপিং</div>
+        <div class="card-title-en">Web Scraping</div>
+        <div class="card-subtitle">ডেটা সংগ্রহের শিল্প</div>
+        <p class="card-desc">
+          ইন্টারনেট থেকে ডেটা সংগ্রহ — requests, BeautifulSoup, Selenium, ও Scrapy দিয়ে 
+          প্র্যাকটিক্যাল ওয়েব স্ক্র্যাপিং। এটি সমগ্র ML পাইপলাইনের প্রথম ধাপ।
+        </p>
+        <div class="card-topics" aria-label="বিষয়সমূহ">
+          <span class="topic-pill">requests & BeautifulSoup</span>
+          <span class="topic-pill">Selenium Automation</span>
+          <span class="topic-pill">Scrapy Framework</span>
+          <span class="topic-pill">Data Cleaning</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-badge badge-beginner">Beginner</span>
+          <span class="card-duration">⏱ ৪ ঘণ্টা</span>
+          <span class="card-cta" aria-hidden="true">
+            শুরু করুন
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </a>
+
+    <!-- ── LECTURE 02: Text Mining ── -->
+    <a class="lesson-card"
+       href="Machine_Learning_4_Lectures/text_mining_bengali_final.html"
+       role="listitem"
+       style="--card-accent: #f78166;"
+       aria-label="Lecture 2: Text Mining & NLP">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-num">LECTURE // 02</span>
+          <span class="card-icon" aria-hidden="true">📝</span>
+        </div>
+        <div class="card-title-bn">টেক্সট মাইনিং ও NLP</div>
+        <div class="card-title-en">Text Mining & NLP</div>
+        <div class="card-subtitle">ভাষার গভীরে যাত্রা</div>
+        <p class="card-desc">
+          টেক্সট ডেটা প্রক্রিয়াকরণ — Tokenization, TF-IDF, Word Embeddings, 
+          Sentiment Analysis ও সম্পূর্ণ NLP pipeline তৈরি।
+        </p>
+        <div class="card-topics" aria-label="বিষয়সমূহ">
+          <span class="topic-pill">Tokenization & Preprocessing</span>
+          <span class="topic-pill">TF-IDF & Word2Vec</span>
+          <span class="topic-pill">Sentiment Analysis</span>
+          <span class="topic-pill">Topic Modeling</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-badge badge-intermediate">Intermediate</span>
+          <span class="card-duration">⏱ ৬ ঘণ্টা</span>
+          <span class="card-cta" aria-hidden="true">
+            শুরু করুন
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </a>
+
+    <!-- ── LECTURE 03: NetworkX ── -->
+    <a class="lesson-card"
+       href="Machine_Learning_4_Lectures/networkx_bangla_complete.html"
+       role="listitem"
+       style="--card-accent: #75dfc1;"
+       aria-label="Lecture 3: Graph Theory & NetworkX">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-num">LECTURE // 03</span>
+          <span class="card-icon" aria-hidden="true">🕸️</span>
+        </div>
+        <div class="card-title-bn">গ্রাফ থিওরি ও NetworkX</div>
+        <div class="card-title-en">Graph Theory & NetworkX</div>
+        <div class="card-subtitle">সংযোগের বিজ্ঞান</div>
+        <p class="card-desc">
+          গ্রাফ ডেটা স্ট্রাকচার ও NetworkX দিয়ে নেটওয়ার্ক বিশ্লেষণ — 
+          Node, Edge, Path ও Graph Algorithms সম্পূর্ণ বাংলায়।
+        </p>
+        <div class="card-topics" aria-label="বিষয়সমূহ">
+          <span class="topic-pill">Graph Fundamentals</span>
+          <span class="topic-pill">NetworkX API</span>
+          <span class="topic-pill">Shortest Path Algorithms</span>
+          <span class="topic-pill">Network Visualization</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-badge badge-intermediate">Intermediate</span>
+          <span class="card-duration">⏱ ৫ ঘণ্টা</span>
+          <span class="card-cta" aria-hidden="true">
+            শুরু করুন
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </a>
+
+    <!-- ── LECTURE 04: Deep Learning ── -->
+    <a class="lesson-card"
+       href="Machine_Learning_4_Lectures/deep_learning_masterclass.html"
+       role="listitem"
+       style="--card-accent: #d2a8ff;"
+       aria-label="Lecture 4: Deep Learning Masterclass">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-num">LECTURE // 04</span>
+          <span class="card-icon" aria-hidden="true">🧠</span>
+        </div>
+        <div class="card-title-bn">ডিপ লার্নিং মাস্টারক্লাস</div>
+        <div class="card-title-en">Deep Learning Masterclass</div>
+        <div class="card-subtitle">নিউরাল নেটওয়ার্কের রাজ্যে</div>
+        <p class="card-desc">
+          Neural Networks থেকে শুরু করে CNN, RNN, Transformer — PyTorch ও TensorFlow 
+          দিয়ে সম্পূর্ণ ডিপ লার্নিং মাস্টারক্লাস।
+        </p>
+        <div class="card-topics" aria-label="বিষয়সমূহ">
+          <span class="topic-pill">Neural Networks & Backprop</span>
+          <span class="topic-pill">CNN & Computer Vision</span>
+          <span class="topic-pill">RNN & LSTM</span>
+          <span class="topic-pill">Transformers & Attention</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-badge badge-advanced">Advanced</span>
+          <span class="card-duration">⏱ ৮ ঘণ্টা</span>
+          <span class="card-cta" aria-hidden="true">
+            শুরু করুন
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </a>
+
+    <!-- ── LECTURE 05: AI Bias ── -->
+    <a class="lesson-card"
+       href="Machine_Learning_4_Lectures/bias_guide_.html"
+       role="listitem"
+       style="--card-accent: #ffa657;"
+       aria-label="Lecture 5: AI Bias & Fairness">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-num">LECTURE // 05</span>
+          <span class="card-icon" aria-hidden="true">⚖️</span>
+        </div>
+        <div class="card-title-bn">AI Bias ও Fairness</div>
+        <div class="card-title-en">AI Bias, Fairness & Interpretability</div>
+        <div class="card-subtitle">ন্যায্য AI তৈরির পথ</div>
+        <p class="card-desc">
+          AI মডেলে Bias সনাক্তকরণ ও মিটিগেশন — Fairlearn, SHAP, LIME দিয়ে 
+          Responsible AI ও Explainability practices।
+        </p>
+        <div class="card-topics" aria-label="বিষয়সমূহ">
+          <span class="topic-pill">Bias Detection</span>
+          <span class="topic-pill">Fairness Metrics</span>
+          <span class="topic-pill">FairLearn Library</span>
+          <span class="topic-pill">SHAP & LIME</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-badge badge-advanced">Advanced</span>
+          <span class="card-duration">⏱ ৫ ঘণ্টা</span>
+          <span class="card-cta" aria-hidden="true">
+            শুরু করুন
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </a>
+
+    <!-- ── LECTURE 06: MLflow ── -->
+    <a class="lesson-card"
+       href="Machine_Learning_4_Lectures/mlflow.html"
+       role="listitem"
+       style="--card-accent: #3fb950;"
+       aria-label="Lecture 6: MLflow & MLOps">
+      <div class="card-stripe"></div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-num">LECTURE // 06</span>
+          <span class="card-icon" aria-hidden="true">🚀</span>
+        </div>
+        <div class="card-title-bn">MLflow ও MLOps</div>
+        <div class="card-title-en">MLflow & MLOps</div>
+        <div class="card-subtitle">মডেল থেকে প্রোডাকশন</div>
+        <p class="card-desc">
+          ML এক্সপেরিমেন্ট ট্র্যাকিং, মডেল রেজিস্ট্রি ও ডেপ্লয়মেন্ট — 
+          MLflow দিয়ে সম্পূর্ণ MLOps pipeline তৈরি ও পরিচালনা।
+        </p>
+        <div class="card-topics" aria-label="বিষয়সমূহ">
+          <span class="topic-pill">Experiment Tracking</span>
+          <span class="topic-pill">Model Registry</span>
+          <span class="topic-pill">MLflow Projects</span>
+          <span class="topic-pill">Model Deployment</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-badge badge-advanced">Advanced</span>
+          <span class="card-duration">⏱ ৪ ঘণ্টা</span>
+          <span class="card-cta" aria-hidden="true">
+            শুরু করুন
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </a>
+
+  </div><!-- /lessons-grid -->
+
+  <!-- ===== LEARNING TIMELINE ===== -->
+  <div class="timeline-section" role="region" aria-label="শেখার পথ">
+    <div class="section-label">
+      <div class="section-label-line"></div>
+      <div class="section-label-text">// শেখার পথ — ধাপে ধাপে</div>
+      <div class="section-label-line"></div>
+    </div>
+
+    <div class="timeline" role="list">
+
+      <div class="timeline-item" role="listitem"
+           style="--bullet-color:#6ee7f7; --bullet-rgb:110,231,247;">
+        <div class="timeline-bullet" aria-hidden="true">🌐</div>
+        <a class="timeline-content"
+           href="Machine_Learning_4_Lectures/webscraping_bengali_complete_guide.html"
+           aria-label="Lecture 1: Web Scraping">
+          <div class="timeline-info">
+            <span class="timeline-num" style="color:#6ee7f7;">LECTURE 01</span>
+            <span class="timeline-title">ওয়েব স্ক্র্যাপিং</span>
+            <span class="timeline-sub">ডেটা সংগ্রহ — requests · BeautifulSoup · Selenium</span>
+          </div>
+          <span class="timeline-arrow" style="color:#6ee7f7;">›</span>
+        </a>
+      </div>
+
+      <div class="timeline-item" role="listitem"
+           style="--bullet-color:#f78166; --bullet-rgb:247,129,102;">
+        <div class="timeline-bullet" aria-hidden="true">📝</div>
+        <a class="timeline-content"
+           href="Machine_Learning_4_Lectures/text_mining_bengali_final.html"
+           aria-label="Lecture 2: Text Mining">
+          <div class="timeline-info">
+            <span class="timeline-num" style="color:#f78166;">LECTURE 02</span>
+            <span class="timeline-title">টেক্সট মাইনিং ও NLP</span>
+            <span class="timeline-sub">ভাষা প্রক্রিয়াকরণ — TF-IDF · Word2Vec · Sentiment</span>
+          </div>
+          <span class="timeline-arrow" style="color:#f78166;">›</span>
+        </a>
+      </div>
+
+      <div class="timeline-item" role="listitem"
+           style="--bullet-color:#75dfc1; --bullet-rgb:117,223,193;">
+        <div class="timeline-bullet" aria-hidden="true">🕸️</div>
+        <a class="timeline-content"
+           href="Machine_Learning_4_Lectures/networkx_bangla_complete.html"
+           aria-label="Lecture 3: NetworkX">
+          <div class="timeline-info">
+            <span class="timeline-num" style="color:#75dfc1;">LECTURE 03</span>
+            <span class="timeline-title">গ্রাফ থিওরি ও NetworkX</span>
+            <span class="timeline-sub">নেটওয়ার্ক বিশ্লেষণ — Graphs · Paths · Centrality</span>
+          </div>
+          <span class="timeline-arrow" style="color:#75dfc1;">›</span>
+        </a>
+      </div>
+
+      <div class="timeline-item" role="listitem"
+           style="--bullet-color:#d2a8ff; --bullet-rgb:210,168,255;">
+        <div class="timeline-bullet" aria-hidden="true">🧠</div>
+        <a class="timeline-content"
+           href="Machine_Learning_4_Lectures/deep_learning_masterclass.html"
+           aria-label="Lecture 4: Deep Learning">
+          <div class="timeline-info">
+            <span class="timeline-num" style="color:#d2a8ff;">LECTURE 04</span>
+            <span class="timeline-title">ডিপ লার্নিং মাস্টারক্লাস</span>
+            <span class="timeline-sub">নিউরাল নেটওয়ার্ক — CNN · RNN · Transformers</span>
+          </div>
+          <span class="timeline-arrow" style="color:#d2a8ff;">›</span>
+        </a>
+      </div>
+
+      <div class="timeline-item" role="listitem"
+           style="--bullet-color:#ffa657; --bullet-rgb:255,166,87;">
+        <div class="timeline-bullet" aria-hidden="true">⚖️</div>
+        <a class="timeline-content"
+           href="Machine_Learning_4_Lectures/bias_guide_.html"
+           aria-label="Lecture 5: AI Bias">
+          <div class="timeline-info">
+            <span class="timeline-num" style="color:#ffa657;">LECTURE 05</span>
+            <span class="timeline-title">AI Bias ও Fairness</span>
+            <span class="timeline-sub">দায়িত্বশীল AI — FairLearn · SHAP · Explainability</span>
+          </div>
+          <span class="timeline-arrow" style="color:#ffa657;">›</span>
+        </a>
+      </div>
+
+      <div class="timeline-item" role="listitem"
+           style="--bullet-color:#3fb950; --bullet-rgb:63,185,80;">
+        <div class="timeline-bullet" aria-hidden="true">🚀</div>
+        <a class="timeline-content"
+           href="Machine_Learning_4_Lectures/mlflow.html"
+           aria-label="Lecture 6: MLflow">
+          <div class="timeline-info">
+            <span class="timeline-num" style="color:#3fb950;">LECTURE 06</span>
+            <span class="timeline-title">MLflow ও MLOps</span>
+            <span class="timeline-sub">প্রোডাকশন — Experiment Tracking · Registry · Deploy</span>
+          </div>
+          <span class="timeline-arrow" style="color:#3fb950;">›</span>
+        </a>
+      </div>
+
+    </div><!-- /timeline -->
+  </div>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+  <div class="footer-badge">
+    <span>ML4DS</span> — Machine Learning 4 Data Scientists
+  </div>
+  <div>সম্পূর্ণ বাংলায় · ৬টি লেকচার · ৩২+ ঘণ্টা</div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,2280 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python OOP — বাংলায় সম্পূর্ণ গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f1a;
+    --bg2: #131627;
+    --bg3: #1a1f35;
+    --surface: #1e2438;
+    --border: #2a3050;
+    --accent: #6c63ff;
+    --accent2: #ff6584;
+    --accent3: #43e97b;
+    --accent4: #f7971e;
+    --accent5: #38f9d7;
+    --text: #e8eaf6;
+    --text2: #9ca3c8;
+    --text3: #6b7399;
+    --code-bg: #0a0c18;
+    --yellow: #ffd700;
+    --orange: #ff9500;
+    --pink: #ff2d78;
+    --teal: #00d4aa;
+    --purple: #bf5af2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Hind Siliguri', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    font-size: 16px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #0d0f1a 0%, #1a0a2e 40%, #0d1f3c 100%);
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(108,99,255,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 30%, rgba(67,233,123,0.1) 0%, transparent 50%);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(108,99,255,0.2);
+    border: 1px solid rgba(108,99,255,0.5);
+    color: #a89bff;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 20px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, #a89bff, #6c63ff, #38f9d7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero p {
+    color: var(--text2);
+    font-size: 1.1rem;
+    max-width: 640px;
+    margin: 0 auto 32px;
+    position: relative;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--accent3);
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ── NAV ── */
+  .toc {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+  .toc-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .toc-label {
+    color: var(--text3);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+  .toc a {
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .toc a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: rgba(108,99,255,0.1);
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 60px 30px;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(108,99,255,0.15);
+    border: 1px solid rgba(108,99,255,0.3);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--text), var(--text2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+    color: var(--accent5);
+    margin: 36px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h3::before {
+    content: '▸';
+    color: var(--accent);
+    font-size: 0.9rem;
+  }
+
+  h4 {
+    font-size: 1.05rem;
+    color: var(--accent4);
+    margin: 24px 0 10px;
+  }
+
+  p {
+    color: var(--text2);
+    margin-bottom: 14px;
+    line-height: 1.9;
+  }
+
+  strong { color: var(--text); font-weight: 600; }
+  em { color: var(--accent5); font-style: normal; }
+
+  /* ── CALLOUT BOXES ── */
+  .box {
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    border-left: 4px solid;
+  }
+  .box-info { background: rgba(108,99,255,0.08); border-color: var(--accent); }
+  .box-tip { background: rgba(67,233,123,0.07); border-color: var(--accent3); }
+  .box-warn { background: rgba(247,151,30,0.08); border-color: var(--accent4); }
+  .box-analogy { background: rgba(56,249,215,0.06); border-color: var(--accent5); }
+  .box-def { background: rgba(191,90,242,0.08); border-color: var(--purple); }
+  .box-interview { background: rgba(255,101,132,0.07); border-color: var(--accent2); }
+  .box-exercise { background: rgba(255,45,120,0.06); border-color: var(--pink); }
+
+  .box-title {
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+  }
+  .box-info .box-title { color: var(--accent); }
+  .box-tip .box-title { color: var(--accent3); }
+  .box-warn .box-title { color: var(--accent4); }
+  .box-analogy .box-title { color: var(--accent5); }
+  .box-def .box-title { color: var(--purple); }
+  .box-interview .box-title { color: var(--accent2); }
+  .box-exercise .box-title { color: var(--pink); }
+
+  /* ── CODE BLOCKS ── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+  .code-header {
+    background: var(--surface);
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .code-dots { display: flex; gap: 6px; }
+  .code-dots span {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .d1 { background: #ff5f57; }
+  .d2 { background: #febc2e; }
+  .d3 { background: #28c840; }
+  pre {
+    padding: 20px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #cdd6f4;
+  }
+  .k { color: #cba6f7; }   /* keywords */
+  .f { color: #89b4fa; }   /* functions/methods */
+  .s { color: #a6e3a1; }   /* strings */
+  .c { color: #6c7086; font-style: italic; }  /* comments */
+  .n { color: #fab387; }   /* numbers */
+  .cls { color: #f38ba8; }  /* class names */
+  .self { color: #f9e2af; } /* self */
+  .attr { color: #94e2d5; } /* attributes */
+
+  /* ── SVG DIAGRAMS ── */
+  .diagram-container {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+    margin: 30px 0;
+    text-align: center;
+  }
+  .diagram-title {
+    font-size: 13px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+
+  /* ── DEFINITION TABLE ── */
+  .def-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .def-table th {
+    background: var(--surface);
+    color: var(--accent);
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid var(--border);
+  }
+  .def-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    vertical-align: top;
+  }
+  .def-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .def-table tr:last-child td { border-bottom: none; }
+  .def-table code {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent5);
+    font-size: 13px;
+  }
+
+  /* ── INTERVIEW QUESTIONS ── */
+  .interview-section {
+    background: linear-gradient(135deg, rgba(255,101,132,0.05), rgba(108,99,255,0.05));
+    border: 1px solid rgba(255,101,132,0.2);
+    border-radius: 16px;
+    padding: 30px;
+    margin: 40px 0;
+  }
+  .interview-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--accent2);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .q-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .q-question {
+    padding: 14px 18px;
+    color: var(--text);
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .q-num {
+    background: rgba(255,101,132,0.2);
+    color: var(--accent2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .q-answer {
+    padding: 0 18px 16px 42px;
+    color: var(--text2);
+    font-size: 0.95rem;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .q-answer code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(108,99,255,0.15);
+    color: var(--accent5);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  /* ── EXERCISE ── */
+  .exercise-section {
+    background: linear-gradient(135deg, rgba(255,45,120,0.05), rgba(67,233,123,0.05));
+    border: 1px solid rgba(255,45,120,0.25);
+    border-radius: 16px;
+    padding: 30px;
+    margin: 40px 0;
+  }
+  .exercise-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    color: var(--pink);
+    margin-bottom: 6px;
+  }
+  .exercise-subtitle {
+    font-size: 12px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+  }
+  .ex-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .ex-tag {
+    display: inline-block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .tag-easy { background: rgba(67,233,123,0.15); color: var(--accent3); }
+  .tag-medium { background: rgba(247,151,30,0.15); color: var(--accent4); }
+  .tag-hard { background: rgba(255,45,120,0.15); color: var(--pink); }
+
+  /* ── ALGO SECTION ── */
+  .algo-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 40px;
+    overflow: hidden;
+  }
+  .algo-card-header {
+    background: linear-gradient(90deg, rgba(108,99,255,0.2), rgba(56,249,215,0.1));
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .algo-icon {
+    font-size: 2rem;
+    width: 52px;
+    height: 52px;
+    background: rgba(108,99,255,0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .algo-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--text);
+  }
+  .algo-complexity {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+  }
+  .algo-card-body { padding: 24px; }
+
+  /* ── HIGHLIGHT ── */
+  .highlight {
+    background: rgba(108,99,255,0.15);
+    border: 1px solid rgba(108,99,255,0.3);
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9em;
+    color: var(--accent5);
+  }
+
+  /* ── SEPARATOR ── */
+  .sep {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 60px 0;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    text-align: center;
+    color: var(--text3);
+    font-size: 14px;
+  }
+
+  ul, ol {
+    color: var(--text2);
+    padding-left: 24px;
+    margin-bottom: 14px;
+  }
+  li { margin-bottom: 6px; }
+  li code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(108,99,255,0.15);
+    color: var(--accent5);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .badge-blue { background: rgba(108,99,255,0.2); color: var(--accent); }
+  .badge-green { background: rgba(67,233,123,0.2); color: var(--accent3); }
+  .badge-orange { background: rgba(247,151,30,0.2); color: var(--accent4); }
+
+  /* responsive */
+  @media(max-width:768px){
+    .toc { display: none; }
+    .hero { padding: 50px 20px 40px; }
+    .container { padding: 30px 20px; }
+  }
+
+  /* SVG responsive fix */
+  svg { max-width: 100%; height: auto; display: block; margin: 1rem auto; }
+
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-badge">Python · OOP · বাংলা গাইড</div>
+  <h1>Object Oriented Programming<br>বাংলায় সম্পূর্ণ শিক্ষা</h1>
+  <p>Classes থেকে Algorithms পর্যন্ত — একদম শূন্য থেকে Machine Learning Engineering পর্যায় পর্যন্ত, বাংলায়</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">মডিউল</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">10+</div>
+      <div class="stat-label">অ্যালগরিদম</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">30+</div>
+      <div class="stat-label">কোড উদাহরণ</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">জ্ঞান</div>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="toc">
+  <div class="toc-inner">
+    <span class="toc-label">বিষয়</span>
+    <a href="#module1">১. Classes</a>
+    <a href="#module2">২. Inheritance</a>
+    <a href="#module3">৩. Predefined Classes</a>
+    <a href="#module4">৪. Built-in Methods</a>
+    <a href="#algorithms">৫. Algorithms</a>
+  </div>
+</nav>
+
+<main class="container">
+
+<!-- ═══════════════════════════════════════════════
+     MODULE 1 — CLASSES
+════════════════════════════════════════════════ -->
+<section id="module1">
+  <div class="section-header">
+    <span class="section-number">Module 01</span>
+    <h2>Classes — অবজেক্ট তৈরির ছাঁচ</h2>
+  </div>
+
+  <div class="box box-analogy">
+    <div class="box-title">🏭 সহজ উপমা — Class কী?</div>
+    <p>ধরো তুমি একটি <strong>গাড়ির কারখানা</strong> চালাও। কারখানায় একটি <strong>ব্লুপ্রিন্ট (নকশা)</strong> থাকে, যেখানে লেখা আছে — গাড়িতে কয়টা চাকা হবে, কতটা সিট থাকবে, রঙ কী হবে, ইঞ্জিন কীভাবে চলবে ইত্যাদি।</p>
+    <p>এই <strong>ব্লুপ্রিন্টটাই হলো Class</strong>। আর ব্লুপ্রিন্ট দেখে যে আসল গাড়ি বানানো হয়, সেটা হলো <strong>Object</strong> (বা Instance)।</p>
+    <p>একটা ব্লুপ্রিন্ট থেকে হাজারটা গাড়ি বানানো সম্ভব — ঠিক তেমনই, একটা Class থেকে হাজারটা Object তৈরি করা যায়।</p>
+  </div>
+
+  <!-- DIAGRAM 1 — Class vs Object -->
+  <div class="diagram-container">
+    <div class="diagram-title">Class vs Object — ভিজ্যুয়াল চিত্র</div>
+    <svg viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg" style="max-width:800px;width:100%">
+      <defs>
+        <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#6c63ff;stop-opacity:0.3"/>
+          <stop offset="100%" style="stop-color:#38f9d7;stop-opacity:0.2"/>
+        </linearGradient>
+        <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f7971e;stop-opacity:0.25"/>
+          <stop offset="100%" style="stop-color:#ff6584;stop-opacity:0.2"/>
+        </linearGradient>
+        <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#6c63ff"/>
+        </marker>
+      </defs>
+      <!-- CLASS BOX -->
+      <rect x="20" y="30" width="220" height="250" rx="14" fill="url(#g1)" stroke="#6c63ff" stroke-width="1.5"/>
+      <text x="130" y="60" text-anchor="middle" fill="#a89bff" font-size="12" font-family="JetBrains Mono" letter-spacing="2">CLASS</text>
+      <text x="130" y="85" text-anchor="middle" fill="#e8eaf6" font-size="16" font-family="Hind Siliguri" font-weight="700">Vehicle</text>
+      <line x1="40" y1="96" x2="220" y2="96" stroke="#2a3050" stroke-width="1"/>
+      <text x="40" y="118" fill="#94e2d5" font-size="12" font-family="JetBrains Mono">📦 seats</text>
+      <text x="40" y="140" fill="#94e2d5" font-size="12" font-family="JetBrains Mono">📦 passengers</text>
+      <line x1="40" y1="152" x2="220" y2="152" stroke="#2a3050" stroke-width="1"/>
+      <text x="40" y="174" fill="#89b4fa" font-size="12" font-family="JetBrains Mono">⚙ __init__()</text>
+      <text x="40" y="196" fill="#89b4fa" font-size="12" font-family="JetBrains Mono">⚙ print_passengers()</text>
+      <text x="40" y="218" fill="#89b4fa" font-size="12" font-family="JetBrains Mono">⚙ add()</text>
+      <text x="130" y="260" text-anchor="middle" fill="#6c7086" font-size="11" font-family="Hind Siliguri">← ব্লুপ্রিন্ট (নকশা)</text>
+
+      <!-- ARROWS -->
+      <path d="M 250 155 L 330 105" stroke="#6c63ff" stroke-width="1.5" fill="none" marker-end="url(#arrow)" stroke-dasharray="5,4"/>
+      <path d="M 250 155 L 330 205" stroke="#6c63ff" stroke-width="1.5" fill="none" marker-end="url(#arrow)" stroke-dasharray="5,4"/>
+      <text x="275" y="145" fill="#6c7086" font-size="11" font-family="Hind Siliguri">instantiation</text>
+
+      <!-- OBJECT 1 -->
+      <rect x="340" y="40" width="200" height="110" rx="10" fill="url(#g2)" stroke="#f7971e" stroke-width="1.5"/>
+      <text x="440" y="62" text-anchor="middle" fill="#fbc85a" font-size="11" font-family="JetBrains Mono" letter-spacing="1">OBJECT</text>
+      <text x="440" y="82" text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono">car1</text>
+      <line x1="355" y1="90" x2="525" y2="90" stroke="#2a3050" stroke-width="1"/>
+      <text x="355" y="110" fill="#94e2d5" font-size="11" font-family="JetBrains Mono">seats = 4</text>
+      <text x="355" y="128" fill="#94e2d5" font-size="11" font-family="JetBrains Mono">passengers = ['Alice','Bob']</text>
+
+      <!-- OBJECT 2 -->
+      <rect x="340" y="175" width="200" height="110" rx="10" fill="url(#g2)" stroke="#ff6584" stroke-width="1.5"/>
+      <text x="440" y="197" text-anchor="middle" fill="#fbc85a" font-size="11" font-family="JetBrains Mono" letter-spacing="1">OBJECT</text>
+      <text x="440" y="217" text-anchor="middle" fill="#e8eaf6" font-size="14" font-family="JetBrains Mono">car2</text>
+      <line x1="355" y1="225" x2="525" y2="225" stroke="#2a3050" stroke-width="1"/>
+      <text x="355" y="245" fill="#94e2d5" font-size="11" font-family="JetBrains Mono">seats = 2</text>
+      <text x="355" y="263" fill="#94e2d5" font-size="11" font-family="JetBrains Mono">passengers = ['Charlie']</text>
+
+      <!-- LABELS -->
+      <text x="590" y="95" fill="#9ca3c8" font-size="12" font-family="Hind Siliguri">← আসল গাড়ি ১</text>
+      <text x="590" y="228" fill="#9ca3c8" font-size="12" font-family="Hind Siliguri">← আসল গাড়ি ২</text>
+    </svg>
+  </div>
+
+  <h3>Class-এর গঠন (Anatomy)</h3>
+  <p>একটি Python class-এর ৪টি মূল অংশ থাকে। নিচে সেগুলো ব্যাখ্যা করা হলো:</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+      <div class="code-lang">Python — Vehicle Class (সম্পূর্ণ ব্যাখ্যাসহ)</div>
+    </div>
+    <pre>
+<span class="k">class</span> <span class="cls">Vehicle</span>:              <span class="c"># ← এটা class-এর নাম। সবসময় বড় হাতে শুরু হয়</span>
+
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>, a, b=<span class="k">None</span>):   <span class="c"># ← এটা Constructor</span>
+        <span class="c">#  self = এই object টাই নিজে</span>
+        <span class="c">#  a    = সিটের সংখ্যা (অবশ্যই দিতে হবে)</span>
+        <span class="c">#  b    = যাত্রীদের নাম (না দিলে None)</span>
+
+        <span class="self">self</span>.<span class="attr">seats</span> = a              <span class="c"># ← Attribute: seats সংরক্ষণ</span>
+
+        <span class="k">if</span> b:
+            <span class="self">self</span>.<span class="attr">passengers</span> = b    <span class="c"># ← যদি b দেওয়া হয়</span>
+        <span class="k">else</span>:
+            <span class="self">self</span>.<span class="attr">passengers</span> = []  <span class="c"># ← না হলে খালি লিস্ট</span>
+
+    <span class="k">def</span> <span class="f">print_passengers</span>(<span class="self">self</span>):  <span class="c"># ← Method: যাত্রী দেখানো</span>
+        <span class="k">for</span> i <span class="k">in</span> <span class="f">range</span>(<span class="f">len</span>(<span class="self">self</span>.<span class="attr">passengers</span>)):
+            <span class="f">print</span>(<span class="self">self</span>.<span class="attr">passengers</span>[i])
+
+    <span class="k">def</span> <span class="f">add</span>(<span class="self">self</span>, name):        <span class="c"># ← Method: যাত্রী যোগ করা</span>
+        <span class="self">self</span>.<span class="attr">passengers</span>.<span class="f">append</span>(name)
+
+
+<span class="c"># ── Object তৈরি (Instantiation) ──</span>
+car1 = <span class="cls">Vehicle</span>(<span class="n">4</span>, [<span class="s">'Pierre'</span>, <span class="s">'Adrian'</span>])
+<span class="c">#       ↑                ↑
+#    seats=4     passengers=['Pierre','Adrian']</span>
+
+<span class="c"># ── Attribute access ──</span>
+<span class="f">print</span>(car1.<span class="attr">seats</span>)        <span class="c"># → 4</span>
+
+<span class="c"># ── Method call ──</span>
+car1.<span class="f">print_passengers</span>()  <span class="c"># → Pierre \n Adrian</span>
+car1.<span class="f">add</span>(<span class="s">'Raphael'</span>)       <span class="c"># যাত্রী যোগ</span>
+    </pre>
+  </div>
+
+  <table class="def-table">
+    <tr>
+      <th>Term</th>
+      <th>বাংলায় অর্থ</th>
+      <th>উদাহরণ</th>
+    </tr>
+    <tr>
+      <td><code>class Vehicle:</code></td>
+      <td>Vehicle নামে একটি ছাঁচ/নকশা তৈরি</td>
+      <td>গাড়ির ব্লুপ্রিন্ট</td>
+    </tr>
+    <tr>
+      <td><code>__init__</code></td>
+      <td>Constructor — object তৈরির সময় স্বয়ংক্রিয়ভাবে চলে</td>
+      <td>কারখানায় গাড়ি বানানো শুরু</td>
+    </tr>
+    <tr>
+      <td><code>self</code></td>
+      <td>Object নিজে — প্রতিটি method-এ প্রথম parameter</td>
+      <td>"এই বিশেষ গাড়িটির..."</td>
+    </tr>
+    <tr>
+      <td><code>self.seats</code></td>
+      <td>Attribute — object-এ সংরক্ষিত তথ্য</td>
+      <td>গাড়িতে কতটা সিট</td>
+    </tr>
+    <tr>
+      <td><code>print_passengers()</code></td>
+      <td>Method — class-এ সংজ্ঞায়িত function</td>
+      <td>গাড়ির হর্ন বাজানো</td>
+    </tr>
+    <tr>
+      <td><code>car1 = Vehicle(4, [...])</code></td>
+      <td>Instantiation — ব্লুপ্রিন্ট থেকে আসল object তৈরি</td>
+      <td>ব্লুপ্রিন্ট দেখে গাড়ি বানানো</td>
+    </tr>
+  </table>
+
+  <h3>self কী — সহজ ভাষায়</h3>
+  <div class="box box-analogy">
+    <div class="box-title">🧍 self মানে "আমি নিজে"</div>
+    <p>ধরো তোমার নাম "রাহেলা"। তুমি যখন বলো <strong>"আমার বাড়ি ঢাকায়"</strong>, এখানে "আমার" মানে রাহেলার বাড়ি।</p>
+    <p>Python-এ <strong>self</strong> ঠিক সেই "আমার"-এর মতো। যে object method টি call করছে, সেই object-কে বোঝাতে <code>self</code> ব্যবহার হয়।</p>
+    <p>যেমন: <code>car1.add('Ali')</code> — এখানে car1 হলো <code>self</code>। তাই <code>self.passengers</code> মানে car1-এর passengers।</p>
+  </div>
+
+  <h3>Complex Class — সম্পূর্ণ সমাধান</h3>
+  <p>Module 1-এর exercise-এ Complex number-এর class তৈরি করতে বলা হয়েছিল। নিচে সম্পূর্ণ solution এবং বিস্তারিত ব্যাখ্যা:</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+      <div class="code-lang">Python — Complex Class সম্পূর্ণ সমাধান</div>
+    </div>
+    <pre>
+<span class="k">class</span> <span class="cls">Complex</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>, part_re, part_im):
+        <span class="c"># part_re = বাস্তব অংশ (real part), যেমন: 4+5i তে "4"</span>
+        <span class="c"># part_im = কাল্পনিক অংশ (imaginary part), যেমন: 4+5i তে "5"</span>
+        <span class="self">self</span>.<span class="attr">part_re</span> = part_re
+        <span class="self">self</span>.<span class="attr">part_im</span> = part_im
+
+    <span class="k">def</span> <span class="f">display</span>(<span class="self">self</span>):
+        <span class="k">if</span> <span class="self">self</span>.<span class="attr">part_im</span> < <span class="n">0</span>:
+            <span class="f">print</span>(<span class="self">self</span>.<span class="attr">part_re</span>, <span class="s">"-"</span>, -<span class="self">self</span>.<span class="attr">part_im</span>, <span class="s">"i"</span>)
+            <span class="c"># কাল্পনিক অংশ ঋণাত্মক হলে: যেমন 3 - 2i</span>
+        <span class="k">elif</span> <span class="self">self</span>.<span class="attr">part_im</span> == <span class="n">0</span>:
+            <span class="f">print</span>(<span class="self">self</span>.<span class="attr">part_re</span>)
+            <span class="c"># কাল্পনিক অংশ শূন্য হলে: শুধু বাস্তব অংশ দেখাও</span>
+        <span class="k">else</span>:
+            <span class="f">print</span>(<span class="self">self</span>.<span class="attr">part_re</span>, <span class="s">"+"</span>, <span class="self">self</span>.<span class="attr">part_im</span>, <span class="s">"i"</span>)
+            <span class="c"># কাল্পনিক অংশ ধনাত্মক হলে: যেমন 4 + 5i</span>
+
+    <span class="k">def</span> <span class="f">add</span>(<span class="self">self</span>, C):
+        <span class="c"># C হলো অন্য একটি Complex object</span>
+        <span class="c"># (a+bi) + (c+di) = (a+c) + (b+d)i</span>
+        <span class="self">self</span>.<span class="attr">part_re</span> = <span class="self">self</span>.<span class="attr">part_re</span> + C.<span class="attr">part_re</span>
+        <span class="self">self</span>.<span class="attr">part_im</span> = <span class="self">self</span>.<span class="attr">part_im</span> + C.<span class="attr">part_im</span>
+        <span class="c"># ফলাফল self-এর মধ্যেই সংরক্ষিত হয়ে যায়</span>
+
+<span class="c"># ── Test করা ──</span>
+C1 = <span class="cls">Complex</span>(<span class="n">4</span>, <span class="n">5</span>)   <span class="c"># 4+5i</span>
+C2 = <span class="cls">Complex</span>(<span class="n">3</span>, <span class="n">-2</span>)  <span class="c"># 3-2i</span>
+C1.<span class="f">display</span>()         <span class="c"># → 4 + 5 i</span>
+C2.<span class="f">display</span>()         <span class="c"># → 3 - 2 i</span>
+
+C1.<span class="f">add</span>(C2)           <span class="c"># C1 = (4+3) + (5-2)i = 7+3i</span>
+C1.<span class="f">display</span>()         <span class="c"># → 7 + 3 i</span>
+    </pre>
+  </div>
+
+  <!-- INTERVIEW Q&A -->
+  <div class="interview-section">
+    <div class="interview-title">🎯 Interview প্রশ্নোত্তর — Classes</div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q1</span> Class এবং Object-এর মধ্যে পার্থক্য কী?</div>
+      <div class="q-answer"><strong>Class</strong> হলো blueprint বা template — এটি define করে কী কী data এবং behaviour থাকবে। <strong>Object</strong> হলো সেই class-এর একটি নির্দিষ্ট instance — আসল মেমোরিতে তৈরি। উদাহরণ: <code>Vehicle</code> হলো class, <code>car1 = Vehicle(4, [])</code> হলো object।</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q2</span> <code>__init__</code> method কেন দরকার?</div>
+      <div class="q-answer">Object তৈরির সময় তার initial state (প্রাথমিক অবস্থা) সেট করতে। Python স্বয়ংক্রিয়ভাবে এটি call করে। যেমন নতুন গাড়ি factory থেকে বের হলে তার seats count, color, engine type সেট হয় — ঠিক তেমনই।</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q3</span> <code>self</code> parameter কেন সব method-এ লাগে?</div>
+      <div class="q-answer">Python-এ method call করলে Python নিজেই object-কে প্রথম argument হিসেবে pass করে। <code>car1.add('Ali')</code> internally <code>Vehicle.add(car1, 'Ali')</code>-র মতো কাজ করে। তাই <code>self</code> দিয়ে ঐ নির্দিষ্ট object-এর attributes access করা যায়।</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q4</span> Attribute এবং Method-এর পার্থক্য কী?</div>
+      <div class="q-answer"><strong>Attribute</strong> হলো data — object-এ stored value (যেমন <code>self.seats = 4</code>)। <strong>Method</strong> হলো function — object দিয়ে করা যায় এমন action (যেমন <code>add()</code>, <code>print_passengers()</code>)।</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q5</span> Default parameter কী? <code>b=None</code> মানে কী?</div>
+      <div class="q-answer">Default parameter মানে যদি argument না দাও, তাহলে এই default value ব্যবহার হবে। <code>Vehicle(4)</code> call করলে b-এর value None হয়। কিন্তু <code>Vehicle(4, ['Ali'])</code> call করলে b হয় <code>['Ali']</code>।</div>
+    </div>
+  </div>
+
+  <!-- EXERCISE -->
+  <div class="exercise-section">
+    <div class="exercise-title">⚙️ ML Engineering Exercises — Classes</div>
+    <div class="exercise-subtitle">Machine Learning প্রজেক্টে ব্যবহারযোগ্য</div>
+
+    <div class="ex-item">
+      <span class="ex-tag tag-easy">Easy</span>
+      <h4>১. MLDataset Class</h4>
+      <p>একটি <code>MLDataset</code> class তৈরি করো যার attributes থাকবে: <code>name</code> (dataset-এর নাম), <code>features</code> (feature-এর list), <code>labels</code> (target values-এর list)। Methods: <code>add_sample(feature_row, label)</code> — নতুন data point যোগ করবে, <code>describe()</code> — dataset সম্পর্কে summary print করবে।</p>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Solution</div></div>
+        <pre>
+<span class="k">class</span> <span class="cls">MLDataset</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>, name):
+        <span class="self">self</span>.<span class="attr">name</span> = name
+        <span class="self">self</span>.<span class="attr">features</span> = []
+        <span class="self">self</span>.<span class="attr">labels</span> = []
+
+    <span class="k">def</span> <span class="f">add_sample</span>(<span class="self">self</span>, feature_row, label):
+        <span class="self">self</span>.<span class="attr">features</span>.<span class="f">append</span>(feature_row)
+        <span class="self">self</span>.<span class="attr">labels</span>.<span class="f">append</span>(label)
+
+    <span class="k">def</span> <span class="f">describe</span>(<span class="self">self</span>):
+        <span class="f">print</span>(<span class="s">f"Dataset: {<span class="self">self</span>.<span class="attr">name</span>}"</span>)
+        <span class="f">print</span>(<span class="s">f"Samples: {<span class="f">len</span>(<span class="self">self</span>.<span class="attr">features</span>)}"</span>)
+        <span class="f">print</span>(<span class="s">f"Feature dim: {<span class="f">len</span>(<span class="self">self</span>.<span class="attr">features</span>[<span class="n">0</span>]) <span class="k">if</span> <span class="self">self</span>.<span class="attr">features</span> <span class="k">else</span> <span class="n">0</span>}"</span>)
+
+<span class="c"># Test</span>
+ds = <span class="cls">MLDataset</span>(<span class="s">"Heart Disease"</span>)
+ds.<span class="f">add_sample</span>([<span class="n">65</span>, <span class="n">1</span>, <span class="n">3</span>, <span class="n">138</span>], <span class="n">1</span>)  <span class="c"># [age, sex, cp, trestbps], label</span>
+ds.<span class="f">add_sample</span>([<span class="n">37</span>, <span class="n">1</span>, <span class="n">2</span>, <span class="n">130</span>], <span class="n">0</span>)
+ds.<span class="f">describe</span>()
+        </pre>
+      </div>
+    </div>
+
+    <div class="ex-item">
+      <span class="ex-tag tag-medium">Medium</span>
+      <h4>২. ModelMetrics Class</h4>
+      <p>একটি <code>ModelMetrics</code> class তৈরি করো। Attributes: <code>model_name</code>, <code>predictions</code> (list), <code>ground_truth</code> (list)। Methods: <code>add_result(pred, truth)</code>, <code>accuracy()</code> — সঠিক prediction-এর হার return করবে, <code>report()</code> — full summary দেখাবে।</p>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Solution</div></div>
+        <pre>
+<span class="k">class</span> <span class="cls">ModelMetrics</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>, model_name):
+        <span class="self">self</span>.<span class="attr">model_name</span> = model_name
+        <span class="self">self</span>.<span class="attr">predictions</span> = []
+        <span class="self">self</span>.<span class="attr">ground_truth</span> = []
+
+    <span class="k">def</span> <span class="f">add_result</span>(<span class="self">self</span>, pred, truth):
+        <span class="self">self</span>.<span class="attr">predictions</span>.<span class="f">append</span>(pred)
+        <span class="self">self</span>.<span class="attr">ground_truth</span>.<span class="f">append</span>(truth)
+
+    <span class="k">def</span> <span class="f">accuracy</span>(<span class="self">self</span>):
+        <span class="k">if</span> <span class="k">not</span> <span class="self">self</span>.<span class="attr">predictions</span>:
+            <span class="k">return</span> <span class="n">0.0</span>
+        correct = <span class="f">sum</span>(p == t <span class="k">for</span> p, t <span class="k">in</span>
+                      <span class="f">zip</span>(<span class="self">self</span>.<span class="attr">predictions</span>, <span class="self">self</span>.<span class="attr">ground_truth</span>))
+        <span class="k">return</span> correct / <span class="f">len</span>(<span class="self">self</span>.<span class="attr">predictions</span>)
+
+    <span class="k">def</span> <span class="f">report</span>(<span class="self">self</span>):
+        acc = <span class="self">self</span>.<span class="f">accuracy</span>()
+        <span class="f">print</span>(<span class="s">f"Model   : {<span class="self">self</span>.<span class="attr">model_name</span>}"</span>)
+        <span class="f">print</span>(<span class="s">f"Samples : {<span class="f">len</span>(<span class="self">self</span>.<span class="attr">predictions</span>)}"</span>)
+        <span class="f">print</span>(<span class="s">f"Accuracy: {acc:.2%}"</span>)
+
+<span class="c"># Test</span>
+m = <span class="cls">ModelMetrics</span>(<span class="s">"Random Forest"</span>)
+m.<span class="f">add_result</span>(<span class="n">1</span>, <span class="n">1</span>)
+m.<span class="f">add_result</span>(<span class="n">0</span>, <span class="n">1</span>)
+m.<span class="f">add_result</span>(<span class="n">1</span>, <span class="n">1</span>)
+m.<span class="f">report</span>()  <span class="c"># Accuracy: 66.67%</span>
+        </pre>
+      </div>
+    </div>
+
+    <div class="ex-item">
+      <span class="ex-tag tag-hard">Hard</span>
+      <h4>৩. FeatureScaler Class (Manual Standard Scaler)</h4>
+      <p>একটি <code>FeatureScaler</code> class তৈরি করো যা দিয়ে manually data normalize করা যাবে। Methods: <code>fit(data)</code> — mean ও std calculate করবে, <code>transform(data)</code> — z-score normalization করবে: <code>(x - mean) / std</code>, <code>fit_transform(data)</code> — দুটো একসাথে করবে।</p>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Solution</div></div>
+        <pre>
+<span class="k">class</span> <span class="cls">FeatureScaler</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>):
+        <span class="self">self</span>.<span class="attr">mean_</span> = <span class="k">None</span>
+        <span class="self">self</span>.<span class="attr">std_</span>  = <span class="k">None</span>
+
+    <span class="k">def</span> <span class="f">fit</span>(<span class="self">self</span>, data):
+        n = <span class="f">len</span>(data)
+        <span class="self">self</span>.<span class="attr">mean_</span> = <span class="f">sum</span>(data) / n
+        variance = <span class="f">sum</span>((x - <span class="self">self</span>.<span class="attr">mean_</span>)**<span class="n">2</span> <span class="k">for</span> x <span class="k">in</span> data) / n
+        <span class="self">self</span>.<span class="attr">std_</span> = variance ** <span class="n">0.5</span>
+
+    <span class="k">def</span> <span class="f">transform</span>(<span class="self">self</span>, data):
+        <span class="k">return</span> [(x - <span class="self">self</span>.<span class="attr">mean_</span>) / <span class="self">self</span>.<span class="attr">std_</span> <span class="k">for</span> x <span class="k">in</span> data]
+
+    <span class="k">def</span> <span class="f">fit_transform</span>(<span class="self">self</span>, data):
+        <span class="self">self</span>.<span class="f">fit</span>(data)
+        <span class="k">return</span> <span class="self">self</span>.<span class="f">transform</span>(data)
+
+<span class="c"># Test</span>
+temperatures = [<span class="n">36.5</span>, <span class="n">37.1</span>, <span class="n">38.2</span>, <span class="n">36.8</span>, <span class="n">39.0</span>]
+scaler = <span class="cls">FeatureScaler</span>()
+normalized = scaler.<span class="f">fit_transform</span>(temperatures)
+<span class="f">print</span>(normalized)  <span class="c"># প্রতিটি মান mean থেকে কতটা std দূরে</span>
+        </pre>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<div class="sep"></div>
+
+<!-- ═══════════════════════════════════════════════
+     MODULE 2 — INHERITANCE
+════════════════════════════════════════════════ -->
+<section id="module2">
+  <div class="section-header">
+    <span class="section-number">Module 02</span>
+    <h2>Inheritance — উত্তরাধিকার</h2>
+  </div>
+
+  <div class="box box-analogy">
+    <div class="box-title">👨‍👩‍👧 উপমা — Inheritance কী?</div>
+    <p>তোমার বাবার চোখের রঙ, নাকের আকার, কিছু গুণ তোমার মধ্যেও আছে — এটাই উত্তরাধিকার (inheritance)।</p>
+    <p>Python-এ যখন একটি class আরেকটি class থেকে তৈরি হয়, নতুন class স্বয়ংক্রিয়ভাবে পুরনো class-এর সব methods ও attributes পায়। এই নতুন class-কে বলা হয় <strong>Child class</strong> বা <strong>Subclass</strong>, আর পুরনো class-কে বলা হয় <strong>Parent class</strong> বা <strong>Superclass</strong>।</p>
+  </div>
+
+  <!-- DIAGRAM 2 — Inheritance -->
+  <div class="diagram-container">
+    <div class="diagram-title">Inheritance চিত্র — Vehicle থেকে Motorcycle</div>
+    <svg viewBox="0 0 750 380" xmlns="http://www.w3.org/2000/svg" style="max-width:750px;width:100%">
+      <defs>
+        <linearGradient id="pg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#6c63ff;stop-opacity:0.3"/>
+          <stop offset="100%" style="stop-color:#38f9d7;stop-opacity:0.15"/>
+        </linearGradient>
+        <linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f7971e;stop-opacity:0.3"/>
+          <stop offset="100%" style="stop-color:#ff6584;stop-opacity:0.2"/>
+        </linearGradient>
+        <marker id="inh" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#43e97b"/>
+        </marker>
+      </defs>
+
+      <!-- PARENT -->
+      <rect x="250" y="20" width="260" height="160" rx="12" fill="url(#pg)" stroke="#6c63ff" stroke-width="2"/>
+      <text x="380" y="46" text-anchor="middle" fill="#a89bff" font-size="11" font-family="JetBrains Mono" letter-spacing="2">PARENT CLASS</text>
+      <text x="380" y="68" text-anchor="middle" fill="#e8eaf6" font-size="18" font-family="Hind Siliguri" font-weight="700">Vehicle</text>
+      <line x1="265" y1="78" x2="495" y2="78" stroke="#2a3050" stroke-width="1"/>
+      <text x="270" y="98" fill="#94e2d5" font-size="12" font-family="JetBrains Mono">📦 seats</text>
+      <text x="270" y="116" fill="#94e2d5" font-size="12" font-family="JetBrains Mono">📦 passengers</text>
+      <line x1="265" y1="126" x2="495" y2="126" stroke="#2a3050" stroke-width="1"/>
+      <text x="270" y="144" fill="#89b4fa" font-size="12" font-family="JetBrains Mono">⚙ print_passengers()</text>
+      <text x="270" y="162" fill="#89b4fa" font-size="12" font-family="JetBrains Mono">⚙ add()</text>
+
+      <!-- ARROW -->
+      <line x1="380" y1="180" x2="380" y2="230" stroke="#43e97b" stroke-width="2" marker-end="url(#inh)"/>
+      <rect x="320" y="193" width="120" height="24" rx="5" fill="rgba(67,233,123,0.1)" stroke="rgba(67,233,123,0.3)" stroke-width="1"/>
+      <text x="380" y="209" text-anchor="middle" fill="#43e97b" font-size="11" font-family="Hind Siliguri">উত্তরাধিকার</text>
+
+      <!-- CHILD -->
+      <rect x="200" y="240" width="360" height="120" rx="12" fill="url(#cg)" stroke="#f7971e" stroke-width="2"/>
+      <text x="380" y="263" text-anchor="middle" fill="#fbc85a" font-size="11" font-family="JetBrains Mono" letter-spacing="1">CHILD CLASS</text>
+      <text x="380" y="283" text-anchor="middle" fill="#e8eaf6" font-size="18" font-family="Hind Siliguri" font-weight="700">Motorcycle(Vehicle)</text>
+      <line x1="215" y1="292" x2="545" y2="292" stroke="#2a3050" stroke-width="1"/>
+      <text x="220" y="311" fill="#94e2d5" font-size="12" font-family="JetBrains Mono">📦 brand  </text>
+      <text x="320" y="311" fill="#6c7086" font-size="11" font-family="Hind Siliguri">← নতুন attribute</text>
+      <text x="220" y="331" fill="#f38ba8" font-size="12" font-family="JetBrains Mono">⚙ add() </text>
+      <text x="295" y="331" fill="#6c7086" font-size="11" font-family="Hind Siliguri">← override করা (নতুন নিয়মে)</text>
+      <text x="220" y="350" fill="#6c7086" font-size="12" font-family="JetBrains Mono">✓ print_passengers() — Parent থেকে পাওয়া</text>
+    </svg>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+      <div class="code-lang">Python — Inheritance উদাহরণ</div>
+    </div>
+    <pre>
+<span class="k">class</span> <span class="cls">Vehicle</span>:                       <span class="c"># ← Parent class</span>
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>, a, b=<span class="k">None</span>):
+        <span class="self">self</span>.<span class="attr">seats</span> = a
+        <span class="self">self</span>.<span class="attr">passengers</span> = b <span class="k">if</span> b <span class="k">else</span> []
+    <span class="k">def</span> <span class="f">print_passengers</span>(<span class="self">self</span>):
+        <span class="k">for</span> p <span class="k">in</span> <span class="self">self</span>.<span class="attr">passengers</span>:
+            <span class="f">print</span>(p)
+    <span class="k">def</span> <span class="f">add</span>(<span class="self">self</span>, name):
+        <span class="self">self</span>.<span class="attr">passengers</span>.<span class="f">append</span>(name)
+
+
+<span class="k">class</span> <span class="cls">Motorcycle</span>(<span class="cls">Vehicle</span>):           <span class="c"># ← Child class, Vehicle থেকে inherit করে</span>
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>, passengers, brand):
+        <span class="self">self</span>.<span class="attr">seats</span> = <span class="n">2</span>               <span class="c"># সর্বদা ২ সিট</span>
+        <span class="self">self</span>.<span class="attr">passengers</span> = passengers
+        <span class="self">self</span>.<span class="attr">brand</span> = brand           <span class="c"># নতুন attribute — Vehicle-এ নেই</span>
+
+    <span class="k">def</span> <span class="f">add</span>(<span class="self">self</span>, name):            <span class="c"># Override — Vehicle-এর add() পরিবর্তিত</span>
+        <span class="k">if</span> <span class="f">len</span>(<span class="self">self</span>.<span class="attr">passengers</span>) < <span class="self">self</span>.<span class="attr">seats</span>:
+            <span class="self">self</span>.<span class="attr">passengers</span>.<span class="f">append</span>(name)
+            remaining = <span class="self">self</span>.<span class="attr">seats</span> - <span class="f">len</span>(<span class="self">self</span>.<span class="attr">passengers</span>)
+            <span class="f">print</span>(<span class="s">f"আসন বাকি আছে: {remaining}টি"</span>)
+        <span class="k">else</span>:
+            <span class="f">print</span>(<span class="s">"গাড়ি পূর্ণ! জায়গা নেই।"</span>)
+
+<span class="c"># ── Test ──</span>
+moto = <span class="cls">Motorcycle</span>([<span class="s">'Pierre'</span>], <span class="s">'Yamaha'</span>)
+moto.<span class="f">add</span>(<span class="s">'Dimitri'</span>)     <span class="c"># → আসন বাকি আছে: 0টি</span>
+moto.<span class="f">add</span>(<span class="s">'Yohann'</span>)      <span class="c"># → গাড়ি পূর্ণ!</span>
+moto.<span class="f">print_passengers</span>() <span class="c"># → Pierre \n Dimitri (Vehicle থেকে inherited!)</span>
+    </pre>
+  </div>
+
+  <div class="box box-warn">
+    <div class="box-title">⚠️ Method Override বোঝা</div>
+    <p>যখন Child class-এ Parent-এর মতো একই নামের method লেখো, তখন সেটাকে বলে <strong>Method Override</strong>। Child-এর method পুরনো method-কে <em>প্রতিস্থাপন</em> করে।</p>
+    <p>উদাহরণ: Motorcycle-এর <code>add()</code> Vehicle-এর <code>add()</code> কে override করেছে। এখন Motorcycle-এ <code>add()</code> call করলে সিট full check করবে।</p>
+  </div>
+
+  <h3>Convoy Class — সম্পূর্ণ সমাধান</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+      <div class="code-lang">Python — Convoy Class (Exercise c-h সমাধান)</div>
+    </div>
+    <pre>
+<span class="k">class</span> <span class="cls">Convoy</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>):
+        <span class="c"># শুরুতে একটি ৪-সিটের Vehicle স্বয়ংক্রিয়ভাবে যোগ হয়</span>
+        default_vehicle = <span class="cls">Vehicle</span>(<span class="n">4</span>)
+        <span class="self">self</span>.<span class="attr">vehicle_list</span> = [default_vehicle]
+        <span class="self">self</span>.<span class="attr">length</span> = <span class="n">1</span>
+
+    <span class="k">def</span> <span class="f">add_vehicle</span>(<span class="self">self</span>, vehicle):
+        <span class="self">self</span>.<span class="attr">vehicle_list</span>.<span class="f">append</span>(vehicle)
+        <span class="self">self</span>.<span class="attr">length</span> += <span class="n">1</span>   <span class="c"># length আপডেট করতে হবে!</span>
+
+<span class="c"># ── Exercise e-h ──</span>
+convoy1 = <span class="cls">Convoy</span>()
+
+<span class="c"># (f) convoy1-এর প্রথম গাড়িতে "Albert" যোগ</span>
+convoy1.<span class="attr">vehicle_list</span>[<span class="n">0</span>].<span class="f">add</span>(<span class="s">'Albert'</span>)
+
+<span class="c"># (g) "Raphael" চালকসহ Honda Motorcycle যোগ</span>
+moto = <span class="cls">Motorcycle</span>([<span class="s">'Raphael'</span>], <span class="s">'Honda'</span>)
+convoy1.<span class="f">add_vehicle</span>(moto)
+
+<span class="c"># (h) convoy1-এর সব যাত্রী দেখানো</span>
+<span class="f">print</span>(<span class="s">"=== convoy1-এর সকল যাত্রী ==="</span>)
+<span class="k">for</span> idx, vehicle <span class="k">in</span> <span class="f">enumerate</span>(convoy1.<span class="attr">vehicle_list</span>):
+    <span class="f">print</span>(<span class="s">f"--- Vehicle {idx+1} ---"</span>)
+    vehicle.<span class="f">print_passengers</span>()
+    </pre>
+  </div>
+
+  <!-- INTERVIEW -->
+  <div class="interview-section">
+    <div class="interview-title">🎯 Interview প্রশ্নোত্তর — Inheritance</div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q1</span> Inheritance কেন ব্যবহার করি? Code reuse কীভাবে হয়?</div>
+      <div class="q-answer">Inheritance দিয়ে parent-এর সব code পুনরায় লিখতে হয় না। <code>Motorcycle</code>-এ <code>print_passengers()</code> আলাদা করে লেখার দরকার নেই কারণ সেটা <code>Vehicle</code> থেকে inherit হয়। এটাই DRY (Don't Repeat Yourself) principle।</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q2</span> Method Resolution Order (MRO) কী?</div>
+      <div class="q-answer">Python কোন method call করবে তা নির্ধারণের ক্রম। প্রথমে child class-এ খোঁজে, তারপর parent-এ। <code>ClassName.__mro__</code> দিয়ে দেখা যায়।</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q3</span> <code>super()</code> কী কাজ করে?</div>
+      <div class="q-answer"><code>super()</code> দিয়ে parent class-এর method call করা যায়। উদাহরণ: child-এর <code>__init__</code>-এ <code>super().__init__(a, b)</code> লিখলে parent-এর constructor চলে — তাই parent-এর সব initialization হয় এবং আলাদা কিছু যোগ করা যায়।</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q4</span> <code>isinstance(obj, ClassName)</code> কী return করে?</div>
+      <div class="q-answer">obj যদি ClassName বা তার child class-এর instance হয় তাহলে <code>True</code> return করে। যেমন Motorcycle object-এ <code>isinstance(moto, Vehicle)</code> → <code>True</code>, কারণ Motorcycle, Vehicle-এর child।</div>
+    </div>
+  </div>
+
+  <!-- EXERCISE -->
+  <div class="exercise-section">
+    <div class="exercise-title">⚙️ ML Engineering Exercises — Inheritance</div>
+    <div class="exercise-subtitle">Real ML project patterns</div>
+
+    <div class="ex-item">
+      <span class="ex-tag tag-medium">Medium</span>
+      <h4>১. BaseModel → LogisticRegression Hierarchy</h4>
+      <p>একটি <code>BaseMLModel</code> parent class তৈরি করো (attributes: <code>name</code>, <code>is_trained</code>; methods: <code>describe()</code>, <code>check_trained()</code>)। তারপর <code>LogisticRegressionModel</code> child class তৈরি করো যা inherit করে এবং নতুন methods যোগ করে: <code>train(X, y)</code>, <code>predict(X)</code>।</p>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Solution</div></div>
+        <pre>
+<span class="k">class</span> <span class="cls">BaseMLModel</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>, name):
+        <span class="self">self</span>.<span class="attr">name</span> = name
+        <span class="self">self</span>.<span class="attr">is_trained</span> = <span class="k">False</span>
+
+    <span class="k">def</span> <span class="f">describe</span>(<span class="self">self</span>):
+        status = <span class="s">"Trained ✓"</span> <span class="k">if</span> <span class="self">self</span>.<span class="attr">is_trained</span> <span class="k">else</span> <span class="s">"Not Trained ✗"</span>
+        <span class="f">print</span>(<span class="s">f"Model: {<span class="self">self</span>.<span class="attr">name</span>} | Status: {status}"</span>)
+
+    <span class="k">def</span> <span class="f">check_trained</span>(<span class="self">self</span>):
+        <span class="k">if</span> <span class="k">not</span> <span class="self">self</span>.<span class="attr">is_trained</span>:
+            <span class="k">raise</span> <span class="cls">RuntimeError</span>(<span class="s">"Model must be trained first!"</span>)
+
+
+<span class="k">class</span> <span class="cls">LogisticRegressionModel</span>(<span class="cls">BaseMLModel</span>):  <span class="c"># ← Inherit করছে</span>
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>):
+        <span class="f">super</span>().<span class="f">__init__</span>(<span class="s">"Logistic Regression"</span>)  <span class="c"># ← parent constructor call</span>
+        <span class="self">self</span>.<span class="attr">weights</span> = []
+        <span class="self">self</span>.<span class="attr">bias</span> = <span class="n">0</span>
+
+    <span class="k">def</span> <span class="f">train</span>(<span class="self">self</span>, X, y):
+        <span class="c"># সহজ: শুধু feature mean শিখবো</span>
+        <span class="self">self</span>.<span class="attr">weights</span> = [<span class="f">sum</span>(col)/<span class="f">len</span>(col) <span class="k">for</span> col <span class="k">in</span> <span class="f">zip</span>(*X)]
+        <span class="self">self</span>.<span class="attr">is_trained</span> = <span class="k">True</span>
+        <span class="f">print</span>(<span class="s">f"Training complete. Weights: {<span class="self">self</span>.<span class="attr">weights</span>}"</span>)
+
+    <span class="k">def</span> <span class="f">predict</span>(<span class="self">self</span>, X):
+        <span class="self">self</span>.<span class="f">check_trained</span>()  <span class="c"># ← parent method ব্যবহার</span>
+        <span class="k">return</span> [<span class="n">1</span> <span class="k">if</span> <span class="f">sum</span>(x)/<span class="f">len</span>(x) > <span class="f">sum</span>(<span class="self">self</span>.<span class="attr">weights</span>)/<span class="f">len</span>(<span class="self">self</span>.<span class="attr">weights</span>)
+                <span class="k">else</span> <span class="n">0</span> <span class="k">for</span> x <span class="k">in</span> X]
+
+<span class="c"># Test</span>
+model = <span class="cls">LogisticRegressionModel</span>()
+model.<span class="f">describe</span>()        <span class="c"># → Not Trained ✗</span>
+X = [[<span class="n">1</span>,<span class="n">2</span>],[<span class="n">3</span>,<span class="n">4</span>],[<span class="n">0</span>,<span class="n">1</span>]]
+y = [<span class="n">0</span>, <span class="n">1</span>, <span class="n">0</span>]
+model.<span class="f">train</span>(X, y)
+model.<span class="f">describe</span>()        <span class="c"># → Trained ✓</span>
+<span class="f">print</span>(model.<span class="f">predict</span>([[<span class="n">2</span>,<span class="n">3</span>]]))
+        </pre>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<div class="sep"></div>
+
+<!-- ═══════════════════════════════════════════════
+     MODULE 3 — PREDEFINED CLASSES
+════════════════════════════════════════════════ -->
+<section id="module3">
+  <div class="section-header">
+    <span class="section-number">Module 03</span>
+    <h2>Predefined Classes — তৈরি করা ক্লাস</h2>
+  </div>
+
+  <div class="box box-info">
+    <div class="box-title">💡 কী শিখবো এখানে</div>
+    <p>Python-এ অনেক ready-made class আছে যেগুলো অন্যরা তৈরি করে দিয়েছেন। সেগুলো ব্যবহার করতে শিখবো। বিশেষত: <strong>list class</strong> এবং <strong>pandas DataFrame class</strong>।</p>
+  </div>
+
+  <h3>list Class-এর গুরুত্বপূর্ণ Methods</h3>
+
+  <table class="def-table">
+    <tr>
+      <th>Method</th>
+      <th>কাজ</th>
+      <th>উদাহরণ</th>
+    </tr>
+    <tr>
+      <td><code>.append(x)</code></td>
+      <td>শেষে একটি element যোগ</td>
+      <td><code>[1,2].append(3) → [1,2,3]</code></td>
+    </tr>
+    <tr>
+      <td><code>.insert(i, x)</code></td>
+      <td>i তম স্থানে x ঢোকানো</td>
+      <td><code>[1,2,3].insert(1,9) → [1,9,2,3]</code></td>
+    </tr>
+    <tr>
+      <td><code>.remove(x)</code></td>
+      <td>প্রথম x মুছে ফেলা</td>
+      <td><code>[1,2,2].remove(2) → [1,2]</code></td>
+    </tr>
+    <tr>
+      <td><code>.sort()</code></td>
+      <td>ascending order-এ সাজানো</td>
+      <td><code>[3,1,2].sort() → [1,2,3]</code></td>
+    </tr>
+    <tr>
+      <td><code>.reverse()</code></td>
+      <td>উল্টো করা</td>
+      <td><code>[1,2,3].reverse() → [3,2,1]</code></td>
+    </tr>
+    <tr>
+      <td><code>.pop()</code></td>
+      <td>শেষ element সরানো ও return করা</td>
+      <td><code>[1,2,3].pop() → 3, list=[1,2]</code></td>
+    </tr>
+    <tr>
+      <td><code>.index(x)</code></td>
+      <td>x-এর index খোঁজা</td>
+      <td><code>[5,3,8].index(3) → 1</code></td>
+    </tr>
+    <tr>
+      <td><code>.count(x)</code></td>
+      <td>x কতবার আছে</td>
+      <td><code>[1,2,1,1].count(1) → 3</code></td>
+    </tr>
+  </table>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+      <div class="code-lang">Python — list exercises সমাধান</div>
+    </div>
+    <pre>
+<span class="c"># (c) List উল্টানো</span>
+list_1 = [<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>, <span class="n">4</span>, <span class="n">5</span>, <span class="n">6</span>, <span class="n">7</span>, <span class="n">8</span>, <span class="n">9</span>]
+list_1.<span class="f">reverse</span>()        <span class="c"># in-place reverse (list নিজেই বদলে যায়)</span>
+<span class="f">print</span>(list_1)           <span class="c"># → [9, 8, 7, 6, 5, 4, 3, 2, 1]</span>
+
+<span class="c"># (d) ৫ম স্থানে 10 ঢোকানো (index = 4)</span>
+list_2 = [<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>, <span class="n">4</span>, <span class="n">5</span>, <span class="n">6</span>, <span class="n">7</span>, <span class="n">8</span>, <span class="n">9</span>]
+list_2.<span class="f">insert</span>(<span class="n">4</span>, <span class="n">10</span>)    <span class="c"># index 4 = পঞ্চম স্থান (0 থেকে গোনা হয়)</span>
+<span class="f">print</span>(list_2)           <span class="c"># → [1, 2, 3, 4, 10, 5, 6, 7, 8, 9]</span>
+
+<span class="c"># (e) Sort করা</span>
+list_3 = [<span class="n">5</span>, <span class="n">2</span>, <span class="n">4</span>, <span class="n">9</span>, <span class="n">6</span>, <span class="n">7</span>, <span class="n">8</span>, <span class="n">3</span>, <span class="n">10</span>, <span class="n">1</span>]
+list_3.<span class="f">sort</span>()           <span class="c"># ছোট থেকে বড়</span>
+<span class="f">print</span>(list_3)           <span class="c"># → [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</span>
+
+list_3.<span class="f">sort</span>(reverse=<span class="k">True</span>)  <span class="c"># বড় থেকে ছোট</span>
+<span class="f">print</span>(list_3)           <span class="c"># → [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]</span>
+    </pre>
+  </div>
+
+  <h3>pandas DataFrame Class</h3>
+
+  <div class="box box-analogy">
+    <div class="box-title">📊 DataFrame কী?</div>
+    <p>DataFrame হলো Excel-এর মতো একটি table — rows এবং columns আছে। Data science-এ সব data এভাবেই রাখা হয়। pandas package-এ এই class আছে।</p>
+    <p>গুরুত্বপূর্ণ পার্থক্য: list-এর methods (যেমন <code>.sort()</code>) list-কে নিজেই বদলে দেয়। কিন্তু DataFrame-এর বেশিরভাগ method <em>নতুন DataFrame</em> return করে, original বদলায় না। তাই result সংরক্ষণ করতে হয়।</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+      <div class="code-lang">Python — pandas DataFrame exercises সমাধান</div>
+    </div>
+    <pre>
+<span class="k">import</span> pandas <span class="k">as</span> pd
+
+<span class="c"># (a) pandas import, (b) empty DataFrame</span>
+df = pd.<span class="cls">DataFrame</span>()
+
+<span class="c"># (c) list থেকে DataFrame তৈরি</span>
+list_4 = [<span class="n">1</span>, <span class="n">5</span>, <span class="n">45</span>, <span class="n">42</span>, <span class="k">None</span>, <span class="n">123</span>, <span class="n">4213</span>, <span class="k">None</span>, <span class="n">213</span>]
+df1 = pd.<span class="cls">DataFrame</span>(list_4)
+<span class="f">print</span>(df1)
+<span class="c"># কিছু মান NaN (Not a Number) কারণ None দেওয়া হয়েছে</span>
+
+<span class="c"># (d) NaN সরিয়ে নতুন DataFrame</span>
+df2 = df1.<span class="f">dropna</span>()           <span class="c"># ← নতুন DataFrame return করে!</span>
+<span class="f">print</span>(df2)                   <span class="c"># None মানগুলো নেই</span>
+
+<span class="c"># (e) divide2 function তৈরি</span>
+<span class="k">def</span> <span class="f">divide2</span>(x):
+    <span class="k">return</span> x / <span class="n">2</span>
+
+<span class="c"># (f) apply দিয়ে সব মান ভাগ ২ করা</span>
+df3 = df2.<span class="f">apply</span>(divide2)     <span class="c"># প্রতিটি মানে divide2 চলবে</span>
+<span class="f">print</span>(df3)
+<span class="c"># lambda দিয়েও করা যায়:</span>
+df3 = df2.<span class="f">apply</span>(<span class="k">lambda</span> x: x / <span class="n">2</span>)
+    </pre>
+  </div>
+
+  <!-- INTERVIEW -->
+  <div class="interview-section">
+    <div class="interview-title">🎯 Interview প্রশ্নোত্তর — Predefined Classes</div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q1</span> <code>list.sort()</code> এবং <code>sorted(list)</code>-এর পার্থক্য কী?</div>
+      <div class="q-answer"><code>.sort()</code> in-place কাজ করে — original list বদলে দেয়, <code>None</code> return করে। <code>sorted()</code> নতুন list return করে, original অপরিবর্তিত থাকে। ML pipeline-এ সাধারণত <code>sorted()</code> prefer করা হয়।</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q2</span> DataFrame-এ <code>dropna()</code> কেন in-place কাজ করে না?</div>
+      <div class="q-answer">Pandas immutability principle follow করে — methods নতুন object return করে যাতে original data নষ্ট না হয়। In-place করতে চাইলে <code>df.dropna(inplace=True)</code> বা <code>df = df.dropna()</code> করতে হবে।</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q3</span> <code>apply()</code> vs <code>map()</code> vs <code>applymap()</code> পার্থক্য?</div>
+      <div class="q-answer"><code>apply()</code> row বা column-wise কাজ করে। <code>map()</code> শুধু Series-এ। <code>applymap()</code> (নতুন Pandas-এ <code>map()</code>) প্রতিটি cell-এ individually কাজ করে।</div>
+    </div>
+  </div>
+
+  <!-- EXERCISE -->
+  <div class="exercise-section">
+    <div class="exercise-title">⚙️ ML Engineering Exercises — Predefined Classes</div>
+    <div class="exercise-subtitle">Data preprocessing patterns</div>
+
+    <div class="ex-item">
+      <span class="ex-tag tag-medium">Medium</span>
+      <h4>১. Raw Sensor Data Cleaning Pipeline</h4>
+      <p>Wearable device থেকে আসা raw sensor data clean করো: NaN remove, outlier clip, normalize।</p>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Solution</div></div>
+        <pre>
+<span class="k">import</span> pandas <span class="k">as</span> pd
+
+<span class="c"># Simulated heart rate sensor data (BPM)</span>
+raw_hr = [<span class="n">72</span>, <span class="n">75</span>, <span class="k">None</span>, <span class="n">78</span>, <span class="n">210</span>, <span class="n">71</span>, <span class="k">None</span>, <span class="n">74</span>, <span class="n">-5</span>, <span class="n">76</span>]
+
+df_hr = pd.<span class="cls">DataFrame</span>(raw_hr, columns=[<span class="s">'heart_rate'</span>])
+
+<span class="c"># Step 1: NaN সরানো</span>
+df_clean = df_hr.<span class="f">dropna</span>()
+
+<span class="c"># Step 2: Outlier clip করা (HR 30-200 BPM-এর মধ্যে)</span>
+<span class="k">def</span> <span class="f">clip_hr</span>(x):
+    <span class="k">return</span> <span class="f">max</span>(<span class="n">30</span>, <span class="f">min</span>(<span class="n">200</span>, x))
+
+df_clipped = df_clean.<span class="f">apply</span>(<span class="k">lambda</span> col: col.<span class="f">apply</span>(clip_hr))
+
+<span class="c"># Step 3: Min-Max Normalize (0 থেকে 1 পর্যন্ত)</span>
+<span class="k">def</span> <span class="f">minmax_normalize</span>(col):
+    return (col - col.<span class="f">min</span>()) / (col.<span class="f">max</span>() - col.<span class="f">min</span>())
+
+df_normalized = df_clipped.<span class="f">apply</span>(minmax_normalize)
+
+<span class="f">print</span>(<span class="s">"Raw:"</span>, raw_hr)
+<span class="f">print</span>(<span class="s">"Cleaned:\n"</span>, df_normalized)
+        </pre>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<div class="sep"></div>
+
+<!-- ═══════════════════════════════════════════════
+     MODULE 4 — BUILT-IN METHODS
+════════════════════════════════════════════════ -->
+<section id="module4">
+  <div class="section-header">
+    <span class="section-number">Module 04</span>
+    <h2>Built-in Methods — Python-এর বিশেষ পদ্ধতি</h2>
+  </div>
+
+  <div class="box box-info">
+    <div class="box-title">🔮 Dunder Methods কী?</div>
+    <p>Python-এ কিছু special method আছে যাদের নামের শুরু এবং শেষে দুটো underscore (<code>__</code>) থাকে। এগুলোকে বলা হয় <strong>"Dunder methods"</strong> (Double UNDERscore) বা <strong>"Magic Methods"</strong>।</p>
+    <p>এই methods গুলো Python নিজে automatically call করে। যেমন <code>print(obj)</code> লিখলে Python <code>obj.__str__()</code> call করে।</p>
+  </div>
+
+  <!-- DIAGRAM — Dunder Methods -->
+  <div class="diagram-container">
+    <div class="diagram-title">Dunder Methods — কে কখন call হয়</div>
+    <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" style="max-width:760px;width:100%">
+      <defs>
+        <linearGradient id="dg" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#1a1f35"/>
+          <stop offset="100%" style="stop-color:#0d0f1a"/>
+        </linearGradient>
+      </defs>
+      <!-- Items -->
+      <g transform="translate(30,30)">
+        <!-- Row 1 -->
+        <rect x="0" y="0" width="200" height="55" rx="8" fill="rgba(108,99,255,0.15)" stroke="#6c63ff" stroke-width="1"/>
+        <text x="100" y="22" text-anchor="middle" fill="#a89bff" font-size="13" font-family="JetBrains Mono">print(obj)</text>
+        <text x="100" y="44" text-anchor="middle" fill="#6c7086" font-size="11" font-family="Hind Siliguri">print করলে</text>
+
+        <text x="230" y="34" fill="#43e97b" font-size="18">→</text>
+
+        <rect x="260" y="0" width="200" height="55" rx="8" fill="rgba(67,233,123,0.12)" stroke="#43e97b" stroke-width="1"/>
+        <text x="360" y="22" text-anchor="middle" fill="#43e97b" font-size="13" font-family="JetBrains Mono">__str__()</text>
+        <text x="360" y="44" text-anchor="middle" fill="#6c7086" font-size="11" font-family="Hind Siliguri">string representation</text>
+
+        <!-- Row 2 -->
+        <rect x="0" y="70" width="200" height="55" rx="8" fill="rgba(108,99,255,0.15)" stroke="#6c63ff" stroke-width="1"/>
+        <text x="100" y="92" text-anchor="middle" fill="#a89bff" font-size="13" font-family="JetBrains Mono">obj1 &lt; obj2</text>
+        <text x="100" y="114" text-anchor="middle" fill="#6c7086" font-size="11" font-family="Hind Siliguri">তুলনা করলে</text>
+
+        <text x="230" y="104" fill="#43e97b" font-size="18">→</text>
+
+        <rect x="260" y="70" width="200" height="55" rx="8" fill="rgba(67,233,123,0.12)" stroke="#43e97b" stroke-width="1"/>
+        <text x="360" y="92" text-anchor="middle" fill="#43e97b" font-size="13" font-family="JetBrains Mono">__lt__()</text>
+        <text x="360" y="114" text-anchor="middle" fill="#6c7086" font-size="11" font-family="Hind Siliguri">less than</text>
+
+        <!-- Row 3 -->
+        <rect x="0" y="140" width="200" height="55" rx="8" fill="rgba(108,99,255,0.15)" stroke="#6c63ff" stroke-width="1"/>
+        <text x="100" y="162" text-anchor="middle" fill="#a89bff" font-size="13" font-family="JetBrains Mono">obj1 + obj2</text>
+        <text x="100" y="184" text-anchor="middle" fill="#6c7086" font-size="11" font-family="Hind Siliguri">যোগ করলে</text>
+
+        <text x="230" y="174" fill="#43e97b" font-size="18">→</text>
+
+        <rect x="260" y="140" width="200" height="55" rx="8" fill="rgba(67,233,123,0.12)" stroke="#43e97b" stroke-width="1"/>
+        <text x="360" y="162" text-anchor="middle" fill="#43e97b" font-size="13" font-family="JetBrains Mono">__add__()</text>
+        <text x="360" y="184" text-anchor="middle" fill="#6c7086" font-size="11" font-family="Hind Siliguri">addition</text>
+
+        <!-- Row 4 -->
+        <rect x="0" y="210" width="200" height="55" rx="8" fill="rgba(108,99,255,0.15)" stroke="#6c63ff" stroke-width="1"/>
+        <text x="100" y="232" text-anchor="middle" fill="#a89bff" font-size="13" font-family="JetBrains Mono">len(obj)</text>
+        <text x="100" y="254" text-anchor="middle" fill="#6c7086" font-size="11" font-family="Hind Siliguri">দৈর্ঘ্য জানতে</text>
+
+        <text x="230" y="244" fill="#43e97b" font-size="18">→</text>
+
+        <rect x="260" y="210" width="200" height="55" rx="8" fill="rgba(67,233,123,0.12)" stroke="#43e97b" stroke-width="1"/>
+        <text x="360" y="232" text-anchor="middle" fill="#43e97b" font-size="13" font-family="JetBrains Mono">__len__()</text>
+        <text x="360" y="254" text-anchor="middle" fill="#6c7086" font-size="11" font-family="Hind Siliguri">length</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+      <div class="code-lang">Python — Complex Class সম্পূর্ণ Built-in Methods সহ</div>
+    </div>
+    <pre>
+<span class="k">import</span> numpy <span class="k">as</span> np
+
+<span class="k">class</span> <span class="cls">Complex</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>, a=<span class="n">0</span>, b=<span class="n">0</span>):
+        <span class="self">self</span>.<span class="attr">part_re</span> = a
+        <span class="self">self</span>.<span class="attr">part_im</span> = b
+
+    <span class="c"># ── __str__ : print(obj) call করলে এটা চলে ──</span>
+    <span class="k">def</span> <span class="f">__str__</span>(<span class="self">self</span>):
+        <span class="k">if</span> <span class="self">self</span>.<span class="attr">part_im</span> < <span class="n">0</span>:
+            <span class="k">return</span> <span class="s">f"{<span class="self">self</span>.<span class="attr">part_re</span>}{<span class="self">self</span>.<span class="attr">part_im</span>}i"</span>
+            <span class="c"># part_im ইতিমধ্যে negative, তাই সরাসরি দেখালে "3-2i"</span>
+        <span class="k">elif</span> <span class="self">self</span>.<span class="attr">part_im</span> == <span class="n">0</span>:
+            <span class="k">return</span> <span class="s">f"{<span class="self">self</span>.<span class="attr">part_re</span>}"</span>
+        <span class="k">else</span>:
+            <span class="k">return</span> <span class="s">f"{<span class="self">self</span>.<span class="attr">part_re</span>}+{<span class="self">self</span>.<span class="attr">part_im</span>}i"</span>
+
+    <span class="c"># ── mod : modulus |a+bi| = sqrt(a² + b²) ──</span>
+    <span class="k">def</span> <span class="f">mod</span>(<span class="self">self</span>):
+        <span class="k">return</span> np.<span class="f">sqrt</span>(<span class="self">self</span>.<span class="attr">part_re</span>**<span class="n">2</span> + <span class="self">self</span>.<span class="attr">part_im</span>**<span class="n">2</span>)
+
+    <span class="c"># ── __lt__ : obj1 < obj2 হলে এটা চলে ──</span>
+    <span class="k">def</span> <span class="f">__lt__</span>(<span class="self">self</span>, other):
+        <span class="k">return</span> <span class="self">self</span>.<span class="f">mod</span>() < other.<span class="f">mod</span>()
+
+    <span class="c"># ── __gt__ : obj1 > obj2 হলে এটা চলে ──</span>
+    <span class="k">def</span> <span class="f">__gt__</span>(<span class="self">self</span>, other):
+        <span class="k">return</span> <span class="self">self</span>.<span class="f">mod</span>() > other.<span class="f">mod</span>()
+
+    <span class="c"># ── __eq__ : obj1 == obj2 হলে এটা চলে ──</span>
+    <span class="k">def</span> <span class="f">__eq__</span>(<span class="self">self</span>, other):
+        <span class="k">return</span> <span class="self">self</span>.<span class="f">mod</span>() == other.<span class="f">mod</span>()
+
+    <span class="c"># ── __add__ : obj1 + obj2 হলে এটা চলে ──</span>
+    <span class="k">def</span> <span class="f">__add__</span>(<span class="self">self</span>, other):
+        <span class="k">return</span> <span class="cls">Complex</span>(<span class="self">self</span>.<span class="attr">part_re</span> + other.<span class="attr">part_re</span>,
+                        <span class="self">self</span>.<span class="attr">part_im</span> + other.<span class="attr">part_im</span>)
+
+<span class="c"># ── Test ──</span>
+C1 = <span class="cls">Complex</span>(<span class="n">3</span>, <span class="n">4</span>)   <span class="c"># |3+4i| = sqrt(9+16) = 5</span>
+C2 = <span class="cls">Complex</span>(<span class="n">2</span>, <span class="n">-5</span>)  <span class="c"># |2-5i| = sqrt(4+25) = sqrt(29) ≈ 5.39</span>
+
+<span class="f">print</span>(C1)          <span class="c"># → 3+4i  (__str__ call হয়)</span>
+<span class="f">print</span>(C2)          <span class="c"># → 2-5i</span>
+<span class="f">print</span>(C1 < C2)     <span class="c"># → True  (5 < 5.39)</span>
+<span class="f">print</span>(C1 > C2)     <span class="c"># → False</span>
+
+C3 = C1 + C2       <span class="c"># __add__ call হয়</span>
+<span class="f">print</span>(C3)          <span class="c"># → 5-1i</span>
+    </pre>
+  </div>
+
+  <!-- INTERVIEW -->
+  <div class="interview-section">
+    <div class="interview-title">🎯 Interview প্রশ্নোত্তর — Built-in Methods</div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q1</span> <code>__str__</code> এবং <code>__repr__</code>-এর পার্থক্য কী?</div>
+      <div class="q-answer"><code>__str__</code> user-friendly display-এর জন্য (<code>print()</code> use করে)। <code>__repr__</code> developer-friendly, debugging-এর জন্য — object recreate করা যায় এমন string। console-এ শুধু object type করলে <code>__repr__</code> দেখায়।</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q2</span> Operator overloading কী? এটা কেন useful?</div>
+      <div class="q-answer">Custom class-এ <code>+, -, *, >, <</code> ইত্যাদি operator define করা — dunder methods দিয়ে। Useful কারণ: NumPy array-এর <code>+</code> element-wise addition করে, Python-এর default <code>+</code> নয়। এটা code readable করে।</div>
+    </div>
+
+    <div class="q-item">
+      <div class="q-question"><span class="q-num">Q3</span> <code>__len__</code> implement করলে কী সুবিধা?</div>
+      <div class="q-answer">Custom object-এ <code>len()</code> function ব্যবহার করা যাবে। যেমন Dataset class-এ <code>__len__</code> define করলে <code>len(dataset)</code> লিখলেই sample count পাবো।</div>
+    </div>
+  </div>
+
+  <!-- EXERCISE -->
+  <div class="exercise-section">
+    <div class="exercise-title">⚙️ ML Engineering Exercises — Built-in Methods</div>
+    <div class="exercise-subtitle">Production-ready ML classes</div>
+
+    <div class="ex-item">
+      <span class="ex-tag tag-hard">Hard</span>
+      <h4>১. Tensor-like Class (NumPy-এর ছোট version)</h4>
+      <p>একটি <code>Vector</code> class তৈরি করো যেখানে: <code>__init__</code>(data list), <code>__str__</code>(human-readable), <code>__add__</code>(element-wise addition), <code>__mul__</code>(dot product), <code>__len__</code>(dimension count), <code>norm()</code> (L2 norm)।</p>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Solution</div></div>
+        <pre>
+<span class="k">import</span> math
+
+<span class="k">class</span> <span class="cls">Vector</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>, data):
+        <span class="self">self</span>.<span class="attr">data</span> = <span class="f">list</span>(data)
+
+    <span class="k">def</span> <span class="f">__str__</span>(<span class="self">self</span>):
+        vals = <span class="s">", "</span>.<span class="f">join</span>(<span class="f">str</span>(x) <span class="k">for</span> x <span class="k">in</span> <span class="self">self</span>.<span class="attr">data</span>)
+        <span class="k">return</span> <span class="s">f"Vector([{vals}])"</span>
+
+    <span class="k">def</span> <span class="f">__len__</span>(<span class="self">self</span>):
+        <span class="k">return</span> <span class="f">len</span>(<span class="self">self</span>.<span class="attr">data</span>)
+
+    <span class="k">def</span> <span class="f">__add__</span>(<span class="self">self</span>, other):
+        <span class="c"># Element-wise addition: [1,2] + [3,4] = [4,6]</span>
+        <span class="k">if</span> <span class="f">len</span>(<span class="self">self</span>) != <span class="f">len</span>(other):
+            <span class="k">raise</span> <span class="cls">ValueError</span>(<span class="s">"Vectors must have same dimension!"</span>)
+        <span class="k">return</span> <span class="cls">Vector</span>([a + b <span class="k">for</span> a, b <span class="k">in</span> <span class="f">zip</span>(<span class="self">self</span>.<span class="attr">data</span>, other.<span class="attr">data</span>)])
+
+    <span class="k">def</span> <span class="f">__mul__</span>(<span class="self">self</span>, other):
+        <span class="c"># Dot product: [1,2]·[3,4] = 1×3 + 2×4 = 11</span>
+        <span class="k">return</span> <span class="f">sum</span>(a * b <span class="k">for</span> a, b <span class="k">in</span> <span class="f">zip</span>(<span class="self">self</span>.<span class="attr">data</span>, other.<span class="attr">data</span>))
+
+    <span class="k">def</span> <span class="f">norm</span>(<span class="self">self</span>):
+        <span class="c"># L2 norm = sqrt(x₁² + x₂² + ... + xₙ²)</span>
+        <span class="k">return</span> math.<span class="f">sqrt</span>(<span class="f">sum</span>(x**<span class="n">2</span> <span class="k">for</span> x <span class="k">in</span> <span class="self">self</span>.<span class="attr">data</span>))
+
+<span class="c"># Test — ML-তে feature vectors-এর মতো</span>
+v1 = <span class="cls">Vector</span>([<span class="n">1</span>, <span class="n">2</span>, <span class="n">3</span>])   <span class="c"># sample 1</span>
+v2 = <span class="cls">Vector</span>([<span class="n">4</span>, <span class="n">5</span>, <span class="n">6</span>])   <span class="c"># sample 2</span>
+
+<span class="f">print</span>(v1)             <span class="c"># → Vector([1, 2, 3])</span>
+<span class="f">print</span>(v1 + v2)        <span class="c"># → Vector([5, 7, 9])</span>
+<span class="f">print</span>(v1 * v2)        <span class="c"># → 32  (dot product)</span>
+<span class="f">print</span>(<span class="f">len</span>(v1))         <span class="c"># → 3</span>
+<span class="f">print</span>(v1.<span class="f">norm</span>())       <span class="c"># → 3.742...</span>
+        </pre>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<div class="sep"></div>
+
+<!-- ═══════════════════════════════════════════════
+     ALGORITHMS
+════════════════════════════════════════════════ -->
+<section id="algorithms">
+  <div class="section-header">
+    <span class="section-number">Module 05</span>
+    <h2>Algorithms — কিন্ডারগার্টেন থেকে ML পর্যন্ত</h2>
+  </div>
+
+  <div class="box box-analogy">
+    <div class="box-title">🧩 Algorithm কী?</div>
+    <p>Algorithm হলো একটি <strong>ধাপে ধাপে নির্দেশনা</strong> — যেমন রান্নার recipe। তোমাকে বলা হলো: প্রথমে পেঁয়াজ কাটো, তারপর তেলে ভাজো, তারপর মাছ দাও... এই ধাপগুলোই একটি algorithm।</p>
+    <p>Computer-এ algorithm বলে: এই data নাও, এইভাবে প্রক্রিয়া করো, এই result দাও।</p>
+  </div>
+
+  <!-- ALGO 1 — BUBBLE SORT -->
+  <div class="algo-card">
+    <div class="algo-card-header">
+      <div class="algo-icon">🫧</div>
+      <div>
+        <div class="algo-name">Bubble Sort</div>
+        <div class="algo-complexity">Time: O(n²) | Space: O(1) | Stable: ✓</div>
+      </div>
+    </div>
+    <div class="algo-card-body">
+      <div class="box box-analogy">
+        <div class="box-title">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+        <p>ধরো ৫ জন বাচ্চা লাইনে দাঁড়িয়ে আছে, বিভিন্ন উচ্চতায়। তুমি পাশাপাশি দুজনকে দেখো — যদি বাম দিকের জন লম্বা হয়, তাহলে তাদের অদলবদল করো। এভাবে শেষ পর্যন্ত চলো। প্রতিটি round-এ সবচেয়ে লম্বা জন শেষে চলে যায় — বুদবুদের মতো উপরে উঠে যায়!</p>
+      </div>
+
+      <div class="diagram-container">
+        <div class="diagram-title">Bubble Sort — ধাপে ধাপে</div>
+        <svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%">
+          <defs>
+            <linearGradient id="barG" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#6c63ff"/>
+              <stop offset="100%" style="stop-color:#38f9d7"/>
+            </linearGradient>
+          </defs>
+          <!-- Initial -->
+          <text x="10" y="20" fill="#6c7086" font-size="11" font-family="Hind Siliguri">শুরু:</text>
+          <rect x="10" y="30" width="40" height="40" rx="5" fill="rgba(108,99,255,0.2)" stroke="#6c63ff" stroke-width="1.5"/>
+          <text x="30" y="56" text-anchor="middle" fill="#e8eaf6" font-size="16" font-family="JetBrains Mono">5</text>
+          <rect x="55" y="30" width="40" height="40" rx="5" fill="rgba(108,99,255,0.2)" stroke="#6c63ff" stroke-width="1.5"/>
+          <text x="75" y="56" text-anchor="middle" fill="#e8eaf6" font-size="16" font-family="JetBrains Mono">3</text>
+          <rect x="100" y="30" width="40" height="40" rx="5" fill="rgba(108,99,255,0.2)" stroke="#6c63ff" stroke-width="1.5"/>
+          <text x="120" y="56" text-anchor="middle" fill="#e8eaf6" font-size="16" font-family="JetBrains Mono">8</text>
+          <rect x="145" y="30" width="40" height="40" rx="5" fill="rgba(108,99,255,0.2)" stroke="#6c63ff" stroke-width="1.5"/>
+          <text x="165" y="56" text-anchor="middle" fill="#e8eaf6" font-size="16" font-family="JetBrains Mono">1</text>
+          <rect x="190" y="30" width="40" height="40" rx="5" fill="rgba(108,99,255,0.2)" stroke="#6c63ff" stroke-width="1.5"/>
+          <text x="210" y="56" text-anchor="middle" fill="#e8eaf6" font-size="16" font-family="JetBrains Mono">4</text>
+
+          <!-- Pass 1 -->
+          <text x="10" y="100" fill="#6c7086" font-size="11" font-family="Hind Siliguri">Pass 1 পর:</text>
+          <rect x="10" y="110" width="40" height="40" rx="5" fill="rgba(67,233,123,0.15)" stroke="#43e97b" stroke-width="1.5"/>
+          <text x="30" y="136" text-anchor="middle" fill="#e8eaf6" font-size="16" font-family="JetBrains Mono">3</text>
+          <rect x="55" y="110" width="40" height="40" rx="5" fill="rgba(67,233,123,0.15)" stroke="#43e97b" stroke-width="1.5"/>
+          <text x="75" y="136" text-anchor="middle" fill="#e8eaf6" font-size="16" font-family="JetBrains Mono">5</text>
+          <rect x="100" y="110" width="40" height="40" rx="5" fill="rgba(67,233,123,0.15)" stroke="#43e97b" stroke-width="1.5"/>
+          <text x="120" y="136" text-anchor="middle" fill="#e8eaf6" font-size="16" font-family="JetBrains Mono">1</text>
+          <rect x="145" y="110" width="40" height="40" rx="5" fill="rgba(67,233,123,0.15)" stroke="#43e97b" stroke-width="1.5"/>
+          <text x="165" y="136" text-anchor="middle" fill="#e8eaf6" font-size="16" font-family="JetBrains Mono">4</text>
+          <rect x="190" y="110" width="40" height="40" rx="5" fill="rgba(255,101,132,0.3)" stroke="#ff6584" stroke-width="2"/>
+          <text x="210" y="136" text-anchor="middle" fill="#ff6584" font-size="16" font-family="JetBrains Mono">8</text>
+          <text x="210" y="170" text-anchor="middle" fill="#ff6584" font-size="11" font-family="Hind Siliguri">✓ জায়গায়</text>
+
+          <!-- Final -->
+          <text x="350" y="20" fill="#6c7086" font-size="11" font-family="Hind Siliguri">চূড়ান্ত:</text>
+          <rect x="350" y="30" width="40" height="40" rx="5" fill="rgba(67,233,123,0.25)" stroke="#43e97b" stroke-width="2"/>
+          <text x="370" y="56" text-anchor="middle" fill="#43e97b" font-size="16" font-family="JetBrains Mono">1</text>
+          <rect x="395" y="30" width="40" height="40" rx="5" fill="rgba(67,233,123,0.25)" stroke="#43e97b" stroke-width="2"/>
+          <text x="415" y="56" text-anchor="middle" fill="#43e97b" font-size="16" font-family="JetBrains Mono">3</text>
+          <rect x="440" y="30" width="40" height="40" rx="5" fill="rgba(67,233,123,0.25)" stroke="#43e97b" stroke-width="2"/>
+          <text x="460" y="56" text-anchor="middle" fill="#43e97b" font-size="16" font-family="JetBrains Mono">4</text>
+          <rect x="485" y="30" width="40" height="40" rx="5" fill="rgba(67,233,123,0.25)" stroke="#43e97b" stroke-width="2"/>
+          <text x="505" y="56" text-anchor="middle" fill="#43e97b" font-size="16" font-family="JetBrains Mono">5</text>
+          <rect x="530" y="30" width="40" height="40" rx="5" fill="rgba(67,233,123,0.25)" stroke="#43e97b" stroke-width="2"/>
+          <text x="550" y="56" text-anchor="middle" fill="#43e97b" font-size="16" font-family="JetBrains Mono">8</text>
+          <text x="460" y="90" text-anchor="middle" fill="#43e97b" font-size="13" font-family="Hind Siliguri">✓ সম্পূর্ণ sorted!</text>
+        </svg>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Python — Bubble Sort</div></div>
+        <pre>
+<span class="k">def</span> <span class="f">bubble_sort</span>(arr):
+    n = <span class="f">len</span>(arr)
+    <span class="k">for</span> i <span class="k">in</span> <span class="f">range</span>(n):            <span class="c"># n বার round চলবে</span>
+        swapped = <span class="k">False</span>
+        <span class="k">for</span> j <span class="k">in</span> <span class="f">range</span>(n - i - <span class="n">1</span>):  <span class="c"># শেষের sorted অংশ বাদ</span>
+            <span class="k">if</span> arr[j] > arr[j + <span class="n">1</span>]:   <span class="c"># পাশাপাশি তুলনা</span>
+                arr[j], arr[j+<span class="n">1</span>] = arr[j+<span class="n">1</span>], arr[j]  <span class="c"># swap!</span>
+                swapped = <span class="k">True</span>
+        <span class="k">if</span> <span class="k">not</span> swapped:
+            <span class="k">break</span>   <span class="c"># কোনো swap না হলে already sorted</span>
+    <span class="k">return</span> arr
+
+<span class="c"># ML use case: accuracy scores sort করা</span>
+scores = [<span class="n">0.72</span>, <span class="n">0.91</span>, <span class="n">0.65</span>, <span class="n">0.88</span>, <span class="n">0.79</span>]
+<span class="f">print</span>(bubble_sort(scores))  <span class="c"># → [0.65, 0.72, 0.79, 0.88, 0.91]</span>
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 2 — BINARY SEARCH -->
+  <div class="algo-card">
+    <div class="algo-card-header">
+      <div class="algo-icon">🔍</div>
+      <div>
+        <div class="algo-name">Binary Search</div>
+        <div class="algo-complexity">Time: O(log n) | Space: O(1) | Requires sorted input</div>
+      </div>
+    </div>
+    <div class="algo-card-body">
+      <div class="box box-analogy">
+        <div class="box-title">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+        <p>Dictionary-তে "mango" খুঁজছো। তুমি কি প্রথম পৃষ্ঠা থেকে শুরু করবে? না! তুমি মাঝখানে খুলবে। যদি মাঝখানে "monkey" থাকে, তুমি বুঝবে "mango" আগে আছে, তাই আগের অর্ধেকে যাবে। এভাবে প্রতিবার অর্ধেক বাদ দিতে দিতে খুব দ্রুত পাবে!</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Python — Binary Search</div></div>
+        <pre>
+<span class="k">def</span> <span class="f">binary_search</span>(arr, target):
+    left, right = <span class="n">0</span>, <span class="f">len</span>(arr) - <span class="n">1</span>
+
+    <span class="k">while</span> left <= right:
+        mid = (left + right) // <span class="n">2</span>   <span class="c"># মাঝের index</span>
+
+        <span class="k">if</span> arr[mid] == target:
+            <span class="k">return</span> mid              <span class="c"># পেয়ে গেছি!</span>
+        <span class="k">elif</span> arr[mid] < target:
+            left = mid + <span class="n">1</span>          <span class="c"># ডান দিকে যাও</span>
+        <span class="k">else</span>:
+            right = mid - <span class="n">1</span>         <span class="c"># বাম দিকে যাও</span>
+
+    <span class="k">return</span> -<span class="n">1</span>   <span class="c"># পাওয়া যায়নি</span>
+
+<span class="c"># ML use case: optimal threshold খোঁজা</span>
+thresholds = [<span class="n">0.1</span>, <span class="n">0.2</span>, <span class="n">0.3</span>, <span class="n">0.4</span>, <span class="n">0.5</span>, <span class="n">0.6</span>, <span class="n">0.7</span>, <span class="n">0.8</span>]
+idx = <span class="f">binary_search</span>(thresholds, <span class="n">0.5</span>)
+<span class="f">print</span>(<span class="s">f"0.5 পাওয়া গেছে index: {idx}"</span>)  <span class="c"># → 4</span>
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 3 — LINEAR REGRESSION -->
+  <div class="algo-card">
+    <div class="algo-card-header">
+      <div class="algo-icon">📈</div>
+      <div>
+        <div class="algo-name">Linear Regression (Gradient Descent)</div>
+        <div class="algo-complexity">ML Core Algorithm | Iterative Optimization</div>
+      </div>
+    </div>
+    <div class="algo-card-body">
+      <div class="box box-analogy">
+        <div class="box-title">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+        <p>তুমি পাহাড়ের চূড়ায় দাঁড়িয়ে আছো, চোখ বাঁধা। নিচে নামতে হবে। তুমি পা দিয়ে অনুভব করো — যেদিকে ঢাল বেশি সেদিকে এক পা যাও। আবার অনুভব করো, আবার এক পা। এভাবে ধীরে ধীরে সবচেয়ে নিচু জায়গায় (minimum) পৌঁছাও। এটাই Gradient Descent!</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Python — Linear Regression with Gradient Descent (OOP)</div></div>
+        <pre>
+<span class="k">class</span> <span class="cls">LinearRegression</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>, lr=<span class="n">0.01</span>, epochs=<span class="n">1000</span>):
+        <span class="self">self</span>.<span class="attr">lr</span> = lr           <span class="c"># learning rate = প্রতিবার কতটুকু পা দেবো</span>
+        <span class="self">self</span>.<span class="attr">epochs</span> = epochs  <span class="c"># কতবার পুরো process চলবে</span>
+        <span class="self">self</span>.<span class="attr">weight</span> = <span class="n">0.0</span>    <span class="c"># slope (শুরুতে 0)</span>
+        <span class="self">self</span>.<span class="attr">bias</span> = <span class="n">0.0</span>      <span class="c"># intercept (শুরুতে 0)</span>
+
+    <span class="k">def</span> <span class="f">predict</span>(<span class="self">self</span>, X):
+        <span class="c"># y = weight * x + bias</span>
+        <span class="k">return</span> [<span class="self">self</span>.<span class="attr">weight</span> * x + <span class="self">self</span>.<span class="attr">bias</span> <span class="k">for</span> x <span class="k">in</span> X]
+
+    <span class="k">def</span> <span class="f">mse_loss</span>(<span class="self">self</span>, y_pred, y_true):
+        <span class="c"># Mean Squared Error: গড় ভুলের বর্গ</span>
+        n = <span class="f">len</span>(y_true)
+        <span class="k">return</span> <span class="f">sum</span>((p - t)**<span class="n">2</span> <span class="k">for</span> p, t <span class="k">in</span> <span class="f">zip</span>(y_pred, y_true)) / n
+
+    <span class="k">def</span> <span class="f">train</span>(<span class="self">self</span>, X, y):
+        n = <span class="f">len</span>(X)
+        <span class="k">for</span> epoch <span class="k">in</span> <span class="f">range</span>(<span class="self">self</span>.<span class="attr">epochs</span>):
+            y_pred = <span class="self">self</span>.<span class="f">predict</span>(X)
+
+            <span class="c"># Gradient (ঢাল) calculate করো</span>
+            dw = (<span class="n">-2</span>/<span class="n">n</span>) * <span class="f">sum</span>(x*(t-p) <span class="k">for</span> x,t,p <span class="k">in</span> <span class="f">zip</span>(X,y,y_pred))
+            db = (<span class="n">-2</span>/<span class="n">n</span>) * <span class="f">sum</span>(t-p <span class="k">for</span> t,p <span class="k">in</span> <span class="f">zip</span>(y,y_pred))
+
+            <span class="c"># Weight update (ঢালের বিপরীতে এক পা)</span>
+            <span class="self">self</span>.<span class="attr">weight</span> -= <span class="self">self</span>.<span class="attr">lr</span> * dw
+            <span class="self">self</span>.<span class="attr">bias</span>   -= <span class="self">self</span>.<span class="attr">lr</span> * db
+
+            <span class="k">if</span> epoch % <span class="n">200</span> == <span class="n">0</span>:
+                loss = <span class="self">self</span>.<span class="f">mse_loss</span>(y_pred, y)
+                <span class="f">print</span>(<span class="s">f"Epoch {epoch}: Loss={loss:.4f}, w={<span class="self">self</span>.<span class="attr">weight</span>:.4f}"</span>)
+
+<span class="c"># Test: ঘরের আয়তন → দাম predict করা</span>
+X_train = [<span class="n">50</span>, <span class="n">60</span>, <span class="n">70</span>, <span class="n">80</span>, <span class="n">90</span>]    <span class="c"># বর্গমিটার</span>
+y_train = [<span class="n">50000</span>, <span class="n">60000</span>, <span class="n">70000</span>, <span class="n">80000</span>, <span class="n">90000</span>]  <span class="c"># টাকা</span>
+
+model = <span class="cls">LinearRegression</span>(lr=<span class="n">0.0001</span>, epochs=<span class="n">1000</span>)
+model.<span class="f">train</span>(X_train, y_train)
+<span class="f">print</span>(<span class="s">f"100 বর্গমিটার ঘরের দাম: {model.<span class="f">predict</span>([<span class="n">100</span>])[<span class="n">0</span>]:.0f} টাকা"</span>)
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 4 — KNN -->
+  <div class="algo-card">
+    <div class="algo-card-header">
+      <div class="algo-icon">🏘️</div>
+      <div>
+        <div class="algo-name">K-Nearest Neighbors (KNN)</div>
+        <div class="algo-complexity">Time: O(n·d) | Space: O(n) | Non-parametric</div>
+      </div>
+    </div>
+    <div class="algo-card-body">
+      <div class="box box-analogy">
+        <div class="box-title">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+        <p>তুমি একটি নতুন শহরে এসেছো। তোমার পাশের ৫ জন প্রতিবেশী কোন দলকে support করে সেটা দেখলে। যদি ৪ জন লাল দলকে support করে, তুমিও সম্ভবত লাল দলের এলাকায় আছো। KNN ঠিক এভাবে কাজ করে — নতুন point-এর কাছের K টি প্রতিবেশী দেখে class নির্ধারণ করে।</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Python — KNN Classifier (OOP)</div></div>
+        <pre>
+<span class="k">import</span> math
+<span class="k">from</span> collections <span class="k">import</span> Counter
+
+<span class="k">class</span> <span class="cls">KNNClassifier</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>, k=<span class="n">3</span>):
+        <span class="self">self</span>.<span class="attr">k</span> = k
+        <span class="self">self</span>.<span class="attr">X_train</span> = []
+        <span class="self">self</span>.<span class="attr">y_train</span> = []
+
+    <span class="k">def</span> <span class="f">_distance</span>(<span class="self">self</span>, a, b):
+        <span class="c"># Euclidean distance: দুটো point-এর মধ্যে সরলরেখার দূরত্ব</span>
+        <span class="k">return</span> math.<span class="f">sqrt</span>(<span class="f">sum</span>((x - y)**<span class="n">2</span> <span class="k">for</span> x, y <span class="k">in</span> <span class="f">zip</span>(a, b)))
+
+    <span class="k">def</span> <span class="f">fit</span>(<span class="self">self</span>, X, y):
+        <span class="c"># KNN-এ training = শুধু data মনে রাখা</span>
+        <span class="self">self</span>.<span class="attr">X_train</span> = X
+        <span class="self">self</span>.<span class="attr">y_train</span> = y
+
+    <span class="k">def</span> <span class="f">predict</span>(<span class="self">self</span>, X_test):
+        predictions = []
+        <span class="k">for</span> x <span class="k">in</span> X_test:
+            <span class="c"># সব training point-এর দূরত্ব calculate করো</span>
+            distances = [(self._distance(x, xi), yi)
+                         <span class="k">for</span> xi, yi <span class="k">in</span> <span class="f">zip</span>(<span class="self">self</span>.<span class="attr">X_train</span>, <span class="self">self</span>.<span class="attr">y_train</span>)]
+
+            <span class="c"># ছোট থেকে বড় sort করে K টি নাও</span>
+            distances.<span class="f">sort</span>(key=<span class="k">lambda</span> d: d[<span class="n">0</span>])
+            k_nearest = [label <span class="k">for</span> _, label <span class="k">in</span> distances[:<span class="self">self</span>.<span class="attr">k</span>]]
+
+            <span class="c"># সংখ্যাগরিষ্ঠ class জিতবে (majority vote)</span>
+            vote = Counter(k_nearest).<span class="f">most_common</span>(<span class="n">1</span>)[<span class="n">0</span>][<span class="n">0</span>]
+            predictions.<span class="f">append</span>(vote)
+        <span class="k">return</span> predictions
+
+<span class="c"># Test: রোগী detect করা (features: age, heart_rate)</span>
+X_train = [[<span class="n">25</span>, <span class="n">72</span>], [<span class="n">30</span>, <span class="n">75</span>], [<span class="n">60</span>, <span class="n">95</span>], [<span class="n">65</span>, <span class="n">98</span>], [<span class="n">70</span>, <span class="n">102</span>]]
+y_train = [<span class="s">"healthy"</span>, <span class="s">"healthy"</span>, <span class="s">"risk"</span>, <span class="s">"risk"</span>, <span class="s">"risk"</span>]
+
+knn = <span class="cls">KNNClassifier</span>(k=<span class="n">3</span>)
+knn.<span class="f">fit</span>(X_train, y_train)
+result = knn.<span class="f">predict</span>([[<span class="n">55</span>, <span class="n">90</span>]])
+<span class="f">print</span>(<span class="s">f"55 বছর, HR=90: {result[0]}"</span>)   <span class="c"># → risk</span>
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 5 — MERGE SORT -->
+  <div class="algo-card">
+    <div class="algo-card-header">
+      <div class="algo-icon">🔀</div>
+      <div>
+        <div class="algo-name">Merge Sort</div>
+        <div class="algo-complexity">Time: O(n log n) | Space: O(n) | Stable: ✓</div>
+      </div>
+    </div>
+    <div class="algo-card-body">
+      <div class="box box-analogy">
+        <div class="box-title">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+        <p>তোমার কাছে ৮টি তাস আছে, অগোছালো। তুমি সেগুলোকে দুভাগ করলে (৪+৪)। প্রতিটি ভাগকে আবার দুভাগ (২+২)। যতক্ষণ না প্রতিটি ভাগে একটি তাস। এরপর দুটো ভাগ মিলিয়ে গোছানো ভাগ তৈরি করো। এভাবে সব মিলিয়ে শেষে সব গোছানো!</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Python — Merge Sort</div></div>
+        <pre>
+<span class="k">def</span> <span class="f">merge_sort</span>(arr):
+    <span class="k">if</span> <span class="f">len</span>(arr) <= <span class="n">1</span>:      <span class="c"># base case: একটি element = already sorted</span>
+        <span class="k">return</span> arr
+
+    mid = <span class="f">len</span>(arr) // <span class="n">2</span>   <span class="c"># মাঝখানে ভাগ করো</span>
+    left  = <span class="f">merge_sort</span>(arr[:mid])   <span class="c"># বাম অর্ধেক sort করো</span>
+    right = <span class="f">merge_sort</span>(arr[mid:])   <span class="c"># ডান অর্ধেক sort করো</span>
+
+    <span class="k">return</span> <span class="f">merge</span>(left, right)       <span class="c"># দুটো মিলিয়ে দাও</span>
+
+<span class="k">def</span> <span class="f">merge</span>(left, right):
+    result = []
+    i = j = <span class="n">0</span>
+    <span class="k">while</span> i < <span class="f">len</span>(left) <span class="k">and</span> j < <span class="f">len</span>(right):
+        <span class="k">if</span> left[i] <= right[j]:
+            result.<span class="f">append</span>(left[i])
+            i += <span class="n">1</span>
+        <span class="k">else</span>:
+            result.<span class="f">append</span>(right[j])
+            j += <span class="n">1</span>
+    <span class="k">return</span> result + left[i:] + right[j:]   <span class="c"># বাকিটা যোগ</span>
+
+<span class="c"># ML use case: model accuracy sort</span>
+models = [(<span class="s">'LR'</span>,<span class="n">0.82</span>), (<span class="s">'RF'</span>,<span class="n">0.91</span>), (<span class="s">'SVM'</span>,<span class="n">0.78</span>), (<span class="s">'XGB'</span>,<span class="n">0.95</span>)]
+scores = [m[<span class="n">1</span>] <span class="k">for</span> m <span class="k">in</span> models]
+<span class="f">print</span>(<span class="f">merge_sort</span>(scores))  <span class="c"># → [0.78, 0.82, 0.91, 0.95]</span>
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 6 — DECISION TREE -->
+  <div class="algo-card">
+    <div class="algo-card-header">
+      <div class="algo-icon">🌳</div>
+      <div>
+        <div class="algo-name">Decision Tree (Simplified)</div>
+        <div class="algo-complexity">Recursive splitting | Gini/Entropy impurity</div>
+      </div>
+    </div>
+    <div class="algo-card-body">
+      <div class="box box-analogy">
+        <div class="box-title">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+        <p>তুমি "এটা কি কলা?" বলছো। প্রশ্ন করো: <em>হলুদ কি?</em> → হ্যাঁ? → <em>বাঁকা কি?</em> → হ্যাঁ? → এটা কলা। এভাবে হ্যাঁ/না প্রশ্নের গাছ দিয়ে যেকোনো জিনিস চেনা যায়। এটাই Decision Tree!</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Python — Decision Tree Node (OOP with Inheritance)</div></div>
+        <pre>
+<span class="k">class</span> <span class="cls">TreeNode</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>, feature=<span class="k">None</span>, threshold=<span class="k">None</span>,
+                 left=<span class="k">None</span>, right=<span class="k">None</span>, value=<span class="k">None</span>):
+        <span class="self">self</span>.<span class="attr">feature</span> = feature      <span class="c"># কোন feature দিয়ে ভাগ</span>
+        <span class="self">self</span>.<span class="attr">threshold</span> = threshold  <span class="c"># কত মানে ভাগ</span>
+        <span class="self">self</span>.<span class="attr">left</span> = left            <span class="c"># বাম শাখা</span>
+        <span class="self">self</span>.<span class="attr">right</span> = right          <span class="c"># ডান শাখা</span>
+        <span class="self">self</span>.<span class="attr">value</span> = value          <span class="c"># Leaf node-এর class</span>
+
+    <span class="k">def</span> <span class="f">is_leaf</span>(<span class="self">self</span>):
+        <span class="k">return</span> <span class="self">self</span>.<span class="attr">value</span> <span class="k">is not</span> <span class="k">None</span>
+
+
+<span class="k">class</span> <span class="cls">SimpleDecisionTree</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>):
+        <span class="self">self</span>.<span class="attr">root</span> = <span class="k">None</span>
+
+    <span class="k">def</span> <span class="f">_gini</span>(<span class="self">self</span>, labels):
+        <span class="c"># Gini impurity: কতটা mixed? (0 = pure, 0.5 = most mixed)</span>
+        n = <span class="f">len</span>(labels)
+        <span class="k">if</span> n == <span class="n">0</span>:
+            <span class="k">return</span> <span class="n">0</span>
+        <span class="k">from</span> collections <span class="k">import</span> Counter
+        counts = Counter(labels)
+        <span class="k">return</span> <span class="n">1</span> - <span class="f">sum</span>((c/n)**<span class="n">2</span> <span class="k">for</span> c <span class="k">in</span> counts.<span class="f">values</span>())
+
+    <span class="k">def</span> <span class="f">predict_one</span>(<span class="self">self</span>, node, x):
+        <span class="k">if</span> node.<span class="f">is_leaf</span>():
+            <span class="k">return</span> node.<span class="attr">value</span>
+        <span class="k">if</span> x[node.<span class="attr">feature</span>] <= node.<span class="attr">threshold</span>:
+            <span class="k">return</span> <span class="self">self</span>.<span class="f">predict_one</span>(node.<span class="attr">left</span>, x)
+        <span class="k">return</span> <span class="self">self</span>.<span class="f">predict_one</span>(node.<span class="attr">right</span>, x)
+
+<span class="c"># Example: manually built tree (age > 50 → risk)</span>
+tree = <span class="cls">SimpleDecisionTree</span>()
+tree.<span class="attr">root</span> = <span class="cls">TreeNode</span>(
+    feature=<span class="n">0</span>, threshold=<span class="n">50</span>,     <span class="c"># feature 0 = age</span>
+    left  = <span class="cls">TreeNode</span>(value=<span class="s">"healthy"</span>),
+    right = <span class="cls">TreeNode</span>(value=<span class="s">"risk"</span>)
+)
+
+patients = [[<span class="n">30</span>, <span class="n">72</span>], [<span class="n">65</span>, <span class="n">95</span>], [<span class="n">45</span>, <span class="n">80</span>]]
+<span class="k">for</span> p <span class="k">in</span> patients:
+    <span class="f">print</span>(<span class="s">f"Age={p[0]}: {tree.<span class="f">predict_one</span>(tree.<span class="attr">root</span>, p)}"</span>)
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 7 — HASH TABLE -->
+  <div class="algo-card">
+    <div class="algo-card-header">
+      <div class="algo-icon">🗃️</div>
+      <div>
+        <div class="algo-name">Hash Table / Dictionary</div>
+        <div class="algo-complexity">Time: O(1) avg | Space: O(n) | Key-Value storage</div>
+      </div>
+    </div>
+    <div class="algo-card-body">
+      <div class="box box-analogy">
+        <div class="box-title">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+        <p>Library-তে বই খুঁজছো "Harry Potter"। Library-র লোক কোনো খোঁজ না করেই সরাসরি বলে "Rack 7, Shelf 3"। কারণ প্রতিটি বইয়ের নাম থেকে একটি সংখ্যা (hash) বের করে সেই নম্বরের rack-এ রাখা হয়। এটাই Hash Table!</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Python — Hash Table (OOP)</div></div>
+        <pre>
+<span class="k">class</span> <span class="cls">HashTable</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>, size=<span class="n">10</span>):
+        <span class="self">self</span>.<span class="attr">size</span> = size
+        <span class="self">self</span>.<span class="attr">table</span> = [[] <span class="k">for</span> _ <span class="k">in</span> <span class="f">range</span>(size)]  <span class="c"># প্রতিটি slot খালি list</span>
+
+    <span class="k">def</span> <span class="f">_hash</span>(<span class="self">self</span>, key):
+        <span class="c"># key থেকে index বের করো</span>
+        <span class="k">return</span> <span class="f">hash</span>(key) % <span class="self">self</span>.<span class="attr">size</span>
+
+    <span class="k">def</span> <span class="f">set</span>(<span class="self">self</span>, key, value):
+        idx = <span class="self">self</span>.<span class="f">_hash</span>(key)
+        <span class="k">for</span> pair <span class="k">in</span> <span class="self">self</span>.<span class="attr">table</span>[idx]:
+            <span class="k">if</span> pair[<span class="n">0</span>] == key:
+                pair[<span class="n">1</span>] = value  <span class="c"># আগে থাকলে update</span>
+                <span class="k">return</span>
+        <span class="self">self</span>.<span class="attr">table</span>[idx].<span class="f">append</span>([key, value])  <span class="c"># নতুন যোগ</span>
+
+    <span class="k">def</span> <span class="f">get</span>(<span class="self">self</span>, key):
+        idx = <span class="self">self</span>.<span class="f">_hash</span>(key)
+        <span class="k">for</span> pair <span class="k">in</span> <span class="self">self</span>.<span class="attr">table</span>[idx]:
+            <span class="k">if</span> pair[<span class="n">0</span>] == key:
+                <span class="k">return</span> pair[<span class="n">1</span>]
+        <span class="k">return</span> <span class="k">None</span>   <span class="c"># না পেলে None</span>
+
+<span class="c"># ML use case: feature importance cache করা</span>
+ht = <span class="cls">HashTable</span>()
+ht.<span class="f">set</span>(<span class="s">"age"</span>, <span class="n">0.35</span>)
+ht.<span class="f">set</span>(<span class="s">"bmi"</span>, <span class="n">0.28</span>)
+ht.<span class="f">set</span>(<span class="s">"glucose"</span>, <span class="n">0.42</span>)
+<span class="f">print</span>(ht.<span class="f">get</span>(<span class="s">"glucose"</span>))   <span class="c"># → 0.42  (instant O(1) lookup)</span>
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 8 — STACK/QUEUE -->
+  <div class="algo-card">
+    <div class="algo-card-header">
+      <div class="algo-icon">📚</div>
+      <div>
+        <div class="algo-name">Stack & Queue</div>
+        <div class="algo-complexity">Stack: LIFO | Queue: FIFO | Time: O(1)</div>
+      </div>
+    </div>
+    <div class="algo-card-body">
+      <div class="box box-analogy">
+        <div class="box-title">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+        <p><strong>Stack</strong>: বই-এর স্তূপ — শেষে রাখলে প্রথমে নিতে হয় (LIFO: Last In, First Out)। <br><strong>Queue</strong>: দোকানের লাইন — আগে এলে আগে সেবা পাবে (FIFO: First In, First Out)।</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Python — Stack & Queue (OOP)</div></div>
+        <pre>
+<span class="k">class</span> <span class="cls">Stack</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>):
+        <span class="self">self</span>.<span class="attr">items</span> = []
+
+    <span class="k">def</span> <span class="f">push</span>(<span class="self">self</span>, item):   <span class="c"># উপরে রাখো</span>
+        <span class="self">self</span>.<span class="attr">items</span>.<span class="f">append</span>(item)
+
+    <span class="k">def</span> <span class="f">pop</span>(<span class="self">self</span>):          <span class="c"># উপর থেকে তুলে নাও</span>
+        <span class="k">return</span> <span class="self">self</span>.<span class="attr">items</span>.<span class="f">pop</span>() <span class="k">if</span> <span class="self">self</span>.<span class="attr">items</span> <span class="k">else</span> <span class="k">None</span>
+
+    <span class="k">def</span> <span class="f">__len__</span>(<span class="self">self</span>): <span class="k">return</span> <span class="f">len</span>(<span class="self">self</span>.<span class="attr">items</span>)
+
+
+<span class="k">class</span> <span class="cls">Queue</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>):
+        <span class="self">self</span>.<span class="attr">items</span> = []
+
+    <span class="k">def</span> <span class="f">enqueue</span>(<span class="self">self</span>, item):  <span class="c"># লাইনে যোগ</span>
+        <span class="self">self</span>.<span class="attr">items</span>.<span class="f">append</span>(item)
+
+    <span class="k">def</span> <span class="f">dequeue</span>(<span class="self">self</span>):         <span class="c"># সামনে থেকে বের করো</span>
+        <span class="k">return</span> <span class="self">self</span>.<span class="attr">items</span>.<span class="f">pop</span>(<span class="n">0</span>) <span class="k">if</span> <span class="self">self</span>.<span class="attr">items</span> <span class="k">else</span> <span class="k">None</span>
+
+<span class="c"># ML use case: training job queue</span>
+job_queue = <span class="cls">Queue</span>()
+<span class="k">for</span> model <span class="k">in</span> [<span class="s">'RandomForest'</span>, <span class="s">'XGBoost'</span>, <span class="s">'LightGBM'</span>]:
+    job_queue.<span class="f">enqueue</span>(model)
+
+<span class="k">while</span> job_queue.<span class="attr">items</span>:
+    job = job_queue.<span class="f">dequeue</span>()
+    <span class="f">print</span>(<span class="s">f"Training: {job}..."</span>)
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 9 — RECURSION -->
+  <div class="algo-card">
+    <div class="algo-card-header">
+      <div class="algo-icon">🔄</div>
+      <div>
+        <div class="algo-name">Recursion — নিজের মধ্যে নিজে</div>
+        <div class="algo-complexity">Divide & Conquer | Base case + Recursive case</div>
+      </div>
+    </div>
+    <div class="algo-card-body">
+      <div class="box box-analogy">
+        <div class="box-title">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+        <p>তুমি সিঁড়ির কত ধাপ আছে জানতে চাও। তুমি বলতে পারো: "১ম ধাপ + বাকি ধাপের সংখ্যা"। বাকি ধাপের সংখ্যা বলতে? "১ম ধাপ + আরও বাকির সংখ্যা"... এভাবে চলতে থাকে যতক্ষণ না সিঁড়ি শেষ হয় (base case)।</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Python — Recursion উদাহরণ</div></div>
+        <pre>
+<span class="c"># Factorial: n! = n × (n-1) × (n-2) × ... × 1</span>
+<span class="k">def</span> <span class="f">factorial</span>(n):
+    <span class="k">if</span> n == <span class="n">0</span>:            <span class="c"># Base case: 0! = 1</span>
+        <span class="k">return</span> <span class="n">1</span>
+    <span class="k">return</span> n * <span class="f">factorial</span>(n - <span class="n">1</span>)  <span class="c"># Recursive case</span>
+
+<span class="f">print</span>(<span class="f">factorial</span>(<span class="n">5</span>))    <span class="c"># 5 × 4 × 3 × 2 × 1 = 120</span>
+
+<span class="c"># ML use case: Nested JSON/config flatten করা</span>
+<span class="k">def</span> <span class="f">flatten_config</span>(d, parent_key=<span class="s">""</span>, result=<span class="k">None</span>):
+    <span class="k">if</span> result <span class="k">is</span> <span class="k">None</span>:
+        result = {}
+    <span class="k">for</span> k, v <span class="k">in</span> d.<span class="f">items</span>():
+        key = <span class="s">f"{parent_key}.{k}"</span> <span class="k">if</span> parent_key <span class="k">else</span> k
+        <span class="k">if</span> <span class="f">isinstance</span>(v, <span class="f">dict</span>):
+            <span class="f">flatten_config</span>(v, key, result)   <span class="c"># Recursive call!</span>
+        <span class="k">else</span>:
+            result[key] = v
+    <span class="k">return</span> result
+
+config = {
+    <span class="s">"model"</span>: {<span class="s">"lr"</span>: <span class="n">0.01</span>, <span class="s">"epochs"</span>: <span class="n">100</span>},
+    <span class="s">"data"</span>:  {<span class="s">"batch_size"</span>: <span class="n">32</span>, <span class="s">"shuffle"</span>: <span class="k">True</span>}
+}
+<span class="f">print</span>(<span class="f">flatten_config</span>(config))
+<span class="c"># → {'model.lr': 0.01, 'model.epochs': 100, 'data.batch_size': 32, ...}</span>
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 10 — GRAPH BFS/DFS -->
+  <div class="algo-card">
+    <div class="algo-card-header">
+      <div class="algo-icon">🕸️</div>
+      <div>
+        <div class="algo-name">Graph Traversal — BFS & DFS</div>
+        <div class="algo-complexity">BFS: Queue | DFS: Stack/Recursion | Time: O(V+E)</div>
+      </div>
+    </div>
+    <div class="algo-card-body">
+      <div class="box box-analogy">
+        <div class="box-title">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+        <p><strong>BFS (Breadth First Search)</strong>: তুমি দরজা খুঁজছো। প্রথমে তোমার ঘর চেক করো, তারপর পাশের ঘর, তারপর তার পাশের ঘর — এভাবে বাইরের দিকে ছড়িয়ে যাও।<br><strong>DFS (Depth First Search)</strong>: একটি রাস্তায় শুরু করো, যতদূর যাওয়া যায় যাও,막히লে ফিরে আসো, অন্য রাস্তায় যাও।</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Python — BFS & DFS (OOP)</div></div>
+        <pre>
+<span class="k">from</span> collections <span class="k">import</span> deque
+
+<span class="k">class</span> <span class="cls">Graph</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>):
+        <span class="self">self</span>.<span class="attr">adj</span> = {}   <span class="c"># adjacency list: কে কার সাথে connected</span>
+
+    <span class="k">def</span> <span class="f">add_edge</span>(<span class="self">self</span>, u, v):
+        <span class="self">self</span>.<span class="attr">adj</span>.<span class="f">setdefault</span>(u, []).<span class="f">append</span>(v)
+        <span class="self">self</span>.<span class="attr">adj</span>.<span class="f">setdefault</span>(v, []).<span class="f">append</span>(u)
+
+    <span class="k">def</span> <span class="f">bfs</span>(<span class="self">self</span>, start):
+        <span class="c"># Queue দিয়ে level-by-level traverse</span>
+        visited = <span class="f">set</span>()
+        queue = deque([start])
+        visited.<span class="f">add</span>(start)
+        order = []
+        <span class="k">while</span> queue:
+            node = queue.<span class="f">popleft</span>()
+            order.<span class="f">append</span>(node)
+            <span class="k">for</span> neighbor <span class="k">in</span> <span class="self">self</span>.<span class="attr">adj</span>.<span class="f">get</span>(node, []):
+                <span class="k">if</span> neighbor <span class="k">not in</span> visited:
+                    visited.<span class="f">add</span>(neighbor)
+                    queue.<span class="f">append</span>(neighbor)
+        <span class="k">return</span> order
+
+    <span class="k">def</span> <span class="f">dfs</span>(<span class="self">self</span>, start, visited=<span class="k">None</span>):
+        <span class="c"># Recursion দিয়ে deep traverse</span>
+        <span class="k">if</span> visited <span class="k">is</span> <span class="k">None</span>: visited = <span class="f">set</span>()
+        visited.<span class="f">add</span>(start)
+        result = [start]
+        <span class="k">for</span> neighbor <span class="k">in</span> <span class="self">self</span>.<span class="attr">adj</span>.<span class="f">get</span>(start, []):
+            <span class="k">if</span> neighbor <span class="k">not in</span> visited:
+                result += <span class="self">self</span>.<span class="f">dfs</span>(neighbor, visited)
+        <span class="k">return</span> result
+
+<span class="c"># ML use case: Neural network layer connectivity</span>
+g = <span class="cls">Graph</span>()
+g.<span class="f">add_edge</span>(<span class="s">"input"</span>, <span class="s">"hidden1"</span>)
+g.<span class="f">add_edge</span>(<span class="s">"hidden1"</span>, <span class="s">"hidden2"</span>)
+g.<span class="f">add_edge</span>(<span class="s">"hidden2"</span>, <span class="s">"output"</span>)
+<span class="f">print</span>(<span class="s">"BFS:"</span>, g.<span class="f">bfs</span>(<span class="s">"input"</span>))   <span class="c"># layer by layer</span>
+<span class="f">print</span>(<span class="s">"DFS:"</span>, g.<span class="f">dfs</span>(<span class="s">"input"</span>))   <span class="c"># path following</span>
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 11 — DYNAMIC PROGRAMMING -->
+  <div class="algo-card">
+    <div class="algo-card-header">
+      <div class="algo-icon">🧮</div>
+      <div>
+        <div class="algo-name">Dynamic Programming</div>
+        <div class="algo-complexity">Memoization | Overlapping subproblems | O(n) vs O(2ⁿ)</div>
+      </div>
+    </div>
+    <div class="algo-card-body">
+      <div class="box box-analogy">
+        <div class="box-title">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+        <p>গণিতের পরীক্ষায় তুমি একবার ৭×৮ = ৫৬ হিসাব করলে, নোটবুকে লিখে রাখলে। পরে আবার ৭×৮ লাগলে আর হিসাব না করে সরাসরি নোটবুক দেখলে। এটাই Dynamic Programming — আগের উত্তর মনে রেখে সময় বাঁচানো।</p>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div><div class="code-lang">Python — DP with Memoization</div></div>
+        <pre>
+<span class="c"># Fibonacci — without DP: O(2ⁿ), with DP: O(n)</span>
+<span class="k">def</span> <span class="f">fib_dp</span>(n, memo={}):
+    <span class="k">if</span> n <span class="k">in</span> memo:         <span class="c"># আগে হিসাব করা থাকলে সরাসরি দাও</span>
+        <span class="k">return</span> memo[n]
+    <span class="k">if</span> n <= <span class="n">1</span>:
+        <span class="k">return</span> n
+    memo[n] = <span class="f">fib_dp</span>(n-<span class="n">1</span>, memo) + <span class="f">fib_dp</span>(n-<span class="n">2</span>, memo)
+    <span class="k">return</span> memo[n]
+
+<span class="c"># ML use case: Hyperparameter search memoization</span>
+<span class="k">class</span> <span class="cls">MemoizedHPSearch</span>:
+    <span class="k">def</span> <span class="f">__init__</span>(<span class="self">self</span>):
+        <span class="self">self</span>.<span class="attr">cache</span> = {}   <span class="c"># মেমো টেবিল</span>
+
+    <span class="k">def</span> <span class="f">evaluate</span>(<span class="self">self</span>, lr, batch_size):
+        key = (lr, batch_size)
+        <span class="k">if</span> key <span class="k">in</span> <span class="self">self</span>.<span class="attr">cache</span>:
+            <span class="f">print</span>(<span class="s">f"Cache hit! {key}"</span>)
+            <span class="k">return</span> <span class="self">self</span>.<span class="attr">cache</span>[key]
+        <span class="c"># Simulate expensive training</span>
+        score = <span class="n">0.9</span> - (<span class="f">abs</span>(lr - <span class="n">0.01</span>) * <span class="n">10</span>) - (batch_size / <span class="n">1000</span>)
+        <span class="self">self</span>.<span class="attr">cache</span>[key] = score
+        <span class="k">return</span> score
+
+hp_search = <span class="cls">MemoizedHPSearch</span>()
+<span class="f">print</span>(hp_search.<span class="f">evaluate</span>(<span class="n">0.01</span>, <span class="n">32</span>))   <span class="c"># Train করবে</span>
+<span class="f">print</span>(hp_search.<span class="f">evaluate</span>(<span class="n">0.01</span>, <span class="n">32</span>))   <span class="c"># Cache hit!</span>
+        </pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Algorithm Complexity Summary -->
+  <div class="box box-def">
+    <div class="box-title">📊 Algorithm Complexity — Big-O চিট শিট</div>
+    <table class="def-table" style="margin-top:10px">
+      <tr>
+        <th>Algorithm</th>
+        <th>Best</th>
+        <th>Average</th>
+        <th>Worst</th>
+        <th>Memory</th>
+      </tr>
+      <tr><td>Bubble Sort</td><td style="color:#43e97b">O(n)</td><td style="color:#f7971e">O(n²)</td><td style="color:#ff6584">O(n²)</td><td>O(1)</td></tr>
+      <tr><td>Merge Sort</td><td style="color:#43e97b">O(n log n)</td><td style="color:#43e97b">O(n log n)</td><td style="color:#43e97b">O(n log n)</td><td>O(n)</td></tr>
+      <tr><td>Binary Search</td><td style="color:#43e97b">O(1)</td><td style="color:#43e97b">O(log n)</td><td style="color:#43e97b">O(log n)</td><td>O(1)</td></tr>
+      <tr><td>Hash Table (get)</td><td style="color:#43e97b">O(1)</td><td style="color:#43e97b">O(1)</td><td style="color:#ff6584">O(n)</td><td>O(n)</td></tr>
+      <tr><td>BFS / DFS</td><td colspan="3" style="color:#43e97b;text-align:center">O(V + E)</td><td>O(V)</td></tr>
+      <tr><td>KNN (predict)</td><td colspan="3" style="color:#f7971e;text-align:center">O(n·d)</td><td>O(n)</td></tr>
+    </table>
+    <p style="margin-top:12px;font-size:0.85rem">n = data size, d = dimension, V = vertices, E = edges</p>
+  </div>
+
+</section>
+
+</main>
+
+<footer>
+  <p>🐍 Python OOP — বাংলায় সম্পূর্ণ গাইড</p>
+  <p style="margin-top:8px;font-size:12px">Classes · Inheritance · Predefined Classes · Built-in Methods · Algorithms</p>
+  <p style="margin-top:12px;font-size:11px;color:#4a5274">সকল concept বোঝার পর scikit-learn, PyTorch, TensorFlow-এর source code পড়ো — সব OOP দিয়ে তৈরি!</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>লেকচার 01 — Matplotlib সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&family=Baloo+Da+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f0f1a;--surface:#1a1a2e;--surface2:#16213e;--surface3:#0f3460;--accent:#e94560;--accent2:#f5a623;--accent3:#00d4aa;--accent4:#a855f7;--text:#e8e8f0;--text-dim:#9090b0;--code-bg:#0d1117;--border:#2a2a4a;--green:#4ade80;--blue:#60a5fa;--yellow:#fbbf24;--pink:#f472b6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hind Siliguri',sans-serif;background:var(--bg);color:var(--text);font-size:17px;line-height:1.8}
+.sidebar{position:fixed;top:0;left:0;width:255px;height:100vh;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;z-index:100;padding:16px 0}
+.sidebar-logo{font-family:'Baloo Da 2',cursive;font-size:20px;font-weight:800;color:var(--accent);padding:0 16px 16px;border-bottom:1px solid var(--border);margin-bottom:8px}
+.sidebar-logo span{color:var(--accent3)}
+.nav-section{padding:6px 16px 2px;font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.nav-item{display:block;padding:6px 16px;color:var(--text-dim);text-decoration:none;font-size:13px;border-left:3px solid transparent;transition:all .2s;line-height:1.4}
+.nav-item:hover{color:var(--accent3);border-left-color:var(--accent3);background:rgba(0,212,170,.05)}
+.main{margin-left:255px}
+.progress-bar{position:fixed;top:0;left:255px;right:0;height:3px;background:var(--border);z-index:200}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width .2s}
+.hero{background:linear-gradient(135deg,#0f0f1a 0%,#1a0533 50%,#0f3460 100%);padding:70px 55px;position:relative;overflow:hidden;border-bottom:2px solid var(--accent)}
+.hero::before{content:'';position:absolute;top:-50%;right:-10%;width:500px;height:500px;background:radial-gradient(circle,rgba(233,69,96,.15) 0%,transparent 70%);border-radius:50%}
+.hero-badge{display:inline-block;background:var(--accent);color:white;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:18px}
+.hero h1{font-family:'Baloo Da 2',cursive;font-size:48px;font-weight:800;line-height:1.2;margin-bottom:18px;background:linear-gradient(135deg,#fff 30%,var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:19px;color:var(--text-dim);max-width:650px;margin-bottom:28px}
+.hero-stats{display:flex;gap:36px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-num{font-family:'Baloo Da 2',cursive;font-size:34px;font-weight:800;color:var(--accent3)}
+.stat-label{font-size:12px;color:var(--text-dim)}
+.section{padding:55px;border-bottom:1px solid var(--border)}
+.section:nth-child(even){background:rgba(26,26,46,.4)}
+.section-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(233,69,96,.15);border:1px solid rgba(233,69,96,.3);color:var(--accent);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:14px}
+h2{font-family:'Baloo Da 2',cursive;font-size:36px;font-weight:800;color:white;margin-bottom:14px;line-height:1.2}
+h3{font-family:'Baloo Da 2',cursive;font-size:24px;font-weight:700;color:var(--accent3);margin:32px 0 12px}
+h4{font-family:'Baloo Da 2',cursive;font-size:19px;font-weight:600;color:var(--accent2);margin:22px 0 9px}
+p{margin-bottom:14px;color:var(--text)}
+pre,code{font-family:'Fira Code',monospace}
+.code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:12px;margin:18px 0;overflow:hidden}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)}
+.code-lang{font-size:11px;color:var(--accent3);font-family:'Fira Code',monospace;font-weight:500}
+.code-dots{display:flex;gap:5px}
+.code-dot{width:11px;height:11px;border-radius:50%}
+.code-dot:nth-child(1){background:#ff5f57}
+.code-dot:nth-child(2){background:#febc2e}
+.code-dot:nth-child(3){background:#28c840}
+pre{padding:18px;font-size:13.5px;line-height:1.7;overflow-x:auto;color:#e8e8f0}
+.kw{color:#f472b6}.fn{color:#60a5fa}.str{color:#4ade80}.num{color:#fbbf24}.cm{color:#6b7280;font-style:italic}.op{color:#a78bfa}
+.callout{border-radius:12px;padding:18px 22px;margin:18px 0;border-left:4px solid}
+.callout-info{background:rgba(96,165,250,.08);border-color:var(--blue)}
+.callout-warn{background:rgba(251,191,36,.08);border-color:var(--yellow)}
+.callout-tip{background:rgba(74,222,128,.08);border-color:var(--green)}
+.callout-error{background:rgba(233,69,96,.08);border-color:var(--accent)}
+.callout-title{font-weight:700;margin-bottom:7px;font-size:14px;display:flex;align-items:center;gap:7px}
+.diagram-wrap{margin:28px 0;background:var(--surface2);border-radius:14px;padding:28px;border:1px solid var(--border);text-align:center}
+.diagram-title{font-family:'Baloo Da 2',cursive;font-size:17px;color:var(--accent3);margin-bottom:18px;font-weight:700}
+.exercise-section{background:linear-gradient(135deg,rgba(168,85,247,.05),rgba(233,69,96,.05));border:1px solid rgba(168,85,247,.2);border-radius:14px;padding:28px;margin:36px 0}
+.exercise-header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.exercise-icon{width:38px;height:38px;background:var(--accent4);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.exercise-title{font-family:'Baloo Da 2',cursive;font-size:20px;font-weight:700;color:var(--accent4)}
+.exercise-subtitle{font-size:12px;color:var(--text-dim)}
+.ex-item{margin:14px 0;padding:14px;background:rgba(0,0,0,.2);border-radius:9px}
+.ex-num{display:inline-block;background:var(--accent4);color:white;width:26px;height:26px;border-radius:50%;text-align:center;line-height:26px;font-size:12px;font-weight:700;margin-right:9px}
+.hint-toggle{background:none;border:1px solid var(--border);color:var(--text-dim);padding:5px 12px;border-radius:7px;cursor:pointer;font-size:12px;margin-top:9px;font-family:'Hind Siliguri',sans-serif;transition:all .2s}
+.hint-toggle:hover{border-color:var(--accent3);color:var(--accent3)}
+.hint-box{display:none;margin-top:10px}
+.hint-box.open{display:block}
+table{width:100%;border-collapse:collapse;margin:18px 0}
+th{background:var(--surface3);color:white;padding:11px 14px;text-align:left;font-size:13px}
+td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text-dim)}
+tr:hover td{background:rgba(255,255,255,.02);color:var(--text)}
+td code,th code{background:rgba(255,255,255,.1);padding:2px 5px;border-radius:4px;font-size:12px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:18px 0}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:18px 0}
+.card{background:var(--surface);border-radius:11px;padding:18px;border:1px solid var(--border)}
+.card-title{font-family:'Baloo Da 2',cursive;font-size:17px;font-weight:700;color:var(--accent2);margin-bottom:9px}
+.steps{display:flex;flex-direction:column;gap:14px;margin:18px 0}
+.step{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border-radius:11px;padding:16px;border:1px solid var(--border)}
+.step-num{min-width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent4));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:white}
+.step-body h5{font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px}
+.step-body p{font-size:13px;color:var(--text-dim);margin:0}
+.algo-card{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:14px;padding:28px;margin:28px 0}
+.algo-badge{display:inline-block;background:var(--accent2);color:#000;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;margin-bottom:10px}
+.complexity-row{display:flex;gap:16px;margin:14px 0;flex-wrap:wrap}
+.complexity-item{text-align:center;background:rgba(0,0,0,.3);padding:9px 14px;border-radius:9px;flex:1;min-width:80px}
+.complexity-label{font-size:10px;color:var(--text-dim);text-transform:uppercase}
+.complexity-val{font-family:'Fira Code',monospace;font-size:16px;color:var(--accent2);font-weight:700}
+.highlight{color:var(--accent3);font-weight:600}
+.highlight-red{color:var(--accent);font-weight:600}
+.highlight-yellow{color:var(--accent2);font-weight:600}
+.tag{display:inline-block;background:rgba(0,212,170,.15);color:var(--accent3);padding:2px 9px;border-radius:7px;font-size:12px;font-weight:600;margin:2px}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}.hero{padding:36px 22px}.section{padding:36px 22px}.hero h1{font-size:30px}.two-col,.three-col{grid-template-columns:1fr}.progress-bar{left:0}}
+</style>
+</head>
+<body>
+<div id="lecture-nav-banner" style="
+  position:sticky;top:0;z-index:9999;
+  background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);
+  border-bottom:2px solid #58a6ff;
+  padding:10px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:'Hind Siliguri',sans-serif;
+  box-shadow:0 2px 20px rgba(0,0,0,.5);
+">
+  <div style="display:flex;align-items:center;gap:12px">
+    <a href="../Data_Visualisation.html" style="
+      background:#58a6ff;color:#0d1117;border:none;padding:6px 14px;
+      border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;
+      cursor:pointer;letter-spacing:.5px;
+    ">← সূচিপত্র</a>
+    <span style="color:#58a6ff;font-size:13px;font-weight:700;">লেকচার 01 — Matplotlib বেসিক</span>
+  </div>
+  <div style="display:flex;gap:8px;">
+    
+    <a href="Lecture_02_Matplotlib_Advanced.html" style="background:#58a6ff;color:#0d1117;padding:5px 12px;border-radius:5px;font-size:12px;text-decoration:none;font-weight:700;">পরবর্তী →</a>
+  </div>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+<nav class="sidebar">
+  <div class="sidebar-logo">Matplotlib<span>বাংলা</span></div>
+  <span class="nav-section">শুরু</span>
+  <a href="#intro" class="nav-item">📌 পরিচিতি ও Setup</a>
+  <a href="#anatomy" class="nav-item">🔬 Figure গঠন</a>
+  <span class="nav-section">চার্টের ধরন</span>
+  <a href="#lineplot" class="nav-item">📈 Line Plot</a>
+  <a href="#styles" class="nav-item">🎨 Style ও Legend</a>
+  <a href="#barplot" class="nav-item">📊 Bar Plot</a>
+  <a href="#scatter" class="nav-item">🔵 Scatter Plot</a>
+  <a href="#histogram" class="nav-item">📉 Histogram</a>
+  <a href="#boxpie" class="nav-item">📦 Box ও Pie Chart</a>
+  <a href="#subplots" class="nav-item">🗂️ Subplots</a>
+  <a href="#annotation" class="nav-item">✍️ Annotation</a>
+  <span class="nav-section">ইন্টারভিউ</span>
+  <a href="#exercises" class="nav-item">💼 ইন্টারভিউ প্রশ্ন</a>
+  <span class="nav-section">ML Algorithms</span>
+  <a href="#algorithms" class="nav-item">🤖 সব Algorithm</a>
+  <a href="#linear-reg" class="nav-item">&nbsp;&nbsp;Linear Regression</a>
+  <a href="#logistic-reg" class="nav-item">&nbsp;&nbsp;Logistic Regression</a>
+  <a href="#decision-tree" class="nav-item">&nbsp;&nbsp;Decision Tree</a>
+  <a href="#random-forest" class="nav-item">&nbsp;&nbsp;Random Forest</a>
+  <a href="#kmeans" class="nav-item">&nbsp;&nbsp;K-Means</a>
+  <a href="#knn" class="nav-item">&nbsp;&nbsp;KNN</a>
+  <a href="#svm" class="nav-item">&nbsp;&nbsp;SVM</a>
+  <a href="#gradient-boost" class="nav-item">&nbsp;&nbsp;Gradient Boosting</a>
+  <a href="#neural-net" class="nav-item">&nbsp;&nbsp;Neural Networks</a>
+</nav>
+<main class="main">
+<div class="hero">
+  <div class="hero-badge">🇧🇩 সম্পূর্ণ বাংলায় — শূন্য থেকে বিশেষজ্ঞ</div>
+  <h1>Matplotlib মাস্টারক্লাস</h1>
+  <p>ডেটা ভিজুয়ালাইজেশন থেকে Machine Learning পর্যন্ত — একদম নতুনদের জন্য, ML Engineer-দের মতো শেখো।</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">৮টি</div><div class="stat-label">Notebook কভার</div></div>
+    <div class="stat"><div class="stat-num">৯টি</div><div class="stat-label">Chart Type</div></div>
+    <div class="stat"><div class="stat-num">৯টি</div><div class="stat-label">ML Algorithm</div></div>
+    <div class="stat"><div class="stat-num">৫০+</div><div class="stat-label">কোড উদাহরণ</div></div>
+  </div>
+</div>
+
+<!-- INTRO & SETUP -->
+<section class="section" id="intro">
+  <div class="section-badge">🌱 অধ্যায় ১</div>
+  <h2>Matplotlib কী এবং কেন দরকার?</h2>
+  <p>ধরো প্রতি মাসে তোমার খরচের একটা লিস্ট আছে — শুধু সংখ্যা দেখে কোন মাসে বেশি বা কম বোঝা কঠিন। কিন্তু একটা <span class="highlight">গ্রাফ</span> বানালে এক নজরেই বুঝে যাবে! <strong>Matplotlib</strong> হলো Python-এর সেই লাইব্রেরি যেটা দিয়ে তুমি data থেকে গ্রাফ বানাতে পারো।</p>
+  <div class="diagram-wrap">
+    <div class="diagram-title">📊 Matplotlib কীভাবে কাজ করে</div>
+    <svg viewBox="0 0 680 170" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:680px">
+      <defs><marker id="ar1" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M1,1 L6,3.5 L1,6 Z" fill="#00d4aa"/></marker></defs>
+      <rect x="10" y="45" width="150" height="80" rx="10" fill="#1a1a2e" stroke="#e94560" stroke-width="2"/>
+      <text x="85" y="78" text-anchor="middle" fill="#e94560" font-size="13" font-weight="bold" font-family="sans-serif">তোমার Data</text>
+      <text x="85" y="97" text-anchor="middle" fill="#9090b0" font-size="12" font-family="sans-serif">[100, 200, 150]</text>
+      <line x1="162" y1="85" x2="205" y2="85" stroke="#00d4aa" stroke-width="2" marker-end="url(#ar1)"/>
+      <rect x="207" y="45" width="165" height="80" rx="10" fill="#1a1a2e" stroke="#a855f7" stroke-width="2"/>
+      <text x="290" y="75" text-anchor="middle" fill="#a855f7" font-size="13" font-weight="bold" font-family="sans-serif">Matplotlib</text>
+      <text x="290" y="95" text-anchor="middle" fill="#9090b0" font-size="12" font-family="sans-serif">plt.plot(), plt.bar()</text>
+      <text x="290" y="112" text-anchor="middle" fill="#9090b0" font-size="11" font-family="sans-serif">বলো কী চার্ট চাও</text>
+      <line x1="374" y1="85" x2="417" y2="85" stroke="#00d4aa" stroke-width="2" marker-end="url(#ar1)"/>
+      <rect x="419" y="30" width="240" height="110" rx="10" fill="#1a1a2e" stroke="#00d4aa" stroke-width="2"/>
+      <text x="539" y="58" text-anchor="middle" fill="#00d4aa" font-size="13" font-weight="bold" font-family="sans-serif">সুন্দর গ্রাফ 🎉</text>
+      <polyline points="435,105 470,88 510,95 550,72 590,78 640,62" fill="none" stroke="#f5a623" stroke-width="2.5"/>
+      <circle cx="435" cy="105" r="4" fill="#f5a623"/><circle cx="470" cy="88" r="4" fill="#f5a623"/>
+      <circle cx="510" cy="95" r="4" fill="#f5a623"/><circle cx="550" cy="72" r="4" fill="#f5a623"/>
+      <circle cx="590" cy="78" r="4" fill="#f5a623"/><circle cx="640" cy="62" r="4" fill="#f5a623"/>
+      <line x1="430" y1="122" x2="655" y2="122" stroke="#2a2a4a" stroke-width="1"/>
+      <line x1="430" y1="45" x2="430" y2="122" stroke="#2a2a4a" stroke-width="1"/>
+    </svg>
+  </div>
+  <div class="callout callout-info">
+    <div class="callout-title">💡 কেন ML Engineer-দের দরকার?</div>
+    Data Scientist, ML Engineer, Data Analyst — সবাইকেই Matplotlib জানতে হয়। Model train করার পরে result দেখতে, data explore করতে এবং stakeholder-দের বোঝাতে গ্রাফ অপরিহার্য!
+  </div>
+  <h3>প্রতিটি Notebook-এর শুরুতে যা লিখতে হয়</h3>
+  <p>রান্না করার আগে যেমন তেল-মশলা বের করে রাখো, তেমনই কোড লেখার আগে লাইব্রেরিগুলো import করতে হয়।</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — সব Notebook-এর শুরুতে</span></div>
+    <pre><span class="cm"># Jupyter Notebook-এ গ্রাফ notebook-এর ভেতরেই দেখাবে</span>
+<span class="op">%</span>matplotlib inline
+
+<span class="cm"># matplotlib.pyplot = আসল drawing tool, plt = সংক্ষিপ্ত নাম (nickname)</span>
+<span class="kw">import</span> <span class="fn">matplotlib.pyplot</span> <span class="kw">as</span> plt
+
+<span class="cm"># numpy = সংখ্যার হিসাব, pandas = CSV/টেবিল পড়া</span>
+<span class="kw">import</span> <span class="fn">numpy</span> <span class="kw">as</span> np
+<span class="kw">import</span> <span class="fn">pandas</span> <span class="kw">as</span> pd</pre>
+  </div>
+  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ মনে রাখো</div>
+    <code>%matplotlib inline</code> শুধু Jupyter Notebook-এ কাজ করে। সাধারণ Python script (.py ফাইল)-এ <code>plt.show()</code> লিখতে হবে।
+  </div>
+</section>
+
+<!-- ANATOMY -->
+<section class="section" id="anatomy">
+  <div class="section-badge">🔬 অধ্যায় ২</div>
+  <h2>একটি Figure-এর সব অংশ</h2>
+  <p>গ্রাফ আঁকার আগে এর অংশগুলোর নাম জানো — ঠিক যেমন বাড়ির দরজা, জানালা, ছাদ আলাদা জিনিস।</p>
+  <div class="diagram-wrap">
+    <div class="diagram-title">Matplotlib Figure-এর সব অংশ বাংলায়</div>
+    <svg viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:680px">
+      <rect x="15" y="10" width="650" height="380" rx="8" fill="#0f0f1a" stroke="#a855f7" stroke-width="2" stroke-dasharray="6,3"/>
+      <text x="340" y="8" text-anchor="middle" fill="#a855f7" font-size="11" font-family="sans-serif">Figure (পুরো canvas)</text>
+      <rect x="90" y="45" width="490" height="295" rx="4" fill="#16213e" stroke="#00d4aa" stroke-width="1.5"/>
+      <text x="335" y="75" text-anchor="middle" fill="white" font-size="14" font-family="sans-serif" font-weight="bold">মাসিক বিক্রয় রিপোর্ট</text>
+      <rect x="190" y="63" width="290" height="22" rx="3" fill="none" stroke="#f5a623" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="490" y="75" fill="#f5a623" font-size="10" font-family="sans-serif">← Title</text>
+      <line x1="150" y1="320" x2="540" y2="320" stroke="#60a5fa" stroke-width="2"/>
+      <line x1="150" y1="95" x2="150" y2="320" stroke="#60a5fa" stroke-width="2"/>
+      <line x1="210" y1="95" x2="210" y2="320" stroke="#1a2a3a" stroke-width="1"/>
+      <line x1="275" y1="95" x2="275" y2="320" stroke="#1a2a3a" stroke-width="1"/>
+      <line x1="340" y1="95" x2="340" y2="320" stroke="#1a2a3a" stroke-width="1"/>
+      <line x1="405" y1="95" x2="405" y2="320" stroke="#1a2a3a" stroke-width="1"/>
+      <line x1="470" y1="95" x2="470" y2="320" stroke="#1a2a3a" stroke-width="1"/>
+      <line x1="150" y1="170" x2="540" y2="170" stroke="#1a2a3a" stroke-width="1"/>
+      <line x1="150" y1="245" x2="540" y2="245" stroke="#1a2a3a" stroke-width="1"/>
+      <text x="210" y="338" text-anchor="middle" fill="#6b7280" font-size="11" font-family="sans-serif">জানু</text>
+      <text x="275" y="338" text-anchor="middle" fill="#6b7280" font-size="11" font-family="sans-serif">ফেব্রু</text>
+      <text x="340" y="338" text-anchor="middle" fill="#6b7280" font-size="11" font-family="sans-serif">মার্চ</text>
+      <text x="405" y="338" text-anchor="middle" fill="#6b7280" font-size="11" font-family="sans-serif">এপ্রিল</text>
+      <text x="470" y="338" text-anchor="middle" fill="#6b7280" font-size="11" font-family="sans-serif">মে</text>
+      <text x="335" y="358" text-anchor="middle" fill="#9090b0" font-size="12" font-family="sans-serif">মাস (X-axis)</text>
+      <rect x="260" y="345" width="150" height="16" rx="3" fill="none" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="120" y="215" text-anchor="middle" fill="#9090b0" font-size="12" font-family="sans-serif" transform="rotate(-90,120,215)">বিক্রয় (Y-axis)</text>
+      <polyline points="150,295 210,255 275,270 340,195 405,168 470,128 535,112" fill="none" stroke="#e94560" stroke-width="2.5"/>
+      <circle cx="150" cy="295" r="5" fill="#e94560"/><circle cx="210" cy="255" r="5" fill="#e94560"/>
+      <circle cx="275" cy="270" r="5" fill="#e94560"/><circle cx="340" cy="195" r="5" fill="#e94560"/>
+      <circle cx="405" cy="168" r="5" fill="#e94560"/><circle cx="470" cy="128" r="5" fill="#e94560"/>
+      <circle cx="535" cy="112" r="5" fill="#e94560"/>
+      <rect x="415" y="100" width="112" height="32" rx="5" fill="#0f0f1a" stroke="#2a2a4a" stroke-width="1"/>
+      <line x1="424" y1="116" x2="445" y2="116" stroke="#e94560" stroke-width="2"/>
+      <circle cx="434" cy="116" r="3" fill="#e94560"/>
+      <text x="450" y="120" fill="#9090b0" font-size="10" font-family="sans-serif">বিক্রয়</text>
+      <text x="534" y="104" fill="#4ade80" font-size="10" font-family="sans-serif">← Legend</text>
+      <text x="45" y="335" fill="#a855f7" font-size="10" font-family="sans-serif">Axes</text>
+      <text x="40" y="348" fill="#a855f7" font-size="10" font-family="sans-serif">(গ্রাফ এলাকা)</text>
+      <text x="38" y="380" fill="#9090b0" font-size="10" font-family="sans-serif">Grid Lines →</text>
+    </svg>
+  </div>
+  <div class="two-col">
+    <div class="card"><div class="card-title">📐 Figure</div><p style="font-size:14px;color:var(--text-dim)">পুরো canvas। <code>plt.figure(figsize=(10,6))</code> দিয়ে আকার নির্ধারণ।</p></div>
+    <div class="card"><div class="card-title">📏 Axes</div><p style="font-size:14px;color:var(--text-dim)">গ্রাফ আঁকার মূল এলাকা। X ও Y axis এখানে।</p></div>
+    <div class="card"><div class="card-title">🏷️ Title / Labels</div><p style="font-size:14px;color:var(--text-dim)">গ্রাফের শিরোনাম ও axis-এর নাম। পাঠককে বুঝতে সাহায্য করে।</p></div>
+    <div class="card"><div class="card-title">📋 Legend</div><p style="font-size:14px;color:var(--text-dim)">একাধিক line থাকলে কোনটা কী তা বলে।</p></div>
+  </div>
+</section>
+
+<!-- LINE PLOT -->
+<section class="section" id="lineplot">
+  <div class="section-badge">📈 অধ্যায় ৩</div>
+  <h2>Line Plot — রেখা চার্ট</h2>
+  <p>Line Plot হলো সবচেয়ে সহজ এবং বেশি ব্যবহৃত চার্ট। কয়েকটা বিন্দুকে লাইন দিয়ে জুড়ে দেওয়া হয়। ML model-এর training loss, accuracy over epochs — সব কিছুতেই line plot দরকার।</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — Line Plot সব ধরনের উদাহরণ</span></div>
+    <pre><span class="cm"># ── সবচেয়ে সহজ উদাহরণ ──</span>
+<span class="cm"># X=[0,2,4,6], Y=[1,4,4,8] — চারটি বিন্দু লাইন দিয়ে জুড়বে</span>
+plt.<span class="fn">plot</span>([<span class="num">0</span>,<span class="num">2</span>,<span class="num">4</span>,<span class="num">6</span>], [<span class="num">1</span>,<span class="num">4</span>,<span class="num">4</span>,<span class="num">8</span>])
+
+<span class="cm"># ── শুধু Y দিলে X হবে [0,1,2,3] automatically ──</span>
+plt.<span class="fn">plot</span>([<span class="num">1</span>,<span class="num">3</span>,<span class="num">2</span>,<span class="num">4</span>])
+
+<span class="cm"># ── Title, xlabel, ylabel ──</span>
+plt.<span class="fn">title</span>(<span class="str">"আমার প্রথম গ্রাফ"</span>)
+plt.<span class="fn">plot</span>([<span class="num">50</span>,<span class="num">140</span>,<span class="num">200</span>], [<span class="num">1</span>,<span class="num">2</span>,<span class="num">4</span>])
+plt.<span class="fn">xlabel</span>(<span class="str">"গতি (km/h)"</span>)
+plt.<span class="fn">ylabel</span>(<span class="str">"সময় (সেকেন্ড)"</span>)
+plt.<span class="fn">show</span>()
+
+<span class="cm"># ── Axis সীমা নির্ধারণ ──</span>
+plt.<span class="fn">axis</span>([<span class="num">80</span>, <span class="num">180</span>, <span class="num">1</span>, <span class="num">5</span>])      <span class="cm"># [xmin, xmax, ymin, ymax]</span>
+plt.<span class="fn">xlim</span>([<span class="num">80</span>, <span class="num">180</span>])             <span class="cm"># শুধু X</span>
+plt.<span class="fn">ylim</span>([<span class="num">1</span>, <span class="num">5</span>])               <span class="cm"># শুধু Y</span>
+
+<span class="cm"># ── Pandas DataFrame থেকে ──</span>
+df = pd.<span class="fn">read_csv</span>(<span class="str">'sales_data.csv'</span>)
+plt.<span class="fn">plot</span>(df.Month, df.Product1)   <span class="cm"># পদ্ধতি ১</span>
+
+<span class="cm"># পদ্ধতি ২: DataFrame-এর নিজস্ব plot method (সহজ!)</span>
+df.<span class="fn">plot</span>(x=<span class="str">'Month'</span>, y=<span class="str">'Product1'</span>,
+       title=<span class="str">"মাসিক বিক্রয়"</span>, ylim=[<span class="num">100</span>,<span class="num">700</span>])</pre>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">plt.plot([0,2,4,6],[1,4,4,8]) — বিন্দু থেকে লাইন</div>
+    <svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:480px">
+      <defs><marker id="ar2" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M1,1 L6,3.5 L1,6 Z" fill="#4a5568"/></marker></defs>
+      <line x1="55" y1="200" x2="430" y2="200" stroke="#4a5568" stroke-width="2" marker-end="url(#ar2)"/>
+      <line x1="55" y1="200" x2="55" y2="25" stroke="#4a5568" stroke-width="2" marker-end="url(#ar2)"/>
+      <line x1="55" y1="162" x2="425" y2="162" stroke="#2a2a4a" stroke-width="1"/>
+      <line x1="55" y1="124" x2="425" y2="124" stroke="#2a2a4a" stroke-width="1"/>
+      <line x1="55" y1="86" x2="425" y2="86" stroke="#2a2a4a" stroke-width="1"/>
+      <line x1="55" y1="48" x2="425" y2="48" stroke="#2a2a4a" stroke-width="1"/>
+      <text x="55" y="218" text-anchor="middle" fill="#6b7280" font-size="12" font-family="monospace">0</text>
+      <text x="148" y="218" text-anchor="middle" fill="#6b7280" font-size="12" font-family="monospace">2</text>
+      <text x="241" y="218" text-anchor="middle" fill="#6b7280" font-size="12" font-family="monospace">4</text>
+      <text x="334" y="218" text-anchor="middle" fill="#6b7280" font-size="12" font-family="monospace">6</text>
+      <text x="43" y="204" text-anchor="middle" fill="#6b7280" font-size="11" font-family="monospace">0</text>
+      <text x="43" y="166" text-anchor="middle" fill="#6b7280" font-size="11" font-family="monospace">2</text>
+      <text x="43" y="128" text-anchor="middle" fill="#6b7280" font-size="11" font-family="monospace">4</text>
+      <text x="43" y="90" text-anchor="middle" fill="#6b7280" font-size="11" font-family="monospace">6</text>
+      <text x="43" y="52" text-anchor="middle" fill="#6b7280" font-size="11" font-family="monospace">8</text>
+      <polyline points="55,181 148,124 241,124 334,48" fill="none" stroke="#60a5fa" stroke-width="2.5"/>
+      <circle cx="55" cy="181" r="7" fill="#e94560" stroke="white" stroke-width="2"/>
+      <circle cx="148" cy="124" r="7" fill="#e94560" stroke="white" stroke-width="2"/>
+      <circle cx="241" cy="124" r="7" fill="#e94560" stroke="white" stroke-width="2"/>
+      <circle cx="334" cy="48" r="7" fill="#e94560" stroke="white" stroke-width="2"/>
+      <text x="55" y="170" text-anchor="middle" fill="#fbbf24" font-size="10" font-family="monospace">(0,1)</text>
+      <text x="148" y="113" text-anchor="middle" fill="#fbbf24" font-size="10" font-family="monospace">(2,4)</text>
+      <text x="241" y="113" text-anchor="middle" fill="#fbbf24" font-size="10" font-family="monospace">(4,4)</text>
+      <text x="334" y="37" text-anchor="middle" fill="#fbbf24" font-size="10" font-family="monospace">(6,8)</text>
+    </svg>
+  </div>
+  <div class="callout callout-tip"><div class="callout-title">💡 Pro Tip</div>Jupyter-এ শেষ line-এ <code>;</code> দিলে অপ্রয়োজনীয় text output আসে না। যেমন: <code>plt.plot([1,2,3]);</code></div>
+
+  <div class="exercise-section">
+    <div class="exercise-header"><div class="exercise-icon">💼</div><div><div class="exercise-title">ইন্টারভিউ Exercise — Line Plot</div><div class="exercise-subtitle">ML Engineering Level</div></div></div>
+    <div class="ex-item">
+      <span class="ex-num">১</span>
+      <span style="color:var(--text);font-size:15px"><strong>Training Curve:</strong> Neural network-এর training ও validation loss দেখাও। Overfitting কোথায় শুরু হয় চিহ্নিত করো।</span>
+      <button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'❌ বন্ধ করো':'💡 সমাধান দেখো'">💡 সমাধান দেখো</button>
+      <div class="hint-box">
+        <div class="code-block"><div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python</span></div>
+        <pre>train_loss = [<span class="num">2.3</span>,<span class="num">1.8</span>,<span class="num">1.4</span>,<span class="num">1.1</span>,<span class="num">0.9</span>,<span class="num">0.7</span>,<span class="num">0.6</span>,<span class="num">0.5</span>]
+val_loss   = [<span class="num">2.5</span>,<span class="num">2.0</span>,<span class="num">1.7</span>,<span class="num">1.5</span>,<span class="num">1.4</span>,<span class="num">1.6</span>,<span class="num">1.8</span>,<span class="num">2.1</span>]
+epochs     = <span class="fn">range</span>(<span class="num">1</span>,<span class="num">9</span>)
+
+plt.<span class="fn">figure</span>(figsize=(<span class="num">10</span>,<span class="num">5</span>))
+plt.<span class="fn">plot</span>(epochs, train_loss, <span class="str">'b-o'</span>, label=<span class="str">'Training Loss'</span>, linewidth=<span class="num">2</span>)
+plt.<span class="fn">plot</span>(epochs, val_loss,   <span class="str">'r-s'</span>, label=<span class="str">'Validation Loss'</span>, linewidth=<span class="num">2</span>)
+<span class="cm"># Epoch 5-এ val_loss বাড়তে শুরু করে → Overfitting!</span>
+plt.<span class="fn">axvline</span>(x=<span class="num">5</span>, color=<span class="str">'orange'</span>, linestyle=<span class="str">'--'</span>, label=<span class="str">'Overfitting শুরু'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Training vs Validation Loss'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'Epoch'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'Loss'</span>)
+plt.<span class="fn">legend</span>(); plt.<span class="fn">grid</span>(<span class="kw">True</span>, alpha=<span class="num">0.3</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+    </div>
+    <div class="ex-item">
+      <span class="ex-num">২</span>
+      <span style="color:var(--text);font-size:15px"><strong>IoT Sensor Data:</strong> Temperature sensor-এর time series data line chart-এ দেখাও। Y-axis সীমা 20-80 রাখো।</span>
+      <button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'❌ বন্ধ করো':'💡 সমাধান দেখো'">💡 সমাধান দেখো</button>
+      <div class="hint-box">
+        <div class="code-block"><div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python</span></div>
+        <pre>np.random.seed(<span class="num">42</span>)
+df = pd.<span class="fn">DataFrame</span>({
+    <span class="str">'timestamp'</span>: pd.<span class="fn">date_range</span>(<span class="str">'2024-01-01'</span>, periods=<span class="num">100</span>, freq=<span class="str">'h'</span>),
+    <span class="str">'temperature'</span>: <span class="num">50</span> + np.random.<span class="fn">randn</span>(<span class="num">100</span>) * <span class="num">10</span>
+})
+df.<span class="fn">plot</span>(x=<span class="str">'timestamp'</span>, y=<span class="str">'temperature'</span>,
+       title=<span class="str">'IoT Sensor Temperature'</span>, figsize=(<span class="num">12</span>,<span class="num">4</span>),
+       ylim=[<span class="num">20</span>,<span class="num">80</span>], color=<span class="str">'#e94560'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'সময়'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'তাপমাত্রা (°C)'</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STYLES & LEGEND -->
+<section class="section" id="styles">
+  <div class="section-badge">🎨 অধ্যায় ৪</div>
+  <h2>একাধিক Line, Style এবং Legend</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — Style ও Multiple Lines</span></div>
+    <pre>t = np.<span class="fn">arange</span>(<span class="num">0</span>,<span class="num">5</span>,<span class="num">0.2</span>)  <span class="cm"># 0 থেকে 5, ধাপ 0.2</span>
+
+<span class="cm"># একসাথে ৩টি line</span>
+plt.<span class="fn">plot</span>(t,t, t,t**<span class="num">2</span>, t,t**<span class="num">3</span>)
+plt.<span class="fn">ylim</span>([<span class="num">0</span>,<span class="num">50</span>])
+
+<span class="cm"># Style string: color + linestyle + marker</span>
+<span class="cm"># ':r' = বিন্দু রেখা লাল | '-g' = সরল রেখা সবুজ | '--b' = ভাঙা রেখা নীল</span>
+plt.<span class="fn">plot</span>(t,t,<span class="str">':r'</span>, t,t**<span class="num">2</span>,<span class="str">'-g'</span>, t,t**<span class="num">3</span>,<span class="str">'--b'</span>)
+
+<span class="cm"># linewidth ও marker আলাদাভাবে</span>
+plt.<span class="fn">plot</span>(t,t**<span class="num">3</span>,<span class="str">'b'</span>, marker=<span class="str">'D'</span>, linewidth=<span class="num">2</span>, markersize=<span class="num">6</span>)
+
+<span class="cm"># Legend ও Grid</span>
+plt.<span class="fn">grid</span>(<span class="kw">True</span>)
+plt.<span class="fn">plot</span>([<span class="num">50</span>,<span class="num">100</span>,<span class="num">150</span>,<span class="num">200</span>],[<span class="num">2</span>,<span class="num">3</span>,<span class="num">7</span>,<span class="num">10</span>], <span class="str">'b-*'</span>, linewidth=<span class="num">0.8</span>, label=<span class="str">'পথ ১'</span>)
+plt.<span class="fn">plot</span>([<span class="num">50</span>,<span class="num">100</span>,<span class="num">150</span>,<span class="num">200</span>],[<span class="num">2</span>,<span class="num">7</span>,<span class="num">9</span>,<span class="num">10</span>], <span class="str">'g-+'</span>, linewidth=<span class="num">0.8</span>, label=<span class="str">'পথ ২'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'গতি'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'সময়'</span>)
+plt.<span class="fn">legend</span>(loc=<span class="str">'upper left'</span>)   <span class="cm"># legend-এর অবস্থান</span>
+
+<span class="cm"># Pandas-এ দুটো column একসাথে</span>
+df.<span class="fn">plot</span>(x=<span class="str">'Month'</span>, y=[<span class="str">'Product1'</span>,<span class="str">'Product2'</span>],
+       style=[<span class="str">'r--'</span>,<span class="str">'c-.'</span>], title=<span class="str">"মাসিক বিক্রয়"</span>)</pre>
+  </div>
+  <div class="two-col">
+    <div>
+      <h4>রং (Colors)</h4>
+      <table>
+        <tr><th>কোড</th><th>রং</th></tr>
+        <tr><td><code>'b'</code></td><td style="color:#60a5fa">■ নীল (blue)</td></tr>
+        <tr><td><code>'g'</code></td><td style="color:#4ade80">■ সবুজ (green)</td></tr>
+        <tr><td><code>'r'</code></td><td style="color:#f87171">■ লাল (red)</td></tr>
+        <tr><td><code>'c'</code></td><td style="color:#22d3ee">■ সায়ান (cyan)</td></tr>
+        <tr><td><code>'m'</code></td><td style="color:#f472b6">■ ম্যাজেন্টা</td></tr>
+        <tr><td><code>'y'</code></td><td style="color:#fbbf24">■ হলুদ (yellow)</td></tr>
+        <tr><td><code>'k'</code></td><td style="color:#9ca3af">■ কালো (black)</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Line Style ও Markers</h4>
+      <table>
+        <tr><th>কোড</th><th>অর্থ</th></tr>
+        <tr><td><code>'-'</code></td><td>সরল রেখা</td></tr>
+        <tr><td><code>'--'</code></td><td>ভাঙা রেখা</td></tr>
+        <tr><td><code>':'</code></td><td>বিন্দু রেখা</td></tr>
+        <tr><td><code>'-.'</code></td><td>মিশ্র রেখা</td></tr>
+        <tr><td><code>'o'</code></td><td>● গোল marker</td></tr>
+        <tr><td><code>'s'</code></td><td>■ চতুর্ভুজ marker</td></tr>
+        <tr><td><code>'*'</code></td><td>★ তারা marker</td></tr>
+        <tr><td><code>'D'</code></td><td>◆ হীরা marker</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- BAR PLOT -->
+<section class="section" id="barplot">
+  <div class="section-badge">📊 অধ্যায় ৫</div>
+  <h2>Bar Plot — দণ্ড চার্ট</h2>
+  <p>Bar chart তখন ব্যবহার করি যখন বিভিন্ন category-র মধ্যে তুলনা করতে চাই — যেমন বিভিন্ন ML model-এর accuracy তুলনা।</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — Bar Plot সব ধরন</span></div>
+    <pre><span class="cm"># ── সাধারণ bar plot ──</span>
+plt.<span class="fn">bar</span>(<span class="fn">range</span>(<span class="num">7</span>), [<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>,<span class="num">5</span>,<span class="num">4</span>,<span class="num">3</span>],
+        color=<span class="str">'steelblue'</span>, width=<span class="num">0.6</span>)
+
+<span class="cm"># ── দুটি bar পাশাপাশি (Grouped) ──</span>
+barWidth = <span class="num">0.4</span>
+x1 = <span class="fn">range</span>(<span class="num">12</span>)
+x2 = [r + barWidth <span class="kw">for</span> r <span class="kw">in</span> x1]   <span class="cm"># x1 থেকে barWidth সরিয়ে</span>
+plt.<span class="fn">bar</span>(x1, df12.Product1, width=barWidth, label=<span class="str">'Product 1'</span>)
+plt.<span class="fn">bar</span>(x2, df12.Product2, width=barWidth, label=<span class="str">'Product 2'</span>)
+plt.<span class="fn">xticks</span>([<span class="num">0</span>,<span class="num">2</span>,<span class="num">4</span>,<span class="num">6</span>,<span class="num">8</span>,<span class="num">11</span>],
+           [<span class="str">'জানু'</span>,<span class="str">'মার্চ'</span>,<span class="str">'মে'</span>,<span class="str">'জুলাই'</span>,<span class="str">'সেপ্টেম্বর'</span>,<span class="str">'ডিসেম্বর'</span>])
+plt.<span class="fn">legend</span>()
+
+<span class="cm"># ── Stacked (একটার উপর আরেকটা) ──</span>
+plt.<span class="fn">bar</span>(<span class="fn">range</span>(<span class="fn">len</span>(df)), df.Product1, label=<span class="str">'Product 1'</span>)
+plt.<span class="fn">bar</span>(<span class="fn">range</span>(<span class="fn">len</span>(df)), df.Product2,
+        bottom=df.Product1, label=<span class="str">'Product 2'</span>)
+
+<span class="cm"># ── Label ও Title ──</span>
+plt.<span class="fn">xlabel</span>(<span class="str">'মাস'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'বিক্রয়'</span>)
+plt.<span class="fn">title</span>(<span class="str">'মাসিক বিক্রয় তুলনা'</span>); plt.<span class="fn">legend</span>()
+
+<span class="cm"># ── Pandas method (দ্রুত) ──</span>
+df.<span class="fn">head</span>(<span class="num">6</span>).plot.<span class="fn">bar</span>(x=<span class="str">'Month'</span>, y=[<span class="str">'Product1'</span>,<span class="str">'Product2'</span>],
+                   stacked=<span class="kw">True</span>, rot=<span class="num">0</span>)</pre>
+  </div>
+
+  <div class="exercise-section">
+    <div class="exercise-header"><div class="exercise-icon">💼</div><div><div class="exercise-title">ইন্টারভিউ Exercise — Bar Plot</div></div></div>
+    <div class="ex-item">
+      <span class="ex-num">১</span>
+      <span style="color:var(--text);font-size:15px"><strong>Model Comparison:</strong> বিভিন্ন ML model-এর accuracy, precision, recall grouped bar chart-এ দেখাও।</span>
+      <button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'❌ বন্ধ করো':'💡 সমাধান দেখো'">💡 সমাধান দেখো</button>
+      <div class="hint-box">
+        <div class="code-block"><div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python</span></div>
+        <pre>models    = [<span class="str">'Logistic Reg'</span>,<span class="str">'Random Forest'</span>,<span class="str">'XGBoost'</span>,<span class="str">'SVM'</span>]
+accuracy  = [<span class="num">0.82</span>,<span class="num">0.91</span>,<span class="num">0.93</span>,<span class="num">0.87</span>]
+precision = [<span class="num">0.80</span>,<span class="num">0.89</span>,<span class="num">0.92</span>,<span class="num">0.85</span>]
+recall    = [<span class="num">0.79</span>,<span class="num">0.88</span>,<span class="num">0.90</span>,<span class="num">0.83</span>]
+
+x = np.<span class="fn">arange</span>(<span class="fn">len</span>(models)); w = <span class="num">0.25</span>
+plt.<span class="fn">figure</span>(figsize=(<span class="num">10</span>,<span class="num">5</span>))
+plt.<span class="fn">bar</span>(x-w, accuracy,  width=w, label=<span class="str">'Accuracy'</span>,  color=<span class="str">'#60a5fa'</span>)
+plt.<span class="fn">bar</span>(x,   precision, width=w, label=<span class="str">'Precision'</span>, color=<span class="str">'#4ade80'</span>)
+plt.<span class="fn">bar</span>(x+w, recall,    width=w, label=<span class="str">'Recall'</span>,    color=<span class="str">'#f472b6'</span>)
+plt.<span class="fn">xticks</span>(x, models); plt.<span class="fn">ylim</span>([<span class="num">0.7</span>,<span class="num">1.0</span>])
+plt.<span class="fn">title</span>(<span class="str">'ML Model তুলনা'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'Score'</span>)
+plt.<span class="fn">legend</span>(); plt.<span class="fn">grid</span>(axis=<span class="str">'y'</span>, alpha=<span class="num">0.3</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCATTER -->
+<section class="section" id="scatter">
+  <div class="section-badge">🔵 অধ্যায় ৬</div>
+  <h2>Scatter Plot — বিন্দু চার্ট</h2>
+  <p>Scatter plot দুটি variable-এর মধ্যে <strong>সম্পর্ক (correlation)</strong> দেখায়। Feature A বাড়লে Feature B কি বাড়ে না কমে তা বোঝা যায়।</p>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — Scatter Plot সব ধরন</span></div>
+    <pre><span class="cm"># ── সাধারণ scatter ──</span>
+plt.<span class="fn">scatter</span>(<span class="fn">range</span>(<span class="num">0</span>,<span class="num">7</span>), [<span class="num">8</span>,<span class="num">7</span>,<span class="num">6</span>,<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span>],
+            color=<span class="str">'red'</span>, marker=<span class="str">'*'</span>, s=<span class="num">40</span>)
+
+<span class="cm"># ── আকার ও রং list হতে পারে ──</span>
+x  = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]; y1 = [<span class="num">0</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">8</span>,<span class="num">15</span>]
+plt.<span class="fn">scatter</span>(x, y1, color=<span class="str">'yellow'</span>,
+            s=[<span class="num">30</span>,<span class="num">60</span>,<span class="num">90</span>,<span class="num">120</span>,<span class="num">150</span>])  <span class="cm"># ক্রমবর্ধমান আকার</span>
+
+<span class="cm"># ── HEX color ──</span>
+y2 = [<span class="num">5</span>,<span class="num">8</span>,<span class="num">11</span>,<span class="num">16</span>,<span class="num">22</span>]
+plt.<span class="fn">scatter</span>(x, y2,
+            c=[<span class="str">'#d248a2'</span>,<span class="str">'#8b48d2'</span>,<span class="str">'#48a5d2'</span>,<span class="str">'#4dd248'</span>,<span class="str">'#d1d248'</span>], s=<span class="num">40</span>)
+
+<span class="cm"># ── ৩য় variable রঙে দেখানো ──</span>
+plt.<span class="fn">scatter</span>(df.Product1, df.Product2, c=df.Returns, s=<span class="num">30</span>)
+<span class="cm"># Returns যত বেশি, রং তত আলাদা</span>
+
+<span class="cm"># ── Pandas method (colormap সহ) ──</span>
+df.plot.<span class="fn">scatter</span>(x=<span class="str">'Product1'</span>, y=<span class="str">'Product2'</span>,
+               c=<span class="str">'Returns'</span>, cmap=<span class="str">'viridis'</span>, s=<span class="num">30</span>)
+<span class="cm"># viridis = Matplotlib-এর সেরা colormap</span></pre>
+  </div>
+
+  <div class="exercise-section">
+    <div class="exercise-header"><div class="exercise-icon">💼</div><div><div class="exercise-title">ইন্টারভিউ Exercise — Scatter Plot</div></div></div>
+    <div class="ex-item">
+      <span class="ex-num">১</span>
+      <span style="color:var(--text);font-size:15px"><strong>Feature Correlation:</strong> Housing dataset-এ square footage vs price scatter plot বানাও। বিন্দুর রং দিয়ে bedroom count দেখাও।</span>
+      <button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'❌ বন্ধ করো':'💡 সমাধান দেখো'">💡 সমাধান দেখো</button>
+      <div class="hint-box">
+        <div class="code-block"><div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python</span></div>
+        <pre>np.random.seed(<span class="num">42</span>); n=<span class="num">100</span>
+sqft     = np.random.<span class="fn">randint</span>(<span class="num">500</span>,<span class="num">3500</span>,n)
+bedrooms = np.random.<span class="fn">randint</span>(<span class="num">1</span>,<span class="num">6</span>,n)
+price    = sqft*<span class="num">150</span> + bedrooms*<span class="num">10000</span> + np.random.<span class="fn">randn</span>(n)*<span class="num">50000</span>
+
+plt.<span class="fn">figure</span>(figsize=(<span class="num">9</span>,<span class="num">6</span>))
+sc = plt.<span class="fn">scatter</span>(sqft, price, c=bedrooms, cmap=<span class="str">'coolwarm'</span>,
+                 s=<span class="num">60</span>, alpha=<span class="num">0.7</span>, edgecolors=<span class="str">'white'</span>, linewidth=<span class="num">0.5</span>)
+plt.<span class="fn">colorbar</span>(sc, label=<span class="str">'বেডরুম সংখ্যা'</span>)
+plt.<span class="fn">title</span>(<span class="str">'বাড়ির আয়তন বনাম দাম'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'আয়তন (sq ft)'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'দাম'</span>)
+plt.<span class="fn">grid</span>(<span class="kw">True</span>, alpha=<span class="num">0.2</span>); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HISTOGRAM -->
+<section class="section" id="histogram">
+  <div class="section-badge">📉 অধ্যায় ৭</div>
+  <h2>Histogram — বিতরণ চার্ট</h2>
+  <p>Histogram দেখায় data কীভাবে <strong>ছড়িয়ে আছে (distribution)</strong>। ML-এ feature distribution বোঝা model training-এর আগে খুব জরুরি।</p>
+  <div class="two-col">
+    <div class="card"><div class="card-title">📊 Bar Chart vs Histogram</div>
+      <p style="font-size:13px;color:var(--text-dim)"><strong>Bar Chart:</strong> Category ভিত্তিক। X-axis-এ category name।<br><br><strong>Histogram:</strong> Continuous data-র বিতরণ। X-axis-এ সংখ্যার range (bins)।</p>
+    </div>
+    <div class="card"><div class="card-title">🔑 Key Parameters</div>
+      <table>
+        <tr><th>Parameter</th><th>কাজ</th></tr>
+        <tr><td><code>bins</code></td><td>কতটি ভাগে ভাগ করবে</td></tr>
+        <tr><td><code>range</code></td><td>data-র সীমা</td></tr>
+        <tr><td><code>density</code></td><td>frequency বদলে proportion</td></tr>
+        <tr><td><code>rwidth</code></td><td>bar-এর প্রস্থ (0-1)</td></tr>
+        <tr><td><code>orientation</code></td><td>'horizontal' = আড়াআড়ি</td></tr>
+        <tr><td><code>histtype</code></td><td>'barstacked' = স্তূপ</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — Histogram সব ধরন</span></div>
+    <pre><span class="cm"># ── সাধারণ histogram ──</span>
+x = np.random.<span class="fn">choice</span>(<span class="num">11</span>, <span class="num">40</span>)   <span class="cm"># 0-10 থেকে 40টি random</span>
+plt.<span class="fn">hist</span>(x, bins=<span class="num">7</span>, color=<span class="str">'orange'</span>, rwidth=<span class="num">0.8</span>)
+
+<span class="cm"># ── Custom bin ranges ──</span>
+plt.<span class="fn">hist</span>([<span class="num">0</span>,<span class="num">8</span>,<span class="num">13</span>,<span class="num">15</span>,<span class="num">32</span>,<span class="num">40</span>,<span class="num">45</span>],
+         bins=[<span class="num">0</span>,<span class="num">10</span>,<span class="num">20</span>,<span class="num">40</span>,<span class="num">50</span>])  <span class="cm"># অসমান bin</span>
+
+<span class="cm"># ── Horizontal + Frequency ──</span>
+plt.<span class="fn">hist</span>(x, bins=<span class="num">5</span>, density=<span class="kw">True</span>,      <span class="cm"># proportion দেখাও</span>
+         orientation=<span class="str">'horizontal'</span>,        <span class="cm"># আড়াআড়ি</span>
+         color=<span class="str">'#EE3459'</span>, rwidth=<span class="num">0.6</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'frequencies'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'values'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Horizontal histogram'</span>)
+
+<span class="cm"># ── দুটি series পাশাপাশি ──</span>
+plt.<span class="fn">hist</span>([df.Product1, df.Product2], bins=<span class="num">6</span>,
+         color=[<span class="str">'#f27750'</span>,<span class="str">'#f7bf59'</span>],
+         label=[<span class="str">'Product 1'</span>,<span class="str">'Product 2'</span>])
+plt.<span class="fn">legend</span>()
+
+<span class="cm"># ── Stacked histogram ──</span>
+plt.<span class="fn">hist</span>([df.Product1, df.Product2],
+         bins=[<span class="num">100</span>,<span class="num">200</span>,<span class="num">280</span>,<span class="num">325</span>,<span class="num">450</span>,<span class="num">600</span>,<span class="num">800</span>],
+         color=[<span class="str">'#0086ad'</span>,<span class="str">'#97ebdb'</span>],
+         histtype=<span class="str">'barstacked'</span>, rwidth=<span class="num">0.8</span>,
+         label=[<span class="str">'Product 1'</span>,<span class="str">'Product 2'</span>])
+
+<span class="cm"># ── Pandas method ──</span>
+df.plot.<span class="fn">hist</span>(y=[<span class="str">'Product1'</span>,<span class="str">'Product2'</span>], bins=<span class="num">7</span>,
+            subplots=<span class="kw">True</span>, layout=(<span class="num">2</span>,<span class="num">1</span>))  <span class="cm"># আলাদা আলাদা</span></pre>
+  </div>
+
+  <div class="exercise-section">
+    <div class="exercise-header"><div class="exercise-icon">💼</div><div><div class="exercise-title">ইন্টারভিউ Exercise — Histogram</div></div></div>
+    <div class="ex-item">
+      <span class="ex-num">১</span>
+      <span style="color:var(--text);font-size:15px"><strong>Feature Distribution Dashboard:</strong> ML model training-এর আগে তিনটি numerical feature-এর distribution subplot হিসেবে দেখাও।</span>
+      <button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'❌ বন্ধ করো':'💡 সমাধান দেখো'">💡 সমাধান দেখো</button>
+      <div class="hint-box">
+        <div class="code-block"><div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python</span></div>
+        <pre>np.random.seed(<span class="num">42</span>)
+df_f = pd.<span class="fn">DataFrame</span>({
+    <span class="str">'age'</span>:    np.random.<span class="fn">normal</span>(<span class="num">35</span>,<span class="num">10</span>,<span class="num">500</span>),
+    <span class="str">'income'</span>: np.random.<span class="fn">exponential</span>(<span class="num">50000</span>,<span class="num">500</span>),
+    <span class="str">'score'</span>:  np.random.<span class="fn">uniform</span>(<span class="num">0</span>,<span class="num">100</span>,<span class="num">500</span>)
+})
+colors = [<span class="str">'#60a5fa'</span>,<span class="str">'#4ade80'</span>,<span class="str">'#f472b6'</span>]
+titles = [<span class="str">'বয়স বিতরণ'</span>,<span class="str">'আয় বিতরণ'</span>,<span class="str">'স্কোর বিতরণ'</span>]
+plt.<span class="fn">figure</span>(figsize=(<span class="num">15</span>,<span class="num">4</span>))
+<span class="kw">for</span> i,(col,color,title) <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="fn">zip</span>(df_f.columns,colors,titles)):
+    plt.<span class="fn">subplot</span>(<span class="num">1</span>,<span class="num">3</span>,i+<span class="num">1</span>)
+    plt.<span class="fn">hist</span>(df_f[col], bins=<span class="num">30</span>, color=color, alpha=<span class="num">0.8</span>, rwidth=<span class="num">0.9</span>)
+    plt.<span class="fn">title</span>(title); plt.<span class="fn">xlabel</span>(col); plt.<span class="fn">ylabel</span>(<span class="str">'Frequency'</span>)
+    plt.<span class="fn">grid</span>(axis=<span class="str">'y'</span>, alpha=<span class="num">0.3</span>)
+plt.<span class="fn">tight_layout</span>(); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOX & PIE -->
+<section class="section" id="boxpie">
+  <div class="section-badge">📦 অধ্যায় ৮</div>
+  <h2>Box Plot এবং Pie Chart</h2>
+  <h3>Box Plot — সংখ্যার ৫-সংখ্যার সারসংক্ষেপ</h3>
+  <p>Box plot একটি ছবিতে min, max, median, Q1, Q3 এবং outlier দেখায়।</p>
+  <div class="diagram-wrap">
+    <div class="diagram-title">Box Plot-এর প্রতিটি অংশ কী বোঝায়</div>
+    <svg viewBox="0 0 580 260" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:580px">
+      <line x1="195" y1="230" x2="195" y2="185" stroke="#60a5fa" stroke-width="2"/>
+      <line x1="175" y1="230" x2="215" y2="230" stroke="#60a5fa" stroke-width="2"/>
+      <rect x="145" y="115" width="100" height="70" fill="none" stroke="#60a5fa" stroke-width="2"/>
+      <line x1="145" y1="158" x2="245" y2="158" stroke="#f5a623" stroke-width="3"/>
+      <line x1="195" y1="115" x2="195" y2="60" stroke="#60a5fa" stroke-width="2"/>
+      <line x1="175" y1="60" x2="215" y2="60" stroke="#60a5fa" stroke-width="2"/>
+      <circle cx="195" cy="36" r="5" fill="none" stroke="#e94560" stroke-width="2"/>
+      <line x1="250" y1="230" x2="305" y2="230" stroke="#9090b0" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="310" y="234" fill="#9090b0" font-size="12" font-family="sans-serif">Minimum (সর্বনিম্ন)</text>
+      <line x1="250" y1="185" x2="305" y2="185" stroke="#9090b0" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="310" y="189" fill="#9090b0" font-size="12" font-family="sans-serif">Q1 (25th percentile)</text>
+      <line x1="250" y1="158" x2="305" y2="158" stroke="#f5a623" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="310" y="162" fill="#f5a623" font-size="12" font-family="sans-serif">Median (মাঝামাঝি মান)</text>
+      <line x1="250" y1="115" x2="305" y2="115" stroke="#9090b0" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="310" y="119" fill="#9090b0" font-size="12" font-family="sans-serif">Q3 (75th percentile)</text>
+      <line x1="250" y1="60" x2="305" y2="60" stroke="#9090b0" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="310" y="64" fill="#9090b0" font-size="12" font-family="sans-serif">Maximum (সর্বোচ্চ)</text>
+      <line x1="210" y1="36" x2="305" y2="36" stroke="#e94560" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="310" y="40" fill="#e94560" font-size="12" font-family="sans-serif">Outlier (অস্বাভাবিক মান)</text>
+      <text x="75" y="148" fill="#4ade80" font-size="12" font-family="sans-serif" font-weight="bold">IQR</text>
+      <text x="60" y="162" fill="#4ade80" font-size="11" font-family="sans-serif">(Q3-Q1)</text>
+    </svg>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — Box Plot ও Pie Chart</span></div>
+    <pre><span class="cm"># ── Box Plot ──</span>
+plt.<span class="fn">boxplot</span>([df.Product1, df.Product2])
+plt.<span class="fn">title</span>(<span class="str">'Product 1 ও 2 এর বিক্রয় বিতরণ'</span>)
+
+<span class="cm"># মাস অনুযায়ী grouped boxplot</span>
+df[<span class="str">'Months'</span>] = df.Month.<span class="fn">apply</span>(<span class="kw">lambda</span> x: x[<span class="num">3</span>:])
+l = []
+<span class="kw">for</span> m <span class="kw">in</span> df.Months.<span class="fn">unique</span>():
+    l.<span class="fn">append</span>(df[df[<span class="str">'Months'</span>]==m][<span class="str">'Turnover'</span>])
+plt.<span class="fn">boxplot</span>(l)
+plt.<span class="fn">xticks</span>(<span class="fn">range</span>(<span class="num">1</span>,<span class="num">13</span>), df.Months.<span class="fn">unique</span>())
+
+<span class="cm"># Pandas method (সহজ!)</span>
+df.<span class="fn">boxplot</span>(column=<span class="str">'Turnover'</span>, by=<span class="str">'Months'</span>, figsize=(<span class="num">7</span>,<span class="num">7</span>))
+
+<span class="cm"># ── Pie Chart ──</span>
+plt.<span class="fn">figure</span>(figsize=(<span class="num">7</span>,<span class="num">7</span>))   <span class="cm"># square figure ভালো দেখায়</span>
+x = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">10</span>]
+plt.<span class="fn">pie</span>(x,
+        labels=[<span class="str">'A'</span>,<span class="str">'B'</span>,<span class="str">'C'</span>,<span class="str">'D'</span>,<span class="str">'E'</span>],
+        colors=[<span class="str">'red'</span>,<span class="str">'orange'</span>,<span class="str">'yellow'</span>,<span class="str">'green'</span>,<span class="str">'blue'</span>],
+        explode=[<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0.2</span>,<span class="num">0</span>],    <span class="cm"># D-কে বাইরে টানো</span>
+        autopct=<span class="str">'%.2f%%'</span>,           <span class="cm"># % দেখাও, ২ দশমিক</span>
+        pctdistance=<span class="num">0.7</span>,            <span class="cm"># % কেন্দ্র থেকে ৭০% দূরে</span>
+        labeldistance=<span class="num">1.2</span>,          <span class="cm"># label বাইরে</span>
+        shadow=<span class="kw">True</span>)               <span class="cm"># ছায়া</span>
+plt.<span class="fn">legend</span>()</pre>
+  </div>
+</section>
+
+<!-- SUBPLOTS -->
+<section class="section" id="subplots">
+  <div class="section-badge">🗂️ অধ্যায় ৯</div>
+  <h2>Subplots — একসাথে একাধিক গ্রাফ</h2>
+  <div class="diagram-wrap">
+    <div class="diagram-title">subplot(2,2,n) — 2 row × 2 column grid</div>
+    <svg viewBox="0 0 480 240" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:480px">
+      <rect x="10" y="10" width="460" height="220" rx="8" fill="#0f0f1a" stroke="#a855f7" stroke-width="2"/>
+      <rect x="20" y="20" width="210" height="95" rx="6" fill="#16213e" stroke="#00d4aa" stroke-width="1.5"/>
+      <text x="125" y="73" text-anchor="middle" fill="#00d4aa" font-size="16" font-family="sans-serif" font-weight="bold">subplot(2,2,1)</text>
+      <rect x="245" y="20" width="215" height="95" rx="6" fill="#16213e" stroke="#60a5fa" stroke-width="1.5"/>
+      <text x="352" y="73" text-anchor="middle" fill="#60a5fa" font-size="16" font-family="sans-serif" font-weight="bold">subplot(2,2,2)</text>
+      <rect x="20" y="125" width="210" height="95" rx="6" fill="#16213e" stroke="#f472b6" stroke-width="1.5"/>
+      <text x="125" y="178" text-anchor="middle" fill="#f472b6" font-size="16" font-family="sans-serif" font-weight="bold">subplot(2,2,3)</text>
+      <rect x="245" y="125" width="215" height="95" rx="6" fill="#16213e" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="352" y="178" text-anchor="middle" fill="#fbbf24" font-size="16" font-family="sans-serif" font-weight="bold">subplot(2,2,4)</text>
+      <text x="240" y="232" text-anchor="middle" fill="#9090b0" font-size="10" font-family="sans-serif">সংখ্যা বাঁ→ডান, উপর→নিচে যায়। subplot(221) = subplot(2,2,1)</text>
+    </svg>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — Subplots ও Nested Charts</span></div>
+    <pre>df = pd.<span class="fn">read_csv</span>(<span class="str">'sales_data.csv'</span>)
+plt.<span class="fn">figure</span>(figsize=(<span class="num">10</span>,<span class="num">10</span>))
+
+plt.<span class="fn">subplot</span>(<span class="num">2</span>,<span class="num">2</span>,<span class="num">1</span>)                   <span class="cm"># উপর-বাম</span>
+plt.<span class="fn">bar</span>(<span class="fn">range</span>(<span class="fn">len</span>(df)), df.Product1, label=<span class="str">'Product 1'</span>)
+plt.<span class="fn">legend</span>()
+
+plt.<span class="fn">subplot</span>(<span class="num">2</span>,<span class="num">2</span>,<span class="num">2</span>)                   <span class="cm"># উপর-ডান</span>
+plt.<span class="fn">scatter</span>(df.Product1, df.Product2, c=<span class="str">'m'</span>)
+
+plt.<span class="fn">subplot</span>(<span class="num">2</span>,<span class="num">2</span>,<span class="num">3</span>)                   <span class="cm"># নিচ-বাম</span>
+plt.<span class="fn">plot</span>(df.Returns, <span class="str">'r-*'</span>)
+
+plt.<span class="fn">subplot</span>(<span class="num">2</span>,<span class="num">2</span>,<span class="num">4</span>)                   <span class="cm"># নিচ-ডান</span>
+plt.<span class="fn">hist</span>(df.Turnover, color=<span class="str">'green'</span>)
+
+<span class="cm"># ── গ্রাফের ভেতরে গ্রাফ (Nested/Inset) ──</span>
+plt.<span class="fn">figure</span>(figsize=(<span class="num">7</span>,<span class="num">7</span>))
+plt.<span class="fn">boxplot</span>(df.Turnover); plt.<span class="fn">title</span>(<span class="str">'Boxplot'</span>)
+
+<span class="cm"># [x, y, width, height] — সব 0-1 এর মধ্যে (relative position)</span>
+plt.<span class="fn">axes</span>([<span class="num">0.65</span>,<span class="num">0.65</span>,<span class="num">0.2</span>,<span class="num">0.15</span>], facecolor=<span class="str">'#ffe5c1'</span>)
+plt.<span class="fn">hist</span>(df.Turnover, color=<span class="str">'#FFC575'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'Distribution'</span>)
+plt.<span class="fn">xticks</span>([])   <span class="cm"># X axis graduation মুছে দাও</span>
+plt.<span class="fn">yticks</span>([])</pre>
+  </div>
+
+  <div class="exercise-section">
+    <div class="exercise-header"><div class="exercise-icon">💼</div><div><div class="exercise-title">ইন্টারভিউ Exercise — Subplots</div></div></div>
+    <div class="ex-item">
+      <span class="ex-num">১</span>
+      <span style="color:var(--text);font-size:15px"><strong>EDA Dashboard:</strong> Iris dataset-এ ৪টি গ্রাফ একসাথে দেখাও: histogram, scatter, bar chart, boxplot।</span>
+      <button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'❌ বন্ধ করো':'💡 সমাধান দেখো'">💡 সমাধান দেখো</button>
+      <div class="hint-box">
+        <div class="code-block"><div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python</span></div>
+        <pre><span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_iris
+iris = <span class="fn">load_iris</span>()
+df_i = pd.<span class="fn">DataFrame</span>(iris.data, columns=iris.feature_names)
+df_i[<span class="str">'species'</span>] = iris.target
+
+plt.<span class="fn">figure</span>(figsize=(<span class="num">14</span>,<span class="num">10</span>))
+plt.<span class="fn">suptitle</span>(<span class="str">'Iris Dataset EDA Dashboard'</span>, fontsize=<span class="num">16</span>)
+
+plt.<span class="fn">subplot</span>(<span class="num">2</span>,<span class="num">2</span>,<span class="num">1</span>)
+plt.<span class="fn">hist</span>(df_i[<span class="str">'sepal length (cm)'</span>], bins=<span class="num">20</span>, color=<span class="str">'#60a5fa'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Sepal Length বিতরণ'</span>)
+
+plt.<span class="fn">subplot</span>(<span class="num">2</span>,<span class="num">2</span>,<span class="num">2</span>)
+<span class="kw">for</span> s,c <span class="kw">in</span> <span class="fn">zip</span>([<span class="num">0</span>,<span class="num">1</span>,<span class="num">2</span>],[<span class="str">'#e94560'</span>,<span class="str">'#00d4aa'</span>,<span class="str">'#f5a623'</span>]):
+    m = df_i.species==s
+    plt.<span class="fn">scatter</span>(df_i[m][<span class="str">'sepal length (cm)'</span>],
+               df_i[m][<span class="str">'petal length (cm)'</span>],
+               c=c, label=iris.target_names[s], s=<span class="num">40</span>)
+plt.<span class="fn">title</span>(<span class="str">'Sepal vs Petal Length'</span>); plt.<span class="fn">legend</span>()
+
+plt.<span class="fn">subplot</span>(<span class="num">2</span>,<span class="num">2</span>,<span class="num">3</span>)
+counts = df_i.species.<span class="fn">value_counts</span>()
+plt.<span class="fn">bar</span>(iris.target_names, counts,
+        color=[<span class="str">'#e94560'</span>,<span class="str">'#00d4aa'</span>,<span class="str">'#f5a623'</span>])
+plt.<span class="fn">title</span>(<span class="str">'Class বিতরণ'</span>)
+
+plt.<span class="fn">subplot</span>(<span class="num">2</span>,<span class="num">2</span>,<span class="num">4</span>)
+plt.<span class="fn">boxplot</span>([df_i[df_i.species==i][<span class="str">'petal length (cm)'</span>]
+             <span class="kw">for</span> i <span class="kw">in</span> [<span class="num">0</span>,<span class="num">1</span>,<span class="num">2</span>]])
+plt.<span class="fn">xticks</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], iris.target_names)
+plt.<span class="fn">title</span>(<span class="str">'Petal Length by Species'</span>)
+
+plt.<span class="fn">tight_layout</span>(); plt.<span class="fn">show</span>()</pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ANNOTATION -->
+<section class="section" id="annotation">
+  <div class="section-badge">✍️ অধ্যায় ১০</div>
+  <h2>Annotation — গ্রাফে লেখা ও তীর চিহ্ন</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — Text ও Annotation</span></div>
+    <pre>t = np.<span class="fn">arange</span>(<span class="num">0.0</span>,<span class="num">2.0</span>,<span class="num">0.01</span>)
+plt.<span class="fn">plot</span>(t, np.<span class="fn">cos</span>(<span class="num">2</span>*np.pi*t))
+plt.<span class="fn">ylim</span>(-<span class="num">2</span>,<span class="num">2</span>)
+
+<span class="cm"># সরাসরি text — plt.text(x, y, 'text')</span>
+plt.<span class="fn">text</span>(<span class="num">0.8</span>, <span class="num">1.1</span>, <span class="str">'স্থানীয় সর্বোচ্চ'</span>)
+
+<span class="cm"># তীর সহ annotation</span>
+plt.<span class="fn">annotate</span>(
+    <span class="str">'সর্বোচ্চ বিন্দু'</span>,
+    xy=(<span class="num">1.5</span>, <span class="num">0.25</span>),        <span class="cm"># তীর কোথায় point করবে</span>
+    xytext=(<span class="num">2.0</span>, <span class="num">0.5</span>),      <span class="cm"># text কোথায় থাকবে</span>
+    arrowprops={<span class="str">'facecolor'</span>:<span class="str">'green'</span>, <span class="str">'arrowstyle'</span>:<span class="str">'->'</span>}
+)
+
+<span class="cm"># Grid সহ সম্পূর্ণ উদাহরণ</span>
+plt.<span class="fn">grid</span>(<span class="kw">True</span>)
+x = np.<span class="fn">arange</span>(<span class="num">0</span>.,<span class="num">5</span>.,<span class="num">.01</span>)
+y = np.<span class="fn">sin</span>(<span class="num">2</span>*np.pi*x) * np.<span class="fn">exp</span>(-x)
+plt.<span class="fn">plot</span>(x, y); plt.<span class="fn">plot</span>(x, np.<span class="fn">exp</span>(-x)); plt.<span class="fn">plot</span>(x,-np.<span class="fn">exp</span>(-x))
+plt.<span class="fn">annotate</span>(<span class="str">'Asymptote: exp(-x)'</span>, xy=(<span class="num">1.5</span>,<span class="num">0.25</span>), xytext=(<span class="num">2</span>,<span class="num">0.5</span>),
+            arrowprops={<span class="str">'facecolor'</span>:<span class="str">'green'</span>})
+plt.<span class="fn">annotate</span>(<span class="str">'Asymptote: -exp(-x)'</span>, xy=(<span class="num">1.5</span>,-<span class="num">0.25</span>), xytext=(<span class="num">2</span>,-<span class="num">0.5</span>),
+            arrowprops={<span class="str">'facecolor'</span>:<span class="str">'red'</span>})</pre>
+  </div>
+</section>
+
+<!-- MASTER EXERCISES -->
+<section class="section" id="exercises">
+  <div class="section-badge">💼 ইন্টারভিউ প্রস্তুতি</div>
+  <h2>সব ধরনের ইন্টারভিউ প্রশ্ন ও উত্তর</h2>
+  <div class="exercise-section">
+    <div class="exercise-header"><div class="exercise-icon">🎯</div><div><div class="exercise-title">ML Engineering ইন্টারভিউ — সম্পূর্ণ সেট</div><div class="exercise-subtitle">Real-world Data Visualization Tasks</div></div></div>
+
+    <div class="ex-item">
+      <span class="ex-num">১</span>
+      <span style="color:var(--text);font-size:15px"><strong>Confusion Matrix Heatmap:</strong> Classification model-এর confusion matrix heatmap-এ দেখাও। প্রতিটি cell-এ number লেখো।</span>
+      <button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'❌ বন্ধ করো':'💡 সমাধান দেখো'">💡 সমাধান দেখো</button>
+      <div class="hint-box"><div class="code-block"><div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python</span></div>
+      <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+cm = np.<span class="fn">array</span>([[<span class="num">85</span>,<span class="num">15</span>],[<span class="num">10</span>,<span class="num">90</span>]])
+classes = [<span class="str">'Negative'</span>,<span class="str">'Positive'</span>]
+
+plt.<span class="fn">figure</span>(figsize=(<span class="num">6</span>,<span class="num">5</span>))
+plt.<span class="fn">imshow</span>(cm, cmap=<span class="str">'Blues'</span>)
+plt.<span class="fn">colorbar</span>()
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>):
+        plt.<span class="fn">text</span>(j, i, <span class="fn">str</span>(cm[i,j]),
+                 ha=<span class="str">'center'</span>, va=<span class="str">'center'</span>, fontsize=<span class="num">20</span>, fontweight=<span class="str">'bold'</span>,
+                 color=<span class="str">'white'</span> <span class="kw">if</span> cm[i,j]><span class="num">50</span> <span class="kw">else</span> <span class="str">'black'</span>)
+plt.<span class="fn">xticks</span>([<span class="num">0</span>,<span class="num">1</span>], classes); plt.<span class="fn">yticks</span>([<span class="num">0</span>,<span class="num">1</span>], classes)
+plt.<span class="fn">xlabel</span>(<span class="str">'Predicted'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'Actual'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Confusion Matrix'</span>); plt.<span class="fn">show</span>()</pre></div></div>
+    </div>
+
+    <div class="ex-item">
+      <span class="ex-num">২</span>
+      <span style="color:var(--text);font-size:15px"><strong>Feature Importance:</strong> Random Forest-এর feature importance horizontal bar chart-এ দেখাও (গুরুত্বপূর্ণ উপরে)।</span>
+      <button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'❌ বন্ধ করো':'💡 সমাধান দেখো'">💡 সমাধান দেখো</button>
+      <div class="hint-box"><div class="code-block"><div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python</span></div>
+      <pre>features   = [<span class="str">'বয়স'</span>,<span class="str">'আয়'</span>,<span class="str">'শিক্ষা'</span>,<span class="str">'অভিজ্ঞতা'</span>,<span class="str">'স্কোর'</span>]
+importance = [<span class="num">0.15</span>,<span class="num">0.35</span>,<span class="num">0.20</span>,<span class="num">0.25</span>,<span class="num">0.05</span>]
+sorted_idx  = np.<span class="fn">argsort</span>(importance)
+sorted_feat = [features[i] <span class="kw">for</span> i <span class="kw">in</span> sorted_idx]
+sorted_imp  = [importance[i] <span class="kw">for</span> i <span class="kw">in</span> sorted_idx]
+
+plt.<span class="fn">figure</span>(figsize=(<span class="num">8</span>,<span class="num">4</span>))
+plt.<span class="fn">barh</span>(sorted_feat, sorted_imp, color=<span class="str">'#00d4aa'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'Feature Importance'</span>); plt.<span class="fn">title</span>(<span class="str">'Random Forest Feature Importance'</span>)
+<span class="kw">for</span> i,v <span class="kw">in</span> <span class="fn">enumerate</span>(sorted_imp):
+    plt.<span class="fn">text</span>(v+<span class="num">0.005</span>, i, <span class="fn">f</span><span class="str">'{v:.2f}'</span>, va=<span class="str">'center'</span>)
+plt.<span class="fn">show</span>()</pre></div></div>
+    </div>
+
+    <div class="ex-item">
+      <span class="ex-num">৩</span>
+      <span style="color:var(--text);font-size:15px"><strong>ROC Curve:</strong> Binary classifier-এর ROC curve আঁকো এবং AUC দেখাও।</span>
+      <button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'❌ বন্ধ করো':'💡 সমাধান দেখো'">💡 সমাধান দেখো</button>
+      <div class="hint-box"><div class="code-block"><div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python</span></div>
+      <pre><span class="kw">from</span> sklearn.metrics <span class="kw">import</span> roc_curve, auc
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> make_classification
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+
+X,y = <span class="fn">make_classification</span>(n_samples=<span class="num">1000</span>, random_state=<span class="num">42</span>)
+X_tr,X_te,y_tr,y_te = <span class="fn">train_test_split</span>(X,y,test_size=<span class="num">0.3</span>)
+model = <span class="fn">LogisticRegression</span>().<span class="fn">fit</span>(X_tr,y_tr)
+probs = model.<span class="fn">predict_proba</span>(X_te)[:,<span class="num">1</span>]
+fpr,tpr,_ = <span class="fn">roc_curve</span>(y_te,probs)
+roc_auc = <span class="fn">auc</span>(fpr,tpr)
+
+plt.<span class="fn">figure</span>(figsize=(<span class="num">7</span>,<span class="num">6</span>))
+plt.<span class="fn">plot</span>(fpr,tpr, color=<span class="str">'#e94560'</span>, linewidth=<span class="num">2</span>,
+         label=<span class="fn">f</span><span class="str">'ROC (AUC={roc_auc:.3f})'</span>)
+plt.<span class="fn">plot</span>([<span class="num">0</span>,<span class="num">1</span>],[<span class="num">0</span>,<span class="num">1</span>],<span class="str">'k--'</span>, label=<span class="str">'Random Classifier'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'False Positive Rate'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'True Positive Rate'</span>)
+plt.<span class="fn">title</span>(<span class="str">'ROC Curve'</span>); plt.<span class="fn">legend</span>()
+plt.<span class="fn">grid</span>(<span class="kw">True</span>, alpha=<span class="num">0.3</span>); plt.<span class="fn">show</span>()</pre></div></div>
+    </div>
+
+    <div class="ex-item">
+      <span class="ex-num">৪</span>
+      <span style="color:var(--text);font-size:15px"><strong>Learning Curve:</strong> Training size বাড়ালে model performance কীভাবে বাড়ে দেখাও।</span>
+      <button class="hint-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.textContent=this.nextElementSibling.classList.contains('open')?'❌ বন্ধ করো':'💡 সমাধান দেখো'">💡 সমাধান দেখো</button>
+      <div class="hint-box"><div class="code-block"><div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python</span></div>
+      <pre><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> learning_curve
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+
+X,y = <span class="fn">make_classification</span>(n_samples=<span class="num">1000</span>, random_state=<span class="num">42</span>)
+train_sizes,train_scores,val_scores = <span class="fn">learning_curve</span>(
+    <span class="fn">RandomForestClassifier</span>(n_estimators=<span class="num">50</span>), X, y,
+    train_sizes=np.<span class="fn">linspace</span>(<span class="num">0.1</span>,<span class="num">1.0</span>,<span class="num">10</span>), cv=<span class="num">5</span>)
+
+plt.<span class="fn">figure</span>(figsize=(<span class="num">9</span>,<span class="num">5</span>))
+plt.<span class="fn">plot</span>(train_sizes, train_scores.<span class="fn">mean</span>(axis=<span class="num">1</span>), <span class="str">'b-o'</span>, label=<span class="str">'Train'</span>)
+plt.<span class="fn">fill_between</span>(train_sizes,
+    train_scores.<span class="fn">mean</span>(axis=<span class="num">1</span>)-train_scores.<span class="fn">std</span>(axis=<span class="num">1</span>),
+    train_scores.<span class="fn">mean</span>(axis=<span class="num">1</span>)+train_scores.<span class="fn">std</span>(axis=<span class="num">1</span>), alpha=<span class="num">0.1</span>, color=<span class="str">'b'</span>)
+plt.<span class="fn">plot</span>(train_sizes, val_scores.<span class="fn">mean</span>(axis=<span class="num">1</span>), <span class="str">'r-s'</span>, label=<span class="str">'Validation'</span>)
+plt.<span class="fn">fill_between</span>(train_sizes,
+    val_scores.<span class="fn">mean</span>(axis=<span class="num">1</span>)-val_scores.<span class="fn">std</span>(axis=<span class="num">1</span>),
+    val_scores.<span class="fn">mean</span>(axis=<span class="num">1</span>)+val_scores.<span class="fn">std</span>(axis=<span class="num">1</span>), alpha=<span class="num">0.1</span>, color=<span class="str">'r'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Learning Curve'</span>); plt.<span class="fn">xlabel</span>(<span class="str">'Training Examples'</span>)
+plt.<span class="fn">ylabel</span>(<span class="str">'Accuracy'</span>); plt.<span class="fn">legend</span>()
+plt.<span class="fn">grid</span>(<span class="kw">True</span>, alpha=<span class="num">0.3</span>); plt.<span class="fn">show</span>()</pre></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ML ALGORITHMS -->
+<section class="section" id="algorithms">
+  <div class="section-badge">🤖 ML Algorithms</div>
+  <h2>Machine Learning Algorithms — সব কিছু একসাথে</h2>
+  <p>এই অংশে সব গুরুত্বপূর্ণ ML algorithm-এর ধারণা ব্যাখ্যা (একদম শিশুর ভাষায়), গাণিতিক ভিত্তি এবং Python implementation দেওয়া হয়েছে। প্রতিটি উদাহরণ real ML engineering project-এর মতো লেখা।</p>
+</section>
+
+<!-- LINEAR REGRESSION -->
+<section class="section" id="linear-reg">
+  <div class="algo-card">
+    <div class="algo-badge">SUPERVISED — REGRESSION</div>
+    <h3 style="color:var(--accent2);margin-top:8px">১. Linear Regression — সরলরৈখিক প্রতিগমন</h3>
+    <h4>শিশুর ভাষায় বোঝো</h4>
+    <p>ধরো তুমি লক্ষ্য করলে যত বেশি বিজ্ঞাপন দেওয়া হয়, তত বেশি বিক্রয় হয়। এখন একটা <strong>সরল রেখা</strong> টেনে দিলে যেটা এই সম্পর্ক দেখায়। পরে যেকোনো বিজ্ঞাপন খরচ দিলে রেখা থেকে বিক্রয় অনুমান করতে পারবে — এটাই Linear Regression!</p>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Linear Regression — Data points ও Best Fit Line</div>
+      <svg viewBox="0 0 480 230" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:480px">
+        <defs><marker id="ar3" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M1,1 L6,3.5 L1,6 Z" fill="#4a5568"/></marker></defs>
+        <line x1="45" y1="205" x2="450" y2="205" stroke="#4a5568" stroke-width="2" marker-end="url(#ar3)"/>
+        <line x1="45" y1="205" x2="45" y2="20" stroke="#4a5568" stroke-width="2" marker-end="url(#ar3)"/>
+        <circle cx="75" cy="190" r="6" fill="#60a5fa" opacity=".8"/><circle cx="115" cy="175" r="6" fill="#60a5fa" opacity=".8"/>
+        <circle cx="155" cy="168" r="6" fill="#60a5fa" opacity=".8"/><circle cx="195" cy="148" r="6" fill="#60a5fa" opacity=".8"/>
+        <circle cx="235" cy="138" r="6" fill="#60a5fa" opacity=".8"/><circle cx="275" cy="120" r="6" fill="#60a5fa" opacity=".8"/>
+        <circle cx="315" cy="108" r="6" fill="#60a5fa" opacity=".8"/><circle cx="355" cy="92" r="6" fill="#60a5fa" opacity=".8"/>
+        <circle cx="395" cy="80" r="6" fill="#60a5fa" opacity=".8"/>
+        <line x1="55" y1="198" x2="430" y2="68" stroke="#e94560" stroke-width="2.5"/>
+        <text x="435" y="68" fill="#e94560" font-size="11" font-family="sans-serif">Best fit</text>
+        <text x="245" y="225" text-anchor="middle" fill="#9090b0" font-size="12" font-family="sans-serif">বিজ্ঞাপন খরচ →</text>
+        <text x="25" y="115" text-anchor="middle" fill="#9090b0" font-size="12" font-family="sans-serif" transform="rotate(-90,25,115)">বিক্রয় →</text>
+        <rect x="90" y="28" width="185" height="38" rx="7" fill="#1a1a2e" stroke="#f5a623" stroke-width="1"/>
+        <text x="183" y="44" text-anchor="middle" fill="#f5a623" font-size="12" font-family="monospace">y = mx + b</text>
+        <text x="183" y="59" text-anchor="middle" fill="#9090b0" font-size="10" font-family="sans-serif">slope × input + intercept</text>
+      </svg>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="step-num">y</div><div class="step-body"><h5>Output (যা predict করতে চাই)</h5><p>যেমন: বিক্রয়ের পরিমাণ</p></div></div>
+      <div class="step"><div class="step-num">x</div><div class="step-body"><h5>Input (Feature)</h5><p>যেমন: বিজ্ঞাপন খরচ</p></div></div>
+      <div class="step"><div class="step-num">m</div><div class="step-body"><h5>Slope (ঢাল)</h5><p>x একক বাড়লে y কতটা বাড়ে। ধনাত্মক হলে ঊর্ধ্বমুখী।</p></div></div>
+      <div class="step"><div class="step-num">b</div><div class="step-body"><h5>Intercept</h5><p>x=0 হলে y-এর মান। রেখা Y-axis কোথায় কাটে।</p></div></div>
+    </div>
+    <div class="complexity-row">
+      <div class="complexity-item"><div class="complexity-label">Training</div><div class="complexity-val">O(n·d)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Prediction</div><div class="complexity-val">O(d)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Interpretability</div><div class="complexity-val">⭐⭐⭐⭐⭐</div></div>
+      <div class="complexity-item"><div class="complexity-label">Use Case</div><div class="complexity-val">Price, Sales</div></div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — ML Project: Sales Prediction</span></div>
+      <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> mean_squared_error, r2_score
+
+<span class="cm"># ── ১. Data তৈরি ──</span>
+np.random.<span class="fn">seed</span>(<span class="num">42</span>)
+ad_spend = np.random.<span class="fn">uniform</span>(<span class="num">1000</span>,<span class="num">10000</span>,<span class="num">200</span>)
+sales = <span class="num">2.5</span>*ad_spend + <span class="num">5000</span> + np.random.<span class="fn">randn</span>(<span class="num">200</span>)*<span class="num">3000</span>
+
+<span class="cm"># ── ২. Reshape (sklearn চায় 2D array) ──</span>
+X = ad_spend.<span class="fn">reshape</span>(-<span class="num">1</span>,<span class="num">1</span>); y = sales
+X_train,X_test,y_train,y_test = <span class="fn">train_test_split</span>(X,y,test_size=<span class="num">0.2</span>,random_state=<span class="num">42</span>)
+
+<span class="cm"># ── ৩. Train ──</span>
+model = <span class="fn">LinearRegression</span>()
+model.<span class="fn">fit</span>(X_train, y_train)
+y_pred = model.<span class="fn">predict</span>(X_test)
+
+<span class="cm"># ── ৪. Metrics ──</span>
+r2  = <span class="fn">r2_score</span>(y_test, y_pred)
+mse = <span class="fn">mean_squared_error</span>(y_test, y_pred)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Slope(m)={model.coef_[0]:.2f} | Intercept(b)={model.intercept_:.2f}"</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"R²={r2:.4f} | MSE={mse:.2f}"</span>)
+
+<span class="cm"># ── ৫. Visualization ──</span>
+plt.<span class="fn">figure</span>(figsize=(<span class="num">12</span>,<span class="num">5</span>))
+
+plt.<span class="fn">subplot</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">1</span>)
+plt.<span class="fn">scatter</span>(X_test, y_test, alpha=<span class="num">0.6</span>, label=<span class="str">'Actual'</span>, color=<span class="str">'#60a5fa'</span>)
+plt.<span class="fn">plot</span>(X_test, y_pred, <span class="str">'r-'</span>, linewidth=<span class="num">2</span>, label=<span class="str">'Predicted Line'</span>)
+plt.<span class="fn">title</span>(<span class="fn">f</span><span class="str">'Linear Regression (R²={r2:.3f})'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'বিজ্ঞাপন খরচ'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'বিক্রয়'</span>); plt.<span class="fn">legend</span>()
+
+plt.<span class="fn">subplot</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>)
+residuals = y_test - y_pred
+plt.<span class="fn">scatter</span>(y_pred, residuals, alpha=<span class="num">0.6</span>, color=<span class="str">'#4ade80'</span>)
+plt.<span class="fn">axhline</span>(y=<span class="num">0</span>, color=<span class="str">'red'</span>, linestyle=<span class="str">'--'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Residual Plot (শূন্যের কাছে = ভালো model)'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'Predicted'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'Residuals'</span>)
+
+plt.<span class="fn">tight_layout</span>(); plt.<span class="fn">show</span>()</pre>
+    </div>
+  </div>
+</section>
+
+<!-- LOGISTIC REGRESSION -->
+<section class="section" id="logistic-reg">
+  <div class="algo-card">
+    <div class="algo-badge">SUPERVISED — CLASSIFICATION</div>
+    <h3 style="color:var(--accent2);margin-top:8px">২. Logistic Regression — শ্রেণিবিন্যাস মডেল</h3>
+    <h4>শিশুর ভাষায় বোঝো</h4>
+    <p>ধরো তোমার বন্ধু একটা ইমেইল পেল — সে জানতে চায়: "এটা spam নাকি real?" Logistic Regression ঠিক এই কাজ করে — output সর্বদা <strong>0 থেকে 1-এর মধ্যে probability</strong> হিসেবে আসে। তারপর একটা threshold (সাধারণত 0.5) দিয়ে class ঠিক করা হয়।</p>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Sigmoid Function — যেকোনো সংখ্যাকে 0-1 এ রূপান্তর</div>
+      <svg viewBox="0 0 480 210" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:480px">
+        <defs><marker id="ar4" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto"><path d="M1,1 L6,3.5 L1,6 Z" fill="#4a5568"/></marker></defs>
+        <line x1="45" y1="195" x2="445" y2="195" stroke="#4a5568" stroke-width="2" marker-end="url(#ar4)"/>
+        <line x1="240" y1="205" x2="240" y2="15" stroke="#4a5568" stroke-width="2" marker-end="url(#ar4)"/>
+        <line x1="45" y1="178" x2="440" y2="178" stroke="#2a2a4a" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="45" y1="32" x2="440" y2="32" stroke="#2a2a4a" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="36" y="182" fill="#6b7280" font-size="11" font-family="monospace">0</text>
+        <text x="36" y="36" fill="#6b7280" font-size="11" font-family="monospace">1</text>
+        <path d="M 55,175 Q 110,174 170,168 Q 205,162 240,105 Q 275,48 320,35 Q 370,30 440,30" fill="none" stroke="#e94560" stroke-width="3"/>
+        <line x1="240" y1="105" x2="45" y2="105" stroke="#f5a623" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="30" y="109" fill="#f5a623" font-size="11" font-family="monospace">0.5</text>
+        <rect x="255" y="88" width="170" height="38" rx="6" fill="#1a1a2e" stroke="#f5a623" stroke-width="1"/>
+        <text x="340" y="103" text-anchor="middle" fill="#f5a623" font-size="11" font-family="sans-serif">Threshold = 0.5</text>
+        <text x="340" y="119" text-anchor="middle" fill="#9090b0" font-size="10" font-family="sans-serif">&gt;0.5→Class 1 | &lt;0.5→Class 0</text>
+      </svg>
+    </div>
+    <div class="complexity-row">
+      <div class="complexity-item"><div class="complexity-label">Training</div><div class="complexity-val">O(n·d·iter)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Prediction</div><div class="complexity-val">O(d)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Interpretability</div><div class="complexity-val">⭐⭐⭐⭐⭐</div></div>
+      <div class="complexity-item"><div class="complexity-label">Use Case</div><div class="complexity-val">Spam, Fraud</div></div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — ML Project: Email Spam Detection</span></div>
+      <pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report, confusion_matrix
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> make_classification
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+
+X,y = <span class="fn">make_classification</span>(n_samples=<span class="num">1000</span>, n_features=<span class="num">5</span>, random_state=<span class="num">42</span>)
+X_tr,X_te,y_tr,y_te = <span class="fn">train_test_split</span>(X,y,test_size=<span class="num">0.2</span>)
+
+<span class="cm"># Scaling অবশ্যই করতে হবে! Logistic Regression distance-based।</span>
+sc = <span class="fn">StandardScaler</span>()
+X_tr_sc = sc.<span class="fn">fit_transform</span>(X_tr)
+X_te_sc  = sc.<span class="fn">transform</span>(X_te)
+
+lr = <span class="fn">LogisticRegression</span>(max_iter=<span class="num">1000</span>)
+lr.<span class="fn">fit</span>(X_tr_sc, y_tr)
+y_pred = lr.<span class="fn">predict</span>(X_te_sc)
+y_prob = lr.<span class="fn">predict_proba</span>(X_te_sc)[:,<span class="num">1</span>]  <span class="cm"># Class 1-এর probability</span>
+
+<span class="fn">print</span>(<span class="fn">classification_report</span>(y_te, y_pred))
+
+plt.<span class="fn">figure</span>(figsize=(<span class="num">10</span>,<span class="num">4</span>))
+
+plt.<span class="fn">subplot</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">1</span>)
+plt.<span class="fn">hist</span>(y_prob[y_te==<span class="num">0</span>], bins=<span class="num">20</span>, alpha=<span class="num">0.7</span>, label=<span class="str">'Class 0 (Real)'</span>, color=<span class="str">'#60a5fa'</span>)
+plt.<span class="fn">hist</span>(y_prob[y_te==<span class="num">1</span>], bins=<span class="num">20</span>, alpha=<span class="num">0.7</span>, label=<span class="str">'Class 1 (Spam)'</span>, color=<span class="str">'#e94560'</span>)
+plt.<span class="fn">axvline</span>(<span class="num">0.5</span>, color=<span class="str">'green'</span>, linestyle=<span class="str">'--'</span>, label=<span class="str">'Threshold=0.5'</span>)
+plt.<span class="fn">legend</span>(); plt.<span class="fn">title</span>(<span class="str">'Predicted Probability Distribution'</span>)
+
+plt.<span class="fn">subplot</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>)
+cm_d = <span class="fn">confusion_matrix</span>(y_te, y_pred)
+plt.<span class="fn">imshow</span>(cm_d, cmap=<span class="str">'Blues'</span>)
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>):
+        plt.<span class="fn">text</span>(j,i,cm_d[i,j],ha=<span class="str">'center'</span>,va=<span class="str">'center'</span>,fontsize=<span class="num">18</span>,fontweight=<span class="str">'bold'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Confusion Matrix'</span>)
+
+plt.<span class="fn">tight_layout</span>(); plt.<span class="fn">show</span>()</pre>
+    </div>
+  </div>
+</section>
+
+<!-- DECISION TREE -->
+<section class="section" id="decision-tree">
+  <div class="algo-card">
+    <div class="algo-badge">SUPERVISED — CLASSIFICATION &amp; REGRESSION</div>
+    <h3 style="color:var(--accent2);margin-top:8px">৩. Decision Tree — সিদ্ধান্ত গাছ</h3>
+    <h4>শিশুর ভাষায় বোঝো</h4>
+    <p>তুমি কি "20 Questions" খেলা খেলেছ? হ্যাঁ/না প্রশ্ন করে একটা জিনিস বের করতে হয়। Decision Tree ঠিক তেমন! প্রতিটি "node"-এ একটা প্রশ্ন, উত্তরের উপর ভিত্তি করে পরের শাখায় যায়। পাতায় (leaf node) পৌঁছালে final prediction পাওয়া যায়।</p>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Decision Tree Structure</div>
+      <svg viewBox="0 0 500 270" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:500px">
+        <rect x="160" y="8" width="180" height="44" rx="9" fill="#1a0533" stroke="#a855f7" stroke-width="2"/>
+        <text x="250" y="26" text-anchor="middle" fill="#e8e8f0" font-size="12" font-family="sans-serif" font-weight="bold">বয়স &gt; ৩০?</text>
+        <text x="250" y="44" text-anchor="middle" fill="#9090b0" font-size="10" font-family="sans-serif">Root Node</text>
+        <line x1="190" y1="52" x2="95" y2="110" stroke="#6b7280" stroke-width="1.5"/>
+        <text x="122" y="97" fill="#e94560" font-size="12" font-family="sans-serif" font-weight="bold">না</text>
+        <rect x="25" y="110" width="140" height="44" rx="8" fill="#1a1a2e" stroke="#00d4aa" stroke-width="1.5"/>
+        <text x="95" y="128" text-anchor="middle" fill="#00d4aa" font-size="11" font-family="sans-serif" font-weight="bold">আয় &gt; ৫০,০০০?</text>
+        <text x="95" y="146" text-anchor="middle" fill="#6b7280" font-size="10" font-family="sans-serif">Internal Node</text>
+        <line x1="310" y1="52" x2="405" y2="110" stroke="#6b7280" stroke-width="1.5"/>
+        <text x="378" y="97" fill="#4ade80" font-size="12" font-family="sans-serif" font-weight="bold">হ্যাঁ</text>
+        <rect x="335" y="110" width="150" height="44" rx="8" fill="#1a1a2e" stroke="#4ade80" stroke-width="1.5"/>
+        <text x="410" y="128" text-anchor="middle" fill="#4ade80" font-size="11" font-family="sans-serif" font-weight="bold">শিক্ষা = স্নাতক?</text>
+        <text x="410" y="146" text-anchor="middle" fill="#6b7280" font-size="10" font-family="sans-serif">Internal Node</text>
+        <line x1="60" y1="154" x2="45" y2="210" stroke="#6b7280" stroke-width="1.5"/>
+        <text x="32" y="198" fill="#e94560" font-size="11" font-family="sans-serif">না</text>
+        <rect x="5" y="212" width="80" height="38" rx="7" fill="#1a1a2e" stroke="#e94560" stroke-width="1.5"/>
+        <text x="45" y="236" text-anchor="middle" fill="#e94560" font-size="11" font-family="sans-serif">Reject ❌</text>
+        <line x1="130" y1="154" x2="145" y2="210" stroke="#6b7280" stroke-width="1.5"/>
+        <text x="145" y="198" fill="#4ade80" font-size="11" font-family="sans-serif">হ্যাঁ</text>
+        <rect x="110" y="212" width="80" height="38" rx="7" fill="#1a1a2e" stroke="#4ade80" stroke-width="1.5"/>
+        <text x="150" y="236" text-anchor="middle" fill="#4ade80" font-size="11" font-family="sans-serif">Accept ✅</text>
+        <line x1="375" y1="154" x2="320" y2="210" stroke="#6b7280" stroke-width="1.5"/>
+        <text x="325" y="198" fill="#e94560" font-size="11" font-family="sans-serif">না</text>
+        <rect x="280" y="212" width="80" height="38" rx="7" fill="#1a1a2e" stroke="#60a5fa" stroke-width="1.5"/>
+        <text x="320" y="236" text-anchor="middle" fill="#60a5fa" font-size="11" font-family="sans-serif">Review 🔍</text>
+        <line x1="445" y1="154" x2="445" y2="210" stroke="#6b7280" stroke-width="1.5"/>
+        <text x="453" y="198" fill="#4ade80" font-size="11" font-family="sans-serif">হ্যাঁ</text>
+        <rect x="405" y="212" width="80" height="38" rx="7" fill="#1a1a2e" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="445" y="236" text-anchor="middle" fill="#fbbf24" font-size="11" font-family="sans-serif">Accept ✅</text>
+      </svg>
+    </div>
+    <div class="callout callout-warn"><div class="callout-title">⚠️ Overfitting সমস্যা</div>Decision Tree খুব গভীর হলে training data-র সব ছোট pattern শিখে নেয় কিন্তু নতুন data-তে কাজ করে না। সমাধান: <code>max_depth</code> দিয়ে গাছের গভীরতা সীমিত করো।</div>
+    <div class="complexity-row">
+      <div class="complexity-item"><div class="complexity-label">Training</div><div class="complexity-val">O(n·d·log n)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Prediction</div><div class="complexity-val">O(log n)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Interpretability</div><div class="complexity-val">⭐⭐⭐⭐⭐</div></div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — ML Project: Customer Churn Prediction</span></div>
+      <pre><span class="kw">from</span> sklearn.tree <span class="kw">import</span> DecisionTreeClassifier, plot_tree
+
+X,y = <span class="fn">make_classification</span>(n_samples=<span class="num">500</span>, n_features=<span class="num">4</span>, random_state=<span class="num">42</span>)
+X_tr,X_te,y_tr,y_te = <span class="fn">train_test_split</span>(X,y,test_size=<span class="num">0.2</span>)
+
+dt = <span class="fn">DecisionTreeClassifier</span>(max_depth=<span class="num">4</span>, min_samples_split=<span class="num">10</span>, random_state=<span class="num">42</span>)
+dt.<span class="fn">fit</span>(X_tr, y_tr)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Train: {dt.score(X_tr,y_tr):.4f} | Test: {dt.score(X_te,y_te):.4f}"</span>)
+
+<span class="cm"># Tree visualization</span>
+plt.<span class="fn">figure</span>(figsize=(<span class="num">15</span>,<span class="num">8</span>))
+<span class="fn">plot_tree</span>(dt, filled=<span class="kw">True</span>, feature_names=[<span class="str">'F1'</span>,<span class="str">'F2'</span>,<span class="str">'F3'</span>,<span class="str">'F4'</span>],
+          class_names=[<span class="str">'Stay'</span>,<span class="str">'Churn'</span>], rounded=<span class="kw">True</span>, fontsize=<span class="num">10</span>)
+plt.<span class="fn">title</span>(<span class="str">'Customer Churn Decision Tree'</span>); plt.<span class="fn">show</span>()
+
+<span class="cm"># Depth vs Accuracy (Overfitting দেখো!)</span>
+depths = <span class="fn">range</span>(<span class="num">1</span>,<span class="num">15</span>)
+tr_acc=[]; te_acc=[]
+<span class="kw">for</span> d <span class="kw">in</span> depths:
+    m = <span class="fn">DecisionTreeClassifier</span>(max_depth=d).<span class="fn">fit</span>(X_tr,y_tr)
+    tr_acc.<span class="fn">append</span>(m.<span class="fn">score</span>(X_tr,y_tr)); te_acc.<span class="fn">append</span>(m.<span class="fn">score</span>(X_te,y_te))
+
+plt.<span class="fn">figure</span>(figsize=(<span class="num">8</span>,<span class="num">4</span>))
+plt.<span class="fn">plot</span>(depths,tr_acc,<span class="str">'b-o'</span>,label=<span class="str">'Train'</span>)
+plt.<span class="fn">plot</span>(depths,te_acc,<span class="str">'r-s'</span>,label=<span class="str">'Test'</span>)
+plt.<span class="fn">axvline</span>(<span class="num">4</span>,color=<span class="str">'green'</span>,linestyle=<span class="str">'--'</span>,label=<span class="str">'Best depth=4'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Depth vs Accuracy — Overfitting দেখো!'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'Max Depth'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'Accuracy'</span>)
+plt.<span class="fn">legend</span>(); plt.<span class="fn">grid</span>(<span class="kw">True</span>,alpha=<span class="num">0.3</span>); plt.<span class="fn">show</span>()</pre>
+    </div>
+  </div>
+</section>
+
+<!-- RANDOM FOREST -->
+<section class="section" id="random-forest">
+  <div class="algo-card">
+    <div class="algo-badge">SUPERVISED — ENSEMBLE</div>
+    <h3 style="color:var(--accent2);margin-top:8px">৪. Random Forest — বনের মতো অনেক গাছ</h3>
+    <h4>শিশুর ভাষায় বোঝো</h4>
+    <p>তুমি যদি ১০০ জন ডাক্তারকে একই প্রশ্ন করো এবং সবার মতামত নিয়ে সংখ্যাগরিষ্ঠের মত বেছে নাও — তাহলে একজন ডাক্তারের চেয়ে অনেক নির্ভুল হবে। Random Forest ঠিক এইভাবে কাজ করে — অনেকগুলো Decision Tree তৈরি করে সবার prediction-এর ভোটে final decision নেয়।</p>
+    <div class="callout callout-tip"><div class="callout-title">💡 Random Forest-এর বিশেষত্ব</div>প্রতিটি গাছ তৈরি হয় random subset of data (Bagging) এবং random subset of features দিয়ে। এই randomness-এর কারণে গাছগুলো পরস্পর independent থাকে এবং overfitting কমে।</div>
+    <div class="complexity-row">
+      <div class="complexity-item"><div class="complexity-label">Training</div><div class="complexity-val">O(n·d·log n·k)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Prediction</div><div class="complexity-val">O(k·log n)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Interpretability</div><div class="complexity-val">⭐⭐⭐</div></div>
+      <div class="complexity-item"><div class="complexity-label">Use Case</div><div class="complexity-val">Fraud, Medical</div></div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — ML Project: Fraud Detection</span></div>
+      <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+
+X,y = <span class="fn">make_classification</span>(n_samples=<span class="num">2000</span>, n_features=<span class="num">10</span>, n_informative=<span class="num">6</span>,
+                             weights=[<span class="num">0.95</span>,<span class="num">0.05</span>], random_state=<span class="num">42</span>)
+X_tr,X_te,y_tr,y_te = <span class="fn">train_test_split</span>(X,y,test_size=<span class="num">0.2</span>)
+
+rf = <span class="fn">RandomForestClassifier</span>(
+    n_estimators=<span class="num">100</span>,       <span class="cm"># ১০০টি গাছ</span>
+    max_depth=<span class="num">8</span>,             <span class="cm"># প্রতিটির গভীরতা সর্বোচ্চ ৮</span>
+    class_weight=<span class="str">'balanced'</span>, <span class="cm"># Imbalanced data-র জন্য</span>
+    random_state=<span class="num">42</span>, n_jobs=-<span class="num">1</span>)
+rf.<span class="fn">fit</span>(X_tr, y_tr)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Test Accuracy: {rf.score(X_te,y_te):.4f}"</span>)
+
+<span class="cm"># Feature Importance Visualization</span>
+feat_names = [<span class="fn">f</span><span class="str">'Feature {i}'</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>)]
+imp = rf.feature_importances_
+sorted_idx = np.<span class="fn">argsort</span>(imp)
+
+plt.<span class="fn">figure</span>(figsize=(<span class="num">8</span>,<span class="num">5</span>))
+plt.<span class="fn">barh</span>([feat_names[i] <span class="kw">for</span> i <span class="kw">in</span> sorted_idx], imp[sorted_idx], color=<span class="str">'#00d4aa'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Random Forest Feature Importance'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'Importance'</span>); plt.<span class="fn">tight_layout</span>(); plt.<span class="fn">show</span>()</pre>
+    </div>
+  </div>
+</section>
+
+<!-- K-MEANS -->
+<section class="section" id="kmeans">
+  <div class="algo-card">
+    <div class="algo-badge">UNSUPERVISED — CLUSTERING</div>
+    <h3 style="color:var(--accent2);margin-top:8px">৫. K-Means Clustering — গুচ্ছ তৈরি করা</h3>
+    <h4>শিশুর ভাষায় বোঝো</h4>
+    <p>তোমার কাছে ১০০টি রঙিন মার্বেল আছে। তুমি একই রঙের মার্বেলগুলো একসাথে রাখতে চাও, কিন্তু কতটি গ্রুপ হবে সেটা তুমি আগে থেকেই বলে দেবে (এটাই K)। K-Means বারবার চেষ্টা করে data-গুলোকে K টি গ্রুপে ভাগ করে যেন প্রতিটি গ্রুপের ভেতরে distance সবচেয়ে কম থাকে।</p>
+    <div class="callout callout-info"><div class="callout-title">🔑 Supervised vs Unsupervised</div>K-Means unsupervised — training data-তে কোনো label নেই। এটা নিজেই pattern খুঁজে বের করে। তাই এটা customer segmentation, anomaly detection-এ অনেক কাজে লাগে।</div>
+    <div class="complexity-row">
+      <div class="complexity-item"><div class="complexity-label">Training</div><div class="complexity-val">O(n·k·iter)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Use Case</div><div class="complexity-val">Customer Seg.</div></div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — ML Project: Customer Segmentation</span></div>
+      <pre><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+
+np.random.<span class="fn">seed</span>(<span class="num">42</span>)
+age = np.<span class="fn">concatenate</span>([np.random.<span class="fn">normal</span>(<span class="num">25</span>,<span class="num">5</span>,<span class="num">100</span>),
+                        np.random.<span class="fn">normal</span>(<span class="num">45</span>,<span class="num">6</span>,<span class="num">100</span>),
+                        np.random.<span class="fn">normal</span>(<span class="num">65</span>,<span class="num">7</span>,<span class="num">100</span>)])
+income = np.<span class="fn">concatenate</span>([np.random.<span class="fn">normal</span>(<span class="num">30000</span>,<span class="num">5000</span>,<span class="num">100</span>),
+                           np.random.<span class="fn">normal</span>(<span class="num">70000</span>,<span class="num">8000</span>,<span class="num">100</span>),
+                           np.random.<span class="fn">normal</span>(<span class="num">50000</span>,<span class="num">6000</span>,<span class="num">100</span>)])
+X = np.<span class="fn">column_stack</span>([age, income])
+
+<span class="cm"># Elbow Method — সঠিক K খোঁজা</span>
+inertias=[]; K_range=<span class="fn">range</span>(<span class="num">1</span>,<span class="num">11</span>)
+<span class="kw">for</span> k <span class="kw">in</span> K_range:
+    km = <span class="fn">KMeans</span>(n_clusters=k, random_state=<span class="num">42</span>, n_init=<span class="num">10</span>)
+    km.<span class="fn">fit</span>(X); inertias.<span class="fn">append</span>(km.inertia_)
+
+plt.<span class="fn">figure</span>(figsize=(<span class="num">12</span>,<span class="num">4</span>))
+plt.<span class="fn">subplot</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">1</span>)
+plt.<span class="fn">plot</span>(K_range, inertias, <span class="str">'bo-'</span>)
+plt.<span class="fn">axvline</span>(x=<span class="num">3</span>, color=<span class="str">'red'</span>, linestyle=<span class="str">'--'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Elbow Method — সঠিক K=3'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'K'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'Inertia'</span>)
+
+km_final = <span class="fn">KMeans</span>(n_clusters=<span class="num">3</span>, random_state=<span class="num">42</span>, n_init=<span class="num">10</span>)
+labels = km_final.<span class="fn">fit_predict</span>(X)
+centers = km_final.cluster_centers_
+
+plt.<span class="fn">subplot</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>)
+colors_c=[<span class="str">'#e94560'</span>,<span class="str">'#00d4aa'</span>,<span class="str">'#f5a623'</span>]
+segs=[<span class="str">'তরুণ'</span>,<span class="str">'মধ্যবয়স্ক'</span>,<span class="str">'প্রবীণ'</span>]
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>):
+    m=labels==i
+    plt.<span class="fn">scatter</span>(X[m,<span class="num">0</span>],X[m,<span class="num">1</span>],c=colors_c[i],label=segs[i],s=<span class="num">40</span>,alpha=<span class="num">0.7</span>)
+plt.<span class="fn">scatter</span>(centers[:,<span class="num">0</span>],centers[:,<span class="num">1</span>],c=<span class="str">'black'</span>,s=<span class="num">200</span>,marker=<span class="str">'X'</span>,label=<span class="str">'Centroid'</span>,zorder=<span class="num">5</span>)
+plt.<span class="fn">title</span>(<span class="str">'Customer Segmentation (K=3)'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'বয়স'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'আয়'</span>); plt.<span class="fn">legend</span>()
+plt.<span class="fn">tight_layout</span>(); plt.<span class="fn">show</span>()</pre>
+    </div>
+  </div>
+</section>
+
+<!-- KNN -->
+<section class="section" id="knn">
+  <div class="algo-card">
+    <div class="algo-badge">SUPERVISED — CLASSIFICATION &amp; REGRESSION</div>
+    <h3 style="color:var(--accent2);margin-top:8px">৬. K-Nearest Neighbors (KNN)</h3>
+    <h4>শিশুর ভাষায় বোঝো</h4>
+    <p>"কাছের বন্ধুর মতো হওয়া" — KNN ঠিক এই নীতিতে কাজ করে। নতুন data point-এর K টি সবচেয়ে কাছের প্রতিবেশী দেখো — সেই প্রতিবেশীরা কোন class-এ বেশি, সেটাই হবে নতুন point-এর class।</p>
+    <div class="callout callout-warn"><div class="callout-title">⚠️ Scaling অবশ্যই!</div>KNN distance calculate করে। যে feature-এর scale বড় (যেমন income: 50,000), সেটা ছোট scale-এর feature (যেমন age: 35)-কে dominate করে। তাই StandardScaler ব্যবহার করো।</div>
+    <div class="complexity-row">
+      <div class="complexity-item"><div class="complexity-label">Training</div><div class="complexity-val">O(1) !</div></div>
+      <div class="complexity-item"><div class="complexity-label">Prediction</div><div class="complexity-val">O(n·d)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Use Case</div><div class="complexity-val">Recommendation</div></div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — KNN with optimal K selection</span></div>
+      <pre><span class="kw">from</span> sklearn.neighbors <span class="kw">import</span> KNeighborsClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score
+
+X,y = <span class="fn">make_classification</span>(n_samples=<span class="num">800</span>, n_features=<span class="num">6</span>, random_state=<span class="num">42</span>)
+sc = <span class="fn">StandardScaler</span>()
+X_sc = sc.<span class="fn">fit_transform</span>(X)  <span class="cm"># অবশ্যই scale করো!</span>
+
+k_values = <span class="fn">range</span>(<span class="num">1</span>,<span class="num">31</span>)
+cv_scores=[]
+<span class="kw">for</span> k <span class="kw">in</span> k_values:
+    knn = <span class="fn">KNeighborsClassifier</span>(n_neighbors=k)
+    scores = <span class="fn">cross_val_score</span>(knn, X_sc, y, cv=<span class="num">5</span>)
+    cv_scores.<span class="fn">append</span>(scores.<span class="fn">mean</span>())
+
+best_k = list(k_values)[np.<span class="fn">argmax</span>(cv_scores)]
+plt.<span class="fn">figure</span>(figsize=(<span class="num">8</span>,<span class="num">4</span>))
+plt.<span class="fn">plot</span>(k_values, cv_scores, <span class="str">'b-o'</span>)
+plt.<span class="fn">axvline</span>(best_k, color=<span class="str">'red'</span>, linestyle=<span class="str">'--'</span>, label=<span class="fn">f</span><span class="str">'Best K={best_k}'</span>)
+plt.<span class="fn">title</span>(<span class="str">'K বনাম Cross-Validation Accuracy'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'K (Neighbors)'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'CV Accuracy'</span>)
+plt.<span class="fn">legend</span>(); plt.<span class="fn">grid</span>(<span class="kw">True</span>,alpha=<span class="num">0.3</span>); plt.<span class="fn">show</span>()
+
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Best K={best_k}, CV Accuracy={max(cv_scores):.4f}"</span>)</pre>
+    </div>
+  </div>
+</section>
+
+<!-- SVM -->
+<section class="section" id="svm">
+  <div class="algo-card">
+    <div class="algo-badge">SUPERVISED — CLASSIFICATION</div>
+    <h3 style="color:var(--accent2);margin-top:8px">৭. Support Vector Machine (SVM)</h3>
+    <h4>শিশুর ভাষায় বোঝো</h4>
+    <p>দুটো দলের মাঝে একটা দেয়াল তোলো — এমনভাবে যেন দুটো দল থেকে দেয়ালের দূরত্ব সবচেয়ে বেশি হয়। SVM ঠিক এটাই করে। এই "দেয়াল"-কে বলে <strong>Hyperplane</strong>। সবচেয়ে কাছের data point-গুলোকে বলে <strong>Support Vectors</strong> — এরাই hyperplane নির্ধারণ করে।</p>
+    <div class="callout callout-info"><div class="callout-title">🔑 Kernel Trick</div>Data যদি linearly separable না হয় (সরল রেখায় ভাগ করা না যায়), তখন <code>kernel='rbf'</code> বা <code>kernel='poly'</code> দিয়ে data-কে উচ্চতর মাত্রায় নিয়ে যাওয়া হয় যেখানে linear separation সম্ভব।</div>
+    <div class="complexity-row">
+      <div class="complexity-item"><div class="complexity-label">Training</div><div class="complexity-val">O(n² to n³)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Use Case</div><div class="complexity-val">Image, Text</div></div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — SVM with Decision Boundary</span></div>
+      <pre><span class="kw">from</span> sklearn.svm <span class="kw">import</span> SVC
+
+X,y = <span class="fn">make_classification</span>(n_samples=<span class="num">200</span>, n_features=<span class="num">2</span>, n_redundant=<span class="num">0</span>, random_state=<span class="num">42</span>)
+X_sc = <span class="fn">StandardScaler</span>().<span class="fn">fit_transform</span>(X)
+X_tr,X_te,y_tr,y_te = <span class="fn">train_test_split</span>(X_sc,y,test_size=<span class="num">0.2</span>)
+
+svm = <span class="fn">SVC</span>(kernel=<span class="str">'rbf'</span>, C=<span class="num">1.0</span>, gamma=<span class="str">'scale'</span>)
+svm.<span class="fn">fit</span>(X_tr, y_tr)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Test Accuracy: {svm.score(X_te,y_te):.4f}"</span>)
+
+<span class="cm"># Decision Boundary আঁকা</span>
+x_min,x_max = X_sc[:,<span class="num">0</span>].<span class="fn">min</span>()-<span class="num">0.5</span>, X_sc[:,<span class="num">0</span>].<span class="fn">max</span>()+<span class="num">0.5</span>
+y_min,y_max = X_sc[:,<span class="num">1</span>].<span class="fn">min</span>()-<span class="num">0.5</span>, X_sc[:,<span class="num">1</span>].<span class="fn">max</span>()+<span class="num">0.5</span>
+xx,yy = np.<span class="fn">meshgrid</span>(np.<span class="fn">arange</span>(x_min,x_max,<span class="num">0.02</span>),np.<span class="fn">arange</span>(y_min,y_max,<span class="num">0.02</span>))
+Z = svm.<span class="fn">predict</span>(np.c_[xx.<span class="fn">ravel</span>(),yy.<span class="fn">ravel</span>()]).<span class="fn">reshape</span>(xx.shape)
+
+plt.<span class="fn">figure</span>(figsize=(<span class="num">8</span>,<span class="num">6</span>))
+plt.<span class="fn">contourf</span>(xx,yy,Z,alpha=<span class="num">0.3</span>,cmap=<span class="str">'RdYlGn'</span>)
+plt.<span class="fn">scatter</span>(X_sc[:,<span class="num">0</span>],X_sc[:,<span class="num">1</span>],c=y,cmap=<span class="str">'RdYlGn'</span>,edgecolors=<span class="str">'k'</span>,s=<span class="num">50</span>)
+plt.<span class="fn">scatter</span>(svm.support_vectors_[:,<span class="num">0</span>],svm.support_vectors_[:,<span class="num">1</span>],
+           s=<span class="num">200</span>,facecolors=<span class="str">'none'</span>,edgecolors=<span class="str">'blue'</span>,linewidth=<span class="num">2</span>,label=<span class="str">'Support Vectors'</span>)
+plt.<span class="fn">title</span>(<span class="str">'SVM Decision Boundary (RBF Kernel)'</span>)
+plt.<span class="fn">legend</span>(); plt.<span class="fn">show</span>()</pre>
+    </div>
+  </div>
+</section>
+
+<!-- GRADIENT BOOSTING -->
+<section class="section" id="gradient-boost">
+  <div class="algo-card">
+    <div class="algo-badge">SUPERVISED — ENSEMBLE (BOOSTING)</div>
+    <h3 style="color:var(--accent2);margin-top:8px">৮. Gradient Boosting (XGBoost/LightGBM)</h3>
+    <h4>শিশুর ভাষায় বোঝো</h4>
+    <p>Random Forest-এ গাছগুলো parallel-এ (একই সাথে) তৈরি হয়। কিন্তু Gradient Boosting-এ গাছগুলো sequential-এ (একটার পর একটা) তৈরি হয়। প্রতিটি নতুন গাছ আগের গাছের ভুল (error/residual) শেখার চেষ্টা করে। এভাবে ধীরে ধীরে error কমে আসে।</p>
+    <p>XGBoost এবং LightGBM হলো Gradient Boosting-এর optimize করা version — Kaggle competition-এ সবচেয়ে বেশি জয়ী algorithm।</p>
+    <div class="complexity-row">
+      <div class="complexity-item"><div class="complexity-label">Training</div><div class="complexity-val">O(n·d·k)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Prediction</div><div class="complexity-val">O(k·log n)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Interpretability</div><div class="complexity-val">⭐⭐⭐</div></div>
+      <div class="complexity-item"><div class="complexity-label">Use Case</div><div class="complexity-val">Kaggle, Finance</div></div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — Gradient Boosting (sklearn) + Hyperparameter Tuning Visualization</span></div>
+      <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> GradientBoostingClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score
+
+X,y = <span class="fn">make_classification</span>(n_samples=<span class="num">1500</span>, n_features=<span class="num">10</span>,
+                             n_informative=<span class="num">7</span>, random_state=<span class="num">42</span>)
+X_tr,X_te,y_tr,y_te = <span class="fn">train_test_split</span>(X,y,test_size=<span class="num">0.2</span>,random_state=<span class="num">42</span>)
+
+gb = <span class="fn">GradientBoostingClassifier</span>(
+    n_estimators=<span class="num">200</span>,    <span class="cm"># ২০০টি গাছ</span>
+    learning_rate=<span class="num">0.05</span>,  <span class="cm"># প্রতি step-এ কতটুকু শেখে</span>
+    max_depth=<span class="num">4</span>,          <span class="cm"># গাছের গভীরতা</span>
+    subsample=<span class="num">0.8</span>,        <span class="cm"># প্রতিটি গাছ ৮০% data দেখে (Stochastic GB)</span>
+    random_state=<span class="num">42</span>)
+gb.<span class="fn">fit</span>(X_tr, y_tr)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Test Accuracy: {gb.score(X_te,y_te):.4f}"</span>)
+
+<span class="cm"># Learning Curve (n_estimators বনাম accuracy)</span>
+train_scores=[]; test_scores=[]
+estimator_range = [<span class="num">10</span>,<span class="num">25</span>,<span class="num">50</span>,<span class="num">75</span>,<span class="num">100</span>,<span class="num">150</span>,<span class="num">200</span>]
+<span class="kw">for</span> n <span class="kw">in</span> estimator_range:
+    m = <span class="fn">GradientBoostingClassifier</span>(n_estimators=n, learning_rate=<span class="num">0.05</span>,
+                                    max_depth=<span class="num">4</span>, random_state=<span class="num">42</span>)
+    m.<span class="fn">fit</span>(X_tr,y_tr)
+    train_scores.<span class="fn">append</span>(m.<span class="fn">score</span>(X_tr,y_tr))
+    test_scores.<span class="fn">append</span>(m.<span class="fn">score</span>(X_te,y_te))
+
+plt.<span class="fn">figure</span>(figsize=(<span class="num">9</span>,<span class="num">4</span>))
+plt.<span class="fn">plot</span>(estimator_range, train_scores, <span class="str">'b-o'</span>, label=<span class="str">'Train'</span>)
+plt.<span class="fn">plot</span>(estimator_range, test_scores, <span class="str">'r-s'</span>, label=<span class="str">'Test'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Gradient Boosting: n_estimators vs Accuracy'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'n_estimators'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'Accuracy'</span>)
+plt.<span class="fn">legend</span>(); plt.<span class="fn">grid</span>(<span class="kw">True</span>,alpha=<span class="num">0.3</span>); plt.<span class="fn">show</span>()
+
+<span class="cm"># XGBoost ব্যবহার (pip install xgboost)</span>
+<span class="cm"># from xgboost import XGBClassifier</span>
+<span class="cm"># xgb = XGBClassifier(n_estimators=200, learning_rate=0.05,</span>
+<span class="cm">#                     max_depth=4, subsample=0.8, random_state=42)</span>
+<span class="cm"># xgb.fit(X_tr, y_tr, eval_set=[(X_te, y_te)], verbose=False)</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- NEURAL NETWORKS -->
+<section class="section" id="neural-net">
+  <div class="algo-card">
+    <div class="algo-badge">SUPERVISED — DEEP LEARNING</div>
+    <h3 style="color:var(--accent2);margin-top:8px">৯. Neural Networks — কৃত্রিম নিউরাল নেটওয়ার্ক</h3>
+    <h4>শিশুর ভাষায় বোঝো</h4>
+    <p>তোমার মস্তিষ্কে বিলিয়ন বিলিয়ন নিউরন আছে। একটা নিউরন অন্য নিউরনের সাথে সংযুক্ত এবং signal পাঠায়। Neural Network ঠিক এই ধারণা থেকে তৈরি — কিন্তু এটা কম্পিউটারে। প্রতিটি "node" একটা নিউরন, এবং nodes-এর মধ্যে "weight" থাকে যা শেখার মাধ্যমে পরিবর্তন হয়।</p>
+    <div class="diagram-wrap">
+      <div class="diagram-title">Neural Network Architecture — Input → Hidden → Output</div>
+      <svg viewBox="0 0 560 240" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:560px">
+        <text x="80" y="22" text-anchor="middle" fill="#9090b0" font-size="12" font-family="sans-serif">Input Layer</text>
+        <text x="280" y="22" text-anchor="middle" fill="#9090b0" font-size="12" font-family="sans-serif">Hidden Layer 1</text>
+        <text x="420" y="22" text-anchor="middle" fill="#9090b0" font-size="12" font-family="sans-serif">Hidden Layer 2</text>
+        <text x="530" y="22" text-anchor="middle" fill="#9090b0" font-size="12" font-family="sans-serif">Output</text>
+        <!-- Input nodes -->
+        <circle cx="80" cy="60" r="18" fill="#1a1a2e" stroke="#60a5fa" stroke-width="2"/>
+        <text x="80" y="65" text-anchor="middle" fill="#60a5fa" font-size="11" font-family="sans-serif">x₁</text>
+        <circle cx="80" cy="120" r="18" fill="#1a1a2e" stroke="#60a5fa" stroke-width="2"/>
+        <text x="80" y="125" text-anchor="middle" fill="#60a5fa" font-size="11" font-family="sans-serif">x₂</text>
+        <circle cx="80" cy="180" r="18" fill="#1a1a2e" stroke="#60a5fa" stroke-width="2"/>
+        <text x="80" y="185" text-anchor="middle" fill="#60a5fa" font-size="11" font-family="sans-serif">x₃</text>
+        <!-- Hidden layer 1 -->
+        <circle cx="230" cy="50" r="18" fill="#1a1a2e" stroke="#a855f7" stroke-width="2"/>
+        <circle cx="230" cy="100" r="18" fill="#1a1a2e" stroke="#a855f7" stroke-width="2"/>
+        <circle cx="230" cy="150" r="18" fill="#1a1a2e" stroke="#a855f7" stroke-width="2"/>
+        <circle cx="230" cy="200" r="18" fill="#1a1a2e" stroke="#a855f7" stroke-width="2"/>
+        <!-- Hidden layer 2 -->
+        <circle cx="380" cy="70" r="18" fill="#1a1a2e" stroke="#00d4aa" stroke-width="2"/>
+        <circle cx="380" cy="130" r="18" fill="#1a1a2e" stroke="#00d4aa" stroke-width="2"/>
+        <circle cx="380" cy="190" r="18" fill="#1a1a2e" stroke="#00d4aa" stroke-width="2"/>
+        <!-- Output -->
+        <circle cx="510" cy="120" r="20" fill="#1a1a2e" stroke="#e94560" stroke-width="2"/>
+        <text x="510" y="125" text-anchor="middle" fill="#e94560" font-size="11" font-family="sans-serif">ŷ</text>
+        <!-- Connections (subset) -->
+        <line x1="98" y1="60" x2="212" y2="55" stroke="#2a2a4a" stroke-width="1"/>
+        <line x1="98" y1="60" x2="212" y2="105" stroke="#2a2a4a" stroke-width="1"/>
+        <line x1="98" y1="120" x2="212" y2="50" stroke="#2a2a4a" stroke-width="1"/>
+        <line x1="98" y1="120" x2="212" y2="155" stroke="#2a2a4a" stroke-width="1"/>
+        <line x1="98" y1="180" x2="212" y2="145" stroke="#2a2a4a" stroke-width="1"/>
+        <line x1="98" y1="180" x2="212" y2="200" stroke="#2a2a4a" stroke-width="1"/>
+        <line x1="248" y1="50" x2="362" y2="70" stroke="#2a2a4a" stroke-width="1"/>
+        <line x1="248" y1="100" x2="362" y2="130" stroke="#2a2a4a" stroke-width="1"/>
+        <line x1="248" y1="150" x2="362" y2="75" stroke="#2a2a4a" stroke-width="1"/>
+        <line x1="248" y1="200" x2="362" y2="190" stroke="#2a2a4a" stroke-width="1"/>
+        <line x1="398" y1="70" x2="490" y2="115" stroke="#2a2a4a" stroke-width="1"/>
+        <line x1="398" y1="130" x2="490" y2="120" stroke="#2a2a4a" stroke-width="1"/>
+        <line x1="398" y1="190" x2="490" y2="125" stroke="#2a2a4a" stroke-width="1"/>
+        <!-- Labels in nodes -->
+        <text x="230" y="105" text-anchor="middle" fill="#a855f7" font-size="9" font-family="sans-serif">ReLU</text>
+      </svg>
+    </div>
+    <div class="complexity-row">
+      <div class="complexity-item"><div class="complexity-label">Training</div><div class="complexity-val">O(n·W·iter)</div></div>
+      <div class="complexity-item"><div class="complexity-label">Use Case</div><div class="complexity-val">Image, NLP, Speech</div></div>
+      <div class="complexity-item"><div class="complexity-label">Interpretability</div><div class="complexity-val">⭐</div></div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><span class="code-lang">python — Neural Network (sklearn MLP) + Training Visualization</span></div>
+      <pre><span class="kw">from</span> sklearn.neural_network <span class="kw">import</span> MLPClassifier
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+
+X,y = <span class="fn">make_classification</span>(n_samples=<span class="num">1500</span>, n_features=<span class="num">10</span>,
+                             n_informative=<span class="num">7</span>, random_state=<span class="num">42</span>)
+X_tr,X_te,y_tr,y_te = <span class="fn">train_test_split</span>(X,y,test_size=<span class="num">0.2</span>)
+
+<span class="cm"># Neural Network-এ scaling অবশ্যই করতে হবে!</span>
+sc = <span class="fn">StandardScaler</span>()
+X_tr_sc = sc.<span class="fn">fit_transform</span>(X_tr)
+X_te_sc  = sc.<span class="fn">transform</span>(X_te)
+
+mlp = <span class="fn">MLPClassifier</span>(
+    hidden_layer_sizes=(<span class="num">128</span>,<span class="num">64</span>,<span class="num">32</span>),  <span class="cm"># ৩টি hidden layer</span>
+    activation=<span class="str">'relu'</span>,               <span class="cm"># Activation function</span>
+    solver=<span class="str">'adam'</span>,                   <span class="cm"># Optimizer</span>
+    learning_rate_init=<span class="num">0.001</span>,        <span class="cm"># Learning rate</span>
+    max_iter=<span class="num">300</span>,                    <span class="cm"># Epoch সংখ্যা</span>
+    early_stopping=<span class="kw">True</span>,             <span class="cm"># Overfitting রোধ</span>
+    validation_fraction=<span class="num">0.1</span>,         <span class="cm"># Validation set</span>
+    random_state=<span class="num">42</span>)
+mlp.<span class="fn">fit</span>(X_tr_sc, y_tr)
+
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Test Accuracy : {mlp.score(X_te_sc,y_te):.4f}"</span>)
+<span class="fn">print</span>(<span class="fn">f</span><span class="str">"Total Epochs  : {mlp.n_iter_}"</span>)
+
+<span class="cm"># Training Loss Curve</span>
+plt.<span class="fn">figure</span>(figsize=(<span class="num">10</span>,<span class="num">4</span>))
+plt.<span class="fn">subplot</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">1</span>)
+plt.<span class="fn">plot</span>(mlp.loss_curve_, <span class="str">'b-'</span>, linewidth=<span class="num">2</span>, label=<span class="str">'Training Loss'</span>)
+plt.<span class="fn">plot</span>(mlp.validation_scores_, <span class="str">'r-'</span>, linewidth=<span class="num">2</span>, label=<span class="str">'Validation Score'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Neural Network Training Curve'</span>)
+plt.<span class="fn">xlabel</span>(<span class="str">'Iteration'</span>); plt.<span class="fn">legend</span>(); plt.<span class="fn">grid</span>(<span class="kw">True</span>,alpha=<span class="num">0.3</span>)
+
+<span class="cm"># Architecture comparison</span>
+plt.<span class="fn">subplot</span>(<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>)
+archs = [(<span class="num">64</span>,), (<span class="num">128</span>,), (<span class="num">64</span>,<span class="num">32</span>), (<span class="num">128</span>,<span class="num">64</span>), (<span class="num">128</span>,<span class="num">64</span>,<span class="num">32</span>)]
+arch_scores=[]
+<span class="kw">for</span> arch <span class="kw">in</span> archs:
+    m = <span class="fn">MLPClassifier</span>(hidden_layer_sizes=arch, max_iter=<span class="num">200</span>, random_state=<span class="num">42</span>)
+    m.<span class="fn">fit</span>(X_tr_sc,y_tr)
+    arch_scores.<span class="fn">append</span>(m.<span class="fn">score</span>(X_te_sc,y_te))
+
+arch_labels=[<span class="fn">str</span>(a) <span class="kw">for</span> a <span class="kw">in</span> archs]
+plt.<span class="fn">bar</span>(<span class="fn">range</span>(<span class="fn">len</span>(archs)), arch_scores, color=<span class="str">'#a855f7'</span>)
+plt.<span class="fn">xticks</span>(<span class="fn">range</span>(<span class="fn">len</span>(archs)), arch_labels, rotation=<span class="num">15</span>, fontsize=<span class="num">9</span>)
+plt.<span class="fn">ylim</span>([<span class="num">0.7</span>,<span class="num">1.0</span>]); plt.<span class="fn">title</span>(<span class="str">'Architecture তুলনা'</span>)
+plt.<span class="fn">ylabel</span>(<span class="str">'Test Accuracy'</span>)
+
+plt.<span class="fn">tight_layout</span>(); plt.<span class="fn">show</span>()</pre>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL SUMMARY -->
+<section class="section" style="background:linear-gradient(135deg,rgba(233,69,96,.08),rgba(168,85,247,.08));text-align:center">
+  <h2 style="font-size:32px">🎉 অভিনন্দন! তুমি সম্পূর্ণ গাইড শেষ করেছ!</h2>
+  <p style="font-size:18px;color:var(--text-dim);max-width:700px;margin:16px auto">এই একটি ফাইলে তুমি Matplotlib-এর ৮টি Notebook, ৯ ধরনের Chart, সব ML Algorithm এবং ইন্টারভিউ প্রশ্ন শিখে নিয়েছ।</p>
+  <div class="three-col" style="max-width:700px;margin:28px auto;text-align:left">
+    <div class="card" style="border-color:var(--accent)"><div class="card-title">📊 Charts</div><p style="font-size:13px;color:var(--text-dim)">Line, Bar, Scatter, Histogram, Box, Pie, Subplots, Annotation</p></div>
+    <div class="card" style="border-color:var(--accent3)"><div class="card-title">🤖 Algorithms</div><p style="font-size:13px;color:var(--text-dim)">Linear Reg, Logistic Reg, Decision Tree, RF, K-Means, KNN, SVM, GB, Neural Net</p></div>
+    <div class="card" style="border-color:var(--accent4)"><div class="card-title">💼 Skills</div><p style="font-size:13px;color:var(--text-dim)">Training curves, Confusion matrix, ROC curve, Feature importance, EDA dashboard</p></div>
+  </div>
+  <p style="color:var(--text-dim);font-size:15px">পরবর্তী পদক্ষেপ: <span class="tag">Seaborn</span> <span class="tag">Plotly</span> <span class="tag">TensorFlow/PyTorch</span> <span class="tag">Kaggle Competitions</span></p>
+</section>
+
+</main>
+
+<script>
+// Progress bar
+window.addEventListener('scroll',()=>{
+  const d=document.documentElement;
+  const p=(d.scrollTop/(d.scrollHeight-d.clientHeight))*100;
+  document.getElementById('progress').style.width=p+'%';
+});
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2685 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>টাইম সিরিজ: বিশ্লেষণ ও পূর্বাভাস — সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #161a24;
+    --bg3: #1e2435;
+    --card: #1a1f2e;
+    --border: #2a3148;
+    --accent: #4f8ef7;
+    --accent2: #7c6af7;
+    --accent3: #f7c94f;
+    --accent4: #4ff7a0;
+    --danger: #f7614f;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --code-bg: #0d1117;
+    --code-border: #30363d;
+    --highlight: #2d3e6a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0f1117 0%, #1a1035 50%, #0f1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; left: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(79,142,247,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(124,106,247,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(79,142,247,0.15);
+    border: 1px solid rgba(79,142,247,0.4);
+    color: var(--accent);
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff 0%, #94b4f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.3;
+    margin-bottom: 16px;
+  }
+  .hero p {
+    color: var(--text2);
+    font-size: 1.1rem;
+    max-width: 700px;
+    margin: 0 auto 30px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+  .stat-box {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 24px;
+    text-align: center;
+  }
+  .stat-box .num { font-size: 1.6rem; font-weight: 700; color: var(--accent); }
+  .stat-box .lbl { font-size: 12px; color: var(--text2); }
+
+  /* SIDEBAR + LAYOUT */
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar {
+    width: 280px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+    padding: 20px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .sidebar-title {
+    padding: 0 20px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .sidebar a {
+    display: block;
+    padding: 7px 20px;
+    color: var(--text2);
+    text-decoration: none;
+    font-size: 13.5px;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+  }
+  .sidebar a:hover { color: var(--accent); background: rgba(79,142,247,0.06); border-left-color: var(--accent); }
+  .sidebar a.sub { padding-left: 36px; font-size: 13px; color: var(--text3); }
+  .sidebar a.sub:hover { color: var(--accent2); border-left-color: var(--accent2); }
+  .content { flex: 1; padding: 40px 50px; max-width: 900px; }
+
+  /* SECTION */
+  .section { margin-bottom: 70px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(79,142,247,0.3);
+  }
+  .section-header h2 {
+    font-size: 1.65rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent3);
+    margin: 28px 0 12px;
+    padding-left: 12px;
+    border-left: 3px solid var(--accent3);
+  }
+  h4 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--accent4);
+    margin: 20px 0 10px;
+  }
+  p { color: var(--text); margin-bottom: 14px; line-height: 1.9; }
+  strong { color: #fff; font-weight: 600; }
+  em { color: var(--accent3); font-style: normal; font-weight: 500; }
+
+  /* CARD */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin: 20px 0;
+  }
+  .card.blue { border-left: 4px solid var(--accent); }
+  .card.purple { border-left: 4px solid var(--accent2); }
+  .card.yellow { border-left: 4px solid var(--accent3); }
+  .card.green { border-left: 4px solid var(--accent4); }
+  .card.red { border-left: 4px solid var(--danger); }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .card.blue .card-title { color: var(--accent); }
+  .card.purple .card-title { color: var(--accent2); }
+  .card.yellow .card-title { color: var(--accent3); }
+  .card.green .card-title { color: var(--accent4); }
+  .card.red .card-title { color: var(--danger); }
+
+  /* CODE */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    overflow-x: auto;
+    position: relative;
+  }
+  .code-block pre {
+    font-family: 'Fira Code', monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #e6edf3;
+    white-space: pre;
+  }
+  .code-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text3);
+    margin-bottom: 6px;
+  }
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .cm { color: #8b949e; font-style: italic; }
+  .num { color: #79c0ff; }
+  .var { color: #ffa657; }
+  .op { color: #ff7b72; }
+
+  /* FORMULA */
+  .formula-box {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+    text-align: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.1rem;
+    color: var(--accent3);
+    letter-spacing: 0.5px;
+  }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  th {
+    background: var(--bg3);
+    color: var(--accent);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  tr:hover td { background: rgba(79,142,247,0.04); }
+
+  /* EXERCISE */
+  .exercise-section {
+    background: linear-gradient(135deg, rgba(124,106,247,0.08) 0%, rgba(79,142,247,0.08) 100%);
+    border: 1px solid rgba(124,106,247,0.3);
+    border-radius: 14px;
+    padding: 28px;
+    margin: 30px 0;
+  }
+  .exercise-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .ex-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 14px 0;
+  }
+  .ex-q { font-weight: 600; color: #fff; margin-bottom: 10px; }
+  .ex-hint {
+    background: rgba(79,199,160,0.08);
+    border: 1px solid rgba(79,199,160,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 12px;
+    font-size: 13.5px;
+    color: var(--accent4);
+  }
+  .ex-ans {
+    background: rgba(79,142,247,0.07);
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 10px;
+    display: none;
+  }
+  .toggle-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-family: 'Hind Siliguri', sans-serif;
+    transition: all 0.2s;
+  }
+  .toggle-btn:hover { background: var(--highlight); color: var(--accent); }
+
+  /* SVG CONTAINER */
+  .svg-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+  .svg-label {
+    font-size: 12px;
+    color: var(--text3);
+    text-align: center;
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 2px;
+  }
+  .badge-blue { background: rgba(79,142,247,0.15); color: var(--accent); border: 1px solid rgba(79,142,247,0.3); }
+  .badge-green { background: rgba(79,247,160,0.12); color: var(--accent4); border: 1px solid rgba(79,247,160,0.3); }
+  .badge-yellow { background: rgba(247,201,79,0.12); color: var(--accent3); border: 1px solid rgba(247,201,79,0.3); }
+  .badge-red { background: rgba(247,97,79,0.12); color: var(--danger); border: 1px solid rgba(247,97,79,0.3); }
+
+  /* ANALOGY BOX */
+  .analogy {
+    background: linear-gradient(135deg, rgba(247,201,79,0.06) 0%, transparent 100%);
+    border: 1px solid rgba(247,201,79,0.25);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 16px 0;
+  }
+  .analogy-icon { font-size: 1.4rem; margin-bottom: 6px; }
+  .analogy p { color: var(--text2); font-size: 14.5px; }
+
+  /* STEP LIST */
+  .steps { list-style: none; }
+  .steps li {
+    display: flex;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .steps li:last-child { border-bottom: none; }
+  .step-num {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: #fff;
+  }
+
+  /* ALGO BOX */
+  .algo-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+  .algo-header {
+    background: linear-gradient(135deg, var(--bg3), var(--bg2));
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .algo-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+  }
+  .algo-body { padding: 20px 22px; }
+
+  /* INTERVIEW */
+  .interview-box {
+    background: linear-gradient(135deg, rgba(247,97,79,0.06) 0%, rgba(247,201,79,0.04) 100%);
+    border: 1px solid rgba(247,97,79,0.2);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  .interview-title {
+    color: var(--danger);
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* TOC */
+  .toc { display: none; }
+
+  /* SCROLL TOP */
+  .scroll-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 44px; height: 44px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(79,142,247,0.4);
+    z-index: 100;
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.2rem;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    z-index: 1000;
+    transition: width 0.1s;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-badge">সম্পূর্ণ বাংলা গাইড</div>
+  <h1>টাইম সিরিজ: বিশ্লেষণ ও পূর্বাভাস</h1>
+  <p>নতুনদের জন্য — Basic Models থেকে SARIMA ও Prophet পর্যন্ত, সব কিছু বাংলায় সহজভাবে</p>
+  <div class="hero-stats">
+    <div class="stat-box"><div class="num">৫টি</div><div class="lbl">Notebook কভার</div></div>
+    <div class="stat-box"><div class="num">৬টি</div><div class="lbl">Algorithm</div></div>
+    <div class="stat-box"><div class="num">৪০+</div><div class="lbl">Interview প্রশ্ন</div></div>
+    <div class="stat-box"><div class="num">৩০+</div><div class="lbl">Coding Exercise</div></div>
+  </div>
+</div>
+
+<div class="layout">
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-title">📚 বিষয়সূচী</div>
+  <a href="#s0">০. টাইম সিরিজ কী?</a>
+  <a href="#s1">১. ডেটা Import ও Display</a>
+  <a href="#s2">২. টাইম সিরিজ বিশ্লেষণ</a>
+  <a href="#s2" class="sub">↳ Trend, Seasonality, Residual</a>
+  <a href="#s3">৩. Automatic Decomposition</a>
+  <a href="#s4">৪. Moving Average পদ্ধতি</a>
+  <a href="#s5">৫. Regression Model</a>
+  <a href="#s5" class="sub">↳ Lag Feature তৈরি</a>
+  <a href="#s5" class="sub">↳ Train-Test Split</a>
+  <a href="#s6">৬. ARMA Model</a>
+  <a href="#s6" class="sub">↳ AR Process</a>
+  <a href="#s6" class="sub">↳ MA Process</a>
+  <a href="#s7">৭. ARIMA ও SARIMA</a>
+  <a href="#s7" class="sub">↳ Stationarity</a>
+  <a href="#s7" class="sub">↳ Differencing</a>
+  <a href="#s7" class="sub">↳ ACF ও PACF</a>
+  <a href="#s8">৮. SARIMA Training</a>
+  <a href="#s8" class="sub">↳ Orders নির্বাচন</a>
+  <a href="#s8" class="sub">↳ Model Fitting</a>
+  <a href="#s9">৯. Prophet</a>
+  <a href="#s9" class="sub">↳ Data Preparation</a>
+  <a href="#s9" class="sub">↳ Hyperparameter Tuning</a>
+  <a href="#s10">১০. সব Algorithm এক জায়গায়</a>
+  <a href="#s11">১১. ML Engineer Interview প্রস্তুতি</a>
+  <a href="#s12">১২. ADF Test — বিস্তারিত</a>
+  <a href="#s13">১৩. SARIMA Order Selection</a>
+  <a href="#s14">১৪. Cheat Sheet ও Rapid Fire</a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+<!-- ==================== SECTION 0 ==================== -->
+<div class="section" id="s0">
+  <div class="section-header">
+    <div class="section-num">০</div>
+    <h2>টাইম সিরিজ আসলে কী? 🕐</h2>
+  </div>
+
+  <p>ধরো তুমি প্রতিদিন সকালে উঠে তোমার বাড়ির বাইরের তাপমাত্রা মাপছো এবং একটা খাতায় লিখে রাখছো। ৩০ দিন পরে তোমার কাছে ৩০টা সংখ্যা আছে — প্রতিটা একটা নির্দিষ্ট দিনের সাথে যুক্ত। এটাই হলো <strong>টাইম সিরিজ</strong>!</p>
+
+  <div class="analogy">
+    <div class="analogy-icon">🎓</div>
+    <p><strong>সহজ ভাষায়:</strong> টাইম সিরিজ = সময় অনুযায়ী সাজানো সংখ্যার সারি। প্রতিটা সংখ্যার একটা সময়-ঠিকানা আছে। এখানে সময়ের ক্রম (order) খুব গুরুত্বপূর্ণ — তুমি এলোমেলো করতে পারবে না!</p>
+  </div>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <defs>
+        <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#4f8ef7"/>
+          <stop offset="100%" stop-color="#7c6af7"/>
+        </linearGradient>
+      </defs>
+      <!-- Grid -->
+      <line x1="60" y1="30" x2="60" y2="180" stroke="#2a3148" stroke-width="1"/>
+      <line x1="60" y1="180" x2="660" y2="180" stroke="#2a3148" stroke-width="1"/>
+      <!-- Grid lines -->
+      <line x1="60" y1="80" x2="660" y2="80" stroke="#2a3148" stroke-width="0.5" stroke-dasharray="4,4"/>
+      <line x1="60" y1="130" x2="660" y2="130" stroke="#2a3148" stroke-width="0.5" stroke-dasharray="4,4"/>
+      <!-- Axis labels -->
+      <text x="20" y="185" fill="#64748b" font-size="12" font-family="sans-serif">সময়</text>
+      <text x="30" y="85" fill="#64748b" font-size="11" font-family="sans-serif">মান</text>
+      <!-- Data points and line -->
+      <polyline points="80,160 130,140 180,145 230,110 280,120 330,90 380,100 430,70 480,85 530,60 580,75 630,50" fill="none" stroke="url(#lineGrad)" stroke-width="2.5"/>
+      <!-- Points -->
+      <circle cx="80" cy="160" r="5" fill="#4f8ef7"/>
+      <circle cx="130" cy="140" r="5" fill="#4f8ef7"/>
+      <circle cx="180" cy="145" r="5" fill="#4f8ef7"/>
+      <circle cx="230" cy="110" r="5" fill="#5d7ef7"/>
+      <circle cx="280" cy="120" r="5" fill="#5d7ef7"/>
+      <circle cx="330" cy="90" r="5" fill="#6b6ef7"/>
+      <circle cx="380" cy="100" r="5" fill="#6b6ef7"/>
+      <circle cx="430" cy="70" r="5" fill="#7c6af7"/>
+      <circle cx="480" cy="85" r="5" fill="#7c6af7"/>
+      <circle cx="530" cy="60" r="5" fill="#7c6af7"/>
+      <circle cx="580" cy="75" r="5" fill="#8460f7"/>
+      <circle cx="630" cy="50" r="5" fill="#8460f7"/>
+      <!-- Time labels -->
+      <text x="72" y="198" fill="#64748b" font-size="10" font-family="sans-serif">জান</text>
+      <text x="222" y="198" fill="#64748b" font-size="10" font-family="sans-serif">এপ্রি</text>
+      <text x="372" y="198" fill="#64748b" font-size="10" font-family="sans-serif">জুলা</text>
+      <text x="520" y="198" fill="#64748b" font-size="10" font-family="sans-serif">অক্টো</text>
+      <!-- Annotation -->
+      <text x="320" y="25" fill="#f7c94f" font-size="13" font-family="sans-serif" font-weight="bold">AirPassengers - মাসিক যাত্রী সংখ্যা</text>
+    </svg>
+    <div class="svg-label">একটা টাইম সিরিজের উদাহরণ — সময়ের সাথে যাত্রী সংখ্যার পরিবর্তন</div>
+  </div>
+
+  <h3>বাস্তব জীবনে টাইম সিরিজের উদাহরণ</h3>
+  <div class="grid-2">
+    <div class="card blue">
+      <div class="card-title">📈 অর্থনীতি</div>
+      <p>বেকারত্বের হার, শেয়ার বাজারের দাম, GDP বৃদ্ধি</p>
+    </div>
+    <div class="card green">
+      <div class="card-title">🌡️ পরিবেশ</div>
+      <p>দৈনিক তাপমাত্রা, বৃষ্টিপাত, নদীর জলস্তর</p>
+    </div>
+    <div class="card yellow">
+      <div class="card-title">❤️ স্বাস্থ্য</div>
+      <p>ECG (হৃদস্পন্দন), রক্তের সুগার লেভেল</p>
+    </div>
+    <div class="card purple">
+      <div class="card-title">🛒 ব্যবসা</div>
+      <p>মাসিক বিক্রয়, ওয়েবসাইটের ট্রাফিক, স্টক ইনভেন্টরি</p>
+    </div>
+  </div>
+
+  <h3>সাধারণ ML ডেটা বনাম টাইম সিরিজ</h3>
+  <table>
+    <tr><th>বিষয়</th><th>সাধারণ ML ডেটা</th><th>টাইম সিরিজ</th></tr>
+    <tr><td>ক্রম গুরুত্বপূর্ণ?</td><td>না</td><td><strong>হ্যাঁ, অবশ্যই</strong></td></tr>
+    <tr><td>Row shuffle করা যায়?</td><td>হ্যাঁ</td><td>না</td></tr>
+    <tr><td>Index কী?</td><td>সংখ্যা (0,1,2...)</td><td><strong>সময় (তারিখ/সময়)</strong></td></tr>
+    <tr><td>Train-Test Split</td><td>Random split</td><td><strong>শুধু শেষ অংশ test</strong></td></tr>
+    <tr><td>Feature তৈরি</td><td>সরাসরি কলাম</td><td><strong>Lag, Rolling window</strong></td></tr>
+  </table>
+
+  <div class="card red">
+    <div class="card-title">⚠️ সবচেয়ে বড় ভুল</div>
+    <p>টাইম সিরিজে কখনো random shuffle করে train-test split করা যাবে না। এটা করলে "future data দিয়ে past predict" হয়ে যাবে — যেটা বাস্তবে সম্ভব না!</p>
+  </div>
+</div>
+
+<!-- ==================== SECTION 1 ==================== -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <div class="section-num">১</div>
+    <h2>ডেটা Import ও Display 📂</h2>
+  </div>
+
+  <p>আমরা কাজ করবো <strong>AirPassengers</strong> ডেটাসেট নিয়ে। এটা ১৯৪৯ থেকে ১৯৬০ সাল পর্যন্ত প্রতি মাসে কতজন যাত্রী বিমানে উড়েছে তার হিসাব।</p>
+
+  <h3>Step 1: সাধারণভাবে Load করা</h3>
+  <div class="code-block"><div class="code-label">Python</div><pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># সাধারণ read_csv</span>
+<span class="var">data</span> = pd.<span class="fn">read_csv</span>(<span class="str">'AirPassengers.csv'</span>)
+<span class="var">data</span>.<span class="fn">head</span>()
+
+<span class="cm"># dtypes দেখা — বুঝবো কোন কলাম কী ধরনের ডেটা ধরে</span>
+<span class="fn">print</span>(<span class="var">data</span>.dtypes)</pre></div>
+
+  <div class="card yellow">
+    <div class="card-title">🔍 সমস্যা কী?</div>
+    <p>এভাবে load করলে Month কলামটা 'object' (string) হিসেবে আসে, কিন্তু আমাদের দরকার datetime। আর একটা অতিরিক্ত index কলামও চলে আসে।</p>
+  </div>
+
+  <h3>Step 2: সঠিক উপায়ে Load করা</h3>
+  <div class="code-block"><div class="code-label">Python — সঠিক উপায়</div><pre><span class="var">airpass</span> = pd.<span class="fn">read_csv</span>(
+    <span class="str">'AirPassengers.csv'</span>,
+    <span class="var">header</span>=<span class="num">0</span>,        <span class="cm"># ০ নম্বর লাইন হলো column নাম</span>
+    <span class="var">index_col</span>=<span class="num">0</span>,     <span class="cm"># ০ নম্বর কলাম হবে index</span>
+    <span class="var">parse_dates</span>=<span class="kw">True</span> <span class="cm"># index কে datetime বানিয়ে দাও</span>
+)
+
+<span class="cm"># প্রথম ৫ লাইন দেখো</span>
+<span class="fn">print</span>(<span class="var">airpass</span>.<span class="fn">head</span>())
+
+<span class="cm"># index চেক করো — datetime হয়েছে কিনা</span>
+<span class="fn">print</span>(<span class="var">airpass</span>.index)
+<span class="cm"># DatetimeIndex(['1949-01-01', '1949-02-01', ...], dtype='datetime64[ns]')</span>
+
+<span class="cm"># Plot করো</span>
+plt.<span class="fn">plot</span>(<span class="var">airpass</span>)
+plt.<span class="fn">show</span>()</pre></div>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <defs>
+        <linearGradient id="airGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#4f8ef7" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#7c6af7" stop-opacity="0.8"/>
+        </linearGradient>
+      </defs>
+      <rect width="700" height="250" fill="#0f1117" rx="8"/>
+      <!-- Grid -->
+      <line x1="60" y1="30" x2="60" y2="210" stroke="#2a3148" stroke-width="1.5"/>
+      <line x1="60" y1="210" x2="680" y2="210" stroke="#2a3148" stroke-width="1.5"/>
+      <line x1="60" y1="70" x2="680" y2="70" stroke="#1e2435" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="60" y1="110" x2="680" y2="110" stroke="#1e2435" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="60" y1="150" x2="680" y2="150" stroke="#1e2435" stroke-width="1" stroke-dasharray="3,3"/>
+
+      <!-- Seasonal wave pattern simulating AirPassengers -->
+      <polyline points="70,195 75,192 80,185 85,190 90,188 95,183 100,185 105,193 110,192 115,188 120,186 125,189 
+        135,187 140,180 145,182 150,178 155,172 160,176 165,185 170,183 175,179 180,177 185,181
+        195,178 200,170 205,173 210,168 215,162 220,166 225,175 230,173 235,168 240,166 245,170
+        255,167 260,158 265,162 270,156 275,149 280,153 285,163 290,160 295,155 300,152 305,157
+        315,153 320,143 325,148 330,141 335,133 340,138 345,149 350,145 355,140 360,136 365,142
+        375,137 380,126 385,132 390,124 395,114 400,120 405,132 410,128 415,122 420,118 425,125
+        435,119 440,107 445,114 450,104 455,93 460,100 465,113 470,108 475,101 480,97 485,105
+        495,98 500,85 505,92 510,82 515,70 520,78 525,91 530,86 535,79 540,74 545,82
+        555,75 560,62 565,70 570,59 575,47 580,56 585,69 590,63 595,56 600,51 605,60
+        615,53 620,39 625,48 630,36 635,24 640,33 645,47 650,41 655,33 660,28 665,37" 
+        fill="none" stroke="url(#airGrad)" stroke-width="2"/>
+      <!-- Labels -->
+      <text x="65" y="220" fill="#64748b" font-size="10" font-family="sans-serif">1949</text>
+      <text x="195" y="220" fill="#64748b" font-size="10" font-family="sans-serif">1952</text>
+      <text x="325" y="220" fill="#64748b" font-size="10" font-family="sans-serif">1955</text>
+      <text x="455" y="220" fill="#64748b" font-size="10" font-family="sans-serif">1957</text>
+      <text x="585" y="220" fill="#64748b" font-size="10" font-family="sans-serif">1960</text>
+      <!-- Y labels -->
+      <text x="15" y="74" fill="#64748b" font-size="10" font-family="sans-serif">600</text>
+      <text x="15" y="154" fill="#64748b" font-size="10" font-family="sans-serif">200</text>
+      <text x="15" y="214" fill="#64748b" font-size="10" font-family="sans-serif">100</text>
+      <!-- Title -->
+      <text x="340" y="18" fill="#f7c94f" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">AirPassengers Dataset — বাড়ন্ত Trend + Seasonality</text>
+      <!-- Annotations -->
+      <line x1="636" y1="24" x2="636" y2="50" stroke="#f7614f" stroke-width="1.5" stroke-dasharray="3,3"/>
+      <text x="640" y="22" fill="#f7614f" font-size="10" font-family="sans-serif">Peak!</text>
+      <text x="640" y="34" fill="#f7614f" font-size="9" font-family="sans-serif">সর্বোচ্চ</text>
+    </svg>
+    <div class="svg-label">AirPassengers ডেটাসেট — সময়ের সাথে বিমান যাত্রী বাড়ছে এবং মৌসুমী ওঠানামাও করছে</div>
+  </div>
+
+  <div class="exercise-section">
+    <div class="exercise-title">🎯 Practice Exercise — Section ১</div>
+
+    <div class="ex-item">
+      <div class="ex-q">প্র. ১: নিচের কোডটা চালালে কী হবে এবং কেন সমস্যা আছে?</div>
+      <div class="code-block"><pre><span class="var">df</span> = pd.<span class="fn">read_csv</span>(<span class="str">'AirPassengers.csv'</span>)
+<span class="var">df</span>[<span class="str">'Month'</span>] = <span class="var">df</span>[<span class="str">'Month'</span>] + pd.<span class="fn">DateOffset</span>(<span class="var">months</span>=<span class="num">1</span>)</pre></div>
+      <div class="ex-hint">💡 Hint: dtypes চেক করো — 'Month' কলামটা কী ধরনের?</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans"><p><strong>সমস্যা:</strong> `read_csv` এ `parse_dates=True` না দিলে 'Month' কলামটা string (object) হিসেবে আসে। String-এ DateOffset যোগ করা যায় না। সমাধান: `parse_dates=['Month']` দাও অথবা পরে `pd.to_datetime(df['Month'])` করো।</p></div>
+    </div>
+
+    <div class="ex-item">
+      <div class="ex-q">প্র. ২ (ML Engineer Level): তুমি একটা retail কোম্পানিতে কাজ করছো। তাদের কাছে ৩ বছরের daily sales ডেটা আছে CSV ফাইলে। কলাম: `date`, `sales`, `store_id`। Sales ডেটা সঠিকভাবে load করো।</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans">
+        <div class="code-block"><pre><span class="var">df</span> = pd.<span class="fn">read_csv</span>(
+    <span class="str">'sales.csv'</span>,
+    <span class="var">parse_dates</span>=[<span class="str">'date'</span>],   <span class="cm"># date কলামকে datetime বানাও</span>
+    <span class="var">index_col</span>=<span class="str">'date'</span>       <span class="cm"># date কে index বানাও</span>
+)
+
+<span class="cm"># store_id দিয়ে filter করো</span>
+<span class="var">store_1</span> = <span class="var">df</span>[<span class="var">df</span>[<span class="str">'store_id'</span>] == <span class="num">1</span>][<span class="str">'sales'</span>]
+
+<span class="cm"># সঠিক frequency সেট করো</span>
+<span class="var">store_1</span> = <span class="var">store_1</span>.<span class="fn">asfreq</span>(<span class="str">'D'</span>)  <span class="cm"># D = daily</span>
+<span class="fn">print</span>(<span class="var">store_1</span>.<span class="fn">head</span>())</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 2 ==================== -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <div class="section-num">২</div>
+    <h2>টাইম সিরিজ বিশ্লেষণ: Trend, Seasonality, Residual 🔬</h2>
+  </div>
+
+  <p>একটা টাইম সিরিজ দেখলে মনে হয় সব মিলিয়ে জগাখিচুড়ি। কিন্তু আসলে এটা তিনটা অংশ দিয়ে তৈরি। চলো বুঝি।</p>
+
+  <div class="analogy">
+    <div class="analogy-icon">🍰</div>
+    <p><strong>উপমা:</strong> ধরো একটা কেক বানানো হচ্ছে — তাতে আছে: ময়দা (Trend) + চিনি (Seasonality) + কিছু অপ্রত্যাশিত মশলা (Residual/Noise)। তুমি কেক খেলে এই তিনটা আলাদা করতে পারবে না, কিন্তু সব মিলিয়েই কেকের স্বাদ হয়।</p>
+  </div>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <defs>
+        <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#4f8ef7" stop-opacity="0.1"/>
+          <stop offset="100%" stop-color="#4f8ef7" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <rect width="700" height="380" fill="#0f1117" rx="8"/>
+
+      <!-- TREND -->
+      <text x="350" y="22" fill="#4ff7a0" font-size="13" font-family="sans-serif" text-anchor="middle" font-weight="bold">টাইম সিরিজের তিনটি উপাদান</text>
+      <rect x="20" y="35" width="200" height="100" rx="8" fill="#0d1117" stroke="#2a3148"/>
+      <text x="120" y="55" fill="#4ff7a0" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">① TREND (প্রবণতা)</text>
+      <line x1="35" y1="115" x2="205" y2="70" stroke="#4ff7a0" stroke-width="2.5"/>
+      <text x="120" y="130" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">দীর্ঘমেয়াদী গতিপথ</text>
+
+      <!-- SEASONALITY -->
+      <rect x="250" y="35" width="200" height="100" rx="8" fill="#0d1117" stroke="#2a3148"/>
+      <text x="350" y="55" fill="#f7c94f" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">② SEASONALITY (মৌসুমীতা)</text>
+      <polyline points="265,100 280,80 295,100 310,80 325,100 340,80 355,100 370,80 385,100 400,80 415,100 430,80 445,100" fill="none" stroke="#f7c94f" stroke-width="2"/>
+      <text x="350" y="130" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">নিয়মিত চক্রাকার পরিবর্তন</text>
+
+      <!-- RESIDUAL -->
+      <rect x="480" y="35" width="200" height="100" rx="8" fill="#0d1117" stroke="#2a3148"/>
+      <text x="580" y="55" fill="#f7614f" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">③ RESIDUAL (অবশিষ্ট)</text>
+      <polyline points="495,85 510,75 525,90 540,80 555,95 570,78 585,88 600,73 615,92 625,82 650,88 665,75 675,90" fill="none" stroke="#f7614f" stroke-width="1.5"/>
+      <text x="580" y="130" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">এলোমেলো নয়েজ</text>
+
+      <!-- Arrows -->
+      <text x="350" y="165" fill="#64748b" font-size="13" font-family="sans-serif" text-anchor="middle">তিনটা মিলে = টাইম সিরিজ</text>
+
+      <!-- Combined view - Additive -->
+      <rect x="20" y="180" width="660" height="70" rx="8" fill="#0d1117" stroke="#4f8ef7" stroke-opacity="0.4"/>
+      <text x="40" y="198" fill="#4f8ef7" font-size="12" font-family="sans-serif" font-weight="bold">Additive Model: X_t = T_t + S_t + ε_t</text>
+      <text x="40" y="218" fill="#94a3b8" font-size="12" font-family="sans-serif">উদাহরণ: তাপমাত্রা (গ্রীষ্মে সবসময় ১০° বেশি, শীতে ১০° কম — এই পরিমাণ স্থির)</text>
+      <text x="40" y="238" fill="#94a3b8" font-size="12" font-family="sans-serif">পরিচিতি: Seasonal variation সব সময় একই amplitude (উচ্চতা) বজায় রাখে</text>
+
+      <!-- Multiplicative -->
+      <rect x="20" y="265" width="660" height="70" rx="8" fill="#0d1117" stroke="#f7c94f" stroke-opacity="0.4"/>
+      <text x="40" y="283" fill="#f7c94f" font-size="12" font-family="sans-serif" font-weight="bold">Multiplicative Model: X_t = T_t × (1+S_t) × (1+ε_t)</text>
+      <text x="40" y="303" fill="#94a3b8" font-size="12" font-family="sans-serif">উদাহরণ: বিমান যাত্রী (যত বছর গেছে seasonal swing ততই বড় হয়েছে)</text>
+      <text x="40" y="323" fill="#94a3b8" font-size="12" font-family="sans-serif">পরিচিতি: Seasonal variation এর amplitude সময়ের সাথে বাড়ে বা কমে</text>
+
+      <!-- Conversion -->
+      <rect x="20" y="350" width="660" height="25" rx="6" fill="rgba(79,247,160,0.08)" stroke="rgba(79,247,160,0.2)"/>
+      <text x="350" y="367" fill="#4ff7a0" font-size="12" font-family="sans-serif" text-anchor="middle">Multiplicative → Additive: log(X_t) নিলে Multiplicative সিরিজ Additive হয়ে যায় ✓</text>
+    </svg>
+    <div class="svg-label">টাইম সিরিজের তিনটি উপাদান এবং দুটি মডেলের পার্থক্য</div>
+  </div>
+
+  <h3>Logarithm Transform কেন নিই?</h3>
+  <p>Multiplicative model এ কাজ করা কঠিন। কিন্তু log নিলে:</p>
+  <div class="formula-box">log(X_t) = log(T_t) + log(1+S_t) + log(1+ε_t)</div>
+  <p>এখন এটা <strong>Additive</strong> হয়ে গেছে! Additive model নিয়ে কাজ করা অনেক সহজ কারণ এখানে সব component যোগ করা আছে।</p>
+
+  <div class="analogy">
+    <div class="analogy-icon">📱</div>
+    <p><strong>উপমা:</strong> ধরো তোমার ফোনের ব্যাটারি — গ্রীষ্মে সবসময় ১০% বেশি drain হলে সেটা Additive। কিন্তু যদি সবসময় ১০% বেশি (মানে ১০০ থেকে ৯০, কিন্তু ৫০ থেকে ৪৫) drain হয়, সেটা Multiplicative। পার্থক্যটা কি বুঝলে?</p>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">🔑 চেনার উপায়</div>
+    <p><strong>Additive কিনা দেখো:</strong> গ্রাফে seasonal ওঠানামার উচ্চতা (amplitude) কি সব জায়গায় একই?<br>
+    <strong>Multiplicative কিনা দেখো:</strong> সময়ের সাথে কি seasonal swing বড় হচ্ছে?<br><br>
+    AirPassengers ডেটায় যতই বছর যাচ্ছে seasonal swing বড় হচ্ছে → <strong>Multiplicative</strong>!</p>
+  </div>
+</div>
+
+<!-- ==================== SECTION 3 ==================== -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <div class="section-num">৩</div>
+    <h2>Automatic Decomposition: seasonal_decompose 🔧</h2>
+  </div>
+
+  <p><code>statsmodels</code> লাইব্রেরির <code>seasonal_decompose</code> function দিয়ে Python নিজেই আমাদের জন্য Trend, Seasonality ও Residual আলাদা করে দেয়।</p>
+
+  <div class="code-block"><div class="code-label">Python — Decomposition</div><pre><span class="kw">from</span> statsmodels.tsa.seasonal <span class="kw">import</span> seasonal_decompose
+
+<span class="cm"># Step 1: Decompose করো (default: additive)</span>
+<span class="var">res_add</span> = <span class="fn">seasonal_decompose</span>(<span class="var">airpass</span>)
+<span class="var">res_add</span>.<span class="fn">plot</span>()
+plt.<span class="fn">show</span>()
+<span class="cm"># ← এটা ভালো ফল দেবে না! Residual এ বড় variation থাকবে</span>
+
+<span class="cm"># Step 2: Multiplicative model ব্যবহার করো</span>
+<span class="var">res_mul</span> = <span class="fn">seasonal_decompose</span>(<span class="var">airpass</span>, <span class="var">model</span>=<span class="str">'multiplicative'</span>)
+<span class="var">res_mul</span>.<span class="fn">plot</span>()
+plt.<span class="fn">show</span>()
+<span class="cm"># ← এটা ভালো ফল দেবে — Residual প্রায় random হবে</span>
+
+<span class="cm"># Step 3: Log transform নাও (Multiplicative → Additive)</span>
+<span class="var">airpasslog</span> = np.<span class="fn">log</span>(<span class="var">airpass</span>)
+plt.<span class="fn">plot</span>(<span class="var">airpasslog</span>)
+plt.<span class="fn">show</span>()
+<span class="cm"># এখন seasonal amplitude প্রায় constant</span></pre></div>
+
+  <h3>Seasonal Adjustment (CVS) কী?</h3>
+  <p>Seasonality বাদ দিলে আসল trend পরিষ্কার দেখা যায়। এটাকে বলে <strong>Seasonally Adjusted Series</strong>।</p>
+
+  <div class="code-block"><div class="code-label">Python — Seasonally Adjusted Series</div><pre><span class="cm"># Log-transformed series তে decompose করো</span>
+<span class="var">mult</span> = <span class="fn">seasonal_decompose</span>(<span class="var">airpasslog</span>)
+
+<span class="cm"># Seasonal component বাদ দাও</span>
+<span class="var">cvs</span> = <span class="var">airpasslog</span>[<span class="str">'#Passengers'</span>] - <span class="var">mult</span>.seasonal
+
+<span class="cm"># Original scale এ ফিরে যাও (exp নাও)</span>
+<span class="var">x_cvs</span> = np.<span class="fn">exp</span>(<span class="var">cvs</span>)
+
+<span class="cm"># একসাথে plot করো</span>
+plt.<span class="fn">plot</span>(<span class="var">airpass</span>, <span class="var">label</span>=<span class="str">'Original'</span>)
+plt.<span class="fn">plot</span>(<span class="var">x_cvs</span>, <span class="var">label</span>=<span class="str">'Seasonally Adjusted'</span>)
+plt.<span class="fn">legend</span>()
+plt.<span class="fn">show</span>()</pre></div>
+
+  <div class="card green">
+    <div class="card-title">✅ Seasonal Adjustment কেন দরকার?</div>
+    <p>Seasonality বাদ দিলে লুকানো pattern দেখা যায়। উদাহরণ: AirPassengers এ seasonal adjustment করলে দেখা যায় ১৯৫৮ ও ১৯৬০ সালে যাত্রী সংখ্যা কমেছিল — যেটা original graph এ বোঝা যেত না।</p>
+  </div>
+
+  <div class="exercise-section">
+    <div class="exercise-title">🎯 Practice Exercise — Section ৩</div>
+    <div class="ex-item">
+      <div class="ex-q">প্র. (ML Engineer Level): তোমার কাছে একটা e-commerce সাইটের ২ বছরের weekly revenue ডেটা আছে। কীভাবে বুঝবে এটা Additive নাকি Multiplicative? কোড লিখে দেখাও।</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans">
+        <div class="code-block"><pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">from</span> statsmodels.tsa.seasonal <span class="kw">import</span> seasonal_decompose
+
+<span class="cm"># Method 1: চোখে দেখো — seasonal swing বাড়ছে কিনা?</span>
+plt.<span class="fn">plot</span>(<span class="var">revenue</span>)
+plt.<span class="fn">title</span>(<span class="str">'Revenue — Multiplicative দেখতে? Additive দেখতে?'</span>)
+
+<span class="cm"># Method 2: দুটোই decompose করো, residual দেখো</span>
+<span class="var">res_add</span> = <span class="fn">seasonal_decompose</span>(<span class="var">revenue</span>, <span class="var">model</span>=<span class="str">'additive'</span>, <span class="var">period</span>=<span class="num">52</span>)
+<span class="var">res_mul</span> = <span class="fn">seasonal_decompose</span>(<span class="var">revenue</span>, <span class="var">model</span>=<span class="str">'multiplicative'</span>, <span class="var">period</span>=<span class="num">52</span>)
+
+<span class="cm"># ভালো decomposition = residual এর variance কম</span>
+<span class="fn">print</span>(<span class="str">"Additive residual std:"</span>, <span class="var">res_add</span>.resid.<span class="fn">dropna</span>().<span class="fn">std</span>())
+<span class="fn">print</span>(<span class="str">"Multiplicative residual std:"</span>, <span class="var">res_mul</span>.resid.<span class="fn">dropna</span>().<span class="fn">std</span>())
+<span class="cm"># যেটার std কম, সেটাই ভালো model</span></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 4 ==================== -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <div class="section-num">৪</div>
+    <h2>Moving Average পদ্ধতি 📊</h2>
+  </div>
+
+  <p><code>seasonal_decompose</code> আসলে ভেতরে ভেতরে <strong>Moving Average (MA)</strong> ব্যবহার করে trend বের করে। চলো নিজে হাতে বুঝি।</p>
+
+  <div class="analogy">
+    <div class="analogy-icon">🎸</div>
+    <p><strong>উপমা:</strong> ধরো তুমি একটা গান শুনছো যেখানে অনেক noise আছে। তুমি যদি কানে হাত দিয়ে একটু চাপ দাও, তাহলে কিছুটা smooth শোনায়। Moving Average ঠিক এটাই করে — ডেটার "noise" কমিয়ে আসল pattern দেখায়।</p>
+  </div>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <rect width="700" height="280" fill="#0f1117" rx="8"/>
+      <!-- Moving Average Illustration -->
+      <text x="350" y="22" fill="#f7c94f" font-size="13" font-family="sans-serif" text-anchor="middle" font-weight="bold">Moving Average (MA) কীভাবে কাজ করে</text>
+
+      <!-- Example table for MA(3) -->
+      <rect x="20" y="35" width="300" height="220" rx="8" fill="#0d1117" stroke="#2a3148"/>
+      <text x="170" y="55" fill="#4ff7a0" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">MA(3) — Window = 3</text>
+      <!-- Headers -->
+      <rect x="30" y="63" width="280" height="25" rx="4" fill="#1e2435"/>
+      <text x="80" y="80" fill="#94a3b8" font-size="11" font-family="sans-serif">সময়</text>
+      <text x="140" y="80" fill="#94a3b8" font-size="11" font-family="sans-serif">মান</text>
+      <text x="230" y="80" fill="#94a3b8" font-size="11" font-family="sans-serif">MA(3)</text>
+      <!-- Rows -->
+      <text x="80" y="105" fill="#e2e8f0" font-size="12" font-family="sans-serif">t=1</text>
+      <text x="140" y="105" fill="#e2e8f0" font-size="12" font-family="sans-serif">7</text>
+      <text x="230" y="105" fill="#64748b" font-size="12" font-family="sans-serif">NaN</text>
+
+      <text x="80" y="125" fill="#e2e8f0" font-size="12" font-family="sans-serif">t=2</text>
+      <text x="140" y="125" fill="#e2e8f0" font-size="12" font-family="sans-serif">1</text>
+      <text x="230" y="125" fill="#64748b" font-size="12" font-family="sans-serif">NaN</text>
+
+      <rect x="30" y="130" width="280" height="25" rx="4" fill="rgba(79,142,247,0.1)"/>
+      <text x="80" y="148" fill="#4f8ef7" font-size="12" font-family="sans-serif" font-weight="bold">t=3</text>
+      <text x="140" y="148" fill="#4f8ef7" font-size="12" font-family="sans-serif" font-weight="bold">4</text>
+      <text x="230" y="148" fill="#4ff7a0" font-size="12" font-family="sans-serif" font-weight="bold">(7+1+4)/3 = 4</text>
+
+      <rect x="30" y="158" width="280" height="25" rx="4" fill="rgba(124,106,247,0.1)"/>
+      <text x="80" y="176" fill="#7c6af7" font-size="12" font-family="sans-serif" font-weight="bold">t=4</text>
+      <text x="140" y="176" fill="#7c6af7" font-size="12" font-family="sans-serif" font-weight="bold">9</text>
+      <text x="230" y="176" fill="#4ff7a0" font-size="12" font-family="sans-serif" font-weight="bold">(1+4+9)/3 = 4.7</text>
+
+      <text x="80" y="205" fill="#e2e8f0" font-size="12" font-family="sans-serif">t=5</text>
+      <text x="140" y="205" fill="#e2e8f0" font-size="12" font-family="sans-serif">10</text>
+      <text x="230" y="205" fill="#4ff7a0" font-size="12" font-family="sans-serif">(4+9+10)/3 = 7.7</text>
+
+      <text x="170" y="245" fill="#64748b" font-size="11" font-family="sans-serif" text-anchor="middle">শেষের দিকেও NaN আসে</text>
+
+      <!-- Visual representation -->
+      <rect x="340" y="35" width="340" height="220" rx="8" fill="#0d1117" stroke="#2a3148"/>
+      <text x="510" y="55" fill="#f7c94f" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">Noisy vs Smooth</text>
+      <!-- Axes -->
+      <line x1="360" y1="220" x2="665" y2="220" stroke="#2a3148" stroke-width="1.5"/>
+      <line x1="360" y1="70" x2="360" y2="220" stroke="#2a3148" stroke-width="1.5"/>
+      <!-- Noisy (original) -->
+      <polyline points="370,200 395,170 420,195 445,165 470,190 495,155 520,180 545,150 570,170 595,140 620,160 645,125 660,140" fill="none" stroke="#f7614f" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+      <!-- Smooth (MA) -->
+      <polyline points="420,189 445,177 470,170 495,165 520,162 545,157 570,155 595,148 620,147 645,140" fill="none" stroke="#4f8ef7" stroke-width="2.5"/>
+      <!-- Legend -->
+      <line x1="370" y1="245" x2="395" y2="245" stroke="#f7614f" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <text x="400" y="249" fill="#94a3b8" font-size="11" font-family="sans-serif">Original (noisy)</text>
+      <line x1="480" y1="245" x2="505" y2="245" stroke="#4f8ef7" stroke-width="2.5"/>
+      <text x="510" y="249" fill="#94a3b8" font-size="11" font-family="sans-serif">MA (smooth)</text>
+    </svg>
+    <div class="svg-label">Moving Average কীভাবে noise কমিয়ে trend বের করে</div>
+  </div>
+
+  <h3>Centered Moving Average — Even Period</h3>
+  <p>যখন seasonality এর period এমন হয় (যেমন ১২ মাস), তখন centered MA ব্যবহার করতে হয়। এতে extreme গুলো ½ weight পায়।</p>
+  <div class="formula-box">M₁₂X_t = (1/12) × (½X_{t-6} + X_{t-5} + ... + X_t + ... + X_{t+5} + ½X_{t+6})</div>
+
+  <h3>Python এ Moving Average</h3>
+  <div class="code-block"><div class="code-label">Python — Moving Average</div><pre><span class="cm"># ১২-মাসের centered moving average</span>
+<span class="var">airpass_ma</span> = <span class="var">airpasslog</span>.<span class="fn">rolling</span>(
+    <span class="var">window</span>=<span class="num">12</span>,    <span class="cm"># ১২টা মান নিয়ে average</span>
+    <span class="var">center</span>=<span class="kw">True</span>  <span class="cm"># centered window</span>
+).<span class="fn">mean</span>()
+
+<span class="cm"># Plot করো</span>
+plt.<span class="fn">plot</span>(<span class="var">airpasslog</span>, <span class="var">color</span>=<span class="str">'blue'</span>, <span class="var">label</span>=<span class="str">'Original'</span>)
+plt.<span class="fn">plot</span>(<span class="var">airpass_ma</span>, <span class="var">color</span>=<span class="str">'red'</span>, <span class="var">label</span>=<span class="str">'Moving Average'</span>)
+plt.<span class="fn">legend</span>()
+plt.<span class="fn">show</span>()</pre></div>
+
+  <h3>হাতে হাতে Seasonality বের করা (৫ ধাপে)</h3>
+  <ul class="steps">
+    <li><div class="step-num">১</div><div>Moving Average M₁₂X_t বের করো (Trend approximation)</div></li>
+    <li><div class="step-num">২</div><div>Series থেকে MA বিয়োগ করো: X_t - M₁₂X_t</div></li>
+    <li><div class="step-num">৩</div><div>প্রতি মাসের average নাও (seasonality coefficient)</div></li>
+    <li><div class="step-num">৪</div><div>সব coefficient এর মোট average বিয়োগ করে center করো</div></li>
+    <li><div class="step-num">৫</div><div>Original series থেকে seasonal coefficient বিয়োগ করো</div></li>
+  </ul>
+
+  <div class="code-block"><div class="code-label">Python — Manual Seasonality Extraction</div><pre><span class="cm"># Step 1: MA বের করা হয়েছে উপরে</span>
+
+<span class="cm"># Step 2: Difference</span>
+<span class="var">airpasslog_without_ma</span> = <span class="var">airpasslog</span> - <span class="var">airpass_ma</span>
+<span class="var">airpasslog_without_ma</span> = <span class="var">airpasslog_without_ma</span>.<span class="fn">dropna</span>()  <span class="cm"># NaN বাদ দাও</span>
+
+<span class="cm"># Step 3 & 4: Month ধরে average নাও, center করো</span>
+<span class="var">df</span> = <span class="var">airpasslog_without_ma</span>.<span class="fn">copy</span>()
+<span class="var">df</span>[<span class="str">'month'</span>] = <span class="var">df</span>.index.month
+
+<span class="var">seasonality</span> = <span class="var">df</span>.<span class="fn">groupby</span>(<span class="str">'month'</span>).<span class="fn">mean</span>()
+<span class="var">seasonality</span> = <span class="var">seasonality</span> - <span class="var">seasonality</span>.<span class="fn">mean</span>()  <span class="cm"># center</span>
+
+<span class="cm"># Step 5: Seasonal vector বানাও (১২ × ১২ = ১৪৪ মাস)</span>
+<span class="var">seasonal_vector</span> = np.<span class="fn">zeros</span>(<span class="num">144</span>)
+<span class="var">j</span> = <span class="num">0</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">12</span>):
+    <span class="var">seasonal_vector</span>[<span class="var">j</span>:<span class="var">j</span>+<span class="num">12</span>] = <span class="var">seasonality</span>.<span class="fn">iloc</span>[:, <span class="num">0</span>]
+    <span class="var">j</span> += <span class="num">12</span>
+
+<span class="cm"># Seasonally adjusted series</span>
+<span class="var">airpasslog_cvs</span> = <span class="var">airpasslog</span>[<span class="str">"#Passengers"</span>] - <span class="var">seasonal_vector</span>
+<span class="var">airpass_cvs</span> = np.<span class="fn">exp</span>(<span class="var">airpasslog_cvs</span>)  <span class="cm"># Original scale এ ফিরে যাও</span></pre></div>
+</div>
+
+<!-- ==================== SECTION 5 ==================== -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <div class="section-num">৫</div>
+    <h2>Regression Model দিয়ে টাইম সিরিজ পূর্বাভাস 📈</h2>
+  </div>
+
+  <p>আমরা জানি Linear Regression কীভাবে কাজ করে। কিন্তু টাইম সিরিজে Feature গুলো কোথা থেকে আসবে? উত্তর: <strong>আগের মানগুলো থেকেই!</strong></p>
+
+  <div class="formula-box">X_t = β₀ + β₁·X_{t-1} + β₂·X_{t-2} + ... + βₚ·X_{t-p} + ε_t</div>
+
+  <p>মানে: আজকের যাত্রী সংখ্যা = গত মাসের সংখ্যার উপর ভিত্তি করে predict করছি।</p>
+
+  <h3>Feature Engineering: Lag তৈরি</h3>
+  <div class="code-block"><div class="code-label">Python — Lag Features</div><pre><span class="var">df</span> = pd.<span class="fn">read_csv</span>(<span class="str">'AirPassengers.csv'</span>, <span class="var">index_col</span>=<span class="str">'Month'</span>, <span class="var">parse_dates</span>=<span class="kw">True</span>)
+
+<span class="cm"># Lag Feature: গত মাসের মান</span>
+<span class="var">df</span>[<span class="str">'Passengers_lag1'</span>] = <span class="var">df</span>[<span class="str">'#Passengers'</span>].<span class="fn">shift</span>(<span class="num">1</span>)
+<span class="cm"># shift(1) মানে: প্রতিটা মানকে ১ ঘর নিচে নামাও
+# তাহলে row t তে পাবো X_{t-1} এর মান</span>
+
+<span class="cm"># Rolling Window Feature: গত ৩ মাসের গড়</span>
+<span class="var">df</span>[<span class="str">'Passengers_MA_3months'</span>] = <span class="var">df</span>[<span class="str">'#Passengers'</span>].<span class="fn">rolling</span>(<span class="var">window</span>=<span class="num">3</span>).<span class="fn">mean</span>()
+
+<span class="cm"># NaN বাদ দাও</span>
+<span class="var">df</span> = <span class="var">df</span>.<span class="fn">dropna</span>()
+
+<span class="fn">print</span>(<span class="var">df</span>.<span class="fn">head</span>())</pre></div>
+
+  <h3>Train-Test Split — টাইম সিরিজের সঠিক উপায়</h3>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <rect width="700" height="160" fill="#0f1117" rx="8"/>
+      <text x="350" y="22" fill="#f7c94f" font-size="13" font-family="sans-serif" text-anchor="middle" font-weight="bold">টাইম সিরিজে Train-Test Split</text>
+
+      <!-- Wrong way -->
+      <text x="20" y="45" fill="#f7614f" font-size="11" font-family="sans-serif">❌ ভুল উপায় (Random Shuffle)</text>
+      <rect x="20" y="55" width="660" height="30" rx="4" fill="#1e2435"/>
+      <!-- Random colored blocks -->
+      <rect x="25" y="57" width="30" height="26" rx="2" fill="#4f8ef7" opacity="0.7"/>
+      <rect x="60" y="57" width="30" height="26" rx="2" fill="#f7614f" opacity="0.7"/>
+      <rect x="95" y="57" width="30" height="26" rx="2" fill="#4f8ef7" opacity="0.7"/>
+      <rect x="130" y="57" width="30" height="26" rx="2" fill="#f7614f" opacity="0.7"/>
+      <rect x="165" y="57" width="30" height="26" rx="2" fill="#4f8ef7" opacity="0.7"/>
+      <rect x="200" y="57" width="30" height="26" rx="2" fill="#f7614f" opacity="0.7"/>
+      <rect x="235" y="57" width="30" height="26" rx="2" fill="#4f8ef7" opacity="0.7"/>
+      <rect x="270" y="57" width="30" height="26" rx="2" fill="#f7614f" opacity="0.7"/>
+      <text x="320" y="75" fill="#94a3b8" font-size="11" font-family="sans-serif">... future data দিয়ে past predict! অর্থহীন!</text>
+
+      <!-- Correct way -->
+      <text x="20" y="110" fill="#4ff7a0" font-size="11" font-family="sans-serif">✅ সঠিক উপায় (Chronological Split)</text>
+      <rect x="20" y="120" width="495" height="30" rx="4" fill="rgba(79,142,247,0.15)" stroke="rgba(79,142,247,0.4)" stroke-width="1.5"/>
+      <text x="260" y="140" fill="#4f8ef7" font-size="11" font-family="sans-serif" text-anchor="middle">🔵 Training Set (পুরনো ডেটা)</text>
+      <rect x="520" y="120" width="160" height="30" rx="4" fill="rgba(247,97,79,0.15)" stroke="rgba(247,97,79,0.4)" stroke-width="1.5"/>
+      <text x="600" y="140" fill="#f7614f" font-size="11" font-family="sans-serif" text-anchor="middle">🔴 Test Set</text>
+      <line x1="515" y1="115" x2="515" y2="155" stroke="#f7c94f" stroke-width="2" stroke-dasharray="4,3"/>
+      <text x="515" y="110" fill="#f7c94f" font-size="10" font-family="sans-serif" text-anchor="middle">Split এখানে</text>
+    </svg>
+    <div class="svg-label">টাইম সিরিজে সবসময় শেষের অংশ test set হবে — random split না!</div>
+  </div>
+
+  <div class="code-block"><div class="code-label">Python — Linear Regression Model</div><pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> root_mean_squared_error
+
+<span class="cm"># Feature ও Target</span>
+<span class="var">X</span> = <span class="var">df</span>[[<span class="str">'Passengers_lag1'</span>]]   <span class="cm"># Feature: গত মাসের মান</span>
+<span class="var">y</span> = <span class="var">df</span>[<span class="str">'#Passengers'</span>]         <span class="cm"># Target: এই মাসের মান</span>
+
+<span class="cm"># শেষ ২৪ মাস test set</span>
+<span class="var">X_train</span> = <span class="var">X</span>.<span class="fn">iloc</span>[:<span class="op">-</span><span class="num">24</span>]
+<span class="var">X_test</span>  = <span class="var">X</span>.<span class="fn">iloc</span>[<span class="op">-</span><span class="num">24</span>:]
+<span class="var">y_train</span> = <span class="var">y</span>.<span class="fn">iloc</span>[:<span class="op">-</span><span class="num">24</span>]
+<span class="var">y_test</span>  = <span class="var">y</span>.<span class="fn">iloc</span>[<span class="op">-</span><span class="num">24</span>:]
+
+<span class="cm"># Model তৈরি ও train</span>
+<span class="var">model</span> = <span class="fn">LinearRegression</span>()
+<span class="var">model</span>.<span class="fn">fit</span>(<span class="var">X_train</span>, <span class="var">y_train</span>)
+
+<span class="cm"># Predict ও evaluate</span>
+<span class="var">y_pred</span> = <span class="var">model</span>.<span class="fn">predict</span>(<span class="var">X_test</span>)
+<span class="var">rmse</span> = <span class="fn">root_mean_squared_error</span>(<span class="var">y_test</span>, <span class="var">y_pred</span>)
+<span class="fn">print</span>(<span class="str">f"RMSE: {rmse:.2f}"</span>)
+
+<span class="cm"># Visualization</span>
+plt.<span class="fn">figure</span>(<span class="var">figsize</span>=(<span class="num">10</span>, <span class="num">6</span>))
+plt.<span class="fn">plot</span>(<span class="var">y</span>.<span class="var">index</span>, <span class="var">y</span>, <span class="var">label</span>=<span class="str">'Actual'</span>)
+plt.<span class="fn">plot</span>(<span class="var">y_test</span>.<span class="var">index</span>, <span class="var">y_pred</span>, <span class="var">label</span>=<span class="str">'Predicted'</span>, <span class="var">linestyle</span>=<span class="str">'--'</span>)
+plt.<span class="fn">legend</span>()
+plt.<span class="fn">show</span>()</pre></div>
+
+  <div class="exercise-section">
+    <div class="exercise-title">🎯 Practice Exercises — Section ৫</div>
+
+    <div class="ex-item">
+      <div class="ex-q">প্র. ১ (Interview): Lag feature তৈরি করার সময় কেন dropna() করতে হয়?</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans"><p><code>shift(1)</code> করলে প্রথম row এ NaN আসে কারণ t=1 এর জন্য t=0 এর মান নেই। Linear Regression NaN নিয়ে কাজ করতে পারে না, তাই dropna() করতে হয়।</p></div>
+    </div>
+
+    <div class="ex-item">
+      <div class="ex-q">প্র. ২ (ML Engineer): তুমি একটা electricity consumption forecasting project এ কাজ করছো। Training data: ২০১৯-২০২২। Test: ২০২৩। Multiple lag features তৈরি করো এবং model evaluate করো।</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans">
+        <div class="code-block"><pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression, Ridge
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> root_mean_squared_error, mean_absolute_percentage_error
+
+<span class="kw">def</span> <span class="fn">create_lag_features</span>(<span class="var">series</span>, <span class="var">lags</span>=[<span class="num">1</span>, <span class="num">7</span>, <span class="num">30</span>], <span class="var">rolling_windows</span>=[<span class="num">7</span>, <span class="num">30</span>]):
+    <span class="str">"""Lag ও rolling features তৈরি করো"""</span>
+    <span class="var">df</span> = pd.<span class="fn">DataFrame</span>({<span class="str">'y'</span>: <span class="var">series</span>})
+    <span class="kw">for</span> <span class="var">lag</span> <span class="kw">in</span> <span class="var">lags</span>:
+        <span class="var">df</span>[<span class="str">f'lag_{lag}'</span>] = <span class="var">series</span>.<span class="fn">shift</span>(<span class="var">lag</span>)
+    <span class="kw">for</span> <span class="var">w</span> <span class="kw">in</span> <span class="var">rolling_windows</span>:
+        <span class="var">df</span>[<span class="str">f'rolling_mean_{w}'</span>] = <span class="var">series</span>.<span class="fn">rolling</span>(<span class="var">w</span>).<span class="fn">mean</span>()
+        <span class="var">df</span>[<span class="str">f'rolling_std_{w}'</span>] = <span class="var">series</span>.<span class="fn">rolling</span>(<span class="var">w</span>).<span class="fn">std</span>()
+    <span class="cm"># Month ও day of week feature (seasonality এর জন্য)</span>
+    <span class="var">df</span>[<span class="str">'month'</span>] = <span class="var">series</span>.index.month
+    <span class="var">df</span>[<span class="str">'dayofweek'</span>] = <span class="var">series</span>.index.dayofweek
+    <span class="kw">return</span> <span class="var">df</span>.<span class="fn">dropna</span>()
+
+<span class="cm"># Features বানাও</span>
+<span class="var">features_df</span> = <span class="fn">create_lag_features</span>(<span class="var">electricity</span>)
+<span class="var">X</span> = <span class="var">features_df</span>.<span class="fn">drop</span>(<span class="str">'y'</span>, <span class="var">axis</span>=<span class="num">1</span>)
+<span class="var">y</span> = <span class="var">features_df</span>[<span class="str">'y'</span>]
+
+<span class="cm"># 2023 সালের ডেটা test set</span>
+<span class="var">train_mask</span> = <span class="var">X</span>.index.year < <span class="num">2023</span>
+<span class="var">X_train</span>, <span class="var">X_test</span> = <span class="var">X</span>[<span class="var">train_mask</span>], <span class="var">X</span>[~<span class="var">train_mask</span>]
+<span class="var">y_train</span>, <span class="var">y_test</span> = <span class="var">y</span>[<span class="var">train_mask</span>], <span class="var">y</span>[~<span class="var">train_mask</span>]
+
+<span class="cm"># Ridge Regression (regularization সহ)</span>
+<span class="var">model</span> = <span class="fn">Ridge</span>(<span class="var">alpha</span>=<span class="num">1.0</span>)
+<span class="var">model</span>.<span class="fn">fit</span>(<span class="var">X_train</span>, <span class="var">y_train</span>)
+<span class="var">pred</span> = <span class="var">model</span>.<span class="fn">predict</span>(<span class="var">X_test</span>)
+
+<span class="fn">print</span>(<span class="str">f"RMSE: {root_mean_squared_error(y_test, pred):.2f}"</span>)
+<span class="fn">print</span>(<span class="str">f"MAPE: {mean_absolute_percentage_error(y_test, pred)*100:.2f}%"</span>)</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 6 ==================== -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <div class="section-num">৬</div>
+    <h2>ARMA Model: AR ও MA Process 🧠</h2>
+  </div>
+
+  <h3>AR (Auto-Regressive) Process কী?</h3>
+  <div class="analogy">
+    <div class="analogy-icon">🔮</div>
+    <p><strong>উপমা:</strong> তুমি কি জানো তোমার আজকের মেজাজ অনেকটাই গতকালের মেজাজের উপর নির্ভর করে? AR process ঠিক এটাই বলে — আজকের মান আগের মানের উপর নির্ভরশীল।</p>
+  </div>
+  <div class="formula-box">X_t = α₁·X_{t-1} + α₂·X_{t-2} + ... + αₚ·X_{t-p} + ε_t</div>
+  <p><strong>AR(p)</strong> মানে: আজকের মান = আগের p টা মানের weighted sum + error</p>
+
+  <h3>MA (Moving Average) Process কী?</h3>
+  <div class="analogy">
+    <div class="analogy-icon">🌊</div>
+    <p><strong>উপমা:</strong> ভূমিকম্পের পর কয়েকদিন ধরে aftershock থাকে। MA process বলে: আজকের মান আগের ভুল (error) গুলোর উপর নির্ভরশীল।</p>
+  </div>
+  <div class="formula-box">X_t = ε_t + β₁·ε_{t-1} + β₂·ε_{t-2} + ... + βq·ε_{t-q}</div>
+  <p><strong>MA(q)</strong> মানে: আজকের মান = আগের q টা error এর weighted sum</p>
+
+  <h3>ARMA(p,q) = AR + MA</h3>
+  <div class="formula-box">X_t = Σαᵢ·X_{t-i} + ε_t + Σβᵢ·ε_{t-i}</div>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <rect width="700" height="200" fill="#0f1117" rx="8"/>
+      <text x="350" y="22" fill="#f7c94f" font-size="13" font-family="sans-serif" text-anchor="middle" font-weight="bold">ARMA Model এর গঠন</text>
+
+      <!-- AR Part -->
+      <rect x="20" y="35" width="280" height="140" rx="8" fill="#0d1117" stroke="rgba(79,142,247,0.4)"/>
+      <text x="160" y="58" fill="#4f8ef7" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">AR(p) অংশ</text>
+      <text x="160" y="78" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">আগের মানের উপর নির্ভরতা</text>
+      <text x="160" y="100" fill="#e2e8f0" font-size="11" font-family="sans-serif" text-anchor="middle">X_{t-1}, X_{t-2}, ..., X_{t-p}</text>
+      <text x="35" y="130" fill="#64748b" font-size="11" font-family="sans-serif">• p বড় হলে বেশি পুরনো মান ব্যবহার</text>
+      <text x="35" y="150" fill="#64748b" font-size="11" font-family="sans-serif">• PACF দিয়ে p নির্বাচন করা হয়</text>
+      <text x="35" y="170" fill="#64748b" font-size="11" font-family="sans-serif">• Long-term memory ধরে</text>
+
+      <!-- Plus sign -->
+      <text x="320" y="115" fill="#f7c94f" font-size="30" font-family="sans-serif" text-anchor="middle">+</text>
+
+      <!-- MA Part -->
+      <rect x="360" y="35" width="320" height="140" rx="8" fill="#0d1117" stroke="rgba(124,106,247,0.4)"/>
+      <text x="520" y="58" fill="#7c6af7" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">MA(q) অংশ</text>
+      <text x="520" y="78" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">আগের error এর উপর নির্ভরতা</text>
+      <text x="520" y="100" fill="#e2e8f0" font-size="11" font-family="sans-serif" text-anchor="middle">ε_t, ε_{t-1}, ..., ε_{t-q}</text>
+      <text x="375" y="130" fill="#64748b" font-size="11" font-family="sans-serif">• q বড় হলে বেশি পুরনো error ব্যবহার</text>
+      <text x="375" y="150" fill="#64748b" font-size="11" font-family="sans-serif">• ACF দিয়ে q নির্বাচন করা হয়</text>
+      <text x="375" y="170" fill="#64748b" font-size="11" font-family="sans-serif">• Short-term shock ধরে</text>
+    </svg>
+    <div class="svg-label">AR ও MA এর পার্থক্য বোঝার চিত্র</div>
+  </div>
+
+  <div class="card red">
+    <div class="card-title">⚠️ ARMA এর সীমাবদ্ধতা</div>
+    <p>ARMA শুধুমাত্র <strong>stationary</strong> সিরিজে কাজ করে। AirPassengers এর মতো trend বা seasonality থাকলে ARMA সরাসরি ব্যবহার করা যাবে না। এর জন্য দরকার ARIMA বা SARIMA।</p>
+  </div>
+</div>
+
+<!-- ==================== SECTION 7 ==================== -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <div class="section-num">৭</div>
+    <h2>Stationarity, Differencing, ACF ও PACF 📉</h2>
+  </div>
+
+  <h3>Stationarity (স্থিরতা) কী?</h3>
+  <div class="analogy">
+    <div class="analogy-icon">⚖️</div>
+    <p><strong>উপমা:</strong> ধরো একটা দোলনা — যদি এটা একই জায়গায় দুলতে থাকে, এটা stationary। কিন্তু যদি দুলতে দুলতে এগিয়ে যায় (trend), সেটা non-stationary।</p>
+  </div>
+
+  <div class="card blue">
+    <div class="card-title">📐 Weak Stationarity — তিনটি শর্ত</div>
+    <p><strong>(১) Constant Mean:</strong> E(X_t) = μ — গড় সময়ের সাথে পরিবর্তন হবে না<br>
+    <strong>(২) Constant Variance:</strong> Var(X_t) = σ² — variance সব সময় একই<br>
+    <strong>(৩) Autocovariance depends only on lag:</strong> X_t ও X_{t-k} এর সম্পর্ক শুধু k এর উপর নির্ভরশীল, t এর উপর না</p>
+  </div>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <rect width="700" height="220" fill="#0f1117" rx="8"/>
+      <text x="350" y="20" fill="#f7c94f" font-size="13" font-family="sans-serif" text-anchor="middle" font-weight="bold">Stationary vs Non-Stationary</text>
+
+      <!-- Stationary -->
+      <rect x="20" y="30" width="310" height="170" rx="8" fill="#0d1117" stroke="rgba(79,247,160,0.3)"/>
+      <text x="175" y="50" fill="#4ff7a0" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">✅ Stationary Series</text>
+      <line x1="40" y1="120" x2="315" y2="120" stroke="#4ff7a0" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+      <polyline points="40,115 65,90 90,130 115,100 140,125 165,95 190,120 215,90 240,115 265,100 290,125 315,105" fill="none" stroke="#4ff7a0" stroke-width="2"/>
+      <text x="175" y="175" fill="#64748b" font-size="11" font-family="sans-serif" text-anchor="middle">গড় ও variance স্থির</text>
+      <text x="175" y="192" fill="#64748b" font-size="11" font-family="sans-serif" text-anchor="middle">ARMA সরাসরি ব্যবহার করা যাবে</text>
+
+      <!-- Non-stationary -->
+      <rect x="370" y="30" width="310" height="170" rx="8" fill="#0d1117" stroke="rgba(247,97,79,0.3)"/>
+      <text x="525" y="50" fill="#f7614f" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">❌ Non-Stationary Series</text>
+      <polyline points="390,175 415,165 440,155 465,140 490,125 515,115 540,100 565,80 590,65 615,50 640,38 665,28" fill="none" stroke="#f7614f" stroke-width="2"/>
+      <text x="525" y="175" fill="#64748b" font-size="11" font-family="sans-serif" text-anchor="middle">Trend আছে — গড় বাড়ছে</text>
+      <text x="525" y="192" fill="#64748b" font-size="11" font-family="sans-serif" text-anchor="middle">Differencing করে stationary বানাতে হবে</text>
+    </svg>
+    <div class="svg-label">Stationary ও Non-stationary সিরিজের পার্থক্য</div>
+  </div>
+
+  <h3>Differencing কী এবং কেন করি?</h3>
+  <p>Differencing মানে: প্রতিটা মানের বদলে সেটা ও আগের মানের পার্থক্য ব্যবহার করা।</p>
+  <div class="formula-box">∇X_t = X_t - X_{t-1}</div>
+  <p>যদি X_t = αt + ε_t (linear trend), তাহলে: ∇X_t = α + ε_t - ε_{t-1}</p>
+  <p>Trend চলে গেছে! এখন stationary।</p>
+
+  <div class="code-block"><div class="code-label">Python — Differencing</div><pre><span class="cm"># Log transform প্রথমে</span>
+<span class="var">airpasslog</span> = np.<span class="fn">log</span>(<span class="var">airpass</span>)
+
+<span class="cm"># Autocorrelation দেখো — slow decrease = non-stationary</span>
+pd.plotting.<span class="fn">autocorrelation_plot</span>(<span class="var">airpasslog</span>)
+plt.<span class="fn">show</span>()
+
+<span class="cm"># 1st order differencing — trend বাদ দেয়</span>
+<span class="var">airpasslog_1</span> = <span class="var">airpasslog</span>.<span class="fn">diff</span>().<span class="fn">dropna</span>()
+
+<span class="cm"># Seasonal differencing (period=12) — seasonality বাদ দেয়</span>
+<span class="var">airpasslog_2</span> = <span class="var">airpasslog_1</span>.<span class="fn">diff</span>(<span class="var">periods</span>=<span class="num">12</span>).<span class="fn">dropna</span>()
+
+<span class="cm"># ADF test — stationary কিনা পরীক্ষা করো</span>
+<span class="kw">import</span> statsmodels.api <span class="kw">as</span> sm
+<span class="var">_</span>, <span class="var">p_value</span>, <span class="var">_</span>, <span class="var">_</span>, <span class="var">_</span>, <span class="var">_</span> = sm.tsa.stattools.<span class="fn">adfuller</span>(<span class="var">airpasslog_2</span>)
+<span class="fn">print</span>(<span class="str">f"ADF p-value: {p_value:.4f}"</span>)
+<span class="cm"># p < 0.05 মানে stationary ✓</span></pre></div>
+
+  <h3>ACF ও PACF — ARMA এর order বোঝার হাতিয়ার</h3>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <rect width="700" height="300" fill="#0f1117" rx="8"/>
+      <text x="350" y="22" fill="#f7c94f" font-size="13" font-family="sans-serif" text-anchor="middle" font-weight="bold">ACF ও PACF দিয়ে Model Order নির্ধারণ</text>
+
+      <!-- Table header -->
+      <rect x="20" y="35" width="660" height="30" rx="4" fill="#1e2435"/>
+      <text x="120" y="55" fill="#94a3b8" font-size="12" font-family="sans-serif" text-anchor="middle">Model</text>
+      <text x="310" y="55" fill="#94a3b8" font-size="12" font-family="sans-serif" text-anchor="middle">ACF</text>
+      <text x="540" y="55" fill="#94a3b8" font-size="12" font-family="sans-serif" text-anchor="middle">PACF</text>
+
+      <!-- AR(p) -->
+      <rect x="20" y="68" width="660" height="50" rx="4" fill="rgba(79,142,247,0.08)"/>
+      <text x="120" y="98" fill="#4f8ef7" font-size="13" font-family="sans-serif" text-anchor="middle" font-weight="bold">AR(p)</text>
+      <text x="310" y="88" fill="#e2e8f0" font-size="12" font-family="sans-serif" text-anchor="middle">ধীরে ধীরে ০ এর দিকে যায়</text>
+      <text x="310" y="108" fill="#64748b" font-size="11" font-family="sans-serif" text-anchor="middle">(Tails off / Decreasing)</text>
+      <text x="540" y="88" fill="#4ff7a0" font-size="12" font-family="sans-serif" text-anchor="middle">p lag এর পরে হঠাৎ কেটে যায়</text>
+      <text x="540" y="108" fill="#64748b" font-size="11" font-family="sans-serif" text-anchor="middle">(Cuts off after lag p)</text>
+
+      <!-- MA(q) -->
+      <rect x="20" y="122" width="660" height="50" rx="4" fill="rgba(124,106,247,0.08)"/>
+      <text x="120" y="152" fill="#7c6af7" font-size="13" font-family="sans-serif" text-anchor="middle" font-weight="bold">MA(q)</text>
+      <text x="310" y="142" fill="#4ff7a0" font-size="12" font-family="sans-serif" text-anchor="middle">q lag এর পরে হঠাৎ কেটে যায়</text>
+      <text x="310" y="162" fill="#64748b" font-size="11" font-family="sans-serif" text-anchor="middle">(Cuts off after lag q)</text>
+      <text x="540" y="142" fill="#e2e8f0" font-size="12" font-family="sans-serif" text-anchor="middle">ধীরে ধীরে ০ এর দিকে যায়</text>
+      <text x="540" y="162" fill="#64748b" font-size="11" font-family="sans-serif" text-anchor="middle">(Tails off)</text>
+
+      <!-- ARMA(p,q) -->
+      <rect x="20" y="176" width="660" height="50" rx="4" fill="rgba(247,201,79,0.06)"/>
+      <text x="120" y="206" fill="#f7c94f" font-size="13" font-family="sans-serif" text-anchor="middle" font-weight="bold">ARMA(p,q)</text>
+      <text x="310" y="196" fill="#e2e8f0" font-size="12" font-family="sans-serif" text-anchor="middle">ধীরে ধীরে ০ এর দিকে যায়</text>
+      <text x="310" y="216" fill="#64748b" font-size="11" font-family="sans-serif" text-anchor="middle">(উভয়ই Tails off)</text>
+      <text x="540" y="196" fill="#e2e8f0" font-size="12" font-family="sans-serif" text-anchor="middle">ধীরে ধীরে ০ এর দিকে যায়</text>
+      <text x="540" y="216" fill="#64748b" font-size="11" font-family="sans-serif" text-anchor="middle">(উভয়ই Tails off)</text>
+
+      <!-- Key insight -->
+      <rect x="20" y="235" width="660" height="55" rx="8" fill="rgba(79,247,160,0.06)" stroke="rgba(79,247,160,0.2)"/>
+      <text x="350" y="256" fill="#4ff7a0" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">💡 মূল কথা</text>
+      <text x="350" y="275" fill="#94a3b8" font-size="11.5" font-family="sans-serif" text-anchor="middle">ACF → MA এর q বলে | PACF → AR এর p বলে | উভয়ই Tails off → ARMA</text>
+      <text x="350" y="285" fill="#64748b" font-size="11" font-family="sans-serif" text-anchor="middle">Seasonal peaks (12, 24, 36) দেখে Seasonal orders P ও Q নির্ধারণ করতে হয়</text>
+    </svg>
+    <div class="svg-label">ACF ও PACF pattern দেখে ARMA/ARIMA এর order বোঝার নিয়ম</div>
+  </div>
+
+  <div class="code-block"><div class="code-label">Python — ACF ও PACF Plot</div><pre><span class="kw">from</span> statsmodels.graphics.tsaplots <span class="kw">import</span> plot_acf, plot_pacf
+
+<span class="var">fig</span>, (<span class="var">ax1</span>, <span class="var">ax2</span>) = plt.<span class="fn">subplots</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="var">figsize</span>=(<span class="num">14</span>, <span class="num">5</span>))
+
+<span class="cm"># ACF: autocorrelation function</span>
+<span class="fn">plot_acf</span>(<span class="var">airpasslog_2</span>, <span class="var">lags</span>=<span class="num">36</span>, <span class="var">ax</span>=<span class="var">ax1</span>)
+<span class="var">ax1</span>.<span class="fn">set_title</span>(<span class="str">'ACF — MA এর q বোঝার জন্য'</span>)
+
+<span class="cm"># PACF: partial autocorrelation function</span>
+<span class="fn">plot_pacf</span>(<span class="var">airpasslog_2</span>, <span class="var">lags</span>=<span class="num">36</span>, <span class="var">ax</span>=<span class="var">ax2</span>)
+<span class="var">ax2</span>.<span class="fn">set_title</span>(<span class="str">'PACF — AR এর p বোঝার জন্য'</span>)
+
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">show</span>()
+
+<span class="cm"># Blue zone (95% CI) এর বাইরে থাকলে significant</span>
+<span class="cm"># Seasonal peaks দেখো: lag 12, 24, 36 এ বার কেমন?</span></pre></div>
+</div>
+
+<!-- ==================== SECTION 8 ==================== -->
+<div class="section" id="s8">
+  <div class="section-header">
+    <div class="section-num">৮</div>
+    <h2>SARIMA Model: Training ও Prediction 🚀</h2>
+  </div>
+
+  <h3>SARIMA কী?</h3>
+  <div class="formula-box">SARIMA(p, d, q)(P, D, Q)_k</div>
+
+  <table>
+    <tr><th>Parameter</th><th>মানে</th><th>AirPassengers এ মান</th></tr>
+    <tr><td><strong>p</strong></td><td>Non-seasonal AR order</td><td>0 (PACF দেখে)</td></tr>
+    <tr><td><strong>d</strong></td><td>Non-seasonal differencing</td><td>1 (trend বাদ দিতে)</td></tr>
+    <tr><td><strong>q</strong></td><td>Non-seasonal MA order</td><td>1 (ACF দেখে)</td></tr>
+    <tr><td><strong>P</strong></td><td>Seasonal AR order</td><td>0</td></tr>
+    <tr><td><strong>D</strong></td><td>Seasonal differencing</td><td>1 (seasonality বাদ দিতে)</td></tr>
+    <tr><td><strong>Q</strong></td><td>Seasonal MA order</td><td>1</td></tr>
+    <tr><td><strong>k</strong></td><td>Seasonal period</td><td>12 (মাসিক ডেটা)</td></tr>
+  </table>
+
+  <div class="analogy">
+    <div class="analogy-icon">🧩</div>
+    <p><strong>উপমা:</strong> SARIMA হলো ARMA এর super version — এটা trend বাদ দিতে পারে (d), seasonality সামলাতে পারে (D, P, Q, k), এবং আগের মান ও error দিয়ে predict করতে পারে (p, q)।</p>
+  </div>
+
+  <div class="code-block"><div class="code-label">Python — SARIMA Model</div><pre><span class="kw">import</span> statsmodels.api <span class="kw">as</span> sm
+
+<span class="cm"># Important: airpasslog ব্যবহার করো, differenced version না!
+# SARIMA নিজেই differencing করবে (সেটাই I ও D এর কাজ)</span>
+
+<span class="cm"># Step 1: SARIMA(1,1,1)(0,1,1)_12 fit করো</span>
+<span class="var">model1</span> = sm.tsa.<span class="fn">SARIMAX</span>(
+    <span class="var">airpasslog</span>,
+    <span class="var">order</span>=(<span class="num">1</span>, <span class="num">1</span>, <span class="num">1</span>),
+    <span class="var">seasonal_order</span>=(<span class="num">0</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">12</span>)
+)
+<span class="var">sarima1</span> = <span class="var">model1</span>.<span class="fn">fit</span>()
+<span class="fn">print</span>(<span class="var">sarima1</span>.<span class="fn">summary</span>())
+
+<span class="cm"># P>|z| কলাম দেখো — 0.05 এর বেশি হলে সেই parameter বাদ দাও
+# ar.L1 এর p-value বেশি → AR term দরকার নেই</span>
+
+<span class="cm"># Step 2: SARIMA(0,1,1)(0,1,1)_12 — simplified model</span>
+<span class="var">model2</span> = sm.tsa.<span class="fn">SARIMAX</span>(
+    <span class="var">airpasslog</span>,
+    <span class="var">order</span>=(<span class="num">0</span>, <span class="num">1</span>, <span class="num">1</span>),
+    <span class="var">seasonal_order</span>=(<span class="num">0</span>, <span class="num">1</span>, <span class="num">1</span>, <span class="num">12</span>)
+)
+<span class="var">sarima2</span> = <span class="var">model2</span>.<span class="fn">fit</span>()
+<span class="fn">print</span>(<span class="var">sarima2</span>.<span class="fn">summary</span>())
+<span class="cm"># এখন সব parameter significant!
+# Ljung-Box (Prob Q) > 0.05 → residual white noise ✓
+# Jarque-Bera (Prob JB) > 0.05 → residual normal ✓</span></pre></div>
+
+  <h3>Prediction ও Visualization</h3>
+  <div class="code-block"><div class="code-label">Python — SARIMA Prediction</div><pre><span class="kw">import</span> datetime
+
+<span class="cm"># predict(start_index, end_index) — index 0 থেকে গণনা
+# ১৩২ = ১৩৩তম observation (১১ বছর = ১৩২ মাস), ১৪৩ = ১৪৪তম</span>
+<span class="var">pred</span> = np.<span class="fn">exp</span>(<span class="var">sarima2</span>.<span class="fn">predict</span>(<span class="num">132</span>, <span class="num">143</span>))
+
+<span class="cm"># Original series এর সাথে concatenate করো</span>
+<span class="var">airpasspred</span> = pd.<span class="fn">concat</span>([<span class="var">airpass</span>, <span class="var">pred</span>])
+
+<span class="cm"># Plot করো</span>
+plt.<span class="fn">figure</span>(<span class="var">figsize</span>=(<span class="num">12</span>, <span class="num">5</span>))
+plt.<span class="fn">plot</span>(<span class="var">airpasspred</span>)
+plt.<span class="fn">axvline</span>(<span class="var">x</span>=datetime.date(<span class="num">1960</span>, <span class="num">1</span>, <span class="num">1</span>), <span class="var">color</span>=<span class="str">'red'</span>, <span class="var">linestyle</span>=<span class="str">'--'</span>)
+plt.<span class="fn">title</span>(<span class="str">'SARIMA Prediction — লাল দাগের পরেই prediction'</span>)
+plt.<span class="fn">show</span>()
+
+<span class="cm"># Confidence interval সহ prediction</span>
+<span class="var">forecast</span> = <span class="var">sarima2</span>.<span class="fn">get_forecast</span>(<span class="var">steps</span>=<span class="num">12</span>).<span class="fn">summary_frame</span>()
+<span class="var">forecast</span> = np.<span class="fn">exp</span>(<span class="var">forecast</span>)
+
+<span class="var">fig</span>, <span class="var">ax</span> = plt.<span class="fn">subplots</span>(<span class="var">figsize</span>=(<span class="num">12</span>, <span class="num">5</span>))
+plt.<span class="fn">plot</span>(<span class="var">airpass</span>)
+<span class="var">forecast</span>[<span class="str">'mean'</span>].<span class="fn">plot</span>(<span class="var">ax</span>=<span class="var">ax</span>, <span class="var">style</span>=<span class="str">'k--'</span>)
+<span class="var">ax</span>.<span class="fn">fill_between</span>(
+    <span class="var">forecast</span>.index,
+    <span class="var">forecast</span>[<span class="str">'mean_ci_lower'</span>],
+    <span class="var">forecast</span>[<span class="str">'mean_ci_upper'</span>],
+    <span class="var">color</span>=<span class="str">'k'</span>, <span class="var">alpha</span>=<span class="num">0.1</span>
+)</pre></div>
+
+  <h3>Model Selection: AIC, BIC, HQIC</h3>
+  <div class="card purple">
+    <div class="card-title">📊 Information Criteria — কম মানে ভালো</div>
+    <p><strong>AIC (Akaike Information Criterion):</strong> Model এর fit quality ও complexity এর মধ্যে balance<br>
+    <strong>BIC (Bayesian Information Criterion):</strong> AIC এর মতো, কিন্তু বেশি parameter কে বেশি penalize করে<br>
+    <strong>HQIC:</strong> AIC ও BIC এর মাঝামাঝি<br><br>
+    নিয়ম: <em>সবচেয়ে কম AIC/BIC মানেই সেরা model</em></p>
+  </div>
+
+  <div class="exercise-section">
+    <div class="exercise-title">🎯 Practice Exercises — Section ৮</div>
+    <div class="ex-item">
+      <div class="ex-q">প্র. (ML Engineer): SARIMA model এর residual কিভাবে validate করবে? কোড লিখে দেখাও।</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans">
+        <div class="code-block"><pre><span class="cm"># Residual analysis — 4 টা plot</span>
+<span class="var">fig</span>, <span class="var">axes</span> = plt.<span class="fn">subplots</span>(<span class="num">2</span>, <span class="num">2</span>, <span class="var">figsize</span>=(<span class="num">12</span>, <span class="num">8</span>))
+
+<span class="var">residuals</span> = <span class="var">sarima2</span>.resid
+
+<span class="cm"># 1. Residual plot — কোনো pattern নেই তো?</span>
+<span class="var">residuals</span>.<span class="fn">plot</span>(<span class="var">ax</span>=<span class="var">axes</span>[<span class="num">0</span>,<span class="num">0</span>], <span class="var">title</span>=<span class="str">'Residuals'</span>)
+
+<span class="cm"># 2. Histogram — normal distribution?</span>
+<span class="var">residuals</span>.<span class="fn">plot</span>(<span class="var">kind</span>=<span class="str">'hist'</span>, <span class="var">ax</span>=<span class="var">axes</span>[<span class="num">0</span>,<span class="num">1</span>], <span class="var">title</span>=<span class="str">'Residual Distribution'</span>)
+
+<span class="cm"># 3. ACF of residuals — কোনো autocorrelation নেই?</span>
+<span class="fn">plot_acf</span>(<span class="var">residuals</span>, <span class="var">ax</span>=<span class="var">axes</span>[<span class="num">1</span>,<span class="num">0</span>], <span class="var">title</span>=<span class="str">'Residual ACF'</span>)
+
+<span class="cm"># 4. Q-Q plot — normality চেক</span>
+<span class="kw">from</span> scipy <span class="kw">import</span> stats
+stats.<span class="fn">probplot</span>(<span class="var">residuals</span>, <span class="var">plot</span>=<span class="var">axes</span>[<span class="num">1</span>,<span class="num">1</span>])
+<span class="var">axes</span>[<span class="num">1</span>,<span class="num">1</span>].<span class="fn">set_title</span>(<span class="str">'Q-Q Plot'</span>)
+
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">show</span>()
+
+<span class="cm"># Statistical tests</span>
+<span class="kw">from</span> statsmodels.stats.diagnostic <span class="kw">import</span> acorr_ljungbox
+<span class="var">lb_test</span> = <span class="fn">acorr_ljungbox</span>(<span class="var">residuals</span>, <span class="var">lags</span>=[<span class="num">10</span>], <span class="var">return_df</span>=<span class="kw">True</span>)
+<span class="fn">print</span>(<span class="str">"Ljung-Box p-value:"</span>, <span class="var">lb_test</span>[<span class="str">'lb_pvalue'</span>].values[<span class="num">0</span>])
+<span class="cm"># p > 0.05 হলে ভালো — residual white noise</span></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 9 ==================== -->
+<div class="section" id="s9">
+  <div class="section-header">
+    <div class="section-num">৯</div>
+    <h2>Prophet: Facebook এর টাইম সিরিজ Tool 🔮</h2>
+  </div>
+
+  <p>Prophet হলো Facebook (Meta) এর বানানো একটা open-source library। এটা দিয়ে সহজেই টাইম সিরিজ predict করা যায়। SARIMA এর মতো manually stationary করতে হয় না।</p>
+
+  <div class="card green">
+    <div class="card-title">✅ Prophet এর বিশেষত্ব</div>
+    <p>• Trend, Seasonality, Holiday effects আলাদাভাবে model করে<br>
+    • Missing data handle করতে পারে<br>
+    • Outlier তে robust<br>
+    • Non-linear trend সামলাতে পারে<br>
+    • Additive model ব্যবহার করে</p>
+  </div>
+
+  <h3>Prophet এর জন্য ডেটা প্রস্তুতি</h3>
+  <div class="card yellow">
+    <div class="card-title">⚠️ Prophet এর বিশেষ নিয়ম</div>
+    <p>Prophet এর input DataFrame এ অবশ্যই দুটো কলাম থাকতে হবে:<br>
+    • <strong>ds</strong> (datestamp): datetime format এ তারিখ<br>
+    • <strong>y</strong>: predict করতে চাই এমন সংখ্যা</p>
+  </div>
+
+  <div class="code-block"><div class="code-label">Python — Prophet Basic Usage</div><pre><span class="kw">from</span> prophet <span class="kw">import</span> Prophet
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># Data load</span>
+<span class="var">df</span> = pd.<span class="fn">read_csv</span>(<span class="str">'AirPassengers.csv'</span>, <span class="var">parse_dates</span>=<span class="kw">True</span>)
+
+<span class="cm"># Prophet এর জন্য rename করো</span>
+<span class="var">df</span> = <span class="var">df</span>.<span class="fn">rename</span>(<span class="var">columns</span>={<span class="str">"Month"</span>: <span class="str">"ds"</span>, <span class="str">"#Passengers"</span>: <span class="str">"y"</span>})
+
+<span class="cm"># Train-test split</span>
+<span class="var">df_train</span> = <span class="var">df</span>.<span class="fn">iloc</span>[:<span class="op">-</span><span class="num">24</span>]
+<span class="var">df_test</span>  = <span class="var">df</span>.<span class="fn">iloc</span>[<span class="op">-</span><span class="num">24</span>:]
+
+<span class="cm"># Model তৈরি ও train</span>
+<span class="var">model</span> = <span class="fn">Prophet</span>()
+<span class="var">model</span>.<span class="fn">fit</span>(<span class="var">df_train</span>)
+
+<span class="cm"># Future dataframe বানাও (২৪ মাস)
+# make_future_dataframe: training dates + future dates</span>
+<span class="var">future</span> = <span class="var">model</span>.<span class="fn">make_future_dataframe</span>(<span class="var">periods</span>=<span class="num">24</span>, <span class="var">freq</span>=<span class="str">'ME'</span>)
+
+<span class="cm"># Predict করো</span>
+<span class="var">forecast</span> = <span class="var">model</span>.<span class="fn">predict</span>(<span class="var">future</span>)
+
+<span class="cm"># Plot — confidence interval সহ</span>
+<span class="var">model</span>.<span class="fn">plot</span>(<span class="var">forecast</span>)
+
+<span class="cm"># Components: trend, seasonality আলাদা দেখো</span>
+<span class="var">model</span>.<span class="fn">plot_components</span>(<span class="var">forecast</span>)
+plt.<span class="fn">show</span>()
+
+<span class="cm"># RMSE calculate করো</span>
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> root_mean_squared_error
+<span class="var">rmse</span> = <span class="fn">root_mean_squared_error</span>(
+    <span class="var">df_test</span>[<span class="str">'y'</span>],
+    <span class="var">forecast</span>[<span class="str">'yhat'</span>].<span class="fn">tail</span>(<span class="num">24</span>)
+)
+<span class="fn">print</span>(<span class="str">f"RMSE: {rmse:.2f}"</span>)</pre></div>
+
+  <h3>Prophet Hyperparameter Optimization</h3>
+
+  <table>
+    <tr><th>Parameter</th><th>কী করে</th><th>Default</th><th>Range</th></tr>
+    <tr><td>changepoint_prior_scale</td><td>Trend কতটা flexible</td><td>0.05</td><td>0.001-0.5</td></tr>
+    <tr><td>seasonality_prior_scale</td><td>Seasonality কতটা flexible</td><td>10</td><td>0.01-10</td></tr>
+    <tr><td>changepoint_range</td><td>কতটুকু ডেটায় trend change দেখবে</td><td>0.8</td><td>0.5-0.95</td></tr>
+    <tr><td>seasonality_mode</td><td>Additive নাকি Multiplicative</td><td>'additive'</td><td>—</td></tr>
+  </table>
+
+  <div class="code-block"><div class="code-label">Python — Prophet Hyperparameter Tuning</div><pre><span class="kw">import</span> itertools
+<span class="kw">from</span> prophet.diagnostics <span class="kw">import</span> cross_validation, performance_metrics
+
+<span class="cm"># Fixed parameters (জানাই আছে)</span>
+<span class="var">param_fixed</span> = {
+    <span class="str">'seasonality_mode'</span>: <span class="str">'multiplicative'</span>, <span class="cm"># AirPassengers multiplicative</span>
+    <span class="str">'daily_seasonality'</span>: <span class="kw">False</span>,
+    <span class="str">'weekly_seasonality'</span>: <span class="kw">False</span>,
+    <span class="str">'yearly_seasonality'</span>: <span class="kw">True</span>
+}
+
+<span class="cm"># Tune করার parameters</span>
+<span class="var">param_grid</span> = {
+    <span class="str">'changepoint_prior_scale'</span>: [<span class="num">0.01</span>, <span class="num">0.1</span>, <span class="num">0.5</span>],
+    <span class="str">'seasonality_prior_scale'</span>: [<span class="num">0.1</span>, <span class="num">1</span>, <span class="num">10</span>],
+    <span class="str">'changepoint_range'</span>: [<span class="num">0.5</span>, <span class="num">0.75</span>, <span class="num">0.95</span>]
+}
+
+<span class="cm"># সব combinations তৈরি করো</span>
+<span class="var">all_params</span> = [<span class="fn">dict</span>(<span class="fn">zip</span>(<span class="var">param_grid</span>.keys(), <span class="var">v</span>))
+               <span class="kw">for</span> <span class="var">v</span> <span class="kw">in</span> itertools.<span class="fn">product</span>(*<span class="var">param_grid</span>.values())]
+<span class="var">rmses</span> = []
+
+<span class="kw">for</span> <span class="var">params</span> <span class="kw">in</span> <span class="var">all_params</span>:
+    <span class="var">m</span> = <span class="fn">Prophet</span>(**<span class="var">param_fixed</span>, **<span class="var">params</span>).<span class="fn">fit</span>(<span class="var">df_train</span>)
+    <span class="var">df_cv</span> = <span class="fn">cross_validation</span>(
+        <span class="var">m</span>,
+        <span class="var">initial</span>=<span class="str">'2920 days'</span>,  <span class="cm"># প্রথম training window</span>
+        <span class="var">period</span>=<span class="str">'365 days'</span>,    <span class="cm"># কত দিন পরপর evaluate</span>
+        <span class="var">horizon</span>=<span class="str">'365 days'</span>,   <span class="cm"># কত দিন পর্যন্ত predict</span>
+        <span class="var">parallel</span>=<span class="str">"threads"</span>
+    )
+    <span class="var">df_p</span> = <span class="fn">performance_metrics</span>(<span class="var">df_cv</span>, <span class="var">rolling_window</span>=<span class="num">1</span>)
+    <span class="var">rmses</span>.<span class="fn">append</span>(<span class="var">df_p</span>[<span class="str">'rmse'</span>].values[<span class="num">0</span>])
+
+<span class="cm"># সেরা parameters খোঁজো</span>
+<span class="var">best_params</span> = <span class="var">all_params</span>[np.<span class="fn">argmin</span>(<span class="var">rmses</span>)]
+<span class="fn">print</span>(<span class="str">"সেরা parameters:"</span>, <span class="var">best_params</span>)
+<span class="fn">print</span>(<span class="str">"সেরা RMSE:"</span>, <span class="fn">min</span>(<span class="var">rmses</span>))</pre></div>
+</div>
+
+<!-- ==================== SECTION 10 ==================== -->
+<div class="section" id="s10">
+  <div class="section-header">
+    <div class="section-num">১০</div>
+    <h2>সব Algorithm এক জায়গায় 🗂️</h2>
+  </div>
+
+  <!-- ALGO 1: Linear Regression -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-icon" style="background:rgba(79,142,247,0.15)">📏</div>
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:#fff">১. Linear Regression (Lag-Based)</div>
+        <div style="font-size:13px;color:#94a3b8">সহজ baseline model</div>
+      </div>
+      <span class="badge badge-blue">Supervised</span>
+    </div>
+    <div class="algo-body">
+      <div class="analogy"><div class="analogy-icon">🧒</div><p><strong>বাচ্চাদের ভাষায়:</strong> গতকাল যদি ১০০ জন যাত্রী এসে থাকে, আজ সম্ভবত ১০০ জনের কাছাকাছি আসবে। এই "কাছাকাছি" মানে কতটা সেটাই linear regression বের করে।</p></div>
+      <p><strong>কখন ব্যবহার করবে:</strong> Quick baseline পেতে, feature relationship বুঝতে</p>
+      <p><strong>সীমাবদ্ধতা:</strong> Non-linear pattern ধরতে পারে না, seasonality manually handle করতে হয়</p>
+      <div class="code-block"><div class="code-label">Complete Implementation</div><pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> root_mean_squared_error, mean_absolute_error
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">ts_linear_regression</span>(<span class="var">series</span>, <span class="var">n_lags</span>=<span class="num">12</span>, <span class="var">test_size</span>=<span class="num">24</span>):
+    <span class="str">"""
+    টাইম সিরিজের জন্য Linear Regression pipeline
+    series: pandas Series with datetime index
+    n_lags: কতটা পুরনো মান ব্যবহার করবে
+    test_size: শেষ কতটা মাস test করবে
+    """</span>
+    <span class="cm"># Feature matrix তৈরি</span>
+    <span class="var">df</span> = pd.<span class="fn">DataFrame</span>({<span class="str">'y'</span>: <span class="var">series</span>})
+    <span class="kw">for</span> <span class="var">lag</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="var">n_lags</span>+<span class="num">1</span>):
+        <span class="var">df</span>[<span class="str">f'lag_{lag}'</span>] = <span class="var">series</span>.<span class="fn">shift</span>(<span class="var">lag</span>)
+    <span class="var">df</span> = <span class="var">df</span>.<span class="fn">dropna</span>()
+
+    <span class="var">X</span> = <span class="var">df</span>.<span class="fn">drop</span>(<span class="str">'y'</span>, <span class="var">axis</span>=<span class="num">1</span>)
+    <span class="var">y</span> = <span class="var">df</span>[<span class="str">'y'</span>]
+
+    <span class="cm"># Chronological split</span>
+    <span class="var">X_train</span>, <span class="var">X_test</span> = <span class="var">X</span>.<span class="fn">iloc</span>[:<span class="op">-</span><span class="var">test_size</span>], <span class="var">X</span>.<span class="fn">iloc</span>[<span class="op">-</span><span class="var">test_size</span>:]
+    <span class="var">y_train</span>, <span class="var">y_test</span> = <span class="var">y</span>.<span class="fn">iloc</span>[:<span class="op">-</span><span class="var">test_size</span>], <span class="var">y</span>.<span class="fn">iloc</span>[<span class="op">-</span><span class="var">test_size</span>:]
+
+    <span class="var">model</span> = <span class="fn">LinearRegression</span>()
+    <span class="var">model</span>.<span class="fn">fit</span>(<span class="var">X_train</span>, <span class="var">y_train</span>)
+    <span class="var">pred</span> = <span class="var">model</span>.<span class="fn">predict</span>(<span class="var">X_test</span>)
+
+    <span class="kw">return</span> {
+        <span class="str">'model'</span>: <span class="var">model</span>,
+        <span class="str">'rmse'</span>: <span class="fn">root_mean_squared_error</span>(<span class="var">y_test</span>, <span class="var">pred</span>),
+        <span class="str">'mae'</span>: <span class="fn">mean_absolute_error</span>(<span class="var">y_test</span>, <span class="var">pred</span>),
+        <span class="str">'predictions'</span>: pd.<span class="fn">Series</span>(<span class="var">pred</span>, <span class="var">index</span>=<span class="var">y_test</span>.index)
+    }</pre></div>
+    </div>
+  </div>
+
+  <!-- ALGO 2: Moving Average -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-icon" style="background:rgba(124,106,247,0.15)">🌊</div>
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:#fff">২. Moving Average Decomposition</div>
+        <div style="font-size:13px;color:#94a3b8">Trend ও Seasonality আলাদা করা</div>
+      </div>
+      <span class="badge badge-yellow">Unsupervised</span>
+    </div>
+    <div class="algo-body">
+      <div class="analogy"><div class="analogy-icon">🧒</div><p><strong>বাচ্চাদের ভাষায়:</strong> ১ দিন ১ দিন দেখলে বুঝতে পারি না, কিন্তু ১২ মাসের গড় নিলে মূল প্রবণতা দেখা যায়। যেমন — এক বৃষ্টির দিন দেখে বলতে পারব না, কিন্তু বছরের গড় বৃষ্টি দেখে বলতে পারব।</p></div>
+      <div class="code-block"><div class="code-label">Complete Implementation</div><pre><span class="kw">from</span> statsmodels.tsa.seasonal <span class="kw">import</span> seasonal_decompose
+
+<span class="kw">def</span> <span class="fn">decompose_series</span>(<span class="var">series</span>, <span class="var">period</span>=<span class="num">12</span>):
+    <span class="str">"""
+    টাইম সিরিজ decompose করো এবং best model return করো
+    """</span>
+    <span class="cm"># Log transform (Multiplicative কে Additive বানাতে)</span>
+    <span class="var">log_series</span> = np.<span class="fn">log</span>(<span class="var">series</span>)
+
+    <span class="cm"># Decompose</span>
+    <span class="var">result</span> = <span class="fn">seasonal_decompose</span>(<span class="var">log_series</span>, <span class="var">period</span>=<span class="var">period</span>)
+
+    <span class="cm"># Components বের করো</span>
+    <span class="var">trend</span> = np.<span class="fn">exp</span>(<span class="var">result</span>.trend)
+    <span class="var">seasonal</span> = np.<span class="fn">exp</span>(<span class="var">result</span>.seasonal)
+    <span class="var">residual</span> = np.<span class="fn">exp</span>(<span class="var">result</span>.resid)
+
+    <span class="cm"># Seasonally adjusted</span>
+    <span class="var">adjusted</span> = <span class="var">series</span> / <span class="var">seasonal</span>
+
+    <span class="kw">return</span> {
+        <span class="str">'trend'</span>: <span class="var">trend</span>,
+        <span class="str">'seasonal'</span>: <span class="var">seasonal</span>,
+        <span class="str">'residual'</span>: <span class="var">residual</span>,
+        <span class="str">'adjusted'</span>: <span class="var">adjusted</span>
+    }</pre></div>
+    </div>
+  </div>
+
+  <!-- ALGO 3: ARIMA -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-icon" style="background:rgba(79,247,160,0.15)">🔄</div>
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:#fff">৩. ARIMA Model</div>
+        <div style="font-size:13px;color:#94a3b8">Auto-Regressive Integrated Moving Average</div>
+      </div>
+      <span class="badge badge-green">Statistical</span>
+    </div>
+    <div class="algo-body">
+      <div class="analogy"><div class="analogy-icon">🧒</div><p><strong>বাচ্চাদের ভাষায়:</strong> ARIMA হলো তিনটা জিনিসের সমষ্টি — (১) AR: গত কয়েকটা মান দেখো, (২) I: উঠানামা বাদ দিয়ে সমান করো, (৩) MA: গত কয়েকটা ভুল দেখো।</p></div>
+      <div class="code-block"><div class="code-label">Complete Implementation</div><pre><span class="kw">import</span> statsmodels.api <span class="kw">as</span> sm
+<span class="kw">from</span> statsmodels.tsa.stattools <span class="kw">import</span> adfuller
+<span class="kw">import</span> warnings
+warnings.<span class="fn">filterwarnings</span>(<span class="str">'ignore'</span>)
+
+<span class="kw">def</span> <span class="fn">fit_arima</span>(<span class="var">series</span>, <span class="var">order</span>=(<span class="num">1</span>,<span class="num">1</span>,<span class="num">1</span>), <span class="var">test_size</span>=<span class="num">12</span>):
+    <span class="str">"""
+    ARIMA model fit করো এবং evaluate করো
+    order: (p, d, q) tuple
+    """</span>
+    <span class="cm"># Stationarity check</span>
+    <span class="var">adf_stat</span>, <span class="var">p_val</span> = <span class="fn">adfuller</span>(<span class="var">series</span>.[:<span class="op">-</span><span class="var">test_size</span>])[:2]
+    <span class="fn">print</span>(<span class="str">f"ADF p-value: {p_val:.4f} ({'stationary' if p_val < 0.05 else 'non-stationary'})"</span>)
+
+    <span class="cm"># Train-test split</span>
+    <span class="var">train</span> = <span class="var">series</span>.<span class="fn">iloc</span>[:<span class="op">-</span><span class="var">test_size</span>]
+    <span class="var">test</span> = <span class="var">series</span>.<span class="fn">iloc</span>[<span class="op">-</span><span class="var">test_size</span>:]
+
+    <span class="cm"># ARIMA fit</span>
+    <span class="var">model</span> = sm.tsa.<span class="fn">ARIMA</span>(<span class="var">train</span>, <span class="var">order</span>=<span class="var">order</span>)
+    <span class="var">fitted</span> = <span class="var">model</span>.<span class="fn">fit</span>()
+
+    <span class="cm"># Forecast</span>
+    <span class="var">forecast</span> = <span class="var">fitted</span>.<span class="fn">forecast</span>(<span class="var">steps</span>=<span class="var">test_size</span>)
+
+    <span class="var">rmse</span> = np.<span class="fn">sqrt</span>(np.<span class="fn">mean</span>((<span class="var">test</span>.values - <span class="var">forecast</span>.values)**<span class="num">2</span>))
+    <span class="fn">print</span>(<span class="str">f"RMSE: {rmse:.2f} | AIC: {fitted.aic:.2f}"</span>)
+
+    <span class="kw">return</span> <span class="var">fitted</span>, <span class="var">forecast</span></pre></div>
+    </div>
+  </div>
+
+  <!-- ALGO 4: SARIMA -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-icon" style="background:rgba(247,201,79,0.15)">🌍</div>
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:#fff">৪. SARIMA Model</div>
+        <div style="font-size:13px;color:#94a3b8">Seasonal ARIMA — seasonality handle করে</div>
+      </div>
+      <span class="badge badge-yellow">Statistical</span>
+    </div>
+    <div class="algo-body">
+      <div class="analogy"><div class="analogy-icon">🧒</div><p><strong>বাচ্চাদের ভাষায়:</strong> ARIMA এর মতোই, কিন্তু এটা জানে যে গ্রীষ্মকাল আসলে যাত্রী বাড়বেই — এই বার্ষিক pattern টাও সে মনে রাখে।</p></div>
+      <div class="code-block"><div class="code-label">Complete Production-Grade Implementation</div><pre><span class="kw">import</span> statsmodels.api <span class="kw">as</span> sm
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> itertools <span class="kw">import</span> product
+
+<span class="kw">def</span> <span class="fn">auto_sarima</span>(<span class="var">series</span>, <span class="var">p_range</span>=[<span class="num">0</span>,<span class="num">1</span>], <span class="var">q_range</span>=[<span class="num">0</span>,<span class="num">1</span>,<span class="num">2</span>],
+                <span class="var">d</span>=<span class="num">1</span>, <span class="var">D</span>=<span class="num">1</span>, <span class="var">P</span>=<span class="num">0</span>, <span class="var">Q</span>=<span class="num">1</span>, <span class="var">k</span>=<span class="num">12</span>):
+    <span class="str">"""
+    AIC দিয়ে সেরা SARIMA orders খোঁজো
+    """</span>
+    <span class="var">best_aic</span> = np.inf
+    <span class="var">best_order</span> = <span class="kw">None</span>
+    <span class="var">best_model</span> = <span class="kw">None</span>
+
+    <span class="kw">for</span> <span class="var">p</span>, <span class="var">q</span> <span class="kw">in</span> <span class="fn">product</span>(<span class="var">p_range</span>, <span class="var">q_range</span>):
+        <span class="kw">try</span>:
+            <span class="var">model</span> = sm.tsa.<span class="fn">SARIMAX</span>(
+                <span class="var">series</span>,
+                <span class="var">order</span>=(<span class="var">p</span>, <span class="var">d</span>, <span class="var">q</span>),
+                <span class="var">seasonal_order</span>=(<span class="var">P</span>, <span class="var">D</span>, <span class="var">Q</span>, <span class="var">k</span>),
+                <span class="var">enforce_stationarity</span>=<span class="kw">False</span>,
+                <span class="var">enforce_invertibility</span>=<span class="kw">False</span>
+            )
+            <span class="var">result</span> = <span class="var">model</span>.<span class="fn">fit</span>(<span class="var">disp</span>=<span class="kw">False</span>)
+            <span class="kw">if</span> <span class="var">result</span>.aic < <span class="var">best_aic</span>:
+                <span class="var">best_aic</span> = <span class="var">result</span>.aic
+                <span class="var">best_order</span> = (<span class="var">p</span>, <span class="var">d</span>, <span class="var">q</span>)
+                <span class="var">best_model</span> = <span class="var">result</span>
+        <span class="kw">except</span>:
+            <span class="kw">continue</span>
+
+    <span class="fn">print</span>(<span class="str">f"সেরা order: {best_order}, AIC: {best_aic:.2f}"</span>)
+    <span class="kw">return</span> <span class="var">best_model</span>
+
+<span class="cm"># ব্যবহার:</span>
+<span class="var">log_airpass</span> = np.<span class="fn">log</span>(<span class="var">airpass</span>)
+<span class="var">best</span> = <span class="fn">auto_sarima</span>(<span class="var">log_airpass</span>)
+<span class="fn">print</span>(<span class="var">best</span>.<span class="fn">summary</span>())</pre></div>
+    </div>
+  </div>
+
+  <!-- ALGO 5: Prophet -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-icon" style="background:rgba(247,97,79,0.15)">🔮</div>
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:#fff">৫. Facebook Prophet</div>
+        <div style="font-size:13px;color:#94a3b8">Modern, easy-to-use time series forecasting</div>
+      </div>
+      <span class="badge badge-red">ML/Statistical</span>
+    </div>
+    <div class="algo-body">
+      <div class="analogy"><div class="analogy-icon">🧒</div><p><strong>বাচ্চাদের ভাষায়:</strong> Prophet হলো একটা smart calculator যে বলতে পারে — "দেখো, এই সিরিজের একটা নিয়মিত cycle আছে, বছরের শেষে বাড়ে, এবং সামনে এতটুকু হবে।" — সব নিজেই বুঝে নেয়।</p></div>
+      <div class="code-block"><div class="code-label">Complete Production Pipeline</div><pre><span class="kw">from</span> prophet <span class="kw">import</span> Prophet
+<span class="kw">from</span> prophet.diagnostics <span class="kw">import</span> cross_validation, performance_metrics
+<span class="kw">import</span> itertools, numpy <span class="kw">as</span> np, pandas <span class="kw">as</span> pd
+
+<span class="kw">def</span> <span class="fn">prophet_pipeline</span>(<span class="var">df</span>, <span class="var">date_col</span>, <span class="var">value_col</span>,
+                       <span class="var">test_months</span>=<span class="num">12</span>, <span class="var">tune</span>=<span class="kw">True</span>):
+    <span class="str">"""
+    Prophet complete pipeline
+    df: DataFrame
+    date_col: তারিখের কলামের নাম
+    value_col: value কলামের নাম
+    """</span>
+    <span class="cm"># Prophet format</span>
+    <span class="var">prophet_df</span> = <span class="var">df</span>.<span class="fn">rename</span>(<span class="var">columns</span>={<span class="var">date_col</span>: <span class="str">'ds'</span>, <span class="var">value_col</span>: <span class="str">'y'</span>})
+    <span class="var">train</span> = <span class="var">prophet_df</span>.<span class="fn">iloc</span>[:<span class="op">-</span><span class="var">test_months</span>]
+    <span class="var">test</span> = <span class="var">prophet_df</span>.<span class="fn">iloc</span>[<span class="op">-</span><span class="var">test_months</span>:]
+
+    <span class="kw">if</span> <span class="var">tune</span>:
+        <span class="var">param_grid</span> = {
+            <span class="str">'changepoint_prior_scale'</span>: [<span class="num">0.01</span>, <span class="num">0.1</span>, <span class="num">0.5</span>],
+            <span class="str">'seasonality_prior_scale'</span>: [<span class="num">0.1</span>, <span class="num">1</span>, <span class="num">10</span>]
+        }
+        <span class="var">all_params</span> = [<span class="fn">dict</span>(<span class="fn">zip</span>(<span class="var">param_grid</span>.keys(), <span class="var">v</span>))
+                      <span class="kw">for</span> <span class="var">v</span> <span class="kw">in</span> itertools.<span class="fn">product</span>(*<span class="var">param_grid</span>.values())]
+        <span class="var">rmses</span> = []
+        <span class="kw">for</span> <span class="var">params</span> <span class="kw">in</span> <span class="var">all_params</span>:
+            <span class="var">m</span> = <span class="fn">Prophet</span>(**<span class="var">params</span>).<span class="fn">fit</span>(<span class="var">train</span>)
+            <span class="var">cv</span> = <span class="fn">cross_validation</span>(<span class="var">m</span>, <span class="var">horizon</span>=<span class="str">'90 days'</span>)
+            <span class="var">rmses</span>.<span class="fn">append</span>(<span class="fn">performance_metrics</span>(<span class="var">cv</span>)[<span class="str">'rmse'</span>].values[<span class="num">0</span>])
+        <span class="var">best_params</span> = <span class="var">all_params</span>[np.<span class="fn">argmin</span>(<span class="var">rmses</span>)]
+    <span class="kw">else</span>:
+        <span class="var">best_params</span> = {}
+
+    <span class="cm"># Final model</span>
+    <span class="var">model</span> = <span class="fn">Prophet</span>(**<span class="var">best_params</span>)
+    <span class="var">model</span>.<span class="fn">fit</span>(<span class="var">train</span>)
+    <span class="var">future</span> = <span class="var">model</span>.<span class="fn">make_future_dataframe</span>(<span class="var">periods</span>=<span class="var">test_months</span>, <span class="var">freq</span>=<span class="str">'ME'</span>)
+    <span class="var">forecast</span> = <span class="var">model</span>.<span class="fn">predict</span>(<span class="var">future</span>)
+
+    <span class="kw">from</span> sklearn.metrics <span class="kw">import</span> root_mean_squared_error
+    <span class="var">rmse</span> = <span class="fn">root_mean_squared_error</span>(
+        <span class="var">test</span>[<span class="str">'y'</span>], <span class="var">forecast</span>[<span class="str">'yhat'</span>].<span class="fn">tail</span>(<span class="var">test_months</span>)
+    )
+    <span class="fn">print</span>(<span class="str">f"Final RMSE: {rmse:.2f}"</span>)
+    <span class="kw">return</span> <span class="var">model</span>, <span class="var">forecast</span></pre></div>
+    </div>
+  </div>
+
+  <!-- ALGO 6: Model Comparison -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-icon" style="background:rgba(79,247,160,0.15)">⚖️</div>
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:#fff">৬. কোন Algorithm কখন ব্যবহার করবে?</div>
+        <div style="font-size:13px;color:#94a3b8">Quick Reference Guide</div>
+      </div>
+    </div>
+    <div class="algo-body">
+      <table>
+        <tr><th>Algorithm</th><th>কখন ভালো</th><th>কখন খারাপ</th><th>Data দরকার</th></tr>
+        <tr><td><strong>Linear Regression</strong></td><td>Baseline, simple linear trends</td><td>Non-linear, complex seasonality</td><td>কম (৩০+)</td></tr>
+        <tr><td><strong>Moving Average</strong></td><td>Smoothing, trend extraction</td><td>Direct forecasting</td><td>কম (৩০+)</td></tr>
+        <tr><td><strong>ARIMA</strong></td><td>Stationary/linear series</td><td>Complex seasonality</td><td>মাঝারি (৫০+)</td></tr>
+        <tr><td><strong>SARIMA</strong></td><td>Seasonal series, short horizon</td><td>Very long horizon</td><td>মাঝারি (৮০+)</td></tr>
+        <tr><td><strong>Prophet</strong></td><td>Holiday effects, missing data</td><td>Very irregular series</td><td>মাঝারি (৬০+)</td></tr>
+        <tr><td><strong>XGBoost/LGBM*</strong></td><td>Large data, complex features</td><td>Very short series</td><td>বেশি (৫০০+)</td></tr>
+      </table>
+      <p style="font-size:13px;color:#64748b;margin-top:8px">* এই course এ cover হয়নি কিন্তু production এ খুব common</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 11 ==================== -->
+<div class="section" id="s11">
+  <div class="section-header">
+    <div class="section-num">১১</div>
+    <h2>ML Engineer Interview প্রস্তুতি 🎙️</h2>
+  </div>
+
+  <div class="interview-box">
+    <div class="interview-title">🎙️ Category ১: Conceptual Questions</div>
+
+    <div class="ex-item">
+      <div class="ex-q">Q1. Stationarity কী এবং কেন এটা ARIMA এর জন্য জরুরি?</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans"><p><strong>Stationarity</strong> মানে একটা টাইম সিরিজের statistical properties (mean, variance, autocorrelation) সময়ের সাথে পরিবর্তন হয় না। ARIMA এর জন্য জরুরি কারণ: ARIMA এর mathematical assumptions গুলো stationary process এর উপর based। Non-stationary series এ fit করলে spurious correlation দেখা দেয় — model একটা pattern দেখে যেটা আসলে নেই। Differencing করে non-stationary series কে stationary করা যায়।</p></div>
+    </div>
+
+    <div class="ex-item">
+      <div class="ex-q">Q2. ACF ও PACF এর পার্থক্য কী? কোনটা দিয়ে AR এবং কোনটা দিয়ে MA এর order বোঝা যায়?</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans"><p><strong>ACF</strong> (Autocorrelation Function): X_t ও X_{t-h} এর মধ্যে correlation — intermediate lags এর effect বাদ দেয় না।<br><strong>PACF</strong> (Partial ACF): X_t ও X_{t-h} এর মধ্যে correlation যেখানে intermediate lags এর effect বাদ দেওয়া হয়।<br><br>নিয়ম: ACF cuts off after lag q → MA(q) | PACF cuts off after lag p → AR(p) | উভয়ই tails off → ARMA(p,q)</p></div>
+    </div>
+
+    <div class="ex-item">
+      <div class="ex-q">Q3. AIC vs BIC — কোনটা কখন ব্যবহার করবে?</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans"><p><strong>AIC</strong> কম parameters কে কম penalize করে — prediction accuracy maximize করতে চাইলে ব্যবহার করো।<br><strong>BIC</strong> বেশি parameters কে বেশি penalize করে — simple model prefer করলে (interpretability) BIC ব্যবহার করো।<br>যদি sample size ছোট হয় তাহলে AICc (corrected AIC) ব্যবহার করা উচিত।</p></div>
+    </div>
+
+    <div class="ex-item">
+      <div class="ex-q">Q4. ARIMA(1,1,1) মানে কী?</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans"><p>• p=1: AR(1) — আগের ১টা মান ব্যবহার করে<br>• d=1: ১ বার differencing করা হয়েছে (trend বাদ দেওয়া)<br>• q=1: MA(1) — আগের ১টা error ব্যবহার করে<br><br>Equation: ∇X_t = α₁·∇X_{t-1} + ε_t + β₁·ε_{t-1}</p></div>
+    </div>
+  </div>
+
+  <div class="interview-box">
+    <div class="interview-title">🛠️ Category ২: Coding & ML Engineering Questions</div>
+
+    <div class="ex-item">
+      <div class="ex-q">Q5. তুমি একটা production forecasting system বানাচ্ছো। Model retraining strategy কী হবে?</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans">
+        <div class="code-block"><pre><span class="cm">"""
+Production Retraining Strategy:
+1. Sliding Window: নতুন data আসলে পুরনো data drop করো
+2. Expanding Window: সব data রাখো, নতুনটা যোগ করো
+3. Online Learning: প্রতিটা নতুন observation এ model update
+"""</span>
+
+<span class="kw">class</span> <span class="fn">ForecastingPipeline</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>, <span class="var">retrain_freq</span>=<span class="str">'monthly'</span>):
+        <span class="var">self</span>.model = <span class="kw">None</span>
+        <span class="var">self</span>.last_trained = <span class="kw">None</span>
+        <span class="var">self</span>.retrain_freq = <span class="var">retrain_freq</span>
+
+    <span class="kw">def</span> <span class="fn">should_retrain</span>(<span class="var">self</span>):
+        <span class="cm"># Drift detection: residuals এর distribution দেখো</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">def</span> <span class="fn">retrain</span>(<span class="var">self</span>, <span class="var">new_data</span>):
+        <span class="cm"># নতুন data দিয়ে model retrain করো</span>
+        <span class="var">model</span> = sm.tsa.<span class="fn">SARIMAX</span>(
+            <span class="var">new_data</span>,
+            <span class="var">order</span>=<span class="var">self</span>.<span class="fn">_select_order</span>(<span class="var">new_data</span>)
+        )
+        <span class="var">self</span>.model = <span class="var">model</span>.<span class="fn">fit</span>(<span class="var">disp</span>=<span class="kw">False</span>)
+        <span class="var">self</span>.last_trained = pd.<span class="fn">Timestamp</span>(<span class="str">'now'</span>)</pre></div>
+      </div>
+    </div>
+
+    <div class="ex-item">
+      <div class="ex-q">Q6. Time Series Cross-Validation কীভাবে করবে?</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans">
+        <div class="code-block"><pre><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> TimeSeriesSplit
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">time_series_cv</span>(<span class="var">X</span>, <span class="var">y</span>, <span class="var">model</span>, <span class="var">n_splits</span>=<span class="num">5</span>):
+    <span class="str">"""
+    Expanding window cross-validation
+    প্রতিটা fold এ training set বড় হয়, test সবসময় শেষে
+    """</span>
+    <span class="var">tscv</span> = <span class="fn">TimeSeriesSplit</span>(<span class="var">n_splits</span>=<span class="var">n_splits</span>)
+    <span class="var">scores</span> = []
+
+    <span class="kw">for</span> <span class="var">fold</span>, (<span class="var">train_idx</span>, <span class="var">test_idx</span>) <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">tscv</span>.<span class="fn">split</span>(<span class="var">X</span>)):
+        <span class="var">X_tr</span>, <span class="var">X_te</span> = <span class="var">X</span>.<span class="fn">iloc</span>[<span class="var">train_idx</span>], <span class="var">X</span>.<span class="fn">iloc</span>[<span class="var">test_idx</span>]
+        <span class="var">y_tr</span>, <span class="var">y_te</span> = <span class="var">y</span>.<span class="fn">iloc</span>[<span class="var">train_idx</span>], <span class="var">y</span>.<span class="fn">iloc</span>[<span class="var">test_idx</span>]
+
+        <span class="var">model</span>.<span class="fn">fit</span>(<span class="var">X_tr</span>, <span class="var">y_tr</span>)
+        <span class="var">pred</span> = <span class="var">model</span>.<span class="fn">predict</span>(<span class="var">X_te</span>)
+        <span class="var">rmse</span> = np.<span class="fn">sqrt</span>(np.<span class="fn">mean</span>((<span class="var">y_te</span>.values - <span class="var">pred</span>)**<span class="num">2</span>))
+        <span class="var">scores</span>.<span class="fn">append</span>(<span class="var">rmse</span>)
+        <span class="fn">print</span>(<span class="str">f"Fold {fold+1}: RMSE = {rmse:.2f}"</span>)
+
+    <span class="fn">print</span>(<span class="str">f"\nMean RMSE: {np.mean(scores):.2f} ± {np.std(scores):.2f}"</span>)
+    <span class="kw">return</span> <span class="var">scores</span></pre></div>
+      </div>
+    </div>
+
+    <div class="ex-item">
+      <div class="ex-q">Q7. Metrics কোনগুলো ব্যবহার করবে টাইম সিরিজ forecasting evaluate করতে?</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans">
+        <div class="code-block"><pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">evaluate_forecast</span>(<span class="var">y_true</span>, <span class="var">y_pred</span>):
+    <span class="cm"># MAE: সহজ, interpretable</span>
+    <span class="var">mae</span> = np.<span class="fn">mean</span>(np.<span class="fn">abs</span>(<span class="var">y_true</span> - <span class="var">y_pred</span>))
+
+    <span class="cm"># RMSE: বড় error কে বেশি penalize করে</span>
+    <span class="var">rmse</span> = np.<span class="fn">sqrt</span>(np.<span class="fn">mean</span>((<span class="var">y_true</span> - <span class="var">y_pred</span>)**<span class="num">2</span>))
+
+    <span class="cm"># MAPE: percentage error — scale independent</span>
+    <span class="var">mape</span> = np.<span class="fn">mean</span>(np.<span class="fn">abs</span>((<span class="var">y_true</span> - <span class="var">y_pred</span>) / <span class="var">y_true</span>)) * <span class="num">100</span>
+
+    <span class="cm"># sMAPE: symmetric MAPE — 0 এর কাছে মান থাকলে ভালো</span>
+    <span class="var">smape</span> = np.<span class="fn">mean</span>(<span class="num">2</span> * np.<span class="fn">abs</span>(<span class="var">y_true</span>-<span class="var">y_pred</span>) / (np.<span class="fn">abs</span>(<span class="var">y_true</span>)+np.<span class="fn">abs</span>(<span class="var">y_pred</span>))) * <span class="num">100</span>
+
+    <span class="cm"># MASE: compared to naive forecast</span>
+    <span class="var">naive_mae</span> = np.<span class="fn">mean</span>(np.<span class="fn">abs</span>(np.<span class="fn">diff</span>(<span class="var">y_true</span>)))
+    <span class="var">mase</span> = <span class="var">mae</span> / <span class="var">naive_mae</span>  <span class="cm"># <1 means better than naive</span>
+
+    <span class="fn">print</span>(<span class="str">f"MAE:   {mae:.2f}"</span>)
+    <span class="fn">print</span>(<span class="str">f"RMSE:  {rmse:.2f}"</span>)
+    <span class="fn">print</span>(<span class="str">f"MAPE:  {mape:.2f}%"</span>)
+    <span class="fn">print</span>(<span class="str">f"sMAPE: {smape:.2f}%"</span>)
+    <span class="fn">print</span>(<span class="str">f"MASE:  {mase:.2f}"</span>)
+
+<span class="cm"># কোনটা কখন?
+# RMSE: outlier sensitive, engineering problem
+# MAPE: business reporting (% error)
+# MASE: academic comparison across datasets</span></pre></div>
+      </div>
+    </div>
+
+    <div class="ex-item">
+      <div class="ex-q">Q8. (Scenario) তোমাকে একটা retail chain এর next quarter sales forecast করতে বলা হয়েছে। কোথা থেকে শুরু করবে?</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans"><p><strong>Step-by-step approach:</strong><br>
+      ১. <strong>Data collection:</strong> Historical sales, store metadata, holiday calendar সংগ্রহ করো<br>
+      ২. <strong>EDA:</strong> Plot করো, trend/seasonality/outlier চিহ্নিত করো<br>
+      ৩. <strong>Stationarity check:</strong> ADF test, differencing যদি দরকার হয়<br>
+      ৪. <strong>Baseline model:</strong> Naive (last year same period) বা simple moving average<br>
+      ৫. <strong>Model selection:</strong> SARIMA (small data) বা Prophet (holiday effects) বা XGBoost (large, cross-sectional)<br>
+      ৬. <strong>Cross-validation:</strong> Time Series Split দিয়ে evaluate করো<br>
+      ৭. <strong>Ensemble:</strong> একাধিক model এর prediction blend করো<br>
+      ৮. <strong>Monitoring:</strong> Production এ real-time drift detection সেটআপ করো</p></div>
+    </div>
+  </div>
+
+  <div class="interview-box">
+    <div class="interview-title">🔥 Category ৩: Advanced / Tricky Questions</div>
+
+    <div class="ex-item">
+      <div class="ex-q">Q9. Data Leakage টাইম সিরিজে কীভাবে হতে পারে?</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans"><p><strong>টাইম সিরিজে Leakage এর উপায়:</strong><br>
+      ১. <strong>Random shuffle:</strong> Future data দিয়ে past predict করা<br>
+      ২. <strong>Rolling window on full data:</strong> Test set এর ডেটা training statistics এ ঢুকে যাওয়া<br>
+      ৩. <strong>Forward-looking features:</strong> যেমন next month এর value কে feature হিসেবে ব্যবহার<br>
+      ৪. <strong>Target encoding with full data:</strong> Target statistics বের করতে পুরো dataset ব্যবহার<br><br>
+      <strong>সমাধান:</strong> সব preprocessing শুধু training data দিয়ে করো, test data কে strict holdout রাখো।</p></div>
+    </div>
+
+    <div class="ex-item">
+      <div class="ex-q">Q10. Ljung-Box test কী এবং এটা pass না করলে কী করবে?</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans"><p><strong>Ljung-Box test:</strong> Null hypothesis H₀ = residual white noise। p-value < 0.05 হলে H₀ reject — মানে residual এ এখনো structure আছে।<br><br>
+      <strong>Fail হলে করণীয়:</strong><br>
+      ১. AR বা MA order বাড়াও (p বা q বাড়াও)<br>
+      ২. Seasonal order চেক করো (P, Q)<br>
+      ৩. Differencing order পুনরায় চেক করো<br>
+      ৪. Outlier remove করো<br>
+      ৫. অন্য model (Prophet, ML model) try করো</p></div>
+    </div>
+  </div>
+
+  <!-- Final Summary Card -->
+  <div class="card blue" style="margin-top:30px">
+    <div class="card-title">📚 পুরো Course এর সারসংক্ষেপ</div>
+    <ul class="steps">
+      <li><div class="step-num">১</div><div><strong>টাইম সিরিজ কী:</strong> সময় অনুযায়ী সাজানো ডেটা — ক্রম পরিবর্তন করা যাবে না</div></li>
+      <li><div class="step-num">২</div><div><strong>Component:</strong> Trend + Seasonality + Residual = টাইম সিরিজ (Additive বা Multiplicative)</div></li>
+      <li><div class="step-num">৩</div><div><strong>Decomposition:</strong> seasonal_decompose দিয়ে বা manually MA method দিয়ে</div></li>
+      <li><div class="step-num">৪</div><div><strong>Regression:</strong> Lag features বানিয়ে standard ML model ব্যবহার করা যায়</div></li>
+      <li><div class="step-num">৫</div><div><strong>ARMA:</strong> AR (past values) + MA (past errors) — শুধু stationary এ কাজ করে</div></li>
+      <li><div class="step-num">৬</div><div><strong>ARIMA/SARIMA:</strong> Differencing সহ ARMA — non-stationary ও seasonal data সামলায়</div></li>
+      <li><div class="step-num">৭</div><div><strong>Prophet:</strong> Facebook এর easy tool — holiday, missing data সামলায়</div></li>
+    </ul>
+  </div>
+</div>
+
+
+<!-- ==================== SECTION 12: ADF TEST DEEP DIVE ==================== -->
+<div class="section" id="s12">
+  <div class="section-header">
+    <div class="section-num">১২</div>
+    <h2>ADF Test — Stationarity পরীক্ষার হাতিয়ার 🧪</h2>
+  </div>
+
+  <p>Augmented Dickey-Fuller (ADF) test হলো সবচেয়ে জনপ্রিয় stationarity test। এটা দিয়ে নিশ্চিত হওয়া যায় যে series টা সত্যিই stationary কিনা।</p>
+
+  <div class="card blue">
+    <div class="card-title">📐 ADF Test এর Hypothesis</div>
+    <p><strong>H₀ (Null Hypothesis):</strong> সিরিজে একটা unit root আছে → Non-stationary<br>
+    <strong>H₁ (Alternative):</strong> সিরিজে unit root নেই → Stationary<br><br>
+    <strong>নিয়ম:</strong> p-value &lt; 0.05 হলে H₀ reject করো → সিরিজ stationary ✓</p>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-icon">⚖️</div>
+    <p><strong>সহজ ভাষায়:</strong> ধরো তুমি জজ। কেউ বলছে "এই সিরিজটা non-stationary"। তোমাকে প্রমাণ দেখাতে হবে যে সে ভুল। যদি p-value &lt; 0.05 হয়, তুমি বলতে পারো "না, এটা stationary!" ADF test সেটাই করে।</p>
+  </div>
+
+  <div class="code-block"><div class="code-label">Python — ADF Test সম্পূর্ণ Implementation</div><pre><span class="kw">import</span> statsmodels.api <span class="kw">as</span> sm
+<span class="kw">from</span> statsmodels.tsa.stattools <span class="kw">import</span> adfuller
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="kw">def</span> <span class="fn">adf_test_full</span>(<span class="var">series</span>, <span class="var">series_name</span>=<span class="str">"Series"</span>):
+    <span class="str">"""
+    ADF test করো এবং সুন্দর করে result দেখাও
+    """</span>
+    <span class="var">result</span> = <span class="fn">adfuller</span>(<span class="var">series</span>.<span class="fn">dropna</span>(), <span class="var">autolag</span>=<span class="str">'AIC'</span>)
+
+    <span class="fn">print</span>(<span class="str">f"\n{'='*50}"</span>)
+    <span class="fn">print</span>(<span class="str">f"ADF Test: {series_name}"</span>)
+    <span class="fn">print</span>(<span class="str">f"{'='*50}"</span>)
+    <span class="fn">print</span>(<span class="str">f"ADF Statistic : {result[0]:.4f}"</span>)
+    <span class="fn">print</span>(<span class="str">f"p-value       : {result[1]:.4f}"</span>)
+    <span class="fn">print</span>(<span class="str">f"Lags Used     : {result[2]}"</span>)
+    <span class="fn">print</span>(<span class="str">f"Observations  : {result[3]}"</span>)
+    <span class="fn">print</span>(<span class="str">"\nCritical Values:"</span>)
+    <span class="kw">for</span> <span class="var">key</span>, <span class="var">val</span> <span class="kw">in</span> <span class="var">result</span>[<span class="num">4</span>].items():
+        <span class="fn">print</span>(<span class="str">f"  {key}: {val:.4f}"</span>)
+
+    <span class="kw">if</span> <span class="var">result</span>[<span class="num">1</span>] &lt; <span class="num">0.05</span>:
+        <span class="fn">print</span>(<span class="str">"\n✅ সিদ্ধান্ত: STATIONARY (p &lt; 0.05)"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="str">"\n❌ সিদ্ধান্ত: NON-STATIONARY (p >= 0.05) → Differencing দরকার"</span>)
+
+    <span class="kw">return</span> <span class="var">result</span>[<span class="num">1</span>] &lt; <span class="num">0.05</span>
+
+<span class="cm"># Step-by-step stationarity check pipeline:</span>
+<span class="var">airpasslog</span> = np.<span class="fn">log</span>(<span class="var">airpass</span>)
+
+<span class="fn">print</span>(<span class="str">"Step 1: Original log series"</span>)
+<span class="var">is_stat</span> = <span class="fn">adf_test_full</span>(<span class="var">airpasslog</span>[<span class="str">'#Passengers'</span>], <span class="str">"airpasslog"</span>)
+
+<span class="kw">if</span> <span class="kw">not</span> <span class="var">is_stat</span>:
+    <span class="fn">print</span>(<span class="str">"\nStep 2: 1st order differencing"</span>)
+    <span class="var">diff1</span> = <span class="var">airpasslog</span>.<span class="fn">diff</span>().<span class="fn">dropna</span>()
+    <span class="var">is_stat</span> = <span class="fn">adf_test_full</span>(<span class="var">diff1</span>[<span class="str">'#Passengers'</span>], <span class="str">"1st diff"</span>)
+
+<span class="kw">if</span> <span class="kw">not</span> <span class="var">is_stat</span>:
+    <span class="fn">print</span>(<span class="str">"\nStep 3: Seasonal differencing (period=12)"</span>)
+    <span class="var">diff2</span> = <span class="var">diff1</span>.<span class="fn">diff</span>(<span class="var">periods</span>=<span class="num">12</span>).<span class="fn">dropna</span>()
+    <span class="fn">adf_test_full</span>(<span class="var">diff2</span>[<span class="str">'#Passengers'</span>], <span class="str">"Seasonal diff"</span>)</pre></div>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <rect width="700" height="260" fill="#0f1117" rx="8"/>
+      <text x="350" y="22" fill="#f7c94f" font-size="13" font-family="sans-serif" text-anchor="middle" font-weight="bold">Stationarity Check Flow — ধাপে ধাপে</text>
+
+      <!-- Step 1 -->
+      <rect x="270" y="35" width="160" height="45" rx="8" fill="#1e2435" stroke="rgba(79,142,247,0.5)"/>
+      <text x="350" y="57" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle">Original Series</text>
+      <text x="350" y="73" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">ADF Test করো</text>
+
+      <!-- Arrow + decision -->
+      <line x1="350" y1="80" x2="350" y2="110" stroke="#64748b" stroke-width="1.5"/>
+      <polygon points="345,108 355,108 350,115" fill="#64748b"/>
+      <text x="360" y="99" fill="#4ff7a0" font-size="11" font-family="sans-serif">p &lt; 0.05?</text>
+
+      <!-- Yes branch -->
+      <line x1="270" y1="115" x2="140" y2="115" stroke="#4ff7a0" stroke-width="1.5"/>
+      <text x="205" y="108" fill="#4ff7a0" font-size="11" font-family="sans-serif">হ্যাঁ ✓</text>
+      <rect x="70" y="100" width="130" height="35" rx="8" fill="rgba(79,247,160,0.1)" stroke="rgba(79,247,160,0.4)"/>
+      <text x="135" y="123" fill="#4ff7a0" font-size="12" font-family="sans-serif" text-anchor="middle">✅ Stationary!</text>
+      <text x="135" y="155" fill="#64748b" font-size="11" font-family="sans-serif" text-anchor="middle">d=0, D=0</text>
+
+      <!-- No branch -->
+      <line x1="350" y1="115" x2="350" y2="140" stroke="#f7614f" stroke-width="1.5"/>
+      <text x="360" y="132" fill="#f7614f" font-size="11" font-family="sans-serif">না ✗</text>
+
+      <!-- Step 2 box -->
+      <rect x="270" y="140" width="160" height="45" rx="8" fill="#1e2435" stroke="rgba(247,201,79,0.5)"/>
+      <text x="350" y="162" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle">1st Order Diff</text>
+      <text x="350" y="178" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">diff().dropna()</text>
+
+      <!-- Arrow -->
+      <line x1="350" y1="185" x2="350" y2="205" stroke="#64748b" stroke-width="1.5"/>
+      <polygon points="345,203 355,203 350,210" fill="#64748b"/>
+      <text x="360" y="200" fill="#4ff7a0" font-size="11" font-family="sans-serif">p &lt; 0.05?</text>
+
+      <!-- Step 3 -->
+      <rect x="270" y="210" width="160" height="40" rx="8" fill="#1e2435" stroke="rgba(247,97,79,0.5)"/>
+      <text x="350" y="228" fill="#fff" font-size="12" font-family="sans-serif" text-anchor="middle">Seasonal Diff</text>
+      <text x="350" y="244" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">diff(periods=12)</text>
+
+      <!-- Results labels -->
+      <text x="500" y="165" fill="#f7c94f" font-size="12" font-family="sans-serif">d=1 (trend removed)</text>
+      <text x="500" y="235" fill="#f7c94f" font-size="12" font-family="sans-serif">d=1, D=1 (seasonal removed)</text>
+    </svg>
+    <div class="svg-label">ADF test দিয়ে ধাপে ধাপে stationarity নিশ্চিত করার process</div>
+  </div>
+
+  <div class="exercise-section">
+    <div class="exercise-title">🎯 Practice Exercises — ADF Test</div>
+    <div class="ex-item">
+      <div class="ex-q">প্র. (ML Engineer): তোমার কাছে একটা series আছে। ADF test দিলে p-value = 0.03 আসে। কিন্তু series plot করে দেখো স্পষ্ট upward trend আছে। কী করবে?</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">উত্তর দেখো</button>
+      <div class="ex-ans">
+        <p>এটা একটা ফাঁদ! p &lt; 0.05 মানেই সিরিজ সম্পূর্ণ ready নয়। করণীয়:</p>
+        <div class="code-block"><pre><span class="cm"># 1. Visual inspection সবসময় করো</span>
+plt.<span class="fn">plot</span>(<span class="var">series</span>)  <span class="cm"># Clear trend আছে কিনা দেখো</span>
+
+<span class="cm"># 2. ADF test এ trend parameter দাও</span>
+<span class="var">result</span> = <span class="fn">adfuller</span>(<span class="var">series</span>, <span class="var">regression</span>=<span class="str">'ct'</span>)  <span class="cm"># 'ct' = constant + trend</span>
+<span class="cm"># 'c' = constant only (default)
+# 'ct' = constant + trend
+# 'ctt' = constant + linear + quadratic trend
+# 'n' = no constant</span>
+
+<span class="cm"># 3. KPSS test দিয়ে double-check করো
+# KPSS: H0 = stationary (ADF এর উল্টো!)</span>
+<span class="kw">from</span> statsmodels.tsa.stattools <span class="kw">import</span> kpss
+<span class="var">stat</span>, <span class="var">p</span>, <span class="var">lags</span>, <span class="var">crit</span> = <span class="fn">kpss</span>(<span class="var">series</span>, <span class="var">regression</span>=<span class="str">'ct'</span>)
+<span class="cm"># উভয় test এর সম্মিলিত ফলাফল দেখো</span></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 13: SARIMA ORDER SELECTION DEEP DIVE ==================== -->
+<div class="section" id="s13">
+  <div class="section-header">
+    <div class="section-num">১৩</div>
+    <h2>SARIMA Orders বেছে নেওয়া — বিস্তারিত গাইড 🔍</h2>
+  </div>
+
+  <p>ACF ও PACF plot দেখে SARIMA এর p, d, q, P, D, Q নির্বাচন করাটা একটু tricky। চলো step-by-step বুঝি।</p>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <rect width="700" height="380" fill="#0f1117" rx="8"/>
+      <text x="350" y="22" fill="#f7c94f" font-size="13" font-family="sans-serif" text-anchor="middle" font-weight="bold">SARIMA Order Selection — সম্পূর্ণ Decision Tree</text>
+
+      <!-- Step boxes -->
+      <!-- Step 1: Multiplicative or Additive -->
+      <rect x="230" y="35" width="240" height="50" rx="8" fill="#1e2435" stroke="rgba(79,142,247,0.5)"/>
+      <text x="350" y="57" fill="#4f8ef7" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">ধাপ ১: Additive নাকি Multiplicative?</text>
+      <text x="350" y="75" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">Seasonal amplitude বাড়ছে? → Log transform নাও</text>
+
+      <!-- Arrow -->
+      <line x1="350" y1="85" x2="350" y2="105" stroke="#4f8ef7" stroke-width="1.5"/>
+
+      <!-- Step 2: d selection -->
+      <rect x="230" y="105" width="240" height="50" rx="8" fill="#1e2435" stroke="rgba(124,106,247,0.5)"/>
+      <text x="350" y="127" fill="#7c6af7" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">ধাপ ২: d (differencing) বের করো</text>
+      <text x="350" y="145" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">ADF test করো → p≥0.05 হলে diff() করো, d++</text>
+
+      <!-- Arrow -->
+      <line x1="350" y1="155" x2="350" y2="175" stroke="#7c6af7" stroke-width="1.5"/>
+
+      <!-- Step 3: D selection -->
+      <rect x="230" y="175" width="240" height="50" rx="8" fill="#1e2435" stroke="rgba(247,201,79,0.5)"/>
+      <text x="350" y="197" fill="#f7c94f" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">ধাপ ৩: D (seasonal diff) বের করো</text>
+      <text x="350" y="215" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">ACF এ seasonal peak থাকলে diff(periods=k), D++</text>
+
+      <!-- Arrow -->
+      <line x1="350" y1="225" x2="350" y2="245" stroke="#f7c94f" stroke-width="1.5"/>
+
+      <!-- Step 4: p, q selection -->
+      <rect x="230" y="245" width="240" height="50" rx="8" fill="#1e2435" stroke="rgba(79,247,160,0.5)"/>
+      <text x="350" y="267" fill="#4ff7a0" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">ধাপ ৪: p, q বের করো</text>
+      <text x="350" y="285" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">ACF → q | PACF → p | উভয় tail → ARMA(1,1)</text>
+
+      <!-- Arrow -->
+      <line x1="350" y1="295" x2="350" y2="315" stroke="#4ff7a0" stroke-width="1.5"/>
+
+      <!-- Step 5: P, Q selection -->
+      <rect x="230" y="315" width="240" height="50" rx="8" fill="#1e2435" stroke="rgba(247,97,79,0.5)"/>
+      <text x="350" y="337" fill="#f7614f" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">ধাপ ৫: P, Q বের করো</text>
+      <text x="350" y="355" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">Lag 12, 24, 36 এর ACF/PACF দেখে (same rule)</text>
+
+      <!-- Side notes -->
+      <text x="30" y="130" fill="#64748b" font-size="11" font-family="sans-serif">Tip: seasonal_decompose</text>
+      <text x="30" y="145" fill="#64748b" font-size="11" font-family="sans-serif">দিয়েও বোঝা যায়</text>
+
+      <text x="510" y="200" fill="#64748b" font-size="11" font-family="sans-serif">k = seasonal period</text>
+      <text x="510" y="215" fill="#64748b" font-size="11" font-family="sans-serif">(monthly = 12,</text>
+      <text x="510" y="230" fill="#64748b" font-size="11" font-family="sans-serif">quarterly = 4)</text>
+
+      <text x="510" y="270" fill="#64748b" font-size="11" font-family="sans-serif">Start small: p=1,q=1</text>
+      <text x="510" y="285" fill="#64748b" font-size="11" font-family="sans-serif">significance চেক করো</text>
+    </svg>
+    <div class="svg-label">SARIMA order selection এর সম্পূর্ণ decision tree</div>
+  </div>
+
+  <h3>Automatic Order Selection (Auto-ARIMA)</h3>
+  <div class="code-block"><div class="code-label">Python — pmdarima দিয়ে Auto ARIMA</div><pre><span class="cm"># pip install pmdarima</span>
+<span class="kw">import</span> pmdarima <span class="kw">as</span> pm
+
+<span class="cm"># Auto ARIMA — নিজেই best orders খোঁজে নেয়</span>
+<span class="var">auto_model</span> = pm.<span class="fn">auto_arima</span>(
+    <span class="var">airpasslog</span>,
+    <span class="var">start_p</span>=<span class="num">0</span>, <span class="var">start_q</span>=<span class="num">0</span>,    <span class="cm"># শুরুর orders</span>
+    <span class="var">max_p</span>=<span class="num">3</span>, <span class="var">max_q</span>=<span class="num">3</span>,         <span class="cm"># সর্বোচ্চ orders</span>
+    <span class="var">m</span>=<span class="num">12</span>,                      <span class="cm"># seasonal period</span>
+    <span class="var">seasonal</span>=<span class="kw">True</span>,             <span class="cm"># seasonal model চাই</span>
+    <span class="var">d</span>=<span class="kw">None</span>,                    <span class="cm"># auto-detect করবে</span>
+    <span class="var">D</span>=<span class="kw">None</span>,                    <span class="cm"># auto-detect করবে</span>
+    <span class="var">trace</span>=<span class="kw">True</span>,               <span class="cm"># কী করছে দেখাবে</span>
+    <span class="var">error_action</span>=<span class="str">'ignore'</span>,
+    <span class="var">suppress_warnings</span>=<span class="kw">True</span>,
+    <span class="var">stepwise</span>=<span class="kw">True</span>,             <span class="cm"># efficient search</span>
+    <span class="var">information_criterion</span>=<span class="str">'aic'</span>  <span class="cm"># AIC দিয়ে select</span>
+)
+
+<span class="fn">print</span>(<span class="var">auto_model</span>.<span class="fn">summary</span>())
+<span class="fn">print</span>(<span class="str">f"\nBest order: {auto_model.order}"</span>)
+<span class="fn">print</span>(<span class="str">f"Best seasonal order: {auto_model.seasonal_order}"</span>)</pre></div>
+
+  <div class="exercise-section">
+    <div class="exercise-title">🎯 SARIMA End-to-End Project Exercise</div>
+    <div class="ex-item">
+      <div class="ex-q">প্র. (Real ML Project): তোমাকে একটা supermarket chain এর monthly sales forecast করতে বলা হয়েছে। Data: ৫ বছরের monthly sales। সম্পূর্ণ SARIMA pipeline লিখো।</div>
+      <button class="toggle-btn" onclick="toggleAns(this)">সম্পূর্ণ Solution দেখো</button>
+      <div class="ex-ans">
+        <div class="code-block"><pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> statsmodels.api <span class="kw">as</span> sm
+<span class="kw">from</span> statsmodels.tsa.stattools <span class="kw">import</span> adfuller
+<span class="kw">from</span> statsmodels.graphics.tsaplots <span class="kw">import</span> plot_acf, plot_pacf
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> root_mean_squared_error
+<span class="kw">import</span> warnings
+warnings.<span class="fn">filterwarnings</span>(<span class="str">'ignore'</span>)
+
+<span class="cm">########################################
+# STEP 1: DATA LOADING
+########################################</span>
+<span class="var">df</span> = pd.<span class="fn">read_csv</span>(<span class="str">'supermarket_sales.csv'</span>,
+                 <span class="var">index_col</span>=<span class="str">'date'</span>, <span class="var">parse_dates</span>=<span class="kw">True</span>)
+<span class="var">sales</span> = <span class="var">df</span>[<span class="str">'monthly_sales'</span>]
+
+<span class="cm">########################################
+# STEP 2: EDA — চোখে দেখো
+########################################</span>
+<span class="var">fig</span>, <span class="var">axes</span> = plt.<span class="fn">subplots</span>(<span class="num">2</span>, <span class="num">2</span>, <span class="var">figsize</span>=(<span class="num">14</span>, <span class="num">10</span>))
+
+<span class="var">sales</span>.<span class="fn">plot</span>(<span class="var">ax</span>=<span class="var">axes</span>[<span class="num">0</span>,<span class="num">0</span>], <span class="var">title</span>=<span class="str">'Original Sales'</span>)
+
+<span class="cm"># Log transform (multiplicative হলে)</span>
+<span class="var">log_sales</span> = np.<span class="fn">log</span>(<span class="var">sales</span>)
+<span class="var">log_sales</span>.<span class="fn">plot</span>(<span class="var">ax</span>=<span class="var">axes</span>[<span class="num">0</span>,<span class="num">1</span>], <span class="var">title</span>=<span class="str">'Log Sales'</span>)
+
+<span class="cm"># Decomposition</span>
+<span class="kw">from</span> statsmodels.tsa.seasonal <span class="kw">import</span> seasonal_decompose
+<span class="var">decomp</span> = <span class="fn">seasonal_decompose</span>(<span class="var">log_sales</span>, <span class="var">period</span>=<span class="num">12</span>)
+<span class="var">decomp</span>.trend.<span class="fn">plot</span>(<span class="var">ax</span>=<span class="var">axes</span>[<span class="num">1</span>,<span class="num">0</span>], <span class="var">title</span>=<span class="str">'Trend'</span>)
+<span class="var">decomp</span>.seasonal.<span class="fn">plot</span>(<span class="var">ax</span>=<span class="var">axes</span>[<span class="num">1</span>,<span class="num">1</span>], <span class="var">title</span>=<span class="str">'Seasonality'</span>)
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">show</span>()
+
+<span class="cm">########################################
+# STEP 3: STATIONARITY
+########################################</span>
+<span class="kw">def</span> <span class="fn">check_stationarity</span>(<span class="var">series</span>):
+    <span class="var">p</span> = <span class="fn">adfuller</span>(<span class="var">series</span>.<span class="fn">dropna</span>())[<span class="num">1</span>]
+    <span class="fn">print</span>(<span class="str">f"ADF p-value: {p:.4f} → {'✅ Stationary' if p < 0.05 else '❌ Non-stationary'}"</span>)
+    <span class="kw">return</span> <span class="var">p</span> &lt; <span class="num">0.05</span>
+
+<span class="var">d</span> = <span class="num">0</span>
+<span class="var">series_work</span> = <span class="var">log_sales</span>.<span class="fn">copy</span>()
+<span class="kw">while</span> <span class="kw">not</span> <span class="fn">check_stationarity</span>(<span class="var">series_work</span>) <span class="kw">and</span> <span class="var">d</span> &lt; <span class="num">3</span>:
+    <span class="var">series_work</span> = <span class="var">series_work</span>.<span class="fn">diff</span>().<span class="fn">dropna</span>()
+    <span class="var">d</span> += <span class="num">1</span>
+
+<span class="cm"># Seasonal differencing</span>
+<span class="var">D</span> = <span class="num">0</span>
+<span class="var">series_work_s</span> = <span class="var">series_work</span>.<span class="fn">copy</span>()
+<span class="kw">while</span> <span class="kw">not</span> <span class="fn">check_stationarity</span>(<span class="var">series_work_s</span>) <span class="kw">and</span> <span class="var">D</span> &lt; <span class="num">2</span>:
+    <span class="var">series_work_s</span> = <span class="var">series_work_s</span>.<span class="fn">diff</span>(<span class="var">periods</span>=<span class="num">12</span>).<span class="fn">dropna</span>()
+    <span class="var">D</span> += <span class="num">1</span>
+
+<span class="fn">print</span>(<span class="str">f"d={d}, D={D}"</span>)
+
+<span class="cm">########################################
+# STEP 4: ACF/PACF → p, q, P, Q
+########################################</span>
+<span class="var">fig</span>, (<span class="var">ax1</span>, <span class="var">ax2</span>) = plt.<span class="fn">subplots</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="var">figsize</span>=(<span class="num">14</span>, <span class="num">5</span>))
+<span class="fn">plot_acf</span>(<span class="var">series_work_s</span>, <span class="var">lags</span>=<span class="num">36</span>, <span class="var">ax</span>=<span class="var">ax1</span>)
+<span class="fn">plot_pacf</span>(<span class="var">series_work_s</span>, <span class="var">lags</span>=<span class="num">36</span>, <span class="var">ax</span>=<span class="var">ax2</span>)
+plt.<span class="fn">show</span>()
+<span class="cm"># Plot দেখে manually p, q, P, Q ঠিক করো</span>
+
+<span class="cm">########################################
+# STEP 5: MODEL SELECTION (Grid Search)
+########################################</span>
+<span class="kw">from</span> itertools <span class="kw">import</span> product
+
+<span class="var">best_aic</span> = np.inf
+<span class="var">best_params</span> = <span class="kw">None</span>
+
+<span class="kw">for</span> <span class="var">p</span>, <span class="var">q</span>, <span class="var">P</span>, <span class="var">Q</span> <span class="kw">in</span> <span class="fn">product</span>([<span class="num">0</span>,<span class="num">1</span>], [<span class="num">0</span>,<span class="num">1</span>], [<span class="num">0</span>,<span class="num">1</span>], [<span class="num">0</span>,<span class="num">1</span>]):
+    <span class="kw">try</span>:
+        <span class="var">m</span> = sm.tsa.<span class="fn">SARIMAX</span>(
+            <span class="var">log_sales</span>,
+            <span class="var">order</span>=(<span class="var">p</span>, <span class="var">d</span>, <span class="var">q</span>),
+            <span class="var">seasonal_order</span>=(<span class="var">P</span>, <span class="var">D</span>, <span class="var">Q</span>, <span class="num">12</span>),
+            <span class="var">enforce_stationarity</span>=<span class="kw">False</span>
+        ).<span class="fn">fit</span>(<span class="var">disp</span>=<span class="kw">False</span>)
+        <span class="kw">if</span> <span class="var">m</span>.aic &lt; <span class="var">best_aic</span>:
+            <span class="var">best_aic</span> = <span class="var">m</span>.aic
+            <span class="var">best_params</span> = (<span class="var">p</span>, <span class="var">d</span>, <span class="var">q</span>, <span class="var">P</span>, <span class="var">D</span>, <span class="var">Q</span>)
+    <span class="kw">except</span>: <span class="kw">continue</span>
+
+<span class="var">p</span>, <span class="var">d</span>, <span class="var">q</span>, <span class="var">P</span>, <span class="var">D</span>, <span class="var">Q</span> = <span class="var">best_params</span>
+<span class="fn">print</span>(<span class="str">f"Best: SARIMA({p},{d},{q})({P},{D},{Q})_12 | AIC: {best_aic:.2f}"</span>)
+
+<span class="cm">########################################
+# STEP 6: FINAL MODEL + EVALUATION
+########################################</span>
+<span class="var">train</span> = <span class="var">log_sales</span>.<span class="fn">iloc</span>[:<span class="op">-</span><span class="num">12</span>]
+<span class="var">test</span>  = <span class="var">log_sales</span>.<span class="fn">iloc</span>[<span class="op">-</span><span class="num">12</span>:]
+
+<span class="var">final_model</span> = sm.tsa.<span class="fn">SARIMAX</span>(
+    <span class="var">train</span>,
+    <span class="var">order</span>=(<span class="var">p</span>, <span class="var">d</span>, <span class="var">q</span>),
+    <span class="var">seasonal_order</span>=(<span class="var">P</span>, <span class="var">D</span>, <span class="var">Q</span>, <span class="num">12</span>)
+).<span class="fn">fit</span>(<span class="var">disp</span>=<span class="kw">False</span>)
+
+<span class="var">pred_log</span> = <span class="var">final_model</span>.<span class="fn">forecast</span>(<span class="var">steps</span>=<span class="num">12</span>)
+<span class="var">pred</span> = np.<span class="fn">exp</span>(<span class="var">pred_log</span>)
+<span class="var">actual</span> = np.<span class="fn">exp</span>(<span class="var">test</span>)
+
+<span class="var">rmse</span> = <span class="fn">root_mean_squared_error</span>(<span class="var">actual</span>, <span class="var">pred</span>)
+<span class="var">mape</span> = np.<span class="fn">mean</span>(np.<span class="fn">abs</span>((<span class="var">actual</span>-<span class="var">pred</span>)/<span class="var">actual</span>))*<span class="num">100</span>
+<span class="fn">print</span>(<span class="str">f"Test RMSE: {rmse:.2f} | MAPE: {mape:.2f}%"</span>)</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 14: QUICK REFERENCE CHEAT SHEET ==================== -->
+<div class="section" id="s14">
+  <div class="section-header">
+    <div class="section-num">১৪</div>
+    <h2>Quick Reference Cheat Sheet 📋</h2>
+  </div>
+
+  <div class="svg-container">
+    <svg viewBox="0 0 700 520" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+      <rect width="700" height="520" fill="#0f1117" rx="8"/>
+      <text x="350" y="24" fill="#f7c94f" font-size="14" font-family="sans-serif" text-anchor="middle" font-weight="bold">টাইম সিরিজ সম্পূর্ণ Cheat Sheet</text>
+
+      <!-- Column 1: Formulas -->
+      <rect x="15" y="35" width="215" height="470" rx="8" fill="#0d1117" stroke="#2a3148"/>
+      <text x="122" y="55" fill="#4f8ef7" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">📐 মূল সূত্রসমূহ</text>
+      <line x1="20" y1="62" x2="225" y2="62" stroke="#2a3148"/>
+
+      <text x="25" y="80" fill="#f7c94f" font-size="11" font-family="sans-serif" font-weight="bold">Additive Model:</text>
+      <text x="25" y="96" fill="#e2e8f0" font-size="11" font-family="sans-serif">X_t = T_t + S_t + ε_t</text>
+
+      <text x="25" y="118" fill="#f7c94f" font-size="11" font-family="sans-serif" font-weight="bold">Multiplicative Model:</text>
+      <text x="25" y="134" fill="#e2e8f0" font-size="11" font-family="sans-serif">X_t = T_t(1+S_t)(1+ε_t)</text>
+
+      <text x="25" y="156" fill="#f7c94f" font-size="11" font-family="sans-serif" font-weight="bold">Log Transform:</text>
+      <text x="25" y="172" fill="#e2e8f0" font-size="11" font-family="sans-serif">log(X_t) → Additive</text>
+
+      <text x="25" y="194" fill="#f7c94f" font-size="11" font-family="sans-serif" font-weight="bold">AR(p):</text>
+      <text x="25" y="210" fill="#e2e8f0" font-size="11" font-family="sans-serif">X_t = Σαᵢ·X_{t-i} + ε_t</text>
+
+      <text x="25" y="232" fill="#f7c94f" font-size="11" font-family="sans-serif" font-weight="bold">MA(q):</text>
+      <text x="25" y="248" fill="#e2e8f0" font-size="11" font-family="sans-serif">X_t = ε_t + Σβᵢ·ε_{t-i}</text>
+
+      <text x="25" y="270" fill="#f7c94f" font-size="11" font-family="sans-serif" font-weight="bold">Differencing:</text>
+      <text x="25" y="286" fill="#e2e8f0" font-size="11" font-family="sans-serif">∇X_t = X_t - X_{t-1}</text>
+
+      <text x="25" y="308" fill="#f7c94f" font-size="11" font-family="sans-serif" font-weight="bold">Autocorrelation:</text>
+      <text x="25" y="324" fill="#e2e8f0" font-size="11" font-family="sans-serif">ρ(h) = Corr(X_t, X_{t-h})</text>
+
+      <text x="25" y="346" fill="#f7c94f" font-size="11" font-family="sans-serif" font-weight="bold">SARIMA Notation:</text>
+      <text x="25" y="362" fill="#e2e8f0" font-size="11" font-family="sans-serif">SARIMA(p,d,q)(P,D,Q)_k</text>
+
+      <text x="25" y="384" fill="#f7c94f" font-size="11" font-family="sans-serif" font-weight="bold">RMSE:</text>
+      <text x="25" y="400" fill="#e2e8f0" font-size="11" font-family="sans-serif">√(Σ(y-ŷ)²/n)</text>
+
+      <text x="25" y="422" fill="#f7c94f" font-size="11" font-family="sans-serif" font-weight="bold">MAPE:</text>
+      <text x="25" y="438" fill="#e2e8f0" font-size="11" font-family="sans-serif">mean(|y-ŷ|/y) × 100%</text>
+
+      <text x="25" y="460" fill="#f7c94f" font-size="11" font-family="sans-serif" font-weight="bold">AIC:</text>
+      <text x="25" y="476" fill="#e2e8f0" font-size="11" font-family="sans-serif">2k - 2·ln(L) ← কম ভালো</text>
+
+      <!-- Column 2: Rules -->
+      <rect x="240" y="35" width="215" height="470" rx="8" fill="#0d1117" stroke="#2a3148"/>
+      <text x="347" y="55" fill="#4ff7a0" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">📏 ACF/PACF নিয়ম</text>
+      <line x1="245" y1="62" x2="450" y2="62" stroke="#2a3148"/>
+
+      <rect x="248" y="70" width="200" height="55" rx="4" fill="rgba(79,142,247,0.08)"/>
+      <text x="348" y="87" fill="#4f8ef7" font-size="11" font-family="sans-serif" text-anchor="middle" font-weight="bold">AR(p)</text>
+      <text x="348" y="103" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">ACF: tails off (ধীরে কমে)</text>
+      <text x="348" y="118" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">PACF: cuts off after p</text>
+
+      <rect x="248" y="135" width="200" height="55" rx="4" fill="rgba(124,106,247,0.08)"/>
+      <text x="348" y="152" fill="#7c6af7" font-size="11" font-family="sans-serif" text-anchor="middle" font-weight="bold">MA(q)</text>
+      <text x="348" y="168" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">ACF: cuts off after q</text>
+      <text x="348" y="183" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">PACF: tails off (ধীরে কমে)</text>
+
+      <rect x="248" y="200" width="200" height="55" rx="4" fill="rgba(247,201,79,0.06)"/>
+      <text x="348" y="217" fill="#f7c94f" font-size="11" font-family="sans-serif" text-anchor="middle" font-weight="bold">ARMA(p,q)</text>
+      <text x="348" y="233" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">ACF: tails off</text>
+      <text x="348" y="248" fill="#94a3b8" font-size="11" font-family="sans-serif" text-anchor="middle">PACF: tails off উভয়ই</text>
+
+      <text x="248" y="278" fill="#4ff7a0" font-size="11" font-family="sans-serif" font-weight="bold">Seasonal Orders:</text>
+      <text x="248" y="294" fill="#94a3b8" font-size="11" font-family="sans-serif">Lag 12, 24, 36 দেখো</text>
+      <text x="248" y="310" fill="#94a3b8" font-size="11" font-family="sans-serif">Same rules apply করো</text>
+
+      <text x="248" y="335" fill="#4ff7a0" font-size="11" font-family="sans-serif" font-weight="bold">Residual Checks:</text>
+      <text x="248" y="351" fill="#94a3b8" font-size="11" font-family="sans-serif">Ljung-Box p &gt; 0.05 ✓</text>
+      <text x="248" y="367" fill="#94a3b8" font-size="11" font-family="sans-serif">Jarque-Bera p &gt; 0.05 ✓</text>
+      <text x="248" y="383" fill="#94a3b8" font-size="11" font-family="sans-serif">ACF of residual flat ✓</text>
+
+      <text x="248" y="408" fill="#4ff7a0" font-size="11" font-family="sans-serif" font-weight="bold">ADF Test:</text>
+      <text x="248" y="424" fill="#94a3b8" font-size="11" font-family="sans-serif">p &lt; 0.05 → Stationary ✓</text>
+      <text x="248" y="440" fill="#94a3b8" font-size="11" font-family="sans-serif">p ≥ 0.05 → Difference করো</text>
+
+      <text x="248" y="465" fill="#4ff7a0" font-size="11" font-family="sans-serif" font-weight="bold">Model Compare:</text>
+      <text x="248" y="481" fill="#94a3b8" font-size="11" font-family="sans-serif">AIC/BIC কম = ভালো model</text>
+
+      <!-- Column 3: Python Snippets -->
+      <rect x="465" y="35" width="220" height="470" rx="8" fill="#0d1117" stroke="#2a3148"/>
+      <text x="575" y="55" fill="#f7614f" font-size="12" font-family="sans-serif" text-anchor="middle" font-weight="bold">🐍 Quick Code</text>
+      <line x1="470" y1="62" x2="680" y2="62" stroke="#2a3148"/>
+
+      <text x="475" y="80" fill="#f7c94f" font-size="10" font-family="monospace">Load:</text>
+      <text x="475" y="95" fill="#a5d6ff" font-size="10" font-family="monospace">pd.read_csv(f,</text>
+      <text x="475" y="108" fill="#a5d6ff" font-size="10" font-family="monospace">  index_col=0,</text>
+      <text x="475" y="121" fill="#a5d6ff" font-size="10" font-family="monospace">  parse_dates=True)</text>
+
+      <text x="475" y="140" fill="#f7c94f" font-size="10" font-family="monospace">Log + Diff:</text>
+      <text x="475" y="155" fill="#a5d6ff" font-size="10" font-family="monospace">np.log(s).diff()</text>
+      <text x="475" y="168" fill="#a5d6ff" font-size="10" font-family="monospace">  .diff(12).dropna()</text>
+
+      <text x="475" y="187" fill="#f7c94f" font-size="10" font-family="monospace">Decompose:</text>
+      <text x="475" y="202" fill="#a5d6ff" font-size="10" font-family="monospace">seasonal_decompose(</text>
+      <text x="475" y="215" fill="#a5d6ff" font-size="10" font-family="monospace">  s, model='mult')</text>
+
+      <text x="475" y="234" fill="#f7c94f" font-size="10" font-family="monospace">ADF Test:</text>
+      <text x="475" y="249" fill="#a5d6ff" font-size="10" font-family="monospace">adfuller(s)[1]&lt;.05</text>
+
+      <text x="475" y="268" fill="#f7c94f" font-size="10" font-family="monospace">SARIMA Fit:</text>
+      <text x="475" y="283" fill="#a5d6ff" font-size="10" font-family="monospace">sm.tsa.SARIMAX(s,</text>
+      <text x="475" y="296" fill="#a5d6ff" font-size="10" font-family="monospace">  order=(p,d,q),</text>
+      <text x="475" y="309" fill="#a5d6ff" font-size="10" font-family="monospace">  seasonal_order=</text>
+      <text x="475" y="322" fill="#a5d6ff" font-size="10" font-family="monospace">  (P,D,Q,12)).fit()</text>
+
+      <text x="475" y="341" fill="#f7c94f" font-size="10" font-family="monospace">Predict:</text>
+      <text x="475" y="356" fill="#a5d6ff" font-size="10" font-family="monospace">np.exp(m.forecast(</text>
+      <text x="475" y="369" fill="#a5d6ff" font-size="10" font-family="monospace">  steps=12))</text>
+
+      <text x="475" y="388" fill="#f7c94f" font-size="10" font-family="monospace">Prophet:</text>
+      <text x="475" y="403" fill="#a5d6ff" font-size="10" font-family="monospace">m=Prophet().fit(df)</text>
+      <text x="475" y="416" fill="#a5d6ff" font-size="10" font-family="monospace">f=m.make_future_</text>
+      <text x="475" y="429" fill="#a5d6ff" font-size="10" font-family="monospace">  dataframe(12,'ME')</text>
+      <text x="475" y="442" fill="#a5d6ff" font-size="10" font-family="monospace">m.predict(f)</text>
+
+      <text x="475" y="461" fill="#f7c94f" font-size="10" font-family="monospace">Lag Feature:</text>
+      <text x="475" y="476" fill="#a5d6ff" font-size="10" font-family="monospace">df['lag1']=</text>
+      <text x="475" y="489" fill="#a5d6ff" font-size="10" font-family="monospace">  s.shift(1)</text>
+    </svg>
+    <div class="svg-label">সম্পূর্ণ চিট শিট — সূত্র, নিয়ম, এবং কোড এক জায়গায়</div>
+  </div>
+
+  <!-- Final Interview Rapid Fire -->
+  <div class="interview-box" style="margin-top:30px">
+    <div class="interview-title">⚡ Rapid Fire Interview Questions (সংক্ষিপ্ত উত্তর)</div>
+
+    <div class="grid-2">
+      <div class="ex-item">
+        <div class="ex-q">Q: White noise কী?</div>
+        <button class="toggle-btn" onclick="toggleAns(this)">উত্তর</button>
+        <div class="ex-ans"><p>Mean = 0, constant variance, কোনো autocorrelation নেই — সম্পূর্ণ random। ভালো model এর residual হওয়া উচিত white noise।</p></div>
+      </div>
+
+      <div class="ex-item">
+        <div class="ex-q">Q: Overfitting টাইম সিরিজে কীভাবে ধরবে?</div>
+        <button class="toggle-btn" onclick="toggleAns(this)">উত্তর</button>
+        <div class="ex-ans"><p>Train error খুব কম কিন্তু Test error অনেক বেশি। Solution: সহজ model (কম orders), cross-validation, information criteria (AIC/BIC) দিয়ে select করো।</p></div>
+      </div>
+
+      <div class="ex-item">
+        <div class="ex-q">Q: Prophet কি SARIMA এর চেয়ে সবসময় ভালো?</div>
+        <button class="toggle-btn" onclick="toggleAns(this)">উত্তর</button>
+        <div class="ex-ans"><p>না। SARIMA: ছোট dataset, interpretability দরকার হলে। Prophet: holiday effects আছে, missing data আছে, non-linear trend আছে। নির্ভর করে use-case এর উপর।</p></div>
+      </div>
+
+      <div class="ex-item">
+        <div class="ex-q">Q: Seasonal differencing কী বোঝায়?</div>
+        <button class="toggle-btn" onclick="toggleAns(this)">উত্তর</button>
+        <div class="ex-ans"><p>X_t থেকে X_{t-k} বিয়োগ করা, যেখানে k হলো season period। মাসিক ডেটায়: এই মাসের মান - গত বছরের এই মাসের মান। Seasonality বাদ দেওয়ার জন্য।</p></div>
+      </div>
+
+      <div class="ex-item">
+        <div class="ex-q">Q: MAPE এর সমস্যা কী?</div>
+        <button class="toggle-btn" onclick="toggleAns(this)">উত্তর</button>
+        <div class="ex-ans"><p>y_true = 0 হলে infinity হয়ে যায়। ছোট values এ asymmetric — under-forecast কে বেশি penalize করে। Alternative: sMAPE বা MASE ব্যবহার করো।</p></div>
+      </div>
+
+      <div class="ex-item">
+        <div class="ex-q">Q: Time series এ feature scaling দরকার কি?</div>
+        <button class="toggle-btn" onclick="toggleAns(this)">উত্তর</button>
+        <div class="ex-ans"><p>ARIMA/SARIMA/Prophet এ না। কিন্তু Regression-based বা Neural Network based model এ হ্যাঁ। তবে scaling করলে inverse transform করতে হবে predictions এ।</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Final closing card -->
+  <div class="card green" style="margin-top: 32px; text-align:center; padding: 32px;">
+    <div class="card-title" style="text-align:center; font-size:16px; margin-bottom:16px">🎉 অভিনন্দন! সম্পূর্ণ Course শেষ করলে!</div>
+    <p style="font-size:15px; margin-bottom:16px">তুমি এই guide এ শিখেছো:</p>
+    <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:16px">
+      <span class="badge badge-blue">টাইম সিরিজ বেসিক</span>
+      <span class="badge badge-green">Decomposition</span>
+      <span class="badge badge-yellow">Moving Average</span>
+      <span class="badge badge-blue">Regression + Lag</span>
+      <span class="badge badge-green">AR ও MA Process</span>
+      <span class="badge badge-yellow">ARIMA</span>
+      <span class="badge badge-red">SARIMA</span>
+      <span class="badge badge-blue">Prophet</span>
+      <span class="badge badge-green">ADF Test</span>
+      <span class="badge badge-yellow">ACF ও PACF</span>
+      <span class="badge badge-red">Interview Prep</span>
+      <span class="badge badge-blue">Production Code</span>
+    </div>
+    <p style="color:#64748b; font-size:13px">Next Steps: LSTM / Transformer-based time series models, XGBoost for forecasting, LightGBM with lag features</p>
+  </div>
+
+</div><!-- /section 14 -->
+
+</div><!-- /content -->
+</div><!-- /layout -->
+
+<a href="#top" class="scroll-top">↑</a>
+
+<script>
+// Progress bar
+window.addEventListener('scroll', () => {
+  const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progress').style.width = scrolled + '%';
+});
+
+// Toggle answer
+function toggleAns(btn) {
+  const ans = btn.nextElementSibling;
+  if (ans.style.display === 'block') {
+    ans.style.display = 'none';
+    btn.textContent = 'উত্তর দেখো';
+  } else {
+    ans.style.display = 'block';
+    btn.textContent = 'লুকাও';
+  }
+}
+</script>
+</body>
+</html>

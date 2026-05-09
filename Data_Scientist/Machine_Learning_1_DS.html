@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine Learning 1 — বাংলা লেকচার সিরিজ</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+<style>
+
+/* ─────────────────────────────────────────────────
+   DESIGN TOKENS
+───────────────────────────────────────────────── */
+:root {
+  --bg:          #080c14;
+  --bg2:         #0d1220;
+  --bg3:         #111827;
+  --bg4:         #1a2236;
+  --border:      rgba(255,255,255,0.07);
+  --border2:     rgba(255,255,255,0.12);
+
+  --cyan:        #22d3ee;
+  --violet:      #a78bfa;
+  --amber:       #fbbf24;
+  --emerald:     #34d399;
+  --rose:        #fb7185;
+  --teal:        #2dd4bf;
+  --indigo:      #818cf8;
+
+  --text:        #e2e8f0;
+  --text2:       #94a3b8;
+  --text3:       #64748b;
+
+  --radius:      16px;
+  --radius-sm:   10px;
+  --shadow:      0 8px 40px rgba(0,0,0,0.6);
+  --shadow-sm:   0 2px 12px rgba(0,0,0,0.4);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Hind Siliguri', sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 15% 5%,  rgba(34,211,238,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 85% 90%, rgba(167,139,250,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(251,191,36,0.03) 0%, transparent 60%);
+}
+
+/* ─── NOISE OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  opacity: 0.018;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* ─────────────────────────────────────────────────
+   TOP NAV
+───────────────────────────────────────────────── */
+.topnav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 58px;
+  background: rgba(8,12,20,0.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 1rem;
+  padding: 0 2rem;
+}
+
+.topnav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 900;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+  margin-right: 0.5rem;
+}
+
+.topnav-links {
+  display: flex; gap: 0.25rem;
+  overflow-x: auto; flex: 1;
+  -ms-overflow-style: none; scrollbar-width: none;
+}
+.topnav-links::-webkit-scrollbar { display: none; }
+
+.topnav-link {
+  color: var(--text3);
+  text-decoration: none;
+  font-size: 0.78rem; font-weight: 500;
+  padding: 4px 10px; border-radius: 6px;
+  white-space: nowrap;
+  transition: all 0.18s;
+}
+.topnav-link:hover { color: var(--cyan); background: rgba(34,211,238,0.08); }
+
+/* ─────────────────────────────────────────────────
+   WRAPPER
+───────────────────────────────────────────────── */
+.wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 1.5rem 5rem;
+  position: relative; z-index: 1;
+}
+
+/* ─────────────────────────────────────────────────
+   HERO
+───────────────────────────────────────────────── */
+.hero {
+  text-align: center;
+  padding: 5rem 2rem 4rem;
+  position: relative;
+}
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(34,211,238,0.08);
+  border: 1px solid rgba(34,211,238,0.22);
+  color: var(--cyan);
+  font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 5px 16px; border-radius: 50px;
+  margin-bottom: 1.8rem;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 6vw, 4.2rem);
+  font-weight: 900;
+  line-height: 1.15;
+  background: linear-gradient(145deg, #e2e8f0 30%, var(--cyan) 70%, var(--violet));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.2rem;
+}
+
+.hero-sub {
+  font-family: 'Tiro Bangla', serif;
+  font-size: 1.15rem;
+  color: var(--text2);
+  max-width: 650px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.9;
+}
+
+.hero-badges {
+  display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: 50px;
+  font-size: 0.76rem; font-weight: 600;
+  border: 1px solid; white-space: nowrap;
+}
+.badge-cyan    { color: var(--cyan);    border-color: rgba(34,211,238,0.28);  background: rgba(34,211,238,0.06); }
+.badge-violet  { color: var(--violet);  border-color: rgba(167,139,250,0.28); background: rgba(167,139,250,0.06); }
+.badge-amber   { color: var(--amber);   border-color: rgba(251,191,36,0.28);  background: rgba(251,191,36,0.06); }
+.badge-emerald { color: var(--emerald); border-color: rgba(52,211,153,0.28);  background: rgba(52,211,153,0.06); }
+.badge-rose    { color: var(--rose);    border-color: rgba(251,113,133,0.28); background: rgba(251,113,133,0.06); }
+
+/* ─────────────────────────────────────────────────
+   PROGRESS / ROADMAP SVG STRIP
+───────────────────────────────────────────────── */
+.roadmap-wrap {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem 1.5rem;
+  margin-bottom: 3rem;
+  overflow-x: auto;
+}
+
+.roadmap-title {
+  font-family: 'Tiro Bangla', serif;
+  font-size: 1rem; color: var(--text2);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.04em;
+}
+
+/* ─────────────────────────────────────────────────
+   COURSE PATH SECTION
+───────────────────────────────────────────────── */
+.section-label {
+  display: flex; align-items: center; gap: 0.8rem;
+  margin-bottom: 1.8rem;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border2), transparent);
+}
+.section-label-text {
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text3);
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────
+   LECTURE CARDS
+───────────────────────────────────────────────── */
+.lectures-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+@media (max-width: 680px) {
+  .lectures-grid { grid-template-columns: 1fr; }
+}
+
+.lecture-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  display: flex; flex-direction: column;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+  position: relative;
+}
+.lecture-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--card-glow);
+  opacity: 0;
+  transition: opacity 0.3s;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.lecture-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+}
+.lecture-card:hover::before { opacity: 1; }
+.lecture-card:hover { border-color: var(--card-accent); }
+
+/* colour themes per card */
+.card-1 {
+  --card-accent: rgba(34,211,238,0.4);
+  --card-glow: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(34,211,238,0.05), transparent);
+}
+.card-2 {
+  --card-accent: rgba(251,191,36,0.4);
+  --card-glow: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(251,191,36,0.05), transparent);
+}
+.card-3 {
+  --card-accent: rgba(167,139,250,0.4);
+  --card-glow: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(167,139,250,0.05), transparent);
+}
+.card-4 {
+  --card-accent: rgba(52,211,153,0.4);
+  --card-glow: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(52,211,153,0.05), transparent);
+}
+
+/* ── card header ── */
+.card-header {
+  padding: 1.5rem 1.6rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 1rem;
+  background: var(--bg4);
+}
+
+.card-num {
+  flex-shrink: 0;
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem; font-weight: 700;
+  color: #fff;
+}
+.card-1 .card-num { background: linear-gradient(135deg, #06b6d4, #3b82f6); }
+.card-2 .card-num { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+.card-3 .card-num { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+.card-4 .card-num { background: linear-gradient(135deg, #10b981, #06b6d4); }
+
+.card-meta { flex: 1; }
+
+.card-lecture-tag {
+  font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+.card-1 .card-lecture-tag { color: var(--cyan); }
+.card-2 .card-lecture-tag { color: var(--amber); }
+.card-3 .card-lecture-tag { color: var(--violet); }
+.card-4 .card-lecture-tag { color: var(--emerald); }
+
+.card-title {
+  font-family: 'Tiro Bangla', serif;
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.card-title-en {
+  font-size: 0.8rem;
+  color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 2px;
+}
+
+/* ── card body ── */
+.card-body {
+  padding: 1.2rem 1.6rem 1.4rem;
+  flex: 1;
+}
+
+.card-desc {
+  font-size: 0.9rem;
+  color: var(--text2);
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+
+.card-topics {
+  display: flex; flex-wrap: wrap; gap: 0.45rem;
+  margin-bottom: 1.2rem;
+}
+
+.topic-chip {
+  font-size: 0.71rem; font-weight: 600;
+  padding: 3px 10px; border-radius: 50px;
+  border: 1px solid;
+}
+.card-1 .topic-chip { color: var(--cyan);    border-color: rgba(34,211,238,0.22);  background: rgba(34,211,238,0.06); }
+.card-2 .topic-chip { color: var(--amber);   border-color: rgba(251,191,36,0.22);  background: rgba(251,191,36,0.06); }
+.card-3 .topic-chip { color: var(--violet);  border-color: rgba(167,139,250,0.22); background: rgba(167,139,250,0.06); }
+.card-4 .topic-chip { color: var(--emerald); border-color: rgba(52,211,153,0.22);  background: rgba(52,211,153,0.06); }
+
+/* ── card footer ── */
+.card-footer {
+  padding: 1rem 1.6rem;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(0,0,0,0.15);
+}
+
+.card-stats {
+  display: flex; gap: 1.2rem;
+}
+.card-stat {
+  font-size: 0.75rem; color: var(--text3);
+  display: flex; align-items: center; gap: 4px;
+}
+
+.card-cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.8rem; font-weight: 700;
+  padding: 7px 16px; border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.18s;
+  color: #fff;
+}
+.card-1 .card-cta { background: rgba(34,211,238,0.18);  }
+.card-2 .card-cta { background: rgba(251,191,36,0.18);  }
+.card-3 .card-cta { background: rgba(167,139,250,0.18); }
+.card-4 .card-cta { background: rgba(52,211,153,0.18);  }
+.card-cta:hover { transform: translateX(3px); }
+
+/* ── cta arrow icon ── */
+.cta-arrow { font-size: 1rem; transition: transform 0.18s; }
+.lecture-card:hover .cta-arrow { transform: translateX(4px); }
+
+/* ─────────────────────────────────────────────────
+   QUICK-REF TABLE
+───────────────────────────────────────────────── */
+.quick-ref {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 3rem;
+}
+
+.quick-ref-header {
+  padding: 1.2rem 1.6rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg4);
+  display: flex; align-items: center; gap: 0.8rem;
+}
+.quick-ref-header h2 {
+  font-family: 'Tiro Bangla', serif;
+  font-size: 1.1rem; font-weight: 400;
+  color: var(--text);
+}
+
+table.ref-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.87rem;
+}
+table.ref-table th {
+  background: var(--bg4);
+  color: var(--text3);
+  font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 10px 16px; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+table.ref-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  color: var(--text2);
+}
+table.ref-table tr:last-child td { border-bottom: none; }
+table.ref-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+.ref-lec-tag {
+  display: inline-block;
+  font-size: 0.68rem; font-weight: 700;
+  padding: 2px 9px; border-radius: 50px;
+  border: 1px solid; white-space: nowrap;
+}
+.tag-1 { color: var(--cyan);    border-color: rgba(34,211,238,0.3);  background: rgba(34,211,238,0.07); }
+.tag-2 { color: var(--amber);   border-color: rgba(251,191,36,0.3);  background: rgba(251,191,36,0.07); }
+.tag-3 { color: var(--violet);  border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.07); }
+.tag-4 { color: var(--emerald); border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.07); }
+
+td code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  padding: 2px 7px; border-radius: 5px;
+  color: var(--cyan);
+}
+
+/* ─────────────────────────────────────────────────
+   TIPS / INFO BOX
+───────────────────────────────────────────────── */
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.tip-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--tip-color);
+  border-radius: var(--radius-sm);
+  padding: 1.2rem 1.4rem;
+}
+.tip-card .tip-label {
+  font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--tip-color);
+  margin-bottom: 0.5rem;
+}
+.tip-card p { font-size: 0.88rem; color: var(--text2); line-height: 1.7; }
+.tip-card.tip-blue   { --tip-color: var(--cyan); }
+.tip-card.tip-yellow { --tip-color: var(--amber); }
+.tip-card.tip-purple { --tip-color: var(--violet); }
+.tip-card.tip-green  { --tip-color: var(--emerald); }
+
+/* ─────────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────────── */
+.site-footer {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--text3);
+}
+
+/* ─────────────────────────────────────────────────
+   BACK TO TOP
+───────────────────────────────────────────────── */
+#back-top {
+  position: fixed; bottom: 28px; right: 28px;
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, var(--cyan), var(--violet));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #000; font-size: 1.1rem; font-weight: 800;
+  text-decoration: none; z-index: 99;
+  box-shadow: 0 4px 16px rgba(34,211,238,0.35);
+  transition: transform 0.2s;
+}
+#back-top:hover { transform: translateY(-3px); }
+
+/* ─────────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .hero { padding: 3.5rem 1rem 2.5rem; }
+  .topnav { padding: 0 1rem; }
+  .wrapper { padding: 70px 1rem 4rem; }
+  table.ref-table { font-size: 0.8rem; }
+  table.ref-table th, table.ref-table td { padding: 9px 10px; }
+}
+
+</style>
+</head>
+<body>
+<a id="top"></a>
+
+<!-- ══════════════════════════════════════════════
+     TOP NAVIGATION
+══════════════════════════════════════════════ -->
+<nav class="topnav">
+  <span class="topnav-logo">ML-1 বাংলা</span>
+  <div class="topnav-links">
+    <a class="topnav-link" href="#lectures">লেকচার</a>
+    <a class="topnav-link" href="#roadmap">রোডম্যাপ</a>
+    <a class="topnav-link" href="#quickref">দ্রুত রেফারেন্স</a>
+    <a class="topnav-link" href="#tips">টিপস</a>
+    <a class="topnav-link" href="Machine_Learning_1_Lectures/masterclass_bengali.html" target="_blank">লেকচার ১ ↗</a>
+    <a class="topnav-link" href="Machine_Learning_1_Lectures/sklearn_regression_bengali_final.html" target="_blank">লেকচার ২ ↗</a>
+    <a class="topnav-link" href="Machine_Learning_1_Lectures/Classification.html" target="_blank">লেকচার ৩ ↗</a>
+    <a class="topnav-link" href="Machine_Learning_1_Lectures/clustering_bengali_guide.html" target="_blank">লেকচার ৪ ↗</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════ -->
+<div class="wrapper">
+
+<section class="hero">
+  <div class="hero-eyebrow">📚 সম্পূর্ণ বাংলা কোর্স</div>
+  <h1>Machine Learning 1<br>বাংলা লেকচার সিরিজ</h1>
+  <p class="hero-sub">
+    Scikit-learn ব্যবহার করে মেশিন লার্নিং — একদম শূন্য থেকে। ডেটা পরিষ্কার, রিগ্রেশন, ক্লাসিফিকেশন, ক্লাস্টারিং — সব বাংলায়।
+  </p>
+  <div class="hero-badges">
+    <span class="badge badge-cyan">🐍 Python</span>
+    <span class="badge badge-violet">📊 scikit-learn</span>
+    <span class="badge badge-amber">🌲 Ensemble</span>
+    <span class="badge badge-emerald">🔍 GridSearchCV</span>
+    <span class="badge badge-rose">📈 Regression</span>
+    <span class="badge badge-cyan">🧩 Clustering</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     ROADMAP SVG
+══════════════════════════════════════════════ -->
+<div class="roadmap-wrap" id="roadmap">
+  <p class="roadmap-title">📍 শিক্ষার ধাপসমূহ — পর্যায়ক্রমিক পাঠ্যক্রম</p>
+  <svg viewBox="0 0 1000 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:680px;display:block;">
+    <defs>
+      <marker id="rm-arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+        <polygon points="0 0, 9 3.5, 0 7" fill="#475569"/>
+      </marker>
+      <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:0.8"/>
+        <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:0.8"/>
+      </linearGradient>
+      <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.8"/>
+        <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0.8"/>
+      </linearGradient>
+      <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.8"/>
+        <stop offset="100%" style="stop-color:#ec4899;stop-opacity:0.8"/>
+      </linearGradient>
+      <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.8"/>
+        <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:0.8"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Connecting line -->
+    <line x1="100" y1="65" x2="900" y2="65" stroke="#1e293b" stroke-width="2"/>
+
+    <!-- Arrow connectors -->
+    <line x1="218" y1="65" x2="278" y2="65" stroke="#334155" stroke-width="2" marker-end="url(#rm-arrow)"/>
+    <line x1="468" y1="65" x2="528" y2="65" stroke="#334155" stroke-width="2" marker-end="url(#rm-arrow)"/>
+    <line x1="718" y1="65" x2="778" y2="65" stroke="#334155" stroke-width="2" marker-end="url(#rm-arrow)"/>
+
+    <!-- Node 1 -->
+    <rect x="20" y="25" width="200" height="80" rx="12" fill="#0d1220" stroke="#06b6d4" stroke-width="1.5"/>
+    <rect x="20" y="25" width="200" height="8" rx="6" fill="url(#grad1)"/>
+    <text x="120" y="56" text-anchor="middle" fill="#22d3ee" font-size="13" font-weight="700" font-family="sans-serif">লেকচার ১</text>
+    <text x="120" y="73" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">ML ভিত্তি ও Preprocessing</text>
+    <text x="120" y="89" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">Pipeline · GridSearchCV</text>
+
+    <!-- Node 2 -->
+    <rect x="280" y="25" width="190" height="80" rx="12" fill="#0d1220" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="280" y="25" width="190" height="8" rx="6" fill="url(#grad2)"/>
+    <text x="375" y="56" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="700" font-family="sans-serif">লেকচার ২</text>
+    <text x="375" y="73" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">Regression — SLR · MLR</text>
+    <text x="375" y="89" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">Polynomial · Evaluation</text>
+
+    <!-- Node 3 -->
+    <rect x="530" y="25" width="190" height="80" rx="12" fill="#0d1220" stroke="#8b5cf6" stroke-width="1.5"/>
+    <rect x="530" y="25" width="190" height="8" rx="6" fill="url(#grad3)"/>
+    <text x="625" y="56" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="700" font-family="sans-serif">লেকচার ৩</text>
+    <text x="625" y="73" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">Classification — SVM · RF</text>
+    <text x="625" y="89" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">KNN · Naive Bayes · XGB</text>
+
+    <!-- Node 4 -->
+    <rect x="780" y="25" width="200" height="80" rx="12" fill="#0d1220" stroke="#10b981" stroke-width="1.5"/>
+    <rect x="780" y="25" width="200" height="8" rx="6" fill="url(#grad4)"/>
+    <text x="880" y="56" text-anchor="middle" fill="#34d399" font-size="13" font-weight="700" font-family="sans-serif">লেকচার ৪</text>
+    <text x="880" y="73" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">Clustering — K-Means · HCA</text>
+    <text x="880" y="89" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="sans-serif">Mean Shift · Evaluation</text>
+  </svg>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     LECTURE CARDS
+══════════════════════════════════════════════ -->
+<div class="section-label" id="lectures">
+  <span class="section-label-text">📖 সকল লেকচার</span>
+</div>
+
+<div class="lectures-grid">
+
+  <!-- ── CARD 1: Masterclass (Foundations) ── -->
+  <a class="lecture-card card-1" href="Machine_Learning_1_Lectures/masterclass_bengali.html" target="_blank">
+    <div class="card-header">
+      <div class="card-num">০১</div>
+      <div class="card-meta">
+        <div class="card-lecture-tag">লেকচার ১ · ভিত্তি</div>
+        <div class="card-title">মেশিন লার্নিং মাস্টারক্লাস</div>
+        <div class="card-title-en">masterclass_bengali.html</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="card-desc">
+        ML-এর একদম গোড়া থেকে — Supervised vs Unsupervised, ডেটা লোড, Missing Value, Train-Test Split, Encoding, Scaling, তিনটি মডেল তুলনা, Confusion Matrix, Feature Importance, Pipeline, GridSearchCV, Custom Metric এবং Joblib দিয়ে মডেল সংরক্ষণ।
+      </p>
+      <div class="card-topics">
+        <span class="topic-chip">Supervised Learning</span>
+        <span class="topic-chip">Data Cleaning</span>
+        <span class="topic-chip">Imputation</span>
+        <span class="topic-chip">Encoding</span>
+        <span class="topic-chip">StandardScaler</span>
+        <span class="topic-chip">Random Forest</span>
+        <span class="topic-chip">GridSearchCV</span>
+        <span class="topic-chip">Joblib</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="card-stats">
+        <span class="card-stat">📑 ১১ অধ্যায়</span>
+        <span class="card-stat">🎯 ১০+ এক্সার্সাইজ</span>
+        <span class="card-stat">💻 সম্পূর্ণ Pipeline</span>
+      </div>
+      <span class="card-cta">পড়ুন <span class="cta-arrow">→</span></span>
+    </div>
+  </a>
+
+  <!-- ── CARD 2: Regression ── -->
+  <a class="lecture-card card-2" href="Machine_Learning_1_Lectures/sklearn_regression_bengali_final.html" target="_blank">
+    <div class="card-header">
+      <div class="card-num">০২</div>
+      <div class="card-meta">
+        <div class="card-lecture-tag">লেকচার ২ · রিগ্রেশন</div>
+        <div class="card-title">Scikit-Learn দিয়ে Regression</div>
+        <div class="card-title-en">sklearn_regression_bengali_final.html</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="card-desc">
+        NBA player dataset ব্যবহার করে Real-world Regression — Simple Linear Regression (SLR), Multiple Linear Regression (MLR), Polynomial Regression এবং Regularization। Residual plot, R² score, RMSE — সব metrics বিস্তারিত বাংলায়। Data Leakage এড়ানোর সঠিক পদ্ধতি।
+      </p>
+      <div class="card-topics">
+        <span class="topic-chip">SLR / MLR</span>
+        <span class="topic-chip">Polynomial</span>
+        <span class="topic-chip">Ridge / Lasso</span>
+        <span class="topic-chip">R² Score</span>
+        <span class="topic-chip">RMSE / MAE</span>
+        <span class="topic-chip">Residuals</span>
+        <span class="topic-chip">NBA Dataset</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="card-stats">
+        <span class="card-stat">📑 ৮+ সেকশন</span>
+        <span class="card-stat">📊 Sidebar Nav</span>
+        <span class="card-stat">📈 Real Dataset</span>
+      </div>
+      <span class="card-cta">পড়ুন <span class="cta-arrow">→</span></span>
+    </div>
+  </a>
+
+  <!-- ── CARD 3: Classification ── -->
+  <a class="lecture-card card-3" href="Machine_Learning_1_Lectures/Classification.html" target="_blank">
+    <div class="card-header">
+      <div class="card-num">০৩</div>
+      <div class="card-meta">
+        <div class="card-lecture-tag">লেকচার ৩ · ক্লাসিফিকেশন</div>
+        <div class="card-title">Scikit-Learn ML সম্পূর্ণ গাইড</div>
+        <div class="card-title-en">Classification.html · Notebooks 00–08</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="card-desc">
+        সবচেয়ে বিস্তারিত লেকচার — ৮টি Notebook জুড়ে SVM (Wine), KNN (Iris), Naive Bayes, Decision Tree, Random Forest, XGBoost, Ensemble Methods এবং Neural Network basics। প্রতিটি অ্যালগরিদম বাচ্চাদের মতো করে ব্যাখ্যা, তারপর সম্পূর্ণ Python implementation।
+      </p>
+      <div class="card-topics">
+        <span class="topic-chip">SVM</span>
+        <span class="topic-chip">KNN</span>
+        <span class="topic-chip">Naive Bayes</span>
+        <span class="topic-chip">Decision Tree</span>
+        <span class="topic-chip">XGBoost</span>
+        <span class="topic-chip">Ensemble</span>
+        <span class="topic-chip">Neural Net</span>
+        <span class="topic-chip">ROC / AUC</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="card-stats">
+        <span class="card-stat">📑 Notebooks 00–08</span>
+        <span class="card-stat">🎯 সবচেয়ে বিস্তারিত</span>
+        <span class="card-stat">🧠 ৮+ Algorithm</span>
+      </div>
+      <span class="card-cta">পড়ুন <span class="cta-arrow">→</span></span>
+    </div>
+  </a>
+
+  <!-- ── CARD 4: Clustering ── -->
+  <a class="lecture-card card-4" href="Machine_Learning_1_Lectures/clustering_bengali_guide.html" target="_blank">
+    <div class="card-header">
+      <div class="card-num">০৪</div>
+      <div class="card-meta">
+        <div class="card-lecture-tag">লেকচার ৪ · ক্লাস্টারিং</div>
+        <div class="card-title">Clustering সম্পূর্ণ মাস্টারক্লাস</div>
+        <div class="card-title-en">clustering_bengali_guide.html</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="card-desc">
+        Unsupervised Learning-এর জগতে প্রবেশ — K-Means (Elbow Method, Silhouette Score), Hierarchical Clustering (Dendrogram), Mean Shift এবং DBSCAN। Customer segmentation, image compression এবং medical imaging-এ বাস্তব প্রয়োগ।
+      </p>
+      <div class="card-topics">
+        <span class="topic-chip">K-Means</span>
+        <span class="topic-chip">Elbow Method</span>
+        <span class="topic-chip">HCA / Dendrogram</span>
+        <span class="topic-chip">Mean Shift</span>
+        <span class="topic-chip">DBSCAN</span>
+        <span class="topic-chip">Silhouette Score</span>
+        <span class="topic-chip">Image Compression</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="card-stats">
+        <span class="card-stat">📑 ৫+ অধ্যায়</span>
+        <span class="card-stat">🧩 Unsupervised</span>
+        <span class="card-stat">🖼️ Image Applications</span>
+      </div>
+      <span class="card-cta">পড়ুন <span class="cta-arrow">→</span></span>
+    </div>
+  </a>
+
+</div><!-- /lectures-grid -->
+
+
+<!-- ══════════════════════════════════════════════
+     QUICK REFERENCE TABLE
+══════════════════════════════════════════════ -->
+<div class="section-label" id="quickref">
+  <span class="section-label-text">⚡ দ্রুত রেফারেন্স</span>
+</div>
+
+<div class="quick-ref">
+  <div class="quick-ref-header">
+    <span style="font-size:1.2rem">📋</span>
+    <h2>পাঠ্যক্রম অনুযায়ী বিষয়বস্তু ও Scikit-learn API</h2>
+  </div>
+  <div style="overflow-x:auto">
+  <table class="ref-table">
+    <thead>
+      <tr>
+        <th>বিষয়</th>
+        <th>Scikit-learn Class / Function</th>
+        <th>কী করে</th>
+        <th>লেকচার</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Train-Test Split</td>
+        <td><code>train_test_split()</code></td>
+        <td>ডেটা ৮০/২০ ভাগে ভাগ করা, Data Leakage এড়ানো</td>
+        <td><span class="ref-lec-tag tag-1">L1, L2</span></td>
+      </tr>
+      <tr>
+        <td>Missing Value পূরণ</td>
+        <td><code>SimpleImputer</code></td>
+        <td>Median (numerical) বা Mode (categorical) দিয়ে NaN পূরণ</td>
+        <td><span class="ref-lec-tag tag-1">L1</span></td>
+      </tr>
+      <tr>
+        <td>Categorical Encoding</td>
+        <td><code>OneHotEncoder</code></td>
+        <td>Text category → binary columns (position কলাম)</td>
+        <td><span class="ref-lec-tag tag-1">L1</span></td>
+      </tr>
+      <tr>
+        <td>Feature Scaling</td>
+        <td><code>StandardScaler</code></td>
+        <td>z = (x − μ) / σ → সব feature একই scale-এ</td>
+        <td><span class="ref-lec-tag tag-1">L1, L2</span></td>
+      </tr>
+      <tr>
+        <td>Linear Regression</td>
+        <td><code>LinearRegression</code></td>
+        <td>সংখ্যাসূচক output predict (house price, salary)</td>
+        <td><span class="ref-lec-tag tag-2">L2</span></td>
+      </tr>
+      <tr>
+        <td>Polynomial Regression</td>
+        <td><code>PolynomialFeatures</code></td>
+        <td>Non-linear relationship ধরতে feature powers তৈরি</td>
+        <td><span class="ref-lec-tag tag-2">L2</span></td>
+      </tr>
+      <tr>
+        <td>Ridge / Lasso</td>
+        <td><code>Ridge</code> / <code>Lasso</code></td>
+        <td>Regularization — overfitting কমানো</td>
+        <td><span class="ref-lec-tag tag-2">L2</span></td>
+      </tr>
+      <tr>
+        <td>Logistic Regression</td>
+        <td><code>LogisticRegression</code></td>
+        <td>Binary classification baseline, Sigmoid output</td>
+        <td><span class="ref-lec-tag tag-1">L1</span> <span class="ref-lec-tag tag-3">L3</span></td>
+      </tr>
+      <tr>
+        <td>Support Vector Machine</td>
+        <td><code>SVC</code></td>
+        <td>Maximum margin hyperplane, kernel trick</td>
+        <td><span class="ref-lec-tag tag-3">L3</span></td>
+      </tr>
+      <tr>
+        <td>K-Nearest Neighbors</td>
+        <td><code>KNeighborsClassifier</code></td>
+        <td>কাছের k প্রতিবেশীদের vote নেওয়া</td>
+        <td><span class="ref-lec-tag tag-3">L3</span></td>
+      </tr>
+      <tr>
+        <td>Naive Bayes</td>
+        <td><code>GaussianNB</code></td>
+        <td>Bayes theorem দিয়ে probabilistic classification</td>
+        <td><span class="ref-lec-tag tag-3">L3</span></td>
+      </tr>
+      <tr>
+        <td>Decision Tree</td>
+        <td><code>DecisionTreeClassifier</code></td>
+        <td>হ্যাঁ/না প্রশ্নের গাছ, interpretable</td>
+        <td><span class="ref-lec-tag tag-1">L1</span> <span class="ref-lec-tag tag-3">L3</span></td>
+      </tr>
+      <tr>
+        <td>Random Forest</td>
+        <td><code>RandomForestClassifier</code></td>
+        <td>অনেক tree → majority vote, সবচেয়ে শক্তিশালী</td>
+        <td><span class="ref-lec-tag tag-1">L1</span> <span class="ref-lec-tag tag-3">L3</span></td>
+      </tr>
+      <tr>
+        <td>XGBoost</td>
+        <td><code>XGBClassifier</code></td>
+        <td>Gradient boosting ensemble, competition-winning</td>
+        <td><span class="ref-lec-tag tag-3">L3</span></td>
+      </tr>
+      <tr>
+        <td>Hyperparameter Search</td>
+        <td><code>GridSearchCV</code></td>
+        <td>সব combination × k-fold CV → সেরা param</td>
+        <td><span class="ref-lec-tag tag-1">L1</span> <span class="ref-lec-tag tag-3">L3</span></td>
+      </tr>
+      <tr>
+        <td>Evaluation (Classification)</td>
+        <td><code>classification_report</code></td>
+        <td>Precision, Recall, F1-score per class</td>
+        <td><span class="ref-lec-tag tag-1">L1</span> <span class="ref-lec-tag tag-3">L3</span></td>
+      </tr>
+      <tr>
+        <td>Evaluation (Regression)</td>
+        <td><code>r2_score</code>, <code>mean_squared_error</code></td>
+        <td>R², RMSE, MAE — regression performance</td>
+        <td><span class="ref-lec-tag tag-2">L2</span></td>
+      </tr>
+      <tr>
+        <td>K-Means Clustering</td>
+        <td><code>KMeans</code></td>
+        <td>n_clusters গ্রুপে ভাগ, centroid iteratively update</td>
+        <td><span class="ref-lec-tag tag-4">L4</span></td>
+      </tr>
+      <tr>
+        <td>Hierarchical Clustering</td>
+        <td><code>AgglomerativeClustering</code></td>
+        <td>Bottom-up merging, dendrogram দেখা</td>
+        <td><span class="ref-lec-tag tag-4">L4</span></td>
+      </tr>
+      <tr>
+        <td>Mean Shift</td>
+        <td><code>MeanShift</code></td>
+        <td>K নির্দিষ্ট করা লাগে না, density-based</td>
+        <td><span class="ref-lec-tag tag-4">L4</span></td>
+      </tr>
+      <tr>
+        <td>Clustering Evaluation</td>
+        <td><code>silhouette_score</code></td>
+        <td>Cluster মান পরিমাপ (−1 থেকে +1, বেশি ভালো)</td>
+        <td><span class="ref-lec-tag tag-4">L4</span></td>
+      </tr>
+      <tr>
+        <td>Model Persistence</td>
+        <td><code>joblib.dump / load</code></td>
+        <td>Trained model disk-এ সেভ ও পরে লোড</td>
+        <td><span class="ref-lec-tag tag-1">L1</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TIPS
+══════════════════════════════════════════════ -->
+<div class="section-label" id="tips">
+  <span class="section-label-text">💡 গুরুত্বপূর্ণ টিপস</span>
+</div>
+
+<div class="tips-grid">
+  <div class="tip-card tip-blue">
+    <div class="tip-label">🔑 সবচেয়ে গুরুত্বপূর্ণ নিয়ম</div>
+    <p><strong>আগে Split, পরে সব কিছু।</strong> Train-Test Split সবসময় Imputation, Scaling, Encoding-এর আগে করতে হবে। তা না হলে Data Leakage হয় — model পরীক্ষার প্রশ্নপত্র আগে দেখে ফেলে!</p>
+  </div>
+  <div class="tip-card tip-yellow">
+    <div class="tip-label">⚠️ fit() শুধু train-এ</div>
+    <p>SimpleImputer, StandardScaler, OneHotEncoder — সবকিছুর <code>fit()</code> শুধু <strong>X_train</strong>-এ করতে হবে। Test set-এ শুধু <code>transform()</code>। এটাই Data Leakage ঠেকানোর মূল পদ্ধতি।</p>
+  </div>
+  <div class="tip-card tip-purple">
+    <div class="tip-label">📊 Accuracy মানেই সব নয়</div>
+    <p>Imbalanced dataset-এ (যেমন: ৯৫% না, ৫% হ্যাঁ) শুধু Accuracy দেখলে ভুল হবে। <strong>Recall</strong> দেখো যখন False Negative বড় সমস্যা (রোগ শনাক্ত, fraud detection)।</p>
+  </div>
+  <div class="tip-card tip-green">
+    <div class="tip-label">🌲 কোন মডেল কখন?</div>
+    <p><strong>Logistic Regression:</strong> Baseline · <strong>Decision Tree:</strong> Interpretability দরকার হলে · <strong>Random Forest:</strong> Best accuracy · <strong>XGBoost:</strong> Competition/production · <strong>K-Means:</strong> Label নেই, grouping দরকার।</p>
+  </div>
+  <div class="tip-card tip-blue">
+    <div class="tip-label">🔍 GridSearchCV ব্যবহার</div>
+    <p>সব hyperparameter combination পরীক্ষা করে। ছোট param grid-এ GridSearchCV, বড় grid-এ RandomizedSearchCV ব্যবহার করো। <code>scoring='recall'</code> দিয়ে target metric নির্দিষ্ট করো।</p>
+  </div>
+  <div class="tip-card tip-yellow">
+    <div class="tip-label">🧩 Clustering-এ K বেছে নেওয়া</div>
+    <p><strong>Elbow Method:</strong> Distortion বনাম K graph-এ "কনুই" খোঁজো। <strong>Silhouette Score:</strong> সর্বোচ্চ score মানে সেরা K। Mean Shift-এ K নির্দিষ্ট করতে হয় না — bandwidth-ই সব নির্ধারণ করে।</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <p>Machine Learning 1 — বাংলা লেকচার সিরিজ &nbsp;|&nbsp; Scikit-learn · Python · বাংলায় ML</p>
+  <p style="margin-top:0.4rem;">📁 ফোল্ডার: <code style="background:var(--bg3);border:1px solid var(--border);padding:2px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--cyan);">Machine_Learning_1_Lectures/</code></p>
+</footer>
+
+</div><!-- /wrapper -->
+
+<a href="#top" id="back-top" title="উপরে যাও">↑</a>
+
+</body>
+</html>

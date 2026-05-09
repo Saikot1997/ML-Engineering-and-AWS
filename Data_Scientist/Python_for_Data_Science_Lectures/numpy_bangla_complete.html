@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NumPy সম্পূর্ণ বাংলা গাইড — Data Science</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bg4:#30363d;--border:#30363d;--text:#e6edf3;--text2:#8b949e;--text3:#6e7681;--accent:#58a6ff;--accent2:#79c0ff;--green:#3fb950;--yellow:#d29922;--orange:#f0883e;--red:#f85149;--purple:#bc8cff;--pink:#ff7b72;--teal:#39d353;--hl:#1f6feb33}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Hind Siliguri',sans-serif;font-size:17px;line-height:1.8}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:255px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;z-index:100;padding:0 0 20px}
+.sidebar-logo{padding:16px 18px 14px;border-bottom:1px solid var(--border);margin-bottom:8px}
+.sidebar-logo h2{font-size:13px;font-weight:700;color:var(--accent)}
+.sidebar-logo p{font-size:11px;color:var(--text3);margin-top:2px}
+.nav-sect{padding:8px 18px 3px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+.nav-link{display:block;padding:5px 18px;font-size:12.5px;color:var(--text2);text-decoration:none;border-left:2px solid transparent;transition:all .15s}
+.nav-link:hover,.nav-link.active{color:var(--accent);border-left-color:var(--accent);background:var(--hl)}
+.nav-link.sub{padding-left:30px;font-size:11.5px}
+
+/* Main */
+.main{margin-left:255px;padding:0 0 80px}
+.hero{background:linear-gradient(135deg,#0d1117 0%,#1a1f2e 50%,#0d1117 100%);border-bottom:1px solid var(--border);padding:55px 60px 45px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,#1f6feb22 0%,transparent 60%);pointer-events:none}
+.hero-badge{display:inline-block;background:var(--hl);border:1px solid var(--accent);color:var(--accent);font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;margin-bottom:14px;letter-spacing:.5px}
+.hero h1{font-family:'Tiro Bangla',serif;font-size:2.4rem;line-height:1.3;color:var(--text);margin-bottom:14px}
+.hero h1 span{color:var(--accent)}
+.hero p{font-size:15px;color:var(--text2);max-width:600px;line-height:1.8}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.tag{background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:11px;padding:2px 10px;border-radius:20px}
+
+/* Sections */
+.sec{padding:48px 60px;border-bottom:1px solid var(--border)}
+.sec:last-child{border-bottom:none}
+.ch{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+.ch-num{display:flex;align-items:center;justify-content:center;width:38px;height:38px;background:var(--accent);color:#000;font-weight:700;font-size:15px;border-radius:9px;flex-shrink:0}
+.ch h2{font-family:'Tiro Bangla',serif;font-size:1.65rem;color:var(--text)}
+h3{font-family:'Tiro Bangla',serif;font-size:1.15rem;color:var(--accent2);margin:26px 0 10px}
+h4{font-size:.95rem;color:var(--orange);margin:18px 0 7px}
+p{margin-bottom:12px;color:var(--text)}
+
+/* Callouts */
+.box{border-radius:8px;padding:14px 18px;margin:18px 0;border-left:4px solid;font-size:15px}
+.info{background:#1f6feb1a;border-color:var(--accent)}
+.warn{background:#d299221a;border-color:var(--yellow)}
+.tip{background:#3fb9501a;border-color:var(--green)}
+.danger{background:#f851491a;border-color:var(--red)}
+.bt{font-weight:700;font-size:12px;letter-spacing:.5px;margin-bottom:5px;text-transform:uppercase}
+.info .bt{color:var(--accent)}.warn .bt{color:var(--yellow)}.tip .bt{color:var(--green)}.danger .bt{color:var(--red)}
+
+/* Code */
+.cw{background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin:16px 0;overflow:hidden}
+.ch2{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.cl{font-size:11px;color:var(--accent);font-family:'JetBrains Mono',monospace;font-weight:600}
+.cf{font-size:10px;color:var(--text3)}
+pre{padding:18px;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;color:var(--text)}
+.kw{color:var(--pink)}.fn{color:var(--accent)}.st{color:var(--green)}.cm{color:var(--text3);font-style:italic}.nm{color:var(--orange)}.op{color:var(--text2)}
+.ow{background:#0a0d12;border:1px solid var(--border);border-radius:7px;margin:6px 0 16px;padding:12px 18px}
+.ol{font-size:10px;color:var(--green);font-weight:700;margin-bottom:5px;font-family:'JetBrains Mono',monospace}
+.ow pre{padding:0;font-size:12.5px;color:var(--teal)}
+
+/* Diagrams */
+.dw{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:24px;margin:22px 0;text-align:center;overflow-x:auto}
+.dc{font-size:12px;color:var(--text3);margin-top:10px;text-align:center;font-style:italic}
+
+/* Tables */
+.tw{overflow-x:auto;margin:18px 0;border-radius:9px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead th{background:var(--bg3);padding:10px 14px;text-align:left;color:var(--accent);font-weight:600;border-bottom:2px solid var(--border);white-space:nowrap}
+tbody td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--bg3)}
+
+/* Exercises */
+.ex{background:var(--bg2);border:1px solid var(--border);border-top:3px solid var(--purple);border-radius:11px;padding:26px;margin:28px 0}
+.ex-hdr{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.ex-badge{background:var(--purple);color:#000;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase}
+.ex-title{font-size:.95rem;font-weight:600;color:var(--purple)}
+details{margin:10px 0}
+summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:13.5px;padding:7px 11px;background:var(--hl);border-radius:6px;list-style:none;user-select:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'▶ ';font-size:10px}
+details[open] summary::before{content:'▼ '}
+details[open]{border:1px solid var(--border);border-radius:0 0 8px 8px}
+.sb{padding:14px}
+
+/* Algorithm cards */
+.ac{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:26px;margin:22px 0;position:relative;overflow:hidden}
+.ac::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--purple))}
+.an{font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:7px}
+.ae{font-size:1.6rem;margin-bottom:9px;display:block}
+
+/* Grids */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:14px 0}
+.ic{background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:16px}
+.ict{font-size:12px;font-weight:700;color:var(--accent);margin-bottom:7px}
+
+/* Lists */
+ul.f{list-style:none;padding:0}
+ul.f li{padding:5px 0 5px 22px;position:relative;font-size:15px}
+ul.f li::before{content:'→';position:absolute;left:0;color:var(--accent);font-weight:700}
+
+/* Inline code */
+code{font-family:'JetBrains Mono',monospace;font-size:12.5px;background:var(--bg3);padding:1px 5px;border-radius:3px;color:var(--pink);border:1px solid var(--border)}
+
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}.sec{padding:28px 18px}.hero{padding:28px 18px}.g2,.g3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <h2>📊 NumPy সম্পূর্ণ বাংলা গাইড</h2>
+    <p>Manipulation + Operations + Algorithms</p>
+  </div>
+  <div class="nav-sect">Manipulation (Lesson 02)</div>
+  <a class="nav-link" href="#s1">১. Conditional Indexing</a>
+  <a class="nav-link sub" href="#s1ex">↳ ব্যায়াম</a>
+  <a class="nav-link" href="#s2">২. Array Iteration</a>
+  <a class="nav-link sub" href="#s2ex">↳ ব্যায়াম</a>
+  <a class="nav-link" href="#s3">৩. Reshape</a>
+  <a class="nav-link sub" href="#s3ex">↳ ব্যায়াম</a>
+  <a class="nav-link" href="#s4">৪. Concatenation</a>
+  <a class="nav-link sub" href="#s4ex">↳ ব্যায়াম</a>
+  <div class="nav-sect">Operations (Lesson 03)</div>
+  <a class="nav-link" href="#s5">৫. Arithmetic Operators</a>
+  <a class="nav-link" href="#s6">৬. Dot Product ও Matrix Power</a>
+  <a class="nav-link sub" href="#s6ex">↳ ব্যায়াম</a>
+  <a class="nav-link" href="#s7">৭. Rotation Matrix</a>
+  <a class="nav-link" href="#s8">৮. Broadcasting</a>
+  <a class="nav-link sub" href="#s8ex">↳ ব্যায়াম</a>
+  <a class="nav-link" href="#s9">৯. Statistical Methods</a>
+  <a class="nav-link" href="#s10">১০. MSE ও Linear Regression</a>
+  <a class="nav-link sub" href="#s10ex">↳ ব্যায়াম</a>
+  <div class="nav-sect">অ্যালগরিদম সংকলন</div>
+  <a class="nav-link" href="#a1">Linear Regression</a>
+  <a class="nav-link" href="#a2">KNN</a>
+  <a class="nav-link" href="#a3">Decision Tree</a>
+  <a class="nav-link" href="#a4">K-Means</a>
+  <a class="nav-link" href="#a5">Gradient Descent</a>
+  <a class="nav-link" href="#a6">Normalization</a>
+  <a class="nav-link" href="#a7">Confusion Matrix</a>
+  <a class="nav-link" href="#a8">ML Pipeline</a>
+</nav>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<main class="main">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🇧🇩 সম্পূর্ণ বাংলায়</div>
+  <h1>NumPy:<br><span>সম্পূর্ণ বাংলা গাইড</span></h1>
+  <p>Array manipulation, operations, broadcasting, statistical methods এবং machine learning algorithms — কিছুই বাদ নেই। নতুন শিক্ষার্থী থেকে interview preparation পর্যন্ত সব কভার।</p>
+  <div class="hero-tags">
+    <span class="tag">NumPy Manipulation</span><span class="tag">NumPy Operations</span>
+    <span class="tag">Broadcasting</span><span class="tag">Statistics</span>
+    <span class="tag">ML Algorithms</span><span class="tag">Interview Prep</span>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     LESSON 02 — MANIPULATION
+════════════════════════════════════════════════════ -->
+
+<!-- ── S1: Conditional Indexing ── -->
+<section class="sec" id="s1">
+  <div class="ch"><div class="ch-num">১</div><h2>Conditional Indexing — শর্ত দিয়ে অ্যারে থেকে ডেটা বের করা</h2></div>
+
+  <div class="box info"><div class="bt">💡 সহজ উদাহরণ</div>
+  ধরো ক্লাসের সব ছাত্রের নম্বরের একটা list আছে। তুমি শুধু ৫০ এর নিচে যারা পেয়েছে তাদের বের করতে চাও। Conditional Indexing ঠিক এটাই করে — শর্ত দিয়ে অ্যারে থেকে নির্দিষ্ট উপাদান বের করা।</div>
+
+  <h3>১.১ কীভাবে কাজ করে?</h3>
+  <p>NumPy-তে <code>X &lt; 0</code> লিখলে একটা <strong>Boolean অ্যারে</strong> তৈরি হয় — প্রতিটি জায়গায় <code>True</code> বা <code>False</code>। তারপর <code>X[সেই বুলিয়ান অ্যারে]</code> দিলে শুধু <code>True</code> জায়গাগুলো select হয়।</p>
+
+  <div class="dw">
+    <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:640px">
+      <defs><marker id="a1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#58a6ff"/></marker></defs>
+      <text x="18" y="28" fill="#8b949e" font-size="12" font-family="JetBrains Mono">মূল অ্যারে X (3×3)</text>
+      <g transform="translate(18,38)">
+        <rect x="0" y="0" width="48" height="38" fill="#f8514922" stroke="#f85149" stroke-width="1.5" rx="4"/><text x="24" y="23" text-anchor="middle" fill="#f85149" font-size="14" font-family="JetBrains Mono">-1</text>
+        <rect x="50" y="0" width="48" height="38" fill="#21262d" stroke="#30363d" rx="4"/><text x="74" y="23" text-anchor="middle" fill="#e6edf3" font-size="14" font-family="JetBrains Mono">0</text>
+        <rect x="100" y="0" width="48" height="38" fill="#21262d" stroke="#30363d" rx="4"/><text x="124" y="23" text-anchor="middle" fill="#e6edf3" font-size="14" font-family="JetBrains Mono">30</text>
+        <rect x="0" y="42" width="48" height="38" fill="#f8514922" stroke="#f85149" stroke-width="1.5" rx="4"/><text x="24" y="65" text-anchor="middle" fill="#f85149" font-size="14" font-family="JetBrains Mono">-2</text>
+        <rect x="50" y="42" width="48" height="38" fill="#21262d" stroke="#30363d" rx="4"/><text x="74" y="65" text-anchor="middle" fill="#e6edf3" font-size="14" font-family="JetBrains Mono">3</text>
+        <rect x="100" y="42" width="48" height="38" fill="#f8514922" stroke="#f85149" stroke-width="1.5" rx="4"/><text x="124" y="65" text-anchor="middle" fill="#f85149" font-size="14" font-family="JetBrains Mono">-5</text>
+        <rect x="0" y="84" width="48" height="38" fill="#21262d" stroke="#30363d" rx="4"/><text x="24" y="107" text-anchor="middle" fill="#e6edf3" font-size="14" font-family="JetBrains Mono">5</text>
+        <rect x="50" y="84" width="48" height="38" fill="#f8514922" stroke="#f85149" stroke-width="1.5" rx="4"/><text x="74" y="107" text-anchor="middle" fill="#f85149" font-size="14" font-family="JetBrains Mono">-5</text>
+        <rect x="100" y="84" width="48" height="38" fill="#21262d" stroke="#30363d" rx="4"/><text x="124" y="107" text-anchor="middle" fill="#e6edf3" font-size="14" font-family="JetBrains Mono">10</text>
+      </g>
+      <text x="190" y="100" fill="#f85149" font-size="13">X&lt;0 → লাল</text>
+      <text x="190" y="118" fill="#8b949e" font-size="11">X[X&lt;0]=0</text>
+      <line x1="290" y1="100" x2="355" y2="100" stroke="#58a6ff" stroke-width="2" marker-end="url(#a1)"/>
+      <text x="300" y="90" fill="#58a6ff" font-size="12">প্রয়োগ</text>
+      <text x="368" y="28" fill="#8b949e" font-size="12" font-family="JetBrains Mono">ফলাফল X</text>
+      <g transform="translate(368,38)">
+        <rect x="0" y="0" width="48" height="38" fill="#3fb95022" stroke="#3fb950" stroke-width="1.5" rx="4"/><text x="24" y="23" text-anchor="middle" fill="#3fb950" font-size="14" font-family="JetBrains Mono">0</text>
+        <rect x="50" y="0" width="48" height="38" fill="#21262d" stroke="#30363d" rx="4"/><text x="74" y="23" text-anchor="middle" fill="#e6edf3" font-size="14" font-family="JetBrains Mono">0</text>
+        <rect x="100" y="0" width="48" height="38" fill="#21262d" stroke="#30363d" rx="4"/><text x="124" y="23" text-anchor="middle" fill="#e6edf3" font-size="14" font-family="JetBrains Mono">30</text>
+        <rect x="0" y="42" width="48" height="38" fill="#3fb95022" stroke="#3fb950" stroke-width="1.5" rx="4"/><text x="24" y="65" text-anchor="middle" fill="#3fb950" font-size="14" font-family="JetBrains Mono">0</text>
+        <rect x="50" y="42" width="48" height="38" fill="#21262d" stroke="#30363d" rx="4"/><text x="74" y="65" text-anchor="middle" fill="#e6edf3" font-size="14" font-family="JetBrains Mono">3</text>
+        <rect x="100" y="42" width="48" height="38" fill="#3fb95022" stroke="#3fb950" stroke-width="1.5" rx="4"/><text x="124" y="65" text-anchor="middle" fill="#3fb950" font-size="14" font-family="JetBrains Mono">0</text>
+        <rect x="0" y="84" width="48" height="38" fill="#21262d" stroke="#30363d" rx="4"/><text x="24" y="107" text-anchor="middle" fill="#e6edf3" font-size="14" font-family="JetBrains Mono">5</text>
+        <rect x="50" y="84" width="48" height="38" fill="#3fb95022" stroke="#3fb950" stroke-width="1.5" rx="4"/><text x="74" y="107" text-anchor="middle" fill="#3fb950" font-size="14" font-family="JetBrains Mono">0</text>
+        <rect x="100" y="84" width="48" height="38" fill="#21262d" stroke="#30363d" rx="4"/><text x="124" y="107" text-anchor="middle" fill="#e6edf3" font-size="14" font-family="JetBrains Mono">10</text>
+      </g>
+      <text x="368" y="168" fill="#8b949e" font-size="11">লাল → সব ০ হয়ে গেছে (সবুজ)</text>
+    </svg>
+    <div class="dc">ঋণাত্মক উপাদানগুলো (লাল) শর্ত দিয়ে খুঁজে ০ বসানো হয়েছে</div>
+  </div>
+
+  <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">conditional_basic.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># ৩×৩ অ্যারে তৈরি</span>
+X = np.<span class="fn">array</span>([[-<span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">30</span>],
+               [-<span class="nm">2</span>, <span class="nm">3</span>, -<span class="nm">5</span>],
+               [<span class="nm">5</span>, -<span class="nm">5</span>, <span class="nm">10</span>]])
+
+<span class="cm"># X &lt; 0 → Boolean অ্যারে তৈরি করে:
+# [[True, False, False],
+#  [True, False,  True],
+#  [False, True, False]]</span>
+
+<span class="cm"># সব ঋণাত্মককে ০ বানাও</span>
+X[X &lt; <span class="nm">0</span>] = <span class="nm">0</span>
+<span class="fn">print</span>(X)
+<span class="cm"># [[ 0  0 30]
+#  [ 0  3  0]
+#  [ 5  0 10]]</span></pre></div>
+
+  <h3>১.২ অন্য অ্যারের শর্ত দিয়ে Index করা</h3>
+  <p>একটা অ্যারেতে শর্ত দিয়ে সম্পূর্ণ আলাদা একটা অ্যারে filter করা যায়। ML-এ এটা খুব বেশি ব্যবহার হয় — label দিয়ে feature select করতে।</p>
+
+  <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">cross_array_indexing.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+X = np.<span class="fn">array</span>([<span class="nm">3</span>, -<span class="nm">7</span>, -<span class="nm">10</span>, <span class="nm">3</span>, <span class="nm">6</span>, <span class="nm">5</span>, <span class="nm">2</span>, <span class="nm">9</span>])
+y = np.<span class="fn">array</span>([<span class="nm">0</span>,  <span class="nm">1</span>,   <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">0</span>])
+
+<span class="cm"># y==1 হলে X-এ -1 বসাও</span>
+X[y == <span class="nm">1</span>] = -<span class="nm">1</span>
+<span class="fn">print</span>(X)         <span class="cm"># [ 3, -1, -1, -1,  6, -1,  2,  9]</span>
+
+<span class="cm"># y==0 যেখানে, সেখানকার X মান দেখাও</span>
+<span class="fn">print</span>(X[y == <span class="nm">0</span>])  <span class="cm"># [3, 6, 2, 9]</span></pre></div>
+
+  <h3>১.৩ Black Friday সুপারমার্কেট — বাস্তব উদাহরণ</h3>
+
+  <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">supermarket.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+items     = np.<span class="fn">array</span>([<span class="st">"needle"</span>, <span class="st">"bag"</span>, <span class="st">"perfume"</span>, <span class="st">"watch"</span>,
+                       <span class="st">"speakers"</span>, <span class="st">"piano"</span>, <span class="st">"scotch tape"</span>, ...])
+quantities= np.<span class="fn">array</span>([<span class="nm">914</span>, <span class="nm">504</span>, <span class="nm">298</span>, <span class="nm">15</span>, <span class="nm">907</span>, <span class="nm">14</span>, <span class="nm">37</span>, ...])
+discounts = np.<span class="fn">array</span>([<span class="nm">90</span>,  <span class="nm">90</span>,  <span class="nm">90</span>, <span class="nm">90</span>,  <span class="nm">50</span>, <span class="nm">25</span>,  <span class="nm">50</span>, ...])
+
+<span class="cm"># ৯০% ছাড়ের পণ্য ও তাদের পরিমাণ</span>
+<span class="fn">print</span>(items[discounts == <span class="nm">90</span>])
+<span class="cm"># ['needle' 'bag' 'perfume' 'watch' 'fake flowers']</span>
+<span class="fn">print</span>(quantities[discounts == <span class="nm">90</span>])
+<span class="cm"># [914, 504, 298, 15, 291]</span>
+
+<span class="cm"># পরিমাণ ≤ 50 — দ্রুত শেষ হয়ে যাবে কোনগুলো?</span>
+<span class="fn">print</span>(items[quantities &lt;= <span class="nm">50</span>])
+<span class="cm"># ['piano' 'scotch tape' 'watch' 'sticky note']</span>
+<span class="cm"># watch → কম quantity + ৯০% ছাড় = সবার আগে শেষ!</span>
+
+<span class="cm"># নির্দিষ্ট পণ্যের ছাড় বের করো</span>
+<span class="fn">print</span>(discounts[items == <span class="st">"speakers"</span>])  <span class="cm"># [50]</span></pre></div>
+
+  <!-- Exercise 1 -->
+  <div class="ex" id="s1ex">
+    <div class="ex-hdr"><span class="ex-badge">Interview Exercise</span><span class="ex-title">Conditional Indexing — ML Level</span></div>
+    <p><strong>প্রশ্ন ১:</strong> ML model-এর prediction ও actual label আছে। ভুল prediction (misclassified) sample-গুলোর feature বের করো এবং accuracy গণনা করো।</p>
+    <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">starter.py</span></div>
+<pre>y_true = np.<span class="fn">array</span>([<span class="nm">1</span>,<span class="nm">0</span>,<span class="nm">1</span>,<span class="nm">1</span>,<span class="nm">0</span>,<span class="nm">1</span>,<span class="nm">0</span>,<span class="nm">0</span>])
+y_pred = np.<span class="fn">array</span>([<span class="nm">1</span>,<span class="nm">1</span>,<span class="nm">0</span>,<span class="nm">1</span>,<span class="nm">0</span>,<span class="nm">0</span>,<span class="nm">0</span>,<span class="nm">1</span>])
+X_feat = np.<span class="fn">array</span>([[<span class="nm">2.1</span>,<span class="nm">3.2</span>],[<span class="nm">1.1</span>,<span class="nm">0.5</span>],[<span class="nm">4.0</span>,<span class="nm">2.8</span>],
+                    [<span class="nm">3.3</span>,<span class="nm">1.9</span>],[<span class="nm">0.5</span>,<span class="nm">0.2</span>],[<span class="nm">2.9</span>,<span class="nm">3.1</span>],
+                    [<span class="nm">1.8</span>,<span class="nm">2.0</span>],[<span class="nm">0.7</span>,<span class="nm">1.1</span>]])
+<span class="cm"># তোমার কোড এখানে লেখো</span></pre></div>
+    <details><summary>✅ সমাধান দেখো</summary><div class="sb">
+    <div class="cw"><div class="ch2"><span class="cl">Python</span></div>
+<pre>mask = (y_pred != y_true)
+<span class="fn">print</span>(<span class="st">"ভুল sample-এর feature:"</span>)
+<span class="fn">print</span>(X_feat[mask])
+<span class="fn">print</span>(<span class="st">f"মোট ভুল: {mask.sum()} / {len(y_true)}"</span>)
+accuracy = (y_pred == y_true).<span class="fn">mean</span>()
+<span class="fn">print</span>(<span class="st">f"Accuracy: {accuracy:.2%}"</span>)  <span class="cm"># 50.00%</span>
+<span class="cm"># np.where(mask)[0] দিয়ে index বের করো</span>
+<span class="fn">print</span>(<span class="st">"ভুল index:"</span>, np.<span class="fn">where</span>(mask)[<span class="nm">0</span>])  <span class="cm"># [1, 2, 5, 7]</span></pre></div>
+    <div class="box tip"><div class="bt">💡 Interview Insight</div>বাস্তব ML-এ error analysis: কোন sample ভুল হচ্ছে সেগুলো দেখে model উন্নত করা যায়।</div>
+    </div></details>
+
+    <p style="margin-top:16px"><strong>প্রশ্ন ২:</strong> Feature matrix থেকে সেই row বের করো যেখানে column-0 এর মান ৩ এর বেশি <strong>এবং</strong> column-1 এর মান ২ এর কম।</p>
+    <details><summary>✅ সমাধান দেখো</summary><div class="sb">
+    <div class="cw"><div class="ch2"><span class="cl">Python</span></div>
+<pre>X = np.<span class="fn">array</span>([[<span class="nm">4.0</span>,<span class="nm">1.5</span>],[<span class="nm">2.0</span>,<span class="nm">3.0</span>],[<span class="nm">5.0</span>,<span class="nm">0.8</span>],[<span class="nm">1.0</span>,<span class="nm">0.5</span>],[<span class="nm">6.0</span>,<span class="nm">1.9</span>]])
+<span class="cm"># AND = &  |  OR = |  |  NOT = ~</span>
+mask = (X[:, <span class="nm">0</span>] > <span class="nm">3</span>) & (X[:, <span class="nm">1</span>] &lt; <span class="nm">2</span>)
+<span class="fn">print</span>(X[mask])
+<span class="cm"># [[4.0, 1.5]
+#  [5.0, 0.8]
+#  [6.0, 1.9]]</span></pre></div></div></details>
+  </div>
+</section>
+
+<!-- ── S2: Iteration ── -->
+<section class="sec" id="s2">
+  <div class="ch"><div class="ch-num">২</div><h2>Array Iteration — লুপ দিয়ে অ্যারের উপাদান ঘোরা</h2></div>
+
+  <div class="box info"><div class="bt">💡 বাস্তব উদাহরণ: ছবি</div>
+  একটা রঙিন ছবি কম্পিউটারে 3D অ্যারে হিসেবে থাকে — (rows × cols × 3)। প্রতিটি pixel-এ তিনটা সংখ্যা: Red, Green, Blue। ৩২×৩২ ছবি = ৩২×৩২×৩ = ৩০৭২ সংখ্যা!</div>
+
+  <div class="dw">
+    <svg viewBox="0 0 580 180" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:580px">
+      <defs><marker id="a2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#8b949e"/></marker></defs>
+      <rect x="10" y="20" width="80" height="65" fill="#1f3a6e" stroke="#79c0ff" stroke-width="1.5" rx="5"/>
+      <text x="50" y="55" text-anchor="middle" fill="#79c0ff" font-size="26">🍄</text>
+      <text x="50" y="78" text-anchor="middle" fill="#79c0ff" font-size="10">Blue Channel</text>
+      <rect x="10" y="100" width="80" height="65" fill="#1a3a1a" stroke="#3fb950" stroke-width="1.5" rx="5"/>
+      <text x="50" y="135" text-anchor="middle" fill="#3fb950" font-size="26">🍄</text>
+      <text x="50" y="158" text-anchor="middle" fill="#3fb950" font-size="10">Green Channel</text>
+      <rect x="100" y="58" width="80" height="65" fill="#3a1a1a" stroke="#f85149" stroke-width="1.5" rx="5"/>
+      <text x="140" y="93" text-anchor="middle" fill="#f85149" font-size="26">🍄</text>
+      <text x="140" y="116" text-anchor="middle" fill="#f85149" font-size="10">Red Channel</text>
+      <line x1="90" y1="52" x2="100" y2="70" stroke="#79c0ff" stroke-width="1.5" marker-end="url(#a2)"/>
+      <line x1="90" y1="132" x2="100" y2="112" stroke="#3fb950" stroke-width="1.5" marker-end="url(#a2)"/>
+      <line x1="182" y1="90" x2="235" y2="90" stroke="#8b949e" stroke-width="1.5" marker-end="url(#a2)"/>
+      <rect x="240" y="58" width="80" height="65" fill="#2a1f2e" stroke="#bc8cff" stroke-width="1.5" rx="5"/>
+      <text x="280" y="93" text-anchor="middle" fill="#e6edf3" font-size="26">🍄</text>
+      <text x="280" y="116" text-anchor="middle" fill="#bc8cff" font-size="10">Combined</text>
+      <rect x="350" y="38" width="220" height="110" fill="#21262d" stroke="#30363d" rx="7"/>
+      <text x="460" y="58" text-anchor="middle" fill="#58a6ff" font-size="12">অ্যারে shape: (32, 32, 3)</text>
+      <text x="360" y="78" fill="#8b949e" font-size="11">for row in image:         ← সারি</text>
+      <text x="360" y="96" fill="#8b949e" font-size="11">  for pixel in row:      ← pixel</text>
+      <text x="360" y="114" fill="#8b949e" font-size="11">    for ch in pixel:    ← R, G, B</text>
+      <text x="360" y="132" fill="#8b949e" font-size="11">      ... process ...</text>
+    </svg>
+    <div class="dc">৩D অ্যারে = rows × columns × channels | প্রতিটি dimension-এ আলাদা loop</div>
+  </div>
+
+  <h3>২.১ RGB → Grayscale রূপান্তর</h3>
+  <p>রঙিন ছবিকে সাদাকালো বানাতে প্রতিটি pixel-এর R, G, B মানের গড় নাও।</p>
+
+  <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">rgb_to_gray.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">rgb_to_gray</span>(X):
+    <span class="st">"""
+    রঙিন ছবি (rows, cols, 3) → সাদাকালো (rows, cols, 1)
+    """</span>
+    n_rows, n_cols, _ = X.shape
+    X_gray = np.<span class="fn">zeros</span>((n_rows, n_cols, <span class="nm">1</span>))
+
+    <span class="kw">for</span> i, row <span class="kw">in</span> <span class="fn">enumerate</span>(X):
+        <span class="kw">for</span> j, pixel <span class="kw">in</span> <span class="fn">enumerate</span>(row):
+            X_gray[i, j] = np.<span class="fn">mean</span>(pixel)  <span class="cm"># R+G+B গড়</span>
+
+    <span class="kw">return</span> X_gray
+
+<span class="cm"># ⚡ Vectorized (অনেক দ্রুত!) — interview-এ এটা বলো</span>
+<span class="kw">def</span> <span class="fn">rgb_to_gray_fast</span>(X):
+    <span class="kw">return</span> X.<span class="fn">mean</span>(axis=<span class="nm">2</span>, keepdims=<span class="kw">True</span>)</pre></div>
+
+  <div class="box warn"><div class="bt">⚠️ Overflow Bug</div>
+  <code>(R + G + B) // 3</code> লিখলে <strong>ubyte overflow</strong> আসে — <code>uint8</code>-এ ২৫৫+২৫৫+২৫৫=৭৬৫ overflow করে! সঠিক পদ্ধতি: <code>np.mean(pixel)</code> ব্যবহার করো, অথবা আগে <code>img.astype(np.float64)</code> করো।</div>
+
+  <div class="ex" id="s2ex">
+    <div class="ex-hdr"><span class="ex-badge">Interview Exercise</span><span class="ex-title">Vectorized vs Loop — Performance</span></div>
+    <p><strong>প্রশ্ন:</strong> দেখাও যে vectorized approach loop থেকে কতটা দ্রুত।</p>
+    <details><summary>✅ সমাধান দেখো</summary><div class="sb">
+    <div class="cw"><div class="ch2"><span class="cl">Python</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> time
+
+img = np.random.<span class="fn">randint</span>(<span class="nm">0</span>, <span class="nm">256</span>, (<span class="nm">200</span>, <span class="nm">200</span>, <span class="nm">3</span>)).<span class="fn">astype</span>(np.float64)
+
+<span class="cm"># Loop method</span>
+t = time.<span class="fn">time</span>()
+gray_loop = np.<span class="fn">zeros</span>((*img.shape[:<span class="nm">2</span>], <span class="nm">1</span>))
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(img.shape[<span class="nm">0</span>]):
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(img.shape[<span class="nm">1</span>]):
+        gray_loop[i, j] = img[i, j].<span class="fn">mean</span>()
+loop_ms = (<span class="fn">time</span>.<span class="fn">time</span>()-t)*<span class="nm">1000</span>
+
+<span class="cm"># Vectorized method</span>
+t = time.<span class="fn">time</span>()
+gray_vec = img.<span class="fn">mean</span>(axis=<span class="nm">2</span>, keepdims=<span class="kw">True</span>)
+vec_ms = (<span class="fn">time</span>.<span class="fn">time</span>()-t)*<span class="nm">1000</span>
+
+<span class="fn">print</span>(<span class="st">f"Loop:       {loop_ms:.1f} ms"</span>)
+<span class="fn">print</span>(<span class="st">f"Vectorized: {vec_ms:.3f} ms"</span>)
+<span class="fn">print</span>(<span class="st">f"Speedup: ~{loop_ms/vec_ms:.0f}x দ্রুত"</span>)
+<span class="fn">print</span>(<span class="st">"একই ফলাফল:"</span>, np.<span class="fn">allclose</span>(gray_loop, gray_vec))</pre></div></div></details>
+  </div>
+</section>
+
+<!-- ── S3: Reshape ── -->
+<section class="sec" id="s3">
+  <div class="ch"><div class="ch-num">৩</div><h2>Reshape — অ্যারের আকৃতি বদলানো</h2></div>
+
+  <div class="box info"><div class="bt">💡 লেগো ব্লক উদাহরণ</div>
+  তোমার কাছে ১০টা লেগো ব্লক আছে। এক লাইনে (১×১০), দুই সারিতে ৫টা করে (২×৫), বা ৫ সারিতে ২টা করে (৫×২) সাজাতে পারো। ব্লকের সংখ্যা একই, শুধু সাজানোর ধরন বদলেছে — এটাই reshape!</div>
+
+  <div class="dw">
+    <svg viewBox="0 0 620 130" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:620px">
+      <defs><marker id="ra" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f0883e"/></marker></defs>
+      <text x="10" y="18" fill="#8b949e" font-size="11" font-family="JetBrains Mono">shape: (10,) — 1D</text>
+      <g transform="translate(10,25)">
+        <rect x="0"  y="0" width="30" height="30" fill="#1f6feb33" stroke="#58a6ff" rx="3"/><text x="15"  y="19" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="JetBrains Mono">1</text>
+        <rect x="32" y="0" width="30" height="30" fill="#1f6feb33" stroke="#58a6ff" rx="3"/><text x="47"  y="19" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="JetBrains Mono">2</text>
+        <rect x="64" y="0" width="30" height="30" fill="#1f6feb33" stroke="#58a6ff" rx="3"/><text x="79"  y="19" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="JetBrains Mono">3</text>
+        <rect x="96" y="0" width="30" height="30" fill="#1f6feb33" stroke="#58a6ff" rx="3"/><text x="111" y="19" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="JetBrains Mono">4</text>
+        <rect x="128" y="0" width="30" height="30" fill="#1f6feb33" stroke="#58a6ff" rx="3"/><text x="143" y="19" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="JetBrains Mono">5</text>
+        <rect x="160" y="0" width="30" height="30" fill="#1f6feb33" stroke="#58a6ff" rx="3"/><text x="175" y="19" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="JetBrains Mono">6</text>
+        <rect x="192" y="0" width="30" height="30" fill="#1f6feb33" stroke="#58a6ff" rx="3"/><text x="207" y="19" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="JetBrains Mono">7</text>
+        <rect x="224" y="0" width="30" height="30" fill="#1f6feb33" stroke="#58a6ff" rx="3"/><text x="239" y="19" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="JetBrains Mono">8</text>
+        <rect x="256" y="0" width="30" height="30" fill="#1f6feb33" stroke="#58a6ff" rx="3"/><text x="271" y="19" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="JetBrains Mono">9</text>
+        <rect x="288" y="0" width="30" height="30" fill="#1f6feb33" stroke="#58a6ff" rx="3"/><text x="303" y="19" text-anchor="middle" fill="#79c0ff" font-size="11" font-family="JetBrains Mono">10</text>
+      </g>
+      <text x="340" y="42" fill="#f0883e" font-size="11" font-family="JetBrains Mono">.reshape((2,5))</text>
+      <line x1="335" y1="50" x2="410" y2="70" stroke="#f0883e" stroke-width="1.5" marker-end="url(#ra)"/>
+      <text x="420" y="18" fill="#8b949e" font-size="11" font-family="JetBrains Mono">shape: (2, 5) — 2D</text>
+      <g transform="translate(420,25)">
+        <rect x="0"   y="0" width="30" height="26" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="15"  y="17" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">1</text>
+        <rect x="32"  y="0" width="30" height="26" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="47"  y="17" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">2</text>
+        <rect x="64"  y="0" width="30" height="26" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="79"  y="17" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">3</text>
+        <rect x="96"  y="0" width="30" height="26" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="111" y="17" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">4</text>
+        <rect x="128" y="0" width="30" height="26" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="143" y="17" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">5</text>
+        <rect x="0"   y="28" width="30" height="26" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="15"  y="45" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">6</text>
+        <rect x="32"  y="28" width="30" height="26" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="47"  y="45" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">7</text>
+        <rect x="64"  y="28" width="30" height="26" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="79"  y="45" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">8</text>
+        <rect x="96"  y="28" width="30" height="26" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="111" y="45" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">9</text>
+        <rect x="128" y="28" width="30" height="26" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="143" y="45" text-anchor="middle" fill="#3fb950" font-size="11" font-family="JetBrains Mono">10</text>
+      </g>
+      <text x="420" y="105" fill="#8b949e" font-size="11">২ সারি × ৫ কলাম = ১০ (একই মোট)</text>
+    </svg>
+    <div class="dc">শর্ত: পুরনো shape এবং নতুন shape-এর মোট উপাদান সমান হতে হবে</div>
+  </div>
+
+  <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">reshape_guide.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+X = np.<span class="fn">arange</span>(<span class="nm">1</span>, <span class="nm">11</span>)         <span class="cm"># [1, 2, ..., 10]</span>
+<span class="fn">print</span>(X.shape)              <span class="cm"># (10,)</span>
+
+X_2x5 = X.<span class="fn">reshape</span>((<span class="nm">2</span>, <span class="nm">5</span>))   <span class="cm"># 2 সারি, 5 কলাম</span>
+X_5x2 = X.<span class="fn">reshape</span>((<span class="nm">5</span>, <span class="nm">2</span>))   <span class="cm"># 5 সারি, 2 কলাম</span>
+X_auto= X.<span class="fn">reshape</span>((<span class="nm">2</span>, -<span class="nm">1</span>))  <span class="cm"># -1 মানে NumPy নিজে হিসাব করবে → (2,5)</span>
+X_flat= X_2x5.<span class="fn">reshape</span>(-<span class="nm">1</span>)   <span class="cm"># যেকোনো shape → 1D (flatten)</span>
+
+<span class="cm"># ML-এ সবচেয়ে বেশি ব্যবহৃত: flatten করা</span>
+img_batch = np.random.<span class="fn">randint</span>(<span class="nm">0</span>, <span class="nm">256</span>, (<span class="nm">1000</span>, <span class="nm">28</span>, <span class="nm">28</span>))
+X_ml = img_batch.<span class="fn">reshape</span>(<span class="nm">1000</span>, -<span class="nm">1</span>)  <span class="cm"># (1000, 784) — ML ready</span>
+<span class="fn">print</span>(X_ml.shape)  <span class="cm"># (1000, 784)</span></pre></div>
+
+  <h3>৩.১ Digits Dataset — ML উদাহরণ</h3>
+  <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">digits_reshape.py</span></div>
+<pre><span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_digits
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+digits = <span class="fn">load_digits</span>()
+X = digits[<span class="st">'data'</span>]
+<span class="fn">print</span>(X.shape)  <span class="cm"># (1797, 64) — 1797 ছবি, প্রতিটি 8×8=64 মাত্রায় flatten</span>
+
+<span class="cm"># দেখাতে হলে আবার 8×8 বানাও</span>
+X_3d = X.<span class="fn">reshape</span>((<span class="nm">1797</span>, <span class="nm">8</span>, <span class="nm">8</span>))
+img = X_3d[<span class="nm">1100</span>]   <span class="cm"># shape (8, 8) — ১১০০ নম্বর ছবি</span>
+<span class="fn">print</span>(img)
+<span class="cm"># array([[ 0.,  1., 12., 15., 10.,  2.,  0.,  0.],
+#         [ 0.,  4., 14.,  1.,  6., 12.,  2.,  0.], ...])</span></pre></div>
+
+  <div class="ex" id="s3ex">
+    <div class="ex-hdr"><span class="ex-badge">Interview Exercise</span><span class="ex-title">Reshape — Neural Network Input Prep</span></div>
+    <p><strong>প্রশ্ন:</strong> <code>(500, 32, 32, 3)</code> আকারের color image batch-কে Neural Network-এর জন্য <code>(500, 3072)</code> আকারে flatten করো। তারপর ০–১ normalize করো।</p>
+    <details><summary>✅ সমাধান দেখো</summary><div class="sb">
+    <div class="cw"><div class="ch2"><span class="cl">Python</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+images = np.random.<span class="fn">randint</span>(<span class="nm">0</span>, <span class="nm">256</span>, (<span class="nm">500</span>, <span class="nm">32</span>, <span class="nm">32</span>, <span class="nm">3</span>), dtype=np.uint8)
+<span class="fn">print</span>(<span class="st">"Original:"</span>, images.shape)  <span class="cm"># (500, 32, 32, 3)</span>
+
+<span class="cm"># Flatten: 32×32×3 = 3072</span>
+X_flat = images.<span class="fn">reshape</span>(<span class="nm">500</span>, -<span class="nm">1</span>).<span class="fn">astype</span>(np.float32)
+<span class="fn">print</span>(<span class="st">"Flattened:"</span>, X_flat.shape)  <span class="cm"># (500, 3072)</span>
+
+<span class="cm"># Normalize: 0 থেকে 1</span>
+X_norm = X_flat / <span class="nm">255.0</span>
+<span class="fn">print</span>(<span class="st">f"Min: {X_norm.min():.1f}, Max: {X_norm.max():.1f}"</span>)  <span class="cm"># 0.0, 1.0</span>
+
+<span class="cm"># ফিরিয়ে আনো</span>
+X_back = X_flat.<span class="fn">reshape</span>(<span class="nm">500</span>, <span class="nm">32</span>, <span class="nm">32</span>, <span class="nm">3</span>)
+<span class="fn">print</span>(<span class="st">"Back:"</span>, X_back.shape)</pre></div></div></details>
+  </div>
+</section>
+
+<!-- ── S4: Concatenation ── -->
+<section class="sec" id="s4">
+  <div class="ch"><div class="ch-num">৪</div><h2>Concatenation — অ্যারে জোড়া লাগানো</h2></div>
+
+  <div class="dw">
+    <svg viewBox="0 0 560 170" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:560px">
+      <!-- X1 -->
+      <text x="10" y="18" fill="#58a6ff" font-size="11" font-family="JetBrains Mono">X_1 (2×3) — ones</text>
+      <g transform="translate(10,24)">
+        <rect x="0" y="0" width="32" height="26" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="16" y="17" text-anchor="middle" fill="#79c0ff" font-size="11">1</text>
+        <rect x="34" y="0" width="32" height="26" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="50" y="17" text-anchor="middle" fill="#79c0ff" font-size="11">1</text>
+        <rect x="68" y="0" width="32" height="26" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="84" y="17" text-anchor="middle" fill="#79c0ff" font-size="11">1</text>
+        <rect x="0" y="28" width="32" height="26" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="16" y="45" text-anchor="middle" fill="#79c0ff" font-size="11">1</text>
+        <rect x="34" y="28" width="32" height="26" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="50" y="45" text-anchor="middle" fill="#79c0ff" font-size="11">1</text>
+        <rect x="68" y="28" width="32" height="26" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="84" y="45" text-anchor="middle" fill="#79c0ff" font-size="11">1</text>
+      </g>
+      <text x="10" y="100" fill="#f85149" font-size="11" font-family="JetBrains Mono">X_2 (2×3) — zeros</text>
+      <g transform="translate(10,106)">
+        <rect x="0" y="0" width="32" height="26" fill="#f8514922" stroke="#f85149" rx="2"/><text x="16" y="17" text-anchor="middle" fill="#f85149" font-size="11">0</text>
+        <rect x="34" y="0" width="32" height="26" fill="#f8514922" stroke="#f85149" rx="2"/><text x="50" y="17" text-anchor="middle" fill="#f85149" font-size="11">0</text>
+        <rect x="68" y="0" width="32" height="26" fill="#f8514922" stroke="#f85149" rx="2"/><text x="84" y="17" text-anchor="middle" fill="#f85149" font-size="11">0</text>
+        <rect x="0" y="28" width="32" height="26" fill="#f8514922" stroke="#f85149" rx="2"/><text x="16" y="45" text-anchor="middle" fill="#f85149" font-size="11">0</text>
+        <rect x="34" y="28" width="32" height="26" fill="#f8514922" stroke="#f85149" rx="2"/><text x="50" y="45" text-anchor="middle" fill="#f85149" font-size="11">0</text>
+        <rect x="68" y="28" width="32" height="26" fill="#f8514922" stroke="#f85149" rx="2"/><text x="84" y="45" text-anchor="middle" fill="#f85149" font-size="11">0</text>
+      </g>
+      <!-- axis=0 result -->
+      <text x="175" y="18" fill="#3fb950" font-size="11">axis=0 → নিচে জোড়া (4×3)</text>
+      <g transform="translate(175,24)">
+        <rect x="0" y="0" width="32" height="22" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="16" y="15" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="34" y="0" width="32" height="22" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="50" y="15" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="68" y="0" width="32" height="22" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="84" y="15" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="0" y="24" width="32" height="22" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="16" y="39" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="34" y="24" width="32" height="22" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="50" y="39" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="68" y="24" width="32" height="22" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="84" y="39" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="0" y="48" width="32" height="22" fill="#f8514922" stroke="#f85149" rx="2"/><text x="16" y="63" text-anchor="middle" fill="#f85149" font-size="10">0</text>
+        <rect x="34" y="48" width="32" height="22" fill="#f8514922" stroke="#f85149" rx="2"/><text x="50" y="63" text-anchor="middle" fill="#f85149" font-size="10">0</text>
+        <rect x="68" y="48" width="32" height="22" fill="#f8514922" stroke="#f85149" rx="2"/><text x="84" y="63" text-anchor="middle" fill="#f85149" font-size="10">0</text>
+        <rect x="0" y="72" width="32" height="22" fill="#f8514922" stroke="#f85149" rx="2"/><text x="16" y="87" text-anchor="middle" fill="#f85149" font-size="10">0</text>
+        <rect x="34" y="72" width="32" height="22" fill="#f8514922" stroke="#f85149" rx="2"/><text x="50" y="87" text-anchor="middle" fill="#f85149" font-size="10">0</text>
+        <rect x="68" y="72" width="32" height="22" fill="#f8514922" stroke="#f85149" rx="2"/><text x="84" y="87" text-anchor="middle" fill="#f85149" font-size="10">0</text>
+      </g>
+      <!-- axis=1 result -->
+      <text x="360" y="18" fill="#bc8cff" font-size="11">axis=1 → পাশে জোড়া (2×6)</text>
+      <g transform="translate(360,24)">
+        <rect x="0"  y="0" width="28" height="26" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="14" y="17" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="30" y="0" width="28" height="26" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="44" y="17" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="60" y="0" width="28" height="26" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="74" y="17" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="90" y="0" width="28" height="26" fill="#f8514922" stroke="#f85149" rx="2"/><text x="104" y="17" text-anchor="middle" fill="#f85149" font-size="10">0</text>
+        <rect x="120" y="0" width="28" height="26" fill="#f8514922" stroke="#f85149" rx="2"/><text x="134" y="17" text-anchor="middle" fill="#f85149" font-size="10">0</text>
+        <rect x="150" y="0" width="28" height="26" fill="#f8514922" stroke="#f85149" rx="2"/><text x="164" y="17" text-anchor="middle" fill="#f85149" font-size="10">0</text>
+        <rect x="0"  y="28" width="28" height="26" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="14" y="45" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="30" y="28" width="28" height="26" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="44" y="45" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="60" y="28" width="28" height="26" fill="#1f6feb33" stroke="#58a6ff" rx="2"/><text x="74" y="45" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="90" y="28" width="28" height="26" fill="#f8514922" stroke="#f85149" rx="2"/><text x="104" y="45" text-anchor="middle" fill="#f85149" font-size="10">0</text>
+        <rect x="120" y="28" width="28" height="26" fill="#f8514922" stroke="#f85149" rx="2"/><text x="134" y="45" text-anchor="middle" fill="#f85149" font-size="10">0</text>
+        <rect x="150" y="28" width="28" height="26" fill="#f8514922" stroke="#f85149" rx="2"/><text x="164" y="45" text-anchor="middle" fill="#f85149" font-size="10">0</text>
+      </g>
+    </svg>
+    <div class="dc">axis=0 → সারি যোগ (নিচে) | axis=1 → কলাম যোগ (পাশে)</div>
+  </div>
+
+  <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">concatenation.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+X1 = np.<span class="fn">ones</span>((<span class="nm">2</span>,<span class="nm">3</span>))
+X2 = np.<span class="fn">zeros</span>((<span class="nm">2</span>,<span class="nm">3</span>))
+
+X3 = np.<span class="fn">concatenate</span>([X1, X2], axis=<span class="nm">0</span>)  <span class="cm"># (4, 3) — নিচে</span>
+X4 = np.<span class="fn">concatenate</span>([X1, X2], axis=<span class="nm">1</span>)  <span class="cm"># (2, 6) — পাশে</span>
+
+<span class="cm"># Digits থেকে দুটো ছবি পাশে জোড়া</span>
+img1 = X_3d[<span class="nm">560</span>]  <span class="cm"># (8, 8)</span>
+img2 = X_3d[<span class="nm">561</span>]  <span class="cm"># (8, 8)</span>
+img3 = np.<span class="fn">concatenate</span>([img1, img2], axis=<span class="nm">1</span>)  <span class="cm"># (8, 16)</span></pre></div>
+
+  <div class="ex" id="s4ex">
+    <div class="ex-hdr"><span class="ex-badge">Interview Exercise</span><span class="ex-title">Concatenation — Dataset Building</span></div>
+    <p><strong>প্রশ্ন:</strong> দুটো feature set ও নতুন sample জোড়া লাগিয়ে complete dataset তৈরি করো, তারপর 80/20 split করো।</p>
+    <details><summary>✅ সমাধান দেখো</summary><div class="sb">
+    <div class="cw"><div class="ch2"><span class="cl">Python</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+Xa = np.<span class="fn">array</span>([[<span class="nm">25</span>,<span class="nm">170</span>],[<span class="nm">30</span>,<span class="nm">180</span>],[<span class="nm">22</span>,<span class="nm">165</span>]])
+Xb = np.<span class="fn">array</span>([[<span class="nm">65</span>],[<span class="nm">80</span>],[<span class="nm">58</span>]])
+X = np.<span class="fn">concatenate</span>([Xa, Xb], axis=<span class="nm">1</span>)   <span class="cm"># (3, 3)</span>
+
+new = np.<span class="fn">array</span>([[<span class="nm">28</span>,<span class="nm">175</span>,<span class="nm">72</span>],[<span class="nm">35</span>,<span class="nm">168</span>,<span class="nm">63</span>]])
+X_full = np.<span class="fn">concatenate</span>([X, new], axis=<span class="nm">0</span>)  <span class="cm"># (5, 3)</span>
+
+split = <span class="fn">int</span>(<span class="nm">0.8</span> * <span class="fn">len</span>(X_full))
+X_train, X_test = X_full[:split], X_full[split:]
+<span class="fn">print</span>(<span class="st">f"Train: {X_train.shape}, Test: {X_test.shape}"</span>)</pre></div></div></details>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     LESSON 03 — OPERATIONS
+════════════════════════════════════════════════════ -->
+
+<!-- ── S5: Arithmetic ── -->
+<section class="sec" id="s5">
+  <div class="ch"><div class="ch-num">৫</div><h2>Arithmetic Operators — গাণিতিক অপারেশন</h2></div>
+  <p>NumPy-তে <code>+</code> <code>-</code> <code>*</code> <code>/</code> <code>**</code> ব্যবহার করলে অ্যারের <strong>প্রতিটি উপাদানে</strong> সেই operation apply হয় — এটাকে <strong>element-wise</strong> বলে।</p>
+  <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">arithmetic.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+a = np.<span class="fn">array</span>([<span class="nm">4</span>, <span class="nm">10</span>])
+b = np.<span class="fn">array</span>([<span class="nm">6</span>,  <span class="nm">7</span>])
+
+<span class="fn">print</span>(a * b)    <span class="cm"># [24, 70]   — element-wise গুণ</span>
+<span class="fn">print</span>(a + b)    <span class="cm"># [10, 17]   — element-wise যোগ</span>
+<span class="fn">print</span>(a ** <span class="nm">2</span>)  <span class="cm"># [16, 100]  — প্রতিটির বর্গ</span>
+<span class="fn">print</span>(a / b)    <span class="cm"># [0.667, 1.429]</span>
+
+<span class="cm"># প্রতিটি row কে তার index দিয়ে গুণ</span>
+M = np.<span class="fn">ones</span>((<span class="nm">10</span>, <span class="nm">4</span>))
+<span class="kw">for</span> i, row <span class="kw">in</span> <span class="fn">enumerate</span>(M):
+    M[i, :] = row * i
+<span class="fn">print</span>(M)  <span class="cm"># row 0 → সব 0, row 1 → সব 1, row 9 → সব 9</span></pre></div>
+</section>
+
+<!-- ── S6: Dot Product ── -->
+<section class="sec" id="s6">
+  <div class="ch"><div class="ch-num">৬</div><h2>Dot Product ও Matrix Power</h2></div>
+
+  <div class="box warn"><div class="bt">⚠️ সবচেয়ে বড় confusion!</div>
+  <code>A * B</code> = element-wise গুণ (প্রতিটা জায়গায় আলাদা আলাদা)<br>
+  <code>A.dot(B)</code> বা <code>A @ B</code> = matrix multiplication (রৈখিক বীজগণিত)</div>
+
+  <div class="dw">
+    <svg viewBox="0 0 560 150" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:560px">
+      <text x="10" y="18" fill="#58a6ff" font-size="12" font-family="JetBrains Mono">M =</text>
+      <g transform="translate(40,8)">
+        <rect x="0" y="0" width="38" height="32" fill="#1f6feb22" stroke="#58a6ff" rx="3"/><text x="19" y="20" text-anchor="middle" fill="#79c0ff" font-size="14" font-family="JetBrains Mono">5</text>
+        <rect x="40" y="0" width="38" height="32" fill="#1f6feb22" stroke="#58a6ff" rx="3"/><text x="59" y="20" text-anchor="middle" fill="#79c0ff" font-size="14" font-family="JetBrains Mono">1</text>
+        <rect x="0" y="34" width="38" height="32" fill="#1f6feb22" stroke="#58a6ff" rx="3"/><text x="19" y="54" text-anchor="middle" fill="#79c0ff" font-size="14" font-family="JetBrains Mono">3</text>
+        <rect x="40" y="34" width="38" height="32" fill="#1f6feb22" stroke="#58a6ff" rx="3"/><text x="59" y="54" text-anchor="middle" fill="#79c0ff" font-size="14" font-family="JetBrains Mono">0</text>
+      </g>
+      <text x="145" y="52" fill="#8b949e" font-size="18">×</text>
+      <text x="165" y="18" fill="#f0883e" font-size="12" font-family="JetBrains Mono">N =</text>
+      <g transform="translate(195,8)">
+        <rect x="0" y="0" width="38" height="32" fill="#f0883e22" stroke="#f0883e" rx="3"/><text x="19" y="20" text-anchor="middle" fill="#f0883e" font-size="14" font-family="JetBrains Mono">2</text>
+        <rect x="40" y="0" width="38" height="32" fill="#f0883e22" stroke="#f0883e" rx="3"/><text x="59" y="20" text-anchor="middle" fill="#f0883e" font-size="14" font-family="JetBrains Mono">4</text>
+        <rect x="0" y="34" width="38" height="32" fill="#f0883e22" stroke="#f0883e" rx="3"/><text x="19" y="54" text-anchor="middle" fill="#f0883e" font-size="14" font-family="JetBrains Mono">0</text>
+        <rect x="40" y="34" width="38" height="32" fill="#f0883e22" stroke="#f0883e" rx="3"/><text x="59" y="54" text-anchor="middle" fill="#f0883e" font-size="14" font-family="JetBrains Mono">8</text>
+      </g>
+      <text x="295" y="52" fill="#8b949e" font-size="18">=</text>
+      <text x="315" y="18" fill="#3fb950" font-size="12" font-family="JetBrains Mono">MN =</text>
+      <g transform="translate(355,8)">
+        <rect x="0" y="0" width="46" height="32" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="23" y="20" text-anchor="middle" fill="#3fb950" font-size="14" font-family="JetBrains Mono">10</text>
+        <rect x="48" y="0" width="46" height="32" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="71" y="20" text-anchor="middle" fill="#3fb950" font-size="14" font-family="JetBrains Mono">28</text>
+        <rect x="0" y="34" width="46" height="32" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="23" y="54" text-anchor="middle" fill="#3fb950" font-size="14" font-family="JetBrains Mono">6</text>
+        <rect x="48" y="34" width="46" height="32" fill="#3fb95022" stroke="#3fb950" rx="3"/><text x="71" y="54" text-anchor="middle" fill="#3fb950" font-size="14" font-family="JetBrains Mono">12</text>
+      </g>
+      <text x="10" y="100" fill="#8b949e" font-size="12">(১,১) = 5×2 + 1×0 = 10 | (১,২) = 5×4 + 1×8 = 28</text>
+      <text x="10" y="118" fill="#8b949e" font-size="12">(২,১) = 3×2 + 0×0 = 6  | (২,২) = 3×4 + 0×8 = 12</text>
+      <text x="10" y="140" fill="#58a6ff" font-size="12" font-family="JetBrains Mono">M.dot(N)  অথবা  M @ N</text>
+    </svg>
+    <div class="dc">Matrix multiplication: প্রথম matrix-এর row × দ্বিতীয় matrix-এর column</div>
+  </div>
+
+  <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">matrix_power.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+M = np.<span class="fn">array</span>([[<span class="nm">5</span>,<span class="nm">1</span>],[<span class="nm">3</span>,<span class="nm">0</span>]])
+N = np.<span class="fn">array</span>([[<span class="nm">2</span>,<span class="nm">4</span>],[<span class="nm">0</span>,<span class="nm">8</span>]])
+
+<span class="fn">print</span>(M * N)       <span class="cm"># [[10,4],[0,0]] — element-wise</span>
+<span class="fn">print</span>(M.<span class="fn">dot</span>(N))   <span class="cm"># [[10,28],[6,12]] — matrix mult</span>
+<span class="fn">print</span>(M @ N)       <span class="cm"># same, নতুন Python syntax</span>
+
+<span class="cm"># ── Matrix Power: Aⁿ ──</span>
+A = np.<span class="fn">array</span>([[<span class="nm">1</span>,-<span class="nm">1</span>],[-<span class="nm">1</span>,<span class="nm">1</span>]])
+
+<span class="kw">def</span> <span class="fn">powerA</span>(n):
+    An = np.<span class="fn">eye</span>(<span class="nm">2</span>, dtype=<span class="fn">int</span>)  <span class="cm"># identity থেকে শুরু</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n):
+        An = An.<span class="fn">dot</span>(A)
+    <span class="kw">return</span> An
+
+<span class="fn">print</span>(<span class="fn">powerA</span>(<span class="nm">2</span>))  <span class="cm"># [[ 2,-2],[-2, 2]]</span>
+<span class="fn">print</span>(<span class="fn">powerA</span>(<span class="nm">3</span>))  <span class="cm"># [[ 4,-4],[-4, 4]]</span>
+<span class="fn">print</span>(<span class="fn">powerA</span>(<span class="nm">4</span>))  <span class="cm"># [[ 8,-8],[-8, 8]]</span>
+<span class="cm"># Pattern: Aⁿ = 2^(n-1) × [[1,-1],[-1,1]]</span></pre></div>
+
+  <div class="ex" id="s6ex">
+    <div class="ex-hdr"><span class="ex-badge">Interview Exercise</span><span class="ex-title">Matrix Operations — ML Context</span></div>
+    <p><strong>প্রশ্ন:</strong> Neural network-এর forward pass implement করো: <code>Z = X·W + b</code>, তারপর ReLU activation apply করো।</p>
+    <details><summary>✅ সমাধান দেখো</summary><div class="sb">
+    <div class="cw"><div class="ch2"><span class="cl">Python</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+np.random.<span class="fn">seed</span>(<span class="nm">42</span>)
+X = np.random.<span class="fn">randn</span>(<span class="nm">5</span>, <span class="nm">3</span>)   <span class="cm"># 5 sample, 3 feature</span>
+W = np.random.<span class="fn">randn</span>(<span class="nm">3</span>, <span class="nm">4</span>)   <span class="cm"># 3 input → 4 neuron</span>
+b = np.<span class="fn">zeros</span>((<span class="nm">1</span>, <span class="nm">4</span>))         <span class="cm"># bias</span>
+
+<span class="cm"># Forward pass: Z = X·W + b</span>
+Z = X.<span class="fn">dot</span>(W) + b              <span class="cm"># (5, 4) — broadcasting!</span>
+<span class="fn">print</span>(<span class="st">"Z shape:"</span>, Z.shape)
+
+<span class="cm"># ReLU: negative → 0</span>
+A = np.<span class="fn">maximum</span>(<span class="nm">0</span>, Z)
+<span class="fn">print</span>(<span class="st">"After ReLU (no negatives):"</span>, (A &lt; <span class="nm">0</span>).<span class="fn">sum</span>() == <span class="nm">0</span>)  <span class="cm"># True</span>
+
+<span class="cm"># Sigmoid: σ(z) = 1 / (1 + e^(-z))</span>
+sigmoid = <span class="nm">1</span> / (<span class="nm">1</span> + np.<span class="fn">exp</span>(-Z))
+<span class="fn">print</span>(<span class="st">"Sigmoid range:"</span>, sigmoid.<span class="fn">min</span>().<span class="fn">round</span>(<span class="nm">2</span>), <span class="st">"to"</span>, sigmoid.<span class="fn">max</span>().<span class="fn">round</span>(<span class="nm">2</span>))</pre></div></div></details>
+  </div>
+</section>
+
+<!-- ── S7: Rotation ── -->
+<section class="sec" id="s7">
+  <div class="ch"><div class="ch-num">৭</div><h2>Rotation Matrix — ঘূর্ণন ম্যাট্রিক্স</h2></div>
+  <p>২D plane-এ point <code>(x₁, x₂)</code> কে θ কোণে ঘোরাতে rotation matrix ব্যবহার হয়।</p>
+
+  <div class="dw">
+    <svg viewBox="0 0 380 180" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:380px">
+      <defs>
+        <marker id="xax" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#30363d"/></marker>
+        <marker id="yax" markerWidth="6" markerHeight="8" refX="3" refY="8" orient="auto"><polygon points="0 0,6 0,3 8" fill="#30363d"/></marker>
+        <marker id="bv" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#58a6ff"/></marker>
+        <marker id="rv" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#f85149"/></marker>
+      </defs>
+      <line x1="20" y1="100" x2="190" y2="100" stroke="#30363d" stroke-width="1.5" marker-end="url(#xax)"/>
+      <line x1="105" y1="170" x2="105" y2="15" stroke="#30363d" stroke-width="1.5" marker-end="url(#yax)"/>
+      <text x="195" y="104" fill="#8b949e" font-size="11">x₁</text>
+      <text x="108" y="14" fill="#8b949e" font-size="11">x₂</text>
+      <circle cx="105" cy="100" r="3" fill="#8b949e"/>
+      <!-- Original (1,1) -->
+      <circle cx="162" cy="43" r="5" fill="#58a6ff"/>
+      <text x="167" y="42" fill="#58a6ff" font-size="11">(1,1)</text>
+      <line x1="105" y1="100" x2="159" y2="46" stroke="#58a6ff" stroke-width="2" marker-end="url(#bv)"/>
+      <!-- Rotated (-1,-1) -->
+      <circle cx="48" cy="157" r="5" fill="#f85149"/>
+      <text x="14" y="155" fill="#f85149" font-size="11">(-1,-1)</text>
+      <line x1="105" y1="100" x2="51" y2="154" stroke="#f85149" stroke-width="2" marker-end="url(#rv)"/>
+      <!-- Arc -->
+      <path d="M 158 50 A 78 78 0 1 1 51 150" stroke="#bc8cff" stroke-width="1.5" fill="none" stroke-dasharray="5,3"/>
+      <text x="162" y="100" fill="#bc8cff" font-size="12">180°</text>
+      <!-- Formula -->
+      <rect x="215" y="20" width="155" height="70" fill="#21262d" stroke="#30363d" rx="6"/>
+      <text x="293" y="40" text-anchor="middle" fill="#8b949e" font-size="11">A(θ) =</text>
+      <text x="225" y="58" fill="#79c0ff" font-size="11" font-family="JetBrains Mono">[ cos θ  -sin θ ]</text>
+      <text x="225" y="74" fill="#79c0ff" font-size="11" font-family="JetBrains Mono">[ sin θ   cos θ ]</text>
+      <text x="215" y="115" fill="#8b949e" font-size="11">A(π)·(1,1) = (-1,-1)</text>
+      <text x="215" y="131" fill="#8b949e" font-size="11">১৮০° ঘুরলে বিপরীত যায়</text>
+    </svg>
+    <div class="dc">Rotation matrix দিয়ে ২D plane-এ point ঘোরানো</div>
+  </div>
+
+  <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">rotation.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">rotation_matrix</span>(theta):
+    <span class="kw">return</span> np.<span class="fn">array</span>([
+        [np.<span class="fn">cos</span>(theta), -np.<span class="fn">sin</span>(theta)],
+        [np.<span class="fn">sin</span>(theta),  np.<span class="fn">cos</span>(theta)]
+    ])
+
+x = np.<span class="fn">array</span>([<span class="nm">1</span>, <span class="nm">1</span>])
+<span class="fn">print</span>(<span class="fn">rotation_matrix</span>(np.pi).<span class="fn">dot</span>(x))       <span class="cm"># [-1. -1.] — 180°</span>
+<span class="fn">print</span>(<span class="fn">rotation_matrix</span>(np.pi/<span class="nm">2</span>).<span class="fn">dot</span>(x).<span class="fn">round</span>(<span class="nm">10</span>))  <span class="cm"># [-1.  1.] — 90°</span></pre></div>
+</section>
+
+<!-- ── S8: Broadcasting ── -->
+<section class="sec" id="s8">
+  <div class="ch"><div class="ch-num">৮</div><h2>Broadcasting — ভিন্ন আকারের অ্যারেতে অপারেশন</h2></div>
+
+  <div class="box info"><div class="bt">💡 রান্নাঘর উদাহরণ</div>
+  তোমার ৩×৩ ট্রেতে ৯টা কাপকেক আছে। সবার উপরে ১০ গ্রাম করে চিনি দিতে চাও। তুমি "১০" একবার বললেই NumPy নিজেই সব ৯টায় ১০ গ্রাম করে দেয় — এটাই Broadcasting!</div>
+
+  <div class="dw">
+    <svg viewBox="0 0 560 180" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:560px">
+      <!-- Matrix + scalar -->
+      <text x="10" y="18" fill="#8b949e" font-size="12" font-weight="bold">ক্ষেত্র ১: Matrix + Constant</text>
+      <g transform="translate(10,28)">
+        <rect x="0"  y="0" width="28" height="22" fill="#1f6feb22" stroke="#58a6ff" rx="2"/><text x="14" y="15" text-anchor="middle" fill="#79c0ff" font-size="10">3</text>
+        <rect x="30" y="0" width="28" height="22" fill="#1f6feb22" stroke="#58a6ff" rx="2"/><text x="44" y="15" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="60" y="0" width="28" height="22" fill="#1f6feb22" stroke="#58a6ff" rx="2"/><text x="74" y="15" text-anchor="middle" fill="#79c0ff" font-size="10">2</text>
+        <rect x="0"  y="24" width="28" height="22" fill="#1f6feb22" stroke="#58a6ff" rx="2"/><text x="14" y="39" text-anchor="middle" fill="#79c0ff" font-size="10">-2</text>
+        <rect x="30" y="24" width="28" height="22" fill="#1f6feb22" stroke="#58a6ff" rx="2"/><text x="44" y="39" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="60" y="24" width="28" height="22" fill="#1f6feb22" stroke="#58a6ff" rx="2"/><text x="74" y="39" text-anchor="middle" fill="#79c0ff" font-size="10">5</text>
+      </g>
+      <text x="100" y="42" fill="#8b949e" font-size="14">+</text>
+      <rect x="112" y="30" width="28" height="22" fill="#d299221a" stroke="#d29922" rx="3"/>
+      <text x="126" y="45" text-anchor="middle" fill="#d29922" font-size="12">10</text>
+      <text x="148" y="42" fill="#8b949e" font-size="14">=</text>
+      <g transform="translate(162,28)">
+        <rect x="0"  y="0" width="28" height="22" fill="#3fb95022" stroke="#3fb950" rx="2"/><text x="14" y="15" text-anchor="middle" fill="#3fb950" font-size="10">13</text>
+        <rect x="30" y="0" width="28" height="22" fill="#3fb95022" stroke="#3fb950" rx="2"/><text x="44" y="15" text-anchor="middle" fill="#3fb950" font-size="10">11</text>
+        <rect x="60" y="0" width="28" height="22" fill="#3fb95022" stroke="#3fb950" rx="2"/><text x="74" y="15" text-anchor="middle" fill="#3fb950" font-size="10">12</text>
+        <rect x="0"  y="24" width="28" height="22" fill="#3fb95022" stroke="#3fb950" rx="2"/><text x="14" y="39" text-anchor="middle" fill="#3fb950" font-size="10">8</text>
+        <rect x="30" y="24" width="28" height="22" fill="#3fb95022" stroke="#3fb950" rx="2"/><text x="44" y="39" text-anchor="middle" fill="#3fb950" font-size="10">11</text>
+        <rect x="60" y="24" width="28" height="22" fill="#3fb95022" stroke="#3fb950" rx="2"/><text x="74" y="39" text-anchor="middle" fill="#3fb950" font-size="10">15</text>
+      </g>
+      <text x="10" y="95" fill="#8b949e" font-size="11">প্রতিটি উপাদানে ১০ যোগ হয়েছে</text>
+      <!-- Matrix + vector -->
+      <text x="285" y="18" fill="#8b949e" font-size="12" font-weight="bold">ক্ষেত্র ২: Matrix × Column Vector</text>
+      <g transform="translate(285,28)">
+        <rect x="0"  y="0" width="28" height="22" fill="#1f6feb22" stroke="#58a6ff" rx="2"/><text x="14" y="15" text-anchor="middle" fill="#79c0ff" font-size="10">3</text>
+        <rect x="30" y="0" width="28" height="22" fill="#1f6feb22" stroke="#58a6ff" rx="2"/><text x="44" y="15" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="60" y="0" width="28" height="22" fill="#1f6feb22" stroke="#58a6ff" rx="2"/><text x="74" y="15" text-anchor="middle" fill="#79c0ff" font-size="10">2</text>
+        <rect x="0"  y="24" width="28" height="22" fill="#1f6feb22" stroke="#58a6ff" rx="2"/><text x="14" y="39" text-anchor="middle" fill="#79c0ff" font-size="10">-2</text>
+        <rect x="30" y="24" width="28" height="22" fill="#1f6feb22" stroke="#58a6ff" rx="2"/><text x="44" y="39" text-anchor="middle" fill="#79c0ff" font-size="10">1</text>
+        <rect x="60" y="24" width="28" height="22" fill="#1f6feb22" stroke="#58a6ff" rx="2"/><text x="74" y="39" text-anchor="middle" fill="#79c0ff" font-size="10">5</text>
+      </g>
+      <text x="372" y="42" fill="#8b949e" font-size="14">×</text>
+      <g transform="translate(387,28)">
+        <rect x="0" y="0" width="22" height="22" fill="#d299221a" stroke="#d29922" rx="2"/><text x="11" y="15" text-anchor="middle" fill="#d29922" font-size="10">2</text>
+        <rect x="0" y="24" width="22" height="22" fill="#d299221a" stroke="#d29922" rx="2"/><text x="11" y="39" text-anchor="middle" fill="#d29922" font-size="10">5</text>
+      </g>
+      <text x="414" y="42" fill="#8b949e" font-size="14">=</text>
+      <g transform="translate(428,28)">
+        <rect x="0"  y="0" width="28" height="22" fill="#3fb95022" stroke="#3fb950" rx="2"/><text x="14" y="15" text-anchor="middle" fill="#3fb950" font-size="10">6</text>
+        <rect x="30" y="0" width="28" height="22" fill="#3fb95022" stroke="#3fb950" rx="2"/><text x="44" y="15" text-anchor="middle" fill="#3fb950" font-size="10">2</text>
+        <rect x="60" y="0" width="28" height="22" fill="#3fb95022" stroke="#3fb950" rx="2"/><text x="74" y="15" text-anchor="middle" fill="#3fb950" font-size="10">4</text>
+        <rect x="0"  y="24" width="28" height="22" fill="#3fb95022" stroke="#3fb950" rx="2"/><text x="14" y="39" text-anchor="middle" fill="#3fb950" font-size="10">-10</text>
+        <rect x="30" y="24" width="28" height="22" fill="#3fb95022" stroke="#3fb950" rx="2"/><text x="44" y="39" text-anchor="middle" fill="#3fb950" font-size="10">5</text>
+        <rect x="60" y="24" width="28" height="22" fill="#3fb95022" stroke="#3fb950" rx="2"/><text x="74" y="39" text-anchor="middle" fill="#3fb950" font-size="10">25</text>
+      </g>
+      <text x="285" y="92" fill="#8b949e" font-size="11">Row 0 × 2, Row 1 × 5</text>
+      <!-- Rule box -->
+      <rect x="10" y="110" width="540" height="62" fill="#21262d" stroke="#30363d" rx="6"/>
+      <text x="20" y="130" fill="#bc8cff" font-size="12" font-weight="bold">Broadcasting নিয়ম (মনে রাখো):</text>
+      <text x="20" y="148" fill="#8b949e" font-size="12">দুটো dimension compatible হয় যদি: (১) সমান হয়  OR  (২) কোনো একটা = 1</text>
+      <text x="20" y="164" fill="#f85149" font-size="12">কোনোটাই না হলে → ValueError: operands could not be broadcast together</text>
+    </svg>
+    <div class="dc">Broadcasting: ছোট অ্যারেকে স্বয়ংক্রিয়ভাবে বড় করে অপারেশন</div>
+  </div>
+
+  <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">minmax_normalization.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Database: age (বছর), height (মিটার)</span>
+X = np.<span class="fn">array</span>([[<span class="nm">24</span>, <span class="nm">1.88</span>],   <span class="cm"># Jacques</span>
+               [<span class="nm">18</span>, <span class="nm">1.68</span>],   <span class="cm"># Mathilde</span>
+               [<span class="nm">14</span>, <span class="nm">1.65</span>]])  <span class="cm"># Alban</span>
+
+<span class="cm"># Min-Max: X̃ᵢⱼ = (Xᵢⱼ - min_col) / (max_col - min_col)</span>
+<span class="cm"># Broadcasting-এর কারণ: X.min(axis=0) → [14, 1.65]
+# এই vector-কে প্রতিটি row থেকে বাদ দেওয়া যায়!</span>
+X_tilde = (X - X.<span class="fn">min</span>(axis=<span class="nm">0</span>)) / (X.<span class="fn">max</span>(axis=<span class="nm">0</span>) - X.<span class="fn">min</span>(axis=<span class="nm">0</span>))
+<span class="fn">print</span>(X_tilde.<span class="fn">round</span>(<span class="nm">2</span>))
+<span class="cm"># [[1.   1.  ]
+#  [0.4  0.13]
+#  [0.   0.  ]]</span></pre></div>
+
+  <div class="ex" id="s8ex">
+    <div class="ex-hdr"><span class="ex-badge">Interview Exercise</span><span class="ex-title">Broadcasting — Feature Engineering</span></div>
+    <p><strong>প্রশ্ন:</strong> Z-score standardization implement করো (mean=0, std=1) এবং verify করো।</p>
+    <details><summary>✅ সমাধান দেখো</summary><div class="sb">
+    <div class="cw"><div class="ch2"><span class="cl">Python</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+X = np.<span class="fn">array</span>([[<span class="nm">24</span>,<span class="nm">1.88</span>],[<span class="nm">18</span>,<span class="nm">1.68</span>],[<span class="nm">14</span>,<span class="nm">1.65</span>]])
+
+<span class="cm"># Z-score: (X - mean) / std</span>
+X_std = (X - X.<span class="fn">mean</span>(axis=<span class="nm">0</span>)) / X.<span class="fn">std</span>(axis=<span class="nm">0</span>)
+<span class="fn">print</span>(X_std.<span class="fn">round</span>(<span class="nm">3</span>))
+<span class="fn">print</span>(<span class="st">"Mean ≈ 0:"</span>, np.<span class="fn">allclose</span>(X_std.<span class="fn">mean</span>(axis=<span class="nm">0</span>), <span class="nm">0</span>))   <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="st">"Std ≈ 1: "</span>, np.<span class="fn">allclose</span>(X_std.<span class="fn">std</span>(axis=<span class="nm">0</span>), <span class="nm">1</span>))    <span class="cm"># True</span></pre></div></div></details>
+  </div>
+</section>
+
+<!-- ── S9: Statistical Methods ── -->
+<section class="sec" id="s9">
+  <div class="ch"><div class="ch-num">৯</div><h2>Statistical Methods — পরিসংখ্যান পদ্ধতি</h2></div>
+
+  <div class="tw"><table>
+    <thead><tr><th>Method</th><th>কী করে</th><th>axis=0</th><th>axis=1</th></tr></thead>
+    <tbody>
+      <tr><td><code>.mean()</code></td><td>গড়</td><td>প্রতিটি column-এর গড়</td><td>প্রতিটি row-এর গড়</td></tr>
+      <tr><td><code>.sum()</code></td><td>যোগফল</td><td>column-wise sum</td><td>row-wise sum</td></tr>
+      <tr><td><code>.std()</code></td><td>Standard Deviation</td><td>column-wise</td><td>row-wise</td></tr>
+      <tr><td><code>.min()</code> / <code>.max()</code></td><td>সর্বনিম্ন/সর্বোচ্চ</td><td>column-wise</td><td>row-wise</td></tr>
+      <tr><td><code>.argmin()</code> / <code>.argmax()</code></td><td>সর্বনিম্ন/সর্বোচ্চের index</td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box warn"><div class="bt">⚠️ axis মনে রাখার ট্রিক</div>
+  <strong>axis=0</strong> → সারির দিকে operation, <strong>column-ভিত্তিক ফলাফল</strong><br>
+  <strong>axis=1</strong> → column-এর দিকে operation, <strong>row-ভিত্তিক ফলাফল</strong></div>
+
+  <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">stats.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+A = np.<span class="fn">array</span>([[<span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">10</span>],
+               [<span class="nm">3</span>, <span class="nm">5</span>,  <span class="nm">2</span>]])
+
+<span class="fn">print</span>(A.<span class="fn">mean</span>())         <span class="cm"># 3.67 — সব মানের গড়</span>
+<span class="fn">print</span>(A.<span class="fn">mean</span>(axis=<span class="nm">0</span>)) <span class="cm"># [2. 3. 6.] — প্রতিটি column-এর গড়</span>
+<span class="fn">print</span>(A.<span class="fn">mean</span>(axis=<span class="nm">1</span>)) <span class="cm"># [4.   3.33] — প্রতিটি row-এর গড়</span>
+
+<span class="fn">print</span>(A.<span class="fn">argmax</span>())         <span class="cm"># 2 — সর্বোচ্চ মান (10) এর flat index</span>
+<span class="fn">print</span>(A.<span class="fn">argmax</span>(axis=<span class="nm">1</span>)) <span class="cm"># [2, 1] — প্রতিটি row-এ সর্বোচ্চের column index</span></pre></div>
+</section>
+
+<!-- ── S10: MSE & Linear Regression ── -->
+<section class="sec" id="s10">
+  <div class="ch"><div class="ch-num">১০</div><h2>MSE ও Linear Regression — Machine Learning এর ভিত্তি</h2></div>
+
+  <div class="box info"><div class="bt">💡 MSE সহজে বোঝো</div>
+  MSE = model কতটা ভুল করছে তার পরিমাপ। প্রতিটি prediction আর actual-এর পার্থক্যের বর্গ নাও, তারপর সবার গড় নাও। MSE যত কম, model তত ভালো।</div>
+
+  <div class="dw">
+    <svg viewBox="0 0 500 110" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:500px">
+      <rect x="10" y="10" width="480" height="90" fill="#21262d" stroke="#30363d" rx="8"/>
+      <text x="30" y="38" fill="#bc8cff" font-size="14" font-weight="bold">MSE =</text>
+      <text x="100" y="33" fill="#8b949e" font-size="11">1</text>
+      <line x1="98" y1="36" x2="118" y2="36" stroke="#8b949e" stroke-width="1"/>
+      <text x="100" y="50" fill="#8b949e" font-size="11">n</text>
+      <text x="125" y="38" fill="#8b949e" font-size="16">Σ</text>
+      <text x="145" y="40" fill="#58a6ff" font-size="13">( ŷᵢ</text>
+      <text x="174" y="40" fill="#8b949e" font-size="13"> − </text>
+      <text x="192" y="40" fill="#f85149" font-size="13">yᵢ</text>
+      <text x="206" y="40" fill="#8b949e" font-size="13"> )²</text>
+      <text x="30" y="68" fill="#58a6ff" font-size="11">ŷ = X·β  (prediction = feature × coefficient)</text>
+      <text x="30" y="84" fill="#f85149" font-size="11">y = actual target (আসল মান)</text>
+      <text x="30" y="96" fill="#8b949e" font-size="11">লক্ষ্য: এমন β খুঁজো যা MSE minimize করে</text>
+    </svg>
+  </div>
+
+  <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">mse_regression.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">mean_squared_error</span>(X, beta, y):
+    y_hat = X.<span class="fn">dot</span>(beta)                 <span class="cm"># ŷ = X·β</span>
+    <span class="kw">return</span> ((y_hat - y) ** <span class="nm">2</span>).<span class="fn">mean</span>()   <span class="cm"># MSE</span>
+
+<span class="cm"># Data: বয়স → উচ্চতা</span>
+X = np.<span class="fn">array</span>([<span class="nm">24</span>, <span class="nm">18</span>, <span class="nm">14</span>])
+y = np.<span class="fn">array</span>([<span class="nm">1.88</span>, <span class="nm">1.68</span>, <span class="nm">1.65</span>])
+
+<span class="cm"># β = 0.01, 0.02, ..., 0.15 পরীক্ষা করো</span>
+betas = np.<span class="fn">linspace</span>(start=<span class="nm">0.01</span>, stop=<span class="nm">0.15</span>, num=<span class="nm">15</span>)
+errors = np.<span class="fn">array</span>([<span class="fn">mean_squared_error</span>(X, b, y) <span class="kw">for</span> b <span class="kw">in</span> betas])
+
+<span class="cm"># সর্বনিম্ন MSE-এর β</span>
+best_idx = errors.<span class="fn">argmin</span>()
+best_beta = betas[best_idx]
+<span class="fn">print</span>(<span class="st">f"সেরা β: {best_beta}"</span>)        <span class="cm"># 0.15</span>
+<span class="fn">print</span>(<span class="st">f"Min MSE: {errors[best_idx]:.3f}"</span>)
+
+<span class="cm"># সেই β দিয়ে prediction</span>
+y_pred = X * best_beta
+<span class="fn">print</span>(<span class="st">"Predicted heights:"</span>, y_pred)  <span class="cm"># [3.6, 2.7, 2.1]</span>
+
+<span class="cm"># np.linspace ব্যাখ্যা:
+# start=0.01, stop=0.15, num=15 → সমান ব্যবধানে ১৫টা সংখ্যা
+# [0.01, 0.02, 0.03, ..., 0.15]</span></pre></div>
+
+  <div class="ex" id="s10ex">
+    <div class="ex-hdr"><span class="ex-badge">Interview Exercise</span><span class="ex-title">MSE — Regression Evaluation</span></div>
+    <p><strong>প্রশ্ন:</strong> ১০০টা beta পরীক্ষা করো, সেরাটা বের করো, এবং R² score গণনা করো।</p>
+    <details><summary>✅ সমাধান দেখো</summary><div class="sb">
+    <div class="cw"><div class="ch2"><span class="cl">Python</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+np.random.<span class="fn">seed</span>(<span class="nm">42</span>)
+X = np.random.<span class="fn">uniform</span>(<span class="nm">1</span>, <span class="nm">10</span>, <span class="nm">50</span>)
+y = <span class="nm">2.5</span> * X + np.random.<span class="fn">normal</span>(<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">50</span>)
+
+betas = np.<span class="fn">linspace</span>(<span class="nm">0.1</span>, <span class="nm">5.0</span>, <span class="nm">100</span>)
+errors = np.<span class="fn">array</span>([((X*b - y)**<span class="nm">2</span>).<span class="fn">mean</span>() <span class="kw">for</span> b <span class="kw">in</span> betas])
+best_beta = betas[errors.<span class="fn">argmin</span>()]
+<span class="fn">print</span>(<span class="st">f"সেরা β ≈ {best_beta:.2f}"</span>)  <span class="cm"># ≈ 2.5</span>
+
+<span class="cm"># R² score: কতটুকু variance explain করতে পারছে</span>
+y_pred = X * best_beta
+ss_res = ((y - y_pred)**<span class="nm">2</span>).<span class="fn">sum</span>()
+ss_tot = ((y - y.<span class="fn">mean</span>())**<span class="nm">2</span>).<span class="fn">sum</span>()
+r2 = <span class="nm">1</span> - ss_res/ss_tot
+<span class="fn">print</span>(<span class="st">f"R² = {r2:.4f}"</span>)  <span class="cm"># ≈ 0.97</span></pre></div></div></details>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     ALGORITHM SECTION
+════════════════════════════════════════════════════ -->
+
+<section class="sec" id="algo" style="border-top: 3px solid var(--purple)">
+  <div class="ch">
+    <div class="ch-num" style="background:linear-gradient(135deg,#bc8cff,#58a6ff)">🧠</div>
+    <h2>সকল গুরুত্বপূর্ণ অ্যালগরিদম — সম্পূর্ণ বাংলা ব্যাখ্যা ও কোড</h2>
+  </div>
+
+  <div class="box info"><div class="bt">এই section-এ আছে</div>
+  Data Science ও ML-এ সবচেয়ে বেশি ব্যবহৃত ৮টি অ্যালগরিদম — কিন্ডারগার্টেন ব্যাখ্যা, SVG চিত্র, NumPy implementation, এবং scikit-learn shortcut।</div>
+
+  <!-- ── A1: Linear Regression ── -->
+  <div class="ac" id="a1">
+    <span class="ae">📈</span>
+    <div class="an">১. Linear Regression — সেরা সরলরেখা খোঁজা</div>
+    <div class="box tip"><div class="bt">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+    বড় বাচ্চারা বেশি লম্বা — এই সম্পর্কটা একটা সরলরেখা দিয়ে দেখানো যায়। Linear Regression সেই "সেরা সরলরেখা" খুঁজে বের করে যেটা সব data point থেকে সবচেয়ে কম দূরে থাকে।</div>
+
+    <div class="dw">
+      <svg viewBox="0 0 360 180" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:360px">
+        <defs>
+          <marker id="xa" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#30363d"/></marker>
+          <marker id="ya2" markerWidth="6" markerHeight="8" refX="3" refY="8" orient="auto"><polygon points="0 0,6 0,3 8" fill="#30363d"/></marker>
+        </defs>
+        <line x1="25" y1="155" x2="340" y2="155" stroke="#30363d" stroke-width="1.5" marker-end="url(#xa)"/>
+        <line x1="25" y1="155" x2="25" y2="15"  stroke="#30363d" stroke-width="1.5" marker-end="url(#ya2)"/>
+        <text x="345" y="159" fill="#8b949e" font-size="11">X</text>
+        <text x="28"  y="14"  fill="#8b949e" font-size="11">y</text>
+        <circle cx="60"  cy="130" r="5" fill="#58a6ff" opacity=".85"/>
+        <circle cx="100" cy="112" r="5" fill="#58a6ff" opacity=".85"/>
+        <circle cx="150" cy="92"  r="5" fill="#58a6ff" opacity=".85"/>
+        <circle cx="200" cy="78"  r="5" fill="#58a6ff" opacity=".85"/>
+        <circle cx="250" cy="62"  r="5" fill="#58a6ff" opacity=".85"/>
+        <circle cx="300" cy="50"  r="5" fill="#58a6ff" opacity=".85"/>
+        <line x1="40" y1="140" x2="320" y2="44" stroke="#f0883e" stroke-width="2.5"/>
+        <line x1="60"  y1="130" x2="60"  y2="135" stroke="#f85149" stroke-width="2"/>
+        <line x1="150" y1="92"  x2="150" y2="96"  stroke="#f85149" stroke-width="2"/>
+        <line x1="300" y1="50"  x2="300" y2="46"  stroke="#f85149" stroke-width="2"/>
+        <text x="200" y="38" fill="#f0883e" font-size="12">ŷ = β·X</text>
+        <text x="200" y="54" fill="#f0883e" font-size="11">(best fit line)</text>
+        <text x="30" y="172" fill="#8b949e" font-size="11">লাল দাগ = error | লক্ষ্য: error² এর যোগফল minimize</text>
+      </svg>
+      <div class="dc">সেরা line = সব error-এর বর্গের যোগফল সবচেয়ে কম</div>
+    </div>
+
+    <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">linear_regression.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> mean_squared_error, r2_score
+
+<span class="cm"># ── NumPy দিয়ে (Normal Equation) ──</span>
+X = np.<span class="fn">array</span>([<span class="nm">5</span>,<span class="nm">7</span>,<span class="nm">8</span>,<span class="nm">10</span>,<span class="nm">12</span>,<span class="nm">14</span>,<span class="nm">15</span>], dtype=<span class="fn">float</span>)
+y = np.<span class="fn">array</span>([<span class="nm">3.5</span>,<span class="nm">4.0</span>,<span class="nm">4.3</span>,<span class="nm">5.0</span>,<span class="nm">5.8</span>,<span class="nm">6.2</span>,<span class="nm">6.5</span>])
+
+<span class="cm"># Bias term যোগ: [1, X] → intercept সহ regression</span>
+Xb = np.<span class="fn">column_stack</span>([np.<span class="fn">ones</span>(<span class="fn">len</span>(X)), X])
+beta = np.linalg.<span class="fn">pinv</span>(Xb).<span class="fn">dot</span>(y)
+<span class="fn">print</span>(<span class="st">f"Intercept: {beta[0]:.3f}, Slope: {beta[1]:.3f}"</span>)
+
+<span class="cm"># ── Scikit-learn দিয়ে (production-ready) ──</span>
+model = <span class="fn">LinearRegression</span>()
+model.<span class="fn">fit</span>(X.<span class="fn">reshape</span>(-<span class="nm">1</span>,<span class="nm">1</span>), y)
+y_pred = model.<span class="fn">predict</span>(X.<span class="fn">reshape</span>(-<span class="nm">1</span>,<span class="nm">1</span>))
+<span class="fn">print</span>(<span class="st">f"R² = {r2_score(y, y_pred):.4f}"</span>)
+<span class="fn">print</span>(<span class="st">f"MSE = {mean_squared_error(y, y_pred):.4f}"</span>)</pre></div>
+  </div>
+
+  <!-- ── A2: KNN ── -->
+  <div class="ac" id="a2">
+    <span class="ae">🏘️</span>
+    <div class="an">২. K-Nearest Neighbors (KNN) — নিকটতম প্রতিবেশী</div>
+    <div class="box tip"><div class="bt">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+    তুমি নতুন একটা ফল দেখলে কিন্তু চিনলে না। তুমি কাছের ফলগুলো দেখো — যদি বেশিরভাগ কাছের ফল "আম" হয়, তুমিও বলবে এটা "আম"। KNN ঠিক এটাই করে: k সবচেয়ে কাছের প্রতিবেশী দেখে সিদ্ধান্ত নেয়।</div>
+    <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">knn_from_scratch.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">class</span> <span class="fn">KNN</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, k=<span class="nm">3</span>): self.k = k
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, X, y):
+        <span class="cm"># KNN-এ কোনো training নেই — শুধু data মনে রাখে!</span>
+        self.X_train, self.y_train = X, y
+
+    <span class="kw">def</span> <span class="fn">predict</span>(self, X):
+        <span class="kw">return</span> np.<span class="fn">array</span>([self.<span class="fn">_pred</span>(x) <span class="kw">for</span> x <span class="kw">in</span> X])
+
+    <span class="kw">def</span> <span class="fn">_pred</span>(self, x):
+        <span class="cm"># সব point থেকে Euclidean দূরত্ব</span>
+        dists = np.<span class="fn">sqrt</span>(((self.X_train - x)**<span class="nm">2</span>).<span class="fn">sum</span>(axis=<span class="nm">1</span>))
+        k_idx = np.<span class="fn">argsort</span>(dists)[:self.k]      <span class="cm"># k সবচেয়ে কাছের</span>
+        k_labels = self.y_train[k_idx]
+        <span class="kw">return</span> <span class="fn">Counter</span>(k_labels).<span class="fn">most_common</span>(<span class="nm">1</span>)[<span class="nm">0</span>][<span class="nm">0</span>]  <span class="cm"># সংখ্যাগরিষ্ঠ</span>
+
+<span class="cm"># ── Test ──</span>
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_iris
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+
+data = <span class="fn">load_iris</span>()
+Xtr, Xte, ytr, yte = <span class="fn">train_test_split</span>(data.data, data.target, test_size=<span class="nm">0.2</span>, random_state=<span class="nm">42</span>)
+knn = <span class="fn">KNN</span>(k=<span class="nm">3</span>)
+knn.<span class="fn">fit</span>(Xtr, ytr)
+preds = knn.<span class="fn">predict</span>(Xte)
+<span class="fn">print</span>(<span class="st">f"Accuracy: {np.mean(preds==yte):.2%}"</span>)  <span class="cm"># ≈ 97%</span></pre></div>
+  </div>
+
+  <!-- ── A3: Decision Tree ── -->
+  <div class="ac" id="a3">
+    <span class="ae">🌳</span>
+    <div class="an">৩. Decision Tree — সিদ্ধান্ত বৃক্ষ</div>
+    <div class="box tip"><div class="bt">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+    "আজ ছাতা নেবো কি না?" ভাবছো। প্রশ্ন: "বৃষ্টি হবে?" হ্যাঁ → ছাতা নাও। না হলে → "রোদ আছে?" এভাবে প্রশ্ন করতে করতে সিদ্ধান্তে পৌঁছানো। Decision Tree একটা if-else গাছ!</div>
+    <div class="dw">
+      <svg viewBox="0 0 460 200" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:460px">
+        <rect x="175" y="10" width="110" height="34" fill="#1f6feb22" stroke="#58a6ff" rx="6"/>
+        <text x="230" y="31" text-anchor="middle" fill="#79c0ff" font-size="12">Petal width ≤ 0.8?</text>
+        <line x1="175" y1="27" x2="120" y2="65" stroke="#8b949e" stroke-width="1.5"/>
+        <line x1="285" y1="27" x2="340" y2="65" stroke="#8b949e" stroke-width="1.5"/>
+        <text x="135" y="58" fill="#3fb950" font-size="11">হ্যাঁ (True)</text>
+        <text x="295" y="58" fill="#f85149" font-size="11">না (False)</text>
+        <rect x="80"  y="65" width="80" height="30" fill="#3fb95022" stroke="#3fb950" rx="5"/>
+        <text x="120" y="84" text-anchor="middle" fill="#3fb950" font-size="12">Setosa ✓</text>
+        <rect x="300" y="65" width="120" height="30" fill="#f0883e22" stroke="#f0883e" rx="5"/>
+        <text x="360" y="84" text-anchor="middle" fill="#f0883e" font-size="12">Petal width ≤ 1.75?</text>
+        <line x1="300" y1="80" x2="265" y2="118" stroke="#8b949e" stroke-width="1.5"/>
+        <line x1="420" y1="80" x2="415" y2="118" stroke="#8b949e" stroke-width="1.5"/>
+        <text x="254" y="112" fill="#3fb950" font-size="10">হ্যাঁ</text>
+        <text x="408" y="112" fill="#f85149" font-size="10">না</text>
+        <rect x="210" y="118" width="90" height="28" fill="#bc8cff22" stroke="#bc8cff" rx="5"/>
+        <text x="255" y="136" text-anchor="middle" fill="#bc8cff" font-size="11">Versicolor</text>
+        <rect x="380" y="118" width="72" height="28" fill="#d299221a" stroke="#d29922" rx="5"/>
+        <text x="416" y="136" text-anchor="middle" fill="#d29922" font-size="11">Virginica</text>
+        <text x="10" y="185" fill="#8b949e" font-size="11">প্রতিটি node-এ সবচেয়ে ভালো feature দিয়ে split হয় — Gini/Entropy minimize করে</text>
+      </svg>
+      <div class="dc">Decision Tree: feature-এর value দিয়ে বারবার split করে class বের করে</div>
+    </div>
+    <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">decision_tree.py</span></div>
+<pre><span class="kw">from</span> sklearn.tree <span class="kw">import</span> DecisionTreeClassifier
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_iris
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score, classification_report
+
+data = <span class="fn">load_iris</span>()
+Xtr, Xte, ytr, yte = <span class="fn">train_test_split</span>(data.data, data.target, test_size=<span class="nm">0.2</span>, random_state=<span class="nm">42</span>)
+
+dt = <span class="fn">DecisionTreeClassifier</span>(max_depth=<span class="nm">3</span>, random_state=<span class="nm">42</span>)
+dt.<span class="fn">fit</span>(Xtr, ytr)
+y_pred = dt.<span class="fn">predict</span>(Xte)
+
+<span class="fn">print</span>(<span class="st">f"Accuracy: {accuracy_score(yte, y_pred):.2%}"</span>)
+<span class="fn">print</span>(<span class="fn">classification_report</span>(yte, y_pred, target_names=data.target_names))
+
+<span class="cm"># কোন feature সবচেয়ে গুরুত্বপূর্ণ?</span>
+<span class="kw">for</span> name, imp <span class="kw">in</span> <span class="fn">zip</span>(data.feature_names, dt.feature_importances_):
+    <span class="fn">print</span>(<span class="st">f"{name}: {imp:.3f}"</span>)</pre></div>
+  </div>
+
+  <!-- ── A4: K-Means ── -->
+  <div class="ac" id="a4">
+    <span class="ae">🎯</span>
+    <div class="an">৪. K-Means Clustering — দল ভাগ করা</div>
+    <div class="box tip"><div class="bt">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+    ৩০ জন বাচ্চা মাঠে ছড়িয়ে। ৩ দলে ভাগ করতে হবে। প্রথমে ৩ জনকে "নেতা" বানাও। সবাই কাছের নেতার দলে যাও। তারপর প্রতিটা দলের মাঝখানে নতুন নেতা বানাও। বারবার করতে থাকো যতক্ষণ দল বদলানো বন্ধ না হয়।</div>
+    <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">kmeans_scratch.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">kmeans</span>(X, k, max_iters=<span class="nm">100</span>):
+    np.random.<span class="fn">seed</span>(<span class="nm">42</span>)
+    <span class="cm"># random k টা centroid বেছে নাও</span>
+    centroids = X[np.random.<span class="fn">choice</span>(<span class="fn">len</span>(X), k, replace=<span class="kw">False</span>)]
+
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(max_iters):
+        <span class="cm"># প্রতিটি point-এর কাছের centroid</span>
+        dists = np.<span class="fn">array</span>([np.linalg.<span class="fn">norm</span>(X - c, axis=<span class="nm">1</span>) <span class="kw">for</span> c <span class="kw">in</span> centroids])
+        labels = np.<span class="fn">argmin</span>(dists, axis=<span class="nm">0</span>)       <span class="cm"># shape (n,)</span>
+        <span class="cm"># নতুন centroid = cluster-এর গড়</span>
+        new_c = np.<span class="fn">array</span>([X[labels==i].<span class="fn">mean</span>(axis=<span class="nm">0</span>) <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(k)])
+        <span class="kw">if</span> np.<span class="fn">allclose</span>(centroids, new_c): <span class="kw">break</span>   <span class="cm"># converged</span>
+        centroids = new_c
+
+    <span class="kw">return</span> labels, centroids
+
+<span class="cm"># Test</span>
+np.random.<span class="fn">seed</span>(<span class="nm">42</span>)
+X = np.<span class="fn">vstack</span>([np.random.<span class="fn">randn</span>(<span class="nm">50</span>,<span class="nm">2</span>)+[<span class="nm">0</span>,<span class="nm">0</span>],
+               np.random.<span class="fn">randn</span>(<span class="nm">50</span>,<span class="nm">2</span>)+[<span class="nm">5</span>,<span class="nm">5</span>],
+               np.random.<span class="fn">randn</span>(<span class="nm">50</span>,<span class="nm">2</span>)+[<span class="nm">0</span>,<span class="nm">5</span>]])
+labels, centers = <span class="fn">kmeans</span>(X, k=<span class="nm">3</span>)
+<span class="fn">print</span>(<span class="st">"Cluster centers:\n"</span>, centers.<span class="fn">round</span>(<span class="nm">2</span>))
+
+<span class="cm"># Scikit-learn:
+# from sklearn.cluster import KMeans
+# km = KMeans(n_clusters=3).fit(X)</span></pre></div>
+  </div>
+
+  <!-- ── A5: Gradient Descent ── -->
+  <div class="ac" id="a5">
+    <span class="ae">⛰️</span>
+    <div class="an">৫. Gradient Descent — ঢাল বেয়ে নামা</div>
+    <div class="box tip"><div class="bt">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+    চোখ বন্ধ করে পাহাড়ে দাঁড়িয়ে আছো। নিচে যেতে চাও। প্রতি পদক্ষেপে পায়ের নিচে হাত দিয়ে দেখো কোন দিকে ঢাল বেশি — সেই দিকে একটু যাও। বারবার করতে থাকলে সবচেয়ে নিচে পৌঁছাবে। Neural Network এভাবেই শেখে!</div>
+    <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">gradient_descent.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">gradient_descent</span>(X, y, lr=<span class="nm">0.001</span>, n_iter=<span class="nm">1000</span>):
+    <span class="st">"""
+    lr = learning rate (প্রতি পদক্ষেপের আকার)
+    ছোট lr → ধীরে কিন্তু নিখুঁত
+    বড় lr  → দ্রুত কিন্তু overshoot করতে পারে
+    """</span>
+    beta, losses = <span class="nm">0.0</span>, []
+    n = <span class="fn">len</span>(X)
+
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n_iter):
+        y_hat = X * beta
+        loss = ((y_hat - y)**<span class="nm">2</span>).<span class="fn">mean</span>()
+        losses.<span class="fn">append</span>(loss)
+
+        <span class="cm"># Gradient: dL/dβ</span>
+        grad = (<span class="nm">2</span>/n) * (X * (y_hat - y)).<span class="fn">sum</span>()
+        beta = beta - lr * grad   <span class="cm"># ঢাল বেয়ে নামো</span>
+
+    <span class="kw">return</span> beta, losses
+
+np.random.<span class="fn">seed</span>(<span class="nm">42</span>)
+X = np.random.<span class="fn">uniform</span>(<span class="nm">1</span>, <span class="nm">10</span>, <span class="nm">100</span>)
+y = <span class="nm">2.5</span> * X + np.random.<span class="fn">normal</span>(<span class="nm">0</span>, <span class="nm">0.5</span>, <span class="nm">100</span>)
+beta_found, losses = <span class="fn">gradient_descent</span>(X, y)
+<span class="fn">print</span>(<span class="st">f"β found: {beta_found:.4f}"</span>)       <span class="cm"># ≈ 2.5</span>
+<span class="fn">print</span>(<span class="st">f"Initial loss: {losses[0]:.2f}"</span>)
+<span class="fn">print</span>(<span class="st">f"Final loss:   {losses[-1]:.2f}"</span>)  <span class="cm"># অনেক কমেছে</span></pre></div>
+  </div>
+
+  <!-- ── A6: Normalization ── -->
+  <div class="ac" id="a6">
+    <span class="ae">⚖️</span>
+    <div class="an">৬. Normalization ও Standardization — মান সমান করা</div>
+    <div class="box tip"><div class="bt">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+    Height (১৬৫ cm) আর weight (৬৫ kg) তুলনা করতে চাও কিন্তু scale আলাদা! Normalization মানে সবকিছু একই range-এ নিয়ে আসা। Min-Max → [0,1]; Z-score → mean=0, std=1।</div>
+    <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">normalization.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+X = np.<span class="fn">array</span>([[<span class="nm">24</span>,<span class="nm">1.88</span>],[<span class="nm">18</span>,<span class="nm">1.68</span>],[<span class="nm">14</span>,<span class="nm">1.65</span>]])
+
+<span class="cm"># ── Min-Max: সব মান [0, 1]-এ ──</span>
+def <span class="fn">minmax</span>(X):
+    <span class="kw">return</span> (X - X.<span class="fn">min</span>(axis=<span class="nm">0</span>)) / (X.<span class="fn">max</span>(axis=<span class="nm">0</span>) - X.<span class="fn">min</span>(axis=<span class="nm">0</span>))
+
+<span class="cm"># ── Z-score: mean=0, std=1 ──</span>
+def <span class="fn">zscore</span>(X):
+    <span class="kw">return</span> (X - X.<span class="fn">mean</span>(axis=<span class="nm">0</span>)) / X.<span class="fn">std</span>(axis=<span class="nm">0</span>)
+
+<span class="fn">print</span>(<span class="st">"Min-Max:"</span>, <span class="fn">minmax</span>(X).<span class="fn">round</span>(<span class="nm">2</span>))
+<span class="fn">print</span>(<span class="st">"Z-score:"</span>, <span class="fn">zscore</span>(X).<span class="fn">round</span>(<span class="nm">2</span>))
+
+<span class="cm"># Sklearn:
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
+X_mm = MinMaxScaler().fit_transform(X)
+X_zz = StandardScaler().fit_transform(X)
+print("Sklearn MinMax:\n", X_mm.round(2))</span></pre></div>
+  </div>
+
+  <!-- ── A7: Confusion Matrix ── -->
+  <div class="ac" id="a7">
+    <span class="ae">🔢</span>
+    <div class="an">৭. Confusion Matrix ও Classification Metrics</div>
+    <div class="box tip"><div class="bt">🧒 কিন্ডারগার্টেন ব্যাখ্যা</div>
+    Model বিড়াল ও কুকুর চেনে। Confusion Matrix দেখায়: কতটা বিড়ালকে সঠিক বিড়াল বলেছে? কতটাকে ভুলে কুকুর বলেছে? এই "confusion" থেকে model-এর দুর্বলতা বোঝা যায়।</div>
+
+    <div class="dw">
+      <svg viewBox="0 0 400 170" xmlns="http://www.w3.org/2000/svg" width="100%" style="max-width:400px">
+        <text x="120" y="18" text-anchor="middle" fill="#8b949e" font-size="12">Predicted 0</text>
+        <text x="220" y="18" text-anchor="middle" fill="#8b949e" font-size="12">Predicted 1</text>
+        <text x="30" y="62" text-anchor="middle" fill="#8b949e" font-size="12" transform="rotate(-90,30,62)">Actual 0</text>
+        <text x="30" y="122" text-anchor="middle" fill="#8b949e" font-size="12" transform="rotate(-90,30,122)">Actual 1</text>
+        <rect x="50" y="28" width="140" height="54" fill="#3fb95022" stroke="#3fb950" stroke-width="2" rx="4"/>
+        <text x="120" y="52" text-anchor="middle" fill="#3fb950" font-size="18" font-weight="bold">TN</text>
+        <text x="120" y="70" text-anchor="middle" fill="#3fb950" font-size="11">True Negative</text>
+        <rect x="192" y="28" width="140" height="54" fill="#f8514922" stroke="#f85149" stroke-width="2" rx="4"/>
+        <text x="262" y="52" text-anchor="middle" fill="#f85149" font-size="18" font-weight="bold">FP</text>
+        <text x="262" y="70" text-anchor="middle" fill="#f85149" font-size="11">False Positive</text>
+        <rect x="50" y="84" width="140" height="54" fill="#f8514922" stroke="#f85149" stroke-width="2" rx="4"/>
+        <text x="120" y="108" text-anchor="middle" fill="#f85149" font-size="18" font-weight="bold">FN</text>
+        <text x="120" y="126" text-anchor="middle" fill="#f85149" font-size="11">False Negative</text>
+        <rect x="192" y="84" width="140" height="54" fill="#3fb95022" stroke="#3fb950" stroke-width="2" rx="4"/>
+        <text x="262" y="108" text-anchor="middle" fill="#3fb950" font-size="18" font-weight="bold">TP</text>
+        <text x="262" y="126" text-anchor="middle" fill="#3fb950" font-size="11">True Positive</text>
+        <text x="10" y="158" fill="#8b949e" font-size="11">Accuracy = (TP+TN)/All | Precision = TP/(TP+FP) | Recall = TP/(TP+FN)</text>
+      </svg>
+      <div class="dc">Confusion Matrix: সঠিক (সবুজ) ও ভুল (লাল) prediction-এর গণনা</div>
+    </div>
+
+    <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">confusion_matrix.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">metrics</span>(y_true, y_pred):
+    TP = ((y_pred==<span class="nm">1</span>) & (y_true==<span class="nm">1</span>)).<span class="fn">sum</span>()
+    TN = ((y_pred==<span class="nm">0</span>) & (y_true==<span class="nm">0</span>)).<span class="fn">sum</span>()
+    FP = ((y_pred==<span class="nm">1</span>) & (y_true==<span class="nm">0</span>)).<span class="fn">sum</span>()
+    FN = ((y_pred==<span class="nm">0</span>) & (y_true==<span class="nm">1</span>)).<span class="fn">sum</span>()
+    acc  = (TP+TN)/(TP+TN+FP+FN)
+    prec = TP/(TP+FP) <span class="kw">if</span> (TP+FP) > <span class="nm">0</span> <span class="kw">else</span> <span class="nm">0</span>
+    rec  = TP/(TP+FN) <span class="kw">if</span> (TP+FN) > <span class="nm">0</span> <span class="kw">else</span> <span class="nm">0</span>
+    f1   = <span class="nm">2</span>*prec*rec/(prec+rec) <span class="kw">if</span> (prec+rec) > <span class="nm">0</span> <span class="kw">else</span> <span class="nm">0</span>
+    <span class="fn">print</span>(<span class="st">f"Accuracy : {acc:.2%}"</span>)
+    <span class="fn">print</span>(<span class="st">f"Precision: {prec:.2%}"</span>)
+    <span class="fn">print</span>(<span class="st">f"Recall   : {rec:.2%}"</span>)
+    <span class="fn">print</span>(<span class="st">f"F1 Score : {f1:.2%}"</span>)
+
+y_true = np.<span class="fn">array</span>([<span class="nm">1</span>,<span class="nm">0</span>,<span class="nm">1</span>,<span class="nm">1</span>,<span class="nm">0</span>,<span class="nm">1</span>,<span class="nm">0</span>,<span class="nm">0</span>,<span class="nm">1</span>,<span class="nm">1</span>])
+y_pred = np.<span class="fn">array</span>([<span class="nm">1</span>,<span class="nm">0</span>,<span class="nm">1</span>,<span class="nm">0</span>,<span class="nm">0</span>,<span class="nm">1</span>,<span class="nm">1</span>,<span class="nm">0</span>,<span class="nm">1</span>,<span class="nm">0</span>])
+<span class="fn">metrics</span>(y_true, y_pred)</pre></div>
+  </div>
+
+  <!-- ── A8: Full ML Pipeline ── -->
+  <div class="ac" id="a8">
+    <span class="ae">🔗</span>
+    <div class="an">৮. সম্পূর্ণ ML Pipeline — Raw Data থেকে Prediction পর্যন্ত</div>
+    <div class="box tip"><div class="bt">💼 Real Project Pattern</div>
+    এটা একটা অ্যালগরিদম নয় — সব ML project-এ এই পুরো flow follow করতে হয়। Data load → EDA → Preprocessing → Train/Test split → Scale → Model train → Evaluate → Predict।</div>
+    <div class="cw"><div class="ch2"><span class="cl">Python</span><span class="cf">complete_pipeline.py</span></div>
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report
+
+<span class="cm"># ── STEP 1: Data ──</span>
+np.random.<span class="fn">seed</span>(<span class="nm">42</span>)
+df = pd.<span class="fn">DataFrame</span>({
+    <span class="st">'age'</span>:    np.random.<span class="fn">randint</span>(<span class="nm">18</span>, <span class="nm">60</span>, <span class="nm">300</span>),
+    <span class="st">'income'</span>: np.random.<span class="fn">randint</span>(<span class="nm">20000</span>, <span class="nm">100000</span>, <span class="nm">300</span>),
+    <span class="st">'label'</span>:  np.random.<span class="fn">randint</span>(<span class="nm">0</span>, <span class="nm">2</span>, <span class="nm">300</span>)
+})
+
+<span class="cm"># ── STEP 2: EDA ──</span>
+<span class="fn">print</span>(<span class="st">"Shape:"</span>, df.shape)
+<span class="fn">print</span>(<span class="st">"Missing:"</span>, df.<span class="fn">isnull</span>().<span class="fn">sum</span>().<span class="fn">sum</span>())
+<span class="fn">print</span>(df.<span class="fn">describe</span>().<span class="fn">round</span>(<span class="nm">1</span>))
+
+<span class="cm"># ── STEP 3: Preprocessing ──</span>
+X = df[[<span class="st">'age'</span>, <span class="st">'income'</span>]].<span class="fn">values</span>
+y = df[<span class="st">'label'</span>].<span class="fn">values</span>
+
+Xtr, Xte, ytr, yte = <span class="fn">train_test_split</span>(X, y, test_size=<span class="nm">0.2</span>, random_state=<span class="nm">42</span>)
+
+<span class="cm"># ⚠️ CRITICAL: শুধু training data-তে fit, তারপর উভয়ে transform</span>
+scaler = <span class="fn">StandardScaler</span>()
+Xtr_s = scaler.<span class="fn">fit_transform</span>(Xtr)   <span class="cm"># fit + transform</span>
+Xte_s = scaler.<span class="fn">transform</span>(Xte)       <span class="cm"># শুধু transform (fit নয়!)</span>
+
+<span class="cm"># ── STEP 4: Model ──</span>
+model = <span class="fn">LogisticRegression</span>(random_state=<span class="nm">42</span>)
+model.<span class="fn">fit</span>(Xtr_s, ytr)
+
+<span class="cm"># ── STEP 5: Evaluate ──</span>
+y_pred = model.<span class="fn">predict</span>(Xte_s)
+<span class="fn">print</span>(<span class="fn">classification_report</span>(yte, y_pred))
+
+<span class="cm"># ── STEP 6: New prediction ──</span>
+new = np.<span class="fn">array</span>([[<span class="nm">35</span>, <span class="nm">55000</span>]])
+prob = model.<span class="fn">predict_proba</span>(scaler.<span class="fn">transform</span>(new))[<span class="nm">0</span>][<span class="nm">1</span>]
+<span class="fn">print</span>(<span class="st">f"Probability of label 1: {prob:.2%}"</span>)</pre></div>
+
+    <div class="box danger"><div class="bt">🔥 সবচেয়ে গুরুত্বপূর্ণ interview point</div>
+    <code>scaler.fit_transform(X_train)</code> — training data-তে fit করো।<br>
+    <code>scaler.transform(X_test)</code> — test data-তে <strong>শুধু transform</strong> করো, কখনো fit নয়।<br>
+    Test data-তে fit করলে "data leakage" হয় — এটা একটা মারাত্মক ভুল যা ML interview-এ সবসময় জিজ্ঞেস করা হয়।</div>
+  </div>
+
+  <!-- Final Interview Tips -->
+  <div class="ac" style="border-top-color: var(--yellow)">
+    <span class="ae">💡</span>
+    <div class="an" style="color:var(--yellow)">Interview-এ যা অবশ্যই মনে রাখবে</div>
+    <div class="g2">
+      <div>
+        <h4>NumPy সম্পর্কে</h4>
+        <ul class="f">
+          <li><code>a * b</code> ≠ <code>a.dot(b)</code> — সবসময় জিজ্ঞেস করে</li>
+          <li>Loop-এর চেয়ে vectorized সবসময় দ্রুত</li>
+          <li><code>axis=0</code> = column-wise, <code>axis=1</code> = row-wise</li>
+          <li>Broadcasting rules: সমান বা কোনো একটা 1</li>
+          <li><code>reshape(-1)</code> দিয়ে যেকোনো shape flatten</li>
+          <li><code>argmax()</code> index দেয়, <code>max()</code> মান দেয়</li>
+        </ul>
+      </div>
+      <div>
+        <h4>ML Pipeline সম্পর্কে</h4>
+        <ul class="f">
+          <li>Scaler শুধু train-এ fit, test-এ শুধু transform</li>
+          <li>Train/test split-এর আগে shuffle করো</li>
+          <li><code>describe()</code> শুধু quantitative column-এ দেখো</li>
+          <li>Missing value: <code>df.isnull().sum()</code></li>
+          <li>Outlier: 3-sigma rule বা IQR method</li>
+          <li>Class imbalance হলে F1 > Accuracy গুরুত্বপূর্ণ</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- Footer -->
+<div style="background:var(--bg2);border-top:1px solid var(--border);padding:28px 60px;text-align:center">
+  <p style="color:var(--text3);font-size:13px">
+    📊 NumPy সম্পূর্ণ বাংলা টিউটোরিয়াল<br>
+    <span style="color:var(--accent)">Lesson 02 (Manipulation) + Lesson 03 (Operations)</span><br>
+    <span style="font-size:12px;color:var(--text3)">পরবর্তী অধ্যায় যোগ করতে এই HTML file-টা নতুন chat-এ দাও ও বাকি PDF গুলো attach করো</span>
+  </p>
+</div>
+</main>
+
+<script>
+const links = document.querySelectorAll('.nav-link');
+const secs  = document.querySelectorAll('section[id], div.ac[id]');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  secs.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id; });
+  links.forEach(l => {
+    l.classList.remove('active');
+    if (l.getAttribute('href') === '#' + cur) l.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2670 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Scraping সম্পূর্ণ গাইড — বাংলায়</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0f1a;
+  --bg2: #131628;
+  --bg3: #1a1f35;
+  --card: #1e2440;
+  --card2: #252b48;
+  --accent: #6ee7f7;
+  --accent2: #f7a84a;
+  --accent3: #a78bfa;
+  --accent4: #34d399;
+  --accent5: #f87171;
+  --text: #e8eaf6;
+  --text2: #9ba3c7;
+  --text3: #636b92;
+  --border: #2d3561;
+  --code-bg: #0a0c18;
+  --shadow: 0 8px 32px rgba(0,0,0,0.5);
+  --glow: 0 0 20px rgba(110,231,247,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Hind Siliguri',sans-serif;
+  font-size:17px;
+  line-height:1.85;
+  overflow-x:hidden;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--accent3);border-radius:3px;}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(110,231,247,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(167,139,250,0.08) 0%, transparent 60%),
+    var(--bg);
+  padding:40px 20px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(110,231,247,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(110,231,247,0.03) 1px, transparent 1px);
+  background-size:50px 50px;
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(110,231,247,0.1);
+  border:1px solid rgba(110,231,247,0.3);
+  border-radius:100px;
+  padding:6px 18px;
+  font-size:13px;color:var(--accent);
+  margin-bottom:24px;
+  animation:fadeDown 0.8s ease both;
+}
+.hero h1{
+  font-family:'Tiro Bangla',serif;
+  font-size:clamp(2.4rem,7vw,5rem);
+  font-weight:400;
+  line-height:1.2;
+  background:linear-gradient(135deg, #fff 30%, var(--accent) 70%, var(--accent3) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:20px;
+  animation:fadeDown 0.8s 0.1s ease both;
+}
+.hero-sub{
+  font-size:1.15rem;color:var(--text2);
+  max-width:640px;
+  margin:0 auto 40px;
+  animation:fadeDown 0.8s 0.2s ease both;
+}
+.hero-stats{
+  display:flex;gap:32px;flex-wrap:wrap;justify-content:center;
+  animation:fadeDown 0.8s 0.3s ease both;
+}
+.stat{
+  display:flex;flex-direction:column;align-items:center;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:16px 28px;
+}
+.stat-num{font-size:2rem;font-weight:700;color:var(--accent);line-height:1;}
+.stat-label{font-size:13px;color:var(--text2);margin-top:4px;}
+
+/* NAV */
+.nav-sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:260px;
+  background:rgba(13,15,26,0.97);
+  border-right:1px solid var(--border);
+  overflow-y:auto;z-index:100;
+  padding:24px 0;
+  transform:translateX(0);
+  transition:transform 0.3s;
+}
+.nav-sidebar h3{
+  font-size:11px;text-transform:uppercase;letter-spacing:2px;
+  color:var(--text3);padding:0 20px;margin-bottom:12px;
+}
+.nav-sidebar a{
+  display:block;padding:8px 20px;
+  color:var(--text2);text-decoration:none;font-size:14px;
+  border-left:3px solid transparent;
+  transition:all 0.2s;
+}
+.nav-sidebar a:hover,.nav-sidebar a.active{
+  color:var(--accent);border-left-color:var(--accent);
+  background:rgba(110,231,247,0.05);
+}
+.nav-group{margin-bottom:8px;}
+.nav-group-title{
+  font-size:11px;text-transform:uppercase;letter-spacing:1.5px;
+  color:var(--text3);padding:12px 20px 4px;
+}
+
+/* MAIN CONTENT */
+.content{
+  margin-left:260px;
+  padding:0;
+}
+.section{
+  padding:80px 60px;
+  border-bottom:1px solid var(--border);
+  max-width:1000px;
+}
+.section:nth-child(even){background:rgba(255,255,255,0.01);}
+
+/* SECTION HEADER */
+.section-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;text-transform:uppercase;letter-spacing:2px;
+  color:var(--accent2);margin-bottom:10px;
+}
+.section h2{
+  font-family:'Tiro Bangla',serif;
+  font-size:clamp(1.8rem,4vw,2.8rem);
+  font-weight:400;
+  color:#fff;margin-bottom:20px;
+  line-height:1.3;
+}
+.section h3{
+  font-size:1.3rem;font-weight:600;
+  color:var(--accent);margin:36px 0 12px;
+}
+.section h4{
+  font-size:1.1rem;font-weight:600;
+  color:var(--accent2);margin:24px 0 10px;
+}
+.section p{
+  color:var(--text2);margin-bottom:16px;
+  font-size:1rem;
+}
+.section strong{color:var(--text);}
+
+/* CALLOUT BOXES */
+.callout{
+  border-radius:12px;padding:20px 24px;margin:24px 0;
+  border-left:4px solid;
+}
+.callout-info{
+  background:rgba(110,231,247,0.06);
+  border-color:var(--accent);
+}
+.callout-warn{
+  background:rgba(247,168,74,0.06);
+  border-color:var(--accent2);
+}
+.callout-tip{
+  background:rgba(52,211,153,0.06);
+  border-color:var(--accent4);
+}
+.callout-danger{
+  background:rgba(248,113,113,0.06);
+  border-color:var(--accent5);
+}
+.callout-title{
+  font-weight:700;font-size:0.9rem;
+  text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:8px;
+}
+.callout-info .callout-title{color:var(--accent);}
+.callout-warn .callout-title{color:var(--accent2);}
+.callout-tip .callout-title{color:var(--accent4);}
+.callout-danger .callout-title{color:var(--accent5);}
+.callout p{color:var(--text2);margin:0;}
+
+/* CODE BLOCKS */
+.code-block{
+  background:var(--code-bg);
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  margin:20px 0;
+  position:relative;
+}
+.code-header{
+  background:var(--card2);
+  padding:10px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.code-lang{
+  font-size:11px;text-transform:uppercase;letter-spacing:2px;
+  color:var(--accent3);font-family:'JetBrains Mono',monospace;
+}
+.code-dots{display:flex;gap:6px;}
+.code-dot{width:10px;height:10px;border-radius:50%;}
+.code-dot:nth-child(1){background:#f87171;}
+.code-dot:nth-child(2){background:#fbbf24;}
+.code-dot:nth-child(3){background:#34d399;}
+pre{
+  padding:24px;overflow-x:auto;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13.5px;line-height:1.7;
+  color:#c8d8ff;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.kw{color:#a78bfa;}
+.fn{color:#6ee7f7;}
+.st{color:#f9a86d;}
+.cm{color:#4a5280;font-style:italic;}
+.nm{color:#34d399;}
+.op{color:#f87171;}
+
+/* SVG DIAGRAMS */
+.diagram-wrap{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:32px;
+  margin:28px 0;
+  overflow-x:auto;
+}
+.diagram-title{
+  font-size:14px;font-weight:600;
+  color:var(--accent2);
+  text-align:center;
+  margin-bottom:20px;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+}
+
+/* CARDS GRID */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:20px;margin:24px 0;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:24px;
+  transition:all 0.3s;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),var(--accent3));
+}
+.card:hover{
+  border-color:rgba(110,231,247,0.4);
+  transform:translateY(-2px);
+  box-shadow:var(--glow);
+}
+.card-icon{font-size:2rem;margin-bottom:12px;}
+.card h4{color:var(--accent);margin:0 0 10px;font-size:1rem;}
+.card p{color:var(--text2);font-size:0.9rem;margin:0;}
+
+/* TABLE */
+table{
+  width:100%;border-collapse:collapse;margin:20px 0;
+  font-size:0.95rem;
+}
+th{
+  background:var(--card2);color:var(--accent);
+  padding:12px 16px;text-align:left;
+  border:1px solid var(--border);
+  font-size:13px;text-transform:uppercase;letter-spacing:1px;
+}
+td{
+  padding:12px 16px;color:var(--text2);
+  border:1px solid var(--border);
+  vertical-align:top;
+}
+tr:hover td{background:rgba(255,255,255,0.02);}
+
+/* INTERVIEW SECTION */
+.interview-box{
+  background:linear-gradient(135deg,rgba(167,139,250,0.08),rgba(110,231,247,0.04));
+  border:1px solid rgba(167,139,250,0.3);
+  border-radius:16px;padding:32px;margin:40px 0;
+  position:relative;overflow:hidden;
+}
+.interview-box::before{
+  content:'💼 ইন্টারভিউ প্র্যাকটিস';
+  position:absolute;top:0;right:0;
+  background:var(--accent3);color:#000;
+  font-size:11px;font-weight:700;
+  padding:4px 16px;border-radius:0 16px 0 12px;
+  letter-spacing:1px;
+}
+.interview-box h3{
+  color:var(--accent3)!important;margin-top:0!important;
+}
+.q-item{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;padding:20px 24px;margin:16px 0;
+}
+.q-label{
+  font-size:11px;text-transform:uppercase;letter-spacing:2px;
+  font-weight:700;margin-bottom:8px;
+}
+.q-q .q-label{color:var(--accent2);}
+.q-a .q-label{color:var(--accent4);}
+.q-q p,.q-a p{margin:0;font-size:0.95rem;}
+
+/* ALGO SECTION */
+.algo-card{
+  background:var(--card2);
+  border:1px solid var(--border);
+  border-radius:16px;margin:24px 0;
+  overflow:hidden;
+}
+.algo-header{
+  background:linear-gradient(90deg,rgba(110,231,247,0.1),transparent);
+  padding:20px 28px;
+  display:flex;align-items:center;gap:16px;
+  border-bottom:1px solid var(--border);
+}
+.algo-num{
+  width:48px;height:48px;border-radius:12px;
+  background:var(--accent);color:#000;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;font-weight:700;flex-shrink:0;
+}
+.algo-header h3{color:#fff!important;margin:0!important;font-size:1.25rem;}
+.algo-body{padding:28px;}
+.algo-analogy{
+  background:rgba(52,211,153,0.06);
+  border:1px solid rgba(52,211,153,0.2);
+  border-radius:10px;padding:16px 20px;margin:16px 0;
+  font-style:italic;color:var(--accent4);
+}
+.algo-complexity{
+  display:flex;gap:12px;flex-wrap:wrap;margin:16px 0;
+}
+.complexity-badge{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:8px;padding:6px 14px;
+  font-size:12px;font-family:'JetBrains Mono',monospace;
+}
+.complexity-badge span{color:var(--text3);}
+
+/* STEPS */
+.steps{counter-reset:step;}
+.step{
+  display:flex;gap:20px;margin:20px 0;
+  counter-increment:step;
+}
+.step-num{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--accent3);color:#000;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:14px;flex-shrink:0;
+  margin-top:2px;
+}
+.step-content h4{margin:0 0 6px;color:var(--text);}
+.step-content p{margin:0;font-size:0.95rem;}
+
+/* TAG */
+.tag{
+  display:inline-block;
+  background:rgba(110,231,247,0.1);
+  color:var(--accent);
+  border:1px solid rgba(110,231,247,0.2);
+  border-radius:6px;padding:2px 10px;
+  font-size:12px;font-family:'JetBrains Mono',monospace;
+  margin:2px;
+}
+.tag-p{color:var(--accent3);background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.2);}
+.tag-y{color:var(--accent2);background:rgba(247,168,74,0.1);border-color:rgba(247,168,74,0.2);}
+.tag-g{color:var(--accent4);background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.2);}
+
+/* PROGRESS */
+.toc-wrap{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;padding:28px;margin:28px 0;
+}
+.toc-wrap h3{color:var(--accent);margin-bottom:16px;}
+.toc-list{list-style:none;}
+.toc-list li{
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  display:flex;align-items:center;gap:12px;
+}
+.toc-list li:last-child{border:none;}
+.toc-num{
+  width:28px;height:28px;border-radius:8px;
+  background:var(--card2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;color:var(--accent);font-weight:700;flex-shrink:0;
+}
+.toc-list a{color:var(--text2);text-decoration:none;font-size:0.95rem;}
+.toc-list a:hover{color:var(--accent);}
+
+/* ANIMATIONS */
+@keyframes fadeDown{
+  from{opacity:0;transform:translateY(-20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+@keyframes pulse{
+  0%,100%{opacity:1;}50%{opacity:0.5;}
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .nav-sidebar{display:none;}
+  .content{margin-left:0;}
+  .section{padding:40px 24px;}
+}
+
+/* HIGHLIGHT */
+mark{
+  background:rgba(110,231,247,0.15);
+  color:var(--accent);
+  padding:1px 6px;border-radius:4px;
+}
+
+/* DIVIDER */
+.divider{
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--border),transparent);
+  margin:40px 0;
+}
+
+/* Bengali emphasis */
+.bn-em{
+  font-family:'Tiro Bangla',serif;
+  font-style:italic;
+  color:var(--accent2);
+}
+
+/* FLOW DIAGRAM helpers inside SVG */
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR NAV -->
+<nav class="nav-sidebar">
+  <h3>🕸️ Web Scraping গাইড</h3>
+  <div class="nav-group">
+    <div class="nav-group-title">শুরু করি</div>
+    <a href="#intro">০১ · ভূমিকা</a>
+    <a href="#web-basics">০২ · ওয়েব কীভাবে কাজ করে</a>
+    <a href="#html">০৩ · HTML ভাষা</a>
+    <a href="#css">০৪ · CSS ভাষা</a>
+    <a href="#javascript">০৫ · JavaScript</a>
+    <a href="#http">০৬ · HTTP Requests</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">স্ক্র্যাপিং শিখি</div>
+    <a href="#libraries">০৭ · Python Libraries</a>
+    <a href="#beautifulsoup">০৮ · BeautifulSoup</a>
+    <a href="#collect">০৯ · ডেটা সংগ্রহ</a>
+    <a href="#usecase">১০ · বাস্তব উদাহরণ</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">উন্নত বিষয়</div>
+    <a href="#limits">১১ · সীমাবদ্ধতা</a>
+    <a href="#errors">১২ · Error Handling</a>
+    <a href="#legal">১৩ · আইনি বিষয়</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">অ্যালগরিদম</div>
+    <a href="#algorithms">১৪ · সকল অ্যালগরিদম</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="content">
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-badge">🇧🇩 বাংলায় সম্পূর্ণ গাইড</div>
+  <h1>Web Scraping<br>মাস্টারক্লাস</h1>
+  <p class="hero-sub">একদম শূন্য থেকে শুরু করে ML Engineering পর্যন্ত — সবকিছু বাংলায়, সহজ ভাষায়</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">৬</div><div class="stat-label">মডিউল</div></div>
+    <div class="stat"><div class="stat-num">১৪+</div><div class="stat-label">অ্যালগরিদম</div></div>
+    <div class="stat"><div class="stat-num">৫০+</div><div class="stat-label">কোড উদাহরণ</div></div>
+    <div class="stat"><div class="stat-num">৩০+</div><div class="stat-label">ইন্টারভিউ প্রশ্ন</div></div>
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<section class="section" id="toc">
+  <div class="section-tag">📋 সূচিপত্র</div>
+  <h2>কী কী শিখব?</h2>
+  <div class="toc-wrap">
+    <h3>সম্পূর্ণ বিষয়সূচি</h3>
+    <ul class="toc-list">
+      <li><div class="toc-num">০১</div><a href="#intro">Web Scraping কী এবং কেন শিখব?</a></li>
+      <li><div class="toc-num">০২</div><a href="#web-basics">ওয়েব কীভাবে কাজ করে — সম্পূর্ণ ছবি</a></li>
+      <li><div class="toc-num">০৩</div><a href="#html">HTML — ওয়েব পেজের কঙ্কাল</a></li>
+      <li><div class="toc-num">০৪</div><a href="#css">CSS — ওয়েব পেজের পোশাক</a></li>
+      <li><div class="toc-num">০৫</div><a href="#javascript">JavaScript — ওয়েব পেজের আত্মা</a></li>
+      <li><div class="toc-num">০৬</div><a href="#http">HTTP Requests — ইন্টারনেটের ডাকপিয়ন</a></li>
+      <li><div class="toc-num">০৭</div><a href="#libraries">Python Libraries — আমাদের হাতিয়ার</a></li>
+      <li><div class="toc-num">০৮</div><a href="#beautifulsoup">BeautifulSoup — গভীর ডুব</a></li>
+      <li><div class="toc-num">০৯</div><a href="#collect">ডেটা সংগ্রহ করা — হাতে-কলমে</a></li>
+      <li><div class="toc-num">১০</div><a href="#usecase">বাস্তব প্রজেক্ট উদাহরণ</a></li>
+      <li><div class="toc-num">১১</div><a href="#limits">Web Scraping-এর সীমাবদ্ধতা</a></li>
+      <li><div class="toc-num">১২</div><a href="#errors">Error Handling — ভুল সামলানো</a></li>
+      <li><div class="toc-num">১৩</div><a href="#legal">আইনি ও নৈতিক দিক</a></li>
+      <li><div class="toc-num">১৪</div><a href="#algorithms">সকল অ্যালগরিদম — কিন্ডারগার্টেন স্টাইলে</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ====== SECTION 01: INTRO ====== -->
+<section class="section" id="intro">
+  <div class="section-tag">মডিউল ০১</div>
+  <h2>Web Scraping কী?</h2>
+
+  <p>কল্পনা করো তুমি একটা বিশাল লাইব্রেরিতে গেছ। সেখানে লাখো বই আছে। তোমার কাজ হলো প্রতিটা বই থেকে নির্দিষ্ট একটা তথ্য (যেমন লেখকের নাম) বের করে একটা খাতায় লিখে রাখা।</p>
+  <p>তুমি যদি হাতে হাতে করো, সারাজীবন লাগবে। কিন্তু যদি একটা রোবট থাকে যে বইগুলো পড়তে পারে আর তথ্য বের করতে পারে — কয়েক মিনিটেই হয়ে যাবে!</p>
+  <p><strong>Web Scraping হলো ঠিক সেই রোবটের কাজ — শুধু লাইব্রেরির বদলে ইন্টারনেট, আর বইয়ের বদলে ওয়েবসাইট।</strong></p>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">Web Scraping-এর মূল ধারণা</div>
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#6ee7f7" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#a78bfa" stop-opacity="0.8"/>
+        </linearGradient>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#6ee7f7"/>
+        </marker>
+      </defs>
+      <!-- Web -->
+      <rect x="20" y="60" width="140" height="100" rx="12" fill="#1e2440" stroke="#6ee7f7" stroke-width="1.5"/>
+      <text x="90" y="88" fill="#6ee7f7" font-size="13" text-anchor="middle" font-family="'JetBrains Mono',monospace">🌐</text>
+      <text x="90" y="108" fill="#9ba3c7" font-size="12" text-anchor="middle" font-family="Hind Siliguri, sans-serif">ওয়েবসাইট</text>
+      <text x="90" y="126" fill="#636b92" font-size="10" text-anchor="middle" font-family="'JetBrains Mono',monospace">HTML/CSS/JS</text>
+      <text x="90" y="144" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri, sans-serif">কাঁচা ডেটা</text>
+      <!-- Arrow 1 -->
+      <line x1="165" y1="110" x2="235" y2="110" stroke="#6ee7f7" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="200" y="100" fill="#f7a84a" font-size="10" text-anchor="middle" font-family="Hind Siliguri, sans-serif">HTTP GET</text>
+      <!-- Scraper -->
+      <rect x="240" y="60" width="140" height="100" rx="12" fill="#1e2440" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="310" y="88" fill="#a78bfa" font-size="13" text-anchor="middle" font-family="'JetBrains Mono',monospace">🐍</text>
+      <text x="310" y="108" fill="#9ba3c7" font-size="12" text-anchor="middle" font-family="Hind Siliguri, sans-serif">Python Script</text>
+      <text x="310" y="126" fill="#636b92" font-size="10" text-anchor="middle" font-family="'JetBrains Mono',monospace">BeautifulSoup</text>
+      <text x="310" y="144" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri, sans-serif">ডেটা বের করে</text>
+      <!-- Arrow 2 -->
+      <line x1="385" y1="110" x2="455" y2="110" stroke="#6ee7f7" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="420" y="100" fill="#f7a84a" font-size="10" text-anchor="middle" font-family="Hind Siliguri, sans-serif">পরিষ্কার ডেটা</text>
+      <!-- DataFrame -->
+      <rect x="460" y="60" width="140" height="100" rx="12" fill="#1e2440" stroke="#34d399" stroke-width="1.5"/>
+      <text x="530" y="88" fill="#34d399" font-size="13" text-anchor="middle" font-family="'JetBrains Mono',monospace">📊</text>
+      <text x="530" y="108" fill="#9ba3c7" font-size="12" text-anchor="middle" font-family="Hind Siliguri, sans-serif">DataFrame/CSV</text>
+      <text x="530" y="126" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri, sans-serif">পরিষ্কার টেবিল</text>
+      <text x="530" y="144" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri, sans-serif">ML-এর জন্য রেডি</text>
+      <!-- Labels below -->
+      <text x="350" y="200" fill="#636b92" font-size="11" text-anchor="middle" font-family="Hind Siliguri, sans-serif">ওয়েব থেকে ডেটা → Python দিয়ে বের করা → ML-এ ব্যবহার</text>
+    </svg>
+  </div>
+
+  <h3>Web Scraping কেন শিখব?</h3>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">💰</div>
+      <h4>সময় ও অর্থ বাঁচায়</h4>
+      <p>হাতে করলে ১০০০ পণ্যের দাম লিখতে সপ্তাহ লাগে — Scraping দিয়ে ৫ মিনিট।</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎯</div>
+      <h4>নির্ভুল ডেটা</h4>
+      <p>মানুষ ভুল করে (প্রায় ২০%)। রোবট ভুল করে না — প্রতিবার একই নিয়মে কাজ করে।</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🤖</div>
+      <h4>ML-এর জ্বালানি</h4>
+      <p>Machine Learning মডেল তৈরিতে ডেটা দরকার। Scraping সেই ডেটা জোগান দেয়।</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">📈</div>
+      <h4>প্রতিযোগিতা বিশ্লেষণ</h4>
+      <p>প্রতিদিন প্রতিযোগীর দাম, রিভিউ, অফার — স্বয়ংক্রিয়ভাবে ট্র্যাক করো।</p>
+    </div>
+  </div>
+
+  <div class="interview-box">
+    <h3>ইন্টারভিউ প্র্যাকটিস — মডিউল ০১</h3>
+
+    <div class="q-item q-q">
+      <div class="q-label">প্রশ্ন ০১</div>
+      <p>Web Scraping এবং Web Crawling-এর মধ্যে পার্থক্য কী? ML Engineering প্রজেক্টে কোনটা ব্যবহার করবে?</p>
+    </div>
+    <div class="q-item q-a">
+      <div class="q-label">উত্তর</div>
+      <p><strong>Web Scraping</strong> হলো একটি নির্দিষ্ট পেজ থেকে নির্দিষ্ট ডেটা বের করা। যেমন: Amazon-এর একটি পণ্যের দাম। <strong>Web Crawling</strong> হলো অনেক পেজে ঘুরে ঘুরে লিংক ফলো করা — যেমন Google করে। ML প্রজেক্টে সাধারণত Scraping করি (নির্দিষ্ট সাইট থেকে ট্রেনিং ডেটা বের করতে), কিন্তু বড় dataset বানাতে Crawling ও দরকার হয়।</p>
+    </div>
+
+    <div class="q-item q-q">
+      <div class="q-label">প্রশ্ন ০২</div>
+      <p>তুমি একটা NLP মডেল train করবে news headlines দিয়ে। কীভাবে data collect করবে?</p>
+    </div>
+    <div class="q-item q-a">
+      <div class="q-label">উত্তর (ML Engineering লেভেল)</div>
+      <p>১) প্রথমে দেখব site-এর <mark>robots.txt</mark> আছে কিনা। ২) <mark>requests + BeautifulSoup</mark> দিয়ে news site scrape করব। ৩) প্রতিটা headline বের করে <mark>pandas DataFrame</mark>-এ রাখব। ৪) Duplicate সরিয়ে <mark>CSV/Parquet</mark>-এ save করব। ৫) তারপর tokenization, cleaning করে মডেলে feed করব।</p>
+    </div>
+
+    <div class="q-item q-q">
+      <div class="q-label">প্রশ্ন ০৩ (কোডিং)</div>
+      <p>একটি function লিখো যা একটি URL নিয়ে সেই পেজের সমস্ত paragraph text return করে, এবং যদি request fail করে তাহলে gracefully handle করে।</p>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — ML Engineering স্টাইল</div></div>
+      <pre><span class="kw">import</span> requests
+<span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
+<span class="kw">import</span> logging
+<span class="kw">from</span> typing <span class="kw">import</span> List, Optional
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+<span class="kw">def</span> <span class="fn">extract_paragraphs</span>(url: str, timeout: int = <span class="nm">10</span>) -> Optional[List[str]]:
+    <span class="st">"""
+    একটি URL থেকে সব paragraph text বের করে।
+    
+    Args:
+        url: স্ক্র্যাপ করার URL
+        timeout: Request timeout (seconds)
+    
+    Returns:
+        List of paragraph strings, অথবা None যদি fail করে
+    """</span>
+    <span class="kw">try</span>:
+        headers = {
+            <span class="st">'User-Agent'</span>: <span class="st">'Mozilla/5.0 (research bot)'</span>
+        }
+        response = requests.get(url, timeout=timeout, headers=headers)
+        response.raise_for_status()  <span class="cm"># 4xx/5xx error হলে exception raise করে</span>
+        
+        soup = BeautifulSoup(response.content, <span class="st">'lxml'</span>)
+        paragraphs = [
+            p.get_text(strip=<span class="kw">True</span>)
+            <span class="kw">for</span> p <span class="kw">in</span> soup.find_all(<span class="st">'p'</span>)
+            <span class="kw">if</span> p.get_text(strip=<span class="kw">True</span>)  <span class="cm"># খালি paragraph বাদ</span>
+        ]
+        logger.info(<span class="st">f"Found {len(paragraphs)} paragraphs from {url}"</span>)
+        <span class="kw">return</span> paragraphs
+        
+    <span class="kw">except</span> requests.Timeout:
+        logger.error(<span class="st">f"Timeout: {url} respond করেনি {timeout}s-এর মধ্যে"</span>)
+    <span class="kw">except</span> requests.HTTPError <span class="kw">as</span> e:
+        logger.error(<span class="st">f"HTTP Error {e.response.status_code}: {url}"</span>)
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        logger.error(<span class="st">f"Unexpected error: {e}"</span>)
+    
+    <span class="kw">return</span> <span class="kw">None</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SECTION 02: WEB BASICS ====== -->
+<section class="section" id="web-basics">
+  <div class="section-tag">মডিউল ০২</div>
+  <h2>ওয়েব কীভাবে কাজ করে?</h2>
+
+  <p>তুমি browser-এ <mark>www.google.com</mark> লেখো। কী হয়? অনেকেই ভাবে "কানেকশন হয়, পেজ আসে" — কিন্তু মাঝখানে কী হয় সেটা Web Scraping বুঝতে খুব জরুরি।</p>
+
+  <div class="callout callout-tip">
+    <div class="callout-title">🍕 একটা পিৎজা অর্ডারের মতো ভাবো!</div>
+    <p>তুমি = browser (ক্লায়েন্ট) | পিৎজা দোকান = web server | তোমার অর্ডার = HTTP request | পিৎজা = HTML page</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">Client–Server মডেল — ধাপে ধাপে</div>
+    <svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:720px;display:block;margin:0 auto;">
+      <defs>
+        <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#f7a84a"/>
+        </marker>
+        <marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#34d399"/>
+        </marker>
+      </defs>
+
+      <!-- Client -->
+      <rect x="20" y="80" width="150" height="140" rx="14" fill="#1e2440" stroke="#6ee7f7" stroke-width="1.5"/>
+      <text x="95" y="115" fill="#6ee7f7" font-size="28" text-anchor="middle">💻</text>
+      <text x="95" y="140" fill="#e8eaf6" font-size="13" text-anchor="middle" font-family="Hind Siliguri,sans-serif">তোমার Browser</text>
+      <text x="95" y="158" fill="#636b92" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">বা Python Script</text>
+      <text x="95" y="176" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="'JetBrains Mono',monospace">(Client)</text>
+      <text x="95" y="200" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">ধাপ ১: Request পাঠায়</text>
+
+      <!-- Arrow right (request) -->
+      <path d="M175,120 Q360,80 545,120" fill="none" stroke="#f7a84a" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr2)"/>
+      <text x="360" y="90" fill="#f7a84a" font-size="12" text-anchor="middle" font-family="Hind Siliguri,sans-serif">HTTP GET Request →</text>
+      <text x="360" y="105" fill="#636b92" font-size="10" text-anchor="middle" font-family="'JetBrains Mono',monospace">GET /index.html HTTP/1.1</text>
+
+      <!-- Arrow left (response) -->
+      <path d="M545,185 Q360,230 175,185" fill="none" stroke="#34d399" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr3)"/>
+      <text x="360" y="250" fill="#34d399" font-size="12" text-anchor="middle" font-family="Hind Siliguri,sans-serif">← HTTP Response (200 OK)</text>
+      <text x="360" y="265" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">HTML + CSS + JS ফাইল পাঠায়</text>
+
+      <!-- Server -->
+      <rect x="550" y="80" width="150" height="140" rx="14" fill="#1e2440" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="625" y="115" fill="#a78bfa" font-size="28" text-anchor="middle">🖥️</text>
+      <text x="625" y="140" fill="#e8eaf6" font-size="13" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Web Server</text>
+      <text x="625" y="158" fill="#636b92" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">ফাইল রাখে</text>
+      <text x="625" y="176" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="'JetBrains Mono',monospace">(Server)</text>
+      <text x="625" y="200" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">ধাপ ২: Response দেয়</text>
+    </svg>
+  </div>
+
+  <h3>HTTP Status Codes — সার্ভারের বার্তা</h3>
+  <p>সার্ভার যখন response দেয়, সাথে একটা number পাঠায় — সেটা দিয়ে বোঝা যায় কী হয়েছে:</p>
+  <table>
+    <tr><th>কোড</th><th>মানে</th><th>উদাহরণ</th></tr>
+    <tr><td><span class="tag tag-g">200</span></td><td>সাফল্য! পেজ পাওয়া গেছে</td><td>সব ঠিকঠাক — এটাই চাই</td></tr>
+    <tr><td><span class="tag tag-y">301/302</span></td><td>পেজ সরে গেছে (Redirect)</td><td>নতুন URL-এ যাও</td></tr>
+    <tr><td><span class="tag tag-y">403</span></td><td>অনুমতি নেই (Forbidden)</td><td>সাইট scraping ব্লক করেছে</td></tr>
+    <tr><td><span class="tag">404</span></td><td>পেজ পাওয়া যায়নি</td><td>ভুল URL দিয়েছ</td></tr>
+    <tr><td><span class="tag tag-p">429</span></td><td>বেশি request করেছ</td><td>Rate limit — থামো একটু</td></tr>
+    <tr><td><span class="tag" style="color:var(--accent5)">500</span></td><td>সার্ভারের সমস্যা</td><td>তোমার দোষ না, ওদের সমস্যা</td></tr>
+  </table>
+
+  <div class="interview-box">
+    <h3>ইন্টারভিউ প্র্যাকটিস — HTTP ও Web Basics</h3>
+    <div class="q-item q-q">
+      <div class="q-label">প্রশ্ন</div>
+      <p>Scraping করার সময় HTTP 429 error পেলে কী করবে? ML pipeline-এ এটা কীভাবে handle করবে?</p>
+    </div>
+    <div class="q-item q-a">
+      <div class="q-label">উত্তর</div>
+      <p>429 মানে "Too Many Requests" — আমরা বেশি দ্রুত request করেছি। সমাধান: <strong>Exponential Backoff</strong> — প্রথমে ১ সেকেন্ড অপেক্ষা, তারপর ব্যর্থ হলে ২ সেকেন্ড, তারপর ৪ সেকেন্ড। ML pipeline-এ এটা <mark>tenacity</mark> library দিয়ে বা custom retry logic দিয়ে handle করি।</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SECTION 03: HTML ====== -->
+<section class="section" id="html">
+  <div class="section-tag">মডিউল ০৩</div>
+  <h2>HTML — ওয়েব পেজের কঙ্কাল</h2>
+
+  <p>HTML মানে <strong>HyperText Markup Language</strong>। ভাবো তোমার শরীরের কঙ্কাল — HTML হলো ওয়েব পেজের কঙ্কাল। এটা ঠিক করে দেয় পেজে কী কী থাকবে এবং কোথায় থাকবে।</p>
+
+  <div class="callout callout-info">
+    <div class="callout-title">💡 HTML কোনো Programming Language না!</div>
+    <p>HTML-এ কোনো logic নেই, loop নেই, calculation নেই। এটা শুধু structure বলে — "এখানে একটা heading হবে, এখানে একটা paragraph হবে।"</p>
+  </div>
+
+  <h3>HTML Tag কী?</h3>
+  <p>HTML-এ সবকিছু <strong>Tag</strong>-এর মধ্যে থাকে। Tag হলো angle bracket-এ ঢাকা keyword:</p>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">HTML Tag-এর গঠন</div>
+    <svg viewBox="0 0 620 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:620px;display:block;margin:0 auto;">
+      <!-- opening tag -->
+      <rect x="40" y="30" width="120" height="50" rx="8" fill="#1e2440" stroke="#6ee7f7" stroke-width="1.5"/>
+      <text x="100" y="60" fill="#6ee7f7" font-size="14" text-anchor="middle" font-family="'JetBrains Mono',monospace">&lt;p&gt;</text>
+      <text x="100" y="96" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Opening Tag</text>
+      <text x="100" y="109" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">(শুরু)</text>
+
+      <!-- content -->
+      <rect x="200" y="30" width="180" height="50" rx="8" fill="#252b48" stroke="#f7a84a" stroke-width="1.5"/>
+      <text x="290" y="60" fill="#f9a86d" font-size="13" text-anchor="middle" font-family="Hind Siliguri,sans-serif">আমি বাংলা শিখছি</text>
+      <text x="290" y="96" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Content (আসল লেখা)</text>
+      <text x="290" y="109" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">এটাই আমরা বের করতে চাই</text>
+
+      <!-- closing tag -->
+      <rect x="420" y="30" width="130" height="50" rx="8" fill="#1e2440" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="485" y="60" fill="#a78bfa" font-size="14" text-anchor="middle" font-family="'JetBrains Mono',monospace">&lt;/p&gt;</text>
+      <text x="485" y="96" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Closing Tag</text>
+      <text x="485" y="109" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">(শেষ, / দিয়ে বোঝায়)</text>
+
+      <!-- full line below -->
+      <text x="310" y="145" fill="#34d399" font-size="12" text-anchor="middle" font-family="'JetBrains Mono',monospace">&lt;p&gt;আমি বাংলা শিখছি&lt;/p&gt;</text>
+    </svg>
+  </div>
+
+  <h3>HTML গাছের মতো — DOM Tree</h3>
+  <p>HTML document হলো একটা গাছের মতো। একটা root আছে, তার থেকে branches বের হয়, branches থেকে আরো branches। এই structure-কে বলে <strong>DOM Tree</strong> (Document Object Model)।</p>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">HTML DOM Tree — গাছের মতো</div>
+    <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+      <defs>
+        <marker id="arrD" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 z" fill="#636b92"/>
+        </marker>
+      </defs>
+      <!-- html root -->
+      <rect x="280" y="10" width="140" height="38" rx="8" fill="#1e2440" stroke="#6ee7f7" stroke-width="1.5"/>
+      <text x="350" y="34" fill="#6ee7f7" font-size="13" text-anchor="middle" font-family="'JetBrains Mono',monospace">&lt;html&gt;</text>
+      <!-- lines to head/body -->
+      <line x1="350" y1="48" x2="200" y2="98" stroke="#636b92" stroke-width="1" marker-end="url(#arrD)"/>
+      <line x1="350" y1="48" x2="500" y2="98" stroke="#636b92" stroke-width="1" marker-end="url(#arrD)"/>
+      <!-- head -->
+      <rect x="120" y="100" width="140" height="38" rx="8" fill="#1e2440" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="190" y="124" fill="#a78bfa" font-size="13" text-anchor="middle" font-family="'JetBrains Mono',monospace">&lt;head&gt;</text>
+      <!-- body -->
+      <rect x="420" y="100" width="140" height="38" rx="8" fill="#1e2440" stroke="#f7a84a" stroke-width="1.5"/>
+      <text x="490" y="124" fill="#f7a84a" font-size="13" text-anchor="middle" font-family="'JetBrains Mono',monospace">&lt;body&gt;</text>
+      <!-- head children -->
+      <line x1="190" y1="138" x2="150" y2="188" stroke="#636b92" stroke-width="1" marker-end="url(#arrD)"/>
+      <rect x="70" y="190" width="140" height="38" rx="8" fill="#1a1f35" stroke="#636b92" stroke-width="1"/>
+      <text x="140" y="214" fill="#9ba3c7" font-size="12" text-anchor="middle" font-family="'JetBrains Mono',monospace">&lt;title&gt;</text>
+      <text x="140" y="232" fill="#636b92" font-size="9" text-anchor="middle" font-family="Hind Siliguri,sans-serif">পেজের নাম</text>
+      <!-- body children -->
+      <line x1="490" y1="138" x2="380" y2="188" stroke="#636b92" stroke-width="1" marker-end="url(#arrD)"/>
+      <line x1="490" y1="138" x2="490" y2="188" stroke="#636b92" stroke-width="1" marker-end="url(#arrD)"/>
+      <line x1="490" y1="138" x2="600" y2="188" stroke="#636b92" stroke-width="1" marker-end="url(#arrD)"/>
+      <!-- div -->
+      <rect x="300" y="190" width="120" height="38" rx="8" fill="#1e2440" stroke="#34d399" stroke-width="1.5"/>
+      <text x="360" y="214" fill="#34d399" font-size="12" text-anchor="middle" font-family="'JetBrains Mono',monospace">&lt;div&gt;</text>
+      <!-- h1 -->
+      <rect x="430" y="190" width="120" height="38" rx="8" fill="#1e2440" stroke="#34d399" stroke-width="1.5"/>
+      <text x="490" y="214" fill="#34d399" font-size="12" text-anchor="middle" font-family="'JetBrains Mono',monospace">&lt;h1&gt;</text>
+      <!-- p -->
+      <rect x="560" y="190" width="120" height="38" rx="8" fill="#1e2440" stroke="#34d399" stroke-width="1.5"/>
+      <text x="620" y="214" fill="#34d399" font-size="12" text-anchor="middle" font-family="'JetBrains Mono',monospace">&lt;p&gt;</text>
+      <!-- div children -->
+      <line x1="360" y1="228" x2="310" y2="278" stroke="#636b92" stroke-width="1" marker-end="url(#arrD)"/>
+      <line x1="360" y1="228" x2="410" y2="278" stroke="#636b92" stroke-width="1" marker-end="url(#arrD)"/>
+      <rect x="230" y="280" width="120" height="36" rx="8" fill="#1a1f35" stroke="#636b92" stroke-width="1"/>
+      <text x="290" y="303" fill="#9ba3c7" font-size="12" text-anchor="middle" font-family="'JetBrains Mono',monospace">&lt;a&gt;</text>
+      <text x="290" y="320" fill="#636b92" font-size="9" text-anchor="middle" font-family="Hind Siliguri,sans-serif">লিংক</text>
+      <rect x="360" y="280" width="120" height="36" rx="8" fill="#1a1f35" stroke="#636b92" stroke-width="1"/>
+      <text x="420" y="303" fill="#9ba3c7" font-size="12" text-anchor="middle" font-family="'JetBrains Mono',monospace">&lt;img&gt;</text>
+      <text x="420" y="320" fill="#636b92" font-size="9" text-anchor="middle" font-family="Hind Siliguri,sans-serif">ছবি</text>
+      <!-- Legend -->
+      <text x="50" y="365" fill="#6ee7f7" font-size="11" font-family="Hind Siliguri,sans-serif">🔵 = root/parent</text>
+      <text x="200" y="365" fill="#f7a84a" font-size="11" font-family="Hind Siliguri,sans-serif">🟡 = section</text>
+      <text x="340" y="365" fill="#34d399" font-size="11" font-family="Hind Siliguri,sans-serif">🟢 = content elements</text>
+      <text x="520" y="365" fill="#636b92" font-size="11" font-family="Hind Siliguri,sans-serif">⬛ = leaf nodes</text>
+    </svg>
+  </div>
+
+  <h3>গুরুত্বপূর্ণ HTML Tags — Web Scraping-এ যেগুলো সবচেয়ে বেশি দরকার</h3>
+  <table>
+    <tr><th>Tag</th><th>কাজ</th><th>Scraping-এ ব্যবহার</th></tr>
+    <tr><td><span class="tag">&lt;div&gt;</span></td><td>Content block ভাগ করে</td><td>পণ্যের card, news article খুঁজতে</td></tr>
+    <tr><td><span class="tag">&lt;p&gt;</span></td><td>Paragraph text</td><td>বিবরণ, মূল লেখা বের করতে</td></tr>
+    <tr><td><span class="tag">&lt;a&gt;</span></td><td>Link (href attribute-এ URL)</td><td>সব লিংক collect করতে</td></tr>
+    <tr><td><span class="tag">&lt;h1&gt;</span> → <span class="tag">&lt;h6&gt;</span></td><td>Heading (বড় থেকে ছোট)</td><td>শিরোনাম বের করতে</td></tr>
+    <tr><td><span class="tag">&lt;span&gt;</span></td><td>Inline text style</td><td>দাম, রেটিং, ছোট তথ্য বের করতে</td></tr>
+    <tr><td><span class="tag">&lt;table&gt;</span></td><td>Table তৈরি করে</td><td>টেবিল ডেটা সরাসরি pandas-এ</td></tr>
+    <tr><td><span class="tag">&lt;ul&gt; &lt;li&gt;</span></td><td>List item</td><td>তালিকা বের করতে</td></tr>
+    <tr><td><span class="tag">&lt;img&gt;</span></td><td>ছবি দেখায়</td><td>ছবির URL বের করতে (src attribute)</td></tr>
+  </table>
+
+  <h3>HTML Attributes — Tag-এর ভেতরের তথ্য</h3>
+  <p>Tag-এর মধ্যে অতিরিক্ত তথ্য রাখা যায় — এগুলোকে বলে <strong>Attribute</strong>। Scraping-এ এই attributes ব্যবহার করে নির্দিষ্ট element খুঁজি:</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">HTML — Attributes উদাহরণ</div></div>
+    <pre><span class="cm">&lt;!-- id: পেজে একটাই থাকে (unique) --&gt;</span>
+&lt;<span class="kw">div</span> <span class="fn">id</span>=<span class="st">"main-content"</span>&gt;মূল লেখা&lt;/<span class="kw">div</span>&gt;
+
+<span class="cm">&lt;!-- class: একই class অনেক element-এ থাকতে পারে --&gt;</span>
+&lt;<span class="kw">p</span> <span class="fn">class</span>=<span class="st">"product-price"</span>&gt;৳ ১,২৩০&lt;/<span class="kw">p</span>&gt;
+&lt;<span class="kw">p</span> <span class="fn">class</span>=<span class="st">"product-price"</span>&gt;৳ ৮৫০&lt;/<span class="kw">p</span>&gt;
+
+<span class="cm">&lt;!-- href: লিংকের গন্তব্য --&gt;</span>
+&lt;<span class="kw">a</span> <span class="fn">href</span>=<span class="st">"https://example.com"</span>&gt;ক্লিক করো&lt;/<span class="kw">a</span>&gt;
+
+<span class="cm">&lt;!-- src: ছবির URL --&gt;</span>
+&lt;<span class="kw">img</span> <span class="fn">src</span>=<span class="st">"product.jpg"</span> <span class="fn">alt</span>=<span class="st">"পণ্যের ছবি"</span>&gt;
+
+<span class="cm">&lt;!-- data-* attributes: custom data রাখার জায়গা --&gt;</span>
+&lt;<span class="kw">div</span> <span class="fn">data-price</span>=<span class="st">"1230"</span> <span class="fn">data-stock</span>=<span class="st">"available"</span>&gt;&lt;/<span class="kw">div</span>&gt;</pre>
+  </div>
+
+  <div class="callout callout-warn">
+    <div class="callout-title">⚡ Scraping-এ সবচেয়ে জরুরি: id এবং class</div>
+    <p><strong>id</strong> দিয়ে unique element খুঁজো। <strong>class</strong> দিয়ে একই ধরনের সব element (যেমন সব পণ্যের দাম) একসাথে পাও। এই দুটো না জানলে Scraping হবে না।</p>
+  </div>
+
+  <div class="interview-box">
+    <h3>ইন্টারভিউ প্র্যাকটিস — HTML</h3>
+    <div class="q-item q-q">
+      <div class="q-label">প্রশ্ন</div>
+      <p>id এবং class-এর পার্থক্য কী? কখন কোনটা ব্যবহার করবে Scraping-এ?</p>
+    </div>
+    <div class="q-item q-a">
+      <div class="q-label">উত্তর</div>
+      <p><strong>id</strong>: পেজে একবারই থাকে, unique। যেমন <mark>#nav-bar</mark>। যখন নির্দিষ্ট একটা element দরকার তখন id ব্যবহার। <strong>class</strong>: একই class অনেক element-এ থাকতে পারে। যেমন <mark>.product-card</mark> ১০০টা পণ্যে। সব পণ্য একসাথে বের করতে class ব্যবহার।</p>
+    </div>
+
+    <div class="q-item q-q">
+      <div class="q-label">কোডিং প্রশ্ন (ML Engineering)</div>
+      <p>একটি e-commerce সাইটে প্রতিটি product card এভাবে আছে:<br><code>&lt;div class="product-card" data-id="123"&gt;&lt;span class="price"&gt;৳500&lt;/span&gt;&lt;/div&gt;</code><br>সব product-এর id এবং price বের করো।</p>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python Solution</div></div>
+      <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
+
+<span class="kw">def</span> <span class="fn">extract_products</span>(html_content: str) -> pd.DataFrame:
+    soup = BeautifulSoup(html_content, <span class="st">'lxml'</span>)
+    products = []
+    
+    <span class="kw">for</span> card <span class="kw">in</span> soup.find_all(<span class="st">'div'</span>, class_=<span class="st">'product-card'</span>):
+        product_id = card.get(<span class="st">'data-id'</span>)  <span class="cm"># data attribute বের করা</span>
+        price_tag = card.find(<span class="st">'span'</span>, class_=<span class="st">'price'</span>)
+        
+        <span class="cm"># None check — সবসময় করতে হবে!</span>
+        <span class="kw">if</span> price_tag <span class="kw">is not</span> <span class="kw">None</span>:
+            price_text = price_tag.get_text(strip=<span class="kw">True</span>)
+            <span class="cm"># ৳ সরিয়ে number বের করা</span>
+            price = <span class="fn">float</span>(price_text.replace(<span class="st">'৳'</span>, <span class="st">''</span>).replace(<span class="st">','</span>, <span class="st">''</span>).strip())
+        <span class="kw">else</span>:
+            price = <span class="kw">None</span>
+        
+        products.append({<span class="st">'product_id'</span>: product_id, <span class="st">'price'</span>: price})
+    
+    <span class="kw">return</span> pd.DataFrame(products)</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SECTION 04: CSS ====== -->
+<section class="section" id="css">
+  <div class="section-tag">মডিউল ০৪</div>
+  <h2>CSS — ওয়েব পেজের পোশাক</h2>
+
+  <p>HTML দিয়ে কঙ্কাল তৈরি হয়। কিন্তু কঙ্কাল দেখতে ভালো না। <strong>CSS (Cascading Style Sheets)</strong> দিয়ে সেই কঙ্কালকে সুন্দর পোশাক পরানো হয়।</p>
+  <p>Scraping করার সময় CSS সরাসরি কাজে না লাগলেও, CSS-এর <strong>class</strong> এবং <strong>id</strong> attribute ব্যবহার করে আমরা নির্দিষ্ট element খুঁজি।</p>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">CSS Selector — Scraping-এ কীভাবে ব্যবহার হয়</div>
+    <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:680px;display:block;margin:0 auto;">
+      <!-- CSS box -->
+      <rect x="20" y="30" width="200" height="140" rx="12" fill="#1e2440" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="120" y="55" fill="#a78bfa" font-size="12" text-anchor="middle" font-family="Hind Siliguri,sans-serif">CSS Selectors</text>
+      <text x="120" y="80" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="'JetBrains Mono',monospace">.class → ক্লাস</text>
+      <text x="120" y="100" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="'JetBrains Mono',monospace">#id → আইডি</text>
+      <text x="120" y="120" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="'JetBrains Mono',monospace">div &gt; p → সরাসরি</text>
+      <text x="120" y="140" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="'JetBrains Mono',monospace">child</text>
+      <text x="120" y="160" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">soup.select() তে ব্যবহার</text>
+
+      <!-- arrow -->
+      <line x1="225" y1="100" x2="295" y2="100" stroke="#6ee7f7" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="260" y="90" fill="#6ee7f7" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">BeautifulSoup</text>
+
+      <!-- BeautifulSoup methods -->
+      <rect x="300" y="20" width="220" height="160" rx="12" fill="#1e2440" stroke="#6ee7f7" stroke-width="1.5"/>
+      <text x="410" y="45" fill="#6ee7f7" font-size="12" text-anchor="middle" font-family="Hind Siliguri,sans-serif">BS4 Methods</text>
+      <text x="410" y="68" fill="#34d399" font-size="11" text-anchor="middle" font-family="'JetBrains Mono',monospace">soup.select('.class')</text>
+      <text x="410" y="88" fill="#34d399" font-size="11" text-anchor="middle" font-family="'JetBrains Mono',monospace">soup.select('#id')</text>
+      <text x="410" y="108" fill="#34d399" font-size="11" text-anchor="middle" font-family="'JetBrains Mono',monospace">soup.select('div &gt; p')</text>
+      <text x="410" y="130" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">List return করে</text>
+      <text x="410" y="148" fill="#34d399" font-size="11" text-anchor="middle" font-family="'JetBrains Mono',monospace">soup.select_one()</text>
+      <text x="410" y="168" fill="#636b92" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">প্রথম element return</text>
+
+      <!-- arrow 2 -->
+      <line x1="525" y1="100" x2="595" y2="100" stroke="#f7a84a" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <!-- result -->
+      <rect x="600" y="70" width="70" height="60" rx="8" fill="#1a1f35" stroke="#f7a84a" stroke-width="1"/>
+      <text x="635" y="97" fill="#f9a86d" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">ডেটা</text>
+      <text x="635" y="114" fill="#636b92" font-size="9" text-anchor="middle" font-family="Hind Siliguri,sans-serif">ready!</text>
+    </svg>
+  </div>
+
+  <h3>CSS Selectors — Scraping-এ ব্যবহার</h3>
+  <table>
+    <tr><th>Selector</th><th>মানে</th><th>BS4 উদাহরণ</th></tr>
+    <tr><td><span class="tag">.product</span></td><td>"product" class-এর সব element</td><td><code>soup.select('.product')</code></td></tr>
+    <tr><td><span class="tag">#header</span></td><td>"header" id-এর element</td><td><code>soup.select('#header')</code></td></tr>
+    <tr><td><span class="tag">div &gt; p</span></td><td>div-এর সরাসরি child p</td><td><code>soup.select('div > p')</code></td></tr>
+    <tr><td><span class="tag">div p</span></td><td>div-এর ভেতরের যেকোনো p</td><td><code>soup.select('div p')</code></td></tr>
+    <tr><td><span class="tag">p.note</span></td><td>p যার class "note"</td><td><code>soup.select('p.note')</code></td></tr>
+  </table>
+
+  <div class="interview-box">
+    <h3>ইন্টারভিউ প্র্যাকটিস — CSS Selectors</h3>
+    <div class="q-item q-q">
+      <div class="q-label">কোডিং প্রশ্ন</div>
+      <p>একটি news site-এ প্রতিটি article এভাবে: <code>&lt;div class="article"&gt;&lt;h2 class="title"&gt;...&lt;/h2&gt;&lt;span class="date"&gt;...&lt;/span&gt;&lt;/div&gt;</code>। CSS selector দিয়ে সব title ও date বের করো।</p>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python</div></div>
+      <pre><span class="cm"># CSS selector দিয়ে — সবচেয়ে সহজ উপায়</span>
+titles = [el.get_text(strip=<span class="kw">True</span>) <span class="kw">for</span> el <span class="kw">in</span> soup.select(<span class="st">'div.article h2.title'</span>)]
+dates  = [el.get_text(strip=<span class="kw">True</span>) <span class="kw">for</span> el <span class="kw">in</span> soup.select(<span class="st">'div.article span.date'</span>)]
+
+<span class="cm"># অথবা একসাথে loop করা (ML-এ এটা বেশি পরিষ্কার)</span>
+articles = []
+<span class="kw">for</span> article <span class="kw">in</span> soup.select(<span class="st">'div.article'</span>):
+    title = article.select_one(<span class="st">'h2.title'</span>)
+    date  = article.select_one(<span class="st">'span.date'</span>)
+    articles.append({
+        <span class="st">'title'</span>: title.get_text(strip=<span class="kw">True</span>) <span class="kw">if</span> title <span class="kw">else</span> <span class="kw">None</span>,
+        <span class="st">'date'</span>:  date.get_text(strip=<span class="kw">True</span>)  <span class="kw">if</span> date  <span class="kw">else</span> <span class="kw">None</span>,
+    })</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SECTION 05: JavaScript ====== -->
+<section class="section" id="javascript">
+  <div class="section-tag">মডিউল ০৫</div>
+  <h2>JavaScript — ওয়েব পেজের আত্মা</h2>
+
+  <p>HTML = কঙ্কাল, CSS = পোশাক, JavaScript = আত্মা (movement)। JavaScript দিয়ে পেজ জীবন্ত হয় — বোতাম ক্লিক করলে কিছু হয়, scroll করলে নতুন content আসে ইত্যাদি।</p>
+
+  <div class="callout callout-danger">
+    <div class="callout-title">⚠️ BeautifulSoup-এর বড় সীমাবদ্ধতা!</div>
+    <p>BeautifulSoup শুধু প্রথম HTML দেখতে পায় — JavaScript চালানোর পরে যা আসে সেটা দেখতে পায় না। যদি সাইট JavaScript দিয়ে content load করে, তাহলে BeautifulSoup কাজ করবে না। তখন দরকার <strong>Selenium</strong> বা <strong>Playwright</strong>।</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">Static vs Dynamic Page — BeautifulSoup কোথায় কাজ করে?</div>
+    <svg viewBox="0 0 680 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:680px;display:block;margin:0 auto;">
+      <!-- Static side -->
+      <rect x="20" y="20" width="300" height="200" rx="12" fill="#1a2a1a" stroke="#34d399" stroke-width="1.5"/>
+      <text x="170" y="48" fill="#34d399" font-size="13" text-anchor="middle" font-family="Hind Siliguri,sans-serif">✅ Static Page (BeautifulSoup কাজ করে)</text>
+      <text x="170" y="75" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="'JetBrains Mono',monospace">Server পুরো HTML পাঠায়</text>
+      <rect x="45" y="90" width="250" height="110" rx="8" fill="#1e2440" stroke="#636b92" stroke-width="1"/>
+      <text x="65" y="112" fill="#6ee7f7" font-size="11" font-family="'JetBrains Mono',monospace">&lt;html&gt;</text>
+      <text x="75" y="130" fill="#f9a86d" font-size="11" font-family="'JetBrains Mono',monospace">&lt;p&gt;সব ডেটা এখানেই&lt;/p&gt;</text>
+      <text x="75" y="148" fill="#f9a86d" font-size="11" font-family="'JetBrains Mono',monospace">&lt;p&gt;৳ ৫০০&lt;/p&gt;</text>
+      <text x="65" y="166" fill="#6ee7f7" font-size="11" font-family="'JetBrains Mono',monospace">&lt;/html&gt;</text>
+      <text x="170" y="195" fill="#34d399" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Wikipedia, সরকারি সাইট ✓</text>
+
+      <!-- Dynamic side -->
+      <rect x="360" y="20" width="300" height="200" rx="12" fill="#2a1a1a" stroke="#f87171" stroke-width="1.5"/>
+      <text x="510" y="48" fill="#f87171" font-size="13" text-anchor="middle" font-family="Hind Siliguri,sans-serif">❌ Dynamic Page (Selenium দরকার)</text>
+      <text x="510" y="75" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="'JetBrains Mono',monospace">JS পরে data load করে</text>
+      <rect x="385" y="90" width="250" height="110" rx="8" fill="#1e2440" stroke="#636b92" stroke-width="1"/>
+      <text x="405" y="112" fill="#6ee7f7" font-size="11" font-family="'JetBrains Mono',monospace">&lt;html&gt;</text>
+      <text x="415" y="130" fill="#636b92" font-size="11" font-family="'JetBrains Mono',monospace">&lt;div id="data"&gt;&lt;/div&gt;</text>
+      <text x="415" y="150" fill="#a78bfa" font-size="10" font-family="'JetBrains Mono',monospace">// JS পরে এখানে data আসে</text>
+      <text x="405" y="168" fill="#6ee7f7" font-size="11" font-family="'JetBrains Mono',monospace">&lt;/html&gt;</text>
+      <text x="510" y="195" fill="#f87171" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Twitter, Facebook, SPA ✗</text>
+    </svg>
+  </div>
+
+  <div class="interview-box">
+    <h3>ইন্টারভিউ প্র্যাকটিস — JavaScript ও Dynamic Content</h3>
+    <div class="q-item q-q">
+      <div class="q-label">প্রশ্ন</div>
+      <p>BeautifulSoup দিয়ে scrape করতে গিয়ে দেখলে content নেই, কিন্তু browser-এ দেখা যাচ্ছে। কারণ কী এবং সমাধান কী?</p>
+    </div>
+    <div class="q-item q-a">
+      <div class="q-label">উত্তর</div>
+      <p>কারণ: সাইট JavaScript দিয়ে dynamically content load করে (AJAX/React/Vue)। BeautifulSoup শুধু initial HTML দেখে, JS execute করে না।<br><strong>সমাধান ৩টা:</strong><br>১) <mark>Selenium/Playwright</mark> — real browser চালায়, JS execute করে<br>২) <mark>API খোঁজো</mark> — Browser DevTools-এ Network tab দেখো, অনেক সময় hidden API থাকে যেটা directly call করা যায়<br>৩) <mark>requests-html</mark> library — Python-এই JS execute করতে পারে</p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SECTION 06: HTTP ====== -->
+<section class="section" id="http">
+  <div class="section-tag">মডিউল ০৬</div>
+  <h2>HTTP Requests — ইন্টারনেটের ডাকপিয়ন</h2>
+
+  <p>Python-এ ওয়েবসাইটের HTML বের করতে <strong>requests</strong> library ব্যবহার করি। এটা browser-এর মতোই server-কে বলে "এই পেজটা দাও"।</p>
+
+  <h3>প্রথম Scraping Code</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — requests library</div></div>
+    <pre><span class="kw">import</span> requests
+
+<span class="cm"># ১) URL-এ GET request পাঠাও</span>
+response = requests.get(<span class="st">'https://en.wikipedia.org/wiki/Bangladesh'</span>)
+
+<span class="cm"># ২) Status code দেখো — 200 মানে সাফল্য</span>
+<span class="fn">print</span>(response.status_code)  <span class="cm"># 200</span>
+
+<span class="cm"># ৩) HTML content বের করো</span>
+html_content = response.content  <span class="cm"># bytes format</span>
+html_text    = response.text     <span class="cm"># string format</span>
+
+<span class="fn">print</span>(html_text[:<span class="nm">500</span>])  <span class="cm"># প্রথম ৫০০ character দেখো</span></pre>
+  </div>
+
+  <h3>Headers — নিজেকে browser হিসেবে পরিচয় দাও</h3>
+  <p>অনেক সাইট Python script detect করে block করে। Headers দিয়ে নিজেকে real browser হিসেবে দেখানো যায়:</p>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — Headers সহ Request</div></div>
+    <pre>headers = {
+    <span class="st">'User-Agent'</span>: <span class="st">'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'</span>,
+    <span class="st">'Accept-Language'</span>: <span class="st">'en-US,en;q=0.9'</span>,
+    <span class="st">'Accept'</span>: <span class="st">'text/html,application/xhtml+xml,application/xml;q=0.9'</span>,
+}
+
+response = requests.get(url, headers=headers, timeout=<span class="nm">10</span>)
+
+<span class="cm"># ML Pipeline-এ সবসময় timeout দাও — না হলে আটকে যেতে পারে!</span></pre>
+  </div>
+
+  <div class="interview-box">
+    <h3>ইন্টারভিউ প্র্যাকটিস — HTTP</h3>
+    <div class="q-item q-q">
+      <div class="q-label">কোডিং প্রশ্ন (ML Engineering)</div>
+      <p>একটি production-grade scraping function লিখো যা: retry করে, rate limiting মানে, এবং সব errors handle করে।</p>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — Production Grade Scraper</div></div>
+      <pre><span class="kw">import</span> requests, time, logging
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+logger = logging.getLogger(__name__)
+
+<span class="kw">def</span> <span class="fn">safe_get</span>(
+    url: str,
+    max_retries: int = <span class="nm">3</span>,
+    backoff: float = <span class="nm">2.0</span>,
+    timeout: int = <span class="nm">15</span>,
+    headers: Optional[dict] = <span class="kw">None</span>
+) -> Optional[requests.Response]:
+    <span class="st">"""
+    Production-grade HTTP GET with exponential backoff retry।
+    
+    Exponential Backoff মানে: প্রথম try fail → 2s অপেক্ষা
+    দ্বিতীয় fail → 4s অপেক্ষা, তৃতীয় fail → 8s অপেক্ষা।
+    """</span>
+    _headers = headers <span class="kw">or</span> {
+        <span class="st">'User-Agent'</span>: <span class="st">'Mozilla/5.0 (Research Bot)'</span>
+    }
+    
+    <span class="kw">for</span> attempt <span class="kw">in</span> <span class="fn">range</span>(max_retries):
+        <span class="kw">try</span>:
+            response = requests.get(url, headers=_headers, timeout=timeout)
+            
+            <span class="kw">if</span> response.status_code == <span class="nm">429</span>:  <span class="cm"># Rate limited</span>
+                wait = backoff ** attempt
+                logger.warning(<span class="st">f"Rate limited. Waiting {wait}s..."</span>)
+                time.sleep(wait)
+                <span class="kw">continue</span>
+            
+            response.raise_for_status()
+            time.sleep(<span class="nm">0.5</span>)  <span class="cm">#礼貌的 delay — সাইটকে চাপ না দেওয়া</span>
+            <span class="kw">return</span> response
+            
+        <span class="kw">except</span> requests.Timeout:
+            logger.warning(<span class="st">f"Timeout on attempt {attempt+1}/{max_retries}"</span>)
+        <span class="kw">except</span> requests.HTTPError <span class="kw">as</span> e:
+            logger.error(<span class="st">f"HTTP {e.response.status_code} for {url}"</span>)
+            <span class="kw">if</span> e.response.status_code == <span class="nm">404</span>:
+                <span class="kw">break</span>  <span class="cm"># 404-এ retry করা মানে নেই</span>
+        
+        time.sleep(backoff ** attempt)  <span class="cm"># Exponential backoff</span>
+    
+    <span class="kw">return</span> <span class="kw">None</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SECTION 07: LIBRARIES ====== -->
+<section class="section" id="libraries">
+  <div class="section-tag">মডিউল ০৭</div>
+  <h2>Python Libraries — আমাদের হাতিয়ার</h2>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">তিনটি প্রধান Scraping Library তুলনা</div>
+    <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+      <!-- BS4 -->
+      <rect x="20" y="30" width="200" height="200" rx="14" fill="#1e2440" stroke="#6ee7f7" stroke-width="2"/>
+      <text x="120" y="60" fill="#6ee7f7" font-size="24" text-anchor="middle">🍵</text>
+      <text x="120" y="85" fill="#e8eaf6" font-size="14" text-anchor="middle" font-weight="bold" font-family="Hind Siliguri,sans-serif">BeautifulSoup</text>
+      <text x="120" y="108" fill="#34d399" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">✅ শিখতে সহজ</text>
+      <text x="120" y="126" fill="#34d399" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">✅ ছোট প্রজেক্টে ভালো</text>
+      <text x="120" y="144" fill="#f87171" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">❌ JS handle করে না</text>
+      <text x="120" y="162" fill="#f87171" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">❌ ধীরে কাজ করে</text>
+      <rect x="40" y="195" width="160" height="22" rx="6" fill="#6ee7f7" opacity="0.15"/>
+      <text x="120" y="211" fill="#6ee7f7" font-size="12" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Beginner — এখানেই শুরু</text>
+
+      <!-- Scrapy -->
+      <rect x="250" y="30" width="200" height="200" rx="14" fill="#1e2440" stroke="#f7a84a" stroke-width="2"/>
+      <text x="350" y="60" fill="#f7a84a" font-size="24" text-anchor="middle">🕷️</text>
+      <text x="350" y="85" fill="#e8eaf6" font-size="14" text-anchor="middle" font-weight="bold" font-family="Hind Siliguri,sans-serif">Scrapy</text>
+      <text x="350" y="108" fill="#34d399" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">✅ বড় scale-এ দ্রুত</text>
+      <text x="350" y="126" fill="#34d399" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">✅ JSON/CSV export</text>
+      <text x="350" y="144" fill="#f87171" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">❌ শেখা কঠিন</text>
+      <text x="350" y="162" fill="#f87171" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">❌ complex setup</text>
+      <rect x="270" y="195" width="160" height="22" rx="6" fill="#f7a84a" opacity="0.15"/>
+      <text x="350" y="211" fill="#f7a84a" font-size="12" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Large Scale Crawling</text>
+
+      <!-- Selenium -->
+      <rect x="480" y="30" width="200" height="200" rx="14" fill="#1e2440" stroke="#a78bfa" stroke-width="2"/>
+      <text x="580" y="60" fill="#a78bfa" font-size="24" text-anchor="middle">🤖</text>
+      <text x="580" y="85" fill="#e8eaf6" font-size="14" text-anchor="middle" font-weight="bold" font-family="Hind Siliguri,sans-serif">Selenium</text>
+      <text x="580" y="108" fill="#34d399" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">✅ JS execute করে</text>
+      <text x="580" y="126" fill="#34d399" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">✅ Human behavior simulate</text>
+      <text x="580" y="144" fill="#f87171" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">❌ ধীরে কাজ করে</text>
+      <text x="580" y="162" fill="#f87171" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">❌ সাইট detect করে</text>
+      <rect x="500" y="195" width="160" height="22" rx="6" fill="#a78bfa" opacity="0.15"/>
+      <text x="580" y="211" fill="#a78bfa" font-size="12" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Dynamic JS Sites</text>
+    </svg>
+  </div>
+
+  <div class="callout callout-tip">
+    <div class="callout-title">🎯 কোনটা কখন?</div>
+    <p><strong>BeautifulSoup</strong>: Static sites, Wikipedia, সরকারি সাইট, সহজ প্রজেক্ট। <strong>Scrapy</strong>: লক্ষাধিক page crawl, ML dataset তৈরি। <strong>Selenium</strong>: Login দরকার, infinite scroll, JavaScript-heavy sites।</p>
+  </div>
+</section>
+
+<!-- ====== SECTION 08: BEAUTIFULSOUP ====== -->
+<section class="section" id="beautifulsoup">
+  <div class="section-tag">মডিউল ০৮</div>
+  <h2>BeautifulSoup — গভীর ডুব</h2>
+
+  <h3>Soup তৈরি করা</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — BeautifulSoup শুরু</div></div>
+    <pre><span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
+<span class="kw">import</span> requests
+
+<span class="cm"># ধাপ ১: HTML বের করো</span>
+response = requests.get(<span class="st">'https://en.wikipedia.org/wiki/Bangladesh'</span>)
+
+<span class="cm"># ধাপ ২: Soup তৈরি করো</span>
+<span class="cm"># lxml = সবচেয়ে দ্রুত এবং syntax-tolerant parser</span>
+soup = BeautifulSoup(response.content, <span class="st">'lxml'</span>)
+
+<span class="cm"># ধাপ ৩: দেখো কেমন দেখাচ্ছে</span>
+<span class="fn">print</span>(soup.prettify()[:<span class="nm">1000</span>])  <span class="cm"># সুন্দর ফরম্যাটে প্রথম ১০০০ char</span></pre>
+  </div>
+
+  <h3>Parser তুলনা</h3>
+  <table>
+    <tr><th>Parser</th><th>গতি</th><th>Installation</th><th>কখন ব্যবহার</th></tr>
+    <tr><td><span class="tag">html.parser</span></td><td>মাঝারি</td><td>না (built-in)</td><td>সহজ, দ্রুত শুরু করতে</td></tr>
+    <tr><td><span class="tag tag-g">lxml</span></td><td>দ্রুততম</td><td><code>pip install lxml</code></td><td>সবসময় — এটাই best choice</td></tr>
+    <tr><td><span class="tag tag-p">html5lib</span></td><td>ধীর</td><td><code>pip install html5lib</code></td><td>HTML5 specific, ভাঙা HTML ঠিক করতে</td></tr>
+  </table>
+
+  <h3>সব Functions — একসাথে</h3>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">BeautifulSoup Functions — কোনটা কী করে</div>
+    <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+      <!-- center soup -->
+      <rect x="270" y="130" width="160" height="60" rx="12" fill="#1e2440" stroke="#6ee7f7" stroke-width="2"/>
+      <text x="350" y="156" fill="#6ee7f7" font-size="13" text-anchor="middle" font-family="'JetBrains Mono',monospace">soup</text>
+      <text x="350" y="175" fill="#636b92" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">BeautifulSoup Object</text>
+
+      <!-- find -->
+      <rect x="30" y="30" width="180" height="70" rx="10" fill="#1a2a1a" stroke="#34d399" stroke-width="1.5"/>
+      <text x="120" y="52" fill="#34d399" font-size="12" text-anchor="middle" font-family="'JetBrains Mono',monospace">soup.find()</text>
+      <text x="120" y="70" fill="#9ba3c7" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">প্রথম মিলে যাওয়া element</text>
+      <text x="120" y="86" fill="#636b92" font-size="9" text-anchor="middle" font-family="Hind Siliguri,sans-serif">একটা Tag return করে</text>
+      <line x1="210" y1="65" x2="270" y2="150" stroke="#34d399" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+
+      <!-- find_all -->
+      <rect x="30" y="140" width="180" height="70" rx="10" fill="#1a2a1a" stroke="#6ee7f7" stroke-width="1.5"/>
+      <text x="120" y="162" fill="#6ee7f7" font-size="12" text-anchor="middle" font-family="'JetBrains Mono',monospace">soup.find_all()</text>
+      <text x="120" y="180" fill="#9ba3c7" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">সব মিলে যাওয়া elements</text>
+      <text x="120" y="196" fill="#636b92" font-size="9" text-anchor="middle" font-family="Hind Siliguri,sans-serif">List return করে</text>
+      <line x1="210" y1="175" x2="270" y2="165" stroke="#6ee7f7" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+
+      <!-- find_next -->
+      <rect x="30" y="250" width="180" height="58" rx="10" fill="#1a2030" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="120" y="272" fill="#a78bfa" font-size="12" text-anchor="middle" font-family="'JetBrains Mono',monospace">find_next()</text>
+      <text x="120" y="290" fill="#9ba3c7" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">পরের মিলে যাওয়া element</text>
+      <text x="120" y="303" fill="#636b92" font-size="9" text-anchor="middle" font-family="Hind Siliguri,sans-serif">কোনো element থেকে call করো</text>
+      <line x1="210" y1="279" x2="270" y2="185" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+
+      <!-- select -->
+      <rect x="490" y="30" width="180" height="70" rx="10" fill="#2a1a20" stroke="#f87171" stroke-width="1.5"/>
+      <text x="580" y="52" fill="#f87171" font-size="12" text-anchor="middle" font-family="'JetBrains Mono',monospace">soup.select()</text>
+      <text x="580" y="70" fill="#9ba3c7" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">CSS selector দিয়ে খোঁজো</text>
+      <text x="580" y="86" fill="#636b92" font-size="9" text-anchor="middle" font-family="Hind Siliguri,sans-serif">List return করে</text>
+      <line x1="490" y1="65" x2="430" y2="150" stroke="#f87171" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr3)"/>
+
+      <!-- select_one -->
+      <rect x="490" y="140" width="180" height="70" rx="10" fill="#2a1a20" stroke="#f7a84a" stroke-width="1.5"/>
+      <text x="580" y="162" fill="#f7a84a" font-size="12" text-anchor="middle" font-family="'JetBrains Mono',monospace">soup.select_one()</text>
+      <text x="580" y="180" fill="#9ba3c7" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">CSS selector — প্রথমটা</text>
+      <text x="580" y="196" fill="#636b92" font-size="9" text-anchor="middle" font-family="Hind Siliguri,sans-serif">একটা Tag return করে</text>
+      <line x1="490" y1="175" x2="430" y2="165" stroke="#f7a84a" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr2)"/>
+
+      <!-- find_next_sibling -->
+      <rect x="490" y="250" width="180" height="58" rx="10" fill="#2a2a1a" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="580" y="272" fill="#fbbf24" font-size="11" text-anchor="middle" font-family="'JetBrains Mono',monospace">find_next_sibling()</text>
+      <text x="580" y="290" fill="#9ba3c7" font-size="10" text-anchor="middle" font-family="Hind Siliguri,sans-serif">পাশের ভাই element খোঁজো</text>
+      <text x="580" y="303" fill="#636b92" font-size="9" text-anchor="middle" font-family="Hind Siliguri,sans-serif">একই level-এর পরেরটা</text>
+      <line x1="490" y1="279" x2="430" y2="185" stroke="#fbbf24" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr2)"/>
+    </svg>
+  </div>
+
+  <h3>find() — বিস্তারিত</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — find() সব উপায়ে</div></div>
+    <pre>html = <span class="st">'''
+&lt;html&gt;&lt;body&gt;
+  &lt;h1 id="title"&gt;বাংলাদেশ&lt;/h1&gt;
+  &lt;div class="info"&gt;দক্ষিণ এশিয়ার দেশ&lt;/div&gt;
+  &lt;div class="info" data-lang="bn"&gt;বাংলা ভাষা&lt;/div&gt;
+  &lt;p class="detail"&gt;জনসংখ্যা: ১৭ কোটি&lt;/p&gt;
+&lt;/body&gt;&lt;/html&gt;
+'''</span>
+
+soup = BeautifulSoup(html, <span class="st">'html.parser'</span>)
+
+<span class="cm"># ১) Tag দিয়ে খোঁজা</span>
+h1 = soup.find(<span class="st">'h1'</span>)
+<span class="fn">print</span>(h1.text)  <span class="cm"># বাংলাদেশ</span>
+
+<span class="cm"># ২) id দিয়ে খোঁজা</span>
+title = soup.find(<span class="st">'h1'</span>, id=<span class="st">'title'</span>)
+
+<span class="cm"># ৩) class দিয়ে খোঁজা (class_ — Python keyword এড়াতে)</span>
+first_info = soup.find(<span class="st">'div'</span>, class_=<span class="st">'info'</span>)  <span class="cm"># প্রথমটা</span>
+
+<span class="cm"># ৪) একাধিক attribute দিয়ে</span>
+specific = soup.find(<span class="st">'div'</span>, attrs={<span class="st">'class'</span>: <span class="st">'info'</span>, <span class="st">'data-lang'</span>: <span class="st">'bn'</span>})
+
+<span class="cm"># ৫) Shortcut syntax</span>
+h1_short = soup.h1  <span class="cm"># soup.find('h1') এর সমান</span>
+
+<span class="cm"># Text বের করা</span>
+<span class="fn">print</span>(h1.get_text())        <span class="cm"># লেখা সহ সব text</span>
+<span class="fn">print</span>(h1.get_text(strip=<span class="kw">True</span>))  <span class="cm"># আগে-পরে space সরিয়ে</span>
+
+<span class="cm"># Attribute বের করা</span>
+link = soup.find(<span class="st">'a'</span>)
+url = link[<span class="st">'href'</span>]     <span class="cm"># বা: link.get('href')</span></pre>
+  </div>
+
+  <h3>find_all() — সব খুঁজে বের করা</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — find_all()</div></div>
+    <pre><span class="cm"># সব paragraph বের করো</span>
+all_p = soup.find_all(<span class="st">'p'</span>)
+<span class="kw">for</span> p <span class="kw">in</span> all_p:
+    <span class="fn">print</span>(p.text)
+
+<span class="cm"># প্রথম ৩টা মাত্র</span>
+first_3 = soup.find_all(<span class="st">'p'</span>, limit=<span class="nm">3</span>)
+
+<span class="cm"># Multiple class দিয়ে</span>
+items = soup.find_all(<span class="st">'li'</span>, class_=<span class="st">'menu-item'</span>)
+
+<span class="cm"># List comprehension দিয়ে সরাসরি text বের করা (Pythonic)</span>
+texts = [li.get_text(strip=<span class="kw">True</span>) <span class="kw">for</span> li <span class="kw">in</span> soup.find_all(<span class="st">'li'</span>)]</pre>
+  </div>
+
+  <div class="interview-box">
+    <h3>ইন্টারভিউ প্র্যাকটিস — BeautifulSoup Deep</h3>
+    <div class="q-item q-q">
+      <div class="q-label">কোডিং প্রশ্ন (ML Engineering)</div>
+      <p>Wikipedia-র একটি article থেকে সব &lt;h2&gt; heading এবং তার নিচের প্রথম paragraph বের করো। এটা ML-এর জন্য document structure বোঝার কাজে লাগবে।</p>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python Solution</div></div>
+      <pre><span class="kw">import</span> requests, pandas <span class="kw">as</span> pd
+<span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
+
+url = <span class="st">'https://en.wikipedia.org/wiki/Bangladesh'</span>
+soup = BeautifulSoup(requests.get(url).content, <span class="st">'lxml'</span>)
+
+sections = []
+<span class="kw">for</span> h2 <span class="kw">in</span> soup.find_all(<span class="st">'h2'</span>):
+    heading = h2.get_text(strip=<span class="kw">True</span>)
+    
+    <span class="cm"># h2-এর পরে প্রথম paragraph (sibling খোঁজা)</span>
+    next_p = h2.find_next(<span class="st">'p'</span>)
+    content = next_p.get_text(strip=<span class="kw">True</span>) <span class="kw">if</span> next_p <span class="kw">else</span> <span class="st">""</span>
+    
+    sections.append({
+        <span class="st">'heading'</span>: heading,
+        <span class="st">'first_paragraph'</span>: content[:200]  <span class="cm"># প্রথম ২০০ char</span>
+    })
+
+<span class="cm"># ML-এর জন্য DataFrame বানাও</span>
+df = pd.DataFrame(sections)
+df.to_csv(<span class="st">'wiki_sections.csv'</span>, index=<span class="kw">False</span>)
+<span class="fn">print</span>(df.head())</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SECTION 09: COLLECT DATA ====== -->
+<section class="section" id="collect">
+  <div class="section-tag">মডিউল ০৯</div>
+  <h2>ডেটা সংগ্রহ করা — হাতে-কলমে</h2>
+
+  <h3>ডেটা সংরক্ষণ — CSV ও JSON</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — ডেটা Save করা</div></div>
+    <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> json
+
+<span class="cm"># ধরো আমরা scrape করে পেয়েছি:</span>
+products = [
+    {<span class="st">'name'</span>: <span class="st">'Nokia 105'</span>, <span class="st">'price'</span>: <span class="nm">1500</span>, <span class="st">'rating'</span>: <span class="nm">4.2</span>},
+    {<span class="st">'name'</span>: <span class="st">'Samsung A14'</span>, <span class="st">'price'</span>: <span class="nm">18000</span>, <span class="st">'rating'</span>: <span class="nm">4.5</span>},
+]
+
+<span class="cm"># CSV হিসেবে save (ML dataset-এর জন্য)</span>
+df = pd.DataFrame(products)
+df.to_csv(<span class="st">'products.csv'</span>, index=<span class="kw">False</span>, encoding=<span class="st">'utf-8-sig'</span>)
+
+<span class="cm"># JSON হিসেবে save</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="st">'products.json'</span>, <span class="st">'w'</span>, encoding=<span class="st">'utf-8'</span>) <span class="kw">as</span> f:
+    json.dump(products, f, ensure_ascii=<span class="kw">False</span>, indent=<span class="nm">2</span>)
+
+<span class="cm"># Parquet (ML-এ সবচেয়ে efficient format)</span>
+df.to_parquet(<span class="st">'products.parquet'</span>)
+df_back = pd.read_parquet(<span class="st">'products.parquet'</span>)</pre>
+  </div>
+
+  <h3>Complete Scraping Pipeline</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — সম্পূর্ণ Pipeline</div></div>
+    <pre><span class="kw">import</span> requests, time, pandas <span class="kw">as</span> pd
+<span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
+<span class="kw">from</span> typing <span class="kw">import</span> List, Dict
+
+<span class="kw">def</span> <span class="fn">scrape_books</span>(base_url: str, max_pages: int = <span class="nm">5</span>) -> pd.DataFrame:
+    <span class="st">"""
+    books.toscrape.com থেকে বই scrape করার উদাহরণ।
+    এটা legal scraping practice site।
+    """</span>
+    all_books: List[Dict] = []
+    
+    <span class="kw">for</span> page <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, max_pages + <span class="nm">1</span>):
+        url = <span class="st">f"{base_url}/catalogue/page-{page}.html"</span>
+        response = requests.get(url, timeout=<span class="nm">10</span>)
+        
+        <span class="kw">if</span> response.status_code != <span class="nm">200</span>:
+            <span class="fn">print</span>(<span class="st">f"Page {page} failed: {response.status_code}"</span>)
+            <span class="kw">break</span>
+        
+        soup = BeautifulSoup(response.content, <span class="st">'lxml'</span>)
+        
+        <span class="kw">for</span> article <span class="kw">in</span> soup.find_all(<span class="st">'article'</span>, class_=<span class="st">'product_pod'</span>):
+            title = article.find(<span class="st">'h3'</span>).find(<span class="st">'a'</span>)[<span class="st">'title'</span>]
+            price = article.find(<span class="st">'p'</span>, class_=<span class="st">'price_color'</span>).text.strip()
+            rating_class = article.find(<span class="st">'p'</span>, class_=<span class="st">'star-rating'</span>)[<span class="st">'class'</span>][<span class="nm">1</span>]
+            
+            <span class="cm"># Rating শব্দকে সংখ্যায় রূপান্তর</span>
+            rating_map = {<span class="st">'One'</span>:<span class="nm">1</span>,<span class="st">'Two'</span>:<span class="nm">2</span>,<span class="st">'Three'</span>:<span class="nm">3</span>,<span class="st">'Four'</span>:<span class="nm">4</span>,<span class="st">'Five'</span>:<span class="nm">5</span>}
+            rating = rating_map.get(rating_class, <span class="nm">0</span>)
+            
+            all_books.append({
+                <span class="st">'title'</span>: title,
+                <span class="st">'price'</span>: <span class="fn">float</span>(price.replace(<span class="st">'Â£'</span>,<span class="st">''</span>).replace(<span class="st">'£'</span>,<span class="st">''</span>)),
+                <span class="st">'rating'</span>: rating,
+                <span class="st">'page'</span>: page
+            })
+        
+        time.sleep(<span class="nm">1</span>)  <span class="cm">#礼貌: সাইটকে চাপ না দেওয়া</span>
+        <span class="fn">print</span>(<span class="st">f"Page {page} done: {len(all_books)} books total"</span>)
+    
+    df = pd.DataFrame(all_books)
+    df.to_csv(<span class="st">'books_dataset.csv'</span>, index=<span class="kw">False</span>)
+    <span class="kw">return</span> df
+
+<span class="cm"># চালাও!</span>
+df = <span class="fn">scrape_books</span>(<span class="st">'https://books.toscrape.com'</span>)</pre>
+  </div>
+
+  <div class="interview-box">
+    <h3>ইন্টারভিউ প্র্যাকটিস — Pipeline Design</h3>
+    <div class="q-item q-q">
+      <div class="q-label">System Design প্রশ্ন</div>
+      <p>তুমি একটা ML model train করবে যেটা product review sentiment বিশ্লেষণ করবে। ১০টা e-commerce site থেকে review scrape করতে হবে। Architecture কীভাবে design করবে?</p>
+    </div>
+    <div class="q-item q-a">
+      <div class="q-label">উত্তর (Architecture Level)</div>
+      <p>
+        <strong>১. Data Collection Layer:</strong> প্রতিটা site-এর জন্য আলাদা scraper class (Strategy Pattern)। Rate limiting, retry logic সব centralized।<br>
+        <strong>২. Storage Layer:</strong> Raw HTML → S3/local। Parsed data → PostgreSQL বা Parquet files।<br>
+        <strong>৩. Processing Layer:</strong> Text cleaning, deduplication, language detection।<br>
+        <strong>৪. ML Pipeline:</strong> Feature extraction → Model training → Evaluation।<br>
+        <strong>৫. Monitoring:</strong> Site structure change detect করতে scheduled checks।
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SECTION 10: USE CASE ====== -->
+<section class="section" id="usecase">
+  <div class="section-tag">মডিউল ১০</div>
+  <h2>বাস্তব প্রজেক্ট উদাহরণ</h2>
+
+  <p>এবার একটা real scraping project দেখি — পদ্ধতিগতভাবে, step by step।</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">১</div>
+      <div class="step-content">
+        <h4>Browser-এ পেজ খোলো এবং Inspect করো</h4>
+        <p>F12 বা Right Click → Inspect দাও। Network tab-এ কী load হচ্ছে দেখো। Elements tab-এ HTML structure দেখো।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">২</div>
+      <div class="step-content">
+        <h4>Target element-এর class/id খোঁজো</h4>
+        <p>যে ডেটা চাও সেটার উপর right-click → Inspect। HTML-এ কোন tag, class, id তা নোট করো।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৩</div>
+      <div class="step-content">
+        <h4>Request পাঠাও এবং Soup বানাও</h4>
+        <p>requests.get() দিয়ে HTML বের করো, BeautifulSoup দিয়ে parse করো।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৪</div>
+      <div class="step-content">
+        <h4>find/select দিয়ে ডেটা বের করো</h4>
+        <p>soup.find() বা soup.select() দিয়ে নির্দিষ্ট element খোঁজো।</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">৫</div>
+      <div class="step-content">
+        <h4>DataFrame বানাও এবং Save করো</h4>
+        <p>pandas DataFrame-এ রাখো, CSV/Parquet হিসেবে save করো।</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — Complete Real Project (Quotes Scraper)</div></div>
+    <pre><span class="kw">import</span> requests, pandas <span class="kw">as</span> pd
+<span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
+
+<span class="cm"># quotes.toscrape.com — practice site, legal</span>
+URL = <span class="st">"https://quotes.toscrape.com"</span>
+
+<span class="kw">def</span> <span class="fn">scrape_all_quotes</span>() -> pd.DataFrame:
+    quotes_data = []
+    page_url = URL
+    
+    <span class="kw">while</span> page_url:  <span class="cm"># যতক্ষণ পরের page আছে</span>
+        soup = BeautifulSoup(
+            requests.get(page_url).content, <span class="st">'lxml'</span>
+        )
+        
+        <span class="kw">for</span> quote <span class="kw">in</span> soup.find_all(<span class="st">'div'</span>, class_=<span class="st">'quote'</span>):
+            text   = quote.find(<span class="st">'span'</span>, class_=<span class="st">'text'</span>).get_text(strip=<span class="kw">True</span>)
+            author = quote.find(<span class="st">'small'</span>, class_=<span class="st">'author'</span>).get_text(strip=<span class="kw">True</span>)
+            tags   = [t.get_text() <span class="kw">for</span> t <span class="kw">in</span> quote.find_all(<span class="st">'a'</span>, class_=<span class="st">'tag'</span>)]
+            
+            quotes_data.append({
+                <span class="st">'text'</span>: text,
+                <span class="st">'author'</span>: author,
+                <span class="st">'tags'</span>: <span class="st">', '</span>.join(tags)
+            })
+        
+        <span class="cm"># পরের page আছে কিনা দেখো</span>
+        next_btn = soup.find(<span class="st">'li'</span>, class_=<span class="st">'next'</span>)
+        page_url = URL + next_btn.find(<span class="st">'a'</span>)[<span class="st">'href'</span>] <span class="kw">if</span> next_btn <span class="kw">else</span> <span class="kw">None</span>
+    
+    df = pd.DataFrame(quotes_data)
+    <span class="fn">print</span>(<span class="st">f"মোট {len(df)} quotes সংগ্রহ করা হয়েছে"</span>)
+    <span class="kw">return</span> df
+
+df = <span class="fn">scrape_all_quotes</span>()
+df.to_csv(<span class="st">'quotes_dataset.csv'</span>, index=<span class="kw">False</span>)
+
+<span class="cm"># ML analysis</span>
+<span class="fn">print</span>(df[<span class="st">'author'</span>].value_counts().head(<span class="nm">10</span>))  <span class="cm"># কে সবচেয়ে বেশি quote</span></pre>
+  </div>
+</section>
+
+<!-- ====== SECTION 11: LIMITS ====== -->
+<section class="section" id="limits">
+  <div class="section-tag">মডিউল ১১</div>
+  <h2>Web Scraping-এর সীমাবদ্ধতা</h2>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <h4>Dynamic Content</h4>
+      <p>JavaScript দিয়ে content load হলে BeautifulSoup দেখতে পায় না। Selenium দরকার হয়।</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔄</div>
+      <h4>সাইট পরিবর্তন</h4>
+      <p>সাইটের HTML structure বদলালে scraper ভেঙে যায়। Regular monitoring দরকার।</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🛡️</div>
+      <h4>Bot Detection</h4>
+      <p>Captcha, IP blocking, rate limiting দিয়ে সাইট scraping রোধ করে।</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚖️</div>
+      <h4>আইনি সীমাবদ্ধতা</h4>
+      <p>Terms of Service লঙ্ঘন, copyright, GDPR — সব মানতে হবে।</p>
+    </div>
+  </div>
+
+  <h3>Page Hashing — সাইট পরিবর্তন ধরার উপায়</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — Page Change Detection</div></div>
+    <pre><span class="kw">import</span> hashlib, requests
+
+<span class="kw">def</span> <span class="fn">get_page_hash</span>(url: str) -> str:
+    <span class="st">"""পেজের unique fingerprint বের করো"""</span>
+    content = requests.get(url).content
+    <span class="kw">return</span> hashlib.md5(content).hexdigest()
+
+<span class="cm"># প্রথমবার</span>
+old_hash = <span class="fn">get_page_hash</span>(<span class="st">'https://example.com'</span>)
+
+<span class="cm"># পরের দিন আবার check</span>
+new_hash = <span class="fn">get_page_hash</span>(<span class="st">'https://example.com'</span>)
+
+<span class="kw">if</span> old_hash != new_hash:
+    <span class="fn">print</span>(<span class="st">"⚠️ সাইট পরিবর্তন হয়েছে! Scraper check করো!"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"✅ সাইট একই আছে"</span>)</pre>
+  </div>
+
+  <div class="interview-box">
+    <h3>ইন্টারভিউ প্র্যাকটিস — Limits & Solutions</h3>
+    <div class="q-item q-q">
+      <div class="q-label">প্রশ্ন</div>
+      <p>তোমার production scraper হঠাৎ empty data return করছে। কীভাবে debug করবে?</p>
+    </div>
+    <div class="q-item q-a">
+      <div class="q-label">উত্তর (Systematic Debugging)</div>
+      <p>
+        <strong>ধাপ ১:</strong> Status code check — 200 আসছে কি?<br>
+        <strong>ধাপ ২:</strong> Response content print — HTML ঠিকমতো আসছে কি?<br>
+        <strong>ধাপ ৩:</strong> Browser-এ মিলিয়ে দেখো — class/id বদলেছে কি?<br>
+        <strong>ধাপ ৪:</strong> Dynamic content — JavaScript দিয়ে load হচ্ছে কি?<br>
+        <strong>ধাপ ৫:</strong> IP blocked — Different IP থেকে try করো।
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SECTION 12: ERRORS ====== -->
+<section class="section" id="errors">
+  <div class="section-tag">মডিউল ১২</div>
+  <h2>Error Handling — ভুল সামলানো</h2>
+
+  <p>Professional scraping-এ error handling সবচেয়ে গুরুত্বপূর্ণ। ছোট ভুলের কারণে পুরো pipeline বন্ধ হয়ে যেতে পারে।</p>
+
+  <h3>KeyError — Attribute নেই</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — KeyError Handle</div></div>
+    <pre><span class="cm"># ❌ ভুল পদ্ধতি — crash করবে যদি class না থাকে</span>
+tag[<span class="st">'class'</span>]
+
+<span class="cm"># ✅ সঠিক পদ্ধতি ১ — .get() দিয়ে</span>
+tag.get(<span class="st">'class'</span>, <span class="st">'default'</span>)  <span class="cm"># না থাকলে 'default' return</span>
+
+<span class="cm"># ✅ সঠিক পদ্ধতি ২ — check করে</span>
+<span class="kw">if</span> <span class="st">'class'</span> <span class="kw">in</span> tag.attrs:
+    <span class="fn">print</span>(tag[<span class="st">'class'</span>])
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"class attribute নেই"</span>)
+
+<span class="cm"># ✅ সঠিক পদ্ধতি ৩ — has_attr() দিয়ে</span>
+<span class="kw">if</span> tag.has_attr(<span class="st">'href'</span>):
+    url = tag[<span class="st">'href'</span>]</pre>
+  </div>
+
+  <h3>NoneType Error — Element নেই</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — NoneType Handle</div></div>
+    <pre><span class="cm"># ❌ ভুল — যদি h2 না থাকে crash করবে</span>
+soup.find(<span class="st">'h2'</span>).text
+
+<span class="cm"># ✅ সঠিক — None check করো</span>
+h2 = soup.find(<span class="st">'h2'</span>)
+text = h2.get_text(strip=<span class="kw">True</span>) <span class="kw">if</span> h2 <span class="kw">is not None</span> <span class="kw">else</span> <span class="st">""</span>
+
+<span class="cm"># ✅ Pythonic walrus operator (Python 3.8+)</span>
+text = h2.get_text() <span class="kw">if</span> (h2 := soup.find(<span class="st">'h2'</span>)) <span class="kw">else</span> <span class="st">""</span>
+
+<span class="cm"># ✅ ML Pipeline-এ সব একসাথে safe করা</span>
+<span class="kw">def</span> <span class="fn">safe_text</span>(soup, tag, **kwargs) -> str:
+    <span class="st">"""None-safe text extraction"""</span>
+    el = soup.find(tag, **kwargs)
+    <span class="kw">return</span> el.get_text(strip=<span class="kw">True</span>) <span class="kw">if</span> el <span class="kw">else</span> <span class="st">""</span>
+
+<span class="cm"># ব্যবহার</span>
+title = <span class="fn">safe_text</span>(soup, <span class="st">'h1'</span>, class_=<span class="st">'title'</span>)</pre>
+  </div>
+
+  <h3>Complete Error-Safe Scraper</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — Production-grade Error Handling</div></div>
+    <pre><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+<span class="kw">from</span> typing <span class="kw">import</span> List, Optional
+<span class="kw">import</span> logging
+
+@dataclass
+<span class="kw">class</span> <span class="fn">ScrapingResult</span>:
+    url: str
+    success: bool
+    data: dict = field(default_factory=dict)
+    error: Optional[str] = <span class="kw">None</span>
+
+<span class="kw">def</span> <span class="fn">robust_scrape</span>(url: str) -> ScrapingResult:
+    <span class="kw">try</span>:
+        response = requests.get(url, timeout=<span class="nm">10</span>)
+        response.raise_for_status()
+        
+        soup = BeautifulSoup(response.content, <span class="st">'lxml'</span>)
+        
+        data = {
+            <span class="st">'title'</span>:    <span class="fn">safe_text</span>(soup, <span class="st">'h1'</span>),
+            <span class="st">'price'</span>:    <span class="fn">safe_text</span>(soup, <span class="st">'span'</span>, class_=<span class="st">'price'</span>),
+            <span class="st">'rating'</span>:   (soup.find(<span class="st">'div'</span>, class_=<span class="st">'rating'</span>) <span class="kw">or</span> {})
+                    .get(<span class="st">'data-score'</span>),
+        }
+        <span class="kw">return</span> ScrapingResult(url=url, success=<span class="kw">True</span>, data=data)
+        
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        logging.error(<span class="st">f"Failed to scrape {url}: {e}"</span>)
+        <span class="kw">return</span> ScrapingResult(url=url, success=<span class="kw">False</span>, error=<span class="fn">str</span>(e))</pre>
+  </div>
+
+  <div class="interview-box">
+    <h3>ইন্টারভিউ প্র্যাকটিস — Error Handling</h3>
+    <div class="q-item q-q">
+      <div class="q-label">প্রশ্ন</div>
+      <p>১০,০০০ URL scrape করার সময় ১০০টা fail করে। ML pipeline বন্ধ না করে কীভাবে handle করবে?</p>
+    </div>
+    <div class="q-item q-a">
+      <div class="q-label">উত্তর</div>
+      <p>
+        <strong>১. Try-except দিয়ে individual failure handle</strong> — একটা fail করলে পরেরটায় যাও।<br>
+        <strong>২. Failed URLs log করো</strong> — আলাদা file-এ রাখো পরে retry-র জন্য।<br>
+        <strong>৩. Success/failure metrics track করো</strong> — threshold (যেমন ৫০% fail) হলে alert দাও।<br>
+        <strong>৪. Checkpoint save করো</strong> — মাঝপথে বন্ধ হলে শুরু থেকে না করে আগের জায়গা থেকে শুরু করো।
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ====== SECTION 13: LEGAL ====== -->
+<section class="section" id="legal">
+  <div class="section-tag">মডিউল ১৩</div>
+  <h2>আইনি ও নৈতিক দিক</h2>
+
+  <div class="callout callout-danger">
+    <div class="callout-title">⚖️ জরুরি কথা</div>
+    <p>Web Scraping সবসময় illegal না, কিন্তু কিছু নিয়ম আছে। না মানলে আইনি সমস্যা হতে পারে।</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <div class="diagram-title">Scraping কখন Legal, কখন না?</div>
+    <svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:680px;display:block;margin:0 auto;">
+      <rect x="20" y="20" width="300" height="180" rx="12" fill="#1a2a1a" stroke="#34d399" stroke-width="1.5"/>
+      <text x="170" y="46" fill="#34d399" font-size="13" text-anchor="middle" font-weight="bold" font-family="Hind Siliguri,sans-serif">✅ এগুলো করা যাবে</text>
+      <text x="170" y="70" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Public data scrape (Wikipedia, govt sites)</text>
+      <text x="170" y="92" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Personal use-এর জন্য data collect</text>
+      <text x="170" y="114" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Research এবং academic purpose</text>
+      <text x="170" y="136" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">robots.txt মেনে চলা</text>
+      <text x="170" y="158" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Substantial transformation করা</text>
+      <text x="170" y="180" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Rate limiting মেনে চলা</text>
+
+      <rect x="360" y="20" width="300" height="180" rx="12" fill="#2a1a1a" stroke="#f87171" stroke-width="1.5"/>
+      <text x="510" y="46" fill="#f87171" font-size="13" text-anchor="middle" font-weight="bold" font-family="Hind Siliguri,sans-serif">❌ এগুলো করা যাবে না</text>
+      <text x="510" y="70" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Login bypass করে scrape</text>
+      <text x="510" y="92" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Personal data (GDPR) scrape ও resell</text>
+      <text x="510" y="114" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">robots.txt এর disallow উপেক্ষা</text>
+      <text x="510" y="136" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Copyright content as-is reuse</text>
+      <text x="510" y="158" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Server overload করা (DDoS হতে পারে)</text>
+      <text x="510" y="180" fill="#9ba3c7" font-size="11" text-anchor="middle" font-family="Hind Siliguri,sans-serif">Terms of Service লঙ্ঘন করা</text>
+    </svg>
+  </div>
+
+  <h3>robots.txt — সাইটের অনুমতি পত্র</h3>
+  <div class="code-block">
+    <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — robots.txt Check করা</div></div>
+    <pre"><span class="kw">from</span> urllib.robotparser <span class="kw">import</span> RobotFileParser
+
+<span class="kw">def</span> <span class="fn">can_scrape</span>(base_url: str, path: str) -> bool:
+    <span class="st">"""robots.txt মেনে scraping অনুমতি আছে কিনা"""</span>
+    rp = RobotFileParser()
+    rp.set_url(<span class="st">f"{base_url}/robots.txt"</span>)
+    rp.read()
+    <span class="kw">return</span> rp.can_fetch(<span class="st">"*"</span>, <span class="st">f"{base_url}{path}"</span>)
+
+<span class="cm"># ব্যবহার</span>
+<span class="kw">if</span> <span class="fn">can_scrape</span>(<span class="st">"https://example.com"</span>, <span class="st">"/products"</span>):
+    <span class="fn">print</span>(<span class="st">"✅ Scraping allowed"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"❌ Scraping not allowed"</span>)</pre>
+  </div>
+</section>
+
+<!-- ====== SECTION 14: ALGORITHMS ====== -->
+<section class="section" id="algorithms">
+  <div class="section-tag">মডিউল ১৪ — বোনাস</div>
+  <h2>সকল অ্যালগরিদম — কিন্ডারগার্টেন স্টাইলে</h2>
+
+  <p>এই section-এ Web Scraping এবং ML Engineering-এ ব্যবহৃত সব গুরুত্বপূর্ণ অ্যালগরিদম একদম সহজ ভাষায় ব্যাখ্যা করা হয়েছে — সাথে Python implementation এবং ML project-এ কীভাবে ব্যবহার করবে।</p>
+
+  <!-- ALGO 1: LINEAR SEARCH -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">১</div>
+      <h3>Linear Search — সরল খোঁজাখুঁজি</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: তোমার ৫০টা খেলনা মেঝেতে ছড়িয়ে আছে। তুমি লাল বলটা খুঁজছ। একটা একটা করে প্রতিটা খেলনা তুলে দেখছ — এটা লাল বল কি না। এটাই Linear Search।
+      </div>
+      <div class="algo-complexity">
+        <div class="complexity-badge"><span>Best:</span> O(1)</div>
+        <div class="complexity-badge"><span>Worst:</span> O(n)</div>
+        <div class="complexity-badge"><span>Average:</span> O(n)</div>
+        <div class="complexity-badge"><span>Space:</span> O(1)</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python Implementation</div></div>
+        <pre><span class="kw">def</span> <span class="fn">linear_search</span>(arr: list, target) -> int:
+    <span class="st">"""
+    list-এ target খোঁজো।
+    পেলে index return করো, না পেলে -1।
+    """</span>
+    <span class="kw">for</span> i, item <span class="kw">in</span> <span class="fn">enumerate</span>(arr):
+        <span class="kw">if</span> item == target:
+            <span class="kw">return</span> i
+    <span class="kw">return</span> <span class="op">-1</span>
+
+<span class="cm"># ML Project-এ ব্যবহার: Scrape করা URL-এ duplicate খোঁজা</span>
+scraped_urls = [<span class="st">'a.com'</span>, <span class="st">'b.com'</span>, <span class="st">'c.com'</span>, <span class="st">'b.com'</span>]
+idx = <span class="fn">linear_search</span>(scraped_urls, <span class="st">'b.com'</span>)
+<span class="fn">print</span>(<span class="st">f"'b.com' প্রথম পাওয়া গেছে index {idx}-এ"</span>)  <span class="cm"># 1</span>
+
+<span class="cm"># ML Dataset-এ: Label খোঁজা</span>
+labels = [<span class="st">'positive'</span>, <span class="st">'negative'</span>, <span class="st">'neutral'</span>, <span class="st">'positive'</span>]
+first_negative = <span class="fn">linear_search</span>(labels, <span class="st">'negative'</span>)
+<span class="fn">print</span>(<span class="st">f"প্রথম negative review index: {first_negative}"</span>)</pre>
+      </div>
+      <div class="callout callout-tip">
+        <div class="callout-title">ML Engineering-এ ব্যবহার</div>
+        <p>Scraping-এ duplicate URL check, label search। তবে বড় dataset-এ Python-এর <mark>in</mark> operator বা <mark>set</mark> ব্যবহার করা অনেক দ্রুত।</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 2: BINARY SEARCH -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">২</div>
+      <h3>Binary Search — অর্ধেক করে খোঁজা</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: একটা ডিকশনারিতে "mango" শব্দ খুঁজছ। তুমি কি এক পাতা এক পাতা করে দেখবে? না! মাঝখানে খোলো। "mango" কি এর আগে না পরে? পরে হলে পিছনের অর্ধেক বাদ দাও, আবার মাঝখানে খোলো। এটাই Binary Search।
+      </div>
+      <div class="algo-complexity">
+        <div class="complexity-badge"><span>Best:</span> O(1)</div>
+        <div class="complexity-badge"><span>Worst:</span> O(log n)</div>
+        <div class="complexity-badge"><span>Average:</span> O(log n)</div>
+        <div class="complexity-badge"><span>দরকার:</span> Sorted array</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python Implementation</div></div>
+        <pre><span class="kw">def</span> <span class="fn">binary_search</span>(arr: list, target) -> int:
+    <span class="st">"""
+    Sorted list-এ target খোঁজো।
+    IMPORTANT: list অবশ্যই sorted হতে হবে!
+    """</span>
+    left, right = <span class="nm">0</span>, <span class="fn">len</span>(arr) <span class="op">-</span> <span class="nm">1</span>
+    
+    <span class="kw">while</span> left <= right:
+        mid = (left + right) <span class="op">//</span> <span class="nm">2</span>  <span class="cm"># মাঝামাঝি index</span>
+        
+        <span class="kw">if</span> arr[mid] == target:
+            <span class="kw">return</span> mid          <span class="cm"># পেয়ে গেছি!</span>
+        <span class="kw">elif</span> arr[mid] < target:
+            left = mid <span class="op">+</span> <span class="nm">1</span>       <span class="cm"># ডান দিকে খোঁজো</span>
+        <span class="kw">else</span>:
+            right = mid <span class="op">-</span> <span class="nm">1</span>      <span class="cm"># বাম দিকে খোঁজো</span>
+    
+    <span class="kw">return</span> <span class="op">-1</span>
+
+<span class="cm"># ML Project-এ ব্যবহার: Sorted price list-এ threshold খোঁজা</span>
+<span class="kw">import</span> bisect
+
+prices = sorted([<span class="nm">100</span>, <span class="nm">250</span>, <span class="nm">500</span>, <span class="nm">750</span>, <span class="nm">1000</span>, <span class="nm">1500</span>, <span class="nm">2000</span>])
+target_price = <span class="nm">750</span>
+
+idx = <span class="fn">binary_search</span>(prices, target_price)
+<span class="fn">print</span>(<span class="st">f"দাম {target_price} পাওয়া গেছে index {idx}-এ"</span>)
+
+<span class="cm"># Python built-in bisect (production-এ এটা ব্যবহার করো)</span>
+insert_point = bisect.bisect_left(prices, <span class="nm">600</span>)
+<span class="fn">print</span>(<span class="st">f"৬০০ টাকার পণ্য থাকত index {insert_point}-এ"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 3: BUBBLE SORT -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">৩</div>
+      <h3>Bubble Sort — বুদবুদের মতো উঠে আসা</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: ৫ জন বন্ধু উচ্চতা অনুযায়ী লাইনে দাঁড়াবে। পাশাপাশি দুজন দুজন করে তুলনা করো — বেশি লম্বা জন পিছে যাক। বারবার করলে সবচেয়ে লম্বা জন সব শেষে, সবচেয়ে খাটো সামনে। পানির বুদবুদের মতো বড়গুলো উপরে ভাসে!
+      </div>
+      <div class="algo-complexity">
+        <div class="complexity-badge"><span>Best:</span> O(n)</div>
+        <div class="complexity-badge"><span>Worst:</span> O(n²)</div>
+        <div class="complexity-badge"><span>Average:</span> O(n²)</div>
+        <div class="complexity-badge"><span>Space:</span> O(1)</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python Implementation</div></div>
+        <pre><span class="kw">def</span> <span class="fn">bubble_sort</span>(arr: list) -> list:
+    arr = arr.copy()  <span class="cm"># original বদলাবে না</span>
+    n = <span class="fn">len</span>(arr)
+    
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+        swapped = <span class="kw">False</span>
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">0</span>, n<span class="op">-</span>i<span class="op">-</span><span class="nm">1</span>):
+            <span class="kw">if</span> arr[j] > arr[j<span class="op">+</span><span class="nm">1</span>]:
+                arr[j], arr[j<span class="op">+</span><span class="nm">1</span>] = arr[j<span class="op">+</span><span class="nm">1</span>], arr[j]
+                swapped = <span class="kw">True</span>
+        
+        <span class="kw">if not</span> swapped:  <span class="cm"># কোনো swap না হলে sorted — থামো</span>
+            <span class="kw">break</span>
+    
+    <span class="kw">return</span> arr
+
+<span class="cm"># ML Project: Scrape করা product ratings sort করা</span>
+ratings = [<span class="nm">4.2</span>, <span class="nm">3.8</span>, <span class="nm">5.0</span>, <span class="nm">2.1</span>, <span class="nm">4.7</span>, <span class="nm">3.5</span>]
+sorted_ratings = <span class="fn">bubble_sort</span>(ratings)
+<span class="fn">print</span>(sorted_ratings)  <span class="cm"># [2.1, 3.5, 3.8, 4.2, 4.7, 5.0]</span>
+
+<span class="cm"># ⚠️ Production-এ Bubble Sort ব্যবহার করো না!</span>
+<span class="cm"># Python-এর built-in sorted() অনেক বেশি দ্রুত (Timsort)</span>
+fast_sort = sorted(ratings)  <span class="cm"># এটাই ব্যবহার করো</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 4: MERGE SORT -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">৪</div>
+      <h3>Merge Sort — ভাগ করে জোড়া দাও</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: ৮টা তাস sort করবে। ৪+৪ করে দুই ভাগ করো। আবার ২+২+২+২। প্রতিটা ছোট অংশ আলাদাভাবে sort করো। তারপর দুটো sorted অংশ জোড়া দাও — সবচেয়ে ছোটটা আগে নাও। এটাই Merge Sort!
+      </div>
+      <div class="algo-complexity">
+        <div class="complexity-badge"><span>Best:</span> O(n log n)</div>
+        <div class="complexity-badge"><span>Worst:</span> O(n log n)</div>
+        <div class="complexity-badge"><span>Average:</span> O(n log n)</div>
+        <div class="complexity-badge"><span>Space:</span> O(n)</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python Implementation</div></div>
+        <pre><span class="kw">def</span> <span class="fn">merge_sort</span>(arr: list) -> list:
+    <span class="kw">if</span> <span class="fn">len</span>(arr) <= <span class="nm">1</span>:
+        <span class="kw">return</span> arr
+    
+    <span class="cm"># ভাগ করো</span>
+    mid = <span class="fn">len</span>(arr) <span class="op">//</span> <span class="nm">2</span>
+    left  = <span class="fn">merge_sort</span>(arr[:mid])
+    right = <span class="fn">merge_sort</span>(arr[mid:])
+    
+    <span class="cm"># জোড়া দাও</span>
+    <span class="kw">return</span> <span class="fn">_merge</span>(left, right)
+
+<span class="kw">def</span> <span class="fn">_merge</span>(left: list, right: list) -> list:
+    result = []
+    i = j = <span class="nm">0</span>
+    
+    <span class="kw">while</span> i < <span class="fn">len</span>(left) <span class="kw">and</span> j < <span class="fn">len</span>(right):
+        <span class="kw">if</span> left[i] <= right[j]:
+            result.append(left[i]); i += <span class="nm">1</span>
+        <span class="kw">else</span>:
+            result.append(right[j]); j += <span class="nm">1</span>
+    
+    result.extend(left[i:])   <span class="cm"># বাকি যা আছে</span>
+    result.extend(right[j:])
+    <span class="kw">return</span> result
+
+<span class="cm"># ML Dataset: Scrape করা review-কে sentiment score দিয়ে sort</span>
+reviews = [
+    {<span class="st">'text'</span>: <span class="st">'ভালো পণ্য'</span>, <span class="st">'score'</span>: <span class="nm">0.8</span>},
+    {<span class="st">'text'</span>: <span class="st">'খারাপ'</span>,     <span class="st">'score'</span>: <span class="nm">0.2</span>},
+    {<span class="st">'text'</span>: <span class="st">'অসাধারণ'</span>,  <span class="st">'score'</span>: <span class="nm">0.95</span>},
+]
+<span class="cm"># Python-এ এভাবে sort করো (Timsort — অনেক দ্রুত)</span>
+sorted_reviews = sorted(reviews, key=<span class="kw">lambda</span> x: x[<span class="st">'score'</span>], reverse=<span class="kw">True</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 5: QUICK SORT -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">৫</div>
+      <h3>Quick Sort — Pivot দিয়ে দ্রুত sort</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: একজন বন্ধু (Pivot) মাঝখানে দাঁড়িয়েছে। যারা তার চেয়ে ছোট তারা বাম দিকে, যারা বড় তারা ডান দিকে। এবার বাম এবং ডান দলে আবার একই কাজ করো। এটাই Quick Sort!
+      </div>
+      <div class="algo-complexity">
+        <div class="complexity-badge"><span>Best:</span> O(n log n)</div>
+        <div class="complexity-badge"><span>Worst:</span> O(n²)</div>
+        <div class="complexity-badge"><span>Average:</span> O(n log n)</div>
+        <div class="complexity-badge"><span>Space:</span> O(log n)</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python Implementation</div></div>
+        <pre><span class="kw">def</span> <span class="fn">quick_sort</span>(arr: list) -> list:
+    <span class="kw">if</span> <span class="fn">len</span>(arr) <= <span class="nm">1</span>:
+        <span class="kw">return</span> arr
+    
+    pivot = arr[<span class="fn">len</span>(arr) <span class="op">//</span> <span class="nm">2</span>]  <span class="cm"># মাঝের element pivot</span>
+    left   = [x <span class="kw">for</span> x <span class="kw">in</span> arr <span class="kw">if</span> x < pivot]
+    middle = [x <span class="kw">for</span> x <span class="kw">in</span> arr <span class="kw">if</span> x == pivot]
+    right  = [x <span class="kw">for</span> x <span class="kw">in</span> arr <span class="kw">if</span> x > pivot]
+    
+    <span class="kw">return</span> <span class="fn">quick_sort</span>(left) + middle + <span class="fn">quick_sort</span>(right)
+
+<span class="cm"># ML Engineering: Feature importance sort</span>
+features = {<span class="st">'price'</span>: <span class="nm">0.35</span>, <span class="st">'rating'</span>: <span class="nm">0.28</span>, <span class="st">'reviews'</span>: <span class="nm">0.20</span>, <span class="st">'brand'</span>: <span class="nm">0.17</span>}
+sorted_features = sorted(features.items(), key=<span class="kw">lambda</span> x: x[<span class="nm">1</span>], reverse=<span class="kw">True</span>)
+<span class="fn">print</span>(<span class="st">"Feature importance (high to low):"</span>)
+<span class="kw">for</span> feat, imp <span class="kw">in</span> sorted_features:
+    <span class="fn">print</span>(<span class="st">f"  {feat}: {imp:.0%}"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 6: BFS -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">৬</div>
+      <h3>BFS — Breadth First Search (স্তরে স্তরে খোঁজা)</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: তুমি স্কুলে নতুন — বন্ধু বানাবে। প্রথমে তোমার পাশের ৩জনের সাথে বন্ধুত্ব করলে। তারপর সেই ৩ জনের বন্ধুদের সাথে। এভাবে স্তরে স্তরে ছড়িয়ে যাও। Web Crawling এভাবেই কাজ করে — একটা পেজের সব লিংক নাও, তারপর সেই লিংকগুলোর লিংক নাও।
+      </div>
+      <div class="algo-complexity">
+        <div class="complexity-badge"><span>Time:</span> O(V+E)</div>
+        <div class="complexity-badge"><span>Space:</span> O(V)</div>
+        <div class="complexity-badge"><span>ব্যবহার:</span> Web Crawling</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — BFS Web Crawler</div></div>
+        <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+<span class="kw">from</span> urllib.parse <span class="kw">import</span> urljoin, urlparse
+<span class="kw">import</span> requests
+<span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
+
+<span class="kw">def</span> <span class="fn">bfs_crawler</span>(start_url: str, max_pages: int = <span class="nm">20</span>) -> list:
+    <span class="st">"""
+    BFS দিয়ে website crawl করা।
+    Start URL থেকে শুরু করে সব linked page visit।
+    """</span>
+    visited = <span class="fn">set</span>()           <span class="cm"># আগে গেছি কিনা track</span>
+    queue = deque([start_url])  <span class="cm"># FIFO queue — BFS-এর মূল কাঠামো</span>
+    base_domain = urlparse(start_url).netloc
+    results = []
+    
+    <span class="kw">while</span> queue <span class="kw">and</span> <span class="fn">len</span>(visited) < max_pages:
+        url = queue.popleft()  <span class="cm"># সামনে থেকে নাও</span>
+        
+        <span class="kw">if</span> url <span class="kw">in</span> visited:
+            <span class="kw">continue</span>
+        
+        <span class="kw">try</span>:
+            resp = requests.get(url, timeout=<span class="nm">5</span>)
+            soup = BeautifulSoup(resp.content, <span class="st">'lxml'</span>)
+            visited.add(url)
+            results.append({<span class="st">'url'</span>: url, <span class="st">'title'</span>: soup.title.string <span class="kw">if</span> soup.title <span class="kw">else</span> <span class="st">''</span>})
+            
+            <span class="cm"># সব লিংক বের করে queue-তে যোগ করো</span>
+            <span class="kw">for</span> link <span class="kw">in</span> soup.find_all(<span class="st">'a'</span>, href=<span class="kw">True</span>):
+                full_url = urljoin(url, link[<span class="st">'href'</span>])
+                <span class="cm"># শুধু একই domain-এর links নাও</span>
+                <span class="kw">if</span> urlparse(full_url).netloc == base_domain:
+                    <span class="kw">if</span> full_url <span class="kw">not in</span> visited:
+                        queue.append(full_url)
+        
+        <span class="kw">except</span>:
+            <span class="kw">pass</span>
+    
+    <span class="kw">return</span> results</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 7: DFS -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">৭</div>
+      <h3>DFS — Depth First Search (গভীরে খোঁজা)</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: একটা গোলকধাঁধায় পথ খুঁজছ। একটা পথ বেছে নিলে, যতক্ষণ পারো সেই পথে যাও। মৃত্যুফাঁদ পেলে আগের চৌমাথায় ফিরে আরেকটা পথে যাও। DOM tree navigate করতে DFS ব্যবহার হয়!
+      </div>
+      <div class="algo-complexity">
+        <div class="complexity-badge"><span>Time:</span> O(V+E)</div>
+        <div class="complexity-badge"><span>Space:</span> O(V)</div>
+        <div class="complexity-badge"><span>ব্যবহার:</span> DOM Traversal</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — DFS DOM Traversal</div></div>
+        <pre><span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup, Tag
+
+<span class="kw">def</span> <span class="fn">dfs_extract_text</span>(element, results=<span class="kw">None</span>, depth=<span class="nm">0</span>) -> list:
+    <span class="st">"""
+    DOM tree-তে DFS দিয়ে সব text বের করা।
+    Recursion দিয়ে গভীরে গভীরে যাই।
+    """</span>
+    <span class="kw">if</span> results <span class="kw">is None</span>:
+        results = []
+    
+    <span class="kw">if</span> <span class="fn">isinstance</span>(element, Tag):
+        <span class="cm"># এই element process করো</span>
+        text = element.get_text(strip=<span class="kw">True</span>)
+        <span class="kw">if</span> text:
+            results.append({
+                <span class="st">'tag'</span>: element.name,
+                <span class="st">'text'</span>: text[:<span class="nm">100</span>],
+                <span class="st">'depth'</span>: depth
+            })
+        
+        <span class="cm"># সব children-এ recursive call (DFS)</span>
+        <span class="kw">for</span> child <span class="kw">in</span> element.children:
+            <span class="fn">dfs_extract_text</span>(child, results, depth + <span class="nm">1</span>)
+    
+    <span class="kw">return</span> results
+
+<span class="cm"># Wikipedia article DOM traverse করা</span>
+soup = BeautifulSoup(<span class="st">"&lt;div&gt;&lt;h1&gt;Title&lt;/h1&gt;&lt;p&gt;Paragraph&lt;/p&gt;&lt;/div&gt;"</span>, <span class="st">'html.parser'</span>)
+all_text = <span class="fn">dfs_extract_text</span>(soup)
+<span class="kw">for</span> item <span class="kw">in</span> all_text:
+    <span class="fn">print</span>(<span class="st">f"{'  '*item['depth']}&lt;{item['tag']}&gt;: {item['text']}"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 8: HASH TABLE -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">৮</div>
+      <h3>Hash Table — চটজলদি খোঁজার ম্যাজিক</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: ক্লাসে ৩০ জন ছাত্র। Roll number মনে রাখতে ৩০টা drawer আছে। প্রত্যেকের roll number দিয়ে সরাসরি তাদের drawer খোলো — খোঁজার দরকার নেই! Python-এর dictionary এভাবেই কাজ করে।
+      </div>
+      <div class="algo-complexity">
+        <div class="complexity-badge"><span>Lookup:</span> O(1) avg</div>
+        <div class="complexity-badge"><span>Insert:</span> O(1) avg</div>
+        <div class="complexity-badge"><span>Delete:</span> O(1) avg</div>
+        <div class="complexity-badge"><span>Worst:</span> O(n)</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — Hash Table (Duplicate Removal)</div></div>
+        <pre><span class="cm"># ML Scraping Project: Duplicate URL এবং content সরানো</span>
+
+<span class="kw">def</span> <span class="fn">deduplicate_scraped_data</span>(records: list) -> list:
+    <span class="st">"""
+    Hash Table (dict/set) দিয়ে duplicate সরানো।
+    O(n) time — অনেক দ্রুত!
+    """</span>
+    seen_urls = <span class="fn">set</span>()       <span class="cm"># URL duplicate check</span>
+    seen_content = <span class="fn">dict</span>()  <span class="cm"># Content hash duplicate check</span>
+    unique = []
+    
+    <span class="kw">for</span> record <span class="kw">in</span> records:
+        url = record.get(<span class="st">'url'</span>, <span class="st">''</span>)
+        content = record.get(<span class="st">'text'</span>, <span class="st">''</span>)
+        content_hash = <span class="fn">hash</span>(content)  <span class="cm"># Python built-in hash</span>
+        
+        <span class="kw">if</span> url <span class="kw">not in</span> seen_urls <span class="kw">and</span> content_hash <span class="kw">not in</span> seen_content:
+            seen_urls.add(url)
+            seen_content[content_hash] = url
+            unique.append(record)
+    
+    removed = <span class="fn">len</span>(records) <span class="op">-</span> <span class="fn">len</span>(unique)
+    <span class="fn">print</span>(<span class="st">f"{removed} duplicates সরানো হয়েছে"</span>)
+    <span class="kw">return</span> unique
+
+<span class="cm"># Scraping cache — আগে visit করা URL skip করতে</span>
+url_cache = {}  <span class="cm"># url → response</span>
+<span class="kw">def</span> <span class="fn">cached_get</span>(url):
+    <span class="kw">if</span> url <span class="kw">in</span> url_cache:
+        <span class="kw">return</span> url_cache[url]  <span class="cm"># O(1) lookup!</span>
+    resp = requests.get(url)
+    url_cache[url] = resp
+    <span class="kw">return</span> resp</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 9: EXPONENTIAL BACKOFF -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">৯</div>
+      <h3>Exponential Backoff — বুদ্ধিমানের retry</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: দরজায় knock করলে কেউ খুললো না। ১ সেকেন্ড অপেক্ষা করে আবার knock। না খুললে ২ সেকেন্ড অপেক্ষা। তারপর ৪ সেকেন্ড, ৮ সেকেন্ড... এভাবে অপেক্ষা দ্বিগুণ হতে থাকে। সার্ভারকে সুযোগ দেওয়া হয় recover করতে।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — Exponential Backoff</div></div>
+        <pre><span class="kw">import</span> time, random
+
+<span class="kw">def</span> <span class="fn">exponential_backoff</span>(
+    func, 
+    max_retries: int = <span class="nm">5</span>,
+    base_delay: float = <span class="nm">1.0</span>,
+    max_delay: float = <span class="nm">60.0</span>,
+    jitter: bool = <span class="kw">True</span>
+):
+    <span class="st">"""
+    যেকোনো function-কে smart retry দিয়ে wrap করো।
+    Jitter: random ছোট delay যোগ — thundering herd সমস্যা এড়াতে।
+    """</span>
+    <span class="kw">for</span> attempt <span class="kw">in</span> <span class="fn">range</span>(max_retries):
+        <span class="kw">try</span>:
+            <span class="kw">return</span> <span class="fn">func</span>()
+        <span class="kw">except</span> Exception <span class="kw">as</span> e:
+            <span class="kw">if</span> attempt == max_retries <span class="op">-</span> <span class="nm">1</span>:
+                <span class="kw">raise</span>  <span class="cm"># সব retry শেষ — error তোলো</span>
+            
+            delay = <span class="fn">min</span>(base_delay * (<span class="nm">2</span> ** attempt), max_delay)
+            <span class="kw">if</span> jitter:
+                delay += random.uniform(<span class="nm">0</span>, delay * <span class="nm">0.1</span>)
+            
+            <span class="fn">print</span>(<span class="st">f"Attempt {attempt+1} failed: {e}. Retrying in {delay:.1f}s..."</span>)
+            time.sleep(delay)
+
+<span class="cm"># ব্যবহার</span>
+result = <span class="fn">exponential_backoff</span>(
+    <span class="kw">lambda</span>: requests.get(<span class="st">'https://example.com'</span>, timeout=<span class="nm">5</span>)
+)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 10: TF-IDF -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">১০</div>
+      <h3>TF-IDF — কোন শব্দ কতটা গুরুত্বপূর্ণ</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: "বাংলাদেশ সম্পর্কিত" ১০০টা news article-এ "the" শব্দ সব article-এ আছে — এটা গুরুত্বহীন। কিন্তু "মুক্তিযুদ্ধ" শুধু ৫টা article-এ আছে — এটা গুরুত্বপূর্ণ! TF-IDF এটাই মাপে।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — TF-IDF on Scraped Text</div></div>
+        <pre><span class="kw">from</span> sklearn.feature_extraction.text <span class="kw">import</span> TfidfVectorizer
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Scrape করা news headlines (উদাহরণ)</span>
+documents = [
+    <span class="st">"Bangladesh cricket team won the match"</span>,
+    <span class="st">"Bangladesh economy growing fast in 2024"</span>,
+    <span class="st">"Cricket Bangladesh won championship"</span>,
+    <span class="st">"New technology companies in Bangladesh"</span>,
+]
+
+<span class="cm"># TF-IDF Matrix তৈরি করা</span>
+vectorizer = TfidfVectorizer(
+    max_features=<span class="nm">50</span>,      <span class="cm"># সর্বোচ্চ ৫০টা feature</span>
+    stop_words=<span class="st">'english'</span>, <span class="cm"># common words সরাও</span>
+    ngram_range=(<span class="nm">1</span>, <span class="nm">2</span>)   <span class="cm"># single ও double words</span>
+)
+
+tfidf_matrix = vectorizer.fit_transform(documents)
+feature_names = vectorizer.get_feature_names_out()
+
+<span class="cm"># Important keywords বের করো</span>
+df_tfidf = pd.DataFrame(
+    tfidf_matrix.toarray(),
+    columns=feature_names
+)
+<span class="fn">print</span>(<span class="st">"সবচেয়ে গুরুত্বপূর্ণ keywords:"</span>)
+<span class="fn">print</span>(df_tfidf.sum().sort_values(ascending=<span class="kw">False</span>).head(<span class="nm">10</span>))</pre>
+      </div>
+      <div class="callout callout-tip">
+        <div class="callout-title">ML Engineering-এ ব্যবহার</div>
+        <p>Scraped text থেকে keywords বের করা, document similarity, search engine feature, text classification-এর জন্য feature engineering।</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 11: COSINE SIMILARITY -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">১১</div>
+      <h3>Cosine Similarity — কতটা একই রকম?</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: দুটো তীর কল্পনা করো। যদি একই দিকে পয়েন্ট করে — একই রকম। যদি উল্টো দিকে — একদম আলাদা। Cosine similarity মাপে এই তীরগুলোর মধ্যকার কোণ।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — Duplicate Content Detection</div></div>
+        <pre><span class="kw">from</span> sklearn.metrics.pairwise <span class="kw">import</span> cosine_similarity
+<span class="kw">from</span> sklearn.feature_extraction.text <span class="kw">import</span> TfidfVectorizer
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">find_duplicate_articles</span>(articles: list, threshold: float = <span class="nm">0.85</span>) -> list:
+    <span class="st">"""
+    Scraped articles-এ near-duplicate খোঁজা।
+    ৮৫% বা বেশি similar হলে duplicate ধরা।
+    """</span>
+    <span class="kw">if</span> <span class="fn">len</span>(articles) < <span class="nm">2</span>:
+        <span class="kw">return</span> []
+    
+    vectorizer = TfidfVectorizer()
+    tfidf = vectorizer.fit_transform(articles)
+    sim_matrix = cosine_similarity(tfidf)
+    
+    duplicates = []
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(articles)):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i<span class="op">+</span><span class="nm">1</span>, <span class="fn">len</span>(articles)):
+            <span class="kw">if</span> sim_matrix[i][j] >= threshold:
+                duplicates.append((i, j, sim_matrix[i][j]))
+    
+    <span class="kw">return</span> duplicates
+
+<span class="cm"># ব্যবহার</span>
+texts = [
+    <span class="st">"বাংলাদেশ ক্রিকেট দল জয় পেয়েছে"</span>,
+    <span class="st">"বাংলাদেশের ক্রিকেট দল ম্যাচ জিতেছে"</span>,  <span class="cm"># near duplicate</span>
+    <span class="st">"নতুন সেতু নির্মাণ শুরু হয়েছে"</span>,
+]
+dups = <span class="fn">find_duplicate_articles</span>(texts)
+<span class="fn">print</span>(<span class="st">f"Duplicate pairs: {dups}"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 12: REGEX -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">১২</div>
+      <h3>Regular Expressions (Regex) — Pattern খোঁজার শিল্প</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: তুমি একটা বড় বইয়ে সব ফোন নম্বর খুঁজছ। ফোন নম্বরের pattern আছে: ১১টা সংখ্যা, প্রথমটা ০। Regex হলো এই pattern লিখে একবারেই সব খুঁজে বের করার উপায়।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — Regex in Scraping</div></div>
+        <pre><span class="kw">import</span> re
+
+<span class="cm"># Scraped text থেকে useful patterns বের করা</span>
+scraped_text = <span class="st">"""
+  যোগাযোগ: 01712345678 বা 01987654321
+  Email: info@example.com, support@company.bd
+  দাম: ৳ ১,২৩০.৫০ অথবা $45.99
+  তারিখ: 2024-01-15, January 15, 2024
+"""</span>
+
+<span class="cm"># Phone numbers বের করা</span>
+phones = re.findall(<span class="st">r'01[3-9]\d{8}'</span>, scraped_text)
+<span class="fn">print</span>(<span class="st">f"ফোন নম্বর: {phones}"</span>)
+
+<span class="cm"># Emails বের করা</span>
+emails = re.findall(<span class="st">r'[\w.-]+@[\w.-]+\.\w{2,}'</span>, scraped_text)
+<span class="fn">print</span>(<span class="st">f"Email: {emails}"</span>)
+
+<span class="cm"># দাম বের করা (সংখ্যা)</span>
+prices = re.findall(<span class="st">r'[\d,]+\.?\d*'</span>, scraped_text)
+<span class="fn">print</span>(<span class="st">f"দাম: {prices}"</span>)
+
+<span class="cm"># Text পরিষ্কার করা (ML preprocessing)</span>
+dirty_text = <span class="st">"  Hello   World!!! \n\t  জয় বাংলা  "</span>
+clean = re.sub(<span class="st">r'\s+'</span>, <span class="st">' '</span>, dirty_text).strip()  <span class="cm"># Multiple spaces → single</span>
+clean = re.sub(<span class="st">r'[!?.]+'</span>, <span class="st">'.'</span>, clean)              <span class="cm"># Multiple punctuation → single</span>
+<span class="fn">print</span>(<span class="st">f"Clean: '{clean}'"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 13: K-MEANS -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">১৩</div>
+      <h3>K-Means Clustering — দলে ভাগ করা</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: ক্লাসে ৩০ জন ছাত্র। তাদের ৩ দলে ভাগ করবে height ও weight দেখে। প্রথমে ৩টা random center নাও। প্রত্যেকে সবচেয়ে কাছের center-এর দলে যাও। তারপর প্রতিটা দলের নতুন center (গড়) বের করো। আবার করো। যতক্ষণ না stable হয়।
+      </div>
+      <div class="algo-complexity">
+        <div class="complexity-badge"><span>Time:</span> O(n·k·iter)</div>
+        <div class="complexity-badge"><span>ব্যবহার:</span> Product clustering</div>
+        <div class="complexity-badge"><span>Topic:</span> Modeling</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — K-Means on Scraped Products</div></div>
+        <pre><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">import</span> pandas <span class="kw">as</span> pd, numpy <span class="kw">as</span> np
+
+<span class="cm"># Scrape করা পণ্য ডেটা</span>
+products_df = pd.DataFrame({
+    <span class="st">'price'</span>:  [<span class="nm">500</span>, <span class="nm">600</span>, <span class="nm">550</span>, <span class="nm">5000</span>, <span class="nm">5500</span>, <span class="nm">4800</span>, <span class="nm">2000</span>, <span class="nm">2200</span>],
+    <span class="st">'rating'</span>: [<span class="nm">3.5</span>, <span class="nm">3.8</span>, <span class="nm">3.2</span>, <span class="nm">4.8</span>, <span class="nm">4.9</span>, <span class="nm">4.6</span>, <span class="nm">4.0</span>, <span class="nm">4.2</span>],
+    <span class="st">'reviews'</span>:[<span class="nm">50</span>, <span class="nm">60</span>, <span class="nm">45</span>, <span class="nm">500</span>, <span class="nm">450</span>, <span class="nm">600</span>, <span class="nm">200</span>, <span class="nm">180</span>],
+})
+
+<span class="cm"># Feature scaling (K-Means-এ জরুরি)</span>
+scaler = StandardScaler()
+X = scaler.fit_transform(products_df)
+
+<span class="cm"># K-Means: ৩ দল তৈরি করো</span>
+kmeans = KMeans(n_clusters=<span class="nm">3</span>, random_state=<span class="nm">42</span>, n_init=<span class="nm">10</span>)
+products_df[<span class="st">'cluster'</span>] = kmeans.fit_predict(X)
+
+<span class="cm"># দলগুলো কী রকম?</span>
+<span class="kw">for</span> cluster_id <span class="kw">in</span> products_df[<span class="st">'cluster'</span>].unique():
+    subset = products_df[products_df[<span class="st">'cluster'</span>] == cluster_id]
+    <span class="fn">print</span>(<span class="st">f"\nCluster {cluster_id} (গড় দাম: {subset['price'].mean():.0f}):"</span>)
+    <span class="fn">print</span>(subset[<span class="st">['price','rating','reviews']</span>])</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 14: DECISION TREE -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">১৪</div>
+      <h3>Decision Tree — প্রশ্ন করে করে সিদ্ধান্ত</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: "আজ বাইরে যাব কি?" — প্রথম প্রশ্ন: বৃষ্টি আছে? হ্যাঁ → ছাতা আছে? হ্যাঁ → যাও। না → যেও না। না → গরম বেশি? হ্যাঁ → পানি নাও তারপর যাও। এভাবে প্রশ্নের গাছ বানিয়ে সিদ্ধান্ত নেওয়াই Decision Tree।
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — Product Quality Classifier</div></div>
+        <pre><span class="kw">from</span> sklearn.tree <span class="kw">import</span> DecisionTreeClassifier, export_text
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Scraped product data</span>
+df = pd.DataFrame({
+    <span class="st">'price'</span>:      [<span class="nm">500</span>, <span class="nm">5000</span>, <span class="nm">2000</span>, <span class="nm">800</span>, <span class="nm">4500</span>, <span class="nm">1500</span>, <span class="nm">6000</span>, <span class="nm">300</span>],
+    <span class="st">'rating'</span>:     [<span class="nm">3.5</span>, <span class="nm">4.8</span>, <span class="nm">4.2</span>, <span class="nm">2.9</span>, <span class="nm">4.7</span>, <span class="nm">3.8</span>, <span class="nm">4.9</span>, <span class="nm">2.1</span>],
+    <span class="st">'num_reviews'</span>:[<span class="nm">45</span>, <span class="nm">500</span>, <span class="nm">200</span>, <span class="nm">20</span>, <span class="nm">450</span>, <span class="nm">80</span>, <span class="nm">700</span>, <span class="nm">10</span>],
+    <span class="st">'good_buy'</span>:   [<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">0</span>]  <span class="cm"># Label: কিনব কি?</span>
+})
+
+X = df[[<span class="st">'price'</span>, <span class="st">'rating'</span>, <span class="st">'num_reviews'</span>]]
+y = df[<span class="st">'good_buy'</span>]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="nm">0.25</span>, random_state=<span class="nm">42</span>)
+
+<span class="cm"># Model train করো</span>
+model = DecisionTreeClassifier(max_depth=<span class="nm">3</span>, random_state=<span class="nm">42</span>)
+model.fit(X_train, y_train)
+
+<span class="cm"># Decision rules দেখো</span>
+<span class="fn">print</span>(export_text(model, feature_names=list(X.columns)))
+
+<span class="cm"># নতুন পণ্যের জন্য predict</span>
+new_product = [[<span class="nm">3500</span>, <span class="nm">4.5</span>, <span class="nm">300</span>]]  <span class="cm"># price, rating, reviews</span>
+prediction = model.predict(new_product)
+<span class="fn">print</span>(<span class="st">f"কিনব কি? {'হ্যাঁ ✅' if prediction[0]==1 else 'না ❌'}"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGO 15: RATE LIMITING (Token Bucket) -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-num">১৫</div>
+      <h3>Token Bucket — Scraping Rate Control</h3>
+    </div>
+    <div class="algo-body">
+      <div class="algo-analogy">
+        🧒 কিন্ডারগার্টেন ব্যাখ্যা: একটা bucket-এ token আছে। প্রতি সেকেন্ডে ১টা নতুন token আসে (সর্বোচ্চ ১০টা থাকতে পারে)। Request করতে হলে একটা token খরচ করতে হয়। Token শেষ হলে অপেক্ষা করো। এটা Scraping-কে polite রাখে!
+      </div>
+      <div class="code-block">
+        <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — Token Bucket Rate Limiter</div></div>
+        <pre><span class="kw">import</span> time
+<span class="kw">from</span> threading <span class="kw">import</span> Lock
+
+<span class="kw">class</span> <span class="fn">TokenBucket</span>:
+    <span class="st">"""
+    Thread-safe rate limiter scraping-এর জন্য।
+    production pipeline-এ ব্যবহার করো।
+    """</span>
+    
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, rate: float, capacity: int):
+        self.rate = rate          <span class="cm"># প্রতি সেকেন্ডে tokens</span>
+        self.capacity = capacity  <span class="cm"># সর্বোচ্চ tokens</span>
+        self.tokens = capacity    <span class="cm"># শুরুতে ভরা</span>
+        self.last_refill = time.time()
+        self.lock = Lock()
+    
+    <span class="kw">def</span> <span class="fn">consume</span>(self, tokens: int = <span class="nm">1</span>) -> bool:
+        <span class="kw">with</span> self.lock:
+            now = time.time()
+            <span class="cm"># নতুন tokens যোগ করো</span>
+            elapsed = now <span class="op">-</span> self.last_refill
+            self.tokens = <span class="fn">min</span>(
+                self.capacity,
+                self.tokens + elapsed * self.rate
+            )
+            self.last_refill = now
+            
+            <span class="kw">if</span> self.tokens >= tokens:
+                self.tokens -= tokens
+                <span class="kw">return</span> <span class="kw">True</span>
+            <span class="kw">return</span> <span class="kw">False</span>
+    
+    <span class="kw">def</span> <span class="fn">wait_and_consume</span>(self, tokens: int = <span class="nm">1</span>):
+        <span class="kw">while not</span> self.consume(tokens):
+            time.sleep(<span class="nm">0.1</span>)
+
+<span class="cm"># ব্যবহার: প্রতি সেকেন্ডে ২টার বেশি request না</span>
+limiter = <span class="fn">TokenBucket</span>(rate=<span class="nm">2.0</span>, capacity=<span class="nm">5</span>)
+urls = [<span class="st">'https://example.com/1'</span>, <span class="st">'https://example.com/2'</span>]
+
+<span class="kw">for</span> url <span class="kw">in</span> urls:
+    limiter.wait_and_consume()  <span class="cm"># rate limit মানো</span>
+    <span class="cm"># resp = requests.get(url)</span>
+    <span class="fn">print</span>(<span class="st">f"Requesting: {url}"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERVIEW MEGA SECTION -->
+  <div class="interview-box">
+    <h3>মেগা ইন্টারভিউ — সব Algorithm একসাথে</h3>
+
+    <div class="q-item q-q">
+      <div class="q-label">System Design প্রশ্ন (Senior Level)</div>
+      <p>একটি ML Engineering system design করো যেটা: ১০টা job portal থেকে প্রতিদিন ১০,০০০ job listing scrape করবে, duplicate সরাবে, NLP দিয়ে skill extract করবে, এবং candidate recommendation দেবে।</p>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div><div class="code-lang">Python — Complete ML Engineering Pipeline</div></div>
+      <pre><span class="kw">"""
+সম্পূর্ণ Job Scraping → ML Pipeline
+"""</span>
+
+<span class="cm"># ১. Data Collection Layer</span>
+<span class="kw">class</span> <span class="fn">JobScraper</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, sites: list):
+        self.sites = sites
+        self.rate_limiter = <span class="fn">TokenBucket</span>(rate=<span class="nm">2</span>, capacity=<span class="nm">10</span>)
+        self.cache = {}  <span class="cm"># Hash Table: URL → response</span>
+    
+    <span class="kw">def</span> <span class="fn">scrape_all</span>(self) -> list:
+        all_jobs = []
+        <span class="kw">for</span> site <span class="kw">in</span> self.sites:
+            jobs = <span class="fn">exponential_backoff</span>(
+                <span class="kw">lambda</span>: self.scrape_site(site)
+            )
+            all_jobs.extend(jobs)
+        <span class="kw">return</span> all_jobs
+
+<span class="cm"># ২. Processing Layer</span>
+<span class="kw">class</span> <span class="fn">JobProcessor</span>:
+    <span class="kw">def</span> <span class="fn">process</span>(self, raw_jobs: list) -> pd.DataFrame:
+        df = pd.DataFrame(raw_jobs)
+        
+        <span class="cm"># Duplicate সরাও (Hash Table)</span>
+        df = df.drop_duplicates(subset=[<span class="st">'title'</span>, <span class="st">'company'</span>])
+        
+        <span class="cm"># Text clean (Regex)</span>
+        df[<span class="st">'clean_desc'</span>] = df[<span class="st">'description'</span>].str.replace(<span class="st">r'\s+'</span>, <span class="st">' '</span>, regex=<span class="kw">True</span>)
+        
+        <span class="cm"># TF-IDF features</span>
+        tfidf = TfidfVectorizer(max_features=<span class="nm">100</span>)
+        features = tfidf.fit_transform(df[<span class="st">'clean_desc'</span>])
+        
+        <span class="cm"># K-Means clustering (job categories)</span>
+        kmeans = KMeans(n_clusters=<span class="nm">5</span>)
+        df[<span class="st">'category'</span>] = kmeans.fit_predict(features)
+        
+        <span class="kw">return</span> df
+
+<span class="cm"># ৩. ML Layer  </span>
+<span class="kw">class</span> <span class="fn">JobRecommender</span>:
+    <span class="kw">def</span> <span class="fn">recommend</span>(self, candidate_profile: str, jobs_df: pd.DataFrame, top_k: int=<span class="nm">10</span>):
+        <span class="cm"># Cosine Similarity দিয়ে সবচেয়ে relevant jobs</span>
+        vectorizer = TfidfVectorizer()
+        all_texts = [candidate_profile] + list(jobs_df[<span class="st">'clean_desc'</span>])
+        tfidf = vectorizer.fit_transform(all_texts)
+        
+        scores = cosine_similarity(tfidf[<span class="nm">0</span>:<span class="nm">1</span>], tfidf[<span class="nm">1</span>:]).flatten()
+        top_indices = np.argsort(scores)[:<span class="op">-</span>top_k<span class="op">-</span><span class="nm">1</span>:<span class="op">-1</span>]  <span class="cm"># Binary Search idea</span>
+        
+        <span class="kw">return</span> jobs_df.iloc[top_indices]</pre>
+    </div>
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer style="padding:60px;text-align:center;border-top:1px solid var(--border);color:var(--text3);">
+  <div style="font-size:2rem;margin-bottom:16px;">🎉</div>
+  <h3 style="color:var(--accent);font-size:1.5rem;margin-bottom:12px;">অভিনন্দন! তুমি সম্পূর্ণ গাইড পড়েছ!</h3>
+  <p style="color:var(--text2);max-width:500px;margin:0 auto 24px;">Web Scraping থেকে ML Engineering — সব বাংলায় শিখলে। এখন practice করো, প্রজেক্ট বানাও, ইন্টারভিউয়ে shine করো!</p>
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+    <span class="tag tag-g">✅ BeautifulSoup</span>
+    <span class="tag">✅ requests</span>
+    <span class="tag tag-p">✅ Algorithms</span>
+    <span class="tag tag-y">✅ ML Pipeline</span>
+    <span class="tag tag-g">✅ Error Handling</span>
+    <span class="tag">✅ Interview Ready</span>
+  </div>
+  <p style="margin-top:32px;font-size:12px;color:var(--text3);">Web Scraping Complete Guide · বাংলায় · Saikot Das Joy-এর জন্য তৈরি</p>
+</footer>
+
+</main>
+
+<script>
+// Active nav link on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-sidebar a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 100;
+    if (window.scrollY >= sectionTop) current = section.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2656 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Virtual Machine, SSH, VS Code ও Algorithm - সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Baloo+Da+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #161b27;
+    --bg3: #1e2535;
+    --card: #1a2133;
+    --border: #2a3550;
+    --accent: #4f8ef7;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --accent5: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --code-bg: #0d1117;
+    --code-border: #30363d;
+    --heading: #f8fafc;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 17px;
+    line-height: 1.8;
+  }
+
+  /* SIDEBAR NAV */
+  .sidebar {
+    position: fixed; left:0; top:0; bottom:0; width:260px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto; z-index: 100;
+    padding: 0 0 40px 0;
+  }
+  .sidebar-logo {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Baloo Da 2', cursive;
+    font-size: 18px; font-weight: 800;
+    color: var(--accent);
+    background: linear-gradient(135deg, #4f8ef720, #7c3aed10);
+  }
+  .sidebar-logo span { color: var(--accent2); }
+  .nav-section { padding: 12px 20px 4px; font-size:11px; color: var(--text3); text-transform:uppercase; letter-spacing:1.5px; font-weight:600; }
+  .sidebar a {
+    display: block; padding: 7px 20px 7px 28px;
+    color: var(--text2); text-decoration:none; font-size:14px;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+  }
+  .sidebar a:hover, .sidebar a.active {
+    color: var(--accent); border-left-color: var(--accent);
+    background: #4f8ef710;
+  }
+
+  /* MAIN CONTENT */
+  .main {
+    margin-left: 260px;
+    min-height: 100vh;
+  }
+  .top-bar {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 40px;
+    font-size: 13px; color: var(--text3);
+    position: sticky; top:0; z-index:50;
+    display:flex; align-items:center; gap:8px;
+  }
+  .top-bar span { color: var(--text2); }
+
+  .content { padding: 40px; max-width: 900px; }
+
+  /* SECTION HEADERS */
+  .section-hero {
+    background: linear-gradient(135deg, var(--bg3), var(--bg2));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 32px;
+    position: relative; overflow: hidden;
+  }
+  .section-hero::before {
+    content:''; position:absolute; top:-60px; right:-60px;
+    width:200px; height:200px; border-radius:50%;
+    background: radial-gradient(circle, #4f8ef720, transparent 70%);
+  }
+  .chapter-badge {
+    display:inline-block;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color:#fff; font-size:11px; font-weight:700;
+    padding:4px 14px; border-radius:20px; margin-bottom:12px;
+    letter-spacing:1px; text-transform:uppercase;
+  }
+  h1 { font-family:'Baloo Da 2',cursive; font-size:2rem; font-weight:800; color:var(--heading); line-height:1.3; margin-bottom:12px; }
+  h2 { font-family:'Baloo Da 2',cursive; font-size:1.5rem; font-weight:700; color:var(--heading); margin:36px 0 14px; border-bottom:2px solid var(--border); padding-bottom:8px; }
+  h3 { font-family:'Baloo Da 2',cursive; font-size:1.2rem; font-weight:600; color:var(--accent); margin:24px 0 10px; }
+  h4 { font-size:1rem; font-weight:600; color:var(--accent4); margin:16px 0 8px; }
+  p { margin-bottom:14px; color: var(--text); }
+
+  /* CARDS */
+  .card {
+    background: var(--card); border:1px solid var(--border);
+    border-radius:12px; padding:24px; margin:20px 0;
+  }
+  .card-accent { border-left: 4px solid var(--accent); }
+  .card-green { border-left: 4px solid var(--accent3); }
+  .card-yellow { border-left: 4px solid var(--accent4); }
+  .card-red { border-left: 4px solid var(--accent5); }
+  .card-purple { border-left: 4px solid var(--accent2); }
+
+  /* INFO BOXES */
+  .info-box {
+    border-radius:10px; padding:16px 20px; margin:16px 0;
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .info-box.tip { background:#10b98115; border:1px solid #10b98130; }
+  .info-box.warn { background:#f59e0b15; border:1px solid #f59e0b30; }
+  .info-box.danger { background:#ef444415; border:1px solid #ef444430; }
+  .info-box.info { background:#4f8ef715; border:1px solid #4f8ef730; }
+  .info-icon { font-size:20px; margin-top:2px; flex-shrink:0; }
+  .info-content p { margin:0; }
+
+  /* CODE */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 10px; padding:20px;
+    overflow-x: auto; margin:16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px; line-height:1.7;
+    position: relative;
+  }
+  pre .lang-tag {
+    position:absolute; top:8px; right:12px;
+    font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:1px;
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: #ffffff10; color:#e2b714;
+    padding: 2px 8px; border-radius:5px; font-size:13.5px;
+  }
+  pre code { background:none; padding:0; color: inherit; font-size: inherit; }
+  .kw { color: #ff7b72; }   /* keywords */
+  .fn { color: #d2a8ff; }   /* functions */
+  .st { color: #a5d6ff; }   /* strings */
+  .cm { color: #8b949e; }   /* comments */
+  .nm { color: #79c0ff; }   /* numbers */
+  .op { color: #ff7b72; }   /* operators */
+  .cl { color: #ffa657; }   /* class names */
+
+  /* DIAGRAM */
+  .diagram-wrap {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius:12px; padding:24px; margin:20px 0;
+    text-align:center;
+  }
+  .diagram-wrap figcaption {
+    margin-top:12px; font-size:13px; color:var(--text3);
+    font-style:italic;
+  }
+
+  /* TABLE */
+  table { width:100%; border-collapse:collapse; margin:16px 0; }
+  th {
+    background: var(--bg3); color:var(--accent);
+    padding:10px 14px; text-align:left; font-size:13px;
+    font-weight:600; text-transform:uppercase; letter-spacing:0.5px;
+    border:1px solid var(--border);
+  }
+  td { padding:10px 14px; border:1px solid var(--border); font-size:15px; color:var(--text2); }
+  tr:hover td { background: #ffffff05; }
+
+  /* EXERCISE BOX */
+  .exercise {
+    background: linear-gradient(135deg, #7c3aed10, #4f8ef710);
+    border:1px solid var(--accent2);
+    border-radius:14px; padding:24px; margin:28px 0;
+  }
+  .exercise-header {
+    display:flex; align-items:center; gap:12px;
+    margin-bottom:16px;
+  }
+  .exercise-badge {
+    background: var(--accent2); color:#fff;
+    padding:4px 14px; border-radius:20px;
+    font-size:12px; font-weight:700; text-transform:uppercase;
+  }
+  .exercise h3 { margin:0; color:var(--accent2); border:none; font-size:1.1rem; }
+  .exercise ol, .exercise ul { padding-left:24px; }
+  .exercise li { margin:8px 0; color:var(--text2); }
+
+  /* ANSWER TOGGLE */
+  details { margin:12px 0; }
+  summary {
+    cursor:pointer;
+    background: var(--bg3); border:1px solid var(--border);
+    border-radius:8px; padding:10px 16px;
+    color:var(--accent3); font-weight:600;
+    list-style:none; display:flex; align-items:center; gap:8px;
+  }
+  summary::-webkit-details-marker { display:none; }
+  summary::before { content:'▶'; font-size:11px; transition:transform 0.2s; }
+  details[open] summary::before { transform:rotate(90deg); }
+  details .answer { padding:16px; background:var(--bg3); border:1px solid var(--border); border-top:none; border-radius:0 0 8px 8px; }
+
+  /* ALGO COMPLEXITY */
+  .complexity-badge {
+    display:inline-block; padding:2px 10px; border-radius:5px;
+    font-size:12px; font-family:'JetBrains Mono',monospace; font-weight:700;
+  }
+  .c-best { background:#10b98120; color:#10b981; border:1px solid #10b98140; }
+  .c-avg  { background:#f59e0b20; color:#f59e0b; border:1px solid #f59e0b40; }
+  .c-worst{ background:#ef444420; color:#ef4444; border:1px solid #ef444440; }
+
+  /* STEP GUIDE */
+  .steps { counter-reset: step; }
+  .step {
+    position:relative; padding:16px 16px 16px 60px;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:10px; margin:10px 0;
+  }
+  .step::before {
+    counter-increment: step;
+    content: counter(step);
+    position:absolute; left:16px; top:50%; transform:translateY(-50%);
+    width:32px; height:32px; border-radius:50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color:#fff; font-weight:700; font-size:14px;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  /* GRID */
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0; }
+  @media(max-width:700px){ .grid2{ grid-template-columns:1fr; } }
+
+  /* PAGE DIVIDER */
+  .chapter-divider {
+    border:none;
+    border-top: 2px solid var(--border);
+    margin: 60px 0 40px;
+  }
+
+  /* SIDEBAR SCROLL */
+  .sidebar::-webkit-scrollbar { width:4px; }
+  .sidebar::-webkit-scrollbar-track { background:transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+  /* TAG */
+  .tag {
+    display:inline-block; background:var(--bg3); border:1px solid var(--border);
+    border-radius:5px; padding:2px 10px; font-size:13px; color:var(--text2);
+    margin:2px;
+  }
+
+  .highlight { color: var(--accent); font-weight:600; }
+  .highlight2 { color: var(--accent3); font-weight:600; }
+  .highlight3 { color: var(--accent4); font-weight:600; }
+
+  ul, ol { padding-left:24px; margin:10px 0 14px; }
+  li { margin:6px 0; }
+
+  /* TOP PROGRESS BAR */
+  .progress-indicator {
+    height:3px; background:linear-gradient(90deg, var(--accent), var(--accent2));
+    position:fixed; top:0; left:260px; right:0; z-index:200;
+    transform-origin:left; transform:scaleX(0);
+    transition:transform 0.1s;
+  }
+
+  .os-tabs { display:flex; gap:8px; margin:12px 0 0; flex-wrap:wrap; }
+  .os-tab {
+    padding:6px 18px; border-radius:8px;
+    background:var(--bg3); border:1px solid var(--border);
+    color:var(--text2); cursor:pointer; font-size:14px;
+    transition:all 0.2s;
+  }
+  .os-tab.active, .os-tab:hover { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .os-content { display:none; }
+  .os-content.active { display:block; }
+
+  .emoji-list li::marker { font-size:1.1em; }
+</style>
+</head>
+<body>
+
+<div class="progress-indicator" id="progress"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">🖥️ VM &amp; <span>Algorithm</span><br><small style="font-size:13px;font-weight:400;color:var(--text3);">সম্পূর্ণ বাংলা গাইড</small></div>
+
+  <div class="nav-section">অধ্যায় ১: Virtual Machine</div>
+  <a href="#ch1-intro">VM কী?</a>
+  <a href="#ch1-why">VM কেন দরকার?</a>
+  <a href="#ch1-hypervisor">Hypervisor</a>
+  <a href="#ch1-filesystem">File System</a>
+  <a href="#ch1-path">Path (Absolute/Relative)</a>
+  <a href="#ch1-ip">IP Address</a>
+  <a href="#ch1-exercise">চর্চা করো</a>
+
+  <div class="nav-section">অধ্যায় ২: SSH Connection</div>
+  <a href="#ch2-ssh">SSH কী?</a>
+  <a href="#ch2-key">Authentication Key</a>
+  <a href="#ch2-connect">Connect করা</a>
+  <a href="#ch2-errors">Common Errors</a>
+  <a href="#ch2-tunnel">SSH Tunnel</a>
+  <a href="#ch2-exercise">চর্চা করো</a>
+
+  <div class="nav-section">অধ্যায় ৩: VS Code</div>
+  <a href="#ch3-vscode">VS Code কী?</a>
+  <a href="#ch3-install">Install করো</a>
+  <a href="#ch3-remote">Remote SSH</a>
+  <a href="#ch3-exercise">চর্চা করো</a>
+
+  <div class="nav-section">অধ্যায় ৪: Virtual Environments</div>
+  <a href="#ch4-venv">Virtual Env কী?</a>
+  <a href="#ch4-venv-create">venv দিয়ে</a>
+  <a href="#ch4-conda">conda দিয়ে</a>
+  <a href="#ch4-exercise">চর্চা করো</a>
+
+  <div class="nav-section">অধ্যায় ৫: Algorithms</div>
+  <a href="#algo-search">Search Algorithms</a>
+  <a href="#algo-sort">Sorting Algorithms</a>
+  <a href="#algo-tree">Tree Traversal</a>
+  <a href="#algo-graph">Graph Algorithms</a>
+  <a href="#algo-dp">Dynamic Programming</a>
+  <a href="#algo-ml">ML-Specific Algos</a>
+  <a href="#algo-exercise">ML Project চর্চা</a>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="top-bar">
+    🏠 Home → <span>সম্পূর্ণ বাংলা টিউটোরিয়াল</span> → VM, SSH, VS Code &amp; Algorithms
+  </div>
+
+  <div class="content">
+
+    <!-- ========== CHAPTER 1: VIRTUAL MACHINE ========== -->
+    <div class="section-hero" id="ch1-intro">
+      <a href="../Programming_Tools_DS.html" style="display:inline-block;margin-bottom:16px;padding:6px 18px;background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.4);border-radius:8px;color:#4f8ef7;text-decoration:none;font-size:13px;">← মূল পাতায় ফিরুন</a>
+      <div class="chapter-badge">অধ্যায় ১</div>
+      <h1>Virtual Machine (VM) — মাথা থেকে পা পর্যন্ত বোঝো</h1>
+      <p style="color:var(--text2);font-size:16px;">একদম শূন্য থেকে শুরু। কিছুই জানা লাগবে না আগে থেকে।</p>
+    </div>
+
+    <h2 id="ch1-intro">VM কী জিনিস?</h2>
+    <p>ধরো, তোমার কাছে একটা কম্পিউটার আছে। এখন তুমি চাচ্ছ আরেকটা কম্পিউটার ব্যবহার করতে — কিন্তু পকেটে টাকা নেই নতুন কম্পিউটার কিনতে! 😅</p>
+    <p>এই সমস্যার সমাধান হলো <span class="highlight">Virtual Machine</span> — সংক্ষেপে <span class="highlight">VM</span>।</p>
+    <p>VM হলো একটা "নকল কম্পিউটার" যেটা তোমার আসল কম্পিউটারের <strong>ভেতরে</strong> চলে। আসল কম্পিউটারের কিছু RAM, CPU, এবং Disk নিয়ে একটা আলাদা কম্পিউটার তৈরি করা হয় — সফটওয়্যার দিয়ে।</p>
+
+    <div class="info-box info">
+      <div class="info-icon">💡</div>
+      <div class="info-content">
+        <p><strong>সহজ ভাষায়:</strong> তোমার কম্পিউটার = একটা বাসা। VM = সেই বাসার ভেতরে আরেকটা ছোট বাসা। দুটো বাসা আলাদা, কিন্তু একই জমির উপরে।</p>
+      </div>
+    </div>
+
+    <!-- SVG DIAGRAM: VM concept -->
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+        <!-- Physical Computer -->
+        <rect x="20" y="20" width="660" height="340" rx="16" fill="#1e2535" stroke="#2a3550" stroke-width="2"/>
+        <text x="350" y="50" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Hind Siliguri, sans-serif">তোমার আসল কম্পিউটার (Physical Machine)</text>
+
+        <!-- Hardware layer -->
+        <rect x="40" y="60" width="620" height="50" rx="8" fill="#0f1117" stroke="#30363d" stroke-width="1.5"/>
+        <text x="350" y="88" text-anchor="middle" fill="#4f8ef7" font-size="14" font-weight="bold" font-family="Hind Siliguri, sans-serif">🔧 Hardware: CPU + RAM + Disk + Network</text>
+
+        <!-- Hypervisor -->
+        <rect x="40" y="122" width="620" height="42" rx="8" fill="#7c3aed30" stroke="#7c3aed60" stroke-width="1.5"/>
+        <text x="350" y="148" text-anchor="middle" fill="#a78bfa" font-size="14" font-weight="bold" font-family="Hind Siliguri, sans-serif">⚙️ Hypervisor (Resource বণ্টন করে)</text>
+
+        <!-- VM1 -->
+        <rect x="50" y="178" width="190" height="160" rx="10" fill="#10b98115" stroke="#10b98160" stroke-width="2"/>
+        <text x="145" y="202" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold" font-family="Hind Siliguri, sans-serif">VM 1 (Ubuntu)</text>
+        <rect x="65" y="212" width="160" height="30" rx="5" fill="#0d1117" stroke="#30363d"/>
+        <text x="145" y="231" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri, sans-serif">RAM: 2GB | CPU: 1 Core</text>
+        <rect x="65" y="250" width="160" height="30" rx="5" fill="#0d1117" stroke="#30363d"/>
+        <text x="145" y="269" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri, sans-serif">Disk: 50GB | Linux OS</text>
+        <text x="145" y="320" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri, sans-serif">তোমার Data Science VM</text>
+
+        <!-- VM2 -->
+        <rect x="255" y="178" width="190" height="160" rx="10" fill="#4f8ef715" stroke="#4f8ef760" stroke-width="2"/>
+        <text x="350" y="202" text-anchor="middle" fill="#4f8ef7" font-size="13" font-weight="bold" font-family="Hind Siliguri, sans-serif">VM 2 (Windows)</text>
+        <rect x="270" y="212" width="160" height="30" rx="5" fill="#0d1117" stroke="#30363d"/>
+        <text x="350" y="231" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri, sans-serif">RAM: 4GB | CPU: 2 Core</text>
+        <rect x="270" y="250" width="160" height="30" rx="5" fill="#0d1117" stroke="#30363d"/>
+        <text x="350" y="269" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri, sans-serif">Disk: 100GB | Win OS</text>
+        <text x="350" y="320" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri, sans-serif">Test Environment</text>
+
+        <!-- VM3 -->
+        <rect x="460" y="178" width="190" height="160" rx="10" fill="#f59e0b15" stroke="#f59e0b60" stroke-width="2"/>
+        <text x="555" y="202" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="bold" font-family="Hind Siliguri, sans-serif">VM 3 (MacOS)</text>
+        <rect x="475" y="212" width="160" height="30" rx="5" fill="#0d1117" stroke="#30363d"/>
+        <text x="555" y="231" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri, sans-serif">RAM: 2GB | CPU: 1 Core</text>
+        <rect x="475" y="250" width="160" height="30" rx="5" fill="#0d1117" stroke="#30363d"/>
+        <text x="555" y="269" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri, sans-serif">Disk: 30GB | Mac OS</text>
+        <text x="555" y="320" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri, sans-serif">Development</text>
+      </svg>
+      <figcaption>একটা আসল কম্পিউটারের ভেতরে একসাথে ৩টা VM চলতে পারে</figcaption>
+    </div>
+
+    <h2 id="ch1-why">VM কেন দরকার?</h2>
+    <p>এখন প্রশ্ন হলো — কেন আমরা VM ব্যবহার করব? সরাসরি কম্পিউটারে কাজ করলেই তো হয়!</p>
+
+    <div class="grid2">
+      <div class="card card-green">
+        <h4>🛡️ নিরাপত্তা (Isolation)</h4>
+        <p>VM-এ কোনো ভুল হলে বা virus ঢুকলে — তোমার আসল কম্পিউটার সম্পূর্ণ নিরাপদ থাকে। VM রিসেট করলেই সব ঠিক।</p>
+      </div>
+      <div class="card card-accent">
+        <h4>🧪 Testing Sandbox</h4>
+        <p>নতুন software বা code test করার জন্য আলাদা পরিবেশ। ভাঙলেও ক্ষতি নেই — reset করো।</p>
+      </div>
+      <div class="card card-yellow">
+        <h4>📦 Portability</h4>
+        <p>VM-কে যেকোনো কম্পিউটারে নিয়ে যাওয়া যায়। Team-এর সবাই একই environment-এ কাজ করতে পারে।</p>
+      </div>
+      <div class="card card-purple">
+        <h4>🔄 Reproducibility</h4>
+        <p>Data Science-এ একই environment মানে একই ফলাফল। "আমার মেশিনে চলছে কিন্তু তোমার মেশিনে চলছে না" — এই সমস্যা নেই।</p>
+      </div>
+    </div>
+
+    <div class="info-box tip">
+      <div class="info-icon">🎯</div>
+      <div class="info-content">
+        <p><strong>Data Science-এ VM:</strong> Machine Learning project-এ সবাই একই VM ব্যবহার করে মানে — একজন যে result পেয়েছে, অন্যজনও একই result পাবে। Code reproducible হয়।</p>
+      </div>
+    </div>
+
+    <h2 id="ch1-hypervisor">Hypervisor — VM-এর manager</h2>
+    <p><span class="highlight">Hypervisor</span> হলো সেই software যেটা VM তৈরি করে এবং manage করে। এটা আসল কম্পিউটারের hardware এবং VM-গুলোর মাঝখানে থাকে।</p>
+
+    <div class="card">
+      <p>Hypervisor দুই ধরনের:</p>
+      <table>
+        <tr>
+          <th>Type</th>
+          <th>কোথায় চলে</th>
+          <th>উদাহরণ</th>
+          <th>ব্যবহার</th>
+        </tr>
+        <tr>
+          <td><strong>Type 1</strong> (Bare Metal)</td>
+          <td>সরাসরি Hardware-এর উপর</td>
+          <td>VMware ESXi, Hyper-V</td>
+          <td>বড় Server/Cloud</td>
+        </tr>
+        <tr>
+          <td><strong>Type 2</strong> (Hosted)</td>
+          <td>OS-এর উপর চলে</td>
+          <td>VirtualBox, VMware Workstation</td>
+          <td>Personal কম্পিউটার</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="info-box info">
+      <div class="info-icon">☁️</div>
+      <div class="info-content">
+        <p><strong>Cloud VM:</strong> AWS, Google Cloud, Azure — এরা লক্ষ লক্ষ VM manage করে। তুমি যখন কোনো cloud service ব্যবহার করো, আসলে তুমি তাদের physical server-এ একটা VM পাচ্ছ।</p>
+      </div>
+    </div>
+
+    <!-- ========== FILE SYSTEM ========== -->
+    <h2 id="ch1-filesystem">File System — ফাইল কীভাবে সাজানো থাকে?</h2>
+    <p>Linux VM-এ সব কিছু একটা গাছের মতো সাজানো থাকে। মূল (root) থেকে শুরু হয়ে branch হয়ে যায়।</p>
+    <p>এই গাছের গোড়াকে বলা হয় <span class="highlight">root</span>, এবং এটাকে <code>/</code> দিয়ে প্রকাশ করা হয়।</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+        <!-- Root -->
+        <rect x="290" y="20" width="120" height="40" rx="8" fill="#4f8ef730" stroke="#4f8ef7" stroke-width="2"/>
+        <text x="350" y="46" text-anchor="middle" fill="#4f8ef7" font-size="16" font-weight="bold" font-family="JetBrains Mono, monospace">/  (root)</text>
+
+        <!-- Lines from root -->
+        <line x1="350" y1="60" x2="100" y2="110" stroke="#2a3550" stroke-width="1.5"/>
+        <line x1="350" y1="60" x2="230" y2="110" stroke="#2a3550" stroke-width="1.5"/>
+        <line x1="350" y1="60" x2="350" y2="110" stroke="#2a3550" stroke-width="1.5"/>
+        <line x1="350" y1="60" x2="470" y2="110" stroke="#2a3550" stroke-width="1.5"/>
+        <line x1="350" y1="60" x2="600" y2="110" stroke="#2a3550" stroke-width="1.5"/>
+
+        <!-- Level 1 dirs -->
+        <rect x="50" y="110" width="100" height="36" rx="6" fill="#1e2535" stroke="#2a3550"/>
+        <text x="100" y="133" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="JetBrains Mono,monospace">/bin</text>
+
+        <rect x="180" y="110" width="100" height="36" rx="6" fill="#1e2535" stroke="#2a3550"/>
+        <text x="230" y="133" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="JetBrains Mono,monospace">/etc</text>
+
+        <rect x="300" y="110" width="100" height="36" rx="6" fill="#10b98130" stroke="#10b98160"/>
+        <text x="350" y="133" text-anchor="middle" fill="#10b981" font-size="13" font-family="JetBrains Mono,monospace">/home</text>
+
+        <rect x="420" y="110" width="100" height="36" rx="6" fill="#1e2535" stroke="#2a3550"/>
+        <text x="470" y="133" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="JetBrains Mono,monospace">/var</text>
+
+        <rect x="550" y="110" width="100" height="36" rx="6" fill="#1e2535" stroke="#2a3550"/>
+        <text x="600" y="133" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="JetBrains Mono,monospace">/tmp</text>
+
+        <!-- /home children -->
+        <line x1="350" y1="146" x2="280" y2="200" stroke="#2a3550" stroke-width="1.5"/>
+        <line x1="350" y1="146" x2="420" y2="200" stroke="#2a3550" stroke-width="1.5"/>
+
+        <rect x="225" y="200" width="110" height="36" rx="6" fill="#7c3aed30" stroke="#7c3aed60"/>
+        <text x="280" y="223" text-anchor="middle" fill="#a78bfa" font-size="13" font-family="JetBrains Mono,monospace">/ubuntu</text>
+        <text x="280" y="253" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri,sans-serif">তোমার user folder</text>
+
+        <rect x="365" y="200" width="110" height="36" rx="6" fill="#1e2535" stroke="#2a3550"/>
+        <text x="420" y="223" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="JetBrains Mono,monospace">/alice</text>
+
+        <!-- /ubuntu children -->
+        <line x1="280" y1="236" x2="180" y2="300" stroke="#2a3550" stroke-width="1.5"/>
+        <line x1="280" y1="236" x2="280" y2="300" stroke="#2a3550" stroke-width="1.5"/>
+        <line x1="280" y1="236" x2="380" y2="300" stroke="#2a3550" stroke-width="1.5"/>
+
+        <rect x="115" y="300" width="130" height="36" rx="6" fill="#f59e0b15" stroke="#f59e0b40"/>
+        <text x="180" y="323" text-anchor="middle" fill="#f59e0b" font-size="12" font-family="JetBrains Mono,monospace">/projects</text>
+
+        <rect x="215" y="300" width="130" height="36" rx="6" fill="#1e2535" stroke="#2a3550"/>
+        <text x="280" y="323" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="JetBrains Mono,monospace">/documents</text>
+
+        <rect x="315" y="300" width="130" height="36" rx="6" fill="#1e2535" stroke="#2a3550"/>
+        <text x="380" y="323" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="JetBrains Mono,monospace">/.ssh</text>
+
+        <!-- files under projects -->
+        <line x1="180" y1="336" x2="180" y2="380" stroke="#2a3550" stroke-width="1.5"/>
+        <rect x="115" y="380" width="130" height="30" rx="5" fill="#0d1117" stroke="#30363d"/>
+        <text x="180" y="399" text-anchor="middle" fill="#6b7280" font-size="11" font-family="JetBrains Mono,monospace">model.py</text>
+
+        <!-- Labels -->
+        <text x="55" y="162" fill="#6b7280" font-size="10" font-family="Hind Siliguri,sans-serif">commands</text>
+        <text x="182" y="162" fill="#6b7280" font-size="10" font-family="Hind Siliguri,sans-serif">config</text>
+        <text x="422" y="162" fill="#6b7280" font-size="10" font-family="Hind Siliguri,sans-serif">logs</text>
+        <text x="552" y="162" fill="#6b7280" font-size="10" font-family="Hind Siliguri,sans-serif">temp</text>
+      </svg>
+      <figcaption>Linux-এর File System Tree — root (/) থেকে শুরু হয়ে সব কিছু সাজানো</figcaption>
+    </div>
+
+    <h2 id="ch1-path">Path — ফাইলের ঠিকানা</h2>
+    <p>ফাইলের ঠিকানা দেওয়ার দুইটা পদ্ধতি আছে:</p>
+
+    <div class="grid2">
+      <div class="card card-accent">
+        <h4>📍 Absolute Path (সম্পূর্ণ ঠিকানা)</h4>
+        <p>Root (/) থেকে শুরু করে পুরো ঠিকানা। যেখান থেকেই দেখো — একই ঠিকানা।</p>
+        <pre style="margin-top:10px;"><code>/home/ubuntu/projects/model.py</code></pre>
+        <p style="font-size:14px;color:var(--text3);">🏠 বাড়ির সম্পূর্ণ address দেওয়ার মতো — "ঢাকা, গুলশান, রোড ১, বাড়ি ৫"</p>
+      </div>
+      <div class="card card-green">
+        <h4>📌 Relative Path (আপেক্ষিক ঠিকানা)</h4>
+        <p>তুমি এখন যেখানে আছ — সেখান থেকে ঠিকানা।</p>
+        <pre style="margin-top:10px;"><code>projects/model.py</code></pre>
+        <p style="font-size:14px;color:var(--text3);">🧭 "এখান থেকে সোজা গিয়ে বাঁয়ে মোড়" — এর মতো।</p>
+      </div>
+    </div>
+
+    <h3>Special Symbols</h3>
+    <table>
+      <tr><th>Symbol</th><th>মানে</th><th>উদাহরণ</th></tr>
+      <tr><td><code>/</code></td><td>Root directory (একদম উপরে)</td><td><code>/home</code></td></tr>
+      <tr><td><code>~</code></td><td>তোমার home directory</td><td><code>~/projects</code> = <code>/home/ubuntu/projects</code></td></tr>
+      <tr><td><code>.</code></td><td>এখন যে folder-এ আছ</td><td><code>./model.py</code></td></tr>
+      <tr><td><code>..</code></td><td>এক ধাপ উপরে যাও</td><td><code>../documents</code></td></tr>
+    </table>
+
+    <div class="card card-yellow">
+      <h4>🔑 উদাহরণ: <code>..</code> ব্যবহার করে navigate করা</h4>
+      <p>ধরো তুমি আছ <code>/home/ubuntu/projects/ml</code> folder-এ।</p>
+      <ul>
+        <li><code>../</code> → যাবে <code>/home/ubuntu/projects/</code></li>
+        <li><code>../../</code> → যাবে <code>/home/ubuntu/</code></li>
+        <li><code>../../documents</code> → যাবে <code>/home/ubuntu/documents/</code></li>
+      </ul>
+    </div>
+
+    <h2 id="ch1-ip">IP Address — কম্পিউটারের ঠিকানা</h2>
+    <p>Internet-এ প্রতিটা device-এর একটা নিজস্ব পরিচয় নম্বর থাকে — এটাই <span class="highlight">IP Address</span>।</p>
+    <p>এটা দেখতে এরকম: <code>192.168.1.105</code> — চারটা সংখ্যা (0-255) dot দিয়ে আলাদা করা।</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+        <!-- IP breakdown -->
+        <rect x="40" y="60" width="280" height="80" rx="10" fill="#1e2535" stroke="#4f8ef7" stroke-width="2"/>
+        <text x="180" y="45" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="Hind Siliguri, sans-serif">IP Address</text>
+
+        <rect x="55" y="78" width="55" height="44" rx="6" fill="#4f8ef730"/>
+        <text x="82" y="107" text-anchor="middle" fill="#4f8ef7" font-size="22" font-weight="bold" font-family="JetBrains Mono,monospace">192</text>
+
+        <text x="120" y="107" fill="#6b7280" font-size="22" font-family="JetBrains Mono,monospace">.</text>
+
+        <rect x="130" y="78" width="55" height="44" rx="6" fill="#10b98130"/>
+        <text x="157" y="107" text-anchor="middle" fill="#10b981" font-size="22" font-weight="bold" font-family="JetBrains Mono,monospace">168</text>
+
+        <text x="195" y="107" fill="#6b7280" font-size="22" font-family="JetBrains Mono,monospace">.</text>
+
+        <rect x="205" y="78" width="40" height="44" rx="6" fill="#f59e0b30"/>
+        <text x="225" y="107" text-anchor="middle" fill="#f59e0b" font-size="22" font-weight="bold" font-family="JetBrains Mono,monospace">1</text>
+
+        <text x="255" y="107" fill="#6b7280" font-size="22" font-family="JetBrains Mono,monospace">.</text>
+
+        <rect x="265" y="78" width="45" height="44" rx="6" fill="#ef444430"/>
+        <text x="287" y="107" text-anchor="middle" fill="#ef4444" font-size="22" font-weight="bold" font-family="JetBrains Mono,monospace">105</text>
+
+        <!-- Types -->
+        <rect x="380" y="30" width="260" height="70" rx="10" fill="#10b98115" stroke="#10b98140"/>
+        <text x="510" y="55" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold" font-family="Hind Siliguri,sans-serif">Public IP</text>
+        <text x="510" y="78" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri,sans-serif">Internet থেকে দেখা যায়</text>
+        <text x="510" y="96" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri,sans-serif">VM-এর ক্ষেত্রে এটাই লাগবে connect করতে</text>
+
+        <rect x="380" y="118" width="260" height="70" rx="10" fill="#4f8ef715" stroke="#4f8ef740"/>
+        <text x="510" y="143" text-anchor="middle" fill="#4f8ef7" font-size="14" font-weight="bold" font-family="Hind Siliguri,sans-serif">Private IP</text>
+        <text x="510" y="166" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri,sans-serif">শুধু Local Network-এ</text>
+        <text x="510" y="184" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri,sans-serif">বাইরে থেকে দেখা যায় না</text>
+      </svg>
+    </div>
+
+    <div class="card card-yellow">
+      <h4>⚠️ Dynamic IP — গুরুত্বপূর্ণ!</h4>
+      <p>Cloud VM (যেমন AWS)-এর IP address প্রতিবার VM চালু করলে <strong>বদলে যায়</strong>। তাই VM বন্ধ করে আবার চালু করলে নতুন IP দেখে নিতে হবে।</p>
+    </div>
+
+    <!-- EXERCISE 1 -->
+    <div class="exercise" id="ch1-exercise">
+      <div class="exercise-header">
+        <div class="exercise-badge">Interview Level Exercise</div>
+        <h3>অধ্যায় ১: Virtual Machine</h3>
+      </div>
+      <p style="color:var(--text2);margin-bottom:16px;">এই প্রশ্নগুলো job interview-তে আসতে পারে। উত্তর দেওয়ার চেষ্টা করো আগে, তারপর দেখো।</p>
+
+      <h4>প্রশ্ন ১: Hypervisor কী এবং এটা কীভাবে কাজ করে?</h4>
+      <details>
+        <summary>✅ উত্তর দেখো</summary>
+        <div class="answer">
+          <p>Hypervisor হলো এমন software যা physical computer-এর resource (CPU, RAM, Storage) ভাগ করে একাধিক Virtual Machine চালায়। এটা VM এবং hardware-এর মাঝে layer হিসেবে কাজ করে। Type 1 সরাসরি hardware-এ চলে (বেশি efficient), Type 2 চলে OS-এর উপরে।</p>
+        </div>
+      </details>
+
+      <h4 style="margin-top:16px;">প্রশ্ন ২: Absolute path এবং Relative path-এর মধ্যে পার্থক্য কী?</h4>
+      <details>
+        <summary>✅ উত্তর দেখো</summary>
+        <div class="answer">
+          <p><strong>Absolute path:</strong> সবসময় root (/) থেকে শুরু হয়। যেমন: <code>/home/ubuntu/file.py</code></p>
+          <p><strong>Relative path:</strong> তুমি এখন যেখানে আছ সেখান থেকে হিসাব। যেমন: যদি তুমি <code>/home/ubuntu</code>-তে থাকো, তাহলে শুধু <code>file.py</code> লিখলেই হবে।</p>
+        </div>
+      </details>
+
+      <h4 style="margin-top:16px;">প্রশ্ন ৩: VM ব্যবহার কেন Data Science-এ গুরুত্বপূর্ণ? ৩টা কারণ বলো।</h4>
+      <details>
+        <summary>✅ উত্তর দেখো</summary>
+        <div class="answer">
+          <ol>
+            <li><strong>Reproducibility:</strong> সবাই একই environment ব্যবহার করে, তাই code সবার কম্পিউটারে একইভাবে চলে।</li>
+            <li><strong>Isolation:</strong> Experiments isolated environment-এ চলে, main system affect হয় না।</li>
+            <li><strong>Scalability:</strong> Cloud-এ powerful VM নিয়ে বড় model train করা যায়।</li>
+          </ol>
+        </div>
+      </details>
+
+      <h4 style="margin-top:16px;">প্রশ্ন ৪: Dynamic IP vs Static IP — ML deployment-এ কোনটা কেন দরকার?</h4>
+      <details>
+        <summary>✅ উত্তর দেখো</summary>
+        <div class="answer">
+          <p><strong>Production deployment-এ Static IP দরকার।</strong> কারণ যদি তুমি কোনো ML model API serve করো এবং IP বদলে যায়, তাহলে সব client connection ভেঙে পড়বে। Development/Testing-এ Dynamic IP ঠিক আছে।</p>
+        </div>
+      </details>
+    </div>
+
+    <hr class="chapter-divider">
+
+    <!-- ========== CHAPTER 2: SSH ========== -->
+    <div class="section-hero" id="ch2-ssh">
+      <div class="chapter-badge">অধ্যায় ২</div>
+      <h1>SSH — দূরের কম্পিউটারে ঢোকার চাবিকাঠি</h1>
+      <p style="color:var(--text2);font-size:16px;">SSH মানে Secure Shell। নিরাপদে remote machine-এ connect করার পদ্ধতি।</p>
+    </div>
+
+    <h2 id="ch2-ssh">SSH কী?</h2>
+    <p>ধরো তোমার বন্ধুর বাড়ির কম্পিউটারে কিছু কাজ করতে হবে। তুমি সেই বাড়িতে না গিয়ে, তোমার নিজের কম্পিউটার থেকেই সেটা control করতে চাও — এটাই <span class="highlight">SSH (Secure Shell)</span>।</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+        <!-- Local Machine -->
+        <rect x="20" y="60" width="190" height="110" rx="12" fill="#1e2535" stroke="#4f8ef7" stroke-width="2"/>
+        <text x="115" y="85" text-anchor="middle" fill="#4f8ef7" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">💻 তোমার কম্পিউটার</text>
+        <text x="115" y="108" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri,sans-serif">(Local Machine)</text>
+        <rect x="40" y="120" width="150" height="36" rx="6" fill="#0d1117" stroke="#30363d"/>
+        <text x="115" y="143" text-anchor="middle" fill="#10b981" font-size="11" font-family="JetBrains Mono,monospace">$ ssh ubuntu@1.2.3.4</text>
+
+        <!-- Arrow -->
+        <line x1="215" y1="115" x2="385" y2="115" stroke="#4f8ef7" stroke-width="2.5" marker-end="url(#arr)"/>
+        <defs>
+          <marker id="arr" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#4f8ef7"/>
+          </marker>
+        </defs>
+        <text x="300" y="100" text-anchor="middle" fill="#7c3aed" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">🔒 Encrypted</text>
+        <text x="300" y="132" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri,sans-serif">SSH Protocol</text>
+
+        <!-- VM -->
+        <rect x="390" y="60" width="190" height="110" rx="12" fill="#1e2535" stroke="#10b981" stroke-width="2"/>
+        <text x="485" y="85" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">🖥️ Remote VM</text>
+        <text x="485" y="108" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri,sans-serif">(Ubuntu Linux)</text>
+        <rect x="410" y="120" width="150" height="36" rx="6" fill="#0d1117" stroke="#30363d"/>
+        <text x="485" y="143" text-anchor="middle" fill="#10b981" font-size="11" font-family="JetBrains Mono,monospace">ubuntu@ip-1-2-3-4:~$</text>
+
+        <!-- Internet Cloud -->
+        <ellipse cx="300" cy="170" rx="80" ry="30" fill="#0f1117" stroke="#2a3550" stroke-dasharray="4"/>
+        <text x="300" y="175" text-anchor="middle" fill="#6b7280" font-size="12" font-family="Hind Siliguri,sans-serif">🌐 Internet</text>
+
+        <text x="350" y="30" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri,sans-serif">Port 22 দিয়ে connect হয়</text>
+      </svg>
+      <figcaption>SSH দিয়ে তুমি ঘরে বসে remote machine control করতে পারো</figcaption>
+    </div>
+
+    <h2 id="ch2-key">Authentication Key (.pem file) — ডিজিটাল তালা-চাবি</h2>
+    <p>SSH-এ password দেওয়ার বদলে একটা বিশেষ ফাইল ব্যবহার করা হয় — <span class="highlight">.pem file</span>। এটা তোমার digital চাবির মতো।</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+        <!-- Key concept -->
+        <rect x="30" y="20" width="280" height="120" rx="10" fill="#f59e0b15" stroke="#f59e0b40"/>
+        <text x="170" y="50" text-anchor="middle" fill="#f59e0b" font-size="14" font-weight="bold" font-family="Hind Siliguri,sans-serif">🗝️ Private Key (.pem)</text>
+        <text x="170" y="74" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri,sans-serif">তোমার কম্পিউটারে থাকে</text>
+        <text x="170" y="96" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri,sans-serif">কখনো কাউকে দেবে না!</text>
+        <text x="170" y="120" text-anchor="middle" fill="#f59e0b" font-size="22">🔑</text>
+
+        <text x="340" y="90" text-anchor="middle" fill="#4f8ef7" font-size="24">⇌</text>
+        <text x="340" y="110" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri,sans-serif">Match করলে</text>
+        <text x="340" y="126" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri,sans-serif">access পাবে</text>
+
+        <rect x="370" y="20" width="280" height="120" rx="10" fill="#10b98115" stroke="#10b98140"/>
+        <text x="510" y="50" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold" font-family="Hind Siliguri,sans-serif">🔒 Public Key</text>
+        <text x="510" y="74" text-anchor="middle" fill="#94a3b8" font-size="12" font-family="Hind Siliguri,sans-serif">VM-এ আগে থেকে set করা</text>
+        <text x="510" y="96" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri,sans-serif">AWS করে দিয়েছে</text>
+        <text x="510" y="120" text-anchor="middle" fill="#10b981" font-size="22">🔓</text>
+      </svg>
+      <figcaption>Asymmetric Key — Private key তোমার কাছে, Public key VM-এ। দুটো match করলেই connection হয়।</figcaption>
+    </div>
+
+    <h2 id="ch2-connect">SSH দিয়ে VM-এ Connect করা</h2>
+
+    <div class="card card-green">
+      <h4>Step 1: .pem ফাইলের permission ঠিক করো (Mac/Linux)</h4>
+      <pre><code><span class="kw">chmod</span> 400 my_key.pem</code></pre>
+      <p style="font-size:14px;color:var(--text3);">এটা না করলে SSH বলবে "এই key-এর permission অনেক বেশি open, আমি ব্যবহার করব না"।</p>
+    </div>
+
+    <div class="card card-accent">
+      <h4>Step 2: Connect করো</h4>
+      <pre><code><span class="kw">ssh</span> -i <span class="st">"my_key.pem"</span> ubuntu@<span class="nm">1.2.3.4</span></code></pre>
+      <ul style="font-size:14px;color:var(--text2);">
+        <li><code>-i "my_key.pem"</code> → identity file (তোমার চাবি)</li>
+        <li><code>ubuntu</code> → VM-এর user name</li>
+        <li><code>1.2.3.4</code> → VM-এর IP address (এটা বদলে দাও)</li>
+      </ul>
+    </div>
+
+    <div class="info-box warn">
+      <div class="info-icon">⚠️</div>
+      <div class="info-content">
+        <p><strong>Windows-এ:</strong> Folder separator হিসেবে <code>\</code> ব্যবহার করো।<br>
+        <code>ssh -i "Downloads\my_key.pem" ubuntu@1.2.3.4</code></p>
+        <p><strong>Mac/Linux-এ:</strong> <code>/</code> ব্যবহার করো।<br>
+        <code>ssh -i "Downloads/my_key.pem" ubuntu@1.2.3.4</code></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>Step 3: Logout করা</h4>
+      <pre><code><span class="kw">exit</span></code></pre>
+      <p style="font-size:14px;color:var(--text3);">SSH connection বন্ধ হবে। কিন্তু VM চলতে থাকবে।</p>
+    </div>
+
+    <h2 id="ch2-errors">Common SSH Errors — সমস্যা ও সমাধান</h2>
+
+    <div class="card card-red">
+      <h4>❌ Error 1: "Permission denied (publickey)"</h4>
+      <p><strong>কারণ:</strong> .pem ফাইলের permission ঠিক নেই।</p>
+      <p><strong>সমাধান (Mac/Linux):</strong></p>
+      <pre><code><span class="kw">chmod</span> 400 my_key.pem</code></pre>
+      <p><strong>সমাধান (Windows):</strong> File Properties → Security → তোমার username শুধু Read permission রাখো।</p>
+    </div>
+
+    <div class="card card-red">
+      <h4>❌ Error 2: "No such file or directory" (.pem file)</h4>
+      <p><strong>কারণ:</strong> .pem ফাইলের path ভুল দিয়েছ।</p>
+      <p><strong>সমাধান:</strong> আগে .pem ফাইল যে folder-এ আছে সেখানে যাও, তারপর connect করো:</p>
+      <pre><code><span class="cm"># আগে সেই folder-এ যাও</span>
+<span class="kw">cd</span> ~/Downloads
+<span class="cm"># তারপর connect করো</span>
+<span class="kw">ssh</span> -i <span class="st">"my_key.pem"</span> ubuntu@<span class="nm">1.2.3.4</span></code></pre>
+    </div>
+
+    <div class="card card-red">
+      <h4>❌ Error 3: "Connection timed out"</h4>
+      <p><strong>কারণ:</strong> VM বন্ধ আছে অথবা IP address ভুল।</p>
+      <p><strong>সমাধান:</strong> VM চালু করো এবং নতুন IP address চেক করো।</p>
+    </div>
+
+    <div class="card card-red">
+      <h4>❌ Error 4: "Remote host identification has changed"</h4>
+      <p><strong>কারণ:</strong> VM reset হওয়ার পর IP বদলে গেছে কিন্তু পুরনো key আছে।</p>
+      <p><strong>সমাধান:</strong></p>
+      <pre><code><span class="kw">ssh-keygen</span> -R <span class="nm">1.2.3.4</span>  <span class="cm"># পুরনো key মুছো</span></code></pre>
+    </div>
+
+    <h2 id="ch2-tunnel">SSH Tunnel — Port Forwarding</h2>
+    <p>কখনো কখনো VM-এ চলা কোনো app (যেমন Jupyter Notebook বা ML API) তোমার browser-এ দেখতে চাইলে <span class="highlight">SSH Tunnel</span> ব্যবহার করতে হয়।</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+        <!-- Local -->
+        <rect x="20" y="40" width="200" height="100" rx="10" fill="#1e2535" stroke="#4f8ef7" stroke-width="1.5"/>
+        <text x="120" y="65" text-anchor="middle" fill="#4f8ef7" font-size="12" font-family="Hind Siliguri,sans-serif">💻 তোমার কম্পিউটার</text>
+        <text x="120" y="88" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri,sans-serif">Browser: localhost:8888</text>
+        <rect x="40" y="100" width="160" height="26" rx="5" fill="#4f8ef720"/>
+        <text x="120" y="117" text-anchor="middle" fill="#4f8ef7" font-size="11" font-family="JetBrains Mono,monospace">Port: 8888 (Local)</text>
+
+        <!-- Arrow -->
+        <path d="M 225 90 Q 350 40 475 90" stroke="#7c3aed" stroke-width="2.5" fill="none" stroke-dasharray="6,3"/>
+        <text x="350" y="35" text-anchor="middle" fill="#7c3aed" font-size="11" font-weight="bold" font-family="Hind Siliguri,sans-serif">SSH Tunnel 🚇</text>
+        <polygon points="475,85 475,95 485,90" fill="#7c3aed"/>
+
+        <!-- VM -->
+        <rect x="480" y="40" width="200" height="100" rx="10" fill="#1e2535" stroke="#10b981" stroke-width="1.5"/>
+        <text x="580" y="65" text-anchor="middle" fill="#10b981" font-size="12" font-family="Hind Siliguri,sans-serif">🖥️ Remote VM</text>
+        <text x="580" y="88" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="Hind Siliguri,sans-serif">Jupyter: port 8888</text>
+        <rect x="500" y="100" width="160" height="26" rx="5" fill="#10b98120"/>
+        <text x="580" y="117" text-anchor="middle" fill="#10b981" font-size="11" font-family="JetBrains Mono,monospace">Port: 8888 (Remote)</text>
+      </svg>
+      <figcaption>SSH Tunnel: VM-এর port 8888 → তোমার localhost:8888-এ forward হয়</figcaption>
+    </div>
+
+    <pre><code><span class="cm"># Format: ssh -i key.pem -L LOCAL_PORT:localhost:REMOTE_PORT user@IP</span>
+<span class="kw">ssh</span> -i <span class="st">"my_key.pem"</span> -L <span class="nm">8888</span>:localhost:<span class="nm">8888</span> ubuntu@<span class="nm">1.2.3.4</span>
+
+<span class="cm"># তারপর তোমার browser-এ যাও:</span>
+<span class="cm"># http://localhost:8888  ← এটা VM-এর Jupyter দেখাবে!</span></code></pre>
+
+    <!-- EXERCISE 2 -->
+    <div class="exercise" id="ch2-exercise">
+      <div class="exercise-header">
+        <div class="exercise-badge">Interview Level Exercise</div>
+        <h3>অধ্যায় ২: SSH Connection</h3>
+      </div>
+
+      <h4>প্রশ্ন ১: SSH key-based authentication পাসওয়ার্ড authentication-এর চেয়ে কেন ভালো?</h4>
+      <details>
+        <summary>✅ উত্তর দেখো</summary>
+        <div class="answer">
+          <p>Key-based: Brute force attack সম্ভব না (key অনেক লম্বা), password মনে রাখতে হয় না, automation সহজ। Password: সহজে crack করা যায়, phishing-এ চুরি হতে পারে।</p>
+        </div>
+      </details>
+
+      <h4 style="margin-top:16px;">প্রশ্ন ২: তুমি যদি ML model-কে VM-এ FastAPI দিয়ে serve করো port 8000-এ, তাহলে তোমার laptop-এ test করতে কী command লাগবে?</h4>
+      <details>
+        <summary>✅ উত্তর দেখো</summary>
+        <div class="answer">
+          <pre><code>ssh -i "key.pem" -L 8000:localhost:8000 ubuntu@VM_IP</code></pre>
+          <p>তারপর browser-এ <code>http://localhost:8000/docs</code> খোলো।</p>
+        </div>
+      </details>
+
+      <h4 style="margin-top:16px;">প্রশ্ন ৩: <code>chmod 400 key.pem</code> কেন দরকার? এর মানে কী?</h4>
+      <details>
+        <summary>✅ উত্তর দেখো</summary>
+        <div class="answer">
+          <p><code>400</code> মানে: শুধু owner read করতে পারবে, অন্য কেউ কিছুই করতে পারবে না। SSH নিরাপত্তার জন্য দাবি করে key শুধু তুমিই দেখতে পাবে — অন্য user বা group নয়।</p>
+        </div>
+      </details>
+    </div>
+
+    <hr class="chapter-divider">
+
+    <!-- ========== CHAPTER 3: VS CODE ========== -->
+    <div class="section-hero" id="ch3-vscode">
+      <div class="chapter-badge">অধ্যায় ৩</div>
+      <h1>Visual Studio Code — Programmer-এর সেরা হাতিয়ার</h1>
+      <p style="color:var(--text2);font-size:16px;">VS Code হলো একটা শক্তিশালী code editor যেটা দিয়ে VM-এও সরাসরি কাজ করা যায়।</p>
+    </div>
+
+    <h2 id="ch3-vscode">VS Code কী?</h2>
+    <p>VS Code হলো Microsoft-এর তৈরি একটা free code editor। এটা দিয়ে:</p>
+    <ul class="emoji-list">
+      <li>🐍 Python, JavaScript, C++ সহ শত শত language-এ code লেখা যায়</li>
+      <li>🔌 Hundreds of extension install করা যায়</li>
+      <li>🖥️ Remote machine-এ সরাসরি connect করে কাজ করা যায়</li>
+      <li>🐛 Debugging করা যায়</li>
+      <li>📁 File tree দেখা যায় সুন্দর UI-তে</li>
+    </ul>
+
+    <h2 id="ch3-install">VS Code Install ও Setup</h2>
+
+    <div class="steps">
+      <div class="step">VS Code download করো: <a href="https://code.visualstudio.com/download" style="color:var(--accent);">code.visualstudio.com</a> — তোমার OS অনুযায়ী download করো।</div>
+      <div class="step">Install করো: Download হওয়া file run করো এবং installer-এর instructions follow করো।</div>
+      <div class="step">Extensions খোলো: VS Code খুলে <code>Ctrl+Shift+X</code> চাপো (Mac: <code>Cmd+Shift+X</code>)।</div>
+      <div class="step">"Remote - SSH" extension install করো — Microsoft-এর official extension।</div>
+      <div class="step">"Remote Explorer" extension ও install করো।</div>
+    </div>
+
+    <h2 id="ch3-remote">VS Code দিয়ে VM-এ Connect করা</h2>
+
+    <div class="card card-accent">
+      <h4>First Time Connection</h4>
+      <ol>
+        <li>VS Code-এর left sidebar-এ <strong>Remote Explorer</strong> icon-এ click করো।</li>
+        <li><code>SSH</code> section-এ <code>+</code> button-এ click করো।</li>
+        <li>SSH command type করো:</li>
+      </ol>
+      <pre><code>ssh -i "Downloads/my_key.pem" ubuntu@1.2.3.4</code></pre>
+      <ol start="4">
+        <li><code>.ssh/config</code> file select করো।</li>
+        <li>Refresh করো → IP address দেখা যাবে।</li>
+        <li>Connect arrow-এ click করো → OS হিসেবে <code>Linux</code> select করো।</li>
+      </ol>
+    </div>
+
+    <div class="info-box info">
+      <div class="info-icon">🔄</div>
+      <div class="info-content">
+        <p><strong>পরের বার connect করতে:</strong> VM-এর IP বদলে যায়। Remote Explorer → SSH → Gear icon → <code>.ssh/config</code> file খুলো → IP address update করো।</p>
+      </div>
+    </div>
+
+    <div class="card card-green">
+      <h4>Terminal খোলো VM-এ</h4>
+      <p>Connected হওয়ার পর Terminal খুলতে: <code>Ctrl + `</code> (backtick) অথবা Terminal → New Terminal menu।</p>
+      <p>এখন এই terminal সরাসরি VM-এ কাজ করে!</p>
+    </div>
+
+    <div class="card">
+      <h4>📥 VM থেকে File Download করা</h4>
+      <p>VS Code-এ file tree দেখাও → যে file download করতে চাও তার উপর <strong>Right Click</strong> → <strong>Download</strong> → তোমার computer-এ কোথায় save করবে বলো।</p>
+    </div>
+
+    <!-- EXERCISE 3 -->
+    <div class="exercise" id="ch3-exercise">
+      <div class="exercise-header">
+        <div class="exercise-badge">Interview Level Exercise</div>
+        <h3>অধ্যায় ৩: VS Code</h3>
+      </div>
+
+      <h4>প্রশ্ন ১: VS Code Remote SSH extension কীভাবে কাজ করে? Underlying mechanism কী?</h4>
+      <details>
+        <summary>✅ উত্তর দেখো</summary>
+        <div class="answer">
+          <p>VS Code Remote SSH একটা lightweight VS Code Server remote machine-এ install করে। তোমার local VS Code UI সেই remote server-এর সাথে communicate করে SSH tunnel-এর মাধ্যমে। এতে file editing, terminal, debugging সব remote machine-এই হয়।</p>
+        </div>
+      </details>
+
+      <h4 style="margin-top:16px;">প্রশ্ন ২: ML project-এ remote debugging কীভাবে করবে VS Code দিয়ে?</h4>
+      <details>
+        <summary>✅ উত্তর দেখো</summary>
+        <div class="answer">
+          <p>VS Code-এ <code>launch.json</code> configure করো Remote Python Debugger হিসেবে। Code-এ breakpoint দাও, Debug panel থেকে Remote Attach করো। এতে VM-এ চলা Python script-এ step-by-step debug করা যাবে।</p>
+        </div>
+      </details>
+    </div>
+
+    <hr class="chapter-divider">
+
+    <!-- ========== CHAPTER 4: VIRTUAL ENVIRONMENTS ========== -->
+    <div class="section-hero" id="ch4-venv">
+      <div class="chapter-badge">অধ্যায় ৪</div>
+      <h1>Python Virtual Environment — Project-এর নিজস্ব ঘর</h1>
+      <p style="color:var(--text2);font-size:16px;">প্রতিটা project-এর জন্য আলাদা Python environment — dependency conflict থেকে মুক্তি।</p>
+    </div>
+
+    <h2 id="ch4-venv">Virtual Environment কী?</h2>
+    <p>ধরো তোমার দুটো project:</p>
+    <ul>
+      <li><strong>Project A:</strong> scikit-learn 0.24 দরকার</li>
+      <li><strong>Project B:</strong> scikit-learn 1.3 দরকার</li>
+    </ul>
+    <p>একই কম্পিউটারে দুটো version install করলে conflict হবে। সমাধান হলো <span class="highlight">Virtual Environment</span> — প্রতিটা project-এর জন্য একটা isolated Python installation।</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+        <!-- System Python -->
+        <rect x="250" y="10" width="180" height="40" rx="8" fill="#2a3550" stroke="#4f8ef7" stroke-width="1.5"/>
+        <text x="340" y="35" text-anchor="middle" fill="#4f8ef7" font-size="13" font-family="Hind Siliguri,sans-serif">🐍 System Python 3.10</text>
+
+        <line x1="340" y1="50" x2="130" y2="90" stroke="#2a3550" stroke-width="1.5"/>
+        <line x1="340" y1="50" x2="340" y2="90" stroke="#2a3550" stroke-width="1.5"/>
+        <line x1="340" y1="50" x2="550" y2="90" stroke="#2a3550" stroke-width="1.5"/>
+
+        <!-- Env A -->
+        <rect x="30" y="90" width="200" height="100" rx="10" fill="#10b98115" stroke="#10b98160"/>
+        <text x="130" y="116" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">venv_projectA</text>
+        <text x="130" y="138" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="JetBrains Mono,monospace">scikit-learn==0.24</text>
+        <text x="130" y="158" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="JetBrains Mono,monospace">pandas==1.3</text>
+        <text x="130" y="178" text-anchor="middle" fill="#6b7280" font-size="10" font-family="Hind Siliguri,sans-serif">legacy ML project</text>
+
+        <!-- Env B -->
+        <rect x="240" y="90" width="200" height="100" rx="10" fill="#4f8ef715" stroke="#4f8ef760"/>
+        <text x="340" y="116" text-anchor="middle" fill="#4f8ef7" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">venv_projectB</text>
+        <text x="340" y="138" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="JetBrains Mono,monospace">scikit-learn==1.3</text>
+        <text x="340" y="158" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="JetBrains Mono,monospace">pandas==2.0</text>
+        <text x="340" y="178" text-anchor="middle" fill="#6b7280" font-size="10" font-family="Hind Siliguri,sans-serif">new ML project</text>
+
+        <!-- Env C -->
+        <rect x="450" y="90" width="200" height="100" rx="10" fill="#7c3aed15" stroke="#7c3aed60"/>
+        <text x="550" y="116" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">venv_deep</text>
+        <text x="550" y="138" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="JetBrains Mono,monospace">tensorflow==2.13</text>
+        <text x="550" y="158" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="JetBrains Mono,monospace">torch==2.0</text>
+        <text x="550" y="178" text-anchor="middle" fill="#6b7280" font-size="10" font-family="Hind Siliguri,sans-serif">deep learning</text>
+      </svg>
+      <figcaption>একটা System Python থেকে অনেক isolated environment তৈরি — কোনো conflict নেই</figcaption>
+    </div>
+
+    <h2 id="ch4-venv-create">venv দিয়ে Virtual Environment</h2>
+
+    <pre><code><span class="cm"># ১. venv install (যদি না থাকে)</span>
+<span class="kw">sudo apt install</span> python3-venv  <span class="cm"># Linux/Ubuntu</span>
+
+<span class="cm"># ২. নতুন environment তৈরি করো</span>
+<span class="kw">python3</span> -m venv my_project_env
+
+<span class="cm"># ৩. Environment activate করো</span>
+<span class="kw">source</span> my_project_env/bin/activate  <span class="cm"># Mac/Linux</span>
+<span class="cm"># Windows: my_project_env\Scripts\activate</span>
+
+<span class="cm"># ৪. এখন packages install করো (শুধু এই environment-এ থাকবে)</span>
+<span class="kw">pip install</span> pandas==2.0 scikit-learn==1.3
+
+<span class="cm"># ৫. Requirements file তৈরি করো (অন্যরা clone করতে পারবে)</span>
+<span class="kw">pip freeze</span> > requirements.txt
+
+<span class="cm"># ৬. Environment থেকে বেরিয়ে আসো</span>
+<span class="kw">deactivate</span></code></pre>
+
+    <div class="info-box tip">
+      <div class="info-icon">💡</div>
+      <div class="info-content">
+        <p><strong>Activated environment চেনার উপায়:</strong> Terminal prompt-এর আগে <code>(my_project_env)</code> দেখাবে। যেমন: <code>(my_project_env) ubuntu@ip-1-2-3:~$</code></p>
+      </div>
+    </div>
+
+    <h2 id="ch4-conda">Conda দিয়ে Virtual Environment</h2>
+
+    <pre><code><span class="cm"># Environment তৈরি</span>
+<span class="kw">conda create</span> -n my_env python=3.11
+
+<span class="cm"># সব environment দেখো</span>
+<span class="kw">conda env list</span>
+
+<span class="cm"># Activate করো</span>
+<span class="kw">conda activate</span> my_env
+
+<span class="cm"># Package install</span>
+<span class="kw">conda install</span> pandas scikit-learn
+<span class="cm"># অথবা pip ব্যবহার করা যায়</span>
+<span class="kw">pip install</span> tensorflow
+
+<span class="cm"># Deactivate</span>
+<span class="kw">conda deactivate</span>
+
+<span class="cm"># Environment delete</span>
+<span class="kw">conda env remove</span> -n my_env</code></pre>
+
+    <div class="card card-yellow">
+      <h4>⚡ Best Practices</h4>
+      <ul>
+        <li>প্রতিটা project-এর জন্য আলাদা environment তৈরি করো</li>
+        <li>সবসময় <code>requirements.txt</code> রাখো</li>
+        <li>Environment activate হয়েছে কিনা check করো শুরুতে</li>
+        <li>Production-এ exact version pin করো: <code>pandas==2.0.3</code> (>= দিও না)</li>
+      </ul>
+    </div>
+
+    <!-- EXERCISE 4 -->
+    <div class="exercise" id="ch4-exercise">
+      <div class="exercise-header">
+        <div class="exercise-badge">Interview Level Exercise</div>
+        <h3>অধ্যায় ৪: Virtual Environments</h3>
+      </div>
+
+      <h4>প্রশ্ন ১: requirements.txt এবং environment.yml-এর মধ্যে পার্থক্য কী?</h4>
+      <details>
+        <summary>✅ উত্তর দেখো</summary>
+        <div class="answer">
+          <p><code>requirements.txt</code> → pip দিয়ে তৈরি, pip দিয়ে install। <code>environment.yml</code> → conda দিয়ে তৈরি ও install। Conda environment-এ Python version, conda packages এবং pip packages সব থাকতে পারে।</p>
+        </div>
+      </details>
+
+      <h4 style="margin-top:16px;">প্রশ্ন ২: Production ML deployment-এ <code>pip freeze</code> কেন risky হতে পারে?</h4>
+      <details>
+        <summary>✅ উত্তর দেখো</summary>
+        <div class="answer">
+          <p><code>pip freeze</code> সব installed package list করে — এমন packages ও যেগুলো তোমার project-এর directly দরকার নেই। এতে unnecessary dependencies ঢোকে, Docker image বড় হয়, security vulnerability বাড়ে। Better approach: শুধু direct dependencies explicitly pin করো।</p>
+        </div>
+      </details>
+    </div>
+
+    <hr class="chapter-divider">
+
+    <!-- ========== CHAPTER 5: ALGORITHMS ========== -->
+    <div class="section-hero" id="algo-search">
+      <div class="chapter-badge">অধ্যায় ৫</div>
+      <h1>Algorithms — কম্পিউটারের সমস্যা সমাধানের রেসিপি</h1>
+      <p style="color:var(--text2);font-size:16px;">Algorithm হলো ধাপে ধাপে সমস্যা সমাধানের পদ্ধতি — রান্নার রেসিপির মতো।</p>
+    </div>
+
+    <!-- LINEAR SEARCH -->
+    <h2 id="algo-search">🔍 Search Algorithms</h2>
+
+    <h3>১. Linear Search (সরল খোঁজা)</h3>
+    <p><strong>শিশুদের ভাষায়:</strong> তুমি একটা লম্বা লাইনে দাঁড়ানো মানুষের মধ্যে তোমার বন্ধুকে খুঁজছ। প্রথম থেকে শুরু করে একে একে দেখছ — "তুমি কি আমার বন্ধু? না। তুমি? না..." — যতক্ষণ না পাও।</p>
+
+    <div class="card">
+      <span class="complexity-badge c-best">Best: O(1)</span>
+      <span class="complexity-badge c-avg" style="margin-left:8px;">Average: O(n)</span>
+      <span class="complexity-badge c-worst" style="margin-left:8px;">Worst: O(n)</span>
+    </div>
+
+    <pre><code><span class="kw">def</span> <span class="fn">linear_search</span>(data, target):
+    <span class="st">"""
+    ML Use Case: Feature validation, outlier detection
+    data: list of values (e.g., predictions, feature values)
+    target: value to find
+    """</span>
+    <span class="kw">for</span> i, value <span class="kw">in</span> <span class="fn">enumerate</span>(data):
+        <span class="kw">if</span> value == target:
+            <span class="kw">return</span> i  <span class="cm"># index ফেরত দাও</span>
+    <span class="kw">return</span> -<span class="nm">1</span>  <span class="cm"># পাওয়া যায়নি</span>
+
+<span class="cm"># ML Project উদাহরণ: একটা prediction list-এ নির্দিষ্ট class খোঁজা</span>
+predictions = [<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">1</span>, <span class="nm">0</span>, <span class="nm">2</span>]
+idx = <span class="fn">linear_search</span>(predictions, <span class="nm">2</span>)
+<span class="fn">print</span>(<span class="st">f"Class 2 প্রথম পাওয়া গেছে index: {idx}"</span>)  <span class="cm"># 2</span></code></pre>
+
+    <!-- BINARY SEARCH -->
+    <h3>২. Binary Search (অর্ধেক করে খোঁজা)</h3>
+    <p><strong>শিশুদের ভাষায়:</strong> তুমি একটা dictionary-তে "mango" খুঁজছ। মাঝখানে খুললে "lion" — তুমি জানো mango আগে, তাই পেছনের অর্ধেক ফেলে দাও। আবার মাঝখানে দেখো... এভাবে অর্ধেক করতে থাকো।</p>
+    <p><strong>শর্ত:</strong> Data অবশ্যই sorted থাকতে হবে।</p>
+
+    <div class="card">
+      <span class="complexity-badge c-best">Best: O(1)</span>
+      <span class="complexity-badge c-avg" style="margin-left:8px;">Average: O(log n)</span>
+      <span class="complexity-badge c-worst" style="margin-left:8px;">Worst: O(log n)</span>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 680 140" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+        <!-- Array -->
+        <text x="30" y="30" fill="#94a3b8" font-size="12" font-family="Hind Siliguri,sans-serif">Target: 47 খুঁজছি</text>
+
+        <!-- Step 1: full array -->
+        <text x="30" y="55" fill="#6b7280" font-size="11" font-family="Hind Siliguri,sans-serif">Step 1:</text>
+        <g transform="translate(90, 40)">
+          <rect x="0" y="0" width="50" height="28" rx="4" fill="#1e2535" stroke="#2a3550"/>
+          <text x="25" y="19" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="JetBrains Mono,monospace">5</text>
+          <rect x="52" y="0" width="50" height="28" rx="4" fill="#1e2535" stroke="#2a3550"/>
+          <text x="77" y="19" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="JetBrains Mono,monospace">12</text>
+          <rect x="104" y="0" width="50" height="28" rx="4" fill="#1e2535" stroke="#2a3550"/>
+          <text x="129" y="19" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="JetBrains Mono,monospace">23</text>
+          <rect x="156" y="0" width="50" height="28" rx="4" fill="#4f8ef730" stroke="#4f8ef7" stroke-width="2"/>
+          <text x="181" y="19" text-anchor="middle" fill="#4f8ef7" font-size="13" font-weight="bold" font-family="JetBrains Mono,monospace">35</text>
+          <text x="181" y="42" text-anchor="middle" fill="#4f8ef7" font-size="10" font-family="Hind Siliguri,sans-serif">mid</text>
+          <rect x="208" y="0" width="50" height="28" rx="4" fill="#1e2535" stroke="#2a3550"/>
+          <text x="233" y="19" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="JetBrains Mono,monospace">47</text>
+          <rect x="260" y="0" width="50" height="28" rx="4" fill="#1e2535" stroke="#2a3550"/>
+          <text x="285" y="19" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="JetBrains Mono,monospace">56</text>
+          <rect x="312" y="0" width="50" height="28" rx="4" fill="#1e2535" stroke="#2a3550"/>
+          <text x="337" y="19" text-anchor="middle" fill="#94a3b8" font-size="13" font-family="JetBrains Mono,monospace">78</text>
+          <text x="181" y="-8" text-anchor="middle" fill="#10b981" font-size="10" font-family="Hind Siliguri,sans-serif">35 &lt; 47 → ডান দিকে দেখো</text>
+        </g>
+
+        <!-- Step 2 -->
+        <text x="30" y="112" fill="#6b7280" font-size="11" font-family="Hind Siliguri,sans-serif">Step 2:</text>
+        <g transform="translate(360, 97)">
+          <rect x="0" y="0" width="50" height="28" rx="4" fill="#ef444415" stroke="#ef444440"/>
+          <text x="25" y="19" text-anchor="middle" fill="#6b7280" font-size="13" font-family="JetBrains Mono,monospace">47</text>
+          <text x="25" y="42" text-anchor="middle" fill="#10b981" font-size="10" font-family="Hind Siliguri,sans-serif">✓ পেয়েছি!</text>
+          <rect x="52" y="0" width="50" height="28" rx="4" fill="#1e2535" stroke="#2a3550" stroke-dasharray="3"/>
+          <text x="77" y="19" text-anchor="middle" fill="#6b7280" font-size="13" font-family="JetBrains Mono,monospace">56</text>
+          <rect x="104" y="0" width="50" height="28" rx="4" fill="#1e2535" stroke="#2a3550" stroke-dasharray="3"/>
+          <text x="129" y="19" text-anchor="middle" fill="#6b7280" font-size="13" font-family="JetBrains Mono,monospace">78</text>
+        </g>
+      </svg>
+    </div>
+
+    <pre><code><span class="kw">def</span> <span class="fn">binary_search</span>(sorted_arr, target):
+    <span class="st">"""
+    ML Use Case: Hyperparameter search, threshold finding,
+    sorted prediction score-এ class boundary খোঁজা
+    """</span>
+    left, right = <span class="nm">0</span>, <span class="fn">len</span>(sorted_arr) - <span class="nm">1</span>
+
+    <span class="kw">while</span> left &lt;= right:
+        mid = (left + right) // <span class="nm">2</span>
+
+        <span class="kw">if</span> sorted_arr[mid] == target:
+            <span class="kw">return</span> mid
+        <span class="kw">elif</span> sorted_arr[mid] &lt; target:
+            left = mid + <span class="nm">1</span>   <span class="cm"># ডান দিকে যাও</span>
+        <span class="kw">else</span>:
+            right = mid - <span class="nm">1</span>  <span class="cm"># বাম দিকে যাও</span>
+
+    <span class="kw">return</span> -<span class="nm">1</span>
+
+<span class="cm"># ML Project: Classification threshold খোঁজা</span>
+<span class="cm"># Sorted confidence scores থেকে 0.8 threshold কোথায়?</span>
+sorted_scores = [<span class="nm">0.1</span>, <span class="nm">0.3</span>, <span class="nm">0.5</span>, <span class="nm">0.72</span>, <span class="nm">0.8</span>, <span class="nm">0.91</span>, <span class="nm">0.95</span>]
+idx = <span class="fn">binary_search</span>(sorted_scores, <span class="nm">0.8</span>)
+<span class="fn">print</span>(<span class="st">f"Threshold 0.8 index: {idx}"</span>)  <span class="cm"># 4</span>
+
+<span class="cm"># Real ML use: bisect module দিয়ে আরও efficient</span>
+<span class="kw">import</span> bisect
+pos = bisect.bisect_left(sorted_scores, <span class="nm">0.8</span>)
+<span class="fn">print</span>(<span class="st">f"Insert position for 0.8: {pos}"</span>)</code></pre>
+
+    <!-- SORTING -->
+    <hr class="chapter-divider" style="margin:40px 0 30px;">
+    <h2 id="algo-sort">📊 Sorting Algorithms</h2>
+
+    <h3>৩. Bubble Sort (বুদবুদের মতো)</h3>
+    <p><strong>শিশুদের ভাষায়:</strong> পানিতে বুদবুদ উপরে উঠে যায়। এই algorithm-এ বড় সংখ্যা গুলো বুদবুদের মতো আস্তে আস্তে শেষে চলে যায়।</p>
+    <p>পাশের দুটো সংখ্যা দেখো — বড়টা যদি আগে থাকে, swap করো। সারা list একবার করলে সবচেয়ে বড় সংখ্যা শেষে চলে যায়। আবার করো...</p>
+
+    <div class="card">
+      <span class="complexity-badge c-best">Best: O(n)</span>
+      <span class="complexity-badge c-avg" style="margin-left:8px;">Average: O(n²)</span>
+      <span class="complexity-badge c-worst" style="margin-left:8px;">Worst: O(n²)</span>
+      <p style="margin-top:8px;font-size:13px;color:var(--text3);">⚠️ বড় data-তে ব্যবহার করা উচিত না। Concept বোঝার জন্য গুরুত্বপূর্ণ।</p>
+    </div>
+
+    <pre><code><span class="kw">def</span> <span class="fn">bubble_sort</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    arr = arr.copy()  <span class="cm"># original change করব না</span>
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+        swapped = <span class="kw">False</span>
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">0</span>, n - i - <span class="nm">1</span>):
+            <span class="kw">if</span> arr[j] > arr[j + <span class="nm">1</span>]:
+                arr[j], arr[j + <span class="nm">1</span>] = arr[j + <span class="nm">1</span>], arr[j]
+                swapped = <span class="kw">True</span>
+        <span class="kw">if not</span> swapped:  <span class="cm"># কোনো swap না হলে sorted!</span>
+            <span class="kw">break</span>
+    <span class="kw">return</span> arr
+
+<span class="cm"># উদাহরণ</span>
+data = [<span class="nm">64</span>, <span class="nm">34</span>, <span class="nm">25</span>, <span class="nm">12</span>, <span class="nm">22</span>]
+<span class="fn">print</span>(<span class="fn">bubble_sort</span>(data))  <span class="cm"># [12, 22, 25, 34, 64]</span></code></pre>
+
+    <!-- MERGE SORT -->
+    <h3>৪. Merge Sort (ভেঙে জোড়া দেওয়া)</h3>
+    <p><strong>শিশুদের ভাষায়:</strong> ৮জন ছাত্রের একটা class-কে height অনুযায়ী সাজাতে হবে। আগে দুই দলে ভাগ করো, তারপর প্রতি দলকে আবার দুই দলে... যতক্ষণ না এক জন করে দল হয়। তারপর দুই দল মেলাও, মেলাও, মেলাও — sorted!</p>
+
+    <div class="card">
+      <span class="complexity-badge c-best">Best: O(n log n)</span>
+      <span class="complexity-badge c-avg" style="margin-left:8px;">Average: O(n log n)</span>
+      <span class="complexity-badge c-worst" style="margin-left:8px;">Worst: O(n log n)</span>
+      <p style="margin-top:8px;font-size:13px;color:var(--text3);">✅ Consistent performance। Extra space লাগে O(n)।</p>
+    </div>
+
+    <pre><code><span class="kw">def</span> <span class="fn">merge_sort</span>(arr):
+    <span class="st">"""
+    ML Use Case: Large dataset sorting, ranking predictions,
+    feature importance sorting
+    """</span>
+    <span class="kw">if</span> <span class="fn">len</span>(arr) &lt;= <span class="nm">1</span>:
+        <span class="kw">return</span> arr
+
+    mid = <span class="fn">len</span>(arr) // <span class="nm">2</span>
+    left = <span class="fn">merge_sort</span>(arr[:mid])   <span class="cm"># বাম অর্ধেক</span>
+    right = <span class="fn">merge_sort</span>(arr[mid:])  <span class="cm"># ডান অর্ধেক</span>
+
+    <span class="kw">return</span> <span class="fn">merge</span>(left, right)
+
+<span class="kw">def</span> <span class="fn">merge</span>(left, right):
+    result = []
+    i = j = <span class="nm">0</span>
+
+    <span class="kw">while</span> i &lt; <span class="fn">len</span>(left) <span class="kw">and</span> j &lt; <span class="fn">len</span>(right):
+        <span class="kw">if</span> left[i] &lt;= right[j]:
+            result.append(left[i])
+            i += <span class="nm">1</span>
+        <span class="kw">else</span>:
+            result.append(right[j])
+            j += <span class="nm">1</span>
+
+    result.extend(left[i:])
+    result.extend(right[j:])
+    <span class="kw">return</span> result
+
+<span class="cm"># ML Project: Feature importance sort করা</span>
+feature_importances = [
+    (<span class="st">"age"</span>, <span class="nm">0.23</span>), (<span class="st">"income"</span>, <span class="nm">0.45</span>), (<span class="st">"education"</span>, <span class="nm">0.12</span>),
+    (<span class="st">"experience"</span>, <span class="nm">0.38</span>), (<span class="st">"location"</span>, <span class="nm">0.08</span>)
+]
+<span class="cm"># Score অনুযায়ী sort (Python built-in, internally uses Timsort)</span>
+sorted_features = <span class="fn">sorted</span>(feature_importances, key=<span class="kw">lambda</span> x: x[<span class="nm">1</span>], reverse=<span class="kw">True</span>)
+<span class="fn">print</span>(<span class="st">"Top features:"</span>, sorted_features[:3])</code></pre>
+
+    <!-- QUICK SORT -->
+    <h3>৫. Quick Sort (দ্রুত ভাগ করে সাজানো)</h3>
+    <p><strong>শিশুদের ভাষায়:</strong> একটা সংখ্যা বেছে নাও (pivot)। তার চেয়ে ছোট সব বামে, বড় সব ডানে রাখো। তারপর বাম আর ডান দলে আবার একই কাজ করো।</p>
+
+    <div class="card">
+      <span class="complexity-badge c-best">Best: O(n log n)</span>
+      <span class="complexity-badge c-avg" style="margin-left:8px;">Average: O(n log n)</span>
+      <span class="complexity-badge c-worst" style="margin-left:8px;">Worst: O(n²)</span>
+      <p style="margin-top:8px;font-size:13px;color:var(--text3);">✅ Average case-এ সবচেয়ে দ্রুত। In-place সাজানো যায়।</p>
+    </div>
+
+    <pre><code><span class="kw">def</span> <span class="fn">quicksort</span>(arr):
+    <span class="kw">if</span> <span class="fn">len</span>(arr) &lt;= <span class="nm">1</span>:
+        <span class="kw">return</span> arr
+    pivot = arr[<span class="fn">len</span>(arr) // <span class="nm">2</span>]
+    left  = [x <span class="kw">for</span> x <span class="kw">in</span> arr <span class="kw">if</span> x &lt; pivot]
+    mid   = [x <span class="kw">for</span> x <span class="kw">in</span> arr <span class="kw">if</span> x == pivot]
+    right = [x <span class="kw">for</span> x <span class="kw">in</span> arr <span class="kw">if</span> x > pivot]
+    <span class="kw">return</span> <span class="fn">quicksort</span>(left) + mid + <span class="fn">quicksort</span>(right)
+
+<span class="cm"># ML: Prediction confidence score sort করা</span>
+scores = [<span class="nm">0.82</span>, <span class="nm">0.34</span>, <span class="nm">0.91</span>, <span class="nm">0.55</span>, <span class="nm">0.76</span>, <span class="nm">0.23</span>]
+<span class="fn">print</span>(<span class="fn">quicksort</span>(scores))
+<span class="cm"># [0.23, 0.34, 0.55, 0.76, 0.82, 0.91]</span></code></pre>
+
+    <!-- TREE -->
+    <hr class="chapter-divider" style="margin:40px 0 30px;">
+    <h2 id="algo-tree">🌳 Tree Traversal Algorithms</h2>
+    <p>Decision Tree, Gradient Boosting — ML-এর অনেক algorithm tree structure ব্যবহার করে। Tree traverse করতে পারলে অনেক কিছু বুঝবে।</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 580 240" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+        <!-- Tree nodes -->
+        <circle cx="290" cy="30" r="24" fill="#4f8ef730" stroke="#4f8ef7" stroke-width="2"/>
+        <text x="290" y="36" text-anchor="middle" fill="#4f8ef7" font-size="16" font-weight="bold" font-family="JetBrains Mono,monospace">1</text>
+
+        <line x1="270" y1="50" x2="170" y2="90" stroke="#2a3550" stroke-width="1.5"/>
+        <line x1="310" y1="50" x2="410" y2="90" stroke="#2a3550" stroke-width="1.5"/>
+
+        <circle cx="170" cy="110" r="24" fill="#10b98130" stroke="#10b981" stroke-width="2"/>
+        <text x="170" y="116" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold" font-family="JetBrains Mono,monospace">2</text>
+
+        <circle cx="410" cy="110" r="24" fill="#10b98130" stroke="#10b981" stroke-width="2"/>
+        <text x="410" y="116" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold" font-family="JetBrains Mono,monospace">3</text>
+
+        <line x1="152" y1="130" x2="90" y2="175" stroke="#2a3550" stroke-width="1.5"/>
+        <line x1="188" y1="130" x2="250" y2="175" stroke="#2a3550" stroke-width="1.5"/>
+        <line x1="390" y1="130" x2="340" y2="175" stroke="#2a3550" stroke-width="1.5"/>
+        <line x1="430" y1="130" x2="490" y2="175" stroke="#2a3550" stroke-width="1.5"/>
+
+        <circle cx="90" cy="195" r="24" fill="#f59e0b30" stroke="#f59e0b" stroke-width="2"/>
+        <text x="90" y="201" text-anchor="middle" fill="#f59e0b" font-size="16" font-weight="bold" font-family="JetBrains Mono,monospace">4</text>
+
+        <circle cx="250" cy="195" r="24" fill="#f59e0b30" stroke="#f59e0b" stroke-width="2"/>
+        <text x="250" y="201" text-anchor="middle" fill="#f59e0b" font-size="16" font-weight="bold" font-family="JetBrains Mono,monospace">5</text>
+
+        <circle cx="340" cy="195" r="24" fill="#f59e0b30" stroke="#f59e0b" stroke-width="2"/>
+        <text x="340" y="201" text-anchor="middle" fill="#f59e0b" font-size="16" font-weight="bold" font-family="JetBrains Mono,monospace">6</text>
+
+        <circle cx="490" cy="195" r="24" fill="#f59e0b30" stroke="#f59e0b" stroke-width="2"/>
+        <text x="490" y="201" text-anchor="middle" fill="#f59e0b" font-size="16" font-weight="bold" font-family="JetBrains Mono,monospace">7</text>
+
+        <!-- Legend -->
+        <text x="30" y="235" fill="#4f8ef7" font-size="11" font-family="Hind Siliguri,sans-serif">Inorder: 4,2,5,1,6,3,7</text>
+        <text x="200" y="235" fill="#10b981" font-size="11" font-family="Hind Siliguri,sans-serif">Preorder: 1,2,4,5,3,6,7</text>
+        <text x="370" y="235" fill="#f59e0b" font-size="11" font-family="Hind Siliguri,sans-serif">Postorder: 4,5,2,6,7,3,1</text>
+      </svg>
+      <figcaption>একটা Binary Tree — তিনভাবে traverse করা যায়</figcaption>
+    </div>
+
+    <pre><code><span class="kw">class</span> <span class="cl">TreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, val):
+        self.val = val
+        self.left = <span class="kw">None</span>
+        self.right = <span class="kw">None</span>
+
+<span class="cm"># Inorder: Left → Root → Right (sorted order দেয়)</span>
+<span class="kw">def</span> <span class="fn">inorder</span>(node, result=<span class="kw">None</span>):
+    <span class="kw">if</span> result <span class="kw">is None</span>: result = []  <span class="cm"># mutable default arg bug fix</span>
+    <span class="kw">if</span> node:
+        <span class="fn">inorder</span>(node.left, result)
+        result.append(node.val)
+        <span class="fn">inorder</span>(node.right, result)
+    <span class="kw">return</span> result
+
+<span class="cm"># Preorder: Root → Left → Right (tree copy করতে)</span>
+<span class="kw">def</span> <span class="fn">preorder</span>(node, result=<span class="kw">None</span>):
+    <span class="kw">if</span> result <span class="kw">is None</span>: result = []  <span class="cm"># mutable default arg bug fix</span>
+    <span class="kw">if</span> node:
+        result.append(node.val)
+        <span class="fn">preorder</span>(node.left, result)
+        <span class="fn">preorder</span>(node.right, result)
+    <span class="kw">return</span> result
+
+<span class="cm"># BFS (Level Order) — Decision Tree-এ level দেখতে</span>
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">bfs</span>(root):
+    <span class="st">"""ML Use: Decision Tree structure বোঝা, max depth বের করা"""</span>
+    <span class="kw">if not</span> root:
+        <span class="kw">return</span> []
+    result, queue = [], deque([root])
+    <span class="kw">while</span> queue:
+        node = queue.popleft()
+        result.append(node.val)
+        <span class="kw">if</span> node.left: queue.append(node.left)
+        <span class="kw">if</span> node.right: queue.append(node.right)
+    <span class="kw">return</span> result
+
+<span class="cm"># ML Application: Decision Tree depth calculation</span>
+<span class="kw">def</span> <span class="fn">max_depth</span>(node):
+    <span class="st">"""
+    ML: Decision Tree overfit হচ্ছে কিনা check করতে depth measure করি
+    """</span>
+    <span class="kw">if not</span> node:
+        <span class="kw">return</span> <span class="nm">0</span>
+    <span class="kw">return</span> <span class="nm">1</span> + <span class="fn">max</span>(<span class="fn">max_depth</span>(node.left), <span class="fn">max_depth</span>(node.right))</code></pre>
+
+    <!-- GRAPH -->
+    <hr class="chapter-divider" style="margin:40px 0 30px;">
+    <h2 id="algo-graph">🕸️ Graph Algorithms</h2>
+    <p>Graph হলো nodes (বিন্দু) এবং edges (সংযোগ) দিয়ে তৈরি structure। Social network, recommendation system, knowledge graph — সব Graph।</p>
+
+    <h3>৬. BFS (Breadth-First Search)</h3>
+    <p><strong>শিশুদের ভাষায়:</strong> তুমি একটা বাড়ির center room থেকে শুরু করে সব room visit করতে চাও। আগে কাছের সব room দেখো, তারপর তাদের পাশের room...</p>
+
+    <pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">bfs_graph</span>(graph, start):
+    <span class="st">"""
+    ML Use: Recommendation system-এ similar users খোঁজা,
+    Knowledge graph traversal, Feature dependency chain
+    """</span>
+    visited = <span class="fn">set</span>()
+    queue = deque([start])
+    order = []
+
+    <span class="kw">while</span> queue:
+        node = queue.popleft()
+        <span class="kw">if</span> node <span class="kw">not in</span> visited:
+            visited.add(node)
+            order.append(node)
+            <span class="kw">for</span> neighbor <span class="kw">in</span> graph.get(node, []):
+                <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+                    queue.append(neighbor)
+    <span class="kw">return</span> order
+
+<span class="cm"># ML: User similarity graph (Collaborative Filtering)</span>
+user_similarity = {
+    <span class="st">'user_A'</span>: [<span class="st">'user_B'</span>, <span class="st">'user_C'</span>],
+    <span class="st">'user_B'</span>: [<span class="st">'user_A'</span>, <span class="st">'user_D'</span>],
+    <span class="st">'user_C'</span>: [<span class="st">'user_A'</span>, <span class="st">'user_E'</span>],
+    <span class="st">'user_D'</span>: [<span class="st">'user_B'</span>],
+    <span class="st">'user_E'</span>: [<span class="st">'user_C'</span>]
+}
+similar_users = <span class="fn">bfs_graph</span>(user_similarity, <span class="st">'user_A'</span>)
+<span class="fn">print</span>(<span class="st">"Similar users chain:"</span>, similar_users)</code></pre>
+
+    <h3>৭. DFS (Depth-First Search)</h3>
+    <p><strong>শিশুদের ভাষায়:</strong> Maze-এর মধ্যে পথ খোঁজা। একটা দিকে যাও যতদূর যাওয়া যায়,막히লে ফিরে এসে অন্য দিকে চেষ্টা করো।</p>
+
+    <pre><code><span class="kw">def</span> <span class="fn">dfs_graph</span>(graph, start, visited=<span class="kw">None</span>):
+    <span class="st">"""
+    ML Use: Connected components খোঁজা, Cycle detection,
+    Dependency resolution (MLflow pipeline)
+    """</span>
+    <span class="kw">if</span> visited <span class="kw">is None</span>:
+        visited = <span class="fn">set</span>()
+    visited.add(start)
+    result = [start]
+    <span class="kw">for</span> neighbor <span class="kw">in</span> graph.get(start, []):
+        <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+            result.extend(<span class="fn">dfs_graph</span>(graph, neighbor, visited))
+    <span class="kw">return</span> result
+
+<span class="cm"># ML Pipeline dependency graph</span>
+pipeline_deps = {
+    <span class="st">'data_load'</span>: [<span class="st">'preprocess'</span>],
+    <span class="st">'preprocess'</span>: [<span class="st">'feature_eng'</span>, <span class="st">'split'</span>],
+    <span class="st">'feature_eng'</span>: [<span class="st">'train'</span>],
+    <span class="st">'split'</span>: [<span class="st">'train'</span>],
+    <span class="st">'train'</span>: [<span class="st">'evaluate'</span>],
+    <span class="st">'evaluate'</span>: []
+}
+execution_order = <span class="fn">dfs_graph</span>(pipeline_deps, <span class="st">'data_load'</span>)
+<span class="fn">print</span>(<span class="st">"Pipeline execution order:"</span>, execution_order)</code></pre>
+
+    <!-- DYNAMIC PROGRAMMING -->
+    <hr class="chapter-divider" style="margin:40px 0 30px;">
+    <h2 id="algo-dp">⚡ Dynamic Programming (DP)</h2>
+    <p><strong>শিশুদের ভাষায়:</strong> তুমি মইয়ের সিড়ি বেয়ে উঠছ। একবার ১টা সিড়ি, একবার ২টা সিড়ি — কতভাবে ১০তলায় উঠতে পারবে? প্রতিটা সিড়িতে উঠার উপায় = আগের সিড়ির উপায় + তার আগের সিড়ির উপায়। আগের হিসাব মনে রাখো — বারবার করতে হবে না।</p>
+    <p>DP-এর মূল কথা: <span class="highlight">বড় সমস্যা = ছোট ছোট সমস্যার সমাধান জুড়ে দেওয়া</span>। আর আগের সমাধান মনে রাখো।</p>
+
+    <pre><code><span class="cm"># Example: Fibonacci (DP দিয়ে efficient)</span>
+<span class="kw">def</span> <span class="fn">fibonacci_dp</span>(n):
+    <span class="st">"""Memoization দিয়ে — একই calculation দুইবার করব না"""</span>
+    memo = {}
+    <span class="kw">def</span> <span class="fn">fib</span>(k):
+        <span class="kw">if</span> k <= <span class="nm">1</span>: <span class="kw">return</span> k
+        <span class="kw">if</span> k <span class="kw">in</span> memo: <span class="kw">return</span> memo[k]  <span class="cm"># আগে calculate করা আছে?</span>
+        memo[k] = <span class="fn">fib</span>(k-<span class="nm">1</span>) + <span class="fn">fib</span>(k-<span class="nm">2</span>)
+        <span class="kw">return</span> memo[k]
+    <span class="kw">return</span> <span class="fn">fib</span>(n)
+
+<span class="cm"># ML Application: Sequence length optimization</span>
+<span class="cm"># Longest Common Subsequence — NLP-তে text similarity</span>
+<span class="kw">def</span> <span class="fn">lcs_length</span>(s1, s2):
+    <span class="st">"""
+    ML Use: Text similarity, Edit distance variant,
+    Sequence alignment in bioinformatics ML
+    """</span>
+    m, n = <span class="fn">len</span>(s1), <span class="fn">len</span>(s2)
+    dp = [[<span class="nm">0</span>] * (n + <span class="nm">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(m + <span class="nm">1</span>)]
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, m + <span class="nm">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, n + <span class="nm">1</span>):
+            <span class="kw">if</span> s1[i-<span class="nm">1</span>] == s2[j-<span class="nm">1</span>]:
+                dp[i][j] = dp[i-<span class="nm">1</span>][j-<span class="nm">1</span>] + <span class="nm">1</span>
+            <span class="kw">else</span>:
+                dp[i][j] = <span class="fn">max</span>(dp[i-<span class="nm">1</span>][j], dp[i][j-<span class="nm">1</span>])
+
+    <span class="kw">return</span> dp[m][n]
+
+<span class="cm"># Text similarity check</span>
+text1 = <span class="st">"machine learning"</span>
+text2 = <span class="st">"deep learning"</span>
+similarity = <span class="fn">lcs_length</span>(text1, text2)
+<span class="fn">print</span>(<span class="st">f"Common sequence length: {similarity}"</span>)</code></pre>
+
+    <!-- ML SPECIFIC -->
+    <hr class="chapter-divider" style="margin:40px 0 30px;">
+    <h2 id="algo-ml">🤖 ML-Specific Algorithms (Implementation)</h2>
+
+    <h3>৮. KNN (K-Nearest Neighbors)</h3>
+    <p><strong>শিশুদের ভাষায়:</strong> তুমি নতুন একটা ফল দেখলে — চেনো না। কাছের ৫টা ফল দেখো যেগুলো তোমার পরিচিত। সেই ৫টার মধ্যে ৩টা আম হলে — নতুন ফলটাও আম!</p>
+
+    <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">class</span> <span class="cl">KNNClassifier</span>:
+    <span class="st">"""
+    K-Nearest Neighbors — Distance-based classification
+    Simple কিন্তু powerful। No training phase।
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, k=<span class="nm">3</span>):
+        self.k = k
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, X_train, y_train):
+        <span class="st">"""Training = just memorize data"""</span>
+        self.X_train = np.<span class="fn">array</span>(X_train)
+        self.y_train = np.<span class="fn">array</span>(y_train)
+
+    <span class="kw">def</span> <span class="fn">_euclidean_distance</span>(self, x1, x2):
+        <span class="st">"""দুই point-এর মাঝের দূরত্ব"""</span>
+        <span class="kw">return</span> np.<span class="fn">sqrt</span>(np.<span class="fn">sum</span>((x1 - x2) ** <span class="nm">2</span>))
+
+    <span class="kw">def</span> <span class="fn">predict</span>(self, X_test):
+        <span class="kw">return</span> [self.<span class="fn">_predict_single</span>(x) <span class="kw">for</span> x <span class="kw">in</span> X_test]
+
+    <span class="kw">def</span> <span class="fn">_predict_single</span>(self, x):
+        <span class="cm"># সব training point-এর সাথে দূরত্ব মাপো</span>
+        distances = [
+            self.<span class="fn">_euclidean_distance</span>(x, x_train)
+            <span class="kw">for</span> x_train <span class="kw">in</span> self.X_train
+        ]
+        <span class="cm"># K সবচেয়ে কাছের neighbors</span>
+        k_indices = np.<span class="fn">argsort</span>(distances)[:self.k]
+        k_labels = [self.y_train[i] <span class="kw">for</span> i <span class="kw">in</span> k_indices]
+        <span class="cm"># সবচেয়ে বেশি আসা label = prediction</span>
+        <span class="kw">return</span> Counter(k_labels).most_common(<span class="nm">1</span>)[<span class="nm">0</span>][<span class="nm">0</span>]
+
+<span class="cm"># Test</span>
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_iris
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+
+iris = <span class="fn">load_iris</span>()
+X, y = iris.data, iris.target
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(X, y, test_size=<span class="nm">0.2</span>)
+
+scaler = <span class="fn">StandardScaler</span>()
+X_train_scaled = scaler.<span class="fn">fit_transform</span>(X_train)
+X_test_scaled  = scaler.<span class="fn">transform</span>(X_test)
+
+knn = <span class="cl">KNNClassifier</span>(k=<span class="nm">5</span>)
+knn.<span class="fn">fit</span>(X_train_scaled, y_train)
+preds = knn.<span class="fn">predict</span>(X_test_scaled)
+
+accuracy = np.<span class="fn">mean</span>(np.<span class="fn">array</span>(preds) == y_test)
+<span class="fn">print</span>(<span class="st">f"KNN Accuracy: {accuracy:.3f}"</span>)</code></pre>
+
+    <!-- GRADIENT DESCENT -->
+    <h3>৯. Gradient Descent</h3>
+    <p><strong>শিশুদের ভাষায়:</strong> তুমি চোখ বন্ধ করে একটা পাহাড়ের নিচে নামতে চাও। পায়ের নিচে মাটি কোন দিকে ঢালু সেটা feel করো, সেই দিকে এক ধাপ নামো। আবার feel করো... এভাবে সবচেয়ে নিচে (minimum) পৌঁছাও।</p>
+    <p>ML-এ এটা দিয়ে model-এর <strong>error কমানো</strong> হয়।</p>
+
+    <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="kw">class</span> <span class="cl">LinearRegressionGD</span>:
+    <span class="st">"""
+    Gradient Descent দিয়ে Linear Regression।
+    ML Engineering-এর মূল ভিত্তি।
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, learning_rate=<span class="nm">0.01</span>, epochs=<span class="nm">1000</span>):
+        self.lr = learning_rate
+        self.epochs = epochs
+        self.losses = []  <span class="cm"># loss track করব</span>
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, X, y):
+        n_samples = X.shape[<span class="nm">0</span>]
+        <span class="cm"># Weights initialize করো</span>
+        self.weights = np.<span class="fn">zeros</span>(X.shape[<span class="nm">1</span>])
+        self.bias = <span class="nm">0</span>
+
+        <span class="kw">for</span> epoch <span class="kw">in</span> <span class="fn">range</span>(self.epochs):
+            <span class="cm"># Forward pass: prediction</span>
+            y_pred = np.<span class="fn">dot</span>(X, self.weights) + self.bias
+
+            <span class="cm"># Loss (MSE)</span>
+            loss = np.<span class="fn">mean</span>((y_pred - y) ** <span class="nm">2</span>)
+            self.losses.append(loss)
+
+            <span class="cm"># Gradients (পাহাড়ের ঢালু)</span>
+            dw = (<span class="nm">2</span>/n_samples) * np.<span class="fn">dot</span>(X.T, (y_pred - y))
+            db = (<span class="nm">2</span>/n_samples) * np.<span class="fn">sum</span>(y_pred - y)
+
+            <span class="cm"># Update weights (ঢালু অনুযায়ী নামো)</span>
+            self.weights -= self.lr * dw
+            self.bias    -= self.lr * db
+
+            <span class="kw">if</span> epoch % <span class="nm">100</span> == <span class="nm">0</span>:
+                <span class="fn">print</span>(<span class="st">f"Epoch {epoch}: Loss = {loss:.4f}"</span>)
+
+    <span class="kw">def</span> <span class="fn">predict</span>(self, X):
+        <span class="kw">return</span> np.<span class="fn">dot</span>(X, self.weights) + self.bias
+
+<span class="cm"># House price prediction example</span>
+np.random.<span class="fn">seed</span>(<span class="nm">42</span>)
+X = np.random.<span class="fn">randn</span>(<span class="nm">100</span>, <span class="nm">2</span>)  <span class="cm"># 2 features: size, rooms</span>
+y = <span class="nm">3</span>*X[:,<span class="nm">0</span>] + <span class="nm">2</span>*X[:,<span class="nm">1</span>] + np.random.<span class="fn">randn</span>(<span class="nm">100</span>)*<span class="nm">0.1</span>
+
+model = <span class="cl">LinearRegressionGD</span>(learning_rate=<span class="nm">0.1</span>, epochs=<span class="nm">500</span>)
+model.<span class="fn">fit</span>(X, y)
+<span class="fn">print</span>(<span class="st">f"Learned weights: {model.weights}"</span>)  <span class="cm"># ~[3, 2]</span></code></pre>
+
+    <!-- ML EXERCISES -->
+    <div class="exercise" id="algo-exercise">
+      <div class="exercise-header">
+        <div class="exercise-badge">ML Engineering Project Exercise</div>
+        <h3>অধ্যায় ৫: Algorithms — Real Project চর্চা</h3>
+      </div>
+
+      <h4>🏋️ Project Exercise 1: Model Selection Pipeline</h4>
+      <p style="color:var(--text2);">তুমি একটা Binary Classification task করছ। নিচের কাজগুলো করো:</p>
+      <ol>
+        <li>Binary search ব্যবহার করে optimal threshold খোঁজো (precision-recall tradeoff)</li>
+        <li>KNN এবং Logistic Regression-এর accuracy compare করো</li>
+        <li>Feature importance sort করো (merge sort concept)</li>
+      </ol>
+
+      <details>
+        <summary>✅ Solution দেখো</summary>
+        <div class="answer">
+<pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> make_classification
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.neighbors <span class="kw">import</span> KNeighborsClassifier
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> precision_score, recall_score
+<span class="kw">import</span> bisect
+
+<span class="cm"># Data তৈরি করো</span>
+X, y = <span class="fn">make_classification</span>(n_samples=<span class="nm">1000</span>, n_features=<span class="nm">10</span>, random_state=<span class="nm">42</span>)
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(X, y, test_size=<span class="nm">0.2</span>)
+
+<span class="cm"># Model train করো</span>
+lr = <span class="fn">LogisticRegression</span>()
+lr.<span class="fn">fit</span>(X_train, y_train)
+probas = lr.<span class="fn">predict_proba</span>(X_test)[:, <span class="nm">1</span>]
+
+<span class="cm"># Binary search দিয়ে threshold খোঁজা</span>
+sorted_probas = <span class="fn">sorted</span>(probas)
+
+<span class="kw">def</span> <span class="fn">find_best_threshold</span>(probas, y_true, target_precision=<span class="nm">0.9</span>):
+    <span class="st">"""Target precision-এ সবচেয়ে কম threshold খোঁজো"""</span>
+    thresholds = np.<span class="fn">linspace</span>(<span class="nm">0.1</span>, <span class="nm">0.99</span>, <span class="nm">100</span>)
+    best_threshold = <span class="nm">0.5</span>
+
+    left, right = <span class="nm">0</span>, <span class="fn">len</span>(thresholds) - <span class="nm">1</span>
+    <span class="kw">while</span> left &lt;= right:
+        mid = (left + right) // <span class="nm">2</span>
+        t = thresholds[mid]
+        preds = (probas >= t).astype(<span class="fn">int</span>)
+        prec = <span class="fn">precision_score</span>(y_true, preds, zero_division=<span class="nm">0</span>)
+
+        <span class="kw">if</span> prec >= target_precision:
+            best_threshold = t
+            right = mid - <span class="nm">1</span>  <span class="cm"># আরও কম threshold চেষ্টা করো</span>
+        <span class="kw">else</span>:
+            left = mid + <span class="nm">1</span>
+
+    <span class="kw">return</span> best_threshold
+
+threshold = <span class="fn">find_best_threshold</span>(probas, y_test)
+<span class="fn">print</span>(<span class="st">f"Best threshold for 90% precision: {threshold:.3f}"</span>)
+
+<span class="cm"># Feature importance sort করো</span>
+features = [<span class="st">f"feature_{i}"</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">10</span>)]
+importances = <span class="fn">abs</span>(lr.coef_[<span class="nm">0</span>])
+sorted_features = <span class="fn">sorted</span>(
+    <span class="fn">zip</span>(features, importances),
+    key=<span class="kw">lambda</span> x: x[<span class="nm">1</span>],
+    reverse=<span class="kw">True</span>
+)
+<span class="fn">print</span>(<span class="st">"\nTop 5 Features:"</span>)
+<span class="kw">for</span> name, imp <span class="kw">in</span> sorted_features[:5]:
+    <span class="fn">print</span>(<span class="st">f"  {name}: {imp:.4f}"</span>)</code></pre>
+        </div>
+      </details>
+
+      <h4 style="margin-top:20px;">🏋️ Project Exercise 2: Graph-based Feature Dependencies</h4>
+      <p style="color:var(--text2);">তোমার ML pipeline-এ feature engineering steps আছে যেগুলো একটার উপর আরেকটা নির্ভর করে। Topological sort দিয়ে execution order বের করো।</p>
+
+      <details>
+        <summary>✅ Solution দেখো</summary>
+        <div class="answer">
+<pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">topological_sort</span>(graph):
+    <span class="st">"""
+    Kahn's algorithm — ML pipeline ordering
+    কোন step আগে run করতে হবে?
+    """</span>
+    in_degree = {node: <span class="nm">0</span> <span class="kw">for</span> node <span class="kw">in</span> graph}
+    <span class="kw">for</span> node <span class="kw">in</span> graph:
+        <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+            in_degree[neighbor] = in_degree.get(neighbor, <span class="nm">0</span>) + <span class="nm">1</span>
+
+    queue = deque([n <span class="kw">for</span> n <span class="kw">in</span> in_degree <span class="kw">if</span> in_degree[n] == <span class="nm">0</span>])
+    order = []
+
+    <span class="kw">while</span> queue:
+        node = queue.popleft()
+        order.append(node)
+        <span class="kw">for</span> neighbor <span class="kw">in</span> graph.get(node, []):
+            in_degree[neighbor] -= <span class="nm">1</span>
+            <span class="kw">if</span> in_degree[neighbor] == <span class="nm">0</span>:
+                queue.append(neighbor)
+
+    <span class="kw">if</span> <span class="fn">len</span>(order) != <span class="fn">len</span>(graph):
+        <span class="kw">raise</span> <span class="cl">ValueError</span>(<span class="st">"Cycle detected in pipeline!"</span>)
+    <span class="kw">return</span> order
+
+<span class="cm"># ML Pipeline dependency graph</span>
+ml_pipeline = {
+    <span class="st">'raw_data'</span>: [<span class="st">'handle_missing'</span>, <span class="st">'remove_duplicates'</span>],
+    <span class="st">'handle_missing'</span>: [<span class="st">'encode_categoricals'</span>],
+    <span class="st">'remove_duplicates'</span>: [<span class="st">'encode_categoricals'</span>],
+    <span class="st">'encode_categoricals'</span>: [<span class="st">'scale_features'</span>],
+    <span class="st">'scale_features'</span>: [<span class="st">'train_model'</span>],
+    <span class="st">'train_model'</span>: [<span class="st">'evaluate'</span>],
+    <span class="st">'evaluate'</span>: []
+}
+
+execution_order = <span class="fn">topological_sort</span>(ml_pipeline)
+<span class="fn">print</span>(<span class="st">"ML Pipeline Execution Order:"</span>)
+<span class="kw">for</span> i, step <span class="kw">in</span> <span class="fn">enumerate</span>(execution_order, <span class="nm">1</span>):
+    <span class="fn">print</span>(<span class="st">f"  {i}. {step}"</span>)</code></pre>
+        </div>
+      </details>
+
+      <h4 style="margin-top:20px;">🏋️ Project Exercise 3: DP দিয়ে Hyperparameter Search</h4>
+      <p style="color:var(--text2);">Knapsack problem-এর মতো — সীমিত compute budget-এ সবচেয়ে ভালো model configuration খোঁজো।</p>
+
+      <details>
+        <summary>✅ Solution দেখো</summary>
+        <div class="answer">
+<pre><code><span class="kw">def</span> <span class="fn">best_model_config</span>(models, budget):
+    <span class="st">"""
+    Knapsack DP — সীমিত compute time-এ সবচেয়ে বেশি accuracy পাও
+    models: [(name, compute_time, accuracy_gain), ...]
+    budget: total compute hours available
+    """</span>
+    n = <span class="fn">len</span>(models)
+    dp = [[<span class="nm">0.0</span>] * (budget + <span class="nm">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n + <span class="nm">1</span>)]
+
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, n + <span class="nm">1</span>):
+        name, cost, gain = models[i - <span class="nm">1</span>]
+        <span class="kw">for</span> b <span class="kw">in</span> <span class="fn">range</span>(budget + <span class="nm">1</span>):
+            <span class="cm"># এই model না নিলে</span>
+            dp[i][b] = dp[i-<span class="nm">1</span>][b]
+            <span class="cm"># এই model নিলে (যদি budget থাকে)</span>
+            <span class="kw">if</span> b >= cost:
+                dp[i][b] = <span class="fn">max</span>(dp[i][b], dp[i-<span class="nm">1</span>][b-cost] + gain)
+
+    <span class="cm"># কোন models নেওয়া হয়েছে backtrack করো</span>
+    selected = []
+    b = budget
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n, <span class="nm">0</span>, -<span class="nm">1</span>):
+        <span class="kw">if</span> dp[i][b] != dp[i-<span class="nm">1</span>][b]:
+            selected.append(models[i-<span class="nm">1</span>][<span class="nm">0</span>])
+            b -= models[i-<span class="nm">1</span>][<span class="nm">1</span>]
+
+    <span class="kw">return</span> dp[n][budget], selected
+
+<span class="cm"># Available models: (name, compute_hours, accuracy_gain%)</span>
+model_options = [
+    (<span class="st">'logistic_regression'</span>, <span class="nm">1</span>, <span class="nm">0.75</span>),
+    (<span class="st">'random_forest'</span>,       <span class="nm">3</span>, <span class="nm">0.85</span>),
+    (<span class="st">'gradient_boosting'</span>,   <span class="nm">5</span>, <span class="nm">0.92</span>),
+    (<span class="st">'neural_network'</span>,      <span class="nm">8</span>, <span class="nm">0.95</span>),
+    (<span class="st">'svm'</span>,                 <span class="nm">4</span>, <span class="nm">0.88</span>),
+]
+
+total_budget = <span class="nm">10</span>  <span class="cm"># compute hours</span>
+best_gain, chosen = <span class="fn">best_model_config</span>(model_options, total_budget)
+<span class="fn">print</span>(<span class="st">f"Maximum accuracy gain: {best_gain}"</span>)
+<span class="fn">print</span>(<span class="st">f"Selected models: {chosen}"</span>)</code></pre>
+        </div>
+      </details>
+    </div>
+
+    <!-- ALGORITHM SUMMARY TABLE -->
+    <h2>📋 Algorithm Summary — Quick Reference</h2>
+    <table>
+      <tr>
+        <th>Algorithm</th>
+        <th>সেরা ক্ষেত্রে</th>
+        <th>গড় ক্ষেত্রে</th>
+        <th>ML Use Case</th>
+      </tr>
+      <tr>
+        <td>Linear Search</td>
+        <td><span class="complexity-badge c-best">O(1)</span></td>
+        <td><span class="complexity-badge c-avg">O(n)</span></td>
+        <td>Small dataset scan, outlier find</td>
+      </tr>
+      <tr>
+        <td>Binary Search</td>
+        <td><span class="complexity-badge c-best">O(1)</span></td>
+        <td><span class="complexity-badge c-avg">O(log n)</span></td>
+        <td>Threshold tuning, sorted feature lookup</td>
+      </tr>
+      <tr>
+        <td>Merge Sort</td>
+        <td><span class="complexity-badge c-best">O(n log n)</span></td>
+        <td><span class="complexity-badge c-avg">O(n log n)</span></td>
+        <td>Feature importance ranking</td>
+      </tr>
+      <tr>
+        <td>Quick Sort</td>
+        <td><span class="complexity-badge c-best">O(n log n)</span></td>
+        <td><span class="complexity-badge c-avg">O(n log n)</span></td>
+        <td>In-place sorting, prediction ranking</td>
+      </tr>
+      <tr>
+        <td>BFS</td>
+        <td><span class="complexity-badge c-best">O(V+E)</span></td>
+        <td><span class="complexity-badge c-avg">O(V+E)</span></td>
+        <td>Recommendation systems, Level-order</td>
+      </tr>
+      <tr>
+        <td>DFS</td>
+        <td><span class="complexity-badge c-best">O(V+E)</span></td>
+        <td><span class="complexity-badge c-avg">O(V+E)</span></td>
+        <td>Pipeline dependencies, Cycle detection</td>
+      </tr>
+      <tr>
+        <td>Dynamic Programming</td>
+        <td>Problem-dependent</td>
+        <td>Problem-dependent</td>
+        <td>Sequence modeling, Optimization</td>
+      </tr>
+      <tr>
+        <td>KNN</td>
+        <td><span class="complexity-badge c-worst">O(n·d) predict</span></td>
+        <td><span class="complexity-badge c-worst">O(n·d) predict</span></td>
+        <td>Classification, Anomaly detection</td>
+      </tr>
+      <tr>
+        <td>Gradient Descent</td>
+        <td><span class="complexity-badge c-best">O(epochs·n·d)</span></td>
+        <td><span class="complexity-badge c-avg">O(epochs·n·d)</span></td>
+        <td>All neural networks, LR, SVM training</td>
+      </tr>
+    </table>
+
+    <div class="info-box tip">
+      <div class="info-icon">🎯</div>
+      <div class="info-content">
+        <p><strong>সবশেষ কথা:</strong> Algorithm মুখস্থ করো না — বুঝো। প্রতিটা algorithm একটা real problem সমাধান করে। ML Engineering-এ এগুলো জানলে তুমি better code লিখবে, interview-এ confident থাকবে, এবং system design করতে পারবে।</p>
+      </div>
+    </div>
+
+    <!-- ========== BONUS: FILE TRANSFER ========== -->
+    <hr class="chapter-divider">
+
+    <div class="section-hero">
+      <div class="chapter-badge">বোনাস</div>
+      <h1>VM থেকে File Transfer — SCP Command</h1>
+      <p style="color:var(--text2);font-size:16px;">VM-এ তৈরি ফাইল তোমার কম্পিউটারে নামাও, বা তোমার কম্পিউটার থেকে VM-এ পাঠাও।</p>
+    </div>
+
+    <h2>SCP — Secure Copy Protocol</h2>
+    <p>SCP হলো SSH-এর মতোই — কিন্তু এটা দিয়ে ফাইল transfer করা হয়। SSH যেমন remote terminal দেয়, SCP তেমন remote file copy করে।</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+        <rect x="20" y="30" width="200" height="100" rx="10" fill="#1e2535" stroke="#4f8ef7" stroke-width="1.5"/>
+        <text x="120" y="60" text-anchor="middle" fill="#4f8ef7" font-size="13" font-family="Hind Siliguri,sans-serif">💻 তোমার Computer</text>
+        <text x="120" y="82" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="JetBrains Mono,monospace">~/Downloads/</text>
+        <rect x="40" y="95" width="160" height="26" rx="5" fill="#4f8ef720"/>
+        <text x="120" y="112" text-anchor="middle" fill="#4f8ef7" font-size="11" font-family="JetBrains Mono,monospace">model_results.csv</text>
+
+        <!-- Arrow download -->
+        <path d="M 225 70 Q 340 30 455 70" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arr2)"/>
+        <text x="340" y="28" text-anchor="middle" fill="#10b981" font-size="12" font-family="Hind Siliguri,sans-serif">VM → Local (Download)</text>
+
+        <!-- Arrow upload -->
+        <path d="M 455 100 Q 340 140 225 100" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#arr3)"/>
+        <text x="340" y="155" text-anchor="middle" fill="#f59e0b" font-size="12" font-family="Hind Siliguri,sans-serif">Local → VM (Upload)</text>
+
+        <defs>
+          <marker id="arr2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#10b981"/>
+          </marker>
+          <marker id="arr3" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#f59e0b"/>
+          </marker>
+        </defs>
+
+        <rect x="460" y="30" width="200" height="100" rx="10" fill="#1e2535" stroke="#10b981" stroke-width="1.5"/>
+        <text x="560" y="60" text-anchor="middle" fill="#10b981" font-size="13" font-family="Hind Siliguri,sans-serif">🖥️ Remote VM</text>
+        <text x="560" y="82" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="JetBrains Mono,monospace">/home/ubuntu/</text>
+        <rect x="480" y="95" width="160" height="26" rx="5" fill="#10b98120"/>
+        <text x="560" y="112" text-anchor="middle" fill="#10b981" font-size="11" font-family="JetBrains Mono,monospace">model_results.csv</text>
+      </svg>
+      <figcaption>SCP দিয়ে দুই দিকেই ফাইল পাঠানো যায়</figcaption>
+    </div>
+
+    <h3>VM থেকে তোমার Computer-এ Download করা</h3>
+    <pre><code><span class="cm"># Format: scp -i key.pem user@VM_IP:"remote_path" local_path</span>
+<span class="kw">scp</span> -i <span class="st">"my_key.pem"</span> ubuntu@<span class="nm">1.2.3.4</span>:<span class="st">"/home/ubuntu/results.csv"</span> .
+
+<span class="cm"># . মানে current folder-এ রাখো</span>
+<span class="cm"># নির্দিষ্ট folder দিতে চাইলে:</span>
+<span class="kw">scp</span> -i <span class="st">"my_key.pem"</span> ubuntu@<span class="nm">1.2.3.4</span>:<span class="st">"~/model_output.pkl"</span> ~/Downloads/
+
+<span class="cm"># পুরো folder download করতে -r flag</span>
+<span class="kw">scp</span> -r -i <span class="st">"my_key.pem"</span> ubuntu@<span class="nm">1.2.3.4</span>:<span class="st">"~/ml_project"</span> ~/Desktop/</code></pre>
+
+    <h3>তোমার Computer থেকে VM-এ Upload করা</h3>
+    <pre><code><span class="cm"># Format: scp -i key.pem local_path user@VM_IP:"remote_path"</span>
+<span class="kw">scp</span> -i <span class="st">"my_key.pem"</span> ~/data/train.csv ubuntu@<span class="nm">1.2.3.4</span>:<span class="st">"/home/ubuntu/data/"</span>
+
+<span class="cm"># পুরো data folder upload করতে</span>
+<span class="kw">scp</span> -r -i <span class="st">"my_key.pem"</span> ~/my_dataset/ ubuntu@<span class="nm">1.2.3.4</span>:<span class="st">"~/datasets/"</span></code></pre>
+
+    <div class="info-box warn">
+      <div class="info-icon">⚠️</div>
+      <div class="info-content">
+        <p><strong>গুরুত্বপূর্ণ:</strong> শেষে <code>.</code> (dot) দিতে ভুলো না — এটা মানে "এখানেই রাখো"। না দিলে command কাজ করবে না।</p>
+      </div>
+    </div>
+
+    <h3>Exam/Project Archive করে Submit করা</h3>
+    <pre><code><span class="cm">## VM-এ (Step 1): Folder archive করো</span>
+<span class="cm"># আগে parent folder-এ যাও</span>
+<span class="kw">cd</span> ~/ml_project
+
+<span class="cm"># .tar archive তৈরি করো</span>
+<span class="kw">tar</span> -cvf exam_ml_JOY.tar exam_folder/
+<span class="cm"># -c = create, -v = verbose (কী হচ্ছে দেখাবে), -f = file name</span>
+
+<span class="cm">## তোমার Computer-এ (Step 2): Download করো</span>
+<span class="cm"># একটা নতুন terminal খোলো (VM-এ connected না)</span>
+<span class="kw">cd</span> ~/Downloads
+<span class="kw">scp</span> -i <span class="st">"my_key.pem"</span> ubuntu@<span class="nm">1.2.3.4</span>:<span class="st">"~/ml_project/exam_ml_JOY.tar"</span> .</code></pre>
+
+    <hr class="chapter-divider">
+
+    <!-- ========== MORE ML ALGORITHMS ========== -->
+    <div class="section-hero">
+      <div class="chapter-badge">অধ্যায় ৫ — বিস্তারিত</div>
+      <h1>আরও ML Algorithms — Deep Dive</h1>
+    </div>
+
+    <h2>১০. K-Means Clustering</h2>
+    <p><strong>শিশুদের ভাষায়:</strong> ক্লাসের সব ছাত্রকে তিনটা গ্রুপে ভাগ করতে হবে — কিন্তু আগে থেকে কে কোন গ্রুপে সেটা জানা নেই! তাই এভাবে করো: ৩টা জায়গায় দাঁড়াও (center)। সবাই কাছের center-এর কাছে চলে যাক। তারপর center নতুন গ্রুপের মাঝখানে সরে যাক। আবার সবাই কাছের center-এ। এভাবে repeat করো যতক্ষণ না stable হয়।</p>
+
+    <div class="card">
+      <span class="complexity-badge c-avg">Training: O(n·k·i·d)</span>
+      <p style="margin-top:8px;font-size:13px;color:var(--text3);">n=data points, k=clusters, i=iterations, d=features</p>
+    </div>
+
+    <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">class</span> <span class="cl">KMeans</span>:
+    <span class="st">"""
+    K-Means Clustering — Unsupervised Learning
+    ML Use: Customer segmentation, Document clustering,
+    Anomaly detection, Feature learning
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, k=<span class="nm">3</span>, max_iters=<span class="nm">100</span>, tol=<span class="nm">1e-4</span>):
+        self.k = k
+        self.max_iters = max_iters
+        self.tol = tol  <span class="cm"># convergence tolerance</span>
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, X):
+        np.random.<span class="fn">seed</span>(<span class="nm">42</span>)
+        <span class="cm"># Random থেকে k টা point বেছে নাও initial center হিসেবে</span>
+        idx = np.random.<span class="fn">choice</span>(<span class="fn">len</span>(X), self.k, replace=<span class="kw">False</span>)
+        self.centers = X[idx].copy()
+
+        <span class="kw">for</span> iteration <span class="kw">in</span> <span class="fn">range</span>(self.max_iters):
+            <span class="cm"># প্রতিটা point কোন center-এর কাছে?</span>
+            labels = self.<span class="fn">_assign_clusters</span>(X)
+
+            <span class="cm"># নতুন center = প্রতিটা cluster-এর mean</span>
+            new_centers = np.<span class="fn">array</span>([
+                X[labels == j].mean(axis=<span class="nm">0</span>) <span class="kw">if</span> (labels == j).<span class="fn">any</span>() <span class="kw">else</span> self.centers[j]
+                <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(self.k)
+            ])
+
+            <span class="cm"># Converged? (centers আর নড়ছে না)</span>
+            shift = np.<span class="fn">linalg</span>.<span class="fn">norm</span>(new_centers - self.centers)
+            <span class="kw">if</span> shift &lt; self.tol:
+                <span class="fn">print</span>(<span class="st">f"Converged at iteration {iteration}"</span>)
+                <span class="kw">break</span>
+            self.centers = new_centers
+
+        self.labels_ = labels
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">_assign_clusters</span>(self, X):
+        <span class="cm"># প্রতিটা point থেকে সব center-এর দূরত্ব</span>
+        distances = np.<span class="fn">array</span>([
+            np.<span class="fn">linalg</span>.<span class="fn">norm</span>(X - center, axis=<span class="nm">1</span>)
+            <span class="kw">for</span> center <span class="kw">in</span> self.centers
+        ])
+        <span class="kw">return</span> np.<span class="fn">argmin</span>(distances, axis=<span class="nm">0</span>)
+
+    <span class="kw">def</span> <span class="fn">predict</span>(self, X):
+        <span class="kw">return</span> self.<span class="fn">_assign_clusters</span>(X)
+
+    <span class="kw">def</span> <span class="fn">inertia</span>(self, X):
+        <span class="st">"""Within-cluster sum of squares — কম হলে ভালো cluster"""</span>
+        labels = self.<span class="fn">_assign_clusters</span>(X)
+        <span class="kw">return</span> <span class="fn">sum</span>(
+            np.<span class="fn">sum</span>((X[labels == j] - self.centers[j]) ** <span class="nm">2</span>)
+            <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(self.k)
+        )
+
+<span class="cm"># ML Project: Customer Segmentation</span>
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> make_blobs
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+
+X, _ = <span class="fn">make_blobs</span>(n_samples=<span class="nm">300</span>, centers=<span class="nm">4</span>, cluster_std=<span class="nm">0.8</span>, random_state=<span class="nm">42</span>)
+scaler = <span class="fn">StandardScaler</span>()
+X_scaled = scaler.<span class="fn">fit_transform</span>(X)
+
+<span class="cm"># Elbow method: সঠিক k খোঁজা</span>
+inertias = []
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, <span class="nm">8</span>):
+    km = <span class="cl">KMeans</span>(k=k)
+    km.<span class="fn">fit</span>(X_scaled)
+    inertias.append(km.<span class="fn">inertia</span>(X_scaled))
+    <span class="fn">print</span>(<span class="st">f"k={k}: inertia={inertias[-1]:.2f}"</span>)
+
+<span class="cm"># k=4 সবচেয়ে ভালো (elbow point)</span>
+best_km = <span class="cl">KMeans</span>(k=<span class="nm">4</span>)
+best_km.<span class="fn">fit</span>(X_scaled)
+<span class="fn">print</span>(<span class="st">f"\nCluster assignments: {best_km.labels_[:10]}"</span>)</code></pre>
+
+    <h2>১১. Naive Bayes</h2>
+    <p><strong>শিশুদের ভাষায়:</strong> তুমি spam email চিনতে চাও। তুমি জানো যে "free money" শব্দগুলো spam-এ বেশি আসে। একটা নতুন email দেখলে প্রতিটা শব্দ আলাদা আলাদাভাবে বিচার করো — প্রতিটা শব্দের probability গুণ করো — সেটাই Naive Bayes!</p>
+    <p>"Naive" কারণ এটা assume করে প্রতিটা feature সম্পূর্ণ independent — বাস্তবে এটা সত্য না, তবু ভালো কাজ করে।</p>
+
+    <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">class</span> <span class="cl">GaussianNaiveBayes</span>:
+    <span class="st">"""
+    Gaussian Naive Bayes — Continuous features-এর জন্য
+    ML Use: Text classification, Spam detection,
+    Medical diagnosis, Real-time classification
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, X, y):
+        self.classes = np.<span class="fn">unique</span>(y)
+        self.params = {}
+
+        <span class="kw">for</span> c <span class="kw">in</span> self.classes:
+            X_c = X[y == c]
+            self.params[c] = {
+                <span class="st">'prior'</span>: <span class="fn">len</span>(X_c) / <span class="fn">len</span>(X),  <span class="cm"># P(class)</span>
+                <span class="st">'mean'</span>: X_c.mean(axis=<span class="nm">0</span>),        <span class="cm"># প্রতিটা feature-এর mean</span>
+                <span class="st">'var'</span>:  X_c.var(axis=<span class="nm">0</span>) + <span class="nm">1e-9</span>  <span class="cm"># variance (0 হলে সমস্যা)</span>
+            }
+
+    <span class="kw">def</span> <span class="fn">_gaussian_log_prob</span>(self, x, mean, var):
+        <span class="st">"""Gaussian probability log form-এ (numerical stability)"""</span>
+        <span class="kw">return</span> -<span class="nm">0.5</span> * np.<span class="fn">sum</span>(
+            np.<span class="fn">log</span>(<span class="nm">2</span> * np.pi * var) + (x - mean) ** <span class="nm">2</span> / var
+        )
+
+    <span class="kw">def</span> <span class="fn">predict</span>(self, X):
+        predictions = []
+        <span class="kw">for</span> x <span class="kw">in</span> X:
+            scores = {
+                c: np.<span class="fn">log</span>(p[<span class="st">'prior'</span>]) + self.<span class="fn">_gaussian_log_prob</span>(x, p[<span class="st">'mean'</span>], p[<span class="st">'var'</span>])
+                <span class="kw">for</span> c, p <span class="kw">in</span> self.params.items()
+            }
+            predictions.append(<span class="fn">max</span>(scores, key=scores.get))
+        <span class="kw">return</span> np.<span class="fn">array</span>(predictions)
+
+<span class="cm"># Medical Diagnosis example</span>
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_breast_cancer
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+
+data = <span class="fn">load_breast_cancer</span>()
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    data.data, data.target, test_size=<span class="nm">0.2</span>, random_state=<span class="nm">42</span>
+)
+
+gnb = <span class="cl">GaussianNaiveBayes</span>()
+gnb.<span class="fn">fit</span>(X_train, y_train)
+preds = gnb.<span class="fn">predict</span>(X_test)
+accuracy = np.<span class="fn">mean</span>(preds == y_test)
+<span class="fn">print</span>(<span class="st">f"Breast Cancer Diagnosis Accuracy: {accuracy:.3f}"</span>)</code></pre>
+
+    <h2>১২. Decision Tree (সিদ্ধান্ত গাছ)</h2>
+    <p><strong>শিশুদের ভাষায়:</strong> "আজ ক্রিকেট খেলব কি?" — প্রথম প্রশ্ন: "বৃষ্টি হচ্ছে?" হ্যাঁ → খেলব না। না → "রোদ আছে?" হ্যাঁ → খেলব। না → "মাঠ ভেজা?" — এভাবে গাছের মতো প্রশ্ন করতে করতে সিদ্ধান্তে পৌঁছাও।</p>
+    <p>প্রতিটা node-এ সবচেয়ে ভালো question বেছে নেওয়া হয় — যেটা data-কে সবচেয়ে বেশি আলাদা করে। এই measure-কে বলে <span class="highlight">Information Gain</span> বা <span class="highlight">Gini Impurity</span>।</p>
+
+    <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">class</span> <span class="cl">DecisionTreeNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.feature = <span class="kw">None</span>      <span class="cm"># কোন feature-এ split?</span>
+        self.threshold = <span class="kw">None</span>    <span class="cm"># কত value-তে split?</span>
+        self.left = <span class="kw">None</span>         <span class="cm"># বাম শাখা</span>
+        self.right = <span class="kw">None</span>        <span class="cm"># ডান শাখা</span>
+        self.value = <span class="kw">None</span>         <span class="cm"># leaf node-এর prediction</span>
+
+<span class="kw">class</span> <span class="cl">SimpleDecisionTree</span>:
+    <span class="st">"""
+    Decision Tree Classifier — Gini Impurity দিয়ে split
+    ML Use: Feature importance, Interpretable ML,
+    Base learner for Random Forest/Gradient Boosting
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, max_depth=<span class="nm">3</span>, min_samples_split=<span class="nm">2</span>):
+        self.max_depth = max_depth
+        self.min_samples_split = min_samples_split
+        self.root = <span class="kw">None</span>
+
+    <span class="kw">def</span> <span class="fn">_gini</span>(self, y):
+        <span class="st">"""Gini impurity — 0 মানে pure, 0.5 মানে সম্পূর্ণ mixed"""</span>
+        classes, counts = np.<span class="fn">unique</span>(y, return_counts=<span class="kw">True</span>)
+        probs = counts / <span class="fn">len</span>(y)
+        <span class="kw">return</span> <span class="nm">1</span> - np.<span class="fn">sum</span>(probs ** <span class="nm">2</span>)
+
+    <span class="kw">def</span> <span class="fn">_best_split</span>(self, X, y):
+        <span class="st">"""সবচেয়ে ভালো feature ও threshold খোঁজো"""</span>
+        best_gain = -<span class="nm">1</span>
+        best_feature, best_threshold = <span class="kw">None</span>, <span class="kw">None</span>
+        parent_gini = self.<span class="fn">_gini</span>(y)
+        n = <span class="fn">len</span>(y)
+
+        <span class="kw">for</span> feature <span class="kw">in</span> <span class="fn">range</span>(X.shape[<span class="nm">1</span>]):
+            thresholds = np.<span class="fn">unique</span>(X[:, feature])
+            <span class="kw">for</span> t <span class="kw">in</span> thresholds:
+                left_mask = X[:, feature] &lt;= t
+                right_mask = ~left_mask
+
+                <span class="kw">if</span> left_mask.<span class="fn">sum</span>() == <span class="nm">0</span> <span class="kw">or</span> right_mask.<span class="fn">sum</span>() == <span class="nm">0</span>:
+                    <span class="kw">continue</span>
+
+                <span class="cm"># Weighted gini of children</span>
+                left_gini  = self.<span class="fn">_gini</span>(y[left_mask])
+                right_gini = self.<span class="fn">_gini</span>(y[right_mask])
+                child_gini = (left_mask.<span class="fn">sum</span>()/n)*left_gini + (right_mask.<span class="fn">sum</span>()/n)*right_gini
+
+                gain = parent_gini - child_gini
+                <span class="kw">if</span> gain > best_gain:
+                    best_gain = gain
+                    best_feature = feature
+                    best_threshold = t
+
+        <span class="kw">return</span> best_feature, best_threshold, best_gain
+
+    <span class="kw">def</span> <span class="fn">_build</span>(self, X, y, depth):
+        node = <span class="cl">DecisionTreeNode</span>()
+
+        <span class="cm"># Stop conditions</span>
+        <span class="kw">if</span> (depth >= self.max_depth <span class="kw">or</span>
+            <span class="fn">len</span>(y) &lt; self.min_samples_split <span class="kw">or</span>
+            <span class="fn">len</span>(np.<span class="fn">unique</span>(y)) == <span class="nm">1</span>):
+            <span class="cm"># Leaf: majority class</span>
+            node.value = np.bincount(y).<span class="fn">argmax</span>()
+            <span class="kw">return</span> node
+
+        feature, threshold, gain = self.<span class="fn">_best_split</span>(X, y)
+
+        <span class="kw">if</span> gain <= <span class="nm">0</span> <span class="kw">or</span> feature <span class="kw">is</span> <span class="kw">None</span>:
+            node.value = np.bincount(y).<span class="fn">argmax</span>()
+            <span class="kw">return</span> node
+
+        node.feature = feature
+        node.threshold = threshold
+        left_mask = X[:, feature] &lt;= threshold
+        node.left  = self.<span class="fn">_build</span>(X[left_mask],  y[left_mask],  depth+<span class="nm">1</span>)
+        node.right = self.<span class="fn">_build</span>(X[~left_mask], y[~left_mask], depth+<span class="nm">1</span>)
+        <span class="kw">return</span> node
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, X, y):
+        self.root = self.<span class="fn">_build</span>(np.<span class="fn">array</span>(X), np.<span class="fn">array</span>(y), depth=<span class="nm">0</span>)
+
+    <span class="kw">def</span> <span class="fn">_predict_one</span>(self, x, node):
+        <span class="kw">if</span> node.value <span class="kw">is not None</span>:
+            <span class="kw">return</span> node.value
+        <span class="kw">if</span> x[node.feature] &lt;= node.threshold:
+            <span class="kw">return</span> self.<span class="fn">_predict_one</span>(x, node.left)
+        <span class="kw">return</span> self.<span class="fn">_predict_one</span>(x, node.right)
+
+    <span class="kw">def</span> <span class="fn">predict</span>(self, X):
+        <span class="kw">return</span> [self.<span class="fn">_predict_one</span>(x, self.root) <span class="kw">for</span> x <span class="kw">in</span> np.<span class="fn">array</span>(X)]
+
+<span class="cm"># Test with Iris dataset</span>
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_iris
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+
+iris = <span class="fn">load_iris</span>()
+X_tr, X_te, y_tr, y_te = <span class="fn">train_test_split</span>(
+    iris.data, iris.target, test_size=<span class="nm">0.2</span>, random_state=<span class="nm">42</span>
+)
+
+dt = <span class="cl">SimpleDecisionTree</span>(max_depth=<span class="nm">4</span>)
+dt.<span class="fn">fit</span>(X_tr, y_tr)
+preds = dt.<span class="fn">predict</span>(X_te)
+acc = np.<span class="fn">mean</span>(np.<span class="fn">array</span>(preds) == y_te)
+<span class="fn">print</span>(<span class="st">f"Decision Tree Accuracy: {acc:.3f}"</span>)</code></pre>
+
+    <h2>১৩. Time Complexity — Big-O Notation বোঝো</h2>
+    <p><strong>শিশুদের ভাষায়:</strong> তোমার কাছে n টা বই আছে। একটা বই খুঁজতে কত সময় লাগবে? যদি এক এক করে দেখো — n বার। যদি alphabetically সাজানো থাকে এবং binary search করো — log₂(n) বার। n বড় হলে পার্থক্য বিশাল।</p>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;">
+        <!-- Axes -->
+        <line x1="60" y1="240" x2="640" y2="240" stroke="#2a3550" stroke-width="2"/>
+        <line x1="60" y1="240" x2="60" y2="20" stroke="#2a3550" stroke-width="2"/>
+        <text x="350" y="270" text-anchor="middle" fill="#6b7280" font-size="12" font-family="Hind Siliguri,sans-serif">Input size (n) →</text>
+        <text x="20" y="130" text-anchor="middle" fill="#6b7280" font-size="12" transform="rotate(-90 20 130)" font-family="Hind Siliguri,sans-serif">Time →</text>
+
+        <!-- O(1) - constant -->
+        <line x1="60" y1="230" x2="640" y2="230" stroke="#10b981" stroke-width="2.5"/>
+        <text x="645" y="234" fill="#10b981" font-size="11" font-family="JetBrains Mono,monospace">O(1)</text>
+
+        <!-- O(log n) -->
+        <path d="M 60 230 Q 200 180 640 150" stroke="#4f8ef7" stroke-width="2.5" fill="none"/>
+        <text x="645" y="154" fill="#4f8ef7" font-size="11" font-family="JetBrains Mono,monospace">O(log n)</text>
+
+        <!-- O(n) -->
+        <line x1="60" y1="230" x2="640" y2="60" stroke="#f59e0b" stroke-width="2.5"/>
+        <text x="645" y="64" fill="#f59e0b" font-size="11" font-family="JetBrains Mono,monospace">O(n)</text>
+
+        <!-- O(n log n) -->
+        <path d="M 60 230 Q 300 100 640 30" stroke="#a78bfa" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+        <text x="590" y="26" fill="#a78bfa" font-size="11" font-family="JetBrains Mono,monospace">O(n log n)</text>
+
+        <!-- O(n²) -->
+        <path d="M 60 228 Q 200 180 350 100 Q 450 50 540 20" stroke="#ef4444" stroke-width="2" fill="none"/>
+        <text x="544" y="18" fill="#ef4444" font-size="11" font-family="JetBrains Mono,monospace">O(n²)</text>
+
+        <!-- Labels on x-axis -->
+        <text x="160" y="255" text-anchor="middle" fill="#6b7280" font-size="10" font-family="JetBrains Mono,monospace">10</text>
+        <text x="260" y="255" text-anchor="middle" fill="#6b7280" font-size="10" font-family="JetBrains Mono,monospace">100</text>
+        <text x="400" y="255" text-anchor="middle" fill="#6b7280" font-size="10" font-family="JetBrains Mono,monospace">1000</text>
+        <text x="540" y="255" text-anchor="middle" fill="#6b7280" font-size="10" font-family="JetBrains Mono,monospace">10000</text>
+
+        <!-- Better/Worse indicator -->
+        <text x="350" y="14" text-anchor="middle" fill="#6b7280" font-size="11" font-family="Hind Siliguri,sans-serif">উপরে = ধীর (বেশি সময়) | নিচে = দ্রুত (কম সময়)</text>
+      </svg>
+      <figcaption>Big-O Complexity — n যত বড়, পার্থক্য তত বেশি স্পষ্ট</figcaption>
+    </div>
+
+    <table>
+      <tr>
+        <th>Big-O</th>
+        <th>নাম</th>
+        <th>উদাহরণ (বাস্তব)</th>
+        <th>n=1000-এ operations</th>
+      </tr>
+      <tr>
+        <td><span class="complexity-badge c-best">O(1)</span></td>
+        <td>Constant</td>
+        <td>Dictionary lookup, Array index access</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td><span class="complexity-badge c-best">O(log n)</span></td>
+        <td>Logarithmic</td>
+        <td>Binary Search</td>
+        <td>~10</td>
+      </tr>
+      <tr>
+        <td><span class="complexity-badge c-avg">O(n)</span></td>
+        <td>Linear</td>
+        <td>Linear Search, Single loop</td>
+        <td>1,000</td>
+      </tr>
+      <tr>
+        <td><span class="complexity-badge c-avg">O(n log n)</span></td>
+        <td>Linearithmic</td>
+        <td>Merge Sort, Heap Sort, Tim Sort</td>
+        <td>~10,000</td>
+      </tr>
+      <tr>
+        <td><span class="complexity-badge c-worst">O(n²)</span></td>
+        <td>Quadratic</td>
+        <td>Bubble Sort, Nested loops</td>
+        <td>1,000,000</td>
+      </tr>
+      <tr>
+        <td><span class="complexity-badge c-worst">O(2ⁿ)</span></td>
+        <td>Exponential</td>
+        <td>Recursive Fibonacci (naive)</td>
+        <td>2^1000 ≈ ∞</td>
+      </tr>
+    </table>
+
+    <div class="card card-yellow">
+      <h4>💡 ML Engineering-এ Big-O কেন জানতে হবে?</h4>
+      <ul>
+        <li><strong>Data preprocessing:</strong> O(n²) loop কি আসলে O(n)-এ করা যায় vectorization দিয়ে?</li>
+        <li><strong>Feature engineering:</strong> nested loop-এ feature create করলে dataset বড় হলে system hang করবে।</li>
+        <li><strong>Inference time:</strong> Production-এ KNN-এর O(n·d) predict — large n হলে too slow, index structure দরকার।</li>
+        <li><strong>Interview:</strong> System design-এ "তোমার solution scale করবে কি 10x data-তে?" — এর উত্তর Big-O থেকে আসে।</li>
+      </ul>
+    </div>
+
+    <h2>১৪. Space Complexity — Memory-ও গুরুত্বপূর্ণ</h2>
+    <pre><code><span class="cm"># Example: দুইটা approach — time same কিন্তু space আলাদা</span>
+
+<span class="cm"># Approach 1: O(n) extra space</span>
+<span class="kw">def</span> <span class="fn">reverse_list_new</span>(arr):
+    <span class="st">"""নতুন list তৈরি করে — O(n) space"""</span>
+    <span class="kw">return</span> arr[::-<span class="nm">1</span>]  <span class="cm"># নতুন list তৈরি</span>
+
+<span class="cm"># Approach 2: O(1) extra space (in-place)</span>
+<span class="kw">def</span> <span class="fn">reverse_list_inplace</span>(arr):
+    <span class="st">"""একই list-এ reverse — O(1) extra space"""</span>
+    left, right = <span class="nm">0</span>, <span class="fn">len</span>(arr) - <span class="nm">1</span>
+    <span class="kw">while</span> left &lt; right:
+        arr[left], arr[right] = arr[right], arr[left]
+        left += <span class="nm">1</span>; right -= <span class="nm">1</span>
+    <span class="kw">return</span> arr
+
+<span class="cm"># ML Context: Large numpy array-এ in-place operation</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># ❌ Memory inefficient (2x memory)</span>
+X_normalized = (X - X.mean()) / X.std()  <span class="cm"># নতুন array তৈরি</span>
+
+<span class="cm"># ✅ Memory efficient (in-place)</span>
+X -= X.mean()
+X /= X.std()  <span class="cm"># same array modify করলাম</span></code></pre>
+
+    <h2>১৫. Hash Table — O(1) Lookup-এর Magic</h2>
+    <p><strong>শিশুদের ভাষায়:</strong> Library-তে বইয়ের নাম দিলেই সাথে সাথে কোন shelf-এ আছে জানা যায় — কারণ একটা catalog আছে। Hash Table ঠিক এভাবে কাজ করে। key দাও, তাৎক্ষণিক value পাও।</p>
+
+    <pre><code><span class="cm"># Python-এ dict হলো Hash Table</span>
+<span class="cm"># ML Engineering-এ ব্যাপক ব্যবহার</span>
+
+<span class="cm"># Use Case 1: Label encoding cache</span>
+label_map = {}
+labels = [<span class="st">'cat'</span>, <span class="st">'dog'</span>, <span class="st">'cat'</span>, <span class="st">'bird'</span>, <span class="st">'dog'</span>]
+
+<span class="kw">def</span> <span class="fn">encode_labels</span>(labels):
+    <span class="st">"""O(n) — প্রতিটা unique label একবারই process হয়"""</span>
+    mapping = {}
+    counter = <span class="nm">0</span>
+    encoded = []
+    <span class="kw">for</span> label <span class="kw">in</span> labels:
+        <span class="kw">if</span> label <span class="kw">not in</span> mapping:         <span class="cm"># O(1) lookup</span>
+            mapping[label] = counter
+            counter += <span class="nm">1</span>
+        encoded.append(mapping[label])  <span class="cm"># O(1) lookup</span>
+    <span class="kw">return</span> encoded, mapping
+
+encoded, mapping = <span class="fn">encode_labels</span>(labels)
+<span class="fn">print</span>(<span class="st">f"Encoded: {encoded}"</span>)   <span class="cm"># [0, 1, 0, 2, 1]</span>
+<span class="fn">print</span>(<span class="st">f"Mapping: {mapping}"</span>)   <span class="cm"># {'cat':0, 'dog':1, 'bird':2}</span>
+
+<span class="cm"># Use Case 2: Feature frequency counting (NLP)</span>
+<span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+corpus = [<span class="st">"machine learning is fun"</span>, <span class="st">"deep learning is powerful"</span>]
+word_freq = Counter(<span class="st">" "</span>.join(corpus).split())
+<span class="fn">print</span>(<span class="st">"Top words:"</span>, word_freq.most_common(<span class="nm">3</span>))
+
+<span class="cm"># Use Case 3: Memoization cache (DP)</span>
+<span class="kw">from</span> functools <span class="kw">import</span> lru_cache
+
+<span class="kw">@lru_cache</span>(maxsize=<span class="kw">None</span>)  <span class="cm"># Python-এর built-in memoization</span>
+<span class="kw">def</span> <span class="fn">expensive_feature</span>(x):
+    <span class="st">"""একই x-এর জন্য বারবার calculate না করে cache থেকে দাও"""</span>
+    <span class="kw">return</span> x ** <span class="nm">2</span> + np.<span class="fn">sin</span>(x) * np.<span class="fn">cos</span>(x)  <span class="cm"># ধরো এটা expensive</span></code></pre>
+
+    <!-- FINAL COMPREHENSIVE EXERCISE -->
+    <div class="exercise">
+      <div class="exercise-header">
+        <div class="exercise-badge">🏆 Final ML Engineering Challenge</div>
+        <h3>End-to-End Pipeline — সব একসাথে</h3>
+      </div>
+      <p style="color:var(--text2);">এই exercise-এ তুমি একটা complete ML pipeline লিখবে যেখানে algorithms-এর সব concept ব্যবহার হবে।</p>
+
+      <h4>Task: Credit Card Fraud Detection Pipeline</h4>
+      <ul style="color:var(--text2);">
+        <li>Data load ও preprocessing (Hash Table দিয়ে encoding)</li>
+        <li>Binary Search দিয়ে optimal threshold tune করা</li>
+        <li>KNN দিয়ে anomaly detection</li>
+        <li>Graph দিয়ে pipeline dependency management</li>
+        <li>DP দিয়ে model selection optimization</li>
+      </ul>
+
+      <details>
+        <summary>✅ Complete Solution দেখো</summary>
+        <div class="answer">
+<pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> collections <span class="kw">import</span> Counter, deque
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> make_classification
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split, cross_val_score
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier, IsolationForest
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> (precision_score, recall_score,
+                               f1_score, roc_auc_score)
+
+<span class="cm">## ===== STEP 1: Pipeline Dependency Graph =====</span>
+pipeline_graph = {
+    <span class="st">'load_data'</span>:        [<span class="st">'validate_data'</span>],
+    <span class="st">'validate_data'</span>:    [<span class="st">'encode_features'</span>, <span class="st">'handle_imbalance'</span>],
+    <span class="st">'encode_features'</span>:  [<span class="st">'scale_features'</span>],
+    <span class="st">'handle_imbalance'</span>: [<span class="st">'scale_features'</span>],
+    <span class="st">'scale_features'</span>:   [<span class="st">'train_models'</span>],
+    <span class="st">'train_models'</span>:     [<span class="st">'tune_threshold'</span>],
+    <span class="st">'tune_threshold'</span>:   [<span class="st">'evaluate'</span>],
+    <span class="st">'evaluate'</span>:         []
+}
+
+<span class="kw">def</span> <span class="fn">get_execution_order</span>(graph):
+    <span class="st">"""Topological sort — কোন step আগে চলবে"""</span>
+    in_degree = {n: <span class="nm">0</span> <span class="kw">for</span> n <span class="kw">in</span> graph}
+    <span class="kw">for</span> node <span class="kw">in</span> graph:
+        <span class="kw">for</span> dep <span class="kw">in</span> graph[node]:
+            in_degree[dep] += <span class="nm">1</span>
+    q = deque([n <span class="kw">for</span> n, d <span class="kw">in</span> in_degree.items() <span class="kw">if</span> d == <span class="nm">0</span>])
+    order = []
+    <span class="kw">while</span> q:
+        node = q.popleft(); order.append(node)
+        <span class="kw">for</span> dep <span class="kw">in</span> graph[node]:
+            in_degree[dep] -= <span class="nm">1</span>
+            <span class="kw">if</span> in_degree[dep] == <span class="nm">0</span>: q.append(dep)
+    <span class="kw">return</span> order
+
+order = <span class="fn">get_execution_order</span>(pipeline_graph)
+<span class="fn">print</span>(<span class="st">"📋 Pipeline Execution Order:"</span>)
+<span class="kw">for</span> i, step <span class="kw">in</span> <span class="fn">enumerate</span>(order, <span class="nm">1</span>):
+    <span class="fn">print</span>(<span class="st">f"   {i}. {step}"</span>)
+
+<span class="cm">## ===== STEP 2: Data Generation & Encoding =====</span>
+X, y = <span class="fn">make_classification</span>(
+    n_samples=<span class="nm">5000</span>, n_features=<span class="nm">20</span>,
+    weights=[<span class="nm">0.95</span>, <span class="nm">0.05</span>],  <span class="cm"># 5% fraud — imbalanced!</span>
+    random_state=<span class="nm">42</span>
+)
+
+<span class="cm"># Hash table দিয়ে categorical encoding (simulate)</span>
+feature_names = {i: <span class="st">f"feature_{i}"</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">20</span>)}  <span class="cm"># O(1) lookup</span>
+<span class="fn">print</span>(<span class="st">f"\n✅ Data: {X.shape}, Fraud rate: {y.mean():.1%}"</span>)
+
+<span class="cm">## ===== STEP 3: Preprocessing =====</span>
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y, test_size=<span class="nm">0.2</span>, stratify=y, random_state=<span class="nm">42</span>
+)
+scaler = <span class="fn">StandardScaler</span>()
+X_train = scaler.<span class="fn">fit_transform</span>(X_train)
+X_test  = scaler.<span class="fn">transform</span>(X_test)
+
+<span class="cm">## ===== STEP 4: Model Training =====</span>
+models = {
+    <span class="st">'Logistic Regression'</span>: <span class="fn">LogisticRegression</span>(class_weight=<span class="st">'balanced'</span>),
+    <span class="st">'Random Forest'</span>: <span class="fn">RandomForestClassifier</span>(n_estimators=<span class="nm">100</span>, class_weight=<span class="st">'balanced'</span>, random_state=<span class="nm">42</span>)
+}
+
+best_model_name, best_model, best_auc = <span class="kw">None</span>, <span class="kw">None</span>, <span class="nm">0</span>
+<span class="fn">print</span>(<span class="st">"\n🤖 Model Training:"</span>)
+<span class="kw">for</span> name, model <span class="kw">in</span> models.items():
+    model.<span class="fn">fit</span>(X_train, y_train)
+    probas = model.<span class="fn">predict_proba</span>(X_test)[:, <span class="nm">1</span>]
+    auc = <span class="fn">roc_auc_score</span>(y_test, probas)
+    <span class="fn">print</span>(<span class="st">f"   {name}: AUC = {auc:.4f}"</span>)
+    <span class="kw">if</span> auc > best_auc:
+        best_auc = auc; best_model = model; best_model_name = name
+
+<span class="fn">print</span>(<span class="st">f"\n🏆 Best: {best_model_name} (AUC={best_auc:.4f})"</span>)
+
+<span class="cm">## ===== STEP 5: Binary Search Threshold Tuning =====</span>
+probas = best_model.<span class="fn">predict_proba</span>(X_test)[:, <span class="nm">1</span>]
+
+<span class="kw">def</span> <span class="fn">find_threshold_binary_search</span>(probas, y_true, target_recall=<span class="nm">0.80</span>):
+    <span class="st">"""
+    Binary Search: সবচেয়ে বেশি precision যেখানে recall >= target
+    Fraud detection-এ recall গুরুত্বপূর্ণ (fraudকে miss করা যাবে না)
+    """</span>
+    thresholds = np.<span class="fn">linspace</span>(<span class="nm">0.01</span>, <span class="nm">0.99</span>, <span class="nm">200</span>)
+    left, right = <span class="nm">0</span>, <span class="fn">len</span>(thresholds) - <span class="nm">1</span>
+    best_t, best_f1 = <span class="nm">0.5</span>, <span class="nm">0</span>
+
+    <span class="kw">while</span> left &lt;= right:
+        mid = (left + right) // <span class="nm">2</span>
+        t = thresholds[mid]
+        preds = (probas >= t).astype(<span class="fn">int</span>)
+        rec = <span class="fn">recall_score</span>(y_true, preds, zero_division=<span class="nm">0</span>)
+        f1  = <span class="fn">f1_score</span>(y_true, preds, zero_division=<span class="nm">0</span>)
+
+        <span class="kw">if</span> rec >= target_recall:
+            <span class="kw">if</span> f1 > best_f1:
+                best_f1 = f1; best_t = t
+            right = mid - <span class="nm">1</span>  <span class="cm"># আরও কম threshold চেষ্টা করো</span>
+        <span class="kw">else</span>:
+            left = mid + <span class="nm">1</span>
+
+    <span class="kw">return</span> best_t, best_f1
+
+threshold, best_f1 = <span class="fn">find_threshold_binary_search</span>(probas, y_test)
+final_preds = (probas >= threshold).astype(<span class="fn">int</span>)
+
+<span class="fn">print</span>(<span class="st">f"\n🎯 Optimal Threshold: {threshold:.3f}"</span>)
+<span class="fn">print</span>(<span class="st">f"   Precision: {precision_score(y_test, final_preds):.3f}"</span>)
+<span class="fn">print</span>(<span class="st">f"   Recall:    {recall_score(y_test, final_preds):.3f}"</span>)
+<span class="fn">print</span>(<span class="st">f"   F1 Score:  {f1_score(y_test, final_preds):.3f}"</span>)
+<span class="fn">print</span>(<span class="st">f"\n✅ Pipeline Complete! Fraud Detection System Ready."</span>)</code></pre>
+        </div>
+      </details>
+    </div>
+
+    <!-- QUICK CHEATSHEET -->
+    <h2>📌 Algorithm Quick Cheatsheet — Interview-এর জন্য</h2>
+
+    <div class="grid2">
+      <div class="card card-accent">
+        <h4>🔍 কখন কোন Search?</h4>
+        <ul style="font-size:14px;">
+          <li><strong>Linear Search:</strong> unsorted, ছোট data, যেকোনো condition</li>
+          <li><strong>Binary Search:</strong> sorted array, threshold খোঁজা</li>
+          <li><strong>Hash lookup:</strong> exact match, O(1) দরকার</li>
+          <li><strong>BFS:</strong> shortest path, level-by-level</li>
+          <li><strong>DFS:</strong> cycle detection, path existence</li>
+        </ul>
+      </div>
+      <div class="card card-green">
+        <h4>📊 কখন কোন Sort?</h4>
+        <ul style="font-size:14px;">
+          <li><strong>Python sorted():</strong> সবসময় (Timsort, O(n log n))</li>
+          <li><strong>Merge Sort:</strong> stable sort, linked list</li>
+          <li><strong>Quick Sort:</strong> average case fastest, in-place</li>
+          <li><strong>Bubble Sort:</strong> শুধু শেখার জন্য, production-এ না</li>
+          <li><strong>Counting Sort:</strong> integer, bounded range</li>
+        </ul>
+      </div>
+      <div class="card card-yellow">
+        <h4>🤖 ML Algorithm কখন?</h4>
+        <ul style="font-size:14px;">
+          <li><strong>KNN:</strong> simple baseline, anomaly detection</li>
+          <li><strong>Naive Bayes:</strong> text, fast, high dimensional</li>
+          <li><strong>Decision Tree:</strong> interpretable, feature importance</li>
+          <li><strong>K-Means:</strong> clustering, segmentation</li>
+          <li><strong>Gradient Descent:</strong> neural nets, deep learning</li>
+        </ul>
+      </div>
+      <div class="card card-purple">
+        <h4>⚡ DP কখন ব্যবহার করব?</h4>
+        <ul style="font-size:14px;">
+          <li>Overlapping subproblems আছে</li>
+          <li>Optimal substructure আছে</li>
+          <li>Sequence/path optimization</li>
+          <li>Knapsack-style resource allocation</li>
+          <li>String edit distance, LCS</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="margin-top:60px; padding:40px; text-align:center; border-top:2px solid var(--border); background:var(--bg2); border-radius:16px;">
+      <div style="font-size:40px;margin-bottom:16px;">🚀</div>
+      <h3 style="font-family:'Baloo Da 2',cursive;color:var(--heading);font-size:1.4rem;">সম্পূর্ণ! এখন তোমার পালা।</h3>
+      <p style="color:var(--text2);max-width:500px;margin:12px auto;">VM setup করো, SSH দিয়ে connect করো, VS Code দিয়ে কাজ করো, virtual environment তৈরি করো, এবং প্রতিদিন একটা করে algorithm implement করো।</p>
+      <div style="margin-top:20px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+        <span class="tag">🐍 Python</span>
+        <span class="tag">🖥️ VM</span>
+        <span class="tag">🔐 SSH</span>
+        <span class="tag">💻 VS Code</span>
+        <span class="tag">📦 venv</span>
+        <span class="tag">🔍 Search</span>
+        <span class="tag">📊 Sort</span>
+        <span class="tag">🌳 Tree</span>
+        <span class="tag">🕸️ Graph</span>
+        <span class="tag">⚡ DP</span>
+        <span class="tag">🤖 ML</span>
+      </div>
+      <p style="color:var(--text3); font-size:13px; margin-top:20px;">
+        Code always, learn always. শুভকামনা রইল! 💪
+      </p>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+// Progress bar
+window.addEventListener('scroll', () => {
+  const el = document.documentElement;
+  const progress = (el.scrollTop) / (el.scrollHeight - el.clientHeight);
+  document.getElementById('progress').style.transform = `scaleX(${progress})`;
+});
+
+// Active nav link
+const links = document.querySelectorAll('.sidebar a');
+const sections = document.querySelectorAll('[id]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  links.forEach(l => {
+    l.classList.remove('active');
+    if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+  });
+}, { passive: true });
+</script>
+
+</body>
+</html>

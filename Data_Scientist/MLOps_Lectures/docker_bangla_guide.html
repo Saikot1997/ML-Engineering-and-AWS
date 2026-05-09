@@ -1,0 +1,3039 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker সম্পূর্ণ গাইড — বাংলায়</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Tiro+Bangla:ital@0;1&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #0f1629;
+  --bg-card: #131d35;
+  --bg-card2: #1a2540;
+  --accent-blue: #3b82f6;
+  --accent-cyan: #06b6d4;
+  --accent-green: #10b981;
+  --accent-yellow: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-purple: #8b5cf6;
+  --accent-orange: #f97316;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-dim: #64748b;
+  --border: #1e3a5f;
+  --border-bright: #2d5a8e;
+  --code-bg: #050a14;
+  --highlight: #fbbf24;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Hind Siliguri', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.8;
+  font-size: 17px;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--accent-blue); border-radius: 4px; }
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #060d1f 0%, #0a1628 40%, #0e2040 100%);
+  padding: 80px 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 2px solid var(--accent-blue);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at center, rgba(59,130,246,0.08) 0%, transparent 60%);
+  animation: pulse 6s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.5;} 50%{opacity:1;} }
+
+.hero-badge {
+  display: inline-block;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+  color: white;
+  padding: 6px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+.hero h1 {
+  font-family: 'Tiro Bangla', serif;
+  font-size: 3.2rem;
+  font-weight: 400;
+  color: #fff;
+  line-height: 1.3;
+  margin-bottom: 16px;
+  position: relative;
+}
+.hero h1 span { color: var(--accent-cyan); }
+.hero p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto 30px;
+}
+.hero-tags {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.hero-tag {
+  background: rgba(59,130,246,0.15);
+  border: 1px solid rgba(59,130,246,0.3);
+  color: var(--accent-cyan);
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+/* TOC */
+.toc {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent-blue);
+  border-radius: 12px;
+  padding: 30px;
+  margin: 40px auto;
+  max-width: 900px;
+}
+.toc h2 {
+  color: var(--accent-cyan);
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+}
+.toc ol { padding-left: 24px; }
+.toc li { margin-bottom: 8px; }
+.toc a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.toc a:hover { color: var(--accent-cyan); }
+
+/* LAYOUT */
+.container { max-width: 960px; margin: 0 auto; padding: 0 24px 80px; }
+
+/* CHAPTER */
+.chapter {
+  margin-bottom: 80px;
+  scroll-margin-top: 20px;
+}
+.chapter-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.chapter-num {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.chapter-title {
+  font-family: 'Tiro Bangla', serif;
+  font-size: 2rem;
+  font-weight: 400;
+  color: #fff;
+}
+.chapter-sub {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin-top: 2px;
+}
+
+/* SECTION */
+.section { margin-bottom: 50px; }
+.section-title {
+  font-family: 'Hind Siliguri', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  margin-bottom: 18px;
+  padding-left: 14px;
+  border-left: 3px solid var(--accent-cyan);
+}
+
+/* CARDS */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.card-blue { border-left: 4px solid var(--accent-blue); }
+.card-green { border-left: 4px solid var(--accent-green); }
+.card-yellow { border-left: 4px solid var(--accent-yellow); }
+.card-purple { border-left: 4px solid var(--accent-purple); }
+.card-red { border-left: 4px solid var(--accent-red); }
+.card-orange { border-left: 4px solid var(--accent-orange); }
+.card-cyan { border-left: 4px solid var(--accent-cyan); }
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title.blue { color: var(--accent-blue); }
+.card-title.green { color: var(--accent-green); }
+.card-title.yellow { color: var(--accent-yellow); }
+.card-title.purple { color: var(--accent-purple); }
+.card-title.red { color: var(--accent-red); }
+.card-title.orange { color: var(--accent-orange); }
+.card-title.cyan { color: var(--accent-cyan); }
+
+p { color: var(--text-primary); margin-bottom: 14px; line-height: 1.85; }
+strong { color: var(--highlight); font-weight: 600; }
+em { color: var(--accent-cyan); font-style: normal; }
+
+/* ANALOGY BOX */
+.analogy {
+  background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(59,130,246,0.05));
+  border: 1px solid rgba(6,182,212,0.25);
+  border-radius: 12px;
+  padding: 22px 26px;
+  margin: 20px 0;
+  position: relative;
+}
+.analogy::before {
+  content: '💡 সহজ উদাহরণ';
+  display: block;
+  color: var(--accent-cyan);
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+/* IMPORTANT BOX */
+.important {
+  background: rgba(251,191,36,0.07);
+  border: 1px solid rgba(251,191,36,0.25);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin: 16px 0;
+}
+.important::before {
+  content: '⚠️ মনে রাখুন';
+  display: block;
+  color: var(--accent-yellow);
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+/* CODE BLOCK */
+.code-block {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+.code-header {
+  background: var(--bg-card2);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.code-lang {
+  color: var(--accent-cyan);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.code-dots { display: flex; gap: 6px; }
+.code-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+}
+.dot-r { background: #ef4444; }
+.dot-y { background: #f59e0b; }
+.dot-g { background: #10b981; }
+
+pre {
+  padding: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  overflow-x: auto;
+  color: #c9d1d9;
+}
+.kw { color: #ff79c6; }
+.fn { color: #50fa7b; }
+.st { color: #f1fa8c; }
+.cm { color: #6272a4; font-style: italic; }
+.nm { color: #bd93f9; }
+.op { color: #ff79c6; }
+.cn { color: #8be9fd; }
+
+/* SVG DIAGRAMS */
+.svg-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin: 24px 0;
+  text-align: center;
+}
+.svg-caption {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin-top: 12px;
+  font-style: italic;
+}
+
+/* COMPARISON TABLE */
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.comparison-table th {
+  background: var(--bg-card2);
+  color: var(--accent-cyan);
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+.comparison-table td {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.92rem;
+}
+.comparison-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+.comparison-table tr:hover td { background: rgba(59,130,246,0.05); }
+
+/* EXERCISE SECTION */
+.exercise-section {
+  background: linear-gradient(135deg, rgba(16,185,129,0.07), rgba(6,182,212,0.04));
+  border: 1px solid rgba(16,185,129,0.25);
+  border-radius: 14px;
+  padding: 28px;
+  margin: 40px 0;
+}
+.exercise-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(16,185,129,0.2);
+}
+.exercise-badge {
+  background: linear-gradient(90deg, var(--accent-green), #059669);
+  color: white;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.exercise-title-text {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent-green);
+}
+.exercise-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.exercise-q {
+  font-weight: 700;
+  color: var(--accent-yellow);
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+.exercise-hint {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+.exercise-answer {
+  display: none;
+  background: var(--code-bg);
+  border-radius: 8px;
+  padding: 14px;
+  margin-top: 12px;
+  color: var(--accent-green);
+  font-size: 0.88rem;
+}
+.show-answer-btn {
+  background: rgba(16,185,129,0.15);
+  border: 1px solid rgba(16,185,129,0.3);
+  color: var(--accent-green);
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family: 'Hind Siliguri', sans-serif;
+  margin-top: 10px;
+  transition: all 0.2s;
+}
+.show-answer-btn:hover { background: rgba(16,185,129,0.25); }
+
+/* DOCKERFILE KEYWORD CARDS */
+.dockerfile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+@media(max-width:640px){ .dockerfile-grid { grid-template-columns: 1fr; } }
+
+.df-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+}
+.df-keyword {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  background: rgba(6,182,212,0.1);
+  padding: 3px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.df-desc { color: var(--text-secondary); font-size: 0.88rem; }
+
+/* STEPS */
+.steps { margin: 20px 0; }
+.step {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  align-items: flex-start;
+}
+.step-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.step-body {}
+.step-label {
+  font-weight: 700;
+  color: var(--accent-blue);
+  margin-bottom: 4px;
+}
+
+/* CMD ROW */
+.cmd-row {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 18px;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.cmd-prompt { color: var(--accent-green); font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; }
+.cmd-text { color: #f1fa8c; font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; }
+.cmd-note { color: var(--text-dim); font-size: 0.8rem; margin-top: 4px; }
+
+/* GRID 2 */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+@media(max-width:640px){ .grid2 { grid-template-columns: 1fr; } }
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+.footer strong { color: var(--accent-blue); }
+
+/* ALGO SECTION */
+.algo-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px;
+  margin-bottom: 30px;
+}
+.algo-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent-purple);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.algo-badge {
+  background: rgba(139,92,246,0.15);
+  border: 1px solid rgba(139,92,246,0.3);
+  color: var(--accent-purple);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.algo-kindergarten {
+  background: rgba(251,191,36,0.07);
+  border-left: 3px solid var(--accent-yellow);
+  padding: 14px 18px;
+  border-radius: 0 8px 8px 0;
+  margin: 14px 0;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+.algo-kindergarten::before {
+  content: '🧒 বাচ্চাদের মতো বুঝি: ';
+  color: var(--accent-yellow);
+  font-weight: 700;
+}
+
+/* INLINE CODE */
+code {
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(6,182,212,0.1);
+  border: 1px solid rgba(6,182,212,0.2);
+  color: var(--accent-cyan);
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+/* HIGHLIGHT TEXT */
+.hl-blue { color: var(--accent-blue); font-weight: 600; }
+.hl-green { color: var(--accent-green); font-weight: 600; }
+.hl-yellow { color: var(--accent-yellow); font-weight: 600; }
+.hl-cyan { color: var(--accent-cyan); font-weight: 600; }
+.hl-purple { color: var(--accent-purple); font-weight: 600; }
+.hl-red { color: var(--accent-red); font-weight: 600; }
+
+/* VOLUME VISUAL */
+.vol-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  padding: 20px;
+}
+.vol-box {
+  background: var(--bg-card2);
+  border: 2px solid var(--border-bright);
+  border-radius: 10px;
+  padding: 16px 20px;
+  text-align: center;
+  min-width: 120px;
+}
+.vol-arrow { color: var(--accent-cyan); font-size: 1.5rem; }
+
+/* Back to top */
+.back-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--accent-blue);
+  color: white;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 20px rgba(59,130,246,0.4);
+  transition: transform 0.2s;
+}
+.back-top:hover { transform: translateY(-3px); }
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-bright), transparent);
+  margin: 50px 0;
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-badge">সম্পূর্ণ বাংলা গাইড</div>
+  <h1>🐳 <span>Docker</span> মাস্টারক্লাস<br>সম্পূর্ণ বাংলায়</h1>
+  <p>Isolation থেকে শুরু করে Docker Volumes পর্যন্ত — একজন একদম নতুন শিক্ষার্থীর জন্য সব কিছু বিস্তারিতভাবে, সহজ ভাষায়, ইন্টারভিউ প্রশ্নসহ।</p>
+  <div class="hero-tags">
+    <span class="hero-tag">🏠 Isolation</span>
+    <span class="hero-tag">🐳 Docker</span>
+    <span class="hero-tag">📦 Images</span>
+    <span class="hero-tag">🖥️ Docker Desktop</span>
+    <span class="hero-tag">💾 Volumes</span>
+    <span class="hero-tag">🤖 ML Applications</span>
+    <span class="hero-tag">🧮 Algorithms</span>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="container">
+<div class="toc">
+  <h2>📚 সূচিপত্র</h2>
+  <ol>
+    <li><a href="#ch1">অধ্যায় ১: Isolation (বিচ্ছিন্নতা) — কী এবং কেন?</a></li>
+    <li><a href="#ch2">অধ্যায় ২: Virtualization — কীভাবে কাজ করে?</a></li>
+    <li><a href="#ch3">অধ্যায় ৩: Docker — পরিচয় ও কার্যপ্রণালী</a></li>
+    <li><a href="#ch4">অধ্যায় ৪: Docker Image — তৈরি ও ব্যবহার</a></li>
+    <li><a href="#ch5">অধ্যায় ৫: Docker Container — জীবনচক্র ও কমান্ড</a></li>
+    <li><a href="#ch6">অধ্যায় ৬: Docker Desktop — ভিজ্যুয়াল ইন্টারফেস</a></li>
+    <li><a href="#ch7">অধ্যায় ৭: Docker Volumes — ডেটা সংরক্ষণ</a></li>
+    <li><a href="#ch8">অধ্যায় ৮: ML প্রজেক্টে Docker — বাস্তব উদাহরণ</a></li>
+    <li><a href="#ch9">অধ্যায় ৯: সকল Algorithm — কিন্ডারগার্টেন ব্যাখ্যা ও Python Implementation</a></li>
+  </ol>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- CHAPTER 1: ISOLATION -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch1">
+  <div class="chapter-header">
+    <div class="chapter-num">১</div>
+    <div>
+      <div class="chapter-title">Isolation — বিচ্ছিন্নতার নীতি</div>
+      <div class="chapter-sub">Principle of Isolation</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🤔 Isolation মানে কী?</div>
+    <p><strong>Isolation</strong> মানে হলো — আলাদা করা বা বিচ্ছিন্ন করা। কম্পিউটার বিজ্ঞানে এর অর্থ হলো এমন একটি ব্যবস্থা তৈরি করা যেখানে একটি প্রোগ্রাম বা অ্যাপ্লিকেশন অন্য প্রোগ্রাম বা কম্পিউটারের বাকি অংশ থেকে সম্পূর্ণ আলাদাভাবে চলে।</p>
+
+    <div class="analogy">
+      তুমি কি কখনো টিফিন বক্স দেখেছ যেখানে আলাদা আলাদা খোপ থাকে? একটা খোপে ভাত, একটায় তরকারি, আরেকটায় মিষ্টি। তাদের স্বাদ কিন্তু একে অপরের সাথে মেশে না! Isolation ঠিক এই রকম — প্রতিটি প্রোগ্রামকে আলাদা "খোপে" রাখা।
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📖 সহজ উদাহরণ ১: দুই বন্ধুর সমস্যা</div>
+    
+    <div class="card card-blue">
+      <div class="card-title blue">🎓 পরিস্থিতি</div>
+      <p>ধরো তুমি একটি Python স্ক্রিপ্ট লিখেছ যেটি <strong>NumPy 1.16.1</strong> এবং <strong>Python 3.8</strong> ব্যবহার করে। এটা তোমার কম্পিউটারে ঠিকঠাক কাজ করছে।</p>
+      <p>এখন তুমি সেই স্ক্রিপ্টটি তোমার বন্ধুকে দিলে। কিন্তু তোমার বন্ধুর কম্পিউটারে আছে <strong>Python 3.11</strong> এবং <strong>NumPy 1.24</strong>। ফলে? স্ক্রিপ্ট কাজই করছে না! এরর আসছে!</p>
+    </div>
+
+    <div class="analogy">
+      ভাবো তুমি একটা কেক রেসিপি লিখেছ যেটায় বলেছ "৫০০ গ্রাম পুরনো ময়দা লাগবে।" কিন্তু তোমার বন্ধুর বাড়িতে শুধু নতুন ময়দা আছে। কেক ঠিকমতো হবে না! সমাধান? — রেসিপির সাথে ময়দাসহ সব উপকরণ একটা বাক্সে ভরে দাও!
+    </div>
+
+    <div class="card card-green">
+      <div class="card-title green">✅ সমাধান: Isolation</div>
+      <p>যদি তুমি তোমার স্ক্রিপ্টটিকে একটি <strong>"বিশেষ বাক্সে"</strong> রাখতে পারো যেখানে স্ক্রিপ্টের সাথে সাথে <em>Python 3.8</em> এবং <em>NumPy 1.16.1</em> ও থাকবে, তাহলে সেই বাক্সটি যেকোনো কম্পিউটারে দিলেই কাজ করবে! এই বাক্সই হলো Isolation-এর মূল ধারণা।</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🏢 উদাহরণ ২: একটি কোম্পানির সার্ভার</div>
+    
+    <div class="svg-container">
+      <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <!-- Background -->
+        <rect width="700" height="320" fill="#0f1629" rx="10"/>
+        
+        <!-- Server box -->
+        <rect x="20" y="20" width="660" height="280" rx="12" fill="#131d35" stroke="#1e3a5f" stroke-width="1.5"/>
+        <text x="350" y="48" text-anchor="middle" fill="#64748b" font-size="13" font-family="monospace">🖥️ Production Server (উৎপাদন সার্ভার)</text>
+        
+        <!-- App 1 box -->
+        <rect x="50" y="65" width="180" height="140" rx="8" fill="#1a2540" stroke="#3b82f6" stroke-width="2"/>
+        <text x="140" y="90" text-anchor="middle" fill="#3b82f6" font-size="12" font-weight="bold">অ্যাপ ১</text>
+        <text x="140" y="110" text-anchor="middle" fill="#94a3b8" font-size="11">Python 3.8</text>
+        <text x="140" y="128" text-anchor="middle" fill="#ef4444" font-size="11">NumPy 1.16.1</text>
+        <text x="140" y="146" text-anchor="middle" fill="#94a3b8" font-size="11">Flask 2.0</text>
+        <text x="140" y="168" text-anchor="middle" fill="#10b981" font-size="10">✓ আলাদা পরিবেশে চলছে</text>
+        <text x="140" y="185" text-anchor="middle" fill="#10b981" font-size="10">অন্যকে বিরক্ত করছে না</text>
+
+        <!-- App 2 box -->
+        <rect x="260" y="65" width="180" height="140" rx="8" fill="#1a2540" stroke="#8b5cf6" stroke-width="2"/>
+        <text x="350" y="90" text-anchor="middle" fill="#8b5cf6" font-size="12" font-weight="bold">অ্যাপ ২</text>
+        <text x="350" y="110" text-anchor="middle" fill="#94a3b8" font-size="11">Python 3.11</text>
+        <text x="350" y="128" text-anchor="middle" fill="#ef4444" font-size="11">NumPy 1.24</text>
+        <text x="350" y="146" text-anchor="middle" fill="#94a3b8" font-size="11">Django 4.0</text>
+        <text x="350" y="168" text-anchor="middle" fill="#10b981" font-size="10">✓ আলাদা পরিবেশে চলছে</text>
+        <text x="350" y="185" text-anchor="middle" fill="#10b981" font-size="10">কনফ্লিক্ট নেই!</text>
+
+        <!-- App 3 box -->
+        <rect x="470" y="65" width="180" height="140" rx="8" fill="#1a2540" stroke="#06b6d4" stroke-width="2"/>
+        <text x="560" y="90" text-anchor="middle" fill="#06b6d4" font-size="12" font-weight="bold">অ্যাপ ৩</text>
+        <text x="560" y="110" text-anchor="middle" fill="#94a3b8" font-size="11">Python 3.9</text>
+        <text x="560" y="128" text-anchor="middle" fill="#ef4444" font-size="11">TensorFlow 2.0</text>
+        <text x="560" y="146" text-anchor="middle" fill="#94a3b8" font-size="11">FastAPI</text>
+        <text x="560" y="168" text-anchor="middle" fill="#10b981" font-size="10">✓ ML Model চলছে</text>
+        <text x="560" y="185" text-anchor="middle" fill="#10b981" font-size="10">স্বাধীনভাবে</text>
+
+        <!-- Conflict arrow (crossed out) -->
+        <line x1="230" y1="135" x2="260" y2="135" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="245" y="125" text-anchor="middle" fill="#ef4444" font-size="16">🚫</text>
+        <line x1="440" y1="135" x2="470" y2="135" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="455" y="125" text-anchor="middle" fill="#ef4444" font-size="16">🚫</text>
+
+        <!-- Bottom label -->
+        <text x="350" y="245" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold">প্রতিটি অ্যাপ তার নিজের "বাক্সে" — কোনো সংঘর্ষ নেই!</text>
+        <text x="350" y="268" text-anchor="middle" fill="#64748b" font-size="11">Isolation ছাড়া NumPy-র দুটো ভার্সন একই সার্ভারে চলতে পারত না</text>
+      </svg>
+      <div class="svg-caption">চিত্র ১.১ — একটি সার্ভারে Isolation-এর মাধ্যমে তিনটি আলাদা অ্যাপ চলছে, কোনো সংঘর্ষ ছাড়াই</div>
+    </div>
+
+    <div class="important">
+      Isolation মানে কিন্তু সম্পূর্ণ বিচ্ছিন্নতা না — প্রয়োজনে অ্যাপগুলো একে অপরের সাথে কথাও বলতে পারে। যেমন API দিয়ে বা নেটওয়ার্কের মাধ্যমে।
+    </div>
+  </div>
+
+  <!-- EXERCISE 1 -->
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <span class="exercise-badge">🎯 Interview Exercise</span>
+      <span class="exercise-title-text">অধ্যায় ১ — পরীক্ষার প্রশ্ন</span>
+    </div>
+
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ১: Isolation কী এবং কেন এটি প্রয়োজন? একটি বাস্তব উদাহরণ দাও।</div>
+      <p style="color:var(--text-secondary);font-size:0.9rem;">📝 এটি একটি "সংজ্ঞা + উদাহরণ" প্রশ্ন। ইন্টারভিউতে এই ধরনের প্রশ্নে সবসময় প্রথমে সংজ্ঞা, তারপর কেন দরকার, তারপর উদাহরণ দাও।</p>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+        <strong>উত্তর:</strong> Isolation হলো এমন একটি প্রযুক্তি যেটি একটি প্রোগ্রাম বা অ্যাপ্লিকেশনকে অন্য প্রোগ্রাম এবং হোস্ট মেশিন থেকে আলাদাভাবে চালানোর সুযোগ দেয়।<br><br>
+        <strong>কেন দরকার:</strong> ধরো দুটি অ্যাপে NumPy-র দুটো conflicting ভার্সন দরকার — NumPy 1.16 এবং NumPy 1.24। Isolation ছাড়া একই সার্ভারে এটা সম্ভব না। Isolation থাকলে প্রতিটি অ্যাপ তার নিজের ভার্সন পায়।<br><br>
+        <strong>বাস্তব উদাহরণ:</strong> একটি ব্যাংকের সার্ভারে Login App এবং Payment App দুটোই চলে। Payment App-এ বাগ থাকলে Login App যেন প্রভাবিত না হয় — এজন্য Isolation।
+      </div>
+    </div>
+
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ২: Dependency conflict কী? Docker কীভাবে এটি সমাধান করে?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+        <strong>Dependency conflict:</strong> যখন দুটো অ্যাপ একই লাইব্রেরির ভিন্ন ভার্সন চায়, তখন একটিই ইনস্টল করা যায় — এটাই dependency conflict।<br><br>
+        <strong>Docker-এর সমাধান:</strong> প্রতিটি অ্যাপের জন্য আলাদা container তৈরি করা হয়। প্রতিটি container-এর নিজের dependency আছে। তারা পরস্পরের সাথে শেয়ার করে না — তাই conflict হওয়ার সুযোগ নেই।
+      </div>
+    </div>
+
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ৩ (MLOps): তোমার ML মডেল locally ৯৮% accuracy দিচ্ছে কিন্তু production-এ কাজ করছে না। Isolation কীভাবে এই সমস্যা প্রতিরোধ করতে পারে?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+        <strong>সমস্যার কারণ:</strong> "It works on my machine!" — local-এ scikit-learn 1.2 ছিল, production-এ 0.24। একই কোড দুটো ভার্সনে ভিন্নভাবে কাজ করে।<br><br>
+        <strong>Isolation-এর সমাধান:</strong> Model training, inference, এবং API serving প্রতিটিকে Docker container-এ রাখো। Container-এ exact library version specify করা থাকে। এই container local-এ বানিয়ে production-এ push করলে exact same environment পাবে — তাই behavior ও same হবে।
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- CHAPTER 2: VIRTUALIZATION -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch2">
+  <div class="chapter-header">
+    <div class="chapter-num">২</div>
+    <div>
+      <div class="chapter-title">Virtualization — ভার্চুয়ালাইজেশন</div>
+      <div class="chapter-sub">Isolation through Virtualization</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔮 Virtualization কী?</div>
+    <p><strong>Virtualization</strong> মানে হলো একটি কম্পিউটারের ভেতরে "নকল" বা "ভার্চুয়াল" পরিবেশ তৈরি করা। এই নকল পরিবেশ আসল মেশিনের মতোই কাজ করে — কিন্তু সে সম্পূর্ণ আলাদা।</p>
+
+    <div class="analogy">
+      কল্পনা করো তোমার কাছে একটা বড় মাঠ আছে। তুমি সেই মাঠে দড়ি দিয়ে কয়েকটা আলাদা ছোট জায়গা ভাগ করলে। প্রতিটি ভাগ যেন একটা আলাদা খেলার মাঠ। একটায় ক্রিকেট হচ্ছে, আরেকটায় ফুটবল — একটা অন্যটাতে বাধা দিচ্ছে না। Virtualization ঠিক এইভাবে একটা কম্পিউটারকে ভাগ করে।
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 তিনটি Virtualization পদ্ধতি</div>
+    
+    <div class="svg-container">
+      <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <rect width="700" height="380" fill="#0f1629" rx="10"/>
+        
+        <!-- VM Column -->
+        <rect x="30" y="20" width="200" height="340" rx="10" fill="#131d35" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="130" y="45" text-anchor="middle" fill="#3b82f6" font-size="13" font-weight="bold">Virtual Machine</text>
+        <text x="130" y="62" text-anchor="middle" fill="#64748b" font-size="10">(ভার্চুয়াল মেশিন)</text>
+        
+        <rect x="45" y="75" width="170" height="35" rx="6" fill="#1a2540" stroke="#3b82f6" stroke-width="1"/>
+        <text x="130" y="88" text-anchor="middle" fill="#94a3b8" font-size="10">VM1 (Ubuntu OS)</text>
+        <text x="130" y="102" text-anchor="middle" fill="#94a3b8" font-size="9">App + পুরো OS</text>
+
+        <rect x="45" y="118" width="170" height="35" rx="6" fill="#1a2540" stroke="#3b82f6" stroke-width="1"/>
+        <text x="130" y="131" text-anchor="middle" fill="#94a3b8" font-size="10">VM2 (Windows OS)</text>
+        <text x="130" y="145" text-anchor="middle" fill="#94a3b8" font-size="9">App + পুরো OS</text>
+
+        <rect x="45" y="165" width="170" height="28" rx="4" fill="#0e2040" stroke="#1e3a5f"/>
+        <text x="130" y="183" text-anchor="middle" fill="#64748b" font-size="10">Hypervisor</text>
+
+        <rect x="45" y="203" width="170" height="28" rx="4" fill="#0e2040" stroke="#1e3a5f"/>
+        <text x="130" y="221" text-anchor="middle" fill="#64748b" font-size="10">Host OS</text>
+
+        <rect x="45" y="241" width="170" height="28" rx="4" fill="#0e2040" stroke="#1e3a5f"/>
+        <text x="130" y="259" text-anchor="middle" fill="#64748b" font-size="10">Hardware</text>
+
+        <text x="130" y="295" text-anchor="middle" fill="#ef4444" font-size="10">⚠️ ভারী — পুরো OS লাগে</text>
+        <text x="130" y="310" text-anchor="middle" fill="#94a3b8" font-size="9">সম্পূর্ণ Isolation</text>
+        <text x="130" y="325" text-anchor="middle" fill="#94a3b8" font-size="9">বেশি RAM & Storage</text>
+        <text x="130" y="350" text-anchor="middle" fill="#f59e0b" font-size="10">মিনিট লাগে বুট হতে</text>
+
+        <!-- Container Column -->
+        <rect x="250" y="20" width="200" height="340" rx="10" fill="#131d35" stroke="#06b6d4" stroke-width="1.5"/>
+        <text x="350" y="45" text-anchor="middle" fill="#06b6d4" font-size="13" font-weight="bold">Container</text>
+        <text x="350" y="62" text-anchor="middle" fill="#64748b" font-size="10">(Docker)</text>
+
+        <rect x="265" y="75" width="76" height="50" rx="6" fill="#1a2540" stroke="#06b6d4" stroke-width="1"/>
+        <text x="303" y="92" text-anchor="middle" fill="#94a3b8" font-size="9">Container 1</text>
+        <text x="303" y="107" text-anchor="middle" fill="#10b981" font-size="9">App + Libs</text>
+        <text x="303" y="120" text-anchor="middle" fill="#10b981" font-size="10">OS নেই!</text>
+
+        <rect x="349" y="75" width="76" height="50" rx="6" fill="#1a2540" stroke="#06b6d4" stroke-width="1"/>
+        <text x="387" y="92" text-anchor="middle" fill="#94a3b8" font-size="9">Container 2</text>
+        <text x="387" y="107" text-anchor="middle" fill="#10b981" font-size="9">App + Libs</text>
+        <text x="387" y="120" text-anchor="middle" fill="#10b981" font-size="10">OS নেই!</text>
+
+        <rect x="265" y="135" width="160" height="28" rx="4" fill="#0e2040" stroke="#1e3a5f"/>
+        <text x="345" y="153" text-anchor="middle" fill="#64748b" font-size="10">Docker Engine</text>
+
+        <rect x="265" y="173" width="160" height="28" rx="4" fill="#0e2040" stroke="#1e3a5f"/>
+        <text x="345" y="191" text-anchor="middle" fill="#64748b" font-size="10">Host OS (শেয়ার করে)</text>
+
+        <rect x="265" y="211" width="160" height="28" rx="4" fill="#0e2040" stroke="#1e3a5f"/>
+        <text x="345" y="229" text-anchor="middle" fill="#64748b" font-size="10">Hardware</text>
+
+        <text x="350" y="270" text-anchor="middle" fill="#10b981" font-size="10">✅ হালকা — OS শেয়ার করে</text>
+        <text x="350" y="285" text-anchor="middle" fill="#94a3b8" font-size="9">দ্রুত শুরু হয় (সেকেন্ডে)</text>
+        <text x="350" y="300" text-anchor="middle" fill="#94a3b8" font-size="9">কম RAM & Storage</text>
+        <text x="350" y="325" text-anchor="middle" fill="#f59e0b" font-size="10">Microservice-এর জন্য পারফেক্ট</text>
+        <text x="350" y="350" text-anchor="middle" fill="#10b981" font-size="9">MLOps-এ সবচেয়ে বেশি ব্যবহার</text>
+
+        <!-- Venv Column -->
+        <rect x="470" y="20" width="200" height="340" rx="10" fill="#131d35" stroke="#8b5cf6" stroke-width="1.5"/>
+        <text x="570" y="45" text-anchor="middle" fill="#8b5cf6" font-size="13" font-weight="bold">Virtual Env</text>
+        <text x="570" y="62" text-anchor="middle" fill="#64748b" font-size="10">(Python venv)</text>
+
+        <rect x="485" y="75" width="170" height="35" rx="6" fill="#1a2540" stroke="#8b5cf6" stroke-width="1"/>
+        <text x="570" y="90" text-anchor="middle" fill="#94a3b8" font-size="10">venv1/</text>
+        <text x="570" y="106" text-anchor="middle" fill="#94a3b8" font-size="9">NumPy 1.16 + Django</text>
+
+        <rect x="485" y="118" width="170" height="35" rx="6" fill="#1a2540" stroke="#8b5cf6" stroke-width="1"/>
+        <text x="570" y="133" text-anchor="middle" fill="#94a3b8" font-size="10">venv2/</text>
+        <text x="570" y="149" text-anchor="middle" fill="#94a3b8" font-size="9">NumPy 1.24 + FastAPI</text>
+
+        <rect x="485" y="165" width="170" height="28" rx="4" fill="#0e2040" stroke="#1e3a5f"/>
+        <text x="570" y="183" text-anchor="middle" fill="#64748b" font-size="10">Python Interpreter</text>
+
+        <rect x="485" y="203" width="170" height="28" rx="4" fill="#0e2040" stroke="#1e3a5f"/>
+        <text x="570" y="221" text-anchor="middle" fill="#64748b" font-size="10">Host OS</text>
+
+        <rect x="485" y="241" width="170" height="28" rx="4" fill="#0e2040" stroke="#1e3a5f"/>
+        <text x="570" y="259" text-anchor="middle" fill="#64748b" font-size="10">Hardware</text>
+
+        <text x="570" y="295" text-anchor="middle" fill="#f59e0b" font-size="10">⚠️ শুধু Python-এর জন্য</text>
+        <text x="570" y="310" text-anchor="middle" fill="#94a3b8" font-size="9">সবচেয়ে হালকা</text>
+        <text x="570" y="325" text-anchor="middle" fill="#94a3b8" font-size="9">requirements.txt দিয়ে ব্যবহার</text>
+        <text x="570" y="350" text-anchor="middle" fill="#8b5cf6" font-size="9">শুধু library আলাদা করে</text>
+      </svg>
+      <div class="svg-caption">চিত্র ২.১ — তিনটি Virtualization পদ্ধতির তুলনা: VM, Container, এবং Virtual Environment</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🖥️ Virtual Machine — বিস্তারিত</div>
+    
+    <div class="card card-blue">
+      <div class="card-title blue">💻 Virtual Machine (VM) কী?</div>
+      <p>একটি Virtual Machine আক্ষরিক অর্থে <strong>"কম্পিউটারের ভেতরে আরেকটি কম্পিউটার"</strong>। এটির নিজস্ব Operating System (OS) আছে, নিজস্ব RAM আছে, নিজস্ব Disk Space আছে।</p>
+      <p>উদাহরণ: তোমার Windows কম্পিউটারে তুমি একটি Ubuntu VM চালাতে পারো। সেই Ubuntu VM-এ একটি Python অ্যাপ চালালে, অ্যাপটি মনে করবে সে সত্যিকারের Ubuntu মেশিনে আছে!</p>
+    </div>
+
+    <div class="analogy">
+      কল্পনা করো একটা পুতুলের বাড়ি (dollhouse)। বাইরে থেকে দেখলে এটা একটা খেলনা। কিন্তু ভেতরে একটা আসল বাড়ির সব কিছু আছে — রান্নাঘর, শোবার ঘর, বাথরুম। পুতুলরা মনে করে এটাই তাদের আসল বাড়ি! VM ঠিক এইরকম — একটা নকল কম্পিউটার যেটা ভেতর থেকে আসলের মতোই লাগে।
+    </div>
+
+    <div class="grid2">
+      <div class="card card-green">
+        <div class="card-title green">✅ VM-এর সুবিধা</div>
+        <p>সম্পূর্ণ Isolation — নিজস্ব OS</p>
+        <p>Multiple OS একসাথে চালানো</p>
+        <p>Hardware resource সম্পূর্ণ আলাদা</p>
+        <p>Cloud Provider-রা সহজে দেয়</p>
+      </div>
+      <div class="card card-red">
+        <div class="card-title red">❌ VM-এর অসুবিধা</div>
+        <p>অনেক বেশি RAM ও Storage লাগে</p>
+        <p>শুরু হতে মিনিট লাগে</p>
+        <p>OS চালানোর জন্য Resources নষ্ট হয়</p>
+        <p>Container-এর চেয়ে অনেক ভারী</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📦 Container — বিস্তারিত</div>
+    
+    <div class="card card-cyan">
+      <div class="card-title cyan">📦 Container কী?</div>
+      <p>Container হলো VM-এর মতোই, কিন্তু <strong>অনেক হালকা</strong>। এর সবচেয়ে বড় পার্থক্য হলো — Container-এর নিজস্ব OS নেই। এটি হোস্ট মেশিনের OS ব্যবহার করে।</p>
+      <p>Container-এ শুধু অ্যাপ্লিকেশন এবং সেটার প্রয়োজনীয় Library/Dependencies থাকে।</p>
+    </div>
+    
+    <div class="analogy">
+      VM যদি হয় একটি পুরো বাড়ি (নিজস্ব ছাদ, দেওয়াল, মেঝে সব আছে), তাহলে Container হলো সেই বাড়ির একটি ঘর। ঘরের নিজস্ব আসবাবপত্র আছে, কিন্তু ছাদ ও ভিত্তি (OS) বিল্ডিং-এর সাথে শেয়ার করা। তাই ঘর বানানো সহজ, সস্তা এবং দ্রুত!
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🐍 Virtual Environment — বিস্তারিত</div>
+    
+    <div class="card card-purple">
+      <div class="card-title purple">🐍 Python Virtual Environment কী?</div>
+      <p>Virtual Environment শুধুমাত্র Python-এর জন্য। এটি একটি বিশেষ ফোল্ডার তৈরি করে যেখানে নির্দিষ্ট Python লাইব্রেরি ইনস্টল থাকে। এক মেশিনে একাধিক venv থাকতে পারে, প্রতিটিতে আলাদা লাইব্রেরি।</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">BASH — Virtual Environment Commands</div>
+      </div>
+      <pre><span class="cm"># Virtual environment তৈরি করো</span>
+python -m venv myproject_env
+
+<span class="cm"># Activate করো (Linux/Mac)</span>
+source myproject_env/bin/activate
+
+<span class="cm"># Activate করো (Windows)</span>
+myproject_env\Scripts\activate
+
+<span class="cm"># এখন install করো — শুধু এই venv-এ থাকবে</span>
+pip install numpy==1.16.1
+
+<span class="cm"># requirements.txt দিয়ে সব install করো</span>
+pip install -r requirements.txt</pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📊 তুলনামূলক সারণি</div>
+    <table class="comparison-table">
+      <tr>
+        <th>বৈশিষ্ট্য</th>
+        <th>Virtual Machine</th>
+        <th>Container (Docker)</th>
+        <th>Virtual Env</th>
+      </tr>
+      <tr>
+        <td>OS লাগে?</td>
+        <td>✅ হ্যাঁ, নিজস্ব OS</td>
+        <td>❌ না, শেয়ার করে</td>
+        <td>❌ না</td>
+      </tr>
+      <tr>
+        <td>শুরু হতে সময়</td>
+        <td>মিনিট</td>
+        <td>সেকেন্ড</td>
+        <td>তাৎক্ষণিক</td>
+      </tr>
+      <tr>
+        <td>Storage</td>
+        <td>GB (বেশি)</td>
+        <td>MB-GB (কম)</td>
+        <td>KB-MB (সবচেয়ে কম)</td>
+      </tr>
+      <tr>
+        <td>Isolation মাত্রা</td>
+        <td>সম্পূর্ণ</td>
+        <td>ভালো</td>
+        <td>শুধু Library</td>
+      </tr>
+      <tr>
+        <td>MLOps-এ ব্যবহার</td>
+        <td>Cloud infrastructure</td>
+        <td>সবচেয়ে বেশি ✅</td>
+        <td>Local development</td>
+      </tr>
+      <tr>
+        <td>Portable?</td>
+        <td>হ্যাঁ (ভারী)</td>
+        <td>হ্যাঁ (হালকা) ✅</td>
+        <td>requirements.txt দিয়ে</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- EXERCISE 2 -->
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <span class="exercise-badge">🎯 Interview Exercise</span>
+      <span class="exercise-title-text">অধ্যায় ২ — পরীক্ষার প্রশ্ন</span>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ১: Virtual Machine এবং Container-এর মধ্যে মূল পার্থক্য কী? কোনটি MLOps-এ বেশি ব্যবহৃত হয় এবং কেন?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+        <strong>মূল পার্থক্য:</strong> VM-এ নিজস্ব OS আছে (ভারী, মিনিটে boot হয়)। Container-এ OS নেই, host-এর OS শেয়ার করে (হালকা, সেকেন্ডে start হয়)।<br><br>
+        <strong>MLOps-এ Container বেশি ব্যবহৃত:</strong><br>
+        ১. দ্রুত deployment — ML model একটি container-এ প্যাক করে instantly deploy করা যায়<br>
+        ২. Microservices — Preprocessing, Training, Inference আলাদা container-এ<br>
+        ৩. Scalability — Kubernetes দিয়ে হাজারো container চালানো যায়<br>
+        ৪. CI/CD pipeline-এ সহজে integrate করা যায়
+      </div>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ২: Hypervisor কী? এটি কোথায় থাকে এবং কী করে?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+        <strong>Hypervisor</strong> হলো VM এবং হোস্ট মেশিনের মাঝখানে থাকা একটি software layer। এটি VM-গুলোকে manage করে এবং hardware resource (CPU, RAM, Disk) ভাগ করে দেয়। উদাহরণ: VMware, VirtualBox, Hyper-V। Docker-এ Hypervisor নেই — তাই Container VM-এর চেয়ে হালকা।
+      </div>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ৩ (Coding): Python-এ দুটো project আছে — একটায় sklearn==0.24, আরেকটায় sklearn==1.2 লাগবে। কীভাবে manage করবে?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+<pre style="background:#050a14;padding:12px;border-radius:6px;font-size:0.82rem;color:#c9d1d9;overflow-x:auto">
+# Project 1-এর জন্য venv
+python -m venv project1_env
+source project1_env/bin/activate
+pip install scikit-learn==0.24
+deactivate
+
+# Project 2-এর জন্য আলাদা venv
+python -m venv project2_env
+source project2_env/bin/activate
+pip install scikit-learn==1.2
+deactivate
+
+# আরও ভালো সমাধান: প্রতিটিকে Docker container-এ রাখো
+# তাহলে OS-level isolation পাবে, শুধু library না
+</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- CHAPTER 3: DOCKER -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch3">
+  <div class="chapter-header">
+    <div class="chapter-num">৩</div>
+    <div>
+      <div class="chapter-title">Docker — পরিচয় ও কার্যপ্রণালী</div>
+      <div class="chapter-sub">What is Docker and How Does it Work?</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🐳 Docker কী?</div>
+    <p><strong>Docker</strong> হলো বিশ্বের সবচেয়ে জনপ্রিয় Containerization Tool। এটি একটি software যেটি তোমাকে <em>container</em> তৈরি করতে, শেয়ার করতে এবং চালাতে সাহায্য করে।</p>
+    <p>Docker Mac, Linux, এবং Windows — তিনটি OS-এ কাজ করে।</p>
+    
+    <div class="analogy">
+      "Docker Container" নামটা এসেছে shipping container থেকে। বন্দরে যেভাবে বড় বড় ধাতব বাক্স (shipping container) থাকে যেখানে সব ধরনের পণ্য প্যাক করে যেকোনো জায়গায় পাঠানো যায় — Docker Container ঠিক একইভাবে software প্যাক করে যেকোনো কম্পিউটারে চালানো সম্ভব করে।
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎂 কেক রেসিপির উদাহরণ দিয়ে Docker বোঝো</div>
+
+    <div class="svg-container">
+      <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <defs>
+          <marker id="dk3-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#06b6d4"/>
+          </marker>
+        </defs>
+        <rect width="700" height="200" fill="#0f1629" rx="10"/>
+
+        <!-- Dockerfile -->
+        <rect x="30" y="30" width="130" height="140" rx="8" fill="#1a2540" stroke="#f59e0b" stroke-width="2"/>
+        <text x="95" y="55" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">📄 Dockerfile</text>
+        <text x="95" y="75" text-anchor="middle" fill="#94a3b8" font-size="9">(কেকের রেসিপি)</text>
+        <text x="95" y="95" text-anchor="middle" fill="#64748b" font-size="10">FROM python:3.8</text>
+        <text x="95" y="110" text-anchor="middle" fill="#64748b" font-size="10">RUN pip install...</text>
+        <text x="95" y="125" text-anchor="middle" fill="#64748b" font-size="10">COPY app.py /app/</text>
+        <text x="95" y="140" text-anchor="middle" fill="#64748b" font-size="10">CMD ["python"...]</text>
+        <text x="95" y="160" text-anchor="middle" fill="#f59e0b" font-size="9">তুমি লিখেছ</text>
+
+        <!-- Arrow 1: Dockerfile → Image -->
+        <path d="M 162 100 L 200 100" stroke="#06b6d4" stroke-width="2" marker-end="url(#dk3-arrow)"/>
+        <text x="181" y="90" text-anchor="middle" fill="#06b6d4" font-size="9">build</text>
+
+        <!-- Docker Image -->
+        <rect x="202" y="30" width="130" height="140" rx="8" fill="#1a2540" stroke="#3b82f6" stroke-width="2"/>
+        <text x="267" y="55" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="bold">🐳 Docker Image</text>
+        <text x="267" y="72" text-anchor="middle" fill="#94a3b8" font-size="9">(উপকরণ সাজানো)</text>
+        <text x="267" y="95" text-anchor="middle" fill="#10b981" font-size="10">Python 3.8 ✓</text>
+        <text x="267" y="110" text-anchor="middle" fill="#10b981" font-size="10">NumPy 1.16 ✓</text>
+        <text x="267" y="125" text-anchor="middle" fill="#10b981" font-size="10">app.py ✓</text>
+        <text x="267" y="145" text-anchor="middle" fill="#3b82f6" font-size="9">Read-Only Template</text>
+        <text x="267" y="160" text-anchor="middle" fill="#3b82f6" font-size="9">DockerHub-এ শেয়ার হয়</text>
+
+        <!-- Arrow 2: Image → Containers (run) -->
+        <path d="M 334 70 L 372 50" stroke="#06b6d4" stroke-width="2" marker-end="url(#dk3-arrow)"/>
+        <path d="M 334 100 L 372 100" stroke="#06b6d4" stroke-width="2" marker-end="url(#dk3-arrow)"/>
+        <path d="M 334 130 L 372 150" stroke="#06b6d4" stroke-width="2" marker-end="url(#dk3-arrow)"/>
+        <text x="353" y="95" text-anchor="middle" fill="#06b6d4" font-size="9">run</text>
+
+        <!-- Containers -->
+        <rect x="374" y="20" width="100" height="50" rx="6" fill="#1a2540" stroke="#06b6d4" stroke-width="1.5"/>
+        <text x="424" y="40" text-anchor="middle" fill="#06b6d4" font-size="9" font-weight="bold">Container 1</text>
+        <text x="424" y="55" text-anchor="middle" fill="#10b981" font-size="10">চলছে ✓</text>
+        <text x="424" y="66" text-anchor="middle" fill="#94a3b8" font-size="10">স্বাধীন</text>
+
+        <rect x="374" y="80" width="100" height="50" rx="6" fill="#1a2540" stroke="#06b6d4" stroke-width="1.5"/>
+        <text x="424" y="100" text-anchor="middle" fill="#06b6d4" font-size="9" font-weight="bold">Container 2</text>
+        <text x="424" y="115" text-anchor="middle" fill="#10b981" font-size="10">চলছে ✓</text>
+        <text x="424" y="126" text-anchor="middle" fill="#94a3b8" font-size="10">স্বাধীন</text>
+
+        <rect x="374" y="140" width="100" height="50" rx="6" fill="#1a2540" stroke="#06b6d4" stroke-width="1.5"/>
+        <text x="424" y="160" text-anchor="middle" fill="#06b6d4" font-size="9" font-weight="bold">Container 3</text>
+        <text x="424" y="175" text-anchor="middle" fill="#10b981" font-size="10">চলছে ✓</text>
+        <text x="424" y="186" text-anchor="middle" fill="#94a3b8" font-size="10">স্বাধীন</text>
+
+        <!-- Label -->
+        <text x="580" y="70" text-anchor="middle" fill="#94a3b8" font-size="10">একই Image থেকে</text>
+        <text x="580" y="86" text-anchor="middle" fill="#94a3b8" font-size="10">অনেক Container</text>
+        <text x="580" y="110" text-anchor="middle" fill="#f59e0b" font-size="10">কেকের রেসিপি দিয়ে</text>
+        <text x="580" y="126" text-anchor="middle" fill="#f59e0b" font-size="10">অনেক কেক বানানো যায়!</text>
+        <text x="580" y="155" text-anchor="middle" fill="#10b981" font-size="9">প্রতিটি কেক কিন্তু</text>
+        <text x="580" y="170" text-anchor="middle" fill="#10b981" font-size="9">একে অপর থেকে আলাদা</text>
+      </svg>
+      <div class="svg-caption">চিত্র ৩.১ — Dockerfile → Image → Container-এর সম্পর্ক (কেক রেসিপির উদাহরণে)</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🏆 Docker কেন এত দরকারী?</div>
+    <div class="dockerfile-grid">
+      <div class="card card-blue">
+        <div class="card-title blue">⚡ Lightweight (হালকা)</div>
+        <p>Docker container হোস্ট মেশিনের OS শেয়ার করে, তাই এটি VM-এর তুলনায় অনেক হালকা। কম RAM, কম Storage।</p>
+      </div>
+      <div class="card card-green">
+        <div class="card-title green">✈️ Portability (বহনযোগ্য)</div>
+        <p>Local machine-এ বানিয়ে production server-এ পাঠাও — কোনো compatibility সমস্যা নেই। "Works on my machine" সমস্যা শেষ!</p>
+      </div>
+      <div class="card card-cyan">
+        <div class="card-title cyan">😊 Ease of Use (সহজ)</div>
+        <p>Docker Hub-এ হাজারো pre-built image আছে। TensorFlow, PyTorch, Jupyter — সব ডাউনলোড করে সাথে সাথে চালানো যায়।</p>
+      </div>
+      <div class="card card-purple">
+        <div class="card-title purple">👥 Active Community (সক্রিয় সম্প্রদায়)</div>
+        <p>লক্ষ লক্ষ Developer Docker ব্যবহার করে। প্রশ্ন থাকলে Stack Overflow, Docker Forum-এ উত্তর পাবে।</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 3 -->
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <span class="exercise-badge">🎯 Interview Exercise</span>
+      <span class="exercise-title-text">অধ্যায় ৩ — পরীক্ষার প্রশ্ন</span>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ১: Docker Image এবং Docker Container-এর মধ্যে পার্থক্য কী? Analogy দিয়ে বোঝাও।</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+        <strong>Docker Image</strong> হলো একটি read-only template — যেমন একটি কেকের রেসিপি। এটি পরিবর্তন হয় না।<br><br>
+        <strong>Docker Container</strong> হলো সেই রেসিপি থেকে বানানো আসল কেক — যেটি চলছে, যেটিতে পরিবর্তন করা যায়, যেটি delete করা যায়।<br><br>
+        একটি Image থেকে অনেক Container চালানো যায়, ঠিক যেমন একটি রেসিপি দিয়ে অনেক কেক বানানো যায়। প্রতিটি Container স্বাধীন।
+      </div>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ২: DockerHub কী? এটি কীভাবে Data Scientist-দের কাজে আসে?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+        <strong>DockerHub</strong> হলো Docker Images-এর একটি public registry — ভাবো এটি GitHub, কিন্তু code-এর বদলে Docker Image রাখা হয়।<br><br>
+        <strong>Data Scientist-দের কাজে:</strong><br>
+        • TensorFlow GPU image pull করলেই GPU-ready ML environment পাওয়া যায়<br>
+        • Jupyter Notebook image দিয়ে সাথে সাথে notebook server চালু করা যায়<br>
+        • Custom ML model image বানিয়ে team-এর সাথে share করা যায়<br>
+        • CI/CD pipeline-এ DockerHub থেকে auto-pull করা যায়
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- CHAPTER 4: DOCKER IMAGE -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch4">
+  <div class="chapter-header">
+    <div class="chapter-num">৪</div>
+    <div>
+      <div class="chapter-title">Docker Image — তৈরি ও ব্যবহার</div>
+      <div class="chapter-sub">Creating and Using Docker Images</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📄 Dockerfile — Image-এর রেসিপি</div>
+    <p>একটি <strong>Dockerfile</strong> হলো একটি সাধারণ text file যেটিতে ধাপে ধাপে নির্দেশনা লেখা থাকে। Docker এই নির্দেশনা পড়ে Image তৈরি করে।</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">DOCKERFILE — একটি সম্পূর্ণ উদাহরণ</div>
+      </div>
+      <pre><span class="cm"># বেস Image নির্বাচন করো — Python 3.8 ব্যবহার করব</span>
+<span class="kw">FROM</span> <span class="cn">python:3.8</span>
+
+<span class="cm"># Container-এর ভেতরে কাজের ফোল্ডার set করো</span>
+<span class="kw">WORKDIR</span> <span class="st">/app</span>
+
+<span class="cm"># আমার local machine থেকে container-এ ফাইল copy করো</span>
+<span class="kw">COPY</span> app.py /app/
+<span class="kw">COPY</span> requirements.txt /app/
+
+<span class="cm"># Image বানানোর সময় library install করো</span>
+<span class="kw">RUN</span> pip install -r requirements.txt
+
+<span class="cm"># Container চালু হলে এই command run হবে</span>
+<span class="kw">CMD</span> ["python", "app.py"]</pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔑 Dockerfile-এর ৫টি মূল Keyword</div>
+    
+    <div class="dockerfile-grid">
+      <div class="df-card">
+        <div class="df-keyword">FROM</div>
+        <p class="df-desc"><strong>বেস Image</strong> নির্বাচন করে। সব Dockerfile-এর প্রথম লাইন এটি। যেমন <code>FROM python:3.8</code> মানে Python 3.8-এর উপর ভিত্তি করে Image বানাও।</p>
+        <div class="analogy" style="font-size:0.82rem;padding:10px 14px;margin-top:8px;">
+          <span style="color:var(--accent-cyan);font-weight:700;">উপমা:</span> কেক বানানোর জন্য প্রথমে কোন brand-এর ময়দা ব্যবহার করবে তা ঠিক করা।
+        </div>
+      </div>
+      <div class="df-card">
+        <div class="df-keyword">WORKDIR</div>
+        <p class="df-desc"><strong>কাজের ফোল্ডার</strong> নির্ধারণ করে। Container শুরু হলে এই ফোল্ডারে থাকবে। <code>WORKDIR /app</code> মানে /app ফোল্ডারে কাজ করবে।</p>
+        <div class="analogy" style="font-size:0.82rem;padding:10px 14px;margin-top:8px;">
+          <span style="color:var(--accent-cyan);font-weight:700;">উপমা:</span> রান্নাঘরে কোন countertop-এ কাজ করবে তা ঠিক করা।
+        </div>
+      </div>
+      <div class="df-card">
+        <div class="df-keyword">COPY</div>
+        <p class="df-desc">তোমার <strong>local machine থেকে Image-এ ফাইল copy</strong> করে। <code>COPY app.py /app/</code> মানে local-এর app.py ফাইল Image-এর /app/ ফোল্ডারে নিয়ে যাও।</p>
+        <div class="analogy" style="font-size:0.82rem;padding:10px 14px;margin-top:8px;">
+          <span style="color:var(--accent-cyan);font-weight:700;">উপমা:</span> ফ্রিজ থেকে উপকরণ বের করে কাজের জায়গায় সাজিয়ে রাখা।
+        </div>
+      </div>
+      <div class="df-card">
+        <div class="df-keyword">RUN</div>
+        <p class="df-desc">Image <strong>তৈরির সময়</strong> একবার command চালায়। সাধারণত library install করতে ব্যবহার হয়। Image-এ permanently store হয়।</p>
+        <div class="analogy" style="font-size:0.82rem;padding:10px 14px;margin-top:8px;">
+          <span style="color:var(--accent-cyan);font-weight:700;">উপমা:</span> কেকের উপকরণ একবার কেনা — পরে আর কিনতে হবে না।
+        </div>
+      </div>
+      <div class="df-card">
+        <div class="df-keyword">CMD</div>
+        <p class="df-desc">Container <strong>চালু হওয়ার সময়</strong> command চালায়। প্রতিবার container start হলে এটি চলে। Image তৈরিতে চলে না।</p>
+        <div class="analogy" style="font-size:0.82rem;padding:10px 14px;margin-top:8px;">
+          <span style="color:var(--accent-cyan);font-weight:700;">উপমা:</span> প্রতিবার সকালে উঠে "কফি বানাও" — প্রতিদিন করতে হয়।
+        </div>
+      </div>
+      <div class="df-card">
+        <div class="df-keyword">EXPOSE</div>
+        <p class="df-desc">Container কোন <strong>Port-এ শুনছে</strong> তা ঘোষণা করে। <code>EXPOSE 8080</code> মানে container 8080 port ব্যবহার করবে। (Documentation উদ্দেশ্যে বেশি ব্যবহার হয়)</p>
+        <div class="analogy" style="font-size:0.82rem;padding:10px 14px;margin-top:8px;">
+          <span style="color:var(--accent-cyan);font-weight:700;">উপমা:</span> দোকানের সামনে লেখা "8080 নম্বর গেট দিয়ে ঢুকুন।"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔨 Image তৈরির কমান্ড</div>
+    
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">১</div>
+        <div class="step-body">
+          <div class="step-label">Dockerfile তৈরি করো</div>
+          <p>তোমার project folder-এ <code>Dockerfile</code> নামে একটি ফাইল তৈরি করো (কোনো extension নেই — .txt বা .py নয়, শুধু <strong>Dockerfile</strong>)।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">২</div>
+        <div class="step-body">
+          <div class="step-label">Terminal খোলো Dockerfile-এর folder-এ</div>
+          <div class="cmd-row">
+            <span class="cmd-prompt">$</span>
+            <span class="cmd-text">cd /path/to/your/project</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">৩</div>
+        <div class="step-body">
+          <div class="step-label">Image Build করো</div>
+          <div class="cmd-row">
+            <span class="cmd-prompt">$</span>
+            <span class="cmd-text">docker image build -t my_image .</span>
+          </div>
+          <p class="cmd-note">⚠️ শেষের <code>.</code> (dot) ভুলো না! এটি বলছে "Dockerfile এই current folder-এ আছে"। -t মানে tag/name।</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">৪</div>
+        <div class="step-body">
+          <div class="step-label">Image তৈরি হয়েছে কিনা দেখো</div>
+          <div class="cmd-row">
+            <span class="cmd-prompt">$</span>
+            <span class="cmd-text">docker images</span>
+          </div>
+          <p class="cmd-note">এই command সব available Docker Images দেখাবে। তোমার my_image দেখতে পাবে।</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🌐 DockerHub থেকে Image নামানো</div>
+    <p>DockerHub হলো Docker Images-এর বিশাল library। এখানে লক্ষ লক্ষ pre-built image আছে।</p>
+    
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">BASH — DockerHub থেকে Image Pull করা</div>
+      </div>
+      <pre><span class="cm"># Ubuntu image ডাউনলোড করো</span>
+docker image pull ubuntu
+
+<span class="cm"># Python 3.9 image ডাউনলোড করো</span>
+docker image pull python:3.9
+
+<span class="cm"># TensorFlow GPU image ডাউনলোড করো (ML কাজের জন্য)</span>
+docker image pull tensorflow/tensorflow:latest-gpu
+
+<span class="cm"># Jupyter Notebook image</span>
+docker image pull jupyter/scipy-notebook
+
+<span class="cm"># সব available images দেখো</span>
+docker images</pre>
+    </div>
+  </div>
+
+  <!-- EXERCISE 4 -->
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <span class="exercise-badge">🎯 Interview Exercise</span>
+      <span class="exercise-title-text">অধ্যায় ৪ — পরীক্ষার প্রশ্ন</span>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ১ (Hands-on): একটি FastAPI ML serving অ্যাপের জন্য Dockerfile লেখো যেখানে Python 3.9, fastapi, uvicorn, scikit-learn থাকবে এবং port 8000-এ serve করবে।</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+<pre style="background:#050a14;padding:12px;border-radius:6px;font-size:0.82rem;color:#c9d1d9;overflow-x:auto">
+# Dockerfile
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . /app/
+
+EXPOSE 8000
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# requirements.txt:
+# fastapi==0.100.0
+# uvicorn==0.23.0
+# scikit-learn==1.3.0
+# pandas==2.0.0
+# numpy==1.24.0
+</pre>
+      </div>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ২: RUN এবং CMD-এর পার্থক্য কী? একটা ML project-এ কখন কোনটা ব্যবহার করবে?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+        <strong>RUN:</strong> Image build time-এ চলে। একবারই চলে। Result Image-এ permanently বেক হয়।<br>
+        <em>ML উদাহরণ:</em> <code>RUN pip install scikit-learn</code> — library install করা<br><br>
+        <strong>CMD:</strong> Container start time-এ প্রতিবার চলে। Container restart করলেও আবার চলে।<br>
+        <em>ML উদাহরণ:</em> <code>CMD ["python", "train.py"]</code> — model training শুরু করা<br><br>
+        <strong>পার্থক্য মনে রাখার trick:</strong> RUN = "একবারের কাজ" (setup), CMD = "প্রতিবারের কাজ" (run)
+      </div>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ৩: <code>FROM python:3.9-slim</code> vs <code>FROM python:3.9</code> — কোনটা বেশি ভালো এবং কেন?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+        <strong>python:3.9-slim</strong> বেশি ভালো production-এর জন্য কারণ:<br>
+        • অনেক ছোট size (900MB vs 300MB)<br>
+        • কম unnecessary packages<br>
+        • দ্রুত pull হয়<br>
+        • Security attack surface কম<br><br>
+        <strong>python:3.9</strong> ব্যবহার করো যদি: অনেক সিস্টেম-level tool দরকার হয় বা development-এ সব কিছু try করতে চাও।<br><br>
+        <strong>MLOps best practice:</strong> Production-এ সবসময় slim বা alpine image ব্যবহার করো।
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- CHAPTER 5: DOCKER CONTAINER -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch5">
+  <div class="chapter-header">
+    <div class="chapter-num">৫</div>
+    <div>
+      <div class="chapter-title">Docker Container — জীবনচক্র ও কমান্ড</div>
+      <div class="chapter-sub">Container Lifecycle and Commands</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔄 Container-এর জীবনচক্র</div>
+    
+    <div class="svg-container">
+      <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <defs>
+          <marker id="dk5-a1" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#10b981"/></marker>
+          <marker id="dk5-a2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#f59e0b"/></marker>
+          <marker id="dk5-a3" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#ef4444"/></marker>
+          <marker id="dk5-a4" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#3b82f6"/></marker>
+          <marker id="dk5-a5" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#64748b"/></marker>
+        </defs>
+        <rect width="700" height="200" fill="#0f1629" rx="10"/>
+        
+        <!-- States -->
+        <rect x="30" y="75" width="100" height="50" rx="8" fill="#1a2540" stroke="#10b981" stroke-width="2"/>
+        <text x="80" y="96" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Created</text>
+        <text x="80" y="112" text-anchor="middle" fill="#64748b" font-size="9">docker run</text>
+        
+        <rect x="190" y="75" width="100" height="50" rx="8" fill="#1a2540" stroke="#3b82f6" stroke-width="2"/>
+        <text x="240" y="96" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="bold">Running</text>
+        <text x="240" y="112" text-anchor="middle" fill="#64748b" font-size="9">চলছে ✓</text>
+        
+        <rect x="350" y="30" width="100" height="50" rx="8" fill="#1a2540" stroke="#f59e0b" stroke-width="2"/>
+        <text x="400" y="51" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">Paused</text>
+        <text x="400" y="67" text-anchor="middle" fill="#64748b" font-size="9">frozen</text>
+        
+        <rect x="350" y="120" width="100" height="50" rx="8" fill="#1a2540" stroke="#ef4444" stroke-width="2"/>
+        <text x="400" y="141" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">Stopped</text>
+        <text x="400" y="157" text-anchor="middle" fill="#64748b" font-size="9">বন্ধ</text>
+        
+        <rect x="560" y="75" width="100" height="50" rx="8" fill="#1a2540" stroke="#64748b" stroke-width="2"/>
+        <text x="610" y="96" text-anchor="middle" fill="#64748b" font-size="11" font-weight="bold">Deleted</text>
+        <text x="610" y="112" text-anchor="middle" fill="#64748b" font-size="9">মুছে গেছে</text>
+        
+        <!-- Arrows -->
+        <path d="M 130 100 L 188 100" stroke="#10b981" stroke-width="1.5" marker-end="url(#dk5-a1)"/>
+        <text x="159" y="92" text-anchor="middle" fill="#10b981" font-size="10">auto</text>
+        
+        <path d="M 290 80 L 348 55" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#dk5-a2)"/>
+        <text x="315" y="60" text-anchor="middle" fill="#f59e0b" font-size="10">pause</text>
+        
+        <path d="M 350 55 L 292 80" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#dk5-a4)" stroke-dasharray="3,2"/>
+        <text x="315" y="78" text-anchor="middle" fill="#3b82f6" font-size="10">unpause</text>
+        
+        <path d="M 290 120 L 348 145" stroke="#ef4444" stroke-width="1.5" marker-end="url(#dk5-a3)"/>
+        <text x="315" y="142" text-anchor="middle" fill="#ef4444" font-size="10">stop</text>
+        
+        <path d="M 350 145 L 292 120" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#dk5-a4)" stroke-dasharray="3,2"/>
+        <text x="315" y="120" text-anchor="middle" fill="#3b82f6" font-size="10">start</text>
+        
+        <path d="M 450 145 L 558 120" stroke="#64748b" stroke-width="1.5" marker-end="url(#dk5-a5)"/>
+        <text x="504" y="140" text-anchor="middle" fill="#64748b" font-size="10">rm</text>
+      </svg>
+      <div class="svg-caption">চিত্র ৫.১ — Docker Container-এর জীবনচক্র</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">💻 সব গুরুত্বপূর্ণ Container Command</div>
+    
+    <div class="card card-cyan">
+      <div class="card-title cyan">🚀 Container তৈরি ও চালানো</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">BASH</div>
+        </div>
+        <pre><span class="cm"># সবচেয়ে basic command — image থেকে container চালাও</span>
+docker container run my_image
+
+<span class="cm"># Container-এর নাম দাও (সুবিধাজনক)</span>
+docker container run <span class="kw">--name</span> my_container my_image
+
+<span class="cm"># Background-এ চালাও (-d মানে detached mode)</span>
+docker container run -d --name my_container my_image
+
+<span class="cm"># Port mapping করো (host port : container port)</span>
+docker container run -d -p 8080:8000 --name api_container my_image
+
+<span class="cm"># Environment variable দাও</span>
+docker container run -d -e DATABASE_URL=postgres://... --name app my_image</pre>
+      </div>
+    </div>
+
+    <div class="card card-blue">
+      <div class="card-title blue">📋 চলমান Container দেখা</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">BASH</div>
+        </div>
+        <pre><span class="cm"># এখন যেসব container চলছে দেখো</span>
+docker ps
+
+<span class="cm"># সব container দেখো (stopped সহ)</span>
+docker ps -a
+
+<span class="cm"># Container-এর logs দেখো</span>
+docker logs my_container
+
+<span class="cm"># Container-এ ঢুকে কাজ করো (bash shell)</span>
+docker exec -it my_container bash</pre>
+      </div>
+    </div>
+
+    <div class="card card-yellow">
+      <div class="card-title yellow">⏸️ Pause, Stop, Start</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">BASH</div>
+        </div>
+        <pre><span class="cm"># Container pause করো (process freeze হয়)</span>
+docker container pause my_container
+
+<span class="cm"># Container unpause করো (যেখান থেকে ছিল সেখান থেকে চলে)</span>
+docker container unpause my_container
+
+<span class="cm"># Container stop করো (process সম্পূর্ণ বন্ধ হয়)</span>
+docker container stop my_container
+
+<span class="cm"># Container আবার শুরু করো</span>
+docker container start my_container</pre>
+      </div>
+    </div>
+
+    <div class="card card-red">
+      <div class="card-title red">🗑️ Container Delete করা</div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <div class="code-lang">BASH</div>
+        </div>
+        <pre><span class="cm"># প্রথমে stop করো, তারপর delete করো</span>
+docker container stop my_container
+docker container rm my_container
+
+<span class="cm"># সব stopped container একসাথে delete করো</span>
+docker container prune
+
+<span class="cm"># Force delete (stop ছাড়া)</span>
+docker container rm -f my_container</pre>
+      </div>
+    </div>
+
+    <div class="important">
+      <strong>pause vs stop:</strong> <code>pause</code> করলে প্রক্রিয়া freeze হয়, <code>unpause</code> করলে ঠিক যেখান থেকে থেমেছিল সেখান থেকে চলে। <code>stop</code> করলে সব বন্ধ হয়, <code>start</code> করলে আবার শুরু থেকে চলে।
+    </div>
+  </div>
+
+  <!-- EXERCISE 5 -->
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <span class="exercise-badge">🎯 Interview Exercise</span>
+      <span class="exercise-title-text">অধ্যায় ৫ — পরীক্ষার প্রশ্ন</span>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ১ (Scenario): তোমার ML training container রাত ৩টায় শুরু হয়েছে, সকালে দেখতে চাও training কোথায় আছে। কোন command ব্যবহার করবে?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+<pre style="background:#050a14;padding:12px;border-radius:6px;font-size:0.82rem;color:#c9d1d9;overflow-x:auto">
+# Container চলছে কিনা দেখো
+docker ps
+
+# Training-এর output/log দেখো
+docker logs training_container
+
+# Real-time log দেখতে (stream করে)
+docker logs -f training_container
+
+# Container-এর ভেতরে ঢুকে check করো
+docker exec -it training_container bash
+# তারপর ভেতরে: ls models/ — saved model আছে কিনা দেখো
+</pre>
+      </div>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ২: তোমার FastAPI container port 8000-এ চলছে। Browser থেকে localhost:9090 দিয়ে access করতে চাও। Command কী?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+        <code>docker container run -d -p 9090:8000 --name api my_image</code><br><br>
+        <strong>ব্যাখ্যা:</strong> <code>-p 9090:8000</code> মানে host-এর 9090 port থেকে আসা traffic container-এর 8000 port-এ পাঠাও।<br>
+        Format: <code>-p [HOST_PORT]:[CONTAINER_PORT]</code>
+      </div>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ৩: Container delete করার আগে কেন stop করা ভালো? এবং কোন পরিস্থিতিতে container delete করা উচিত?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+        <strong>Stop আগে কেন:</strong> চলমান container force delete করলে data corruption হতে পারে। Database container হলে data নষ্ট হবে।<br><br>
+        <strong>কখন delete করা উচিত:</strong><br>
+        ১. নতুন version deploy করতে হলে (পুরনো container delete করে নতুন চালাও)<br>
+        ২. Testing শেষ হলে (disk space বাঁচাতে)<br>
+        ৩. Sensitive credentials protect করতে<br>
+        ৪. CI/CD pipeline-এ প্রতিটি run শেষে cleanup করা
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- CHAPTER 6: DOCKER DESKTOP -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch6">
+  <div class="chapter-header">
+    <div class="chapter-num">৬</div>
+    <div>
+      <div class="chapter-title">Docker Desktop — ভিজ্যুয়াল ইন্টারফেস</div>
+      <div class="chapter-sub">Docker Desktop GUI</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🖥️ Docker Desktop কী?</div>
+    <p><strong>Docker Desktop</strong> হলো Docker-এর একটি Graphical User Interface (GUI) অ্যাপ্লিকেশন। Command line ব্যবহার না করেও এই অ্যাপের মাধ্যমে Docker পরিচালনা করা যায়। এটি Mac, Linux এবং Windows-এ পাওয়া যায়।</p>
+    
+    <div class="analogy">
+      Terminal/Command line যদি হয় একটা car-এর manual gearbox — যেখানে সব কিছু নিজে control করতে হয় — তাহলে Docker Desktop হলো automatic car-এর dashboard। সব কিছু বোতাম টিপে করা যায়, দেখতেও সুন্দর।
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 Docker Desktop-এ কী কী করা যায়?</div>
+
+    <div class="svg-container">
+      <svg viewBox="0 0 700 350" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <rect width="700" height="350" fill="#0f1629" rx="10"/>
+        
+        <!-- Central Docker Desktop -->
+        <circle cx="350" cy="175" r="55" fill="#1a2540" stroke="#06b6d4" stroke-width="2"/>
+        <text x="350" y="168" text-anchor="middle" fill="#06b6d4" font-size="11" font-weight="bold">Docker</text>
+        <text x="350" y="183" text-anchor="middle" fill="#06b6d4" font-size="11" font-weight="bold">Desktop</text>
+        <text x="350" y="198" text-anchor="middle" fill="#64748b" font-size="9">🐳</text>
+
+        <!-- Features -->
+        <rect x="30" y="20" width="160" height="55" rx="8" fill="#1a2540" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="110" y="40" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="bold">📋 Image ও Container</text>
+        <text x="110" y="55" text-anchor="middle" fill="#94a3b8" font-size="9">সব এক জায়গায় দেখো</text>
+        <text x="110" y="68" text-anchor="middle" fill="#64748b" font-size="10">visual list view</text>
+        <line x1="190" y1="47" x2="296" y2="147" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <rect x="510" y="20" width="160" height="55" rx="8" fill="#1a2540" stroke="#10b981" stroke-width="1.5"/>
+        <text x="590" y="40" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">🗂️ Image Structure</text>
+        <text x="590" y="55" text-anchor="middle" fill="#94a3b8" font-size="9">Image-এর layers দেখো</text>
+        <text x="590" y="68" text-anchor="middle" fill="#64748b" font-size="10">layer-by-layer analysis</text>
+        <line x1="510" y1="47" x2="404" y2="147" stroke="#10b981" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <rect x="30" y="150" width="160" height="55" rx="8" fill="#1a2540" stroke="#8b5cf6" stroke-width="1.5"/>
+        <text x="110" y="170" text-anchor="middle" fill="#8b5cf6" font-size="10" font-weight="bold">📁 File Explorer</text>
+        <text x="110" y="185" text-anchor="middle" fill="#94a3b8" font-size="9">Container-এর ভেতরের</text>
+        <text x="110" y="198" text-anchor="middle" fill="#64748b" font-size="10">ফাইল দেখো ও edit করো</text>
+        <line x1="190" y1="177" x2="295" y2="175" stroke="#8b5cf6" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <rect x="510" y="150" width="160" height="55" rx="8" fill="#1a2540" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="590" y="170" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">⚙️ Container Control</text>
+        <text x="590" y="185" text-anchor="middle" fill="#94a3b8" font-size="9">Stop, Start, Delete</text>
+        <text x="590" y="198" text-anchor="middle" fill="#64748b" font-size="10">বোতাম টিপেই করো</text>
+        <line x1="510" y1="177" x2="405" y2="175" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <rect x="30" y="280" width="160" height="55" rx="8" fill="#1a2540" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="110" y="300" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="bold">📊 Logs দেখা</text>
+        <text x="110" y="315" text-anchor="middle" fill="#94a3b8" font-size="9">প্রতিটি restart-এর পর</text>
+        <text x="110" y="328" text-anchor="middle" fill="#64748b" font-size="10">output observe করো</text>
+        <line x1="190" y1="307" x2="296" y2="203" stroke="#ef4444" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <rect x="510" y="280" width="160" height="55" rx="8" fill="#1a2540" stroke="#06b6d4" stroke-width="1.5"/>
+        <text x="590" y="300" text-anchor="middle" fill="#06b6d4" font-size="10" font-weight="bold">🐍 Script দেখা ও Edit</text>
+        <text x="590" y="315" text-anchor="middle" fill="#94a3b8" font-size="9">Container-এর Python</text>
+        <text x="590" y="328" text-anchor="middle" fill="#64748b" font-size="10">script modify করো</text>
+        <line x1="510" y1="307" x2="404" y2="203" stroke="#06b6d4" stroke-width="1" stroke-dasharray="4,3"/>
+      </svg>
+      <div class="svg-caption">চিত্র ৬.১ — Docker Desktop-এর মূল Features</div>
+    </div>
+
+    <div class="grid2">
+      <div class="card card-blue">
+        <div class="card-title blue">✅ Docker Desktop-এর সুবিধা</div>
+        <p>কমান্ড মনে রাখতে হয় না</p>
+        <p>সব কিছু visually দেখা যায়</p>
+        <p>শিক্ষার্থীদের জন্য সহজ</p>
+        <p>Container-এর file tree দেখা যায়</p>
+        <p>Resource usage monitor করা যায়</p>
+      </div>
+      <div class="card card-yellow">
+        <div class="card-title yellow">⚠️ কখন Terminal ব্যবহার করবে</div>
+        <p>Automation এবং scripting-এ</p>
+        <p>CI/CD pipeline-এ</p>
+        <p>Remote server-এ (GUI নেই)</p>
+        <p>Production deployment-এ</p>
+        <p>Advanced commands-এ</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCISE 6 -->
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <span class="exercise-badge">🎯 Interview Exercise</span>
+      <span class="exercise-title-text">অধ্যায় ৬ — পরীক্ষার প্রশ্ন</span>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন: Production server-এ Docker Desktop ব্যবহার করা কি উচিত? কেন বা কেন নয়?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+        <strong>না, production server-এ Docker Desktop উচিত নয়।</strong><br><br>
+        <strong>কারণ:</strong><br>
+        ১. Production Linux server-এ graphical desktop environment থাকে না (headless)<br>
+        ২. GUI অতিরিক্ত RAM ব্যবহার করে<br>
+        ৩. Docker Engine (CLI only) অনেক lighter এবং faster<br>
+        ৪. Automation-এ CLI সহজ<br><br>
+        <strong>Rule of thumb:</strong> Local development ও learning — Docker Desktop ✓। Production, CI/CD — Docker Engine + CLI ✓।
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- CHAPTER 7: DOCKER VOLUMES -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch7">
+  <div class="chapter-header">
+    <div class="chapter-num">৭</div>
+    <div>
+      <div class="chapter-title">Docker Volumes — ডেটা সংরক্ষণ</div>
+      <div class="chapter-sub">Persistent Data Storage</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">💾 Volume কেন দরকার?</div>
+    <p>Docker Container-এর একটি বড় সমস্যা হলো — Container delete করলে তার ভেতরের সব <strong>data মুছে যায়</strong>। এটি Container-এর স্বভাব।</p>
+
+    <div class="analogy">
+      ভাবো তুমি একটা বালির ঘর বানিয়েছ। বালির ঘরে তুমি কিছু জিনিসপত্র রাখলে। কিন্তু সমুদ্রের ঢেউ এসে বালির ঘর ভেঙে দিলে — সব কিছু নষ্ট! সমাধান? জিনিসপত্রগুলো বালির ঘরের বাইরে পাথরের বাক্সে রাখো। ঢেউ বালির ঘর ভাঙলেও পাথরের বাক্স ঠিক থাকবে। Docker Volume হলো সেই পাথরের বাক্স!
+    </div>
+
+    <div class="card card-red">
+      <div class="card-title red">⚠️ Volume ছাড়া কী হয়?</div>
+      <p>ধরো তুমি একটি ML training container চালালে, model save করলে। তারপর container delete করলে — saved model চলে গেল! পরের বার আবার train করতে হবে। এটা এড়াতেই Volume দরকার।</p>
+    </div>
+
+    <div class="svg-container">
+      <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <rect width="700" height="260" fill="#0f1629" rx="10"/>
+        
+        <!-- Volume -->
+        <ellipse cx="350" cy="40" rx="80" ry="25" fill="#1a2540" stroke="#10b981" stroke-width="2"/>
+        <rect x="270" y="40" width="160" height="60" fill="#1a2540" stroke="#10b981" stroke-width="2"/>
+        <ellipse cx="350" cy="100" rx="80" ry="25" fill="#1a2540" stroke="#10b981" stroke-width="2"/>
+        <text x="350" y="68" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">💾 Docker Volume</text>
+        <text x="350" y="85" text-anchor="middle" fill="#94a3b8" font-size="9">ডেটা persistent থাকে</text>
+        <text x="350" y="98" text-anchor="middle" fill="#10b981" font-size="9">Container delete হলেও নিরাপদ</text>
+
+        <!-- Arrows to containers -->
+        <path d="M 270 70 L 180 150" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <path d="M 350 103 L 350 155" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <path d="M 430 70 L 520 150" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="5,3"/>
+        
+        <!-- Container 1 -->
+        <rect x="80" y="150" width="150" height="80" rx="8" fill="#1a2540" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="155" y="175" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="bold">Container 1</text>
+        <text x="155" y="192" text-anchor="middle" fill="#94a3b8" font-size="9">ML Training</text>
+        <text x="155" y="208" text-anchor="middle" fill="#10b981" font-size="9">Volume mount করা আছে</text>
+        <text x="155" y="222" text-anchor="middle" fill="#f59e0b" font-size="10">delete হলেও ডেটা থাকবে</text>
+
+        <!-- Container 2 -->
+        <rect x="275" y="150" width="150" height="80" rx="8" fill="#1a2540" stroke="#8b5cf6" stroke-width="1.5"/>
+        <text x="350" y="175" text-anchor="middle" fill="#8b5cf6" font-size="10" font-weight="bold">Container 2</text>
+        <text x="350" y="192" text-anchor="middle" fill="#94a3b8" font-size="9">ML Inference</text>
+        <text x="350" y="208" text-anchor="middle" fill="#10b981" font-size="9">একই Volume পড়তে পারে</text>
+        <text x="350" y="222" text-anchor="middle" fill="#f59e0b" font-size="10">saved model ব্যবহার করে</text>
+
+        <!-- Container 3 -->
+        <rect x="470" y="150" width="150" height="80" rx="8" fill="#1a2540" stroke="#06b6d4" stroke-width="1.5"/>
+        <text x="545" y="175" text-anchor="middle" fill="#06b6d4" font-size="10" font-weight="bold">Container 3</text>
+        <text x="545" y="192" text-anchor="middle" fill="#94a3b8" font-size="9">Dashboard</text>
+        <text x="545" y="208" text-anchor="middle" fill="#10b981" font-size="9">Logs ও Metrics দেখে</text>
+        <text x="545" y="222" text-anchor="middle" fill="#f59e0b" font-size="10">সব শেয়ার করা ডেটা</text>
+      </svg>
+      <div class="svg-caption">চিত্র ৭.১ — একটি Volume থেকে তিনটি Container ডেটা শেয়ার করছে</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📂 দুই ধরনের Volume</div>
+    
+    <div class="grid2">
+      <div class="card card-green">
+        <div class="card-title green">1️⃣ Named Volume</div>
+        <p><strong>Docker নিজে manage করে।</strong> তুমি শুধু নাম দাও, Docker বাকি সব handle করে। Volume কোথায় store হচ্ছে তোমাকে জানতে হবে না।</p>
+        <p><em>ব্যবহার:</em> Database data, ML model weights, config files — যেগুলো persist করতে হবে।</p>
+        <div class="code-block" style="margin-top:10px;">
+          <div class="code-header"><div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div><div class="code-lang">BASH</div></div>
+          <pre style="font-size:0.78rem;padding:12px;"><span class="cm"># Named Volume তৈরি</span>
+docker volume create my_data
+
+<span class="cm"># Container-এ mount করো</span>
+docker run --name app \
+  -v my_data:/app/data \
+  my_image</pre>
+        </div>
+      </div>
+      <div class="card card-blue">
+        <div class="card-title blue">2️⃣ Bind Mount</div>
+        <p><strong>তোমার কম্পিউটারের একটি নির্দিষ্ট ফোল্ডার</strong> Container-এ যুক্ত করো। তুমি নিজে path specify করো।</p>
+        <p><em>ব্যবহার:</em> Development-এ local code changes সাথে সাথে container-এ দেখতে। Dataset বড় হলে local-এ রেখে container access করাতে।</p>
+        <div class="code-block" style="margin-top:10px;">
+          <div class="code-header"><div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div><div class="code-lang">BASH</div></div>
+          <pre style="font-size:0.78rem;padding:12px;"><span class="cm"># Bind Mount (host path : container path)</span>
+docker run --name app \
+  -v /home/user/project:/app \
+  my_image
+
+<span class="cm"># Windows-এ</span>
+docker run --name app \
+  -v C:\Users\user\project:/app \
+  my_image</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">💻 Volume Management Commands</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">BASH — Volume সম্পর্কিত সব Command</div>
+      </div>
+      <pre><span class="cm"># Named Volume তৈরি করো</span>
+docker volume create my_volume
+
+<span class="cm"># সব Volume দেখো</span>
+docker volume ls
+
+<span class="cm"># একটি Volume-এর বিস্তারিত দেখো</span>
+docker volume inspect my_volume
+
+<span class="cm"># Volume delete করো</span>
+docker volume rm my_volume
+
+<span class="cm"># সব unused volume delete করো</span>
+docker volume prune
+
+<span class="cm"># ML Project উদাহরণ:</span>
+<span class="cm"># Training container — model save করবে volume-এ</span>
+docker run --name trainer \
+  -v ml_models:/app/models \
+  -v /home/user/data:/app/data \
+  training_image
+
+<span class="cm"># Inference container — একই volume থেকে model load করবে</span>
+docker run --name inference \
+  -v ml_models:/app/models \
+  -p 8000:8000 \
+  inference_image</pre>
+    </div>
+  </div>
+
+  <!-- EXERCISE 7 -->
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <span class="exercise-badge">🎯 Interview Exercise</span>
+      <span class="exercise-title-text">অধ্যায় ৭ — পরীক্ষার প্রশ্ন</span>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ১ (MLOps Scenario): তোমার XGBoost model 6 ঘন্টা train করে save করে। Training container delete হলে model হারিয়ে যাওয়া যাবে না। কীভাবে setup করবে?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+<pre style="background:#050a14;padding:12px;border-radius:6px;font-size:0.82rem;color:#c9d1d9;overflow-x:auto">
+# Named Volume তৈরি করো
+docker volume create xgboost_models
+
+# Training container চালাও — model /app/models-এ save হবে
+# এই folder volume-এ persist হবে
+docker run -d --name xgb_trainer \
+  -v xgboost_models:/app/models \
+  -v /home/user/dataset:/app/data \
+  xgboost_training_image
+
+# Training শেষে container delete করলেও
+# xgboost_models volume-এ model থাকবে
+
+# Inference container চালাও — একই volume mount করো
+docker run -d --name xgb_api \
+  -v xgboost_models:/app/models \
+  -p 8000:8000 \
+  xgboost_inference_image
+</pre>
+      </div>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রশ্ন ২: Named Volume এবং Bind Mount-এর মধ্যে কোনটি production-এ ব্যবহার করবে এবং কেন?</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+        <strong>Production-এ Named Volume ভালো কারণ:</strong><br>
+        ১. Docker নিজে manage করে — manual path management নেই<br>
+        ২. Platform independent (Linux, Mac, Windows একই command)<br>
+        ৩. Backup ও migrate করা সহজ<br>
+        ৪. Container-এর lifecycle থেকে আলাদা<br><br>
+        <strong>Bind Mount ভালো development-এ:</strong><br>
+        Local code change করলে সাথে সাথে container-এ reflect হয় — live reload!
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- CHAPTER 8: ML APPLICATIONS -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch8">
+  <div class="chapter-header">
+    <div class="chapter-num">৮</div>
+    <div>
+      <div class="chapter-title">ML প্রজেক্টে Docker — বাস্তব উদাহরণ</div>
+      <div class="chapter-sub">Docker in Machine Learning Engineering</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🤖 Titanic Dataset — Model Training & Serving</div>
+    <p>এখন আমরা একটি সম্পূর্ণ ML Engineering প্রজেক্ট দেখব — Titanic dataset দিয়ে model train করা এবং সেটাকে Docker দিয়ে serve করা।</p>
+
+    <div class="svg-container">
+      <svg viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <defs>
+          <marker id="dk8-ma1" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 z" fill="#06b6d4"/>
+          </marker>
+        </defs>
+        <rect width="700" height="160" fill="#0f1629" rx="10"/>
+        
+        <rect x="20" y="40" width="120" height="80" rx="8" fill="#1a2540" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="80" y="65" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">📊 Data</text>
+        <text x="80" y="82" text-anchor="middle" fill="#94a3b8" font-size="9">titanic.csv</text>
+        <text x="80" y="97" text-anchor="middle" fill="#64748b" font-size="10">Host Volume-এ</text>
+        <text x="80" y="110" text-anchor="middle" fill="#64748b" font-size="10">রাখা আছে</text>
+
+        <path d="M 142 80 L 175 80" stroke="#06b6d4" stroke-width="1.5" marker-end="url(#dk8-ma1)"/>
+
+        <rect x="177" y="40" width="140" height="80" rx="8" fill="#1a2540" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="247" y="60" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="bold">🏋️ Training</text>
+        <text x="247" y="76" text-anchor="middle" fill="#94a3b8" font-size="9">Container 1</text>
+        <text x="247" y="92" text-anchor="middle" fill="#64748b" font-size="10">sklearn + pandas</text>
+        <text x="247" y="107" text-anchor="middle" fill="#10b981" font-size="10">Model save → Volume</text>
+
+        <path d="M 319 80 L 352 80" stroke="#06b6d4" stroke-width="1.5" marker-end="url(#dk8-ma1)"/>
+        <text x="335" y="70" text-anchor="middle" fill="#10b981" font-size="10">model.pkl</text>
+
+        <rect x="354" y="40" width="140" height="80" rx="8" fill="#1a2540" stroke="#8b5cf6" stroke-width="1.5"/>
+        <text x="424" y="60" text-anchor="middle" fill="#8b5cf6" font-size="10" font-weight="bold">🔮 Inference</text>
+        <text x="424" y="76" text-anchor="middle" fill="#94a3b8" font-size="9">Container 2</text>
+        <text x="424" y="92" text-anchor="middle" fill="#64748b" font-size="10">FastAPI server</text>
+        <text x="424" y="107" text-anchor="middle" fill="#10b981" font-size="10">Model load → Predict</text>
+
+        <path d="M 496 80 L 529 80" stroke="#06b6d4" stroke-width="1.5" marker-end="url(#dk8-ma1)"/>
+
+        <rect x="531" y="40" width="140" height="80" rx="8" fill="#1a2540" stroke="#10b981" stroke-width="1.5"/>
+        <text x="601" y="60" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">🌐 User</text>
+        <text x="601" y="76" text-anchor="middle" fill="#94a3b8" font-size="9">API Call</text>
+        <text x="601" y="92" text-anchor="middle" fill="#64748b" font-size="10">POST /predict</text>
+        <text x="601" y="107" text-anchor="middle" fill="#10b981" font-size="10">survived: 1 বা 0</text>
+      </svg>
+      <div class="svg-caption">চিত্র ৮.১ — একটি সম্পূর্ণ ML Pipeline Docker Container-এ</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📝 Step 1: Training App তৈরি করো</div>
+    
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">PYTHON — train.py</div>
+      </div>
+      <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> pickle
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> accuracy_score
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> LabelEncoder
+
+<span class="cm"># ১. ডেটা লোড করো (Volume থেকে)</span>
+df = pd.read_csv(<span class="st">'/app/data/titanic.csv'</span>)
+
+<span class="cm"># ২. Basic Preprocessing</span>
+df[<span class="st">'Sex'</span>] = LabelEncoder().fit_transform(df[<span class="st">'Sex'</span>])
+df[<span class="st">'Age'</span>].fillna(df[<span class="st">'Age'</span>].median(), inplace=<span class="cn">True</span>)
+
+<span class="cm"># Features ও Target নির্বাচন</span>
+features = [<span class="st">'Pclass'</span>, <span class="st">'Sex'</span>, <span class="st">'Age'</span>, <span class="st">'SibSp'</span>, <span class="st">'Parch'</span>, <span class="st">'Fare'</span>]
+X = df[features]
+y = df[<span class="st">'Survived'</span>]
+
+<span class="cm"># ৩. Train-Test Split</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="nm">0.2</span>, random_state=<span class="nm">42</span>
+)
+
+<span class="cm"># ৪. Model Train করো</span>
+model = RandomForestClassifier(n_estimators=<span class="nm">100</span>, random_state=<span class="nm">42</span>)
+model.fit(X_train, y_train)
+
+<span class="cm"># ৫. Accuracy দেখো</span>
+acc = accuracy_score(y_test, model.predict(X_test))
+print(<span class="kw">f</span><span class="st">"Model Accuracy: {acc:.2%}"</span>)
+
+<span class="cm"># ৬. Model save করো (Volume-এ persist হবে)</span>
+<span class="kw">with</span> open(<span class="st">'/app/models/titanic_model.pkl'</span>, <span class="st">'wb'</span>) <span class="kw">as</span> f:
+    pickle.dump(model, f)
+print(<span class="st">"✅ Model saved to /app/models/titanic_model.pkl"</span>)</pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📝 Step 2: Training Dockerfile</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">DOCKERFILE — Training Image</div>
+      </div>
+      <pre><span class="kw">FROM</span> <span class="cn">python:3.9-slim</span>
+
+<span class="kw">WORKDIR</span> <span class="st">/app</span>
+
+<span class="cm"># requirements install করো</span>
+<span class="kw">COPY</span> requirements_train.txt .
+<span class="kw">RUN</span> pip install --no-cache-dir -r requirements_train.txt
+
+<span class="cm"># Training script copy করো</span>
+<span class="kw">COPY</span> train.py .
+
+<span class="cm"># Container চালু হলে training শুরু হবে</span>
+<span class="kw">CMD</span> ["python", "train.py"]</pre>
+    </div>
+    
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">TXT — requirements_train.txt</div>
+      </div>
+      <pre>pandas==2.0.0
+scikit-learn==1.3.0
+numpy==1.24.0</pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📝 Step 3: Inference App (FastAPI)</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">PYTHON — main.py (FastAPI)</div>
+      </div>
+      <pre><span class="kw">import</span> pickle
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># FastAPI app তৈরি</span>
+app = FastAPI(title=<span class="st">"Titanic Survival Predictor"</span>)
+
+<span class="cm"># Startup-এ model load করো (Volume থেকে)</span>
+<span class="kw">with</span> open(<span class="st">'/app/models/titanic_model.pkl'</span>, <span class="st">'rb'</span>) <span class="kw">as</span> f:
+    model = pickle.load(f)
+
+<span class="cm"># Input data এর structure</span>
+<span class="kw">class</span> <span class="fn">Passenger</span>(BaseModel):
+    pclass: <span class="cn">int</span>      <span class="cm"># 1, 2, বা 3 (class)</span>
+    sex: <span class="cn">int</span>         <span class="cm"># 0=female, 1=male</span>
+    age: <span class="cn">float</span>
+    sibsp: <span class="cn">int</span>       <span class="cm"># ভাই-বোন সংখ্যা</span>
+    parch: <span class="cn">int</span>       <span class="cm"># parents/children সংখ্যা</span>
+    fare: <span class="cn">float</span>
+
+<span class="cm"># Health check endpoint</span>
+<span class="op">@</span>app.get(<span class="st">"/"</span>)
+<span class="kw">def</span> <span class="fn">health</span>():
+    <span class="kw">return</span> {<span class="st">"status"</span>: <span class="st">"healthy"</span>, <span class="st">"model"</span>: <span class="st">"Titanic RF"</span>}
+
+<span class="cm"># Prediction endpoint</span>
+<span class="op">@</span>app.post(<span class="st">"/predict"</span>)
+<span class="kw">def</span> <span class="fn">predict</span>(passenger: Passenger):
+    features = [[
+        passenger.pclass, passenger.sex, passenger.age,
+        passenger.sibsp, passenger.parch, passenger.fare
+    ]]
+    prediction = model.predict(features)[<span class="nm">0</span>]
+    probability = model.predict_proba(features)[<span class="nm">0</span>][<span class="nm">1</span>]
+    
+    <span class="kw">return</span> {
+        <span class="st">"survived"</span>: <span class="cn">int</span>(prediction),
+        <span class="st">"survival_probability"</span>: <span class="cn">round</span>(<span class="cn">float</span>(probability), <span class="nm">3</span>),
+        <span class="st">"message"</span>: <span class="st">"বেঁচে গেছে!"</span> <span class="kw">if</span> prediction == <span class="nm">1</span> <span class="kw">else</span> <span class="st">"বাঁচেনি 😢"</span>
+    }</pre>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🚀 Step 4: সব কিছু চালানো</div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">BASH — Complete Pipeline Commands</div>
+      </div>
+      <pre><span class="cm"># ১. Volumes তৈরি করো</span>
+docker volume create titanic_models
+docker volume create titanic_data
+
+<span class="cm"># ২. Training Image build করো</span>
+docker image build -t titanic_trainer .
+
+<span class="cm"># ৩. Training container চালাও</span>
+<span class="cm">#    - data folder bind mount করো</span>
+<span class="cm">#    - models volume mount করো</span>
+docker run --name trainer \
+  -v titanic_models:/app/models \
+  -v /home/user/data:/app/data \
+  titanic_trainer
+
+<span class="cm"># ৪. Training শেষে model volume-এ সেভ হয়ে গেছে</span>
+<span class="cm"># ৫. Inference Image build করো</span>
+docker image build -t titanic_api -f Dockerfile.inference .
+
+<span class="cm"># ৬. API Container চালাও (model load করবে volume থেকে)</span>
+docker run -d \
+  --name titanic_inference \
+  -v titanic_models:/app/models \
+  -p 8000:8000 \
+  titanic_api
+
+<span class="cm"># ৭. API test করো</span>
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"pclass": 1, "sex": 0, "age": 25, "sibsp": 0, "parch": 0, "fare": 100}'</pre>
+    </div>
+  </div>
+
+  <!-- EXERCISE 8 -->
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <span class="exercise-badge">🎯 ML Engineering Exercise</span>
+      <span class="exercise-title-text">অধ্যায় ৮ — MLOps প্রজেক্ট চ্যালেঞ্জ</span>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রজেক্ট চ্যালেঞ্জ ১: তোমার predictive maintenance project-এ XGBoost model train করো এবং BentoML দিয়ে serve করার জন্য Dockerfile লেখো।</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+<pre style="background:#050a14;padding:12px;border-radius:6px;font-size:0.82rem;color:#c9d1d9;overflow-x:auto">
+# Dockerfile.serving
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# System dependencies
+RUN apt-get update && apt-get install -y \
+    libgomp1 \  # XGBoost-এর জন্য
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir \
+    xgboost==1.7.0 \
+    bentoml==1.0.0 \
+    scikit-learn==1.3.0 \
+    pandas==2.0.0
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["bentoml", "serve", "service:svc", "--port", "3000"]
+</pre>
+      </div>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">প্রজেক্ট চ্যালেঞ্জ ২: Docker Compose দিয়ে Training + MLflow tracking + PostgreSQL একসাথে চালানোর জন্য docker-compose.yml লেখো।</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+<pre style="background:#050a14;padding:12px;border-radius:6px;font-size:0.82rem;color:#c9d1d9;overflow-x:auto">
+# docker-compose.yml
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: mlflow
+      POSTGRES_PASSWORD: mlflow123
+      POSTGRES_DB: mlflow_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  mlflow:
+    image: python:3.9-slim
+    command: mlflow server --host 0.0.0.0 --port 5000
+             --backend-store-uri postgresql://mlflow:mlflow123@postgres/mlflow_db
+             --default-artifact-root /mlflow/artifacts
+    volumes:
+      - mlflow_artifacts:/mlflow/artifacts
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+
+  trainer:
+    build: .
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    volumes:
+      - ml_models:/app/models
+      - ./data:/app/data
+    depends_on:
+      - mlflow
+
+volumes:
+  postgres_data:
+  mlflow_artifacts:
+  ml_models:
+</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- CHAPTER 9: ALGORITHMS -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="chapter" id="ch9">
+  <div class="chapter-header">
+    <div class="chapter-num">৯</div>
+    <div>
+      <div class="chapter-title">সকল ML Algorithm — সম্পূর্ণ গাইড</div>
+      <div class="chapter-sub">All Algorithms — Kindergarten Explanation + Python Implementation</div>
+    </div>
+  </div>
+
+  <p>এই অধ্যায়ে আমরা সব গুরুত্বপূর্ণ ML Algorithm দেখব — একদম সহজ ভাষায় ব্যাখ্যা করব এবং ML Engineering Project-এর উপযোগী Python code লিখব।</p>
+
+  <!-- LINEAR REGRESSION -->
+  <div class="algo-card">
+    <div class="algo-title">
+      📈 Linear Regression
+      <span class="algo-badge">Supervised · Regression</span>
+    </div>
+    <div class="algo-kindergarten">
+      তুমি যদি জানো একটা বাড়ির কত ঘর আছে, তুমি অনুমান করতে পারো বাড়ির দাম কত হতে পারে। বেশি ঘর = বেশি দাম। এই সহজ সম্পর্কটাই Linear Regression!
+    </div>
+    <p>Linear Regression একটি সরল রেখা (straight line) ব্যবহার করে Input এবং Output-এর মধ্যে সম্পর্ক খোঁজে। সূত্র: <strong>y = mx + b</strong> (m = slope, b = intercept)।</p>
+    
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">PYTHON — Linear Regression (ML Engineering Level)</div>
+      </div>
+      <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression, Ridge, Lasso
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split, cross_val_score
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> mean_squared_error, r2_score, mean_absolute_error
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">import</span> mlflow
+<span class="kw">import</span> mlflow.sklearn
+
+<span class="cm"># MLflow experiment tracking সহ Linear Regression</span>
+<span class="kw">def</span> <span class="fn">train_linear_regression</span>(X, y, experiment_name: str = <span class="st">"linear_regression"</span>):
+    <span class="cm">"""
+    Production-ready Linear Regression with MLflow tracking.
+    
+    Args:
+        X: Feature DataFrame
+        y: Target Series  
+        experiment_name: MLflow experiment name
+    Returns:
+        trained pipeline, metrics dict
+    """</span>
+    
+    <span class="cm"># MLflow experiment set করো</span>
+    mlflow.set_experiment(experiment_name)
+    
+    <span class="kw">with</span> mlflow.start_run():
+        <span class="cm"># Train-Test Split</span>
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=<span class="nm">0.2</span>, random_state=<span class="nm">42</span>
+        )
+        
+        <span class="cm"># Pipeline: Scaling + Linear Regression</span>
+        pipeline = Pipeline([
+            (<span class="st">'scaler'</span>, StandardScaler()),
+            (<span class="st">'model'</span>, LinearRegression())
+        ])
+        
+        <span class="cm"># Train করো</span>
+        pipeline.fit(X_train, y_train)
+        
+        <span class="cm"># Predictions</span>
+        y_pred = pipeline.predict(X_test)
+        
+        <span class="cm"># Metrics calculate করো</span>
+        metrics = {
+            <span class="st">'rmse'</span>: np.sqrt(mean_squared_error(y_test, y_pred)),
+            <span class="st">'mae'</span>: mean_absolute_error(y_test, y_pred),
+            <span class="st">'r2'</span>: r2_score(y_test, y_pred),
+        }
+        
+        <span class="cm"># Cross-validation</span>
+        cv_scores = cross_val_score(pipeline, X_train, y_train, cv=<span class="nm">5</span>, scoring=<span class="st">'r2'</span>)
+        metrics[<span class="st">'cv_r2_mean'</span>] = cv_scores.mean()
+        metrics[<span class="st">'cv_r2_std'</span>] = cv_scores.std()
+        
+        <span class="cm"># MLflow-এ log করো</span>
+        mlflow.log_metrics(metrics)
+        mlflow.sklearn.log_model(pipeline, <span class="st">"linear_regression_model"</span>)
+        
+        print(<span class="kw">f</span><span class="st">"R² Score: {metrics['r2']:.3f}"</span>)
+        print(<span class="kw">f</span><span class="st">"RMSE: {metrics['rmse']:.3f}"</span>)
+        
+        <span class="kw">return</span> pipeline, metrics</pre>
+    </div>
+  </div>
+
+  <!-- LOGISTIC REGRESSION -->
+  <div class="algo-card">
+    <div class="algo-title">
+      📊 Logistic Regression
+      <span class="algo-badge">Supervised · Classification</span>
+    </div>
+    <div class="algo-kindergarten">
+      তুমি দেখো আকাশে মেঘ আছে কিনা — থাকলে বলো "বৃষ্টি হবে" (1), না থাকলে বলো "বৃষ্টি হবে না" (0)। হ্যাঁ বা না বলাই Logistic Regression!
+    </div>
+    <p>Logistic Regression দুটি class-এর মধ্যে পার্থক্য করে (0 বা 1)। এটি Sigmoid function ব্যবহার করে probability বের করে।</p>
+    
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">PYTHON — Logistic Regression (Production Level)</div>
+      </div>
+      <pre><span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> (classification_report, confusion_matrix, 
+                               roc_auc_score, roc_curve)
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> LabelEncoder
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="kw">def</span> <span class="fn">train_logistic_regression</span>(X, y):
+    <span class="cm">"""Titanic Survival Prediction — Binary Classification"""</span>
+    
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=<span class="nm">0.2</span>, random_state=<span class="nm">42</span>, stratify=y
+    )
+    
+    <span class="cm"># Pipeline with Logistic Regression</span>
+    pipeline = Pipeline([
+        (<span class="st">'scaler'</span>, StandardScaler()),
+        (<span class="st">'model'</span>, LogisticRegression(
+            max_iter=<span class="nm">1000</span>,
+            C=<span class="nm">1.0</span>,           <span class="cm"># Regularization strength</span>
+            class_weight=<span class="st">'balanced'</span>  <span class="cm"># Imbalanced data handle</span>
+        ))
+    ])
+    
+    pipeline.fit(X_train, y_train)
+    y_pred = pipeline.predict(X_test)
+    y_prob = pipeline.predict_proba(X_test)[:, <span class="nm">1</span>]
+    
+    <span class="cm"># Comprehensive metrics</span>
+    print(<span class="st">"Classification Report:"</span>)
+    print(classification_report(y_test, y_pred))
+    print(<span class="kw">f</span><span class="st">"ROC-AUC: {roc_auc_score(y_test, y_prob):.3f}"</span>)
+    
+    <span class="kw">return</span> pipeline</pre>
+    </div>
+  </div>
+
+  <!-- DECISION TREE -->
+  <div class="algo-card">
+    <div class="algo-title">
+      🌳 Decision Tree
+      <span class="algo-badge">Supervised · Classification + Regression</span>
+    </div>
+    <div class="algo-kindergarten">
+      "তোমার কি জ্বর আছে? হ্যাঁ → "মাথাব্যথা আছে? হ্যাঁ → ডাক্তারের কাছে যাও। না → বিশ্রাম নাও।" এইভাবে প্রশ্ন করে সিদ্ধান্তে পৌঁছানোটাই Decision Tree!
+    </div>
+    <p>Decision Tree একটি গাছের মতো structure তৈরি করে। প্রতিটি node-এ একটি প্রশ্ন থাকে, প্রতিটি branch প্রশ্নের উত্তর, প্রতিটি leaf final decision।</p>
+    
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">PYTHON — Decision Tree with Visualization</div>
+      </div>
+      <pre><span class="kw">from</span> sklearn.tree <span class="kw">import</span> DecisionTreeClassifier, export_text, plot_tree
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> GridSearchCV
+
+<span class="kw">def</span> <span class="fn">train_decision_tree</span>(X_train, X_test, y_train, y_test, feature_names):
+    <span class="cm">"""Decision Tree with Hyperparameter Tuning"""</span>
+    
+    <span class="cm"># Hyperparameter tuning</span>
+    param_grid = {
+        <span class="st">'max_depth'</span>: [<span class="nm">3</span>, <span class="nm">5</span>, <span class="nm">7</span>, <span class="nm">10</span>, <span class="cn">None</span>],
+        <span class="st">'min_samples_split'</span>: [<span class="nm">2</span>, <span class="nm">5</span>, <span class="nm">10</span>],
+        <span class="st">'min_samples_leaf'</span>: [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">4</span>],
+        <span class="st">'criterion'</span>: [<span class="st">'gini'</span>, <span class="st">'entropy'</span>]
+    }
+    
+    dt = DecisionTreeClassifier(random_state=<span class="nm">42</span>)
+    grid_search = GridSearchCV(
+        dt, param_grid, cv=<span class="nm">5</span>, scoring=<span class="st">'f1_weighted'</span>, n_jobs=-<span class="nm">1</span>
+    )
+    grid_search.fit(X_train, y_train)
+    
+    best_model = grid_search.best_estimator_
+    print(<span class="kw">f</span><span class="st">"Best params: {grid_search.best_params_}"</span>)
+    
+    <span class="cm"># Feature importance</span>
+    importance_df = pd.DataFrame({
+        <span class="st">'feature'</span>: feature_names,
+        <span class="st">'importance'</span>: best_model.feature_importances_
+    }).sort_values(<span class="st">'importance'</span>, ascending=<span class="cn">False</span>)
+    print(importance_df)
+    
+    <span class="cm"># Tree visualization (text format)</span>
+    print(export_text(best_model, feature_names=feature_names))
+    
+    <span class="kw">return</span> best_model</pre>
+    </div>
+  </div>
+
+  <!-- RANDOM FOREST -->
+  <div class="algo-card">
+    <div class="algo-title">
+      🌲🌲🌲 Random Forest
+      <span class="algo-badge">Ensemble · Bagging</span>
+    </div>
+    <div class="algo-kindergarten">
+      একটা Decision Tree মাঝে মাঝে ভুল করে। কিন্তু যদি ১০০টা বিভিন্ন মানুষের মতামত নাও এবং সংখ্যাগরিষ্ঠের মত মেনে নাও — তাহলে ভুল হওয়ার সম্ভাবনা অনেক কম! Random Forest মানে হলো অনেকগুলো Decision Tree-র ভোটের ফলাফল!
+    </div>
+    <p>Random Forest অনেকগুলো Decision Tree তৈরি করে (Bagging), প্রতিটি আলাদা random subset of data ও features দেখে। Classification-এ majority vote, Regression-এ average নেয়।</p>
+    
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">PYTHON — Random Forest (Production Pipeline)</div>
+      </div>
+      <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> RandomizedSearchCV
+<span class="kw">import</span> joblib
+
+<span class="kw">def</span> <span class="fn">train_random_forest_pipeline</span>(X, y, save_path: str = <span class="st">"/app/models/rf_model.pkl"</span>):
+    <span class="cm">"""
+    ML Engineering level Random Forest training.
+    Dockerized production workflow-এর জন্য।
+    """</span>
+    
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=<span class="nm">0.2</span>, random_state=<span class="nm">42</span>, stratify=y
+    )
+    
+    <span class="cm"># RandomizedSearchCV (GridSearch-এর চেয়ে দ্রুত)</span>
+    param_distributions = {
+        <span class="st">'n_estimators'</span>: [<span class="nm">100</span>, <span class="nm">200</span>, <span class="nm">300</span>],
+        <span class="st">'max_depth'</span>: [<span class="nm">5</span>, <span class="nm">10</span>, <span class="nm">20</span>, <span class="cn">None</span>],
+        <span class="st">'max_features'</span>: [<span class="st">'sqrt'</span>, <span class="st">'log2'</span>, <span class="nm">0.5</span>],
+        <span class="st">'min_samples_leaf'</span>: [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">4</span>],
+        <span class="st">'class_weight'</span>: [<span class="st">'balanced'</span>, <span class="cn">None</span>]
+    }
+    
+    rf = RandomForestClassifier(random_state=<span class="nm">42</span>, n_jobs=-<span class="nm">1</span>)
+    search = RandomizedSearchCV(
+        rf, param_distributions, 
+        n_iter=<span class="nm">20</span>, cv=<span class="nm">5</span>, scoring=<span class="st">'f1_weighted'</span>,
+        n_jobs=-<span class="nm">1</span>, random_state=<span class="nm">42</span>
+    )
+    search.fit(X_train, y_train)
+    
+    best_rf = search.best_estimator_
+    
+    <span class="cm"># Evaluation</span>
+    y_pred = best_rf.predict(X_test)
+    print(classification_report(y_test, y_pred))
+    
+    <span class="cm"># Model save (Docker Volume-এ persist হবে)</span>
+    joblib.dump(best_rf, save_path)
+    print(<span class="kw">f</span><span class="st">"✅ Model saved: {save_path}"</span>)
+    
+    <span class="kw">return</span> best_rf</pre>
+    </div>
+  </div>
+
+  <!-- XGBOOST -->
+  <div class="algo-card">
+    <div class="algo-title">
+      ⚡ XGBoost
+      <span class="algo-badge">Ensemble · Boosting</span>
+    </div>
+    <div class="algo-kindergarten">
+      Random Forest-এ গাছগুলো একসাথে কাজ করে। XGBoost-এ গাছগুলো একটার পর একটা শেখে — প্রতিটি গাছ আগেরটার ভুল দেখে সেটা ঠিক করার চেষ্টা করে। ধাপে ধাপে শেখা — এটাই Boosting!
+    </div>
+    <p>XGBoost (eXtreme Gradient Boosting) Sequential tree building করে। প্রতিটি নতুন tree আগের tree-এর residual error শিখে কমায়। Kaggle competitions-এর favorite algorithm।</p>
+    
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">PYTHON — XGBoost (Predictive Maintenance ML Project)</div>
+      </div>
+      <pre><span class="kw">import</span> xgboost <span class="kw">as</span> xgb
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report, roc_auc_score
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">import</span> mlflow
+<span class="kw">import</span> mlflow.xgboost
+
+<span class="kw">def</span> <span class="fn">train_xgboost_predictive_maintenance</span>(X, y):
+    <span class="cm">"""
+    XGBoost for Predictive Maintenance.
+    তোমার ~/Projects/predictive-maintenance-mlops project-এর জন্য।
+    """</span>
+    
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=<span class="nm">0.2</span>, random_state=<span class="nm">42</span>, stratify=y
+    )
+    
+    <span class="cm"># XGBoost Parameters</span>
+    params = {
+        <span class="st">'objective'</span>: <span class="st">'binary:logistic'</span>,
+        <span class="st">'n_estimators'</span>: <span class="nm">300</span>,
+        <span class="st">'max_depth'</span>: <span class="nm">6</span>,
+        <span class="st">'learning_rate'</span>: <span class="nm">0.05</span>,
+        <span class="st">'subsample'</span>: <span class="nm">0.8</span>,
+        <span class="st">'colsample_bytree'</span>: <span class="nm">0.8</span>,
+        <span class="st">'min_child_weight'</span>: <span class="nm">5</span>,
+        <span class="st">'scale_pos_weight'</span>: (y == <span class="nm">0</span>).sum() / (y == <span class="nm">1</span>).sum(),  <span class="cm"># Imbalance handle</span>
+        <span class="st">'eval_metric'</span>: <span class="st">'logloss'</span>,
+        <span class="st">'random_state'</span>: <span class="nm">42</span>
+    }
+    
+    <span class="kw">with</span> mlflow.start_run():
+        model = xgb.XGBClassifier(**params)
+        
+        <span class="cm"># Early stopping সহ train করো</span>
+        model.fit(
+            X_train, y_train,
+            eval_set=[(X_test, y_test)],
+            early_stopping_rounds=<span class="nm">30</span>,
+            verbose=<span class="nm">50</span>
+        )
+        
+        <span class="cm"># Evaluate</span>
+        y_pred = model.predict(X_test)
+        y_prob = model.predict_proba(X_test)[:, <span class="nm">1</span>]
+        
+        auc = roc_auc_score(y_test, y_prob)
+        print(<span class="kw">f</span><span class="st">"ROC-AUC: {auc:.3f}"</span>)
+        print(classification_report(y_test, y_pred))
+        
+        <span class="cm"># MLflow tracking</span>
+        mlflow.log_params(params)
+        mlflow.log_metric(<span class="st">"roc_auc"</span>, auc)
+        mlflow.xgboost.log_model(model, <span class="st">"xgboost_model"</span>)
+        
+        <span class="kw">return</span> model</pre>
+    </div>
+  </div>
+
+  <!-- K-MEANS -->
+  <div class="algo-card">
+    <div class="algo-title">
+      ⭕ K-Means Clustering
+      <span class="algo-badge">Unsupervised · Clustering</span>
+    </div>
+    <div class="algo-kindergarten">
+      ক্লাসে শিক্ষক বললেন "তোমরা ৩টা দলে ভাগ হও।" তোমরা নিজেরাই কাছাকাছি যারা আছো তাদের সাথে দল বানালে। K-Means ঠিক এইভাবে ডেটা-কে দলে ভাগ করে!
+    </div>
+    <p>K-Means কোনো label ছাড়াই ডেটাকে K টি cluster-এ ভাগ করে। যেসব data point কাছাকাছি, তারা একই cluster-এ পড়ে।</p>
+    
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">PYTHON — K-Means for Customer Segmentation</div>
+      </div>
+      <pre><span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> silhouette_score
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">find_optimal_kmeans</span>(X, max_k: <span class="cn">int</span> = <span class="nm">10</span>):
+    <span class="cm">"""
+    Elbow Method দিয়ে optimal K খোঁজো।
+    Customer segmentation বা anomaly detection-এ ব্যবহার।
+    """</span>
+    
+    <span class="cm"># Scale করো (K-Means-এর জন্য জরুরি)</span>
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
+    inertias = []
+    silhouette_scores = []
+    
+    <span class="kw">for</span> k <span class="kw">in</span> range(<span class="nm">2</span>, max_k + <span class="nm">1</span>):
+        kmeans = KMeans(n_clusters=k, random_state=<span class="nm">42</span>, n_init=<span class="nm">10</span>)
+        labels = kmeans.fit_predict(X_scaled)
+        
+        inertias.append(kmeans.inertia_)
+        silhouette_scores.append(silhouette_score(X_scaled, labels))
+    
+    <span class="cm"># Optimal K = highest silhouette score</span>
+    optimal_k = np.argmax(silhouette_scores) + <span class="nm">2</span>
+    print(<span class="kw">f</span><span class="st">"Optimal K: {optimal_k}"</span>)
+    
+    <span class="cm"># Final model</span>
+    final_model = KMeans(n_clusters=optimal_k, random_state=<span class="nm">42</span>)
+    labels = final_model.fit_predict(X_scaled)
+    
+    <span class="kw">return</span> final_model, labels, scaler</pre>
+    </div>
+  </div>
+
+  <!-- SVM -->
+  <div class="algo-card">
+    <div class="algo-title">
+      📐 Support Vector Machine (SVM)
+      <span class="algo-badge">Supervised · Classification</span>
+    </div>
+    <div class="algo-kindergarten">
+      লাল এবং নীল বল দুটো টেবিলে মিশিয়ে আছে। তুমি একটা দড়ি রেখে দুই দলকে আলাদা করতে চাও। SVM সেই দড়িকে এমনভাবে রাখে যেন দুই দলের মাঝখানে সবচেয়ে বেশি জায়গা থাকে।
+    </div>
+    <p>SVM দুটি class-এর মাঝে সর্বোচ্চ margin-এর hyperplane খোঁজে। Kernel trick দিয়ে non-linear data-ও handle করতে পারে।</p>
+    
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">PYTHON — SVM with Kernel Selection</div>
+      </div>
+      <pre><span class="kw">from</span> sklearn.svm <span class="kw">import</span> SVC
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+
+<span class="kw">def</span> <span class="fn">train_svm</span>(X_train, X_test, y_train, y_test):
+    <span class="cm">"""SVM for ECG Arrhythmia Classification (তোমার ECG project-এর মতো)"""</span>
+    
+    <span class="cm"># Kernel comparison</span>
+    kernels = [<span class="st">'linear'</span>, <span class="st">'rbf'</span>, <span class="st">'poly'</span>]
+    results = {}
+    
+    <span class="kw">for</span> kernel <span class="kw">in</span> kernels:
+        pipeline = Pipeline([
+            (<span class="st">'scaler'</span>, StandardScaler()),
+            (<span class="st">'svm'</span>, SVC(
+                kernel=kernel,
+                C=<span class="nm">10</span>,
+                probability=<span class="cn">True</span>,  <span class="cm"># Probability estimate চালু করো</span>
+                class_weight=<span class="st">'balanced'</span>,
+                random_state=<span class="nm">42</span>
+            ))
+        ])
+        pipeline.fit(X_train, y_train)
+        score = pipeline.score(X_test, y_test)
+        results[kernel] = score
+        print(<span class="kw">f</span><span class="st">"Kernel {kernel}: {score:.3f}"</span>)
+    
+    <span class="cm"># Best kernel দিয়ে final model</span>
+    best_kernel = max(results, key=results.get)
+    print(<span class="kw">f</span><span class="st">"Best kernel: {best_kernel}"</span>)
+    
+    <span class="kw">return</span> results</pre>
+    </div>
+  </div>
+
+  <!-- NEURAL NETWORK / CNN -->
+  <div class="algo-card">
+    <div class="algo-title">
+      🧠 Neural Network + CNN
+      <span class="algo-badge">Deep Learning · Classification</span>
+    </div>
+    <div class="algo-kindergarten">
+      তোমার মস্তিষ্কে কোটি কোটি নিউরন (কোষ) আছে। একটা নিউরন আরেকটার সাথে কথা বলে — শেখার সময় এই সংযোগগুলো শক্তিশালী হয়। Neural Network ঠিক মস্তিষ্কের মতো — অনেক "কৃত্রিম নিউরন" একসাথে শিখে!
+    </div>
+    <p>Neural Network লেয়ারে লেয়ারে কাজ করে। CNN (Convolutional Neural Network) ছবি এবং signal থেকে feature বের করতে পারদর্শী — ECG signal analysis-এর জন্য উপযুক্ত।</p>
+    
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">PYTHON — CNN for ECG Arrhythmia (তোমার Project থেকে)</div>
+      </div>
+      <pre><span class="kw">import</span> tensorflow <span class="kw">as</span> tf
+<span class="kw">from</span> tensorflow <span class="kw">import</span> keras
+<span class="kw">from</span> tensorflow.keras <span class="kw">import</span> layers
+<span class="kw">from</span> imblearn.combine <span class="kw">import</span> SMOTETomek  <span class="cm"># তোমার project-এ ব্যবহার করেছিলে</span>
+
+<span class="kw">def</span> <span class="fn">build_ecg_cnn</span>(input_shape: tuple, num_classes: <span class="cn">int</span>) -> keras.Model:
+    <span class="cm">"""
+    1D CNN for ECG Arrhythmia Classification.
+    তোমার 99.1% macro recall model-এর মতো architecture।
+    """</span>
+    
+    model = keras.Sequential([
+        <span class="cm"># Input layer</span>
+        layers.Input(shape=input_shape),
+        
+        <span class="cm"># Conv Block 1</span>
+        layers.Conv1D(filters=<span class="nm">64</span>, kernel_size=<span class="nm">5</span>, activation=<span class="st">'relu'</span>, padding=<span class="st">'same'</span>),
+        layers.BatchNormalization(),
+        layers.MaxPooling1D(pool_size=<span class="nm">2</span>),
+        layers.Dropout(<span class="nm">0.3</span>),
+        
+        <span class="cm"># Conv Block 2</span>
+        layers.Conv1D(filters=<span class="nm">128</span>, kernel_size=<span class="nm">5</span>, activation=<span class="st">'relu'</span>, padding=<span class="st">'same'</span>),
+        layers.BatchNormalization(),
+        layers.MaxPooling1D(pool_size=<span class="nm">2</span>),
+        layers.Dropout(<span class="nm">0.3</span>),
+        
+        <span class="cm"># Flatten → Dense layers</span>
+        layers.GlobalAveragePooling1D(),
+        layers.Dense(<span class="nm">256</span>, activation=<span class="st">'relu'</span>),
+        layers.Dropout(<span class="nm">0.5</span>),
+        layers.Dense(num_classes, activation=<span class="st">'softmax'</span>)
+    ])
+    
+    model.compile(
+        optimizer=keras.optimizers.Adam(learning_rate=<span class="nm">0.001</span>),
+        loss=<span class="st">'sparse_categorical_crossentropy'</span>,
+        metrics=[<span class="st">'accuracy'</span>]
+    )
+    
+    <span class="kw">return</span> model
+
+<span class="kw">def</span> <span class="fn">train_with_smote_tomek</span>(X, y, model):
+    <span class="cm">"""SMOTE-Tomek দিয়ে imbalanced data handle করো"""</span>
+    
+    <span class="cm"># SMOTE-Tomek: Oversample minority + Undersample majority</span>
+    smote_tomek = SMOTETomek(random_state=<span class="nm">42</span>)
+    X_resampled, y_resampled = smote_tomek.fit_resample(
+        X.reshape(X.shape[<span class="nm">0</span>], -<span class="nm">1</span>), y
+    )
+    X_resampled = X_resampled.reshape(-<span class="nm">1</span>, X.shape[<span class="nm">1</span>], <span class="nm">1</span>)
+    
+    <span class="cm"># Callbacks</span>
+    callbacks = [
+        keras.callbacks.EarlyStopping(patience=<span class="nm">10</span>, restore_best_weights=<span class="cn">True</span>),
+        keras.callbacks.ReduceLROnPlateau(factor=<span class="nm">0.5</span>, patience=<span class="nm">5</span>),
+        keras.callbacks.ModelCheckpoint(
+            <span class="st">'/app/models/ecg_model.h5'</span>, save_best_only=<span class="cn">True</span>
+        )
+    ]
+    
+    history = model.fit(
+        X_resampled, y_resampled,
+        epochs=<span class="nm">100</span>, batch_size=<span class="nm">32</span>,
+        validation_split=<span class="nm">0.2</span>,
+        callbacks=callbacks
+    )
+    
+    <span class="kw">return</span> model, history</pre>
+    </div>
+  </div>
+
+  <!-- KMEANS + ISOLATION FOREST (ANOMALY) -->
+  <div class="algo-card">
+    <div class="algo-title">
+      🚨 Isolation Forest (Anomaly Detection)
+      <span class="algo-badge">Unsupervised · Anomaly Detection</span>
+    </div>
+    <div class="algo-kindergarten">
+      একটা সৎ মানুষ লুকিয়ে থাকা কঠিন — কারণ সে অনেকের মতো। কিন্তু একজন চোর সহজেই ধরা পড়ে — কারণ সে অদ্ভুত কিছু করছে। Isolation Forest এই "অদ্ভুত" জিনিসগুলো খোঁজে বের করে!
+    </div>
+    <p>Isolation Forest random tree তৈরি করে। Anomalous data point-গুলো কম steps-এ isolate হয় — তাই তাদের "isolation score" কম। Predictive Maintenance-এ machine failure আগে থেকে detect করতে দারুণ কাজে লাগে।</p>
+    
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+        <div class="code-lang">PYTHON — Anomaly Detection Pipeline</div>
+      </div>
+      <pre><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> IsolationForest
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">detect_anomalies_predictive_maintenance</span>(sensor_data: pd.DataFrame):
+    <span class="cm">"""
+    Sensor data থেকে machine failure আগে detect করো।
+    তোমার predictive-maintenance-mlops project-এর জন্য।
+    """</span>
+    
+    <span class="cm"># Sensor features</span>
+    feature_cols = [<span class="st">'temperature'</span>, <span class="st">'vibration'</span>, <span class="st">'pressure'</span>, <span class="st">'rpm'</span>]
+    X = sensor_data[feature_cols].values
+    
+    <span class="cm"># Scale করো</span>
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
+    <span class="cm"># Isolation Forest</span>
+    iso_forest = IsolationForest(
+        n_estimators=<span class="nm">100</span>,
+        contamination=<span class="nm">0.05</span>,  <span class="cm"># ৫% anomaly আশা করছি</span>
+        random_state=<span class="nm">42</span>
+    )
+    
+    <span class="cm"># Fit ও predict</span>
+    predictions = iso_forest.fit_predict(X_scaled)
+    anomaly_scores = iso_forest.decision_function(X_scaled)
+    
+    <span class="cm"># Results</span>
+    sensor_data[<span class="st">'is_anomaly'</span>] = predictions == -<span class="nm">1</span>  <span class="cm"># -1 = anomaly</span>
+    sensor_data[<span class="st">'anomaly_score'</span>] = anomaly_scores
+    
+    anomaly_count = (predictions == -<span class="nm">1</span>).sum()
+    print(<span class="kw">f</span><span class="st">"⚠️ Detected {anomaly_count} anomalies out of {len(predictions)} records"</span>)
+    
+    <span class="cm"># Critical anomalies (very low score = very abnormal)</span>
+    critical = sensor_data[sensor_data[<span class="st">'anomaly_score'</span>] < -<span class="nm">0.5</span>]
+    print(<span class="kw">f</span><span class="st">"🚨 Critical anomalies: {len(critical)} — মেশিন ঠিক করো!"</span>)
+    
+    <span class="kw">return</span> iso_forest, sensor_data</pre>
+    </div>
+  </div>
+
+  <!-- COMPLETE COMPARISON TABLE -->
+  <div class="section" style="margin-top:40px;">
+    <div class="section-title">📊 সকল Algorithm তুলনা</div>
+    <table class="comparison-table">
+      <tr>
+        <th>Algorithm</th>
+        <th>ধরন</th>
+        <th>কখন ব্যবহার করবে</th>
+        <th>MLOps-এ ব্যবহার</th>
+      </tr>
+      <tr>
+        <td><strong>Linear Regression</strong></td>
+        <td>Supervised/Regression</td>
+        <td>দাম, temperature predict করতে</td>
+        <td>Baseline model</td>
+      </tr>
+      <tr>
+        <td><strong>Logistic Regression</strong></td>
+        <td>Supervised/Classification</td>
+        <td>হ্যাঁ/না উত্তর দিতে</td>
+        <td>Fraud detection baseline</td>
+      </tr>
+      <tr>
+        <td><strong>Decision Tree</strong></td>
+        <td>Supervised/Both</td>
+        <td>Interpretability দরকার হলে</td>
+        <td>Rule extraction</td>
+      </tr>
+      <tr>
+        <td><strong>Random Forest</strong></td>
+        <td>Ensemble/Bagging</td>
+        <td>Tabular data, নির্ভরযোগ্য দরকার</td>
+        <td>Production ML ✅</td>
+      </tr>
+      <tr>
+        <td><strong>XGBoost</strong></td>
+        <td>Ensemble/Boosting</td>
+        <td>Kaggle, imbalanced data</td>
+        <td>Predictive Maintenance ✅</td>
+      </tr>
+      <tr>
+        <td><strong>SVM</strong></td>
+        <td>Supervised/Classification</td>
+        <td>High-dimensional data, small dataset</td>
+        <td>Signal classification</td>
+      </tr>
+      <tr>
+        <td><strong>CNN</strong></td>
+        <td>Deep Learning</td>
+        <td>Image, signal (ECG) data</td>
+        <td>Medical AI ✅</td>
+      </tr>
+      <tr>
+        <td><strong>K-Means</strong></td>
+        <td>Unsupervised/Clustering</td>
+        <td>Customer segmentation</td>
+        <td>Data exploration</td>
+      </tr>
+      <tr>
+        <td><strong>Isolation Forest</strong></td>
+        <td>Unsupervised/Anomaly</td>
+        <td>Fault/fraud detection</td>
+        <td>Predictive Maintenance ✅</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- FINAL EXERCISE -->
+  <div class="exercise-section">
+    <div class="exercise-header">
+      <span class="exercise-badge">🏆 Final Challenge</span>
+      <span class="exercise-title-text">Complete ML Engineering Pipeline</span>
+    </div>
+    <div class="exercise-item">
+      <div class="exercise-q">চূড়ান্ত প্রজেক্ট: তোমার predictive maintenance MLOps stack-এ (PostgreSQL + MLflow + BentoML + FastAPI + Kafka) XGBoost model Dockerize করো এবং real-time Kafka stream থেকে anomaly detect করার pipeline তৈরি করো।</div>
+      <button class="show-answer-btn" onclick="toggleAnswer(this)">উত্তর দেখুন ▼</button>
+      <div class="exercise-answer">
+<pre style="background:#050a14;padding:12px;border-radius:6px;font-size:0.82rem;color:#c9d1d9;overflow-x:auto">
+# kafka_consumer.py — Real-time anomaly detection
+from kafka import KafkaConsumer
+import json
+import joblib
+import numpy as np
+from datetime import datetime
+
+# Model load করো (Docker Volume থেকে)
+model = joblib.load('/app/models/xgboost_model.pkl')
+scaler = joblib.load('/app/models/scaler.pkl')
+
+# Kafka Consumer সেটআপ
+consumer = KafkaConsumer(
+    'sensor-readings',
+    bootstrap_servers=['kafka:9093'],  # Docker service name
+    value_deserializer=lambda x: json.loads(x.decode('utf-8')),
+    group_id='anomaly-detector'
+)
+
+print("🚀 Anomaly Detection Pipeline চালু হয়েছে...")
+
+for message in consumer:
+    sensor_data = message.value
+    
+    # Feature extract করো
+    features = np.array([[
+        sensor_data['temperature'],
+        sensor_data['vibration'],
+        sensor_data['pressure'],
+        sensor_data['rpm']
+    ]])
+    
+    # Scale করো
+    features_scaled = scaler.transform(features)
+    
+    # Predict করো
+    prediction = model.predict(features_scaled)[0]
+    probability = model.predict_proba(features_scaled)[0][1]
+    
+    if prediction == 1:  # Failure predicted
+        alert = {
+            'timestamp': datetime.now().isoformat(),
+            'machine_id': sensor_data['machine_id'],
+            'failure_probability': float(probability),
+            'alert': '🚨 মেশিন failure আসন্ন! Maintenance দরকার!'
+        }
+        print(json.dumps(alert, ensure_ascii=False, indent=2))
+        # PostgreSQL-এ log করো, Grafana-তে alert পাঠাও...
+</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>🐳 <strong>Docker সম্পূর্ণ বাংলা গাইড</strong> — ML Engineering-এর জন্য সম্পূর্ণ বাংলায়</p>
+  <p style="margin-top:8px;">এই গাইড পড়লে তোমার Docker, Isolation, Volumes এবং ML Algorithms-এর সম্পূর্ণ ধারণা হবে।<br>
+  কোনো প্রশ্ন থাকলে নিচে comment করো বা GitHub: <strong>Saikot1997</strong>-এ issue খোলো।</p>
+  <p style="margin-top:16px;color:var(--text-dim);">Made with ❤️ in Bengali · সম্পূর্ণ বাংলায় তৈরি</p>
+</div>
+
+</div><!-- container end -->
+
+<!-- Back to top -->
+<a href="#top" class="back-top">↑</a>
+
+<script>
+function toggleAnswer(btn) {
+  const answer = btn.nextElementSibling;
+  if (answer.style.display === 'block') {
+    answer.style.display = 'none';
+    btn.textContent = 'উত্তর দেখুন ▼';
+  } else {
+    answer.style.display = 'block';
+    btn.textContent = 'উত্তর লুকাও ▲';
+  }
+}
+</script>
+</body>
+</html>

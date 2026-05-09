@@ -1,0 +1,2261 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>লেকচার 05 — ডেটা ভিজুয়ালাইজেশন — Plotly ও Seaborn সম্পূর্ণ গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #1f2937;
+  --border: #30363d;
+  --accent: #f97316;
+  --accent2: #fb923c;
+  --accent3: #fdba74;
+  --blue: #38bdf8;
+  --green: #4ade80;
+  --purple: #c084fc;
+  --pink: #f472b6;
+  --yellow: #fbbf24;
+  --text: #e6edf3;
+  --text2: #b0bec5;
+  --text3: #6e7681;
+  --code-bg: #0d1117;
+  --radius: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Hind Siliguri', sans-serif;
+  font-size: 17px;
+  line-height: 1.85;
+  overflow-x: hidden;
+}
+
+/* ===== HERO ===== */
+.hero {
+  background: linear-gradient(135deg, #0d1117 0%, #1a1033 50%, #0d1117 100%);
+  border-bottom: 2px solid var(--accent);
+  padding: 60px 20px 50px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.15) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-block;
+  background: rgba(249,115,22,0.15);
+  border: 1px solid rgba(249,115,22,0.4);
+  color: var(--accent2);
+  padding: 5px 18px;
+  border-radius: 50px;
+  font-size: 13px;
+  letter-spacing: 1px;
+  margin-bottom: 22px;
+  font-weight: 600;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 900;
+  line-height: 1.2;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.hero h1 span { color: var(--accent); }
+.hero p {
+  font-size: 1.1rem;
+  color: var(--text2);
+  max-width: 650px;
+  margin: 0 auto 30px;
+}
+.hero-tags {
+  display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+}
+.tag {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--blue);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ===== TOC ===== */
+.toc-wrapper {
+  max-width: 900px; margin: 40px auto; padding: 0 20px;
+}
+.toc-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 28px 30px;
+}
+.toc-box h2 {
+  font-size: 1.15rem;
+  color: var(--accent);
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+.toc-box ul { list-style: none; }
+.toc-box ul li { padding: 4px 0; }
+.toc-box ul li a {
+  color: var(--text2);
+  text-decoration: none;
+  font-size: 15px;
+  transition: color 0.2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.toc-box ul li a:hover { color: var(--accent); }
+.toc-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px;
+  background: rgba(249,115,22,0.15);
+  border-radius: 50%;
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* ===== MAIN LAYOUT ===== */
+.container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+
+/* ===== SECTION ===== */
+.section {
+  margin: 50px 0;
+  padding: 36px 38px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  position: relative;
+}
+.section-label {
+  position: absolute;
+  top: -13px; left: 28px;
+  background: var(--accent);
+  color: #000;
+  padding: 3px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.section-label.blue { background: var(--blue); }
+.section-label.green { background: var(--green); }
+.section-label.purple { background: var(--purple); }
+.section-label.pink { background: var(--pink); }
+
+.section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.section h2 .emoji { font-size: 1.4rem; }
+
+.section h3 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--accent2);
+  margin: 24px 0 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section h3::before {
+  content: '▸';
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+p { margin-bottom: 14px; color: var(--text2); }
+p strong { color: var(--text); }
+
+/* ===== INFO BOX ===== */
+.info-box {
+  background: rgba(56,189,248,0.08);
+  border: 1px solid rgba(56,189,248,0.3);
+  border-left: 4px solid var(--blue);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 18px 0;
+  color: #bae6fd;
+  font-size: 15.5px;
+}
+.info-box.orange {
+  background: rgba(249,115,22,0.08);
+  border-color: rgba(249,115,22,0.3);
+  border-left-color: var(--accent);
+  color: #fed7aa;
+}
+.info-box.green {
+  background: rgba(74,222,128,0.08);
+  border-color: rgba(74,222,128,0.3);
+  border-left-color: var(--green);
+  color: #bbf7d0;
+}
+.info-box.purple {
+  background: rgba(192,132,252,0.08);
+  border-color: rgba(192,132,252,0.3);
+  border-left-color: var(--purple);
+  color: #e9d5ff;
+}
+.info-box.yellow {
+  background: rgba(251,191,36,0.08);
+  border-color: rgba(251,191,36,0.3);
+  border-left-color: var(--yellow);
+  color: #fef08a;
+}
+.info-box-title {
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+
+/* ===== CODE BLOCK ===== */
+.code-wrap {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  margin: 18px 0;
+  overflow: hidden;
+}
+.code-header {
+  background: #161b22;
+  border-bottom: 1px solid #30363d;
+  padding: 8px 16px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12px;
+  color: var(--text3);
+}
+.code-dots { display: flex; gap: 5px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot.r { background: #ff5f57; }
+.dot.y { background: #ffbd2e; }
+.dot.g { background: #28ca41; }
+.code-header span { margin-left: auto; font-family: 'JetBrains Mono', monospace; }
+.code-block {
+  padding: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 1.8;
+  overflow-x: auto;
+  color: #c9d1d9;
+  white-space: pre-wrap;
+}
+.kw { color: #ff7b72; } /* keywords */
+.fn { color: #d2a8ff; } /* functions */
+.st { color: #a5d6ff; } /* strings */
+.cm { color: #6e7781; font-style: italic; } /* comments */
+.nm { color: #ffa657; } /* numbers/names */
+.op { color: #79c0ff; } /* operators/props */
+.py { color: #79c0ff; }
+
+/* ===== CODE EXPLANATION ===== */
+.code-explain {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 12px 0;
+}
+.code-explain p { margin: 0; font-size: 15px; color: var(--text2); }
+
+/* ===== STEP LIST ===== */
+.step-list { list-style: none; margin: 14px 0; }
+.step-list li {
+  display: flex; gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(48,54,61,0.6);
+  font-size: 15.5px;
+  color: var(--text2);
+}
+.step-list li:last-child { border-bottom: none; }
+.step-num {
+  min-width: 28px; height: 28px;
+  background: var(--accent);
+  color: #000;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ===== SVG DIAGRAM ===== */
+.diagram-wrap {
+  margin: 24px 0;
+  text-align: center;
+}
+.diagram-wrap svg { max-width: 100%; height: auto; }
+.diagram-caption {
+  font-size: 13px;
+  color: var(--text3);
+  margin-top: 8px;
+}
+
+/* ===== CONCEPT CARD ===== */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin: 18px 0;
+}
+.concept-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.concept-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.concept-card .icon { font-size: 1.8rem; margin-bottom: 8px; }
+.concept-card h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.concept-card p { font-size: 13.5px; margin: 0; }
+
+/* ===== TABLE ===== */
+.table-wrap { overflow-x: auto; margin: 18px 0; border-radius: 10px; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+th {
+  background: rgba(249,115,22,0.15);
+  color: var(--accent);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 10px 16px;
+  color: var(--text2);
+  border-bottom: 1px solid rgba(48,54,61,0.5);
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(249,115,22,0.04); }
+code { 
+  font-family: 'JetBrains Mono', monospace; 
+  background: rgba(56,189,248,0.1);
+  color: var(--blue);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+/* ===== QUIZ ===== */
+.quiz-box {
+  background: linear-gradient(135deg, rgba(192,132,252,0.08), rgba(249,115,22,0.05));
+  border: 1px solid rgba(192,132,252,0.3);
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  margin: 20px 0;
+}
+.quiz-box h4 { color: var(--purple); font-size: 14px; margin-bottom: 10px; letter-spacing: 0.5px; }
+.quiz-box p { color: var(--text); font-size: 16px; margin-bottom: 14px; font-weight: 500; }
+.quiz-box details summary {
+  color: var(--accent2);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 14px;
+  background: rgba(249,115,22,0.1);
+  border-radius: 6px;
+  font-weight: 600;
+}
+.quiz-box details[open] summary { margin-bottom: 10px; }
+.quiz-box details p { color: var(--green); font-size: 15px; margin: 0; }
+
+/* ===== PRACTICE BADGE ===== */
+.practice-banner {
+  background: linear-gradient(90deg, rgba(74,222,128,0.1), rgba(56,189,248,0.05));
+  border: 1px solid rgba(74,222,128,0.3);
+  border-radius: 8px;
+  padding: 14px 20px;
+  margin: 18px 0;
+  display: flex; align-items: center; gap: 14px;
+}
+.practice-banner .icon { font-size: 1.5rem; flex-shrink: 0; }
+.practice-banner p { margin: 0; font-size: 14.5px; color: #86efac; }
+
+/* ===== INLINE HIGHLIGHT ===== */
+.hl { color: var(--accent); font-weight: 600; }
+.hl-blue { color: var(--blue); font-weight: 600; }
+.hl-green { color: var(--green); font-weight: 600; }
+.hl-purple { color: var(--purple); font-weight: 600; }
+
+/* ===== SEPARATOR ===== */
+.part-divider {
+  text-align: center;
+  padding: 40px 20px;
+  position: relative;
+}
+.part-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+.part-divider-inner {
+  display: inline-block;
+  background: var(--bg);
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 30px 20px;
+  text-align: center;
+  color: var(--text3);
+  font-size: 13.5px;
+  margin-top: 60px;
+}
+</style>
+</head>
+<body>
+<div id="lecture-nav-banner" style="
+  position:sticky;top:0;z-index:9999;
+  background:linear-gradient(135deg,#0d1117 0%,#161b22 100%);
+  border-bottom:2px solid #e3b341;
+  padding:10px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:'Hind Siliguri',sans-serif;
+  box-shadow:0 2px 20px rgba(0,0,0,.5);
+">
+  <div style="display:flex;align-items:center;gap:12px">
+    <a href="../Data_Visualisation.html" style="
+      background:#e3b341;color:#0d1117;border:none;padding:6px 14px;
+      border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;
+      cursor:pointer;letter-spacing:.5px;
+    ">← সূচিপত্র</a>
+    <span style="color:#e3b341;font-size:13px;font-weight:700;">লেকচার 05 — Plotly ও Seaborn মাস্টারক্লাস</span>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <a href="Lecture_04_Plotly_Full.html" style="background:#21262d;color:#e6edf3;padding:5px 12px;border-radius:5px;font-size:12px;text-decoration:none;border:1px solid #30363d;">← পূর্ববর্তী</a>
+    
+  </div>
+</div>
+
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">📊 সম্পূর্ণ বাংলা গাইড — Newbie Friendly</div>
+  <h1>ডেটা <span>ভিজুয়ালাইজেশন</span><br>Plotly ও Seaborn</h1>
+  <p>একদম শূন্য থেকে শুরু করে সব কিছু বাংলায় বোঝানো হয়েছে। কোনো কিছুই বাদ দেওয়া হয়নি।</p>
+  <div class="hero-tags">
+    <span class="tag">python</span>
+    <span class="tag">plotly</span>
+    <span class="tag">seaborn</span>
+    <span class="tag">pandas</span>
+    <span class="tag">matplotlib</span>
+    <span class="tag">data-viz</span>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc-wrapper">
+  <div class="toc-box">
+    <h2>📋 সূচিপত্র (Table of Contents)</h2>
+    <ul>
+      <li><a href="#part1"><span class="toc-num">A</span> পার্ট ১ — Plotly দিয়ে ডেটা ভিজুয়ালাইজেশন (Masterclass)</a></li>
+      <li><a href="#why-viz"><span class="toc-num">1</span> ডেটা ভিজুয়ালাইজেশন কেন জরুরি?</a></li>
+      <li><a href="#plotly-basics"><span class="toc-num">2</span> Plotly-র বেসিক — ইন্সটল ও ব্যবহার</a></li>
+      <li><a href="#dataset"><span class="toc-num">3</span> ডেটাসেট — Game Sales CSV</a></li>
+      <li><a href="#plotly-questions"><span class="toc-num">4</span> Plotly — প্রশ্ন (a) থেকে (k.2) পর্যন্ত সব</a></li>
+      <li><a href="#part2"><span class="toc-num">B</span> পার্ট ২ — Seaborn দিয়ে Exam (Netflix ডেটা)</a></li>
+      <li><a href="#seaborn-intro"><span class="toc-num">5</span> Seaborn পরিচয় ও ডেটাসেট</a></li>
+      <li><a href="#seaborn-questions"><span class="toc-num">6</span> Seaborn — প্রশ্ন (a) থেকে (v) পর্যন্ত সব</a></li>
+      <li><a href="#part3"><span class="toc-num">✅</span> Best Practices, চার্ট গাইড ও চূড়ান্ত সারসংক্ষেপ</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ============================================================ -->
+<!-- PART 1 — PLOTLY -->
+<!-- ============================================================ -->
+<div id="part1" class="part-divider">
+  <span class="part-divider-inner">🟠 পার্ট ১ — Plotly Masterclass</span>
+</div>
+
+<!-- WHY VIZ -->
+<div id="why-viz" class="section">
+  <div class="section-label">ধারণা</div>
+  <h2><span class="emoji">🤔</span> ডেটা ভিজুয়ালাইজেশন কেন দরকার?</h2>
+
+  <p>ধরো, তোমার কাছে হাজারো সংখ্যা আছে — যেমন গত ৩০ বছরের ভিডিও গেমের বিক্রয় তথ্য। শুধু সংখ্যা দেখলে তুমি সহজে কিছু বুঝতে পারবে না। কিন্তু সেই তথ্য যদি একটা <strong>গ্রাফ বা চার্টে</strong> দেখানো হয়, তাহলে মুহূর্তেই তুমি বুঝতে পারবে কোন বছরে সবচেয়ে বেশি বিক্রি হয়েছে, কোথায় পড়েছে।</p>
+
+  <p>এই কারণেই ডেটা ভিজুয়ালাইজেশন Data Science-এর অন্যতম গুরুত্বপূর্ণ দক্ষতা।</p>
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="icon">⚡</div>
+      <h4>দ্রুত বোঝা যায়</h4>
+      <p>গ্রাফ দেখলে প্যাটার্ন ও ট্রেন্ড মুহূর্তেই চোখে পড়ে। হাজার লাইনের ডেটা একটা চার্টে পরিষ্কার হয়ে যায়।</p>
+    </div>
+    <div class="concept-card">
+      <div class="icon">🗣️</div>
+      <h4>সহজে বোঝানো যায়</h4>
+      <p>বস বা ক্লায়েন্টকে ডেটা দিয়ে বোঝাতে গ্রাফ অনেক বেশি কার্যকর। সবাই সংখ্যা বোঝে না, গ্রাফ বোঝে।</p>
+    </div>
+    <div class="concept-card">
+      <div class="icon">🐛</div>
+      <h4>ভুল ধরা যায়</h4>
+      <p>ডেটায় যদি কোনো অস্বাভাবিক মান থাকে (outlier), ভিজুয়ালাইজেশনে সেটা সহজেই ধরা পড়ে।</p>
+    </div>
+  </div>
+
+  <!-- SVG: Why visualization matters -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f97316"/>
+          <stop offset="100%" stop-color="#7c3aed"/>
+        </linearGradient>
+      </defs>
+      <!-- Left: raw numbers -->
+      <rect x="20" y="10" width="310" height="200" rx="10" fill="#161b22" stroke="#30363d"/>
+      <text x="175" y="38" fill="#6e7781" text-anchor="middle" font-size="12" font-family="JetBrains Mono">📄 RAW DATA (বোঝা কঠিন)</text>
+      <text x="40" y="62" fill="#4d5768" font-size="11" font-family="JetBrains Mono">Year: 2000  Sales: 1234.5</text>
+      <text x="40" y="80" fill="#4d5768" font-size="11" font-family="JetBrains Mono">Year: 2001  Sales: 1456.2</text>
+      <text x="40" y="98" fill="#4d5768" font-size="11" font-family="JetBrains Mono">Year: 2002  Sales: 1890.1</text>
+      <text x="40" y="116" fill="#4d5768" font-size="11" font-family="JetBrains Mono">Year: 2003  Sales: 2100.8</text>
+      <text x="40" y="134" fill="#4d5768" font-size="11" font-family="JetBrains Mono">Year: 2004  Sales: 2567.3</text>
+      <text x="40" y="152" fill="#4d5768" font-size="11" font-family="JetBrains Mono">Year: 2005  Sales: 3012.4</text>
+      <text x="40" y="170" fill="#4d5768" font-size="11" font-family="JetBrains Mono">Year: 2006  Sales: 3456.9</text>
+      <text x="40" y="188" fill="#3d4455" font-size="11" font-family="JetBrains Mono">... ৩০+ বছরের ডেটা ...</text>
+      <!-- Arrow -->
+      <line x1="345" y1="110" x2="375" y2="110" stroke="#f97316" stroke-width="2.5"/>
+      <polygon points="375,104 385,110 375,116" fill="#f97316"/>
+      <text x="365" y="103" fill="#f97316" font-size="10" text-anchor="middle">ভিজু-</text>
+      <text x="365" y="124" fill="#f97316" font-size="10" text-anchor="middle">য়ালাইজ</text>
+      <!-- Right: chart -->
+      <rect x="390" y="10" width="310" height="200" rx="10" fill="#161b22" stroke="#30363d"/>
+      <text x="545" y="38" fill="#4ade80" text-anchor="middle" font-size="12" font-family="JetBrains Mono">📊 CHART (সহজে বোঝা যায়!)</text>
+      <!-- Simple bar chart -->
+      <rect x="420" y="155" width="22" height="25" rx="2" fill="url(#barGrad)" opacity="0.7"/>
+      <rect x="450" y="140" width="22" height="40" rx="2" fill="url(#barGrad)" opacity="0.75"/>
+      <rect x="480" y="120" width="22" height="60" rx="2" fill="url(#barGrad)" opacity="0.8"/>
+      <rect x="510" y="95" width="22" height="85" rx="2" fill="url(#barGrad)" opacity="0.85"/>
+      <rect x="540" y="75" width="22" height="105" rx="2" fill="url(#barGrad)" opacity="0.9"/>
+      <rect x="570" y="55" width="22" height="125" rx="2" fill="url(#barGrad)"/>
+      <rect x="600" y="70" width="22" height="110" rx="2" fill="#f97316" opacity="0.6"/>
+      <line x1="415" y1="180" x2="635" y2="180" stroke="#30363d" stroke-width="1"/>
+      <text x="431" y="195" fill="#6e7781" font-size="9" text-anchor="middle">2000</text>
+      <text x="491" y="195" fill="#6e7781" font-size="9" text-anchor="middle">2003</text>
+      <text x="551" y="195" fill="#6e7781" font-size="9" text-anchor="middle">2006</text>
+      <text x="611" y="195" fill="#6e7781" font-size="9" text-anchor="middle">2008</text>
+      <text x="545" y="65" fill="#fbbf24" font-size="9" text-anchor="middle">▲ Peak!</text>
+    </svg>
+    <div class="diagram-caption">একই ডেটা — বাম দিকে সংখ্যায়, ডান দিকে চার্টে। কোনটা সহজ?</div>
+  </div>
+
+  <div class="info-box orange">
+    <div class="info-box-title">💡 মূল কথা</div>
+    ডেটা শুধু সংখ্যা নয় — এটা একটা গল্প বলে। আর সেই গল্প বলার সবচেয়ে ভালো মাধ্যম হলো ভিজুয়ালাইজেশন। Notebook-এ বলা হয়েছে: <em>"Your data needs to tell a story"</em> — তোমার ডেটার একটা গল্প থাকা দরকার।
+  </div>
+</div>
+
+<!-- PLOTLY BASICS -->
+<div id="plotly-basics" class="section">
+  <div class="section-label">সেটআপ</div>
+  <h2><span class="emoji">🔧</span> Plotly কী এবং কীভাবে ব্যবহার করব?</h2>
+
+  <p><span class="hl">Plotly</span> হলো Python-এর একটা লাইব্রেরি যেটা দিয়ে ইন্টারঅ্যাক্টিভ গ্রাফ তৈরি করা যায়। মানে তুমি গ্রাফে মাউস নিয়ে গেলে তথ্য দেখাবে, জুম করা যাবে, ক্লিক করে ফিল্টার করা যাবে — এটাই Plotly-র সৌন্দর্য।</p>
+
+  <div class="info-box">
+    <div class="info-box-title">🌐 Plotly.js এর উপরে তৈরি</div>
+    Plotly আসলে JavaScript-এর Plotly.js লাইব্রেরির উপরে বানানো। তাই এর গ্রাফগুলো Jupyter Notebook-এ, HTML ফাইলে, বা Dash অ্যাপে দেখানো যায়।
+  </div>
+
+  <h3>Plotly ইন্সটল করা</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+      <span>Terminal / Command Prompt</span>
+    </div>
+    <div class="code-block">
+<span class="cm"># Step 1: Terminal খোলো</span>
+<span class="cm"># Step 2: Python version চেক করো</span>
+python <span class="op">--version</span>
+
+<span class="cm"># Step 3: Plotly ইন্সটল করো</span>
+pip install plotly
+    </div>
+  </div>
+
+  <div class="code-explain">
+    <p>🔎 <strong>বোঝার কথা:</strong> <code>pip</code> হলো Python-এর Package Manager। যেমন Android-এ Play Store দিয়ে app ইন্সটল করো, Python-এ <code>pip</code> দিয়ে library ইন্সটল করো।</p>
+  </div>
+
+  <h3>Plotly ইমপোর্ট করা — দুটো প্যাকেজ</h3>
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+      <span>Python — import.py</span>
+    </div>
+    <div class="code-block">
+<span class="kw">import</span> plotly.express <span class="kw">as</span> <span class="nm">px</span>
+<span class="kw">import</span> plotly.graph_objects <span class="kw">as</span> <span class="nm">go</span>
+    </div>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-box-title">🟢 দুটো প্যাকেজ কেন?</div>
+    <strong>plotly.express (px)</strong> → সহজ, দ্রুত গ্রাফ বানানোর জন্য। কম কোড লিখতে হয়। Masterclass-এ বেশিরভাগ কাজ এটা দিয়েই হবে।<br><br>
+    <strong>plotly.graph_objects (go)</strong> → বেশি কাস্টমাইজেশনের জন্য। বেশি কোড, বেশি নিয়ন্ত্রণ।
+  </div>
+
+  <h3>Plotly দিয়ে গ্রাফ বানানোর ৪টি ধাপ</h3>
+
+  <!-- SVG: 4 steps diagram -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 130" xmlns="http://www.w3.org/2000/svg">
+      <!-- Step boxes -->
+      <rect x="10" y="30" width="145" height="70" rx="8" fill="#1f2937" stroke="#f97316" stroke-width="1.5"/>
+      <text x="82" y="58" fill="#f97316" text-anchor="middle" font-size="22">①</text>
+      <text x="82" y="76" fill="#e6edf3" text-anchor="middle" font-size="12" font-weight="bold">Figure তৈরি</text>
+      <text x="82" y="92" fill="#6e7781" text-anchor="middle" font-size="10">go.Figure()</text>
+      <!-- arrow -->
+      <line x1="158" y1="65" x2="172" y2="65" stroke="#30363d" stroke-width="2"/>
+      <polygon points="172,60 180,65 172,70" fill="#30363d"/>
+
+      <rect x="183" y="30" width="145" height="70" rx="8" fill="#1f2937" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="255" y="58" fill="#38bdf8" text-anchor="middle" font-size="22">②</text>
+      <text x="255" y="76" fill="#e6edf3" text-anchor="middle" font-size="12" font-weight="bold">Graph Type যোগ</text>
+      <text x="255" y="92" fill="#6e7781" text-anchor="middle" font-size="10">add_traces()</text>
+      <!-- arrow -->
+      <line x1="331" y1="65" x2="345" y2="65" stroke="#30363d" stroke-width="2"/>
+      <polygon points="345,60 353,65 345,70" fill="#30363d"/>
+
+      <rect x="356" y="30" width="145" height="70" rx="8" fill="#1f2937" stroke="#4ade80" stroke-width="1.5"/>
+      <text x="428" y="58" fill="#4ade80" text-anchor="middle" font-size="22">③</text>
+      <text x="428" y="76" fill="#e6edf3" text-anchor="middle" font-size="12" font-weight="bold">Legend/Title</text>
+      <text x="428" y="92" fill="#6e7781" text-anchor="middle" font-size="10">update_layout()</text>
+      <!-- arrow -->
+      <line x1="504" y1="65" x2="518" y2="65" stroke="#30363d" stroke-width="2"/>
+      <polygon points="518,60 526,65 518,70" fill="#30363d"/>
+
+      <rect x="529" y="30" width="145" height="70" rx="8" fill="#1f2937" stroke="#c084fc" stroke-width="1.5"/>
+      <text x="601" y="58" fill="#c084fc" text-anchor="middle" font-size="22">④</text>
+      <text x="601" y="76" fill="#e6edf3" text-anchor="middle" font-size="12" font-weight="bold">গ্রাফ দেখাও</text>
+      <text x="601" y="92" fill="#6e7781" text-anchor="middle" font-size="10">fig.show()</text>
+    </svg>
+    <div class="diagram-caption">Plotly দিয়ে গ্রাফ বানানোর ৪টি ধাপ</div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+      <span>Python — plotly_4_steps.py</span>
+    </div>
+    <div class="code-block">
+<span class="cm"># ধাপ ১: Figure (ক্যানভাস) তৈরি করো</span>
+fig = <span class="nm">go</span>.<span class="fn">Figure</span>()
+
+<span class="cm"># ধাপ ২: গ্রাফের ধরন বলো (এখানে Scatter = ডট চার্ট)</span>
+fig.<span class="fn">add_traces</span>(<span class="nm">go</span>.<span class="fn">Scatter</span>(x=<span class="st">'Variable_1'</span>, y=<span class="st">'Variable_2'</span>))
+
+<span class="cm"># ধাপ ৩: শিরোনাম ও অক্ষের নাম দাও</span>
+fig.<span class="fn">update_layout</span>(
+    title=<span class="st">"আমার গ্রাফের শিরোনাম"</span>,
+    xaxis_title=<span class="st">"X অক্ষ"</span>,
+    yaxis_title=<span class="st">"Y অক্ষ"</span>
+)
+
+<span class="cm"># ধাপ ৪: গ্রাফ দেখাও</span>
+fig.<span class="fn">show</span>()
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 ভাবো যেন তুমি একটা ছবি আঁকছো। প্রথমে সাদা কাগজ নাও (Figure), তারপর কী আঁকবে ঠিক করো (graph type), তারপর নাম লেখো (title/labels), শেষে সবাইকে দেখাও।</p>
+  </div>
+</div>
+
+<!-- DATASET -->
+<div id="dataset" class="section">
+  <div class="section-label">ডেটাসেট</div>
+  <h2><span class="emoji">🎮</span> Game Sales ডেটাসেট — এটা কী?</h2>
+
+  <p>Masterclass-এ আমরা <span class="hl">Game_sales.csv</span> ফাইল নিয়ে কাজ করব। এটা একটা ভিডিও গেমের বিক্রয় ডেটা যেখানে ১৯৮৫ থেকে ২০১৬ সাল পর্যন্তের তথ্য আছে।</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>কলামের নাম</th><th>বাংলায় মানে</th><th>উদাহরণ</th></tr></thead>
+      <tbody>
+        <tr><td><code>Name</code></td><td>গেমের নাম</td><td>Super Mario Bros</td></tr>
+        <tr><td><code>Year_of_Release</code></td><td>প্রকাশের বছর</td><td>1985, 2008</td></tr>
+        <tr><td><code>Genre</code></td><td>গেমের ধরন</td><td>Action, Sports, RPG</td></tr>
+        <tr><td><code>Publisher</code></td><td>প্রকাশক কোম্পানি</td><td>Nintendo, EA</td></tr>
+        <tr><td><code>NA_Sales</code></td><td>উত্তর আমেরিকায় বিক্রি (মিলিয়নে)</td><td>4.49</td></tr>
+        <tr><td><code>EU_Sales</code></td><td>ইউরোপে বিক্রি</td><td>3.58</td></tr>
+        <tr><td><code>JP_Sales</code></td><td>জাপানে বিক্রি</td><td>1.28</td></tr>
+        <tr><td><code>Global_Sales</code></td><td>সারা বিশ্বে বিক্রি</td><td>11.12</td></tr>
+        <tr><td><code>Critic_Score</code></td><td>সমালোচকদের স্কোর (১০০ এর মধ্যে)</td><td>76</td></tr>
+        <tr><td><code>User_Score</code></td><td>ব্যবহারকারীদের স্কোর (১০ এর মধ্যে)</td><td>8.0</td></tr>
+        <tr><td><code>Rating</code></td><td>বয়সের ক্যাটাগরি</td><td>E, M, T</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PLOTLY QUESTIONS -->
+<div id="plotly-questions" class="section">
+  <div class="section-label">প্র্যাকটিস</div>
+  <h2><span class="emoji">🧪</span> Plotly — সব প্রশ্ন ও উত্তর বাংলায়</h2>
+
+  <!-- Question (a) -->
+  <h3>প্রশ্ন (a) — CSV ফাইল পড়া</h3>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_a.py</span></div>
+    <div class="code-block">
+<span class="kw">import</span> pandas <span class="kw">as</span> <span class="nm">pd</span>
+
+df = <span class="nm">pd</span>.<span class="fn">read_csv</span>(<span class="st">'Game_sales.csv'</span>)
+
+df.<span class="fn">head</span>()
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 <strong>লাইন বাই লাইন ব্যাখ্যা:</strong></p>
+    <ul style="list-style:none; margin-top:8px;">
+      <li style="padding:4px 0; color:#b0bec5;">▸ <code>import pandas as pd</code> → pandas লাইব্রেরি আনো, সংক্ষেপে <code>pd</code> নাম দাও</li>
+      <li style="padding:4px 0; color:#b0bec5;">▸ <code>pd.read_csv(...)</code> → CSV ফাইলটা পড়ে একটা টেবিলে রাখো, সেটার নাম <code>df</code> (DataFrame)</li>
+      <li style="padding:4px 0; color:#b0bec5;">▸ <code>df.head()</code> → টেবিলের প্রথম ৫টা সারি দেখাও</li>
+    </ul>
+  </div>
+  <div class="info-box">
+    <div class="info-box-title">📌 DataFrame কী?</div>
+    DataFrame মানে একটা এক্সেল শিটের মতো টেবিল। সারি (rows) আর কলাম (columns) আছে। Python-এ pandas লাইব্রেরি দিয়ে এই টেবিল নিয়ে কাজ করা যায়।
+  </div>
+
+  <!-- Question (b) -->
+  <h3>প্রশ্ন (b) — সময়ের সাথে বিক্রির ট্রেন্ড (Line Chart)</h3>
+  <p>প্রশ্ন: ১৯৮৫ থেকে ২০১৬ পর্যন্ত বৈশ্বিক ভিডিও গেম বিক্রির ট্রেন্ড দেখাও।</p>
+
+  <div class="info-box purple">
+    <div class="info-box-title">📈 কোন গ্রাফ ব্যবহার করব?</div>
+    সময়ভিত্তিক ডেটার জন্য (time-series) সবচেয়ে ভালো হলো <strong>Line Chart (রেখা গ্রাফ)</strong>। এতে বছরের সাথে সাথে পরিবর্তন স্পষ্ট বোঝা যায়।
+  </div>
+
+  <!-- SVG: Time series types -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 160" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="200" height="140" rx="8" fill="#161b22" stroke="#30363d"/>
+      <text x="110" y="30" fill="#f97316" text-anchor="middle" font-size="12" font-weight="bold">Line Chart ✓</text>
+      <polyline points="30,130 60,110 90,90 120,60 150,70 180,100 195,115" fill="none" stroke="#f97316" stroke-width="2.5"/>
+      <text x="110" y="155" fill="#6e7781" text-anchor="middle" font-size="11">সময়ের ট্রেন্ড দেখাতে সেরা</text>
+
+      <rect x="220" y="10" width="200" height="140" rx="8" fill="#161b22" stroke="#30363d"/>
+      <text x="320" y="30" fill="#38bdf8" text-anchor="middle" font-size="12" font-weight="bold">Bar Chart</text>
+      <rect x="240" y="80" width="22" height="55" rx="2" fill="#38bdf8" opacity="0.7"/>
+      <rect x="270" y="60" width="22" height="75" rx="2" fill="#38bdf8" opacity="0.7"/>
+      <rect x="300" y="40" width="22" height="95" rx="2" fill="#38bdf8" opacity="0.7"/>
+      <rect x="330" y="55" width="22" height="80" rx="2" fill="#38bdf8" opacity="0.7"/>
+      <rect x="360" y="70" width="22" height="65" rx="2" fill="#38bdf8" opacity="0.7"/>
+      <text x="320" y="155" fill="#6e7681" text-anchor="middle" font-size="11">তুলনার জন্য ভালো</text>
+
+      <rect x="430" y="10" width="200" height="140" rx="8" fill="#161b22" stroke="#30363d"/>
+      <text x="530" y="30" fill="#4ade80" text-anchor="middle" font-size="12" font-weight="bold">Box Plot</text>
+      <line x1="490" y1="55" x2="490" y2="135" stroke="#4ade80" stroke-width="1.5"/>
+      <rect x="465" y="75" width="50" height="40" rx="2" fill="none" stroke="#4ade80" stroke-width="2"/>
+      <line x1="465" y1="92" x2="515" y2="92" stroke="#4ade80" stroke-width="2.5"/>
+      <line x1="560" y1="55" x2="560" y2="135" stroke="#4ade80" stroke-width="1.5"/>
+      <rect x="535" y="70" width="50" height="50" rx="2" fill="none" stroke="#4ade80" stroke-width="2"/>
+      <line x1="535" y1="88" x2="585" y2="88" stroke="#4ade80" stroke-width="2.5"/>
+      <text x="530" y="155" fill="#6e7681" text-anchor="middle" font-size="11">বিতরণ দেখাতে ভালো</text>
+    </svg>
+    <div class="diagram-caption">বিভিন্ন গ্রাফের ধরন ও ব্যবহার</div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_b.py</span></div>
+    <div class="code-block">
+<span class="cm"># ধাপ ১: বছর অনুযায়ী গ্রুপ করে মোট বিক্রি হিসাব করো</span>
+df_global_sales = df.<span class="fn">groupby</span>([<span class="st">'Year_of_Release'</span>]).<span class="fn">agg</span>({<span class="st">'Global_Sales'</span>: <span class="st">'sum'</span>})
+
+<span class="cm"># ধাপ ২: খালি Figure তৈরি</span>
+fig = <span class="nm">go</span>.<span class="fn">Figure</span>()
+
+<span class="cm"># ধাপ ৩: Scatter (line) trace যোগ করো</span>
+fig.<span class="fn">add_traces</span>(<span class="nm">go</span>.<span class="fn">Scatter</span>(
+    x=df_global_sales.index,
+    y=df_global_sales[<span class="st">'Global_Sales'</span>]
+))
+
+<span class="cm"># ধাপ ৪: শিরোনাম ও লেবেল দাও</span>
+fig.<span class="fn">update_layout</span>(
+    title=<span class="st">"Evolution of Global Video Game Sales between 1985 and 2016"</span>,
+    xaxis_title=<span class="st">"Year"</span>,
+    yaxis_title=<span class="st">"Sales"</span>
+)
+
+fig.<span class="fn">show</span>()
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 <code>groupby(['Year_of_Release']).agg({'Global_Sales': 'sum'})</code></p>
+    <p>এটা বলছে: বছর অনুযায়ী ডেটা ভাগ করো, তারপর প্রতি বছরের সব বিক্রি যোগ করো। যেমন ২০০৮ সালে মোট কত বিক্রি হয়েছে।</p>
+    <p style="margin-top:8px;">🔎 <code>df_global_sales.index</code> → এটা বছরগুলোর তালিকা (X অক্ষের জন্য)</p>
+  </div>
+  <div class="info-box orange">
+    <div class="info-box-title">📊 ফলাফল থেকে কী বোঝা গেল?</div>
+    গ্রাফ দেখলে বোঝা যায় বিক্রি ক্রমশ বাড়ছিল, <strong>২০০৮ সালে চূড়ায়</strong> পৌঁছায়। এরপর থেকে কমতে শুরু করে। কেন? হয়তো ডেটায় নতুন প্ল্যাটফর্মের তথ্য নেই, অথবা সত্যিই বিক্রি কমেছে।
+  </div>
+
+  <!-- Question (c) -->
+  <h3>প্রশ্ন (c) — স্কোরের বিতরণ (Box Plot)</h3>
+  <p>প্রশ্ন: বছরের সাথে ভিডিও গেমের স্কোরের ট্রেন্ড দেখাও।</p>
+  <div class="info-box">
+    <div class="info-box-title">📦 Box Plot কী?</div>
+    Box Plot দেখায় ডেটা কতটা ছড়িয়ে আছে। মাঝের রেখা হলো মিডিয়ান (মধ্যমান), বাক্সটা হলো মাঝের ৫০% ডেটা, আর ডগাগুলো চরম মান।
+    <br><br>
+    ভাবো ৫০ জনের পরীক্ষার নম্বর — সবচেয়ে কম, সবচেয়ে বেশি, গড় কত — এটাই Box Plot এক ছবিতে দেখায়।
+  </div>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_c.py</span></div>
+    <div class="code-block">
+fig = <span class="nm">go</span>.<span class="fn">Figure</span>()
+
+fig.<span class="fn">add_traces</span>(<span class="nm">go</span>.<span class="fn">Box</span>(
+    x=df[<span class="st">'Year_of_Release'</span>],   <span class="cm"># X অক্ষে বছর</span>
+    y=df[<span class="st">'Critic_Score'</span>]      <span class="cm"># Y অক্ষে স্কোর</span>
+))
+
+fig.<span class="fn">update_layout</span>(
+    title=<span class="st">"Evolution of score between 1985 and 2016"</span>,
+    xaxis_title=<span class="st">"Year"</span>,
+    yaxis_title=<span class="st">"Score"</span>
+)
+
+fig.<span class="fn">show</span>()
+    </div>
+  </div>
+  <div class="info-box orange">
+    <div class="info-box-title">📊 ফলাফল</div>
+    সময়ের সাথে গেমের মান কিছুটা কমেছে, তবে ২০০০ সাল থেকে স্থিতিশীল হয়েছে।
+  </div>
+
+  <!-- Question (d) -->
+  <h3>প্রশ্ন (d) — একই গ্রাফে একাধিক লাইন (Multi-line Chart)</h3>
+  <p>প্রশ্ন: একই গ্রাফে Global, NA, EU, JP বিক্রির ট্রেন্ড দেখাও।</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_d.py</span></div>
+    <div class="code-block">
+<span class="cm"># একসাথে ৪টা কলামের যোগফল বের করো</span>
+df_global_sales = df.<span class="fn">groupby</span>([<span class="st">'Year_of_Release'</span>]).<span class="fn">agg</span>({
+    <span class="st">'Global_Sales'</span>: <span class="st">'sum'</span>,
+    <span class="st">'NA_Sales'</span>: <span class="st">'sum'</span>,
+    <span class="st">'EU_Sales'</span>: <span class="st">'sum'</span>,
+    <span class="st">'JP_Sales'</span>: <span class="st">'sum'</span>
+})
+
+fig = <span class="nm">go</span>.<span class="fn">Figure</span>()
+
+<span class="cm"># একটা list-এ চারটা Scatter trace দাও</span>
+fig.<span class="fn">add_traces</span>([
+    <span class="nm">go</span>.<span class="fn">Scatter</span>(name=<span class="st">"Global"</span>, x=df_global_sales.index, y=df_global_sales[<span class="st">'Global_Sales'</span>]),
+    <span class="nm">go</span>.<span class="fn">Scatter</span>(name=<span class="st">"NA"</span>,     x=df_global_sales.index, y=df_global_sales[<span class="st">'NA_Sales'</span>]),
+    <span class="nm">go</span>.<span class="fn">Scatter</span>(name=<span class="st">"EU"</span>,     x=df_global_sales.index, y=df_global_sales[<span class="st">'EU_Sales'</span>]),
+    <span class="nm">go</span>.<span class="fn">Scatter</span>(name=<span class="st">"JP"</span>,     x=df_global_sales.index, y=df_global_sales[<span class="st">'JP_Sales'</span>])
+])
+
+fig.<span class="fn">update_layout</span>(
+    title=<span class="st">"Evolution of Video Game Sales between 1985 and 2016"</span>,
+    xaxis_title=<span class="st">"Year"</span>, yaxis_title=<span class="st">"Sales"</span>
+)
+
+fig.<span class="fn">show</span>()
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 এখানে <code>add_traces([ ... ])</code>-এ একটা list দেওয়া হয়েছে, যেখানে ৪টা Scatter trace আছে। প্রতিটার আলাদা <code>name</code> থাকায় legend-এ আলাদা করে দেখাবে।</p>
+  </div>
+  <div class="info-box orange">
+    <div class="info-box-title">🌍 মজার তথ্য</div>
+    গ্রাফ থেকে দেখা যায় উত্তর আমেরিকা (NA) বিশ্বের সবচেয়ে বড় ভিডিও গেম বাজার — এমনকি ইউরোপের থেকেও বেশি, যদিও ইউরোপে জনসংখ্যা ২০ কোটি বেশি!
+  </div>
+  <div class="info-box green">
+    <div class="info-box-title">💡 Plotly Tip — Legend-এ ডাবল-ক্লিক!</div>
+    Legend-এ কোনো category-তে ডাবল-ক্লিক করলে শুধু সেটাই দেখাবে, বাকিগুলো লুকিয়ে যাবে। এটা Plotly-র ইন্টারঅ্যাক্টিভিটির সুবিধা।
+  </div>
+
+  <!-- Question (e) -->
+  <h3>প্রশ্ন (e) — Publisher-ভিত্তিক গেম সংখ্যা ও বিক্রি (Grouped Bar)</h3>
+  <p>প্রশ্ন: প্রতিটা Publisher কত গেম বানিয়েছে এবং কত বিক্রি করেছে — একসাথে দেখাও।</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_e.py</span></div>
+    <div class="code-block">
+<span class="cm"># Publisher অনুযায়ী মোট বিক্রি</span>
+global_sales = df.<span class="fn">groupby</span>([<span class="st">'Publisher'</span>]).<span class="fn">agg</span>({<span class="st">'Global_Sales'</span>: <span class="st">'sum'</span>})
+
+<span class="cm"># Publisher অনুযায়ী গেমের সংখ্যা</span>
+global_games = df.<span class="fn">groupby</span>([<span class="st">'Publisher'</span>]).<span class="fn">agg</span>({<span class="st">'Name'</span>: <span class="st">'count'</span>})
+
+<span class="cm"># দুটো টেবিল জোড়া লাগাও, বিক্রির ক্রমে সাজাও, শীর্ষ ১৫ নাও</span>
+global_sales = global_sales.<span class="fn">join</span>(global_games).<span class="fn">sort_values</span>(
+    by=<span class="st">'Global_Sales'</span>, ascending=<span class="kw">False</span>).<span class="fn">head</span>(<span class="nm">15</span>)
+
+fig = <span class="nm">go</span>.<span class="fn">Figure</span>()
+
+fig.<span class="fn">add_traces</span>([
+    <span class="nm">go</span>.<span class="fn">Bar</span>(name=<span class="st">'Sales'</span>,           x=global_sales.index, y=global_sales[<span class="st">'Global_Sales'</span>]),
+    <span class="nm">go</span>.<span class="fn">Bar</span>(name=<span class="st">'Number of games'</span>, x=global_sales.index, y=global_sales[<span class="st">'Name'</span>],
+             marker_color=<span class="st">'orange'</span>)  <span class="cm"># রং নির্দিষ্ট করো</span>
+])
+
+fig.<span class="fn">update_layout</span>(title=<span class="st">"Number of games and global sales per Publisher"</span>)
+fig.<span class="fn">show</span>()
+    </div>
+  </div>
+  <div class="info-box yellow">
+    <div class="info-box-title">⚠️ সতর্কতা — স্কেলের পার্থক্য</div>
+    এই গ্রাফে দুটো আলাদা জিনিস একসাথে দেখানো হয়েছে — বিক্রি (মিলিয়নে) এবং গেমের সংখ্যা (unit-এ)। এই দুটোর একক আলাদা, তাই সরাসরি তুলনা করা ঠিক নয়।
+    <br><br>
+    তবে মজার বিষয়: <strong>Nintendo</strong> Electronics Arts-এর তুলনায় মাত্র এক-তৃতীয়াংশ গেম বানিয়েছে, কিন্তু বিক্রি EA-র কাছাকাছি!
+  </div>
+  <div class="info-box">
+    <div class="info-box-title">♿ Accessibility Tips — রং নিয়ে সতর্কতা</div>
+    সবাই রং এক রকম দেখে না। Color blindness (বর্ণান্ধতা) অনেকের থাকে। তাই গ্রাফে রং বাছাইয়ে সাবধান থাকো — শুধু রং দিয়ে তথ্য বোঝানো উচিত নয়, লেবেল বা pattern-ও ব্যবহার করো।
+  </div>
+
+  <!-- Question (f) -->
+  <h3>প্রশ্ন (f) — Scatter Plot: User Score vs Critic Score</h3>
+  <p>প্রশ্ন: User Score এবং Critic Score-এর মধ্যে কোনো সম্পর্ক আছে? Scatter plot দিয়ে দেখাও।</p>
+  <div class="info-box purple">
+    <div class="info-box-title">📐 Correlation (সহসম্বন্ধ) কী?</div>
+    দুটো variable-এর মধ্যে সম্পর্ককে Correlation বলে।<br>
+    • <strong>+1</strong> = পুরোপুরি ধনাত্মক সম্পর্ক (একটা বাড়লে অন্যটাও বাড়ে)<br>
+    • <strong>-1</strong> = পুরোপুরি ঋণাত্মক সম্পর্ক (একটা বাড়লে অন্যটা কমে)<br>
+    • <strong>0</strong> = কোনো সম্পর্ক নেই<br><br>
+    মনে রেখো: Correlation মানেই Causation নয়। দুটো জিনিস একসাথে পরিবর্তন হলেই বলা যায় না যে একটা অন্যটার কারণ।
+  </div>
+
+  <!-- SVG: Correlation explanation -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 170" xmlns="http://www.w3.org/2000/svg">
+      <!-- Positive -->
+      <rect x="10" y="10" width="205" height="150" rx="8" fill="#161b22" stroke="#30363d"/>
+      <text x="112" y="30" fill="#4ade80" text-anchor="middle" font-size="12" font-weight="bold">Positive Correlation (+1)</text>
+      <line x1="30" y1="150" x2="200" y2="150" stroke="#30363d" stroke-width="1"/>
+      <line x1="30" y1="150" x2="30" y2="40" stroke="#30363d" stroke-width="1"/>
+      <circle cx="50" cy="140" r="4" fill="#4ade80" opacity="0.8"/>
+      <circle cx="70" cy="125" r="4" fill="#4ade80" opacity="0.8"/>
+      <circle cx="90" cy="110" r="4" fill="#4ade80" opacity="0.8"/>
+      <circle cx="110" cy="95" r="4" fill="#4ade80" opacity="0.8"/>
+      <circle cx="130" cy="82" r="4" fill="#4ade80" opacity="0.8"/>
+      <circle cx="150" cy="68" r="4" fill="#4ade80" opacity="0.8"/>
+      <circle cx="170" cy="55" r="4" fill="#4ade80" opacity="0.8"/>
+      <line x1="40" y1="148" x2="180" y2="48" stroke="#4ade80" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="112" y="165" fill="#4ade80" text-anchor="middle" font-size="10">একটা বাড়লে অন্যটা বাড়ে</text>
+
+      <!-- Zero -->
+      <rect x="248" y="10" width="205" height="150" rx="8" fill="#161b22" stroke="#30363d"/>
+      <text x="350" y="30" fill="#fbbf24" text-anchor="middle" font-size="12" font-weight="bold">No Correlation (0)</text>
+      <line x1="268" y1="150" x2="438" y2="150" stroke="#30363d" stroke-width="1"/>
+      <line x1="268" y1="150" x2="268" y2="40" stroke="#30363d" stroke-width="1"/>
+      <circle cx="285" cy="120" r="4" fill="#fbbf24" opacity="0.8"/>
+      <circle cx="305" cy="70" r="4" fill="#fbbf24" opacity="0.8"/>
+      <circle cx="325" cy="130" r="4" fill="#fbbf24" opacity="0.8"/>
+      <circle cx="345" cy="55" r="4" fill="#fbbf24" opacity="0.8"/>
+      <circle cx="365" cy="140" r="4" fill="#fbbf24" opacity="0.8"/>
+      <circle cx="385" cy="80" r="4" fill="#fbbf24" opacity="0.8"/>
+      <circle cx="410" cy="105" r="4" fill="#fbbf24" opacity="0.8"/>
+      <line x1="275" y1="100" x2="420" y2="100" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="350" y="165" fill="#fbbf24" text-anchor="middle" font-size="10">কোনো সম্পর্ক নেই</text>
+
+      <!-- Negative -->
+      <rect x="486" y="10" width="205" height="150" rx="8" fill="#161b22" stroke="#30363d"/>
+      <text x="588" y="30" fill="#f472b6" text-anchor="middle" font-size="12" font-weight="bold">Negative Correlation (-1)</text>
+      <line x1="506" y1="150" x2="676" y2="150" stroke="#30363d" stroke-width="1"/>
+      <line x1="506" y1="150" x2="506" y2="40" stroke="#30363d" stroke-width="1"/>
+      <circle cx="525" cy="55" r="4" fill="#f472b6" opacity="0.8"/>
+      <circle cx="545" cy="68" r="4" fill="#f472b6" opacity="0.8"/>
+      <circle cx="565" cy="82" r="4" fill="#f472b6" opacity="0.8"/>
+      <circle cx="585" cy="95" r="4" fill="#f472b6" opacity="0.8"/>
+      <circle cx="605" cy="110" r="4" fill="#f472b6" opacity="0.8"/>
+      <circle cx="625" cy="125" r="4" fill="#f472b6" opacity="0.8"/>
+      <circle cx="645" cy="140" r="4" fill="#f472b6" opacity="0.8"/>
+      <line x1="515" y1="48" x2="655" y2="148" stroke="#f472b6" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="588" y="165" fill="#f472b6" text-anchor="middle" font-size="10">একটা বাড়লে অন্যটা কমে</text>
+    </svg>
+    <div class="diagram-caption">Correlation-এর তিনটি ধরন</div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_f.py</span></div>
+    <div class="code-block">
+<span class="cm"># Plotly Express দিয়ে Scatter Plot — অনেক কম কোড!</span>
+fig = <span class="nm">px</span>.<span class="fn">scatter</span>(
+    df,
+    x=<span class="st">"Critic_Score"</span>,   <span class="cm"># X অক্ষে সমালোচকের স্কোর</span>
+    y=<span class="st">"User_Score"</span>,     <span class="cm"># Y অক্ষে ব্যবহারকারীর স্কোর</span>
+    range_y=[<span class="nm">0</span>, <span class="nm">10</span>],    <span class="cm"># Y অক্ষ ০ থেকে ১০</span>
+    range_x=[<span class="nm">0</span>, <span class="nm">100</span>],   <span class="cm"># X অক্ষ ০ থেকে ১০০</span>
+    hover_data=[<span class="st">'Name'</span>, <span class="st">'EU_Sales'</span>]  <span class="cm"># hover করলে এই তথ্য দেখাবে</span>
+)
+
+<span class="cm"># একটা reference line যোগ করো (যদি দুই স্কোর সমান হতো)</span>
+fig.<span class="fn">add_shape</span>(
+    type=<span class="st">"line"</span>,
+    x0=<span class="nm">0</span>, x1=<span class="nm">100</span>,
+    y0=<span class="nm">0</span>, y1=<span class="nm">10</span>,
+    line=<span class="fn">dict</span>(color=<span class="st">"Red"</span>, width=<span class="nm">2</span>, dash=<span class="st">"dash"</span>)
+)
+
+fig.<span class="fn">show</span>()
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 <code>hover_data</code> মানে: মাউস point-এর উপর নিয়ে গেলে Name এবং EU_Sales দেখাবে।</p>
+    <p style="margin-top:6px;">🔎 <code>add_shape(type="line")</code> মানে: একটা রেখা আঁকো। এখানে লাল ড্যাশ রেখাটা দেখায় যদি User আর Critic স্কোর একই হতো তাহলে কোথায় থাকত।</p>
+  </div>
+  <div class="info-box orange">
+    <div class="info-box-title">📊 ফলাফল</div>
+    User Score এবং Critic Score-এর মধ্যে <strong>শক্তিশালী ধনাত্মক সম্পর্ক</strong> দেখা গেছে। মানে সমালোচক ভালো বললে ব্যবহারকারীরাও ভালো বলে।
+  </div>
+
+  <!-- Question f.2 -->
+  <h3>প্রশ্ন (f.2) — Animation Frame যোগ করা</h3>
+  <p>প্রশ্ন: বছরের সাথে সাথে এই সম্পর্ক কি পরিবর্তিত হয়? Animation দিয়ে দেখাও।</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_f2.py</span></div>
+    <div class="code-block">
+<span class="cm"># প্রথমে বছর অনুযায়ী সাজাও (animation-এর জন্য জরুরি!)</span>
+df_sorted = df.<span class="fn">sort_values</span>(by=<span class="st">"Year_of_Release"</span>)
+
+fig = <span class="nm">px</span>.<span class="fn">scatter</span>(
+    df_sorted,
+    x=<span class="st">"Critic_Score"</span>,
+    y=<span class="st">"User_Score"</span>,
+    animation_frame=<span class="st">"Year_of_Release"</span>,  <span class="cm"># এই column-এ animation হবে</span>
+    range_y=[<span class="nm">0</span>, <span class="nm">10</span>],
+    range_x=[<span class="nm">0</span>, <span class="nm">100</span>],
+    hover_data=[<span class="st">'Name'</span>, <span class="st">'EU_Sales'</span>]
+)
+
+fig.<span class="fn">add_shape</span>(type=<span class="st">"line"</span>, x0=<span class="nm">0</span>, x1=<span class="nm">100</span>, y0=<span class="nm">0</span>, y1=<span class="nm">10</span>,
+    line=<span class="fn">dict</span>(color=<span class="st">"Red"</span>, width=<span class="nm">2</span>, dash=<span class="st">"dash"</span>))
+
+fig.<span class="fn">show</span>()
+    </div>
+  </div>
+  <div class="info-box yellow">
+    <div class="info-box-title">⚠️ গুরুত্বপূর্ণ সতর্কতা</div>
+    <code>animation_frame</code> ব্যবহারের আগে ডেটা সঠিকভাবে sort করতে হবে। না করলে animation ভুল ক্রমে চলবে এবং বিভ্রান্তিকর হবে।
+  </div>
+
+  <!-- Question g -->
+  <h3>প্রশ্ন (g) — Correlation Heatmap</h3>
+  <p>প্রশ্ন: সব quantitative variable-এর মধ্যে correlation হিসাব করে heatmap দেখাও।</p>
+  <div class="info-box">
+    <div class="info-box-title">🌡️ Heatmap কী?</div>
+    Heatmap হলো একটা টেবিল যেখানে প্রতিটা cell-এর রং দিয়ে মান বোঝানো হয়। যেমন গাঢ় লাল = শক্তিশালী সম্পর্ক, সাদা = কোনো সম্পর্ক নেই।
+  </div>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_g.py</span></div>
+    <div class="code-block">
+<span class="cm"># df.corr() সব numeric column-এর মধ্যে correlation বের করে</span>
+<span class="cm"># px.imshow() সেটাকে heatmap হিসেবে দেখায়</span>
+fig = <span class="nm">px</span>.<span class="fn">imshow</span>(df.<span class="fn">corr</span>(), text_auto=<span class="kw">True</span>)
+fig.<span class="fn">show</span>()
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 <code>text_auto=True</code> মানে: প্রতিটা cell-এ correlation-এর মান সংখ্যায় লেখা থাকবে।</p>
+  </div>
+
+  <!-- Question h -->
+  <h3>প্রশ্ন (h) — Genre অনুযায়ী Score বিতরণ (Boxplot)</h3>
+  <p>প্রশ্ন: বিভিন্ন Genre-এর গেমের Critic Score-এর বিতরণ Box Plot-এ দেখাও।</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_h.py</span></div>
+    <div class="code-block">
+fig = <span class="nm">px</span>.<span class="fn">box</span>(
+    df,
+    x=<span class="st">"Genre"</span>,          <span class="cm"># X অক্ষে Genre</span>
+    y=<span class="st">"Critic_Score"</span>,   <span class="cm"># Y অক্ষে স্কোর</span>
+    color=<span class="st">"Genre"</span>,      <span class="cm"># প্রতিটা Genre-এ আলাদা রং</span>
+    color_discrete_sequence=<span class="nm">px</span>.colors.qualitative.Dark24
+)
+fig.<span class="fn">show</span>()
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 <code>color_discrete_sequence=px.colors.qualitative.Dark24</code> → ২৪টা আলাদা রঙের একটা প্যালেট ব্যবহার করো।</p>
+  </div>
+
+  <!-- Question h.2 -->
+  <h3>প্রশ্ন (h.2) — Median দিয়ে Genre সাজানো</h3>
+  <p>আগের গ্রাফে Genre গুলো কোনো নির্দিষ্ট ক্রমে ছিল না। এখন median অনুযায়ী সাজাও।</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_h2.py</span></div>
+    <div class="code-block">
+<span class="cm"># প্রতিটা Genre-এর median Critic_Score বের করো, সাজাও</span>
+custom_order = (
+    df.<span class="fn">groupby</span>(<span class="st">'Genre'</span>)
+      .<span class="fn">agg</span>({<span class="st">"Critic_Score"</span>: <span class="st">"median"</span>})
+      .<span class="fn">sort_values</span>(by=<span class="st">"Critic_Score"</span>)
+      .index
+)
+
+<span class="cm"># সেই custom order অনুযায়ী ডেটা সাজাও</span>
+sorted_df = df.<span class="fn">sort_values</span>(
+    <span class="st">"Genre"</span>,
+    key=<span class="kw">lambda</span> x: x.<span class="fn">map</span>({value: idx <span class="kw">for</span> idx, value <span class="kw">in</span> <span class="fn">enumerate</span>(custom_order)})
+)
+
+fig = <span class="nm">px</span>.<span class="fn">box</span>(sorted_df, x=<span class="st">"Genre"</span>, y=<span class="st">"Critic_Score"</span>,
+    color=<span class="st">"Genre"</span>, color_discrete_sequence=<span class="nm">px</span>.colors.qualitative.Dark24)
+fig.<span class="fn">show</span>()
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 <code>lambda x: x.map({...})</code> → এটা একটু জটিল, কিন্তু মূল ব্যাপার হলো: প্রতিটা Genre-কে তার median-অনুযায়ী একটা নম্বর দিয়ে সাজানো হচ্ছে।</p>
+  </div>
+
+  <!-- Question j -->
+  <h3>প্রশ্ন (j) — Animated Histogram: Critic_Score-এর সময়ভিত্তিক বিতরণ</h3>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_j.py</span></div>
+    <div class="code-block">
+<span class="cm"># ২০০০ সালের পরের ডেটা নাও, বছর অনুযায়ী সাজাও</span>
+df_histogram = df[df[<span class="st">'Year_of_Release'</span>] > <span class="nm">2000</span>].<span class="fn">sort_values</span>(by=<span class="st">'Year_of_Release'</span>)
+
+<span class="nm">px</span>.<span class="fn">histogram</span>(
+    df_histogram,
+    x=<span class="st">"Critic_Score"</span>,
+    animation_frame=<span class="st">'Year_of_Release'</span>,  <span class="cm"># বছর অনুযায়ী animation</span>
+    nbins=<span class="nm">10</span>,        <span class="cm"># ১০টা বার</span>
+    range_y=[<span class="nm">0</span>, <span class="nm">200</span>]  <span class="cm"># Y অক্ষ ০ থেকে ২০০</span>
+)
+    </div>
+  </div>
+  <div class="info-box">
+    <div class="info-box-title">📊 Histogram কী?</div>
+    Histogram দেখায় কোনো variable-এর মান কতবার এবং কোন range-এ পড়েছে। যেমন কতটা গেমের স্কোর ৭০-৮০ এর মধ্যে, কতটা ৮০-৯০ এর মধ্যে।
+  </div>
+
+  <!-- Question k -->
+  <h3>প্রশ্ন (k) — Publisher-ভিত্তিক বিক্রি: Pie Chart</h3>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_k.py</span></div>
+    <div class="code-block">
+df_global_publisher = df.<span class="fn">groupby</span>([<span class="st">'Publisher'</span>]).<span class="fn">agg</span>({
+    <span class="st">'Global_Sales'</span>: <span class="st">'sum'</span>,
+    <span class="st">'NA_Sales'</span>: <span class="st">'sum'</span>,
+    <span class="st">'EU_Sales'</span>: <span class="st">'sum'</span>,
+    <span class="st">'JP_Sales'</span>: <span class="st">'sum'</span>
+}).<span class="fn">reset_index</span>().<span class="fn">sort_values</span>(by=<span class="st">'Global_Sales'</span>).<span class="fn">tail</span>(<span class="nm">20</span>)
+
+fig = <span class="nm">px</span>.<span class="fn">pie</span>(
+    df_global_publisher,
+    values=<span class="st">'Global_Sales'</span>,  <span class="cm"># কোন column-এর মান ব্যবহার করব</span>
+    names=<span class="st">'Publisher'</span>,     <span class="cm"># label কী হবে</span>
+    title=<span class="st">'Number of sales per Publisher'</span>,
+    hover_data=[<span class="st">'EU_Sales'</span>]
+)
+fig.<span class="fn">show</span>()
+    </div>
+  </div>
+  <div class="info-box yellow">
+    <div class="info-box-title">⚠️ Pie Chart-এর সমস্যা</div>
+    অনেক category থাকলে Pie Chart পড়া কঠিন হয়। ২০টা slice দেওয়া হলে কোনটা কত বড় বোঝা যায় না। এক্ষেত্রে Bar Chart বেশি কার্যকর।
+  </div>
+
+  <!-- Question k.2 -->
+  <h3>প্রশ্ন (k.2) — Pie Chart-কে Bar Chart-এ রূপান্তর</h3>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_k2.py</span></div>
+    <div class="code-block">
+df_global_publisher = df.<span class="fn">groupby</span>([<span class="st">'Publisher'</span>]).<span class="fn">agg</span>({
+    <span class="st">'Global_Sales'</span>: <span class="st">'sum'</span>, <span class="st">'EU_Sales'</span>: <span class="st">'sum'</span>
+}).<span class="fn">reset_index</span>()
+
+df_global_publisher = df_global_publisher.<span class="fn">sort_values</span>(
+    by=<span class="st">'Global_Sales'</span>, ascending=<span class="kw">False</span>).<span class="fn">head</span>(<span class="nm">20</span>)
+
+<span class="cm"># px.bar() দিয়ে Bar Chart বানাও</span>
+fig = <span class="nm">px</span>.<span class="fn">bar</span>(
+    df_global_publisher,
+    y=<span class="st">'Global_Sales'</span>,
+    x=<span class="st">'Publisher'</span>,
+    title=<span class="st">'Number of sales per Publisher'</span>,
+    hover_data=[<span class="st">'EU_Sales'</span>]
+)
+fig.<span class="fn">show</span>()
+    </div>
+  </div>
+  <div class="info-box green">
+    <div class="info-box-title">✅ ভালো অভ্যাস</div>
+    Bar Chart-এ সহজেই বোঝা যায় কোন Publisher সবচেয়ে বেশি বিক্রি করেছে। Category বেশি হলে সবসময় Pie Chart-এর বদলে Bar Chart ব্যবহার করো।
+  </div>
+
+  <div class="practice-banner">
+    <span class="icon">📚</span>
+    <p>Plotly-তে আরও অনেক ধরনের চার্ট আছে। Official documentation-এ Fundamentals, Basic charts, Statistical Charts, Financial Charts, Maps, Subplots, Animation — সব কিছু পাবে। Plotly কে Dash framework-এর সাথেও ব্যবহার করা যায়।</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 2 — SEABORN EXAM -->
+<!-- ============================================================ -->
+<div id="part2" class="part-divider">
+  <span class="part-divider-inner">🔵 পার্ট ২ — Seaborn Exam (Netflix Data)</span>
+</div>
+
+<div id="seaborn-intro" class="section">
+  <div class="section-label blue">পরিচয়</div>
+  <h2><span class="emoji">🎬</span> Seaborn Exam — Netflix ডেটা</h2>
+
+  <p>এই Exam-এ <span class="hl-blue">Seaborn</span> লাইব্রেরি ব্যবহার করে Netflix-এর মুভি ও সিরিজের ডেটা বিশ্লেষণ করা হয়েছে। Seaborn হলো Matplotlib-এর উপরে বানানো একটা high-level লাইব্রেরি — এটা দিয়ে সুন্দর statistical গ্রাফ সহজে বানানো যায়।</p>
+
+  <div class="info-box">
+    <div class="info-box-title">📦 Seaborn vs Plotly — পার্থক্য কী?</div>
+    <strong>Seaborn:</strong> Static গ্রাফ, statistical বিশ্লেষণের জন্য বেশি উপযুক্ত, কম কোডে ভালো ফলাফল।<br>
+    <strong>Plotly:</strong> Interactive গ্রাফ, ওয়েব অ্যাপ বা dashboard-এ ব্যবহারের জন্য ভালো।
+  </div>
+
+  <h3>দুটো ডেটাসেট</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>ফাইল</th><th>কী আছে?</th></tr></thead>
+      <tbody>
+        <tr><td><code>netflix_titles.csv</code></td><td>~৭৮০০ Netflix মুভি ও সিরিজের তথ্য — শিরোনাম, পরিচালক, দেশ, রেটিং, duration ইত্যাদি</td></tr>
+        <tr><td><code>imdb.csv</code></td><td>IMDB-র রেটিং তথ্য — গড় রেটিং, ভোটের সংখ্যা ইত্যাদি</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Netflix কলাম</th><th>মানে</th></tr></thead>
+      <tbody>
+        <tr><td><code>show_id</code></td><td>প্রতিটা content-এর unique ID</td></tr>
+        <tr><td><code>type</code></td><td>Movie নাকি TV Show</td></tr>
+        <tr><td><code>title</code></td><td>শিরোনাম</td></tr>
+        <tr><td><code>director</code></td><td>পরিচালক</td></tr>
+        <tr><td><code>cast</code></td><td>অভিনেতা-অভিনেত্রীরা</td></tr>
+        <tr><td><code>country</code></td><td>নির্মাণের দেশ</td></tr>
+        <tr><td><code>date_added</code></td><td>Netflix-এ যোগ হওয়ার তারিখ</td></tr>
+        <tr><td><code>release_year</code></td><td>মুক্তির বছর</td></tr>
+        <tr><td><code>rating</code></td><td>বয়সের ক্যাটাগরি (TV-MA, TV-14 ইত্যাদি)</td></tr>
+        <tr><td><code>duration</code></td><td>দৈর্ঘ্য (মিনিটে বা সিজনে)</td></tr>
+        <tr><td><code>listed_in</code></td><td>ক্যাটাগরি তালিকা (Action, Drama ইত্যাদি)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SEABORN QUESTIONS -->
+<div id="seaborn-questions" class="section">
+  <div class="section-label blue">Exam</div>
+  <h2><span class="emoji">📝</span> Seaborn Exam — প্রশ্ন ও উত্তর</h2>
+
+  <!-- a, b, c -->
+  <h3>প্রশ্ন (a), (b), (c) — লাইব্রেরি ও ডেটা লোড করা</h3>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_abc.py</span></div>
+    <div class="code-block">
+<span class="cm"># (a) তিনটা লাইব্রেরি import করো</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> <span class="nm">pd</span>
+<span class="kw">import</span> seaborn <span class="kw">as</span> <span class="nm">sns</span>
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> <span class="nm">plt</span>
+
+<span class="cm"># (b) Netflix CSV ফাইল পড়ো</span>
+df_netflix = <span class="nm">pd</span>.<span class="fn">read_csv</span>(<span class="st">"netflix_titles.csv"</span>)
+
+<span class="cm"># (c) প্রথম ৫ সারি দেখাও</span>
+df_netflix.<span class="fn">head</span>()
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 তিনটা লাইব্রেরি:</p>
+    <ul style="list-style:none; margin-top:8px;">
+      <li style="padding:4px 0; color:#b0bec5;">▸ <code>pandas (pd)</code> → ডেটা পড়া ও প্রক্রিয়াজাত করার জন্য</li>
+      <li style="padding:4px 0; color:#b0bec5;">▸ <code>seaborn (sns)</code> → সুন্দর statistical গ্রাফ বানানোর জন্য</li>
+      <li style="padding:4px 0; color:#b0bec5;">▸ <code>matplotlib.pyplot (plt)</code> → Seaborn-এর নিচে যে লাইব্রেরি কাজ করে, গ্রাফের size/layout নিয়ন্ত্রণের জন্য</li>
+    </ul>
+  </div>
+
+  <!-- d -->
+  <h3>প্রশ্ন (d) — Movie vs TV Show সংখ্যা (Count Plot)</h3>
+  <p>প্রশ্ন: Netflix-এ কতটা Movie আর কতটা TV Show আছে — একটা গ্রাফে দেখাও।</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_d.py</span></div>
+    <div class="code-block">
+<span class="cm"># countplot স্বয়ংক্রিয়ভাবে গণনা করে, তোমাকে আলাদা count করতে হবে না</span>
+<span class="nm">sns</span>.<span class="fn">countplot</span>(x=<span class="st">"type"</span>, data=df_netflix);
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 <code>sns.countplot()</code> → <code>type</code> কলামে কতটা "Movie" এবং কতটা "TV Show" আছে সেটা নিজে নিজে গণনা করে Bar দেখায়। তোমাকে আলাদা করে count করতে হবে না — Seaborn এটা করে দেয়!</p>
+    <p style="margin-top:8px;">🔎 শেষে <code>;</code> দেওয়া হয়েছে — এটা Jupyter Notebook-এ অপ্রয়োজনীয় text output বন্ধ রাখতে ব্যবহার করা হয়।</p>
+  </div>
+
+  <!-- e -->
+  <h3>প্রশ্ন (e) — IMDB ডেটা লোড করা</h3>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_e.py</span></div>
+    <div class="code-block">
+df_imdb = <span class="nm">pd</span>.<span class="fn">read_csv</span>(<span class="st">"imdb.csv"</span>)
+df_imdb.<span class="fn">head</span>()
+    </div>
+  </div>
+
+  <!-- f -->
+  <h3>প্রশ্ন (f) — দুটো DataFrame মার্জ করা</h3>
+  <p>প্রশ্ন: Netflix ও IMDB-র ডেটা একত্রিত করো — শিরোনাম ও বছর মিলিয়ে।</p>
+  <div class="info-box purple">
+    <div class="info-box-title">🔗 Merge কী?</div>
+    দুটো টেবিল জোড়া লাগানো — যেমন এক টেবিলে Netflix-এর তথ্য, অন্য টেবিলে IMDB রেটিং। দুটোতে যে কন্টেন্টের নাম ও বছর মেলে, সেগুলো একসাথে জোড়া লাগাও।
+  </div>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_f.py</span></div>
+    <div class="code-block">
+all_content = <span class="nm">pd</span>.<span class="fn">merge</span>(
+    df_netflix,
+    df_imdb,
+    left_on=[<span class="st">'title'</span>, <span class="st">'release_year'</span>],       <span class="cm"># Netflix-এ কোন কলামে মেলাবো</span>
+    right_on=[<span class="st">'primaryTitle'</span>, <span class="st">'startYear'</span>]   <span class="cm"># IMDB-তে কোন কলামে মেলাবো</span>
+)
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 এটা SQL-এর JOIN-এর মতো। Netflix-এর <code>title</code> যদি IMDB-র <code>primaryTitle</code>-এর সাথে মেলে, এবং একই সাথে <code>release_year</code> মেলে — তাহলে দুটো সারি একসাথে জোড়া লাগবে।</p>
+  </div>
+
+  <!-- g -->
+  <h3>প্রশ্ন (g) — is_action কলাম যোগ করা</h3>
+  <p>প্রশ্ন: একটা নতুন কলাম বানাও যেটা বলবে কন্টেন্টটা Action ক্যাটাগরির কিনা।</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_g.py</span></div>
+    <div class="code-block">
+<span class="cm"># listed_in কলামে "Action" আছে কিনা চেক করো</span>
+all_content[<span class="st">"is_action"</span>] = all_content[<span class="st">"listed_in"</span>].<span class="fn">apply</span>(
+    <span class="kw">lambda</span> x: <span class="st">"Action"</span> <span class="kw">in</span> x
+)
+
+all_content.<span class="fn">head</span>()
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 <code>lambda x: "Action" in x</code> এটা একটা ছোট ফাংশন:</p>
+    <ul style="list-style:none; margin-top:8px;">
+      <li style="padding:4px 0; color:#b0bec5;">▸ <code>x</code> = প্রতিটা সারির <code>listed_in</code>-এর মান (যেমন "Action & Adventure, Dramas")</li>
+      <li style="padding:4px 0; color:#b0bec5;">▸ <code>"Action" in x</code> = এটা True দেবে যদি "Action" থাকে, নাহলে False</li>
+    </ul>
+    <p style="margin-top:8px;">🔎 <code>.apply()</code> → এই ফাংশনটা প্রতিটা সারিতে লাগিয়ে দাও।</p>
+  </div>
+
+  <!-- h, i -->
+  <h3>প্রশ্ন (h) ও (i) — শুধু Movie রাখো, duration পরিষ্কার করো</h3>
+  <div class="info-box">
+    <div class="info-box-title">⚠️ সমস্যা কী?</div>
+    <code>duration</code> কলামে মান এরকম: <strong>"120 min"</strong> বা <strong>"2 Seasons"</strong>। Movie-র জন্য শুধু সংখ্যাটা দরকার। তাই " min" অংশটা কেটে ফেলতে হবে এবং int-এ রূপান্তর করতে হবে।
+  </div>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_hi.py</span></div>
+    <div class="code-block">
+<span class="cm"># (h) শুধু Movie রাখো</span>
+all_movies = all_content.<span class="fn">loc</span>[all_content[<span class="st">"type"</span>] == <span class="st">"Movie"</span>, :].<span class="fn">copy</span>()
+
+<span class="cm"># (i) " min" বাদ দিয়ে int-এ রূপান্তর করো</span>
+<span class="cm"># x[:-4] মানে শেষের ৪টা character বাদ দাও (" min" = 4 character)</span>
+all_movies.<span class="fn">loc</span>[:, <span class="st">"duration_int"</span>] = (
+    all_movies[<span class="st">"duration"</span>]
+    .<span class="fn">apply</span>(<span class="kw">lambda</span> x: x[:-<span class="nm">4</span>])
+    .<span class="fn">astype</span>(<span class="nm">int</span>)
+)
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 <code>x[:-4]</code> মানে: string-এর শেষের ৪টা character বাদ দাও।</p>
+    <p>"120 min" → x[:-4] → "120" → astype(int) → 120</p>
+    <p style="margin-top:8px;">🔎 <code>.copy()</code> → একটা আলাদা কপি তৈরি করে, যাতে মূল DataFrame পরিবর্তন না হয়।</p>
+  </div>
+
+  <!-- j -->
+  <h3>প্রশ্ন (j) — Action বনাম Non-Action Movie-র duration (Boxplot)</h3>
+  <p>প্রশ্ন: Action movie কি Non-Action movie-র চেয়ে বেশি লম্বা হয়?</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_j.py</span></div>
+    <div class="code-block">
+<span class="nm">sns</span>.<span class="fn">boxplot</span>(
+    x=<span class="st">"is_action"</span>,     <span class="cm"># X অক্ষে True/False</span>
+    y=<span class="st">"duration_int"</span>,  <span class="cm"># Y অক্ষে মিনিটে দৈর্ঘ্য</span>
+    data=all_movies
+);
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 এই গ্রাফে X অক্ষে True (Action) ও False (Non-Action) থাকবে, Y অক্ষে দৈর্ঘ্য। Boxplot দেখাবে Action movie সাধারণত কতটা লম্বা।</p>
+  </div>
+
+  <!-- k -->
+  <h3>প্রশ্ন (k) — IMDB রেটিং-এর বিতরণ (Histogram + KDE)</h3>
+  <p>প্রশ্ন: সব content-এর গড় রেটিং কীভাবে বিতরণ হয়েছে?</p>
+  <div class="info-box">
+    <div class="info-box-title">📈 KDE (Kernel Density Estimation) কী?</div>
+    KDE হলো Histogram-এর smooth version। এটা একটা মসৃণ curve দেখায় যা বলে কোন রেটিং-এ সবচেয়ে বেশি content পড়ে।
+  </div>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_k.py</span></div>
+    <div class="code-block">
+<span class="cm"># displot = distribution plot; kde=True মানে smooth curve-ও দেখাও</span>
+<span class="nm">sns</span>.<span class="fn">displot</span>(x=<span class="st">"averageRating"</span>, kde=<span class="kw">True</span>, data=all_content);
+    </div>
+  </div>
+
+  <!-- l -->
+  <h3>প্রশ্ন (l) — US Action Movie-র দৈর্ঘ্য vs রেটিং (Line Plot)</h3>
+  <p>প্রশ্ন: যুক্তরাষ্ট্রের Action movie-তে দৈর্ঘ্য বাড়লে কি রেটিং বাড়ে বা কমে?</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_l.py</span></div>
+    <div class="code-block">
+<span class="nm">sns</span>.<span class="fn">lineplot</span>(
+    x=<span class="st">"duration_int"</span>,
+    y=<span class="st">"averageRating"</span>,
+    data=all_movies.<span class="fn">loc</span>[
+        (all_movies[<span class="st">"country"</span>] == <span class="st">"United States"</span>) &   <span class="cm"># দেশ = US</span>
+        (all_movies[<span class="st">"duration_int"</span>] < <span class="nm">160</span>) &              <span class="cm"># ১৬০ মিনিটের কম</span>
+        (all_movies[<span class="st">"is_action"</span>])                          <span class="cm"># Action হতে হবে</span>
+    ]
+);
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 <code>.loc[condition1 & condition2 & condition3]</code> → তিনটা শর্ত একসাথে পূরণ করা সারিগুলো নাও। <code>&</code> মানে AND — সবগুলো শর্ত একসাথে সত্য হতে হবে।</p>
+  </div>
+
+  <!-- m -->
+  <h3>প্রশ্ন (m) — সব পরিচালকের তালিকা বানানো</h3>
+  <p>সমস্যা: <code>director</code> কলামে একটা সারিতে একাধিক পরিচালক থাকতে পারে — যেমন "Steven Spielberg, James Cameron"। সব পরিচালক আলাদাভাবে বের করতে হবে।</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_m.py</span></div>
+    <div class="code-block">
+directors = (
+    all_content[<span class="st">"director"</span>]
+    .<span class="fn">str.split</span>(<span class="st">', '</span>, expand=<span class="kw">True</span>)  <span class="cm"># ','  দিয়ে ভাগ করো, আলাদা column-এ</span>
+    .<span class="fn">stack</span>()                            <span class="cm"># সব column এক column-এ এনে দাও</span>
+    .<span class="fn">reset_index</span>(drop=<span class="kw">True</span>)             <span class="cm"># index নতুন করে দাও</span>
+)
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 ধাপে ধাপে বোঝা যাক:</p>
+    <ol style="list-style:none; margin-top:8px;">
+      <li style="padding:5px 0; color:#b0bec5;"><span style="color:#f97316;">①</span> <code>str.split(', ', expand=True)</code> → "Spielberg, Cameron" কে দুটো আলাদা column-এ রাখে: col0="Spielberg", col1="Cameron"</li>
+      <li style="padding:5px 0; color:#b0bec5;"><span style="color:#f97316;">②</span> <code>.stack()</code> → সব column-এর মান একটাই column-এ নিয়ে আসে (সিঁড়ির মতো একটার পর একটা)</li>
+      <li style="padding:5px 0; color:#b0bec5;"><span style="color:#f97316;">③</span> <code>.reset_index(drop=True)</code> → পুরনো multi-index সরিয়ে নতুন করে 0,1,2... index দাও</li>
+    </ol>
+  </div>
+
+  <!-- SVG: stack explanation -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Before -->
+      <rect x="10" y="10" width="280" height="180" rx="8" fill="#161b22" stroke="#30363d"/>
+      <text x="150" y="30" fill="#fbbf24" text-anchor="middle" font-size="12" font-weight="bold">str.split() এর পরে (Wide)</text>
+      <!-- headers -->
+      <rect x="20" y="38" width="70" height="22" rx="2" fill="rgba(249,115,22,0.15)"/>
+      <rect x="95" y="38" width="90" height="22" rx="2" fill="rgba(56,189,248,0.1)"/>
+      <rect x="190" y="38" width="90" height="22" rx="2" fill="rgba(56,189,248,0.1)"/>
+      <text x="55" y="53" fill="#f97316" text-anchor="middle" font-size="11">index</text>
+      <text x="140" y="53" fill="#38bdf8" text-anchor="middle" font-size="11">col_0</text>
+      <text x="235" y="53" fill="#38bdf8" text-anchor="middle" font-size="11">col_1</text>
+      <!-- rows -->
+      <text x="55" y="78" fill="#6e7781" text-anchor="middle" font-size="10">0</text>
+      <text x="140" y="78" fill="#c9d1d9" text-anchor="middle" font-size="10">Spielberg</text>
+      <text x="235" y="78" fill="#c9d1d9" text-anchor="middle" font-size="10">Cameron</text>
+      <text x="55" y="100" fill="#6e7781" text-anchor="middle" font-size="10">1</text>
+      <text x="140" y="100" fill="#c9d1d9" text-anchor="middle" font-size="10">Nolan</text>
+      <text x="235" y="100" fill="#c9d1d9" text-anchor="middle" font-size="10">NaN</text>
+      <text x="55" y="122" fill="#6e7781" text-anchor="middle" font-size="10">2</text>
+      <text x="140" y="122" fill="#c9d1d9" text-anchor="middle" font-size="10">Tarantino</text>
+      <text x="235" y="122" fill="#c9d1d9" text-anchor="middle" font-size="10">Kubrick</text>
+
+      <!-- Arrow -->
+      <line x1="306" y1="100" x2="326" y2="100" stroke="#f97316" stroke-width="2.5"/>
+      <polygon points="326,95 336,100 326,105" fill="#f97316"/>
+      <text x="320" y="90" fill="#f97316" font-size="9" text-anchor="middle">.stack()</text>
+
+      <!-- After -->
+      <rect x="340" y="10" width="200" height="180" rx="8" fill="#161b22" stroke="#30363d"/>
+      <text x="440" y="30" fill="#4ade80" text-anchor="middle" font-size="12" font-weight="bold">stack() এর পরে (Long)</text>
+      <rect x="350" y="38" width="60" height="22" rx="2" fill="rgba(249,115,22,0.15)"/>
+      <rect x="415" y="38" width="115" height="22" rx="2" fill="rgba(74,222,128,0.1)"/>
+      <text x="380" y="53" fill="#f97316" text-anchor="middle" font-size="11">index</text>
+      <text x="472" y="53" fill="#4ade80" text-anchor="middle" font-size="11">director</text>
+      <text x="380" y="78" fill="#6e7781" text-anchor="middle" font-size="10">0</text>
+      <text x="472" y="78" fill="#c9d1d9" text-anchor="middle" font-size="10">Spielberg</text>
+      <text x="380" y="100" fill="#6e7781" text-anchor="middle" font-size="10">1</text>
+      <text x="472" y="100" fill="#c9d1d9" text-anchor="middle" font-size="10">Cameron</text>
+      <text x="380" y="122" fill="#6e7781" text-anchor="middle" font-size="10">2</text>
+      <text x="472" y="122" fill="#c9d1d9" text-anchor="middle" font-size="10">Nolan</text>
+      <text x="380" y="144" fill="#6e7781" text-anchor="middle" font-size="10">3</text>
+      <text x="472" y="144" fill="#c9d1d9" text-anchor="middle" font-size="10">Tarantino</text>
+      <text x="380" y="166" fill="#6e7781" text-anchor="middle" font-size="10">4</text>
+      <text x="472" y="166" fill="#c9d1d9" text-anchor="middle" font-size="10">Kubrick</text>
+    </svg>
+    <div class="diagram-caption">str.split() তারপর stack() — এভাবে wide format থেকে long format-এ রূপান্তর হয়</div>
+  </div>
+
+  <!-- n -->
+  <h3>প্রশ্ন (n) — সবচেয়ে বেশি উপস্থিত ৮ পরিচালক (Horizontal Bar)</h3>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_n.py</span></div>
+    <div class="code-block">
+<span class="nm">sns</span>.<span class="fn">barplot</span>(
+    y=directors.<span class="fn">value_counts</span>().<span class="fn">head</span>(<span class="nm">8</span>).index,   <span class="cm"># Y অক্ষে পরিচালকের নাম</span>
+    x=directors.<span class="fn">value_counts</span>().<span class="fn">head</span>(<span class="nm">8</span>).values   <span class="cm"># X অক্ষে সংখ্যা</span>
+);
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 <code>value_counts()</code> → প্রতিটা পরিচালক কতবার এসেছে গণনা করে, সবচেয়ে বেশি থেকে কমের দিকে সাজায়।</p>
+    <p>🔎 <code>.head(8)</code> → শীর্ষ ৮টা নাও।</p>
+    <p>🔎 <code>.index</code> → নামগুলো (Y অক্ষের জন্য); <code>.values</code> → সংখ্যাগুলো (X অক্ষের জন্য)</p>
+    <p style="margin-top:6px;">Horizontal bar তৈরি হয় কারণ Y-তে নাম আর X-তে সংখ্যা দেওয়া হয়েছে।</p>
+  </div>
+
+  <!-- o, p -->
+  <h3>প্রশ্ন (o) ও (p) — Netflix-এ content যোগ হওয়ার ট্রেন্ড</h3>
+  <p>(o) নতুন "year" কলাম বানাও → (p) সেটা দিয়ে Movie ও TV Show কত যোগ হয়েছে দেখাও।</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_op.py</span></div>
+    <div class="code-block">
+<span class="cm"># (o) date_added থেকে শুধু বছর বের করো</span>
+all_content[<span class="st">"year"</span>] = <span class="nm">pd</span>.<span class="fn">to_datetime</span>(all_content[<span class="st">"date_added"</span>]).dt.year
+
+<span class="cm"># (p) type ও year দিয়ে গ্রুপ করে count করো, তারপর line plot</span>
+<span class="nm">sns</span>.<span class="fn">lineplot</span>(
+    x=<span class="st">'year'</span>,
+    y=<span class="st">'show_id'</span>,           <span class="cm"># show_id count = কতটা content</span>
+    hue=<span class="st">'type'</span>,             <span class="cm"># Movie ও TV Show আলাদা রঙে</span>
+    data=all_content.<span class="fn">groupby</span>([<span class="st">'type'</span>, <span class="st">'year'</span>]).<span class="fn">count</span>()
+);
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 <code>pd.to_datetime(...).dt.year</code> → "December 1, 2020" এরকম string থেকে শুধু বছর (2020) বের করো।</p>
+    <p>🔎 <code>hue='type'</code> → Movie এবং TV Show-কে আলাদা রঙে দেখাবে।</p>
+  </div>
+
+  <!-- r, s, t -->
+  <h3>প্রশ্ন (r), (s), (t) — ব্রিটিশ Series ও Movie-র Top 5</h3>
+  <p>প্রশ্ন: UK-তে নির্মিত সবচেয়ে জনপ্রিয় ৫টা Series ও ৫টা Movie পাশাপাশি দেখাও।</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_rst.py</span></div>
+    <div class="code-block">
+<span class="cm"># (r) & (s): UK-র series ও movie বের করো, numVotes-এ সাজাও</span>
+uk_series = all_content.<span class="fn">loc</span>[
+    (all_content[<span class="st">"country"</span>] == <span class="st">'United Kingdom'</span>) &
+    (all_content[<span class="st">"type"</span>] == <span class="st">'TV Show'</span>), :
+].<span class="fn">sort_values</span>(<span class="st">'numVotes'</span>, ascending=<span class="kw">False</span>)
+
+uk_movies = all_content.<span class="fn">loc</span>[
+    (all_content[<span class="st">"country"</span>] == <span class="st">'United Kingdom'</span>) &
+    (all_content[<span class="st">"type"</span>] == <span class="st">'Movie'</span>), :
+].<span class="fn">sort_values</span>(<span class="st">'numVotes'</span>, ascending=<span class="kw">False</span>)
+
+<span class="cm"># (t): পাশাপাশি দুটো গ্রাফ</span>
+<span class="nm">plt</span>.<span class="fn">figure</span>(figsize=(<span class="nm">20</span>, <span class="nm">8</span>))  <span class="cm"># বড় figure তৈরি করো</span>
+
+<span class="cm"># বাম দিকের গ্রাফ (১ম subplot)</span>
+<span class="nm">plt</span>.<span class="fn">subplot</span>(<span class="nm">121</span>)  <span class="cm"># 1 row, 2 column, 1st position</span>
+<span class="nm">plt</span>.<span class="fn">title</span>(label=<span class="st">'Most popular English series'</span>)
+<span class="nm">sns</span>.<span class="fn">barplot</span>(x=<span class="st">"originalTitle"</span>, y=<span class="st">"numVotes"</span>, data=uk_series.<span class="fn">head</span>(<span class="nm">5</span>))
+<span class="nm">plt</span>.<span class="fn">xticks</span>(rotation=<span class="nm">50</span>)  <span class="cm"># X-এর label ৫০° কোণে ঘোরাও</span>
+
+<span class="cm"># ডান দিকের গ্রাফ (২য় subplot)</span>
+<span class="nm">plt</span>.<span class="fn">subplot</span>(<span class="nm">122</span>)  <span class="cm"># 1 row, 2 column, 2nd position</span>
+<span class="nm">plt</span>.<span class="fn">title</span>(label=<span class="st">'Most popular English movies'</span>)
+<span class="nm">sns</span>.<span class="fn">barplot</span>(x=<span class="st">"originalTitle"</span>, y=<span class="st">"numVotes"</span>, data=uk_movies.<span class="fn">head</span>(<span class="nm">5</span>))
+<span class="nm">plt</span>.<span class="fn">xticks</span>(rotation=<span class="nm">50</span>);
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 <code>plt.figure(figsize=(20, 8))</code> → পুরো ছবির সাইজ ঠিক করো (20 x 8 inch)।</p>
+    <p>🔎 <code>plt.subplot(121)</code> → 1 row, 2 column-এর grid-এ 1st position নাও। সহজ কথায়: বাম দিকের অর্ধেক জায়গা।</p>
+    <p>🔎 <code>plt.subplot(122)</code> → একই grid-এ 2nd position। ডান দিকের অর্ধেক।</p>
+    <p>🔎 <code>plt.xticks(rotation=50)</code> → X অক্ষের label ৫০ ডিগ্রি কাত করো, যাতে লম্বা নামগুলো পড়া যায়।</p>
+  </div>
+
+  <!-- SVG: subplot explanation -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="480" height="140" rx="10" fill="#161b22" stroke="#30363d"/>
+      <text x="250" y="30" fill="#6e7781" text-anchor="middle" font-size="11">plt.figure() — পুরো এলাকা</text>
+      <!-- subplot 121 -->
+      <rect x="20" y="40" width="220" height="100" rx="6" fill="#1f2937" stroke="#f97316" stroke-width="1.5"/>
+      <text x="130" y="65" fill="#f97316" text-anchor="middle" font-size="12" font-weight="bold">plt.subplot(121)</text>
+      <text x="130" y="85" fill="#6e7781" text-anchor="middle" font-size="10">1 row, 2 col, position 1</text>
+      <text x="130" y="105" fill="#c9d1d9" text-anchor="middle" font-size="10">UK Series Top 5</text>
+      <text x="130" y="125" fill="#4ade80" text-anchor="middle" font-size="10">← বাম দিক →</text>
+      <!-- subplot 122 -->
+      <rect x="260" y="40" width="220" height="100" rx="6" fill="#1f2937" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="370" y="65" fill="#38bdf8" text-anchor="middle" font-size="12" font-weight="bold">plt.subplot(122)</text>
+      <text x="370" y="85" fill="#6e7781" text-anchor="middle" font-size="10">1 row, 2 col, position 2</text>
+      <text x="370" y="105" fill="#c9d1d9" text-anchor="middle" font-size="10">UK Movies Top 5</text>
+      <text x="370" y="125" fill="#4ade80" text-anchor="middle" font-size="10">← ডান দিক →</text>
+    </svg>
+    <div class="diagram-caption">subplot(121) ও subplot(122) — পাশাপাশি দুটো গ্রাফ</div>
+  </div>
+
+  <!-- u -->
+  <h3>প্রশ্ন (u) — সময়ের সাথে content-এর মান (Boxen Plot)</h3>
+  <p>প্রশ্ন: Netflix-এ কন্টেন্টের মান সময়ের সাথে কি উন্নত নাকি খারাপ হচ্ছে?</p>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_u.py</span></div>
+    <div class="code-block">
+<span class="nm">plt</span>.<span class="fn">figure</span>(figsize=(<span class="nm">10</span>, <span class="nm">8</span>))
+
+<span class="nm">sns</span>.<span class="fn">boxenplot</span>(
+    x=<span class="st">"year"</span>,
+    y=<span class="st">"averageRating"</span>,
+    data=all_content
+);
+
+<span class="cm"># ফলাফলের ব্যাখ্যা (কমেন্টে দেওয়া আছে notebook-এ):</span>
+<span class="cm"># ২০১৩-১৪ সালে বেশিরভাগ নতুন content মানসম্পন্ন ছিল।</span>
+<span class="cm"># গড়ে মান কমেনি।</span>
+<span class="cm"># তবে গত ৫ বছরে খুব খারাপ ও খুব ভালো — দুই ধরনের content-ই যোগ হয়েছে।</span>
+    </div>
+  </div>
+  <div class="info-box">
+    <div class="info-box-title">📦 Boxen Plot কী?</div>
+    Boxen Plot হলো Box Plot-এর উন্নত সংস্করণ। এটা বেশি বিস্তারিত বিতরণ দেখায় — বিশেষত outlier বা চরম মানগুলো আরও স্পষ্ট করে।
+  </div>
+
+  <!-- v -->
+  <h3>প্রশ্ন (v) — Bonus: UK-র সেরা মুভিতে সবচেয়ে বেশি অভিনয় করা ১৫ শিল্পী</h3>
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>question_v.py</span></div>
+    <div class="code-block">
+<span class="cm"># UK-র movie যেগুলোর rating > 8</span>
+cast = all_movies.<span class="fn">loc</span>[
+    (all_movies[<span class="st">"country"</span>] == <span class="st">'United Kingdom'</span>) &
+    (all_movies[<span class="st">"averageRating"</span>] > <span class="nm">8</span>)
+][<span class="st">'cast'</span>].<span class="fn">str.split</span>(<span class="st">', '</span>, expand=<span class="kw">True</span>).<span class="fn">stack</span>().<span class="fn">reset_index</span>(drop=<span class="kw">True</span>)
+
+<span class="cm"># Top 15 অভিনেতা/অভিনেত্রী — horizontal bar</span>
+<span class="nm">sns</span>.<span class="fn">barplot</span>(
+    y=cast.<span class="fn">value_counts</span>().<span class="fn">head</span>(<span class="nm">15</span>).index,   <span class="cm"># নাম</span>
+    x=cast.<span class="fn">value_counts</span>().<span class="fn">head</span>(<span class="nm">15</span>)          <span class="cm"># সংখ্যা</span>
+);
+    </div>
+  </div>
+  <div class="code-explain">
+    <p>🔎 এই কোড আগের <code>directors</code>-এর মতোই কাজ করে — শুধু এখন <code>cast</code> কলামে করা হচ্ছে, এবং তিনটা শর্তে ফিল্টার করা হয়েছে (UK + Movie + rating 8+)।</p>
+  </div>
+
+  <div class="quiz-box">
+    <h4>🧠 নিজেকে পরীক্ষা করো</h4>
+    <p>Seaborn-এর <code>displot(kde=True)</code> কী করে?</p>
+    <details>
+      <summary>উত্তর দেখো</summary>
+      <p>এটা একটা Histogram দেখায় এবং সাথে একটা smooth KDE (Kernel Density Estimation) curve-ও দেখায়। <code>kde=True</code> বললেই ঐ মসৃণ রেখাটা আসে।</p>
+    </details>
+  </div>
+
+  <div class="quiz-box">
+    <h4>🧠 নিজেকে পরীক্ষা করো</h4>
+    <p><code>plt.subplot(121)</code>-এর ১, ২, ১ মানে কী আলাদাভাবে?</p>
+    <details>
+      <summary>উত্তর দেখো</summary>
+      <p><strong>প্রথম ১</strong> = মোট ১টা row। <strong>২</strong> = মোট ২টা column। <strong>শেষের ১</strong> = এই গ্রাফটা ১ম position-এ (বাম দিকে)।</p>
+    </details>
+  </div>
+</div>
+
+<!-- SUMMARY SECTION -->
+<div class="section">
+  <div class="section-label green">সারসংক্ষেপ</div>
+  <h2><span class="emoji">🎯</span> সব কিছু এক জায়গায়</h2>
+
+  <!-- SVG: Full comparison -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="20" fill="#e6edf3" text-anchor="middle" font-size="14" font-weight="bold">Plotly vs Seaborn — একনজরে তুলনা</text>
+      <!-- Headers -->
+      <rect x="10" y="30" width="340" height="36" rx="6" fill="rgba(249,115,22,0.2)" stroke="#f97316" stroke-width="1"/>
+      <text x="180" y="53" fill="#f97316" text-anchor="middle" font-size="14" font-weight="bold">🟠 Plotly</text>
+      <rect x="360" y="30" width="330" height="36" rx="6" fill="rgba(56,189,248,0.2)" stroke="#38bdf8" stroke-width="1"/>
+      <text x="525" y="53" fill="#38bdf8" text-anchor="middle" font-size="14" font-weight="bold">🔵 Seaborn</text>
+      <!-- Rows -->
+      <text x="15" y="90" fill="#6e7781" font-size="11" font-weight="bold">ধরন</text>
+      <text x="15" y="108" fill="#c9d1d9" font-size="12">Interactive (ক্লিক, জুম, hover)</text>
+      <text x="365" y="90" fill="#6e7781" font-size="11" font-weight="bold">ধরন</text>
+      <text x="365" y="108" fill="#c9d1d9" font-size="12">Static (স্থির ছবি)</text>
+      <line x1="10" y1="118" x2="340" y2="118" stroke="#30363d" stroke-width="0.8"/>
+      <line x1="360" y1="118" x2="685" y2="118" stroke="#30363d" stroke-width="0.8"/>
+      <text x="15" y="135" fill="#6e7781" font-size="11" font-weight="bold">কোড পরিমাণ</text>
+      <text x="15" y="153" fill="#c9d1d9" font-size="12">go তে বেশি, px তে কম</text>
+      <text x="365" y="135" fill="#6e7681" font-size="11" font-weight="bold">কোড পরিমাণ</text>
+      <text x="365" y="153" fill="#c9d1d9" font-size="12">সাধারণত খুব কম</text>
+      <line x1="10" y1="163" x2="340" y2="163" stroke="#30363d" stroke-width="0.8"/>
+      <line x1="360" y1="163" x2="685" y2="163" stroke="#30363d" stroke-width="0.8"/>
+      <text x="15" y="180" fill="#6e7681" font-size="11" font-weight="bold">সেরা ব্যবহার</text>
+      <text x="15" y="198" fill="#c9d1d9" font-size="12">Dashboard, Web App, Dash</text>
+      <text x="365" y="180" fill="#6e7681" font-size="11" font-weight="bold">সেরা ব্যবহার</text>
+      <text x="365" y="198" fill="#c9d1d9" font-size="12">EDA, Statistical Analysis, Report</text>
+      <line x1="10" y1="208" x2="340" y2="208" stroke="#30363d" stroke-width="0.8"/>
+      <line x1="360" y1="208" x2="685" y2="208" stroke="#30363d" stroke-width="0.8"/>
+      <text x="15" y="225" fill="#6e7781" font-size="11" font-weight="bold">ডেটাসেট</text>
+      <text x="15" y="243" fill="#c9d1d9" font-size="12">Game Sales (1985–2016)</text>
+      <text x="365" y="225" fill="#6e7781" font-size="11" font-weight="bold">ডেটাসেট</text>
+      <text x="365" y="243" fill="#c9d1d9" font-size="12">Netflix + IMDB</text>
+      <!-- Divider line -->
+      <line x1="350" y1="30" x2="350" y2="255" stroke="#30363d" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>গ্রাফের ধরন</th><th>কখন ব্যবহার করব</th><th>Plotly</th><th>Seaborn</th></tr></thead>
+      <tbody>
+        <tr><td>Line Chart</td><td>সময়ের সাথে পরিবর্তন</td><td><code>go.Scatter</code> / <code>px.line</code></td><td><code>sns.lineplot</code></td></tr>
+        <tr><td>Bar Chart</td><td>তুলনা করতে</td><td><code>go.Bar</code> / <code>px.bar</code></td><td><code>sns.barplot</code></td></tr>
+        <tr><td>Count Plot</td><td>গণনা করতে</td><td><code>px.histogram</code></td><td><code>sns.countplot</code></td></tr>
+        <tr><td>Box Plot</td><td>বিতরণ ও outlier দেখতে</td><td><code>go.Box</code> / <code>px.box</code></td><td><code>sns.boxplot</code></td></tr>
+        <tr><td>Scatter Plot</td><td>দুটো variable-এর সম্পর্ক</td><td><code>go.Scatter</code> / <code>px.scatter</code></td><td><code>sns.scatterplot</code></td></tr>
+        <tr><td>Histogram</td><td>বিতরণ দেখতে</td><td><code>px.histogram</code></td><td><code>sns.displot</code> / <code>histplot</code></td></tr>
+        <tr><td>Heatmap</td><td>Correlation matrix</td><td><code>px.imshow</code></td><td><code>sns.heatmap</code></td></tr>
+        <tr><td>Pie Chart</td><td>অনুপাত দেখাতে (কম category)</td><td><code>px.pie</code></td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box green">
+    <div class="info-box-title">🎉 অভিনন্দন!</div>
+    তুমি এখন Plotly ও Seaborn-এর মূল ধারণাগুলো জানো। এই দুটো লাইব্রেরি দিয়ে যেকোনো ডেটা বিশ্লেষণ প্রকল্পে সুন্দর গ্রাফ বানাতে পারবে। পরবর্তী পদক্ষেপ — নিজে ডেটা নিয়ে experiment করো!
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- BEST PRACTICES SECTION -->
+<!-- ============================================================ -->
+<div class="container">
+
+<div id="part3" class="part-divider">
+  <span class="part-divider-inner">✅ ভালো অভ্যাস ও টিপস</span>
+</div>
+
+<div class="section">
+  <div class="section-label green">Best Practices</div>
+  <h2><span class="emoji">🏆</span> ভালো ভিজুয়ালাইজেশনের নিয়মকানুন</h2>
+
+  <p>শুধু গ্রাফ বানানো জানলেই হবে না — ভালো গ্রাফ কীভাবে বানায় সেটাও জানা দরকার। Notebook-এ এই বিষয়গুলো বিশেষভাবে উল্লেখ করা হয়েছে।</p>
+
+  <h3>১. কোন সময়ে কোন গ্রাফ?</h3>
+
+  <!-- SVG: Chart selection guide -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="22" fill="#e6edf3" text-anchor="middle" font-size="13" font-weight="bold">কোন ডেটায় কোন গ্রাফ বেছে নেব?</text>
+
+      <!-- TIME SERIES -->
+      <rect x="10" y="35" width="325" height="155" rx="8" fill="#161b22" stroke="#f97316" stroke-width="1.5"/>
+      <text x="172" y="57" fill="#f97316" text-anchor="middle" font-size="12" font-weight="bold">📈 সময়ভিত্তিক ডেটা (Time Series)</text>
+      <!-- mini line -->
+      <polyline points="30,130 60,110 90,85 120,95 150,70 180,80 200,60" fill="none" stroke="#f97316" stroke-width="2"/>
+      <text x="220" y="95" fill="#c9d1d9" font-size="11">Line Chart</text>
+      <text x="220" y="112" fill="#6e7781" font-size="10">বছর/মাস অনুযায়ী বিক্রি</text>
+      <!-- mini bar -->
+      <rect x="30" y="148" width="12" height="22" rx="1" fill="#f97316" opacity="0.7"/>
+      <rect x="48" y="138" width="12" height="32" rx="1" fill="#f97316" opacity="0.7"/>
+      <rect x="66" y="128" width="12" height="42" rx="1" fill="#f97316" opacity="0.7"/>
+      <rect x="84" y="135" width="12" height="35" rx="1" fill="#f97316" opacity="0.5"/>
+      <text x="120" y="152" fill="#c9d1d9" font-size="11">Bar Chart</text>
+      <text x="120" y="169" fill="#6e7781" font-size="10">প্রতি বছরের তুলনা</text>
+      <text x="172" y="185" fill="#6e7681" text-anchor="middle" font-size="10">→ go.Scatter / px.line / go.Bar</text>
+
+      <!-- COMPARISON -->
+      <rect x="365" y="35" width="325" height="155" rx="8" fill="#161b22" stroke="#38bdf8" stroke-width="1.5"/>
+      <text x="527" y="57" fill="#38bdf8" text-anchor="middle" font-size="12" font-weight="bold">📊 তুলনামূলক ডেটা (Comparison)</text>
+      <!-- grouped bars -->
+      <rect x="385" y="120" width="10" height="48" rx="1" fill="#38bdf8" opacity="0.8"/>
+      <rect x="398" y="108" width="10" height="60" rx="1" fill="#f97316" opacity="0.7"/>
+      <rect x="420" y="130" width="10" height="38" rx="1" fill="#38bdf8" opacity="0.8"/>
+      <rect x="433" y="118" width="10" height="50" rx="1" fill="#f97316" opacity="0.7"/>
+      <text x="470" y="132" fill="#c9d1d9" font-size="11">Grouped Bar</text>
+      <text x="470" y="149" fill="#6e7781" font-size="10">Publisher-ভিত্তিক বিক্রি</text>
+      <!-- scatter -->
+      <circle cx="395" cy="85" r="4" fill="#38bdf8" opacity="0.8"/>
+      <circle cx="408" cy="75" r="4" fill="#38bdf8" opacity="0.8"/>
+      <circle cx="420" cy="90" r="4" fill="#38bdf8" opacity="0.8"/>
+      <circle cx="432" cy="68" r="4" fill="#38bdf8" opacity="0.8"/>
+      <text x="460" y="80" fill="#c9d1d9" font-size="11">Scatter / Bubble</text>
+      <text x="460" y="97" fill="#6e7781" font-size="10">Score vs Score তুলনা</text>
+      <text x="527" y="185" fill="#6e7781" text-anchor="middle" font-size="10">→ go.Bar / px.scatter / px.bar</text>
+
+      <!-- DISTRIBUTION -->
+      <rect x="10" y="205" width="325" height="165" rx="8" fill="#161b22" stroke="#4ade80" stroke-width="1.5"/>
+      <text x="172" y="227" fill="#4ade80" text-anchor="middle" font-size="12" font-weight="bold">📦 বিতরণ (Distribution)</text>
+      <!-- histogram shape -->
+      <rect x="30" y="295" width="18" height="40" rx="1" fill="#4ade80" opacity="0.5"/>
+      <rect x="52" y="270" width="18" height="65" rx="1" fill="#4ade80" opacity="0.65"/>
+      <rect x="74" y="248" width="18" height="87" rx="1" fill="#4ade80" opacity="0.8"/>
+      <rect x="96" y="258" width="18" height="77" rx="1" fill="#4ade80" opacity="0.7"/>
+      <rect x="118" y="285" width="18" height="50" rx="1" fill="#4ade80" opacity="0.55"/>
+      <text x="160" y="265" fill="#c9d1d9" font-size="11">Histogram</text>
+      <text x="160" y="282" fill="#6e7781" font-size="10">Score-এর বিতরণ</text>
+      <!-- boxplot -->
+      <line x1="30" y1="233" x2="30" y2="248" stroke="#4ade80" stroke-width="1.5"/>
+      <rect x="20" y="238" width="80" height="28" rx="2" fill="none" stroke="#4ade80" stroke-width="2"/>
+      <line x1="20" y1="250" x2="100" y2="250" stroke="#4ade80" stroke-width="2.5"/>
+      <line x1="100" y1="233" x2="100" y2="248" stroke="#4ade80" stroke-width="1.5"/>
+      <text x="120" y="245" fill="#c9d1d9" font-size="11">Box / Boxen Plot</text>
+      <text x="120" y="260" fill="#6e7781" font-size="10">Genre অনুযায়ী মান</text>
+      <text x="172" y="360" fill="#6e7781" text-anchor="middle" font-size="10">→ px.histogram / px.box / sns.displot</text>
+
+      <!-- CORRELATION -->
+      <rect x="365" y="205" width="325" height="165" rx="8" fill="#161b22" stroke="#c084fc" stroke-width="1.5"/>
+      <text x="527" y="227" fill="#c084fc" text-anchor="middle" font-size="12" font-weight="bold">🔗 সম্পর্ক (Correlation)</text>
+      <!-- heatmap grid -->
+      <rect x="385" y="240" width="22" height="22" rx="1" fill="#c084fc" opacity="0.9"/>
+      <rect x="410" y="240" width="22" height="22" rx="1" fill="#c084fc" opacity="0.4"/>
+      <rect x="435" y="240" width="22" height="22" rx="1" fill="#c084fc" opacity="0.6"/>
+      <rect x="385" y="265" width="22" height="22" rx="1" fill="#c084fc" opacity="0.4"/>
+      <rect x="410" y="265" width="22" height="22" rx="1" fill="#c084fc" opacity="0.9"/>
+      <rect x="435" y="265" width="22" height="22" rx="1" fill="#c084fc" opacity="0.3"/>
+      <rect x="385" y="290" width="22" height="22" rx="1" fill="#c084fc" opacity="0.6"/>
+      <rect x="410" y="290" width="22" height="22" rx="1" fill="#c084fc" opacity="0.3"/>
+      <rect x="435" y="290" width="22" height="22" rx="1" fill="#c084fc" opacity="0.9"/>
+      <text x="475" y="258" fill="#c9d1d9" font-size="11">Heatmap</text>
+      <text x="475" y="275" fill="#6e7781" font-size="10">Correlation matrix</text>
+      <!-- pie -->
+      <path d="M 415 330 L 415 310 A 20 20 0 0 1 435 330 Z" fill="#c084fc" opacity="0.9"/>
+      <path d="M 415 330 L 435 330 A 20 20 0 0 1 395 330 Z" fill="#c084fc" opacity="0.5"/>
+      <path d="M 415 330 L 395 330 A 20 20 0 0 1 415 310 Z" fill="#c084fc" opacity="0.3"/>
+      <text x="450" y="322" fill="#c9d1d9" font-size="11">Pie Chart</text>
+      <text x="450" y="339" fill="#6e7781" font-size="10">অনুপাত দেখানো (কম category)</text>
+      <text x="527" y="360" fill="#6e7781" text-anchor="middle" font-size="10">→ px.imshow / px.pie / sns.heatmap</text>
+    </svg>
+    <div class="diagram-caption">ডেটার ধরন অনুযায়ী গ্রাফ বেছে নাও</div>
+  </div>
+
+  <h3>২. Pie Chart-এর সীমাবদ্ধতা</h3>
+  <p>Notebook-এ বিশেষভাবে বলা হয়েছে — Pie Chart বেশি category থাকলে পড়া কষ্টকর হয়। ২০টা slice দিলে কোনটা কত বড় বোঝা যায় না।</p>
+
+  <!-- SVG: Pie vs Bar -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 600 160" xmlns="http://www.w3.org/2000/svg">
+      <!-- Bad pie -->
+      <rect x="10" y="10" width="270" height="140" rx="8" fill="#1f2937" stroke="#ff5f57" stroke-width="1.5"/>
+      <text x="145" y="28" fill="#ff5f57" text-anchor="middle" font-size="11" font-weight="bold">❌ Pie Chart (অনেক category) — কঠিন</text>
+      <!-- messy pie slices -->
+      <path d="M 145 90 L 145 50 A 40 40 0 0 1 178 68 Z" fill="#f97316" opacity="0.8"/>
+      <path d="M 145 90 L 178 68 A 40 40 0 0 1 181 98 Z" fill="#38bdf8" opacity="0.8"/>
+      <path d="M 145 90 L 181 98 A 40 40 0 0 1 165 126 Z" fill="#4ade80" opacity="0.8"/>
+      <path d="M 145 90 L 165 126 A 40 40 0 0 1 125 126 Z" fill="#c084fc" opacity="0.8"/>
+      <path d="M 145 90 L 125 126 A 40 40 0 0 1 109 98 Z" fill="#fbbf24" opacity="0.8"/>
+      <path d="M 145 90 L 109 98 A 40 40 0 0 1 112 68 Z" fill="#f472b6" opacity="0.8"/>
+      <path d="M 145 90 L 112 68 A 40 40 0 0 1 145 50 Z" fill="#a5f3fc" opacity="0.8"/>
+      <text x="220" y="80" fill="#6e7781" font-size="9">Publisher A</text>
+      <text x="220" y="93" fill="#6e7781" font-size="9">Publisher B</text>
+      <text x="220" y="106" fill="#6e7781" font-size="9">Publisher C</text>
+      <text x="220" y="119" fill="#6e7781" font-size="9">... আরো ১৭টা</text>
+      <text x="145" y="145" fill="#ff5f57" text-anchor="middle" font-size="10">কোনটা কত বড়? বোঝা যাচ্ছে না!</text>
+
+      <!-- Good bar -->
+      <rect x="320" y="10" width="270" height="140" rx="8" fill="#1f2937" stroke="#4ade80" stroke-width="1.5"/>
+      <text x="455" y="28" fill="#4ade80" text-anchor="middle" font-size="11" font-weight="bold">✅ Bar Chart — সহজ পড়া যায়</text>
+      <rect x="340" y="40" width="120" height="14" rx="2" fill="#f97316" opacity="0.85"/>
+      <rect x="340" y="60" width="95" height="14" rx="2" fill="#38bdf8" opacity="0.85"/>
+      <rect x="340" y="80" width="75" height="14" rx="2" fill="#4ade80" opacity="0.85"/>
+      <rect x="340" y="100" width="55" height="14" rx="2" fill="#c084fc" opacity="0.85"/>
+      <rect x="340" y="120" width="40" height="14" rx="2" fill="#fbbf24" opacity="0.85"/>
+      <text x="468" y="52" fill="#c9d1d9" font-size="10">Nintendo</text>
+      <text x="443" y="72" fill="#c9d1d9" font-size="10">EA</text>
+      <text x="423" y="92" fill="#c9d1d9" font-size="10">Activision</text>
+      <text x="403" y="112" fill="#c9d1d9" font-size="10">Sony</text>
+      <text x="388" y="132" fill="#c9d1d9" font-size="10">Ubisoft</text>
+      <text x="455" y="148" fill="#4ade80" text-anchor="middle" font-size="10">স্পষ্ট, সহজে তুলনা করা যায়!</text>
+    </svg>
+    <div class="diagram-caption">একই ডেটা — Pie Chart এ কঠিন, Bar Chart-এ সহজ</div>
+  </div>
+
+  <h3>৩. রং বাছাইয়ে সতর্কতা (Color Accessibility)</h3>
+
+  <div class="info-box yellow">
+    <div class="info-box-title">⚠️ Color Blindness সম্পর্কে</div>
+    পৃথিবীর প্রায় ৮% পুরুষ ও ০.৫% মহিলা কোনো না কোনো ধরনের বর্ণান্ধতায় (color blindness) ভোগেন। সবচেয়ে সাধারণ হলো Deuteranopia ও Protanopia — যেখানে লাল ও সবুজ আলাদা করা যায় না।<br><br>
+    Notebook-এ বলা হয়েছে: শুধু রং দিয়ে তথ্য বোঝানো ঠিক নয় — Pattern, label, আলাদা shape-ও ব্যবহার করো।
+  </div>
+
+  <!-- SVG: Color blindness example -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 680 130" xmlns="http://www.w3.org/2000/svg">
+      <text x="340" y="18" fill="#e6edf3" text-anchor="middle" font-size="12" font-weight="bold">একই গ্রাফ — বিভিন্ন দৃষ্টিভঙ্গিতে</text>
+      <!-- Normal -->
+      <rect x="10" y="28" width="150" height="95" rx="6" fill="#161b22" stroke="#30363d"/>
+      <text x="85" y="45" fill="#4ade80" text-anchor="middle" font-size="10" font-weight="bold">স্বাভাবিক দৃষ্টি</text>
+      <rect x="25" y="55" width="35" height="50" rx="2" fill="#e74c3c"/>
+      <rect x="68" y="70" width="35" height="35" rx="2" fill="#2ecc71"/>
+      <rect x="111" y="60" width="35" height="45" rx="2" fill="#e74c3c"/>
+      <text x="43" y="115" fill="#e74c3c" text-anchor="middle" font-size="9">লাল</text>
+      <text x="86" y="115" fill="#2ecc71" text-anchor="middle" font-size="9">সবুজ</text>
+      <text x="129" y="115" fill="#e74c3c" text-anchor="middle" font-size="9">লাল</text>
+      <!-- Deuteranopia -->
+      <rect x="175" y="28" width="150" height="95" rx="6" fill="#161b22" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="250" y="45" fill="#fbbf24" text-anchor="middle" font-size="10" font-weight="bold">Deuteranopia দৃষ্টি</text>
+      <rect x="190" y="55" width="35" height="50" rx="2" fill="#9a7d0a"/>
+      <rect x="233" y="70" width="35" height="35" rx="2" fill="#9a7d0a"/>
+      <rect x="276" y="60" width="35" height="45" rx="2" fill="#9a7d0a"/>
+      <text x="208" y="115" fill="#9a7d0a" text-anchor="middle" font-size="9">?</text>
+      <text x="251" y="115" fill="#9a7d0a" text-anchor="middle" font-size="9">?</text>
+      <text x="294" y="115" fill="#9a7d0a" text-anchor="middle" font-size="9">?</text>
+      <text x="250" y="118" fill="#fbbf24" text-anchor="middle" font-size="8">আলাদা করা যাচ্ছে না!</text>
+      <!-- Better solution -->
+      <rect x="340" y="28" width="330" height="95" rx="6" fill="#161b22" stroke="#4ade80" stroke-width="1.5"/>
+      <text x="505" y="45" fill="#4ade80" text-anchor="middle" font-size="10" font-weight="bold">✅ ভালো সমাধান — রং + আলাদা pattern</text>
+      <rect x="358" y="55" width="35" height="50" rx="2" fill="#f97316"/>
+      <rect x="398" y="70" width="35" height="35" rx="2" fill="#38bdf8"/>
+      <rect x="438" y="60" width="35" height="45" rx="2" fill="#f97316"/>
+      <text x="376" y="115" fill="#f97316" text-anchor="middle" font-size="9">Sales</text>
+      <text x="416" y="115" fill="#38bdf8" text-anchor="middle" font-size="9">Games</text>
+      <text x="456" y="115" fill="#f97316" text-anchor="middle" font-size="9">Sales</text>
+      <!-- Label text on bars -->
+      <text x="375" y="78" fill="#fff" text-anchor="middle" font-size="8" font-weight="bold">S</text>
+      <text x="415" y="90" fill="#000" text-anchor="middle" font-size="8" font-weight="bold">G</text>
+      <text x="455" y="82" fill="#fff" text-anchor="middle" font-size="8" font-weight="bold">S</text>
+      <text x="520" y="80" fill="#c9d1d9" font-size="10">• আলাদা রং (Orange/Blue)</text>
+      <text x="520" y="97" fill="#c9d1d9" font-size="10">• আলাদা label</text>
+      <text x="520" y="114" fill="#c9d1d9" font-size="10">• সবার বোধগম্য</text>
+    </svg>
+    <div class="diagram-caption">Color blindness-এর কথা মাথায় রেখে গ্রাফ বানাও</div>
+  </div>
+
+  <h3>৪. Plotly Express (px) বনাম Plotly Graph Objects (go)</h3>
+  <p>এই পার্থক্যটা ভালোভাবে বোঝা জরুরি, কারণ Notebook জুড়ে দুটোই ব্যবহার হয়েছে।</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- px side -->
+      <rect x="10" y="10" width="315" height="180" rx="10" fill="#161b22" stroke="#f97316" stroke-width="2"/>
+      <rect x="10" y="10" width="315" height="36" rx="10" fill="rgba(249,115,22,0.2)"/>
+      <text x="167" y="33" fill="#f97316" text-anchor="middle" font-size="13" font-weight="bold">plotly.express (px)</text>
+      <text x="25" y="65" fill="#4ade80" font-size="11">✅ সুবিধা:</text>
+      <text x="35" y="83" fill="#c9d1d9" font-size="11">• কম কোডে দ্রুত গ্রাফ</text>
+      <text x="35" y="100" fill="#c9d1d9" font-size="11">• একলাইনে গ্রাফ বানানো যায়</text>
+      <text x="35" y="117" fill="#c9d1d9" font-size="11">• DataFrame সরাসরি দেওয়া যায়</text>
+      <text x="35" y="134" fill="#c9d1d9" font-size="11">• animation_frame সহজে যোগ হয়</text>
+      <text x="25" y="155" fill="#fbbf24" font-size="11">📝 উদাহরণ:</text>
+      <text x="35" y="172" fill="#79c0ff" font-size="10" font-family="monospace">px.scatter(df, x="A", y="B")</text>
+
+      <!-- go side -->
+      <rect x="355" y="10" width="315" height="180" rx="10" fill="#161b22" stroke="#38bdf8" stroke-width="2"/>
+      <rect x="355" y="10" width="315" height="36" rx="10" fill="rgba(56,189,248,0.15)"/>
+      <text x="512" y="33" fill="#38bdf8" text-anchor="middle" font-size="13" font-weight="bold">plotly.graph_objects (go)</text>
+      <text x="370" y="65" fill="#4ade80" font-size="11">✅ সুবিধা:</text>
+      <text x="380" y="83" fill="#c9d1d9" font-size="11">• বেশি নিয়ন্ত্রণ ও কাস্টমাইজেশন</text>
+      <text x="380" y="100" fill="#c9d1d9" font-size="11">• একই গ্রাফে বিভিন্ন trace মেশানো</text>
+      <text x="380" y="117" fill="#c9d1d9" font-size="11">• জটিল layout তৈরি সম্ভব</text>
+      <text x="380" y="134" fill="#c9d1d9" font-size="11">• প্রতিটা element আলাদা নিয়ন্ত্রণ</text>
+      <text x="370" y="155" fill="#fbbf24" font-size="11">📝 উদাহরণ:</text>
+      <text x="380" y="172" fill="#79c0ff" font-size="10" font-family="monospace">go.Figure() → add_traces(go.Scatter(...))</text>
+    </svg>
+    <div class="diagram-caption">px → দ্রুত ও সহজ | go → বেশি নিয়ন্ত্রণ</div>
+  </div>
+
+  <h3>৫. ডেটার একটা গল্প বলো (Data Storytelling)</h3>
+  <p>Notebook-এ বারবার বলা হয়েছে — ডেটা শুধু সংখ্যা নয়, এটা বাস্তবতার একটা প্রতিচ্ছবি। একটা ভালো গ্রাফে তিনটা জিনিস থাকে:</p>
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="icon">🎯</div>
+      <h4>উদ্দেশ্য পরিষ্কার</h4>
+      <p>গ্রাফ বানানোর আগে ভাবো: আমি কী বলতে চাই? কে দেখবে? কী সিদ্ধান্ত নেবে?</p>
+    </div>
+    <div class="concept-card">
+      <div class="icon">📐</div>
+      <h4>সঠিক গ্রাফ বেছে নাও</h4>
+      <p>তুলনা হলে Bar, সময় হলে Line, বিতরণ হলে Histogram — প্রতিটা ডেটার জন্য সঠিক গ্রাফ আছে।</p>
+    </div>
+    <div class="concept-card">
+      <div class="icon">🏷️</div>
+      <h4>সঠিক লেবেল দাও</h4>
+      <p>Title, X-axis, Y-axis, Legend — সব কিছু পরিষ্কারভাবে লেখো। দর্শক যেন নিজে নিজে বুঝতে পারে।</p>
+    </div>
+    <div class="concept-card">
+      <div class="icon">🔍</div>
+      <h4>ফলাফল ব্যাখ্যা করো</h4>
+      <p>গ্রাফের নিচে কী দেখলে সেটা লেখো। গ্রাফ একা কথা বলে না — তোমার ব্যাখ্যা লাগে।</p>
+    </div>
+  </div>
+
+  <h3>৬. Pandas-এর গুরুত্বপূর্ণ কৌশল (উভয় Notebook জুড়ে ব্যবহৃত)</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>কৌশল</th><th>কী করে</th><th>উদাহরণ</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>groupby().agg()</code></td>
+          <td>গ্রুপ করে হিসাব করো</td>
+          <td>প্রতি বছরে মোট বিক্রি</td>
+        </tr>
+        <tr>
+          <td><code>sort_values()</code></td>
+          <td>মান অনুযায়ী সাজাও</td>
+          <td>বিক্রির ক্রমে publisher সাজানো</td>
+        </tr>
+        <tr>
+          <td><code>head(n)</code> / <code>tail(n)</code></td>
+          <td>প্রথম/শেষ n সারি নাও</td>
+          <td>Top 15 publisher</td>
+        </tr>
+        <tr>
+          <td><code>.loc[condition]</code></td>
+          <td>শর্ত দিয়ে সারি ফিল্টার</td>
+          <td>শুধু US-এর Action movie</td>
+        </tr>
+        <tr>
+          <td><code>pd.merge()</code></td>
+          <td>দুই DataFrame জোড়া লাগাও</td>
+          <td>Netflix + IMDB একত্র করা</td>
+        </tr>
+        <tr>
+          <td><code>str.split().stack()</code></td>
+          <td>comma-separated মান আলাদা করো</td>
+          <td>পরিচালক ও অভিনেতার তালিকা</td>
+        </tr>
+        <tr>
+          <td><code>value_counts()</code></td>
+          <td>প্রতিটা unique মান কতবার আছে</td>
+          <td>সবচেয়ে বেশি কাজ করা পরিচালক</td>
+        </tr>
+        <tr>
+          <td><code>pd.to_datetime().dt.year</code></td>
+          <td>date থেকে বছর বের করো</td>
+          <td>Netflix-এ যোগ হওয়ার বছর</td>
+        </tr>
+        <tr>
+          <td><code>.apply(lambda x: ...)</code></td>
+          <td>প্রতিটা সারিতে ফাংশন লাগাও</td>
+          <td>is_action কলাম বানানো</td>
+        </tr>
+        <tr>
+          <td><code>astype(int)</code></td>
+          <td>ডেটা টাইপ পরিবর্তন করো</td>
+          <td>"120" string → 120 integer</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>৭. Seaborn-এর গুরুত্বপূর্ণ ফাংশন — এক নজরে</h3>
+
+  <div class="code-wrap">
+    <div class="code-header"><div class="code-dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div><span>seaborn_cheatsheet.py</span></div>
+    <div class="code-block">
+<span class="cm"># ১. Count Plot — গণনা করে বার দেখায়</span>
+<span class="nm">sns</span>.<span class="fn">countplot</span>(x=<span class="st">"type"</span>, data=df)
+
+<span class="cm"># ২. Box Plot — বিতরণ ও outlier দেখায়</span>
+<span class="nm">sns</span>.<span class="fn">boxplot</span>(x=<span class="st">"is_action"</span>, y=<span class="st">"duration_int"</span>, data=df)
+
+<span class="cm"># ৩. Boxen Plot — Box Plot-এর উন্নত সংস্করণ</span>
+<span class="nm">sns</span>.<span class="fn">boxenplot</span>(x=<span class="st">"year"</span>, y=<span class="st">"averageRating"</span>, data=df)
+
+<span class="cm"># ৪. Distribution Plot — Histogram + KDE</span>
+<span class="nm">sns</span>.<span class="fn">displot</span>(x=<span class="st">"averageRating"</span>, kde=<span class="kw">True</span>, data=df)
+
+<span class="cm"># ৫. Line Plot — সময়ের সাথে ট্রেন্ড</span>
+<span class="nm">sns</span>.<span class="fn">lineplot</span>(x=<span class="st">"year"</span>, y=<span class="st">"count"</span>, hue=<span class="st">"type"</span>, data=df)
+
+<span class="cm"># ৬. Bar Plot — তুলনামূলক বার চার্ট</span>
+<span class="nm">sns</span>.<span class="fn">barplot</span>(x=<span class="st">"title"</span>, y=<span class="st">"numVotes"</span>, data=df)
+
+<span class="cm"># ৭. পাশাপাশি দুটো গ্রাফ</span>
+<span class="nm">plt</span>.<span class="fn">figure</span>(figsize=(<span class="nm">16</span>, <span class="nm">6</span>))
+<span class="nm">plt</span>.<span class="fn">subplot</span>(<span class="nm">121</span>);  <span class="nm">sns</span>.<span class="fn">barplot</span>(...)
+<span class="nm">plt</span>.<span class="fn">subplot</span>(<span class="nm">122</span>);  <span class="nm">sns</span>.<span class="fn">barplot</span>(...)
+<span class="nm">plt</span>.<span class="fn">show</span>()
+    </div>
+  </div>
+
+  <h3>৮. Animation Frame — সময়ের সাথে পরিবর্তন দেখানো (Plotly-র বিশেষ ক্ষমতা)</h3>
+  <p>Plotly Express-এর সবচেয়ে চমকপ্রদ ফিচার হলো <code>animation_frame</code>। এটা দিয়ে একটা slider তৈরি হয়, যেটা টেনে বিভিন্ন সময়ের ডেটা দেখা যায়।</p>
+
+  <!-- SVG: Animation frame concept -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 680 150" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="660" height="130" rx="10" fill="#161b22" stroke="#30363d"/>
+      <text x="340" y="32" fill="#e6edf3" text-anchor="middle" font-size="12" font-weight="bold">animation_frame কীভাবে কাজ করে</text>
+      <!-- Frames -->
+      <rect x="30" y="45" width="90" height="65" rx="6" fill="#1f2937" stroke="#f97316" stroke-width="2"/>
+      <text x="75" y="65" fill="#f97316" text-anchor="middle" font-size="11">Frame 1</text>
+      <text x="75" y="82" fill="#6e7781" text-anchor="middle" font-size="10">Year: 2000</text>
+      <circle cx="55" cy="100" r="5" fill="#f97316" opacity="0.7"/>
+      <circle cx="70" cy="93" r="4" fill="#f97316" opacity="0.6"/>
+      <circle cx="85" cy="97" r="6" fill="#f97316" opacity="0.8"/>
+      <circle cx="100" cy="88" r="3" fill="#f97316" opacity="0.5"/>
+
+      <text x="140" y="82" fill="#30363d" text-anchor="middle" font-size="20">→</text>
+
+      <rect x="160" y="45" width="90" height="65" rx="6" fill="#1f2937" stroke="#38bdf8" stroke-width="2"/>
+      <text x="205" y="65" fill="#38bdf8" text-anchor="middle" font-size="11">Frame 2</text>
+      <text x="205" y="82" fill="#6e7781" text-anchor="middle" font-size="10">Year: 2005</text>
+      <circle cx="180" cy="95" r="5" fill="#38bdf8" opacity="0.7"/>
+      <circle cx="195" cy="85" r="7" fill="#38bdf8" opacity="0.6"/>
+      <circle cx="215" cy="100" r="4" fill="#38bdf8" opacity="0.8"/>
+      <circle cx="230" cy="90" r="6" fill="#38bdf8" opacity="0.5"/>
+
+      <text x="268" y="82" fill="#30363d" text-anchor="middle" font-size="20">→</text>
+
+      <rect x="290" y="45" width="90" height="65" rx="6" fill="#1f2937" stroke="#4ade80" stroke-width="2"/>
+      <text x="335" y="65" fill="#4ade80" text-anchor="middle" font-size="11">Frame 3</text>
+      <text x="335" y="82" fill="#6e7781" text-anchor="middle" font-size="10">Year: 2010</text>
+      <circle cx="308" cy="90" r="6" fill="#4ade80" opacity="0.7"/>
+      <circle cx="325" cy="98" r="4" fill="#4ade80" opacity="0.6"/>
+      <circle cx="342" cy="83" r="8" fill="#4ade80" opacity="0.8"/>
+      <circle cx="360" cy="92" r="5" fill="#4ade80" opacity="0.5"/>
+
+      <text x="396" y="82" fill="#30363d" text-anchor="middle" font-size="20">→</text>
+
+      <!-- Slider -->
+      <rect x="430" y="75" width="220" height="8" rx="4" fill="#30363d"/>
+      <rect x="430" y="75" width="110" height="8" rx="4" fill="#f97316" opacity="0.7"/>
+      <circle cx="540" cy="79" r="8" fill="#f97316"/>
+      <text x="540" y="105" fill="#f97316" text-anchor="middle" font-size="10">Slider টেনে বছর বদলাও</text>
+      <text x="540" y="120" fill="#6e7781" text-anchor="middle" font-size="10">animation_frame="Year_of_Release"</text>
+      <text x="540" y="135" fill="#6e7781" text-anchor="middle" font-size="9">⚠️ sort_values() আগে করতে হবে!</text>
+    </svg>
+    <div class="diagram-caption">animation_frame — প্রতিটা বছরের জন্য আলাদা frame তৈরি হয়, slider দিয়ে নিয়ন্ত্রণ করা যায়</div>
+  </div>
+
+  <h3>৯. Distribution (বিতরণ) কী? — সহজ ব্যাখ্যা</h3>
+  <p>Notebook-এ Distribution নিয়ে বিস্তারিত বলা হয়েছে। এটা বোঝাটা খুব জরুরি।</p>
+
+  <div class="info-box purple">
+    <div class="info-box-title">📊 Distribution কী — একটা উদাহরণ</div>
+    ধরো তোমার ক্লাসে ৫০ জন ছাত্রের পরীক্ষার নম্বর আছে। এখন প্রশ্ন — বেশিরভাগ কত পেয়েছে? কতজন ৮০-৯০ এর মধ্যে, কতজন ৫০-৬০ এর মধ্যে?<br><br>
+    এই <strong>বিস্তার বা ছড়িয়ে পড়াটাই Distribution</strong>। Histogram দেখায় কোন range-এ কতজন পড়ে।<br><br>
+    Distribution-এর বৈশিষ্ট্য:<br>
+    • <strong>Central tendency</strong> — গড় বা মধ্যমান কোথায়?<br>
+    • <strong>Dispersion</strong> — ডেটা কতটা ছড়িয়ে আছে?<br>
+    • <strong>Shape</strong> — বামে বেশি, ডানে বেশি, নাকি মাঝে বেশি?
+  </div>
+
+  <!-- SVG: Distribution shapes -->
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg">
+      <text x="340" y="18" fill="#e6edf3" text-anchor="middle" font-size="12" font-weight="bold">Distribution-এর বিভিন্ন আকার</text>
+      <!-- Normal / Bell -->
+      <rect x="10" y="28" width="200" height="125" rx="8" fill="#161b22" stroke="#30363d"/>
+      <text x="110" y="46" fill="#f97316" text-anchor="middle" font-size="11" font-weight="bold">Normal (Bell Curve)</text>
+      <path d="M 25 140 Q 60 140 80 90 Q 110 30 140 90 Q 165 140 200 140" fill="none" stroke="#f97316" stroke-width="2.5"/>
+      <line x1="110" y1="140" x2="110" y2="58" stroke="#f97316" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="110" y="152" fill="#6e7781" text-anchor="middle" font-size="10">মাঝে সবচেয়ে বেশি</text>
+
+      <!-- Left skewed -->
+      <rect x="240" y="28" width="200" height="125" rx="8" fill="#161b22" stroke="#30363d"/>
+      <text x="340" y="46" fill="#38bdf8" text-anchor="middle" font-size="11" font-weight="bold">Left Skewed</text>
+      <path d="M 255 140 Q 270 140 295 130 Q 360 60 400 30 Q 415 100 440 140" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+      <text x="340" y="152" fill="#6e7781" text-anchor="middle" font-size="10">ডানে বেশি, বামে লেজ</text>
+
+      <!-- Right skewed -->
+      <rect x="470" y="28" width="200" height="125" rx="8" fill="#161b22" stroke="#30363d"/>
+      <text x="570" y="46" fill="#4ade80" text-anchor="middle" font-size="11" font-weight="bold">Right Skewed</text>
+      <path d="M 480 30 Q 495 100 510 140 Q 550 60 640 130 Q 655 140 670 140" fill="none" stroke="#4ade80" stroke-width="2.5"/>
+      <text x="570" y="152" fill="#6e7781" text-anchor="middle" font-size="10">বামে বেশি, ডানে লেজ</text>
+    </svg>
+    <div class="diagram-caption">সাধারণ Distribution-এর তিনটি আকার</div>
+  </div>
+
+  <h3>১০. Notebook-এ না বোঝা গেলে কী করবে?</h3>
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="icon">📖</div>
+      <h4>Official Docs</h4>
+      <p>Plotly: <code>plotly.com/python</code><br>Seaborn: <code>seaborn.pydata.org</code><br>সব function-এর বিস্তারিত আছে।</p>
+    </div>
+    <div class="concept-card">
+      <div class="icon">🧪</div>
+      <h4>নিজে try করো</h4>
+      <p>Code cell-এ ছোট পরিবর্তন করো। রং বদলাও, parameter বদলাও — দেখো কী হয়। Error পেলে ভয় নেই।</p>
+    </div>
+    <div class="concept-card">
+      <div class="icon">🔍</div>
+      <h4>help() ব্যবহার</h4>
+      <p>Notebook-এ <code>help(sns.boxplot)</code> লিখলে ঐ function-এর সব parameter দেখাবে।</p>
+    </div>
+
+  </div>
+
+  <!-- Final quiz -->
+  <div class="quiz-box">
+    <h4>🧠 চূড়ান্ত পরীক্ষা</h4>
+    <p>তুমি জাপানের রেস্তোরাঁর রেটিং ডেটা বিশ্লেষণ করছো। তোমাকে দেখাতে হবে: প্রতি শহরে গড় রেটিং কত এবং রেটিংগুলো কতটা ছড়িয়ে আছে। কোন গ্রাফ ব্যবহার করবে?</p>
+    <details>
+      <summary>উত্তর দেখো</summary>
+      <p><strong>Box Plot</strong> সবচেয়ে উপযুক্ত! কারণ এটা একসাথে দেখায়: median (গড়ের কাছাকাছি), IQR (ছড়িয়ে পড়া), এবং outlier (অস্বাভাবিক মান)। X অক্ষে শহর, Y অক্ষে রেটিং দিলেই হবে। <br><br>Plotly: <code>px.box(df, x="city", y="rating")</code><br>Seaborn: <code>sns.boxplot(x="city", y="rating", data=df)</code></p>
+    </details>
+  </div>
+
+  <div class="quiz-box">
+    <h4>🧠 চূড়ান্ত পরীক্ষা ২</h4>
+    <p><code>df.groupby('Publisher').agg({'Name': 'count'})</code> — এটা কী করে?</p>
+    <details>
+      <summary>উত্তর দেখো</summary>
+      <p>প্রতিটা Publisher কতটা গেম বানিয়েছে সেটা গণনা করে। <code>groupby('Publisher')</code> মানে Publisher অনুযায়ী ভাগ করো, আর <code>agg({'Name': 'count'})</code> মানে Name কলামে কতটা সারি আছে গণনা করো — সেটাই গেমের সংখ্যা।</p>
+    </details>
+  </div>
+
+  <div class="quiz-box">
+    <h4>🧠 চূড়ান্ত পরীক্ষা ৩</h4>
+    <p>Seaborn-এ <code>hue</code> parameter কী কাজ করে?</p>
+    <details>
+      <summary>উত্তর দেখো</summary>
+      <p><code>hue</code> একটা categorical কলামকে আলাদা রঙে দেখায়। যেমন <code>hue='type'</code> দিলে Movie ও TV Show দুটো আলাদা রঙের line বা bar হিসেবে দেখাবে — একটাই গ্রাফে তুলনা করা যাবে।</p>
+    </details>
+  </div>
+
+  <div class="practice-banner">
+    <span class="icon">🚀</span>
+    <p><strong>পরবর্তী পদক্ষেপ:</strong> Plotly-র আরও advanced features — Subplots, Mapbox maps, Financial charts, এবং Dash দিয়ে interactive web application বানানো শিখতে পারো। Seaborn-এ PairPlot, FacetGrid, এবং Heatmap-এর বিস্তারিত ব্যবহার explore করো।</p>
+  </div>
+
+</div>
+
+</div><!-- /container (best practices) -->
+  <p>📊 ডেটা ভিজুয়ালাইজেশন — Plotly ও Seaborn সম্পূর্ণ বাংলা গাইড</p>
+  <p style="margin-top:6px; font-size:12px;">সম্পূর্ণ Newbie Friendly • সব code locally run করো</p>
+</footer>
+
+</body>
+</html>

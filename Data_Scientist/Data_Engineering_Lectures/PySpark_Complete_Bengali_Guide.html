@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PySpark সম্পূর্ণ গাইড — বাংলায়</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1f2937;--bg4:#263040;--accent:#f97316;--accent2:#fb923c;--accent3:#fbbf24;--blue:#38bdf8;--green:#34d399;--purple:#a78bfa;--red:#f87171;--pink:#f472b6;--text:#e2e8f0;--text2:#94a3b8;--text3:#cbd5e1;--border:#2d3748;--code-bg:#0a0e16;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Hind Siliguri',sans-serif;background:var(--bg);color:var(--text);line-height:1.85;font-size:17px;overflow-x:hidden;}
+::-webkit-scrollbar{width:7px;}::-webkit-scrollbar-track{background:var(--bg2);}::-webkit-scrollbar-thumb{background:var(--accent);border-radius:4px;}
+.hero{background:linear-gradient(135deg,#0d1117 0%,#1a0a2e 40%,#0a1a2e 100%);border-bottom:2px solid var(--accent);padding:60px 40px 50px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(249,115,22,.12) 0%,transparent 60%);}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.6rem);font-weight:900;background:linear-gradient(90deg,var(--accent),var(--accent3),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:16px;}
+.hero-sub{font-size:1.1rem;color:var(--text2);max-width:700px;margin:0 auto 24px;}
+.hero-badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.badge{background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.4);color:var(--accent2);padding:5px 14px;border-radius:20px;font-size:.83rem;font-weight:600;}
+.container{max-width:1080px;margin:0 auto;padding:0 22px;}
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:26px 30px;margin:32px auto;max-width:780px;}
+.toc h2{color:var(--accent);font-size:1.15rem;margin-bottom:14px;}
+.toc ol{padding-left:20px;}.toc li{margin:7px 0;}.toc a{color:var(--blue);text-decoration:none;}.toc a:hover{color:var(--accent2);}
+.toc .sub{padding-left:16px;list-style:disc;}.toc .sub a{color:var(--text2);font-size:.92rem;}
+.chapter{padding:56px 0 36px;border-bottom:1px solid var(--border);}
+.chapter-header{display:flex;align-items:flex-start;gap:18px;margin-bottom:32px;padding:24px 28px;background:linear-gradient(135deg,var(--bg2),var(--bg3));border-radius:14px;border-left:4px solid var(--accent);}
+.chapter-num{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--accent);line-height:1;min-width:56px;opacity:.6;}
+.chapter-title{font-size:1.6rem;font-weight:700;color:var(--text);margin-bottom:5px;}
+.chapter-subtitle{color:var(--text2);font-size:.98rem;}
+.section{margin:32px 0;}
+h3.section-title{font-size:1.3rem;font-weight:700;color:var(--accent2);margin-bottom:14px;padding-bottom:7px;border-bottom:2px solid rgba(251,146,60,.25);display:flex;align-items:center;gap:9px;}
+h4.sub-title{font-size:1.05rem;font-weight:600;color:var(--blue);margin:22px 0 10px;padding-left:11px;border-left:3px solid var(--blue);}
+p{margin-bottom:13px;color:var(--text3);}strong{color:var(--text);font-weight:700;}em{color:var(--accent3);font-style:normal;font-weight:600;}
+pre{background:var(--code-bg);border:1px solid #1e3a5f;border-radius:10px;padding:18px 20px;overflow-x:auto;margin:16px 0;position:relative;}
+pre::before{content:attr(data-lang);position:absolute;top:9px;right:13px;font-size:.68rem;color:var(--text2);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1px;}
+code{font-family:'JetBrains Mono',monospace;font-size:.87rem;color:#e2e8f0;line-height:1.7;}
+p code,li code{background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.2);border-radius:4px;padding:1px 5px;color:var(--blue);font-size:.84em;}
+.kw{color:#c792ea;font-weight:600;}.fn{color:#82aaff;}.str{color:#c3e88d;}.num{color:#f78c6c;}.cm{color:#546e7a;font-style:italic;}.cls{color:#ffcb6b;}.op{color:#89ddff;}
+.callout{border-radius:10px;padding:16px 20px;margin:18px 0;border-left:4px solid;display:flex;gap:13px;align-items:flex-start;}
+.callout-icon{font-size:1.35rem;flex-shrink:0;margin-top:2px;}.callout-body{flex:1;}
+.callout.note{background:#1a2a1a;border-color:var(--green);}.callout.note .callout-icon{color:var(--green);}
+.callout.warn{background:#2a1a0a;border-color:var(--accent);}.callout.warn .callout-icon{color:var(--accent);}
+.callout.tip{background:#1a1a2e;border-color:var(--purple);}.callout.tip .callout-icon{color:var(--purple);}
+.callout.important{background:#1a1530;border-color:var(--pink);}.callout.important .callout-icon{color:var(--pink);}
+.callout p{margin:0;color:var(--text3);}
+.exercise{background:linear-gradient(135deg,#0a1628,#0d1f35);border:2px solid var(--blue);border-radius:14px;padding:22px 26px;margin:26px 0;}
+.exercise-header{display:flex;align-items:center;gap:11px;margin-bottom:14px;}
+.exercise-icon{font-size:1.4rem;}.exercise-title{color:var(--blue);font-size:1.05rem;font-weight:700;}
+.exercise-difficulty{margin-left:auto;font-size:.73rem;padding:3px 9px;border-radius:12px;font-weight:700;letter-spacing:.4px;}
+.diff-easy{background:rgba(52,211,153,.15);color:var(--green);border:1px solid var(--green);}
+.diff-medium{background:rgba(251,191,36,.15);color:var(--accent3);border:1px solid var(--accent3);}
+.diff-hard{background:rgba(248,113,113,.15);color:var(--red);border:1px solid var(--red);}
+.exercise p{color:var(--text3);margin-bottom:9px;}.exercise ol,.exercise ul{padding-left:20px;color:var(--text3);}.exercise li{margin:5px 0;}
+details.solution{margin-top:14px;background:rgba(56,189,248,.05);border:1px solid rgba(56,189,248,.2);border-radius:8px;overflow:hidden;}
+details.solution summary{padding:11px 17px;cursor:pointer;color:var(--blue);font-weight:600;font-size:.93rem;list-style:none;display:flex;align-items:center;gap:7px;}
+details.solution summary::-webkit-details-marker{display:none;}
+details.solution[open] summary{border-bottom:1px solid rgba(56,189,248,.2);}
+details.solution .solution-body{padding:16px 20px;}
+.diagram{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px;margin:22px 0;text-align:center;overflow-x:auto;}
+.diagram svg{max-width:100%;height:auto;}
+.diagram-caption{text-align:center;color:var(--text2);font-size:.86rem;margin-top:10px;font-style:italic;}
+.table-wrap{overflow-x:auto;margin:18px 0;}
+table{width:100%;border-collapse:collapse;font-size:.91rem;}
+th{background:rgba(249,115,22,.15);color:var(--accent2);padding:11px 15px;text-align:left;border:1px solid var(--border);font-weight:700;}
+td{padding:9px 15px;border:1px solid var(--border);color:var(--text3);}
+tr:nth-child(even) td{background:rgba(255,255,255,.02);}
+tr:hover td{background:rgba(249,115,22,.04);}
+.algo-box{background:linear-gradient(135deg,#0d1a2e,#1a0d2e);border:2px solid var(--purple);border-radius:14px;padding:26px 30px;margin:26px 0;}
+.algo-title{font-size:1.2rem;font-weight:700;color:var(--purple);margin-bottom:14px;display:flex;align-items:center;gap:9px;}
+.interview-box{background:linear-gradient(135deg,#1a0a1a,#0a1a1a);border:2px solid var(--pink);border-radius:14px;padding:22px 26px;margin:26px 0;}
+.interview-title{color:var(--pink);font-weight:700;font-size:1.05rem;margin-bottom:14px;display:flex;align-items:center;gap:9px;}
+.interview-q{background:rgba(244,114,182,.08);border-left:3px solid var(--pink);padding:11px 15px;border-radius:0 8px 8px 0;margin:11px 0;color:var(--text3);font-weight:600;}
+.interview-a{padding:9px 15px;color:var(--text2);font-size:.92rem;}
+.nav-pills{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:9px 22px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;}
+.nav-pills::-webkit-scrollbar{display:none;}
+.nav-pill{white-space:nowrap;padding:5px 14px;border-radius:20px;font-size:.8rem;font-weight:600;text-decoration:none;transition:all .2s;border:1px solid transparent;color:var(--text2);}
+.nav-pill:hover{background:rgba(249,115,22,.15);border-color:var(--accent);color:var(--accent);}
+.footer{background:var(--bg2);border-top:1px solid var(--border);padding:28px 22px;text-align:center;color:var(--text2);font-size:.88rem;margin-top:56px;}
+ul li,ol li{margin:7px 0;color:var(--text3);}ul,ol{padding-left:22px;margin-bottom:13px;}
+@media(max-width:768px){.hero{padding:36px 18px;}.chapter-header{flex-direction:column;gap:9px;padding:18px;}.chapter-num{font-size:1.8rem;}pre{font-size:.79rem;padding:13px;}}
+</style>
+</head>
+<body>
+<!-- HERO -->
+<div class="hero">
+  <div style="position:relative;z-index:1;">
+    <svg width="72" height="72" viewBox="0 0 72 72" style="margin-bottom:14px"><circle cx="36" cy="36" r="34" fill="none" stroke="#f97316" stroke-width="1.5" opacity=".4"/><polygon points="36,6 62,52 10,52" fill="none" stroke="#f97316" stroke-width="2"/><circle cx="36" cy="36" r="7" fill="#f97316" opacity=".8"/><line x1="36" y1="29" x2="36" y2="6" stroke="#fb923c" stroke-width="1.5" opacity=".6"/><line x1="43" y1="40" x2="62" y2="52" stroke="#fb923c" stroke-width="1.5" opacity=".6"/><line x1="29" y1="40" x2="10" y2="52" stroke="#fb923c" stroke-width="1.5" opacity=".6"/></svg>
+    <h1 class="hero-title">PySpark সম্পূর্ণ গাইড — বাংলায়</h1>
+    <p class="hero-sub">শূন্য থেকে ML Engineering পর্যন্ত — ডায়াগ্রাম, ইন্টারভিউ প্রস্তুতি ও হাতে-কলমে কোড</p>
+    <div class="hero-badges">
+      <span class="badge">🔥 সম্পূর্ণ বাংলায়</span>
+      <span class="badge">📊 SVG ডায়াগ্রাম</span>
+      <span class="badge">💼 ইন্টারভিউ প্রশ্ন</span>
+      <span class="badge">🤖 সব ML অ্যালগরিদম</span>
+      <span class="badge">⚡ MLOps কোড</span>
+    </div>
+  </div>
+</div>
+<!-- NAV -->
+<nav class="nav-pills">
+  <a class="nav-pill" href="#toc">📋 সূচি</a>
+  <a class="nav-pill" href="#ch1">১. পরিচয়</a>
+  <a class="nav-pill" href="#ch2">২. RDD</a>
+  <a class="nav-pill" href="#ch3">৩. DataFrame</a>
+  <a class="nav-pill" href="#ch4">৪. MLlib</a>
+  <a class="nav-pill" href="#ch5">৫. প্রজেক্ট</a>
+  <a class="nav-pill" href="#algorithms">🧠 অ্যালগরিদম</a>
+  <a class="nav-pill" href="#interview">💼 ইন্টারভিউ</a>
+</nav>
+<div class="container">
+<!-- TOC -->
+<div id="toc" class="toc">
+  <h2>📋 সম্পূর্ণ সূচিপত্র</h2>
+  <ol>
+    <li><a href="#ch1">Apache Spark ও PySpark পরিচয়</a>
+      <ul class="sub"><li><a href="#s1-1">Spark কী ও কেন?</a></li><li><a href="#s1-2">Spark Architecture</a></li><li><a href="#s1-3">Installation</a></li><li><a href="#s1-4">প্রথম Notebook</a></li></ul>
+    </li>
+    <li><a href="#ch2">RDD — Resilient Distributed Dataset</a>
+      <ul class="sub"><li><a href="#s2-1">RDD কী?</a></li><li><a href="#s2-2">MapReduce প্যাটার্ন</a></li><li><a href="#s2-3">Transformations ও Actions</a></li><li><a href="#s2-4">Shared Variables</a></li><li><a href="#s2-5">হাতে-কলমে অনুশীলন</a></li></ul>
+    </li>
+    <li><a href="#ch3">SparkSQL — DataFrame ও Data Manipulation</a>
+      <ul class="sub"><li><a href="#s3-1">DataFrame কী?</a></li><li><a href="#s3-2">Schema ও DataFrame তৈরি</a></li><li><a href="#s3-3">ফাইল পড়া ও লেখা</a></li><li><a href="#s3-4">Column ও Row Manipulation</a></li><li><a href="#s3-5">Missing Values</a></li><li><a href="#s3-6">Aggregation ও Join</a></li><li><a href="#s3-7">SparkSQL Interface</a></li></ul>
+    </li>
+    <li><a href="#ch4">Machine Learning — MLlib</a>
+      <ul class="sub"><li><a href="#s4-1">MLlib Architecture</a></li><li><a href="#s4-2">Feature Engineering</a></li><li><a href="#s4-3">Model Training ও Evaluation</a></li><li><a href="#s4-4">Pipeline</a></li><li><a href="#s4-5">CrossValidator</a></li></ul>
+    </li>
+    <li><a href="#ch5">মূল্যায়ন প্রজেক্ট</a></li>
+    <li><a href="#algorithms">সমস্ত ML অ্যালগরিদম</a>
+      <ul class="sub"><li><a href="#algo-lr">Linear Regression</a></li><li><a href="#algo-logistic">Logistic Regression</a></li><li><a href="#algo-dt">Decision Tree</a></li><li><a href="#algo-rf">Random Forest</a></li><li><a href="#algo-gbt">Gradient Boosting</a></li><li><a href="#algo-kmeans">K-Means</a></li><li><a href="#algo-svm">SVM</a></li><li><a href="#algo-nb">Naive Bayes</a></li></ul>
+    </li>
+    <li><a href="#interview">সমস্ত ইন্টারভিউ প্রশ্ন ও উত্তর</a></li>
+  </ol>
+</div>
+<!-- ===== CHAPTER 1 ===== -->
+<section id="ch1" class="chapter">
+<div class="chapter-header"><div class="chapter-num">১</div><div><div class="chapter-title">Apache Spark এবং PySpark পরিচয়</div><div class="chapter-subtitle">Spark কী, কেন দরকার, এবং কীভাবে কাজ করে — একেবারে শুরু থেকে</div></div></div>
+
+<div id="s1-1" class="section">
+<h3 class="section-title">🔥 Spark কী এবং কেন দরকার?</h3>
+<div class="callout note"><div class="callout-icon">💡</div><div class="callout-body"><p><strong>গল্প দিয়ে বুঝি:</strong> তোমার কাছে ১ কোটি রেকর্ডের ডেটা আছে। সাধারণ Python (Pandas) দিয়ে কাজ করলে সব ডেটা একটা কম্পিউটারের RAM-এ লোড হবে। RAM কম থাকলে কম্পিউটার হ্যাং করবে। Spark এই সমস্যার সমাধান করে — অনেক কম্পিউটার একসাথে কাজ করে।</p></div></div>
+<p>Apache Spark হলো একটি <strong>open-source distributed computing framework</strong>। এটা এমন একটা সিস্টেম যেখানে <em>অনেকগুলো কম্পিউটার একসাথে কাজ করে</em> বড় ডেটা প্রসেস করতে পারে।</p>
+<h4 class="sub-title">Hadoop বনাম Spark</h4>
+<p><strong>Hadoop:</strong> পুরনো প্রযুক্তি। ডেটা <em>ডিস্কে</em> সংরক্ষণ হয়। প্রতিটা অপারেশনের পর ডিস্কে লেখা হয় — তাই ধীর।</p>
+<p><strong>Spark:</strong> ডেটা <em>RAM-এ</em> রাখে। RAM অনেক দ্রুত। Spark Hadoop-এর চেয়ে ১০০ গুণ পর্যন্ত দ্রুত হতে পারে!</p>
+
+<div class="diagram">
+<svg viewBox="0 0 680 250" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#f97316;stop-opacity:.25"/><stop offset="100%" style="stop-color:#f97316;stop-opacity:.05"/></linearGradient><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#38bdf8;stop-opacity:.25"/><stop offset="100%" style="stop-color:#38bdf8;stop-opacity:.05"/></linearGradient></defs>
+<rect x="15" y="15" width="300" height="220" rx="12" fill="url(#g1)" stroke="#f97316" stroke-width="1.5"/>
+<text x="165" y="46" text-anchor="middle" fill="#f97316" font-size="14" font-weight="bold" font-family="Hind Siliguri,sans-serif">Hadoop (পুরনো)</text>
+<rect x="50" y="62" width="90" height="32" rx="6" fill="#f97316" fill-opacity=".2" stroke="#f97316" stroke-width="1"/><text x="95" y="83" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="Hind Siliguri,sans-serif">Step 1</text>
+<text x="158" y="83" fill="#f97316" font-size="20" font-family="'Hind Siliguri',sans-serif">→</text>
+<rect x="175" y="62" width="100" height="32" rx="6" fill="#f97316" fill-opacity=".2" stroke="#f97316" stroke-width="1"/><text x="225" y="83" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="Hind Siliguri,sans-serif">💾 ডিস্কে লেখো</text>
+<text x="165" y="122" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Hind Siliguri,sans-serif">ডিস্ক পড়া-লেখা (ধীর)</text>
+<rect x="50" y="135" width="90" height="32" rx="6" fill="#f97316" fill-opacity=".2" stroke="#f97316" stroke-width="1"/><text x="95" y="156" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="Hind Siliguri,sans-serif">Step 2</text>
+<text x="158" y="156" fill="#f97316" font-size="20" font-family="'Hind Siliguri',sans-serif">→</text>
+<rect x="175" y="135" width="100" height="32" rx="6" fill="#f97316" fill-opacity=".2" stroke="#f97316" stroke-width="1"/><text x="225" y="156" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="Hind Siliguri,sans-serif">💾 ডিস্কে লেখো</text>
+<text x="165" y="210" text-anchor="middle" fill="#f87171" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">🐢 ধীর</text>
+<rect x="365" y="15" width="300" height="220" rx="12" fill="url(#g2)" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="515" y="46" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="bold" font-family="Hind Siliguri,sans-serif">Spark (নতুন)</text>
+<rect x="395" y="62" width="240" height="32" rx="6" fill="#38bdf8" fill-opacity=".15" stroke="#38bdf8" stroke-width="1"/><text x="515" y="83" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="Hind Siliguri,sans-serif">Step 1 → ⚡ RAM → Step 2</text>
+<text x="515" y="120" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Hind Siliguri,sans-serif">সব কিছু RAM-এ থাকে</text>
+<rect x="395" y="135" width="240" height="32" rx="6" fill="#38bdf8" fill-opacity=".1" stroke="#38bdf8" stroke-width="1"/><text x="515" y="156" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="Hind Siliguri,sans-serif">Step 3 → ⚡ RAM → Step 4</text>
+<text x="515" y="210" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">🚀 ১০০x দ্রুত!</text>
+</svg>
+<div class="diagram-caption">চিত্র ১.১ — Hadoop বনাম Spark: কোথায় ডেটা রাখে</div>
+</div>
+
+<h4 class="sub-title">Spark-এর ক্ষমতা</h4>
+<ul>
+<li><strong>বড় ডেটা প্রসেস</strong> — কোটি কোটি রেকর্ড অনায়াসে</li>
+<li><strong>Machine Learning (MLlib)</strong> — scikit-learn-এর মতোই, কিন্তু distributed</li>
+<li><strong>Streaming Data</strong> — real-time ডেটা প্রসেস করতে পারে</li>
+<li><strong>SQL Query</strong> — সাধারণ SQL দিয়ে ডেটা জিজ্ঞেস করা যায়</li>
+<li><strong>Graph Data</strong> — নেটওয়ার্ক বিশ্লেষণ (GraphX)</li>
+</ul>
+<div class="callout tip"><div class="callout-icon">🌟</div><div class="callout-body"><p><strong>PySpark কী?</strong> Spark মূলত Scala ভাষায় লেখা। কিন্তু Python দিয়ে Spark ব্যবহার করতে পারি — এটাই <strong>PySpark</strong>।</p></div></div>
+</div>
+
+<div id="s1-2" class="section">
+<h3 class="section-title">🏗️ Spark Architecture — ভিতরে কী আছে?</h3>
+<div class="callout note"><div class="callout-icon">🎯</div><div class="callout-body"><p><strong>সহজ উপমা:</strong> ধরো একটা রেস্তোরাঁ। <strong>Driver</strong> = ম্যানেজার (নির্দেশ দেয়, রান্না করে না)। <strong>Executor</strong>গুলো = রাঁধুনি (আসল কাজ করে)। <strong>Cluster Manager</strong> = সুপারভাইজার (কে কোথায় কাজ করবে ঠিক করে)।</p></div></div>
+<h4 class="sub-title">Driver</h4>
+<ul><li>আমাদের <strong>কোড চালায়</strong></li><li>সব Executor-দের <strong>নির্দেশ দেয়</strong></li><li>কোন Executor কোন কাজ করবে ঠিক করে (task scheduling)</li><li>SparkSession/SparkContext এখানে থাকে</li></ul>
+<h4 class="sub-title">Executor</h4>
+<ul><li>Driver-এর নির্দেশ অনুযায়ী <strong>আসল কাজ করে</strong></li><li>ডেটার একটা অংশ নিজের কাছে রাখে (partition)</li><li>কাজ শেষে Driver-কে জানায়</li></ul>
+
+<div class="diagram">
+<svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="arr" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#38bdf8"/></marker><marker id="arr2" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,9 3.5,0 7" fill="#94a3b8" opacity=".5"/></marker></defs>
+<!-- Cluster Manager -->
+<rect x="60" y="318" width="590" height="46" rx="10" fill="#1e3a5f" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="355" y="347" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">Cluster Manager — সব কম্পিউটার পরিচালনা করে</text>
+<!-- Driver -->
+<rect x="55" y="25" width="220" height="260" rx="12" fill="#1a1530" stroke="#a78bfa" stroke-width="2"/>
+<text x="165" y="52" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">Driver Process</text>
+<text x="165" y="69" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Hind Siliguri,sans-serif">(ম্যানেজার)</text>
+<rect x="75" y="88" width="180" height="58" rx="8" fill="#f97316" fill-opacity=".2" stroke="#f97316" stroke-width="1.5"/>
+<text x="165" y="113" text-anchor="middle" fill="#f97316" font-size="12" font-weight="bold" font-family="Hind Siliguri,sans-serif">Spark Session</text>
+<text x="165" y="132" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Spark-এ ঢোকার দরজা</text>
+<rect x="75" y="165" width="180" height="48" rx="8" fill="#38bdf8" fill-opacity=".15" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="165" y="187" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold" font-family="Hind Siliguri,sans-serif">User Code</text>
+<text x="165" y="204" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">আমাদের PySpark কোড</text>
+<!-- Executor 1 -->
+<rect x="355" y="25" width="150" height="260" rx="12" fill="#0a1628" stroke="#34d399" stroke-width="2"/>
+<text x="430" y="52" text-anchor="middle" fill="#34d399" font-size="12" font-weight="bold" font-family="Hind Siliguri,sans-serif">Executor 1</text>
+<text x="430" y="68" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Hind Siliguri,sans-serif">(রাঁধুনি ১)</text>
+<rect x="373" y="82" width="114" height="32" rx="5" fill="#34d399" fill-opacity=".15" stroke="#34d399" stroke-width="1"/><text x="430" y="103" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 1</text>
+<rect x="373" y="125" width="114" height="32" rx="5" fill="#34d399" fill-opacity=".1" stroke="#34d399" stroke-width="1"/><text x="430" y="146" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 2</text>
+<rect x="373" y="178" width="114" height="32" rx="5" fill="#34d399" fill-opacity=".07" stroke="#34d399" stroke-width="1"/><text x="430" y="199" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Hind Siliguri,sans-serif">Task চালায়</text>
+<!-- Executor 2 -->
+<rect x="530" y="25" width="150" height="260" rx="12" fill="#0a1628" stroke="#fbbf24" stroke-width="2"/>
+<text x="605" y="52" text-anchor="middle" fill="#fbbf24" font-size="12" font-weight="bold" font-family="Hind Siliguri,sans-serif">Executor 2</text>
+<text x="605" y="68" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Hind Siliguri,sans-serif">(রাঁধুনি ২)</text>
+<rect x="548" y="82" width="114" height="32" rx="5" fill="#fbbf24" fill-opacity=".15" stroke="#fbbf24" stroke-width="1"/><text x="605" y="103" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 3</text>
+<rect x="548" y="125" width="114" height="32" rx="5" fill="#fbbf24" fill-opacity=".1" stroke="#fbbf24" stroke-width="1"/><text x="605" y="146" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 4</text>
+<rect x="548" y="178" width="114" height="32" rx="5" fill="#fbbf24" fill-opacity=".07" stroke="#fbbf24" stroke-width="1"/><text x="605" y="199" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Hind Siliguri,sans-serif">Task চালায়</text>
+<!-- Arrows -->
+<line x1="277" y1="152" x2="352" y2="122" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="4,3"/>
+<line x1="277" y1="160" x2="527" y2="130" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="4,3"/>
+<line x1="353" y1="195" x2="279" y2="182" stroke="#94a3b8" stroke-width="1" marker-end="url(#arr2)" stroke-dasharray="3,3" opacity=".6"/>
+<line x1="528" y1="198" x2="281" y2="188" stroke="#94a3b8" stroke-width="1" marker-end="url(#arr2)" stroke-dasharray="3,3" opacity=".6"/>
+<text x="302" y="120" fill="#38bdf8" font-size="9" font-family="Hind Siliguri,sans-serif">নির্দেশ দেয়</text>
+<text x="282" y="194" fill="#94a3b8" font-size="9" font-family="Hind Siliguri,sans-serif" opacity=".7">ফলাফল দেয়</text>
+<line x1="165" y1="285" x2="165" y2="315" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="430" y1="285" x2="430" y2="315" stroke="#34d399" stroke-width="1.5" marker-end="url(#arr)"/>
+<line x1="605" y1="285" x2="605" y2="315" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arr)"/>
+</svg>
+<div class="diagram-caption">চিত্র ১.২ — Spark Architecture: Driver, Executor ও Cluster Manager</div>
+</div>
+
+<h4 class="sub-title">Cluster Manager-এর ধরন</h4>
+<ul><li><strong>YARN</strong> — Hadoop 2 ও 3-এ ব্যবহৃত</li><li><strong>Kubernetes</strong> — Container পরিবেশে জনপ্রিয়</li><li><strong>Standalone</strong> — Spark-এর নিজস্ব, সবচেয়ে সহজ</li></ul>
+</div>
+
+<div id="s1-3" class="section">
+<h3 class="section-title">⚙️ PySpark Installation</h3>
+<div class="callout warn"><div class="callout-icon">⚠️</div><div class="callout-body"><p>Spark চালাতে <strong>Java 8</strong> লাগবে। অন্য version-এ সমস্যা হতে পারে।</p></div></div>
+<h4 class="sub-title">ধাপ ১: Java ইনস্টল</h4>
+<pre data-lang="bash"><code>sudo apt update
+sudo apt install openjdk-8-jre-headless -y
+sudo apt install openjdk-8-jdk-headless -y</code></pre>
+<h4 class="sub-title">ধাপ ২: Python Virtual Environment</h4>
+<pre data-lang="bash"><code><span class="cm"># venv module ইনস্টল</span>
+sudo apt install python3.8-venv -y
+<span class="cm"># virtual environment তৈরি ও সক্রিয়</span>
+python3 -m venv .venv
+. .venv/bin/activate
+pip install notebook</code></pre>
+<h4 class="sub-title">ধাপ ৩: Spark ডাউনলোড</h4>
+<pre data-lang="bash"><code>wget https://dst-de.s3.eu-west-3.amazonaws.com/pyspark_fr/spark.tgz
+tar xzvf spark.tgz
+sudo mv spark-3.5.0-bin-hadoop2.7 /opt/spark-3.5.0
+sudo ln -s /opt/spark-3.5.0 /opt/spark</code></pre>
+<h4 class="sub-title">ধাপ ৪: Environment Variables</h4>
+<div class="callout tip"><div class="callout-icon">📘</div><div class="callout-body"><p><strong>Environment Variable কী?</strong> Operating system-এর বিশেষ variable যা সব program দেখতে পায়। PATH বলে কোন ফোল্ডারে command খুঁজবে। SPARK_HOME বলে Spark কোথায় আছে।</p></div></div>
+<pre data-lang="bash"><code>export SPARK_HOME=/opt/spark
+export PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH
+export PYTHONPATH=$(\
+  ZIPS=("$SPARK_HOME"/python/lib/*.zip); \
+  IFS=:; echo "${ZIPS[*]}\
+"):$PYTHONPATH
+
+<span class="cm"># ~/.bashrc-এ যোগ করো (প্রতিবার login-এ স্বয়ংক্রিয়ভাবে সেট হবে)</span>
+echo "export SPARK_HOME=$SPARK_HOME" >> ~/.bashrc
+echo "export PATH=$SPARK_HOME/bin:$SPARK_HOME/sbin:$PATH" >> ~/.bashrc
+echo "export PYTHONPATH=$PYTHONPATH" >> ~/.bashrc</code></pre>
+</div>
+
+<div id="s1-4" class="section">
+<h3 class="section-title">🚀 প্রথম PySpark Notebook</h3>
+<pre data-lang="bash"><code>jupyter notebook --ip=0.0.0.0 --port=8888 --no-browser \
+  --NotebookApp.token='' --NotebookApp.password=''</code></pre>
+<p>Browser-এ <code>http://localhost:8888</code> এ যাও। নতুন Notebook তৈরি করো:</p>
+<pre data-lang="python"><code><span class="cm"># Cell 1: SparkSession তৈরি</span>
+<span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark <span class="kw">import</span> SparkContext
+<span class="kw">from</span> pyspark.conf <span class="kw">import</span> SparkConf
+
+conf = <span class="cls">SparkConf</span>()
+conf.set(<span class="str">"spark.log.level"</span>, <span class="str">"error"</span>)
+conf.set(<span class="str">"spark.ui.showConsoleProgress"</span>, <span class="str">"false"</span>)
+sc = <span class="cls">SparkContext</span>.getOrCreate(conf=conf)
+
+spark = <span class="cls">SparkSession</span>.builder \
+    .master(<span class="str">"local"</span>) \
+    .appName(<span class="str">"আমার প্রথম Spark"</span>) \
+    .getOrCreate()
+spark</code></pre>
+<pre data-lang="python"><code><span class="cm"># Cell 2: প্রথম RDD</span>
+rdd = sc.parallelize([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>])
+rdd = rdd.map(<span class="kw">lambda</span> x: x * <span class="num">2</span>)
+rdd.take(<span class="num">5</span>)  <span class="cm"># Output: [2, 4, 6, 8, 10]</span></code></pre>
+<pre data-lang="python"><code><span class="cm"># Cell 3: বন্ধ করো</span>
+sc.stop()</code></pre>
+<div class="callout note"><div class="callout-icon">✅</div><div class="callout-body"><p>Output-এ <code>[2, 4, 6, 8, 10]</code> দেখলে PySpark সফলভাবে কাজ করছে!</p></div></div>
+
+<div class="exercise">
+<div class="exercise-header"><div class="exercise-icon">🧪</div><div class="exercise-title">অনুশীলন ১.১ — SparkSession Factory (MLOps Best Practice)</div><span class="exercise-difficulty diff-medium">মাঝারি</span></div>
+<p>বাস্তব MLOps প্রজেক্টে SparkSession একটি utility function-এ রাখা হয়। <code>get_spark_session(app_name, master, log_level)</code> function তৈরি করো যা:</p>
+<ol><li>আগে থেকে session থাকলে সেটাই return করে (নতুন তৈরি করে না)</li><li>Executor memory 2GB সেট করে</li><li>Adaptive Query Execution চালু রাখে</li></ol>
+<details class="solution"><summary>💡 সমাধান দেখো</summary><div class="solution-body">
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">import</span> logging
+
+<span class="kw">def</span> <span class="fn">get_spark_session</span>(
+    app_name: str,
+    master: str = <span class="str">"local[*]"</span>,
+    log_level: str = <span class="str">"ERROR"</span>
+) -> SparkSession:
+    <span class="str">"""Configured SparkSession তৈরি অথবা বিদ্যমানটা return করো।"""</span>
+    existing = SparkSession.getActiveSession()
+    <span class="kw">if</span> existing <span class="kw">is not None</span>:
+        <span class="kw">return</span> existing
+    spark = (SparkSession.builder
+        .appName(app_name)
+        .master(master)
+        .config(<span class="str">"spark.executor.memory"</span>, <span class="str">"2g"</span>)
+        .config(<span class="str">"spark.driver.memory"</span>, <span class="str">"2g"</span>)
+        .config(<span class="str">"spark.sql.adaptive.enabled"</span>, <span class="str">"true"</span>)
+        .getOrCreate()
+    )
+    spark.sparkContext.setLogLevel(log_level)
+    <span class="kw">return</span> spark
+
+spark = get_spark_session(<span class="str">"PredictiveMaintenance-MLOps"</span>, <span class="str">"local[4]"</span>)
+<span class="fn">print</span>(<span class="str">f"Session: {spark.conf.get('spark.app.name')}"</span>)</code></pre>
+</div></details>
+</div>
+</div>
+</section>
+<!-- ===== CHAPTER 2 RDD ===== -->
+<section id="ch2" class="chapter">
+<div class="chapter-header"><div class="chapter-num">২</div><div><div class="chapter-title">Data Structures in Spark — RDD</div><div class="chapter-subtitle">Spark-এর সবচেয়ে মৌলিক data structure — বিতরণকৃত ডেটার ভিত্তি</div></div></div>
+
+<div id="s2-1" class="section">
+<h3 class="section-title">📦 RDD কী? — Resilient Distributed Dataset</h3>
+<div class="callout note"><div class="callout-icon">🧩</div><div class="callout-body"><p><strong>RDD-র পূর্ণ অর্থ:</strong><br><strong>R</strong>esilient — মজবুত (কোনো কম্পিউটার বিকল হলে নিজে ঠিক হয়)<br><strong>D</strong>istributed — বিতরণকৃত (অনেক কম্পিউটারে ছড়িয়ে আছে)<br><strong>D</strong>ataset — ডেটার সংগ্রহ</p></div></div>
+<p>RDD হলো Spark-এর <strong>সবচেয়ে মৌলিক data structure</strong>। Python-এর list-এর মতোই, কিন্তু <em>একটা নয় অনেক কম্পিউটারে ভাগ হয়ে থাকে</em>। ডেটার প্রতিটা অংশকে <strong>Partition (পার্টিশন)</strong> বলে।</p>
+
+<div class="diagram">
+<svg viewBox="0 0 680 270" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="arr3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#38bdf8"/></marker></defs>
+<text x="95" y="25" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="bold" font-family="Hind Siliguri,sans-serif">Python List</text>
+<rect x="25" y="32" width="140" height="200" rx="8" fill="#1f2937" stroke="#4b5563" stroke-width="1.5"/>
+<text x="95" y="65" text-anchor="middle" fill="#f97316" font-size="15" font-family="monospace" font-weight="bold">A</text>
+<text x="95" y="92" text-anchor="middle" fill="#f97316" font-size="15" font-family="monospace" font-weight="bold">B</text>
+<text x="95" y="119" text-anchor="middle" fill="#f97316" font-size="15" font-family="monospace" font-weight="bold">C</text>
+<text x="95" y="146" text-anchor="middle" fill="#f97316" font-size="15" font-family="monospace" font-weight="bold">D</text>
+<text x="95" y="173" text-anchor="middle" fill="#f97316" font-size="15" font-family="monospace" font-weight="bold">E</text>
+<text x="95" y="200" text-anchor="middle" fill="#f97316" font-size="15" font-family="monospace" font-weight="bold">F</text>
+<text x="95" y="227" text-anchor="middle" fill="#f97316" font-size="15" font-family="monospace" font-weight="bold">G</text>
+<text x="183" y="132" fill="#38bdf8" font-size="22" font-family="monospace">→</text>
+<text x="176" y="150" fill="#94a3b8" font-size="9" font-family="Hind Siliguri,sans-serif">parallelize()</text>
+<text x="420" y="25" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="bold" font-family="Hind Siliguri,sans-serif">RDD (Distributed)</text>
+<rect x="215" y="35" width="135" height="130" rx="8" fill="#0a1628" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="282" y="56" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold" font-family="Hind Siliguri,sans-serif">Executor 1</text>
+<rect x="232" y="64" width="84" height="28" rx="5" fill="#38bdf8" fill-opacity=".12" stroke="#38bdf8" stroke-width="1"/><text x="274" y="83" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="monospace">A, B, C</text>
+<text x="274" y="103" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Hind Siliguri,sans-serif">Partition 1</text>
+<rect x="232" y="112" width="84" height="28" rx="5" fill="#38bdf8" fill-opacity=".07" stroke="#38bdf8" stroke-width="1"/><text x="274" y="131" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="monospace">D, E</text>
+<text x="274" y="151" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Hind Siliguri,sans-serif">Partition 2</text>
+<rect x="375" y="35" width="135" height="130" rx="8" fill="#0a1628" stroke="#34d399" stroke-width="1.5"/>
+<text x="442" y="56" text-anchor="middle" fill="#34d399" font-size="11" font-weight="bold" font-family="Hind Siliguri,sans-serif">Executor 2</text>
+<rect x="393" y="64" width="84" height="28" rx="5" fill="#34d399" fill-opacity=".12" stroke="#34d399" stroke-width="1"/><text x="435" y="83" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="monospace">F, G</text>
+<text x="435" y="103" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Hind Siliguri,sans-serif">Partition 3</text>
+<line x1="170" y1="95" x2="212" y2="88" stroke="#38bdf8" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr3)"/>
+<line x1="170" y1="120" x2="212" y2="120" stroke="#38bdf8" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr3)"/>
+<line x1="170" y1="150" x2="372" y2="95" stroke="#34d399" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr3)"/>
+<line x1="170" y1="175" x2="372" y2="110" stroke="#34d399" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr3)"/>
+<rect x="215" y="195" width="295" height="55" rx="8" fill="#1f2937" stroke="#4b5563" stroke-width="1"/>
+<text x="362" y="218" text-anchor="middle" fill="#fbbf24" font-size="11" font-weight="bold" font-family="Hind Siliguri,sans-serif">🔑 মূল বিষয়</text>
+<text x="362" y="237" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Hind Siliguri,sans-serif">ডেটা অনেক কম্পিউটারে ভাগ → একসাথে প্রসেস → দ্রুত!</text>
+</svg>
+<div class="diagram-caption">চিত্র ২.১ — Python List থেকে RDD: ডেটা কীভাবে ভাগ হয়</div>
+</div>
+
+<pre data-lang="python"><code><span class="kw">from</span> pyspark <span class="kw">import</span> SparkContext, SparkConf
+
+conf = <span class="cls">SparkConf</span>().setAppName(<span class="str">"RDD শিক্ষা"</span>).setMaster(<span class="str">"local[*]"</span>)
+sc = <span class="cls">SparkContext</span>(conf=conf)
+
+<span class="cm"># পদ্ধতি ১: List থেকে RDD</span>
+rdd1 = sc.parallelize([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>])
+
+<span class="cm"># পদ্ধতি ২: Range থেকে, নির্দিষ্ট Partition সংখ্যায়</span>
+rdd2 = sc.parallelize(<span class="fn">range</span>(<span class="num">50</span>), <span class="num">3</span>)   <span class="cm"># 50টা সংখ্যা, 3 partition-এ</span>
+
+<span class="cm"># পদ্ধতি ৩: ফাইল থেকে RDD</span>
+rdd3 = sc.textFile(<span class="str">"data.txt"</span>)
+
+<span class="cm"># Partition সংখ্যা</span>
+<span class="fn">print</span>(rdd2.getNumPartitions())  <span class="cm"># 3</span>
+
+<span class="cm"># ডেটা দেখো (সব ডেটা Driver-এ আনে — বড় ডেটায় বিপদজনক!)</span>
+<span class="fn">print</span>(rdd1.collect())          <span class="cm"># [1, 2, 3, 4, 5]</span>
+
+<span class="cm"># নিরাপদ পদ্ধতি — প্রথম কয়েকটা দেখো</span>
+<span class="fn">print</span>(rdd2.take(<span class="num">5</span>))            <span class="cm"># [0, 1, 2, 3, 4]</span>
+
+<span class="cm"># Partition অনুযায়ী ডেটা দেখো</span>
+<span class="fn">print</span>(rdd2.glom().collect())   <span class="cm"># [[0..15], [16..32], [33..49]]</span></code></pre>
+
+<div class="callout warn"><div class="callout-icon">⚠️</div><div class="callout-body"><p><strong>collect() সতর্কতা:</strong> collect() সব ডেটা Driver machine-এ নিয়ে আসে। ১ কোটি রেকর্ডের ডেটায় Driver-এর RAM ফুরিয়ে যাবে। সবসময় <code>take(n)</code> ব্যবহার করো।</p></div></div>
+</div>
+
+<div id="s2-2" class="section">
+<h3 class="section-title">🗺️ MapReduce — Spark-এর হিসাব করার পদ্ধতি</h3>
+<div class="callout note"><div class="callout-icon">🍕</div><div class="callout-body"><p><strong>সহজ উপমা:</strong> ৩টা পিৎজার দোকান, প্রতিটায় আলাদা রাঁধুনি।<br><strong>Map Phase:</strong> প্রতিটা রাঁধুনি তার নিজের পিৎজা কাটে (একই কাজ আলাদাভাবে)।<br><strong>Reduce Phase:</strong> সব পিৎজার টুকরো গুনে মোট বের করে।</p></div></div>
+
+<div class="diagram">
+<svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+<text x="340" y="20" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">Map Phase: f(x) = x × 2 — সব Executor একসাথে</text>
+<rect x="15" y="32" width="160" height="140" rx="8" fill="#0a1628" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="95" y="52" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold" font-family="Hind Siliguri,sans-serif">Executor 1</text>
+<text x="95" y="72" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="monospace">A → f(A)</text>
+<text x="95" y="93" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="monospace">B → f(B)</text>
+<text x="95" y="114" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="monospace">C → f(C)</text>
+<text x="95" y="155" text-anchor="middle" fill="#34d399" font-size="9" font-family="Hind Siliguri,sans-serif">একই সময়ে ↓</text>
+<rect x="260" y="32" width="160" height="140" rx="8" fill="#0a1628" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="340" y="52" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold" font-family="Hind Siliguri,sans-serif">Executor 2</text>
+<text x="340" y="72" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="monospace">D → f(D)</text>
+<text x="340" y="93" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="monospace">E → f(E)</text>
+<text x="340" y="114" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="monospace">F → f(F)</text>
+<text x="340" y="155" text-anchor="middle" fill="#34d399" font-size="9" font-family="Hind Siliguri,sans-serif">একই সময়ে ↓</text>
+<rect x="505" y="32" width="160" height="140" rx="8" fill="#0a1628" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="585" y="52" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold" font-family="Hind Siliguri,sans-serif">Executor 3</text>
+<text x="585" y="72" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="monospace">G → f(G)</text>
+<text x="585" y="93" text-anchor="middle" fill="#e2e8f0" font-size="11" font-family="monospace">H → f(H)</text>
+<text x="585" y="155" text-anchor="middle" fill="#34d399" font-size="9" font-family="Hind Siliguri,sans-serif">একই সময়ে ↓</text>
+<text x="340" y="190" text-anchor="middle" fill="#fbbf24" font-size="11" font-family="Hind Siliguri,sans-serif">⚡ সব Executor একসাথে কাজ করে → ৩x দ্রুত!</text>
+</svg>
+<div class="diagram-caption">চিত্র ২.২ — Map Phase: সব Executor একসাথে কাজ করে</div>
+</div>
+
+<pre data-lang="python"><code><span class="cm"># ── map: প্রতিটা element-এ function চালাও ──</span>
+rdd = sc.parallelize([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>])
+squared = rdd.map(<span class="kw">lambda</span> x: x ** <span class="num">2</span>)
+<span class="fn">print</span>(squared.collect())  <span class="cm"># [1, 4, 9, 16, 25]</span>
+
+<span class="cm"># ── flatMap: function list return করলে সেটা সমতল করো ──</span>
+rdd2 = sc.parallelize([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+<span class="cm"># map দিয়ে: [[1, 2], [2, 4], [3, 6]] — list of lists</span>
+<span class="fn">print</span>(rdd2.map(<span class="kw">lambda</span> x: [x, x*<span class="num">2</span>]).collect())
+<span class="cm"># flatMap দিয়ে: [1, 2, 2, 4, 3, 6] — একটা flat list</span>
+<span class="fn">print</span>(rdd2.flatMap(<span class="kw">lambda</span> x: [x, x*<span class="num">2</span>]).collect())
+
+<span class="cm"># ── mapPartitions: পুরো partition-এ function চালাও ──</span>
+rdd3 = sc.parallelize(<span class="fn">range</span>(<span class="num">9</span>), <span class="num">3</span>)
+
+<span class="kw">def</span> <span class="fn">partition_sum</span>(partition):
+    <span class="kw">return</span> [<span class="fn">sum</span>(partition)]
+
+<span class="fn">print</span>(rdd3.mapPartitions(partition_sum).collect())
+<span class="cm"># partition 0:[0,1,2]→3, partition 1:[3,4,5]→12, partition 2:[6,7,8]→21</span>
+<span class="cm"># Output: [3, 12, 21]</span>
+
+<span class="cm"># ── mapValues / flatMapValues (PairRDD-তে) ──</span>
+pair_rdd = sc.parallelize([(<span class="str">"a"</span>, <span class="num">1</span>), (<span class="str">"b"</span>, <span class="num">2</span>), (<span class="str">"c"</span>, <span class="num">3</span>)])
+<span class="fn">print</span>(pair_rdd.mapValues(<span class="kw">lambda</span> x: x * <span class="num">2</span>).collect())
+<span class="cm"># [('a', 2), ('b', 4), ('c', 6)]</span>
+
+<span class="cm"># ── reduce: পুরো RDD একটা value-তে পরিণত করো ──</span>
+rdd_nums = sc.parallelize(<span class="fn">range</span>(<span class="num">10</span>))
+total = rdd_nums.reduce(<span class="kw">lambda</span> x, y: x + y)
+<span class="fn">print</span>(total)  <span class="cm"># 45</span>
+
+<span class="cm"># ── reduceByKey: key অনুযায়ী reduce ──</span>
+fruit_rdd = sc.parallelize([
+    (<span class="str">"আম"</span>, <span class="num">3</span>), (<span class="str">"কলা"</span>, <span class="num">5</span>), (<span class="str">"আম"</span>, <span class="num">2</span>), (<span class="str">"কলা"</span>, <span class="num">1</span>)
+])
+result = fruit_rdd.reduceByKey(<span class="kw">lambda</span> x, y: x + y)
+<span class="fn">print</span>(result.collect())  <span class="cm"># [('আম', 5), ('কলা', 6)]</span></code></pre>
+
+<div class="callout note"><div class="callout-icon">📐</div><div class="callout-body"><p><strong>Reduce function-এর নিয়ম:</strong> অবশ্যই <strong>commutative</strong> (f(a,b)=f(b,a)) ও <strong>associative</strong> (f(f(a,b),c)=f(a,f(b,c))) হতে হবে। যোগ (+) ও গুণ (×) এই শর্ত পূরণ করে। বিয়োগ (-) ও ভাগ (÷) করে না।</p></div></div>
+</div>
+
+<div id="s2-3" class="section">
+<h3 class="section-title">⚡ Transformations বনাম Actions</h3>
+<div class="callout note"><div class="callout-icon">💡</div><div class="callout-body"><p><strong>Lazy Evaluation:</strong> Spark Transformations সাথে সাথে চালায় না। "পরিকল্পনা" লিখে রাখে। Action দেখলে তবেই সব কাজ করে।<br><strong>উপমা:</strong> রেসিপি লেখা (Transformation) বনাম আসলে রান্না করা (Action)।</p></div></div>
+
+<div class="table-wrap"><table>
+<thead><tr><th>বৈশিষ্ট্য</th><th>Transformation</th><th>Action</th></tr></thead>
+<tbody>
+<tr><td>কখন চলে?</td><td>Action দেখলে (Lazy)</td><td>সাথে সাথে (Eager)</td></tr>
+<tr><td>কী return করে?</td><td>নতুন RDD</td><td>Value বা ডেটা Driver-এ</td></tr>
+<tr><td>উদাহরণ</td><td>map, filter, flatMap, reduceByKey</td><td>collect, count, take, reduce, save</td></tr>
+</tbody>
+</table></div>
+
+<h4 class="sub-title">Narrow vs Wide Transformations</h4>
+<div class="diagram">
+<svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg">
+<text x="170" y="20" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">Narrow Transformation</text>
+<text x="170" y="36" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Hind Siliguri,sans-serif">এক partition → এক partition (দ্রুত)</text>
+<rect x="22" y="48" width="78" height="46" rx="6" fill="#34d399" fill-opacity=".15" stroke="#34d399" stroke-width="1.5"/><text x="61" y="76" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 1</text>
+<rect x="22" y="106" width="78" height="46" rx="6" fill="#34d399" fill-opacity=".1" stroke="#34d399" stroke-width="1.5"/><text x="61" y="134" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 2</text>
+<rect x="22" y="164" width="78" height="46" rx="6" fill="#34d399" fill-opacity=".07" stroke="#34d399" stroke-width="1.5"/><text x="61" y="192" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 3</text>
+<text x="118" y="74" fill="#34d399" font-size="18" font-family="monospace">→</text>
+<text x="118" y="132" fill="#34d399" font-size="18" font-family="monospace">→</text>
+<text x="118" y="190" fill="#34d399" font-size="18" font-family="monospace">→</text>
+<text x="116" y="82" fill="#94a3b8" font-size="8" font-family="Hind Siliguri,sans-serif">map()</text>
+<rect x="148" y="48" width="78" height="46" rx="6" fill="#34d399" fill-opacity=".15" stroke="#34d399" stroke-width="1.5"/><text x="187" y="76" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 1</text>
+<rect x="148" y="106" width="78" height="46" rx="6" fill="#34d399" fill-opacity=".1" stroke="#34d399" stroke-width="1.5"/><text x="187" y="134" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 2</text>
+<rect x="148" y="164" width="78" height="46" rx="6" fill="#34d399" fill-opacity=".07" stroke="#34d399" stroke-width="1.5"/><text x="187" y="192" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 3</text>
+<text x="170" y="218" text-anchor="middle" fill="#34d399" font-size="10" font-family="Hind Siliguri,sans-serif">✅ দ্রুত, কম খরচ</text>
+<text x="510" y="20" text-anchor="middle" fill="#f87171" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">Wide Transformation (Shuffle)</text>
+<text x="510" y="36" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="Hind Siliguri,sans-serif">ডেটা অদল-বদল হয় — network transfer</text>
+<rect x="352" y="48" width="78" height="46" rx="6" fill="#f87171" fill-opacity=".15" stroke="#f87171" stroke-width="1.5"/><text x="391" y="76" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 1</text>
+<rect x="352" y="106" width="78" height="46" rx="6" fill="#f87171" fill-opacity=".1" stroke="#f87171" stroke-width="1.5"/><text x="391" y="134" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 2</text>
+<rect x="352" y="164" width="78" height="46" rx="6" fill="#f87171" fill-opacity=".07" stroke="#f87171" stroke-width="1.5"/><text x="391" y="192" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 3</text>
+<line x1="432" y1="71" x2="588" y2="71" stroke="#f87171" stroke-width="1" opacity=".8"/>
+<line x1="432" y1="71" x2="588" y2="129" stroke="#f87171" stroke-width="1" opacity=".4"/>
+<line x1="432" y1="129" x2="588" y2="71" stroke="#f87171" stroke-width="1" opacity=".4"/>
+<line x1="432" y1="129" x2="588" y2="129" stroke="#f87171" stroke-width="1" opacity=".8"/>
+<line x1="432" y1="187" x2="588" y2="187" stroke="#f87171" stroke-width="1" opacity=".8"/>
+<line x1="432" y1="129" x2="588" y2="187" stroke="#f87171" stroke-width="1" opacity=".3"/>
+<text x="508" y="90" text-anchor="middle" fill="#f87171" font-size="9" font-family="Hind Siliguri,sans-serif">Shuffle!</text>
+<rect x="590" y="48" width="78" height="46" rx="6" fill="#f87171" fill-opacity=".15" stroke="#f87171" stroke-width="1.5"/><text x="629" y="76" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 1</text>
+<rect x="590" y="106" width="78" height="46" rx="6" fill="#f87171" fill-opacity=".1" stroke="#f87171" stroke-width="1.5"/><text x="629" y="134" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 2</text>
+<rect x="590" y="164" width="78" height="46" rx="6" fill="#f87171" fill-opacity=".07" stroke="#f87171" stroke-width="1.5"/><text x="629" y="192" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">Partition 3</text>
+<text x="510" y="218" text-anchor="middle" fill="#f87171" font-size="10" font-family="Hind Siliguri,sans-serif">⚠️ ধীর, বেশি network ব্যবহার</text>
+</svg>
+<div class="diagram-caption">চিত্র ২.৩ — Narrow vs Wide Transformation</div>
+</div>
+
+<div class="table-wrap"><table>
+<thead><tr><th>ধরন</th><th>Method</th><th>কাজ</th></tr></thead>
+<tbody>
+<tr><td rowspan="4" style="color:var(--green);font-weight:700">Narrow</td><td><code>map(f)</code></td><td>প্রতিটা element-এ f চালাও</td></tr>
+<tr><td><code>flatMap(f)</code></td><td>f চালাও ও result সমতল করো</td></tr>
+<tr><td><code>mapPartitions(f)</code></td><td>প্রতিটা partition-এ f চালাও</td></tr>
+<tr><td><code>filter(f)</code></td><td>f True হলে রাখো</td></tr>
+<tr><td rowspan="5" style="color:var(--red);font-weight:700">Wide</td><td><code>reduceByKey(f)</code></td><td>key অনুযায়ী reduce</td></tr>
+<tr><td><code>groupByKey()</code></td><td>key অনুযায়ী গ্রুপ</td></tr>
+<tr><td><code>sortByKey()</code></td><td>key অনুযায়ী sort</td></tr>
+<tr><td><code>distinct()</code></td><td>unique elements</td></tr>
+<tr><td><code>join(rdd2)</code></td><td>দুটো RDD join</td></tr>
+<tr><td rowspan="5" style="color:var(--accent);font-weight:700">Actions</td><td><code>collect()</code></td><td>সব ডেটা Driver-এ আনো</td></tr>
+<tr><td><code>take(n)</code></td><td>প্রথম n টা</td></tr>
+<tr><td><code>count()</code></td><td>মোট সংখ্যা</td></tr>
+<tr><td><code>reduce(f)</code></td><td>সব reduce</td></tr>
+<tr><td><code>saveAsTextFile(path)</code></td><td>ফাইলে সংরক্ষণ</td></tr>
+</tbody>
+</table></div>
+</div>
+
+<div id="s2-4" class="section">
+<h3 class="section-title">🔗 Shared Variables — Accumulator ও Broadcast</h3>
+<div class="callout warn"><div class="callout-icon">⚠️</div><div class="callout-body"><p><strong>সমস্যা:</strong> Cluster-এ কাজ করার সময় Driver-এর variable আর Executor-এর variable আলাদা! সাধারণ Python variable Executor-এ পরিবর্তন করলে Driver জানে না।</p></div></div>
+<pre data-lang="python"><code><span class="cm"># ❌ এটা কাজ করে না!</span>
+count = <span class="num">0</span>
+rdd = sc.parallelize([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+rdd.foreach(<span class="kw">lambda</span> x: <span class="kw">None</span>)  <span class="cm"># count কখনো বদলাবে না Driver-এ</span>
+<span class="fn">print</span>(count)  <span class="cm"># 0 — Executor-এ চেঞ্জ হয়, Driver-এ না</span>
+
+<span class="cm"># ✅ Accumulator: Executor থেকে Driver-এ মান পাঠাও</span>
+count = sc.accumulator(<span class="num">0</span>)
+
+<span class="kw">def</span> <span class="fn">add_count</span>(x):
+    count.add(x)
+
+rdd = sc.parallelize([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>])
+rdd.foreach(add_count)
+<span class="fn">print</span>(count.value)  <span class="cm"># 15</span>
+
+<span class="cm"># ✅ Broadcast: বড় ডেটা একবার সব Executor-এ পাঠাও</span>
+<span class="cm"># যেমন: বড় lookup table, model weights</span>
+lookup = {<span class="str">"BDT"</span>: <span class="num">120</span>, <span class="str">"USD"</span>: <span class="num">1</span>, <span class="str">"EUR"</span>: <span class="num">1.08</span>}
+bc_lookup = sc.broadcast(lookup)
+
+currencies = sc.parallelize([(<span class="str">"BDT"</span>, <span class="num">1000</span>), (<span class="str">"USD"</span>, <span class="num">50</span>)])
+in_usd = currencies.map(
+    <span class="kw">lambda</span> x: (x[<span class="num">0</span>], x[<span class="num">1</span>] / bc_lookup.value[x[<span class="num">0</span>]])
+)
+<span class="fn">print</span>(in_usd.collect())</code></pre>
+</div>
+
+<div id="s2-5" class="section">
+<h3 class="section-title">💪 হাতে-কলমে অনুশীলন — Word Count (ক্লাসিক)</h3>
+<pre data-lang="python"><code><span class="cm"># Shakespeare-এর সম্পূর্ণ রচনায় শব্দ গণনা</span>
+rdd = sc.textFile(<span class="str">"shakespeare.txt"</span>)
+
+<span class="cm"># ধাপ ১: পরিষ্কার করো ও শব্দে ভাগ করো</span>
+words = rdd.flatMap(<span class="kw">lambda</span> line: line.replace(<span class="str">"'"</span>, <span class="str">" "</span>).lower().split())
+
+<span class="cm"># ধাপ ২: ছোট শব্দ সরাও</span>
+words_clean = words.filter(<span class="kw">lambda</span> w: <span class="fn">len</span>(w) > <span class="num">1</span>)
+
+<span class="cm"># ধাপ ৩: (শব্দ, 1) tuple তৈরি</span>
+pairs = words_clean.map(<span class="kw">lambda</span> w: (w, <span class="num">1</span>))
+
+<span class="cm"># ধাপ ৪: একই শব্দের count যোগ করো</span>
+counts = pairs.reduceByKey(<span class="kw">lambda</span> x, y: x + y)
+
+<span class="cm"># ধাপ ৫: সবচেয়ে বেশি ব্যবহৃত ১০টা শব্দ</span>
+top10 = counts.sortBy(<span class="kw">lambda</span> x: x[<span class="num">1</span>], ascending=<span class="kw">False</span>).take(<span class="num">10</span>)
+<span class="fn">print</span>(top10)</code></pre>
+
+<div class="exercise">
+<div class="exercise-header"><div class="exercise-icon">💼</div><div class="exercise-title">অনুশীলন ২.১ — MLOps Log Analysis</div><span class="exercise-difficulty diff-hard">কঠিন</span></div>
+<p>Application log বিশ্লেষণ করো (বাস্তব MLOps কাজ):</p>
+<pre data-lang="python"><code>logs = [
+    <span class="str">"2024-01-15 ERROR Model prediction failed: timeout"</span>,
+    <span class="str">"2024-01-15 INFO Model loaded successfully"</span>,
+    <span class="str">"2024-01-15 ERROR Data validation failed: null values"</span>,
+    <span class="str">"2024-01-15 WARN Memory usage 85%"</span>,
+    <span class="str">"2024-01-15 ERROR Model prediction failed: memory"</span>,
+    <span class="str">"2024-01-15 INFO Prediction completed in 234ms"</span>,
+]</code></pre>
+<ol><li>প্রতিটা log level (ERROR, WARN, INFO) কতবার আছে</li><li>ERROR log-গুলো দেখাও</li><li>"Model prediction failed" কতবার?</li></ol>
+<details class="solution"><summary>💡 সমাধান দেখো</summary><div class="solution-body">
+<pre data-lang="python"><code>logs_rdd = sc.parallelize(logs)
+
+<span class="cm"># ১. Level count</span>
+level_counts = (logs_rdd
+    .map(<span class="kw">lambda</span> line: (line.split()[<span class="num">1</span>], <span class="num">1</span>))
+    .reduceByKey(<span class="kw">lambda</span> x, y: x + y)
+    .sortBy(<span class="kw">lambda</span> x: x[<span class="num">1</span>], ascending=<span class="kw">False</span>)
+)
+<span class="fn">print</span>(level_counts.collect())
+
+<span class="cm"># ২. ERROR logs</span>
+errors = logs_rdd.filter(<span class="kw">lambda</span> l: <span class="str">"ERROR"</span> <span class="kw">in</span> l)
+<span class="kw">for</span> e <span class="kw">in</span> errors.collect(): <span class="fn">print</span>(e)
+
+<span class="cm"># ৩. নির্দিষ্ট error count</span>
+pred_fail = logs_rdd.filter(<span class="kw">lambda</span> l: <span class="str">"Model prediction failed"</span> <span class="kw">in</span> l).count()
+<span class="fn">print</span>(<span class="str">f"Prediction failures: {pred_fail}"</span>)</code></pre>
+</div></details>
+</div>
+</div>
+</section>
+<!-- ===== CHAPTER 3 DATAFRAME ===== -->
+<section id="ch3" class="chapter">
+<div class="chapter-header"><div class="chapter-num">৩</div><div><div class="chapter-title">SparkSQL — DataFrame ও Data Manipulation</div><div class="chapter-subtitle">Pandas-এর মতোই কিন্তু distributed — বড় ডেটার টেবিল অপারেশন</div></div></div>
+
+<div id="s3-1" class="section">
+<h3 class="section-title">📊 DataFrame কী এবং কেন?</h3>
+<p>RDD শক্তিশালী কিন্তু কঠিন। Column নাম নেই, SQL নেই, optimization কম। তাই Spark তৈরি করল <strong>DataFrame</strong> — Pandas-এর মতো দেখতে কিন্তু বিতরণকৃত।</p>
+<div class="callout note"><div class="callout-icon">🗃️</div><div class="callout-body"><p><strong>DataFrame = RDD + Schema।</strong> Schema মানে প্রতিটা column-এর নাম, type (int, string), এবং null আসতে পারবে কি না।</p></div></div>
+<p>DataFrame-এর সুবিধা:</p>
+<ul>
+<li>Column নাম আছে — <code>df["age"]</code> দিয়ে access</li>
+<li><strong>Catalyst Optimizer</strong> — Spark নিজেই query optimize করে</li>
+<li><strong>SQL Support</strong> — সাধারণ SQL চালানো যায়</li>
+<li>RDD-এর চেয়ে সাধারণত ৫-১০x দ্রুত</li>
+</ul>
+</div>
+
+<div id="s3-2" class="section">
+<h3 class="section-title">🔧 Schema ও DataFrame তৈরি</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Spark Type</th><th>Python</th><th>ব্যবহার</th><th>মেমরি</th></tr></thead>
+<tbody>
+<tr><td><code>IntegerType()</code></td><td>int</td><td>সাধারণ পূর্ণসংখ্যা (±2 বিলিয়ন)</td><td>4 bytes</td></tr>
+<tr><td><code>LongType()</code></td><td>int</td><td>বড় পূর্ণসংখ্যা</td><td>8 bytes</td></tr>
+<tr><td><code>FloatType()</code></td><td>float</td><td>দশমিক (কম নির্ভুল)</td><td>4 bytes</td></tr>
+<tr><td><code>DoubleType()</code></td><td>float</td><td>দশমিক (বেশি নির্ভুল)</td><td>8 bytes</td></tr>
+<tr><td><code>StringType()</code></td><td>str</td><td>টেক্সট</td><td>variable</td></tr>
+<tr><td><code>BooleanType()</code></td><td>bool</td><td>True/False</td><td>1 byte</td></tr>
+<tr><td><code>DateType()</code></td><td>datetime.date</td><td>তারিখ</td><td>4 bytes</td></tr>
+<tr><td><code>TimestampType()</code></td><td>datetime.datetime</td><td>তারিখ+সময়</td><td>8 bytes</td></tr>
+<tr><td><code>ArrayType(T)</code></td><td>list</td><td>একটা column-এ list</td><td>variable</td></tr>
+</tbody>
+</table></div>
+
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql.types <span class="kw">import</span> *
+
+spark = <span class="cls">SparkSession</span>.builder.appName(<span class="str">"DF শিক্ষা"</span>).master(<span class="str">"local"</span>).getOrCreate()
+
+<span class="cm"># Schema তৈরি</span>
+schema = <span class="cls">StructType</span>([
+    <span class="cls">StructField</span>(<span class="str">"id"</span>,   <span class="cls">IntegerType</span>(), <span class="kw">False</span>),  <span class="cm"># nullable=False</span>
+    <span class="cls">StructField</span>(<span class="str">"নাম"</span>,  <span class="cls">StringType</span>(),  <span class="kw">True</span>),
+    <span class="cls">StructField</span>(<span class="str">"বয়স"</span>, <span class="cls">IntegerType</span>(), <span class="kw">True</span>),
+    <span class="cls">StructField</span>(<span class="str">"শহর"</span>, <span class="cls">StringType</span>(),  <span class="kw">True</span>),
+    <span class="cls">StructField</span>(<span class="str">"বেতন"</span>,<span class="cls">DoubleType</span>(),  <span class="kw">True</span>),
+])
+
+data = [
+    (<span class="num">1</span>, <span class="str">"রাহেলা"</span>,  <span class="num">28</span>, <span class="str">"ঢাকা"</span>,       <span class="num">50000.0</span>),
+    (<span class="num">2</span>, <span class="str">"করিম"</span>,    <span class="num">35</span>, <span class="str">"চট্টগ্রাম"</span>,  <span class="num">75000.0</span>),
+    (<span class="num">3</span>, <span class="str">"সুমাইয়া"</span>, <span class="num">22</span>, <span class="str">"সিলেট"</span>,     <span class="num">40000.0</span>),
+    (<span class="num">4</span>, <span class="str">"জাবের"</span>,   <span class="num">42</span>, <span class="str">"ঢাকা"</span>,       <span class="num">90000.0</span>),
+    (<span class="num">5</span>, <span class="str">"নাফিসা"</span>,  <span class="num">30</span>, <span class="str">"রাজশাহী"</span>,   <span class="num">55000.0</span>),
+]
+
+df = spark.createDataFrame(data, schema)
+df.printSchema()  <span class="cm"># structure দেখাও</span>
+df.show()         <span class="cm"># data দেখাও</span></code></pre>
+</div>
+
+<div id="s3-3" class="section">
+<h3 class="section-title">📂 ফাইল পড়া ও লেখা</h3>
+<pre data-lang="python"><code><span class="cm"># ── CSV পড়া ──</span>
+df = spark.read \
+    .option(<span class="str">"header"</span>, <span class="kw">True</span>) \       <span class="cm"># প্রথম লাইন = column নাম</span>
+    .option(<span class="str">"inferSchema"</span>, <span class="kw">True</span>) \ <span class="cm"># type নিজেই বুঝুক</span>
+    .option(<span class="str">"delimiter"</span>, <span class="str">","</span>) \    <span class="cm"># separator</span>
+    .csv(<span class="str">"data.csv"</span>)
+
+<span class="cm"># নিজের schema দিয়ে (best practice)</span>
+my_schema = <span class="cls">StructType</span>([
+    <span class="cls">StructField</span>(<span class="str">"name"</span>,   <span class="cls">StringType</span>()),
+    <span class="cls">StructField</span>(<span class="str">"age"</span>,    <span class="cls">IntegerType</span>()),
+    <span class="cls">StructField</span>(<span class="str">"salary"</span>, <span class="cls">DoubleType</span>()),
+])
+df2 = spark.read.schema(my_schema).option(<span class="str">"header"</span>, <span class="kw">True</span>).csv(<span class="str">"data.csv"</span>)
+
+<span class="cm"># JSON পড়া</span>
+df_json = spark.read.option(<span class="str">"multiLine"</span>, <span class="kw">True</span>).json(<span class="str">"data.json"</span>)
+
+<span class="cm"># Parquet — Big Data-তে সেরা format (column-based, compressed)</span>
+df_parquet = spark.read.parquet(<span class="str">"data.parquet"</span>)
+
+<span class="cm"># ── ফাইল লেখা ──</span>
+df.write.mode(<span class="str">"overwrite"</span>).option(<span class="str">"header"</span>, <span class="kw">True</span>).csv(<span class="str">"output/"</span>)
+df.write.mode(<span class="str">"overwrite"</span>).parquet(<span class="str">"output.parquet"</span>)
+<span class="cm"># mode: "overwrite", "append", "error" (default), "ignore"</span></code></pre>
+</div>
+
+<div id="s3-4" class="section">
+<h3 class="section-title">🔨 Column ও Row Manipulation</h3>
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> *
+
+<span class="cm"># ── Column নির্বাচন (তিনটা পদ্ধতি) ──</span>
+df.select(<span class="str">"নাম"</span>).show()
+df.select(df[<span class="str">"নাম"</span>]).show()
+df.select(col(<span class="str">"নাম"</span>)).show()
+
+<span class="cm"># Calculation সহ</span>
+df.select(<span class="str">"নাম"</span>, (col(<span class="str">"বেতন"</span>) * <span class="num">12</span>).alias(<span class="str">"বার্ষিক_বেতন"</span>)).show()
+
+<span class="cm"># ── নতুন Column যোগ ──</span>
+df = df.withColumn(<span class="str">"বার্ষিক_বেতন"</span>, col(<span class="str">"বেতন"</span>) * <span class="num">12</span>)
+
+<span class="cm"># ── Column rename ──</span>
+df = df.withColumnRenamed(<span class="str">"বেতন"</span>, <span class="str">"মাসিক_বেতন"</span>)
+
+<span class="cm"># ── Column মুছো ──</span>
+df = df.drop(<span class="str">"id"</span>)
+
+<span class="cm"># ── Row filter ──</span>
+df.filter(col(<span class="str">"শহর"</span>) == <span class="str">"ঢাকা"</span>).show()
+df.filter((col(<span class="str">"বয়স"</span>) > <span class="num">30</span>) & (col(<span class="str">"মাসিক_বেতন"</span>) > <span class="num">60000</span>)).show()
+
+<span class="cm"># ── Sort ──</span>
+df.orderBy(<span class="str">"বয়স"</span>).show()
+df.orderBy(col(<span class="str">"মাসিক_বেতন"</span>).desc()).show()
+
+<span class="cm"># ── when/otherwise: if/elif/else ──</span>
+df = df.withColumn(<span class="str">"বেতন_স্তর"</span>,
+    when(col(<span class="str">"মাসিক_বেতন"</span>) >= <span class="num">80000</span>, <span class="str">"উচ্চ"</span>)
+    .when(col(<span class="str">"মাসিক_বেতন"</span>) >= <span class="num">50000</span>, <span class="str">"মধ্যম"</span>)
+    .otherwise(<span class="str">"নিম্ন"</span>)
+)
+df.show()
+
+<span class="cm"># ── Statistics ──</span>
+df.describe([<span class="str">"বয়স"</span>, <span class="str">"মাসিক_বেতন"</span>]).show()
+df.summary().show()  <span class="cm"># quartiles সহ</span>
+<span class="fn">print</span>(df.count())     <span class="cm"># মোট row</span>
+
+<span class="cm"># ── Sample ──</span>
+df_sample = df.sample(<span class="kw">True</span>, <span class="num">0.3</span>, seed=<span class="num">42</span>)  <span class="cm"># ৩০%</span></code></pre>
+</div>
+
+<div id="s3-5" class="section">
+<h3 class="section-title">🧹 Missing Values Handle করা</h3>
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, isnan, isnull, count, when, mean
+
+<span class="cm"># ── Missing value গণনা ──</span>
+<span class="kw">def</span> <span class="fn">count_missing</span>(df):
+    <span class="kw">return</span> df.select([
+        count(when(isnull(c) | isnan(c), c)).alias(c)
+        <span class="kw">for</span> c <span class="kw">in</span> df.columns
+    ])
+
+count_missing(df).show()
+
+<span class="cm"># ── Duplicate সরাও ──</span>
+df.distinct().count()                     <span class="cm"># unique row সংখ্যা</span>
+df.dropDuplicates([<span class="str">"নাম"</span>]).show()       <span class="cm"># নাম অনুযায়ী unique</span>
+
+<span class="cm"># ── Row সরাও ──</span>
+df.dropna(how=<span class="str">"any"</span>).show()             <span class="cm"># কোনো null হলে</span>
+df.dropna(how=<span class="str">"all"</span>).show()             <span class="cm"># সব null হলে</span>
+df.dropna(subset=[<span class="str">"বয়স"</span>, <span class="str">"মাসিক_বেতন"</span>]).show()  <span class="cm"># নির্দিষ্ট column</span>
+
+<span class="cm"># ── Missing value পূরণ ──</span>
+df.fillna(<span class="num">0</span>).show()
+df.fillna({<span class="str">"বয়স"</span>: <span class="num">25</span>, <span class="str">"শহর"</span>: <span class="str">"অজানা"</span>}).show()
+
+<span class="cm"># গড় দিয়ে পূরণ</span>
+mean_salary = df.select(mean(col(<span class="str">"মাসিক_বেতন"</span>))).collect()[<span class="num">0</span>][<span class="num">0</span>]
+df = df.fillna({<span class="str">"মাসিক_বেতন"</span>: mean_salary})</code></pre>
+</div>
+
+<div id="s3-6" class="section">
+<h3 class="section-title">📈 Data Aggregation ও Join</h3>
+<pre data-lang="python"><code><span class="cm"># ── GroupBy ও Aggregation ──</span>
+df.groupBy(<span class="str">"শহর"</span>).agg(
+    avg(<span class="str">"মাসিক_বেতন"</span>).alias(<span class="str">"গড়_বেতন"</span>),
+    count(<span class="str">"*"</span>).alias(<span class="str">"মোট_কর্মী"</span>),
+    <span class="fn">max</span>(<span class="str">"মাসিক_বেতন"</span>).alias(<span class="str">"সর্বোচ্চ"</span>)
+).orderBy(<span class="str">"গড়_বেতন"</span>, ascending=<span class="kw">False</span>).show()
+
+<span class="cm"># ── Join ──</span>
+dept = spark.createDataFrame(
+    [(<span class="num">1</span>, <span class="str">"Engineering"</span>), (<span class="num">2</span>, <span class="str">"Sales"</span>), (<span class="num">3</span>, <span class="str">"HR"</span>)],
+    [<span class="str">"id"</span>, <span class="str">"বিভাগ"</span>]
+)
+
+<span class="cm"># Inner Join: দুই দিকেই match লাগবে</span>
+df.join(dept, on=<span class="str">"id"</span>, how=<span class="str">"inner"</span>).show()
+
+<span class="cm"># Left Join: বামেরটা সব থাকবে</span>
+df.join(dept, on=<span class="str">"id"</span>, how=<span class="str">"left"</span>).show()
+
+<span class="cm"># আলাদা column নামে join</span>
+df.join(dept, df[<span class="str">"id"</span>] == dept[<span class="str">"id"</span>], how=<span class="str">"inner"</span>).show()</code></pre>
+</div>
+
+<div id="s3-7" class="section">
+<h3 class="section-title">🗄️ SparkSQL Interface</h3>
+<pre data-lang="python"><code><span class="cm"># DataFrame → SQL Table</span>
+df.createOrReplaceTempView(<span class="str">"কর্মীরা"</span>)
+
+<span class="cm"># SQL query চালাও</span>
+spark.sql(<span class="str">"""
+    SELECT শহর,
+           COUNT(*) AS মোট_কর্মী,
+           AVG(মাসিক_বেতন) AS গড়_বেতন
+    FROM কর্মীরা
+    WHERE বয়স > 25
+    GROUP BY শহর
+    HAVING মোট_কর্মী >= 1
+    ORDER BY গড়_বেতন DESC
+"""</span>).show()
+
+<span class="cm"># ── User Defined Function (UDF) ──</span>
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> udf
+
+<span class="kw">def</span> <span class="fn">বয়স_শ্রেণী</span>(age):
+    <span class="kw">if</span> age < <span class="num">30</span>: <span class="kw">return</span> <span class="str">"তরুণ"</span>
+    <span class="kw">elif</span> age < <span class="num">40</span>: <span class="kw">return</span> <span class="str">"মধ্যবয়সী"</span>
+    <span class="kw">else</span>: <span class="kw">return</span> <span class="str">"প্রবীণ"</span>
+
+age_udf = udf(বয়স_শ্রেণী, <span class="cls">StringType</span>())
+df.withColumn(<span class="str">"বয়স_শ্রেণী"</span>, age_udf(col(<span class="str">"বয়স"</span>))).show()</code></pre>
+<div class="callout warn"><div class="callout-icon">⚠️</div><div class="callout-body"><p><strong>UDF সতর্কতা:</strong> UDF ধীর — Spark JVM থেকে Python-এ যায় ও আসে। সবসময় PySpark built-in function ব্যবহার করো। শুধু একান্ত প্রয়োজনে UDF।</p></div></div>
+
+<div class="exercise">
+<div class="exercise-header"><div class="exercise-icon">💼</div><div class="exercise-title">অনুশীলন ৩.১ — AI4I Predictive Maintenance Data Cleaning</div><span class="exercise-difficulty diff-hard">কঠিন</span></div>
+<p>AI4I 2020 predictive maintenance dataset পরিষ্কার করো:</p>
+<ol><li>Schema সহ DataFrame তৈরি করো</li><li>Missing values গণনা ও গড় দিয়ে পূরণ করো</li><li>Type অনুযায়ী failure rate বের করো</li><li>SQL দিয়ে সর্বোচ্চ failure-এর Type খুঁজো</li></ol>
+<details class="solution"><summary>💡 সমাধান দেখো</summary><div class="solution-body">
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.sql.types <span class="kw">import</span> *
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> *
+
+schema = <span class="cls">StructType</span>([
+    <span class="cls">StructField</span>(<span class="str">"UDI"</span>, <span class="cls">IntegerType</span>(), <span class="kw">False</span>),
+    <span class="cls">StructField</span>(<span class="str">"Type"</span>, <span class="cls">StringType</span>()),
+    <span class="cls">StructField</span>(<span class="str">"Air_Temp"</span>, <span class="cls">DoubleType</span>()),
+    <span class="cls">StructField</span>(<span class="str">"Process_Temp"</span>, <span class="cls">DoubleType</span>()),
+    <span class="cls">StructField</span>(<span class="str">"Rotational_Speed"</span>, <span class="cls">DoubleType</span>()),
+    <span class="cls">StructField</span>(<span class="str">"Torque"</span>, <span class="cls">DoubleType</span>()),
+    <span class="cls">StructField</span>(<span class="str">"Tool_Wear"</span>, <span class="cls">IntegerType</span>()),
+    <span class="cls">StructField</span>(<span class="str">"Target"</span>, <span class="cls">IntegerType</span>()),
+])
+
+data = [
+    (<span class="num">1</span>, <span class="str">"M"</span>, <span class="num">298.1</span>, <span class="num">308.6</span>, <span class="num">1498.1</span>, <span class="num">25.1</span>, <span class="num">97</span>,  <span class="num">0</span>),
+    (<span class="num">2</span>, <span class="str">"L"</span>, <span class="num">298.2</span>, <span class="kw">None</span>,  <span class="num">1500.0</span>, <span class="num">25.0</span>, <span class="num">102</span>, <span class="num">0</span>),
+    (<span class="num">3</span>, <span class="str">"H"</span>, <span class="kw">None</span>,  <span class="num">309.0</span>, <span class="num">1498.0</span>, <span class="num">26.0</span>, <span class="num">95</span>,  <span class="num">1</span>),
+]
+df = spark.createDataFrame(data, schema)
+
+<span class="cm"># Missing values পূরণ</span>
+numeric_cols = [<span class="str">"Air_Temp"</span>, <span class="str">"Process_Temp"</span>]
+means = {c: df.select(mean(c)).collect()[<span class="num">0</span>][<span class="num">0</span>] <span class="kw">for</span> c <span class="kw">in</span> numeric_cols}
+df_clean = df.fillna(means)
+
+<span class="cm"># Failure rate</span>
+df_clean.groupBy(<span class="str">"Type"</span>).agg(
+    count(<span class="str">"*"</span>).alias(<span class="str">"মোট"</span>),
+    sum(<span class="str">"Target"</span>).alias(<span class="str">"ব্যর্থতা"</span>),
+    (sum(<span class="str">"Target"</span>)/count(<span class="str">"*"</span>)*<span class="num">100</span>).alias(<span class="str">"ব্যর্থতা_%"</span>)
+).show()
+
+<span class="cm"># SQL</span>
+df_clean.createOrReplaceTempView(<span class="str">"machines"</span>)
+spark.sql(<span class="str">"SELECT Type, SUM(Target) AS failures FROM machines GROUP BY Type ORDER BY failures DESC"</span>).show()</code></pre>
+</div></details>
+</div>
+</div>
+</section>
+<!-- ===== CHAPTER 4 MLlib ===== -->
+<section id="ch4" class="chapter">
+<div class="chapter-header"><div class="chapter-num">৪</div><div><div class="chapter-title">Machine Learning with PySpark — MLlib</div><div class="chapter-subtitle">Distributed ML training — scikit-learn-এর মতোই কিন্তু cluster-এ</div></div></div>
+
+<div id="s4-1" class="section">
+<h3 class="section-title">🤖 MLlib Architecture — Estimator ও Transformer</h3>
+<div class="callout note"><div class="callout-icon">🔑</div><div class="callout-body"><p><strong>scikit-learn থেকে সবচেয়ে বড় পার্থক্য:</strong><br>scikit-learn: <code>model.fit(X)</code> → same model transform করে।<br>MLlib: <code>estimator.fit(df)</code> → একটা <em>নতুন Transformer object</em> তৈরি হয় → সেটা দিয়ে transform করো।</p></div></div>
+
+<div class="diagram">
+<svg viewBox="0 0 680 180" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="parr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#fbbf24"/></marker></defs>
+<rect x="10" y="40" width="155" height="75" rx="10" fill="#1a0d2e" stroke="#a78bfa" stroke-width="2"/>
+<text x="87" y="68" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">Estimator</text>
+<text x="87" y="86" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">StandardScaler,</text>
+<text x="87" y="102" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">LogisticRegression...</text>
+<line x1="167" y1="77" x2="235" y2="77" stroke="#fbbf24" stroke-width="2" marker-end="url(#parr)"/>
+<text x="199" y="68" text-anchor="middle" fill="#fbbf24" font-size="11" font-family="Hind Siliguri,sans-serif">.fit(df)</text>
+<rect x="172" y="122" width="100" height="42" rx="8" fill="#0a1628" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="222" y="148" text-anchor="middle" fill="#38bdf8" font-size="10" font-family="Hind Siliguri,sans-serif">Training Data</text>
+<line x1="222" y1="120" x2="222" y2="84" stroke="#38bdf8" stroke-width="1" stroke-dasharray="4,3" opacity=".7"/>
+<rect x="238" y="40" width="165" height="75" rx="10" fill="#0d1a0d" stroke="#34d399" stroke-width="2"/>
+<text x="320" y="68" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">Transformer</text>
+<text x="320" y="86" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">ScalerModel,</text>
+<text x="320" y="102" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">LogisticRegressionModel</text>
+<line x1="405" y1="77" x2="473" y2="77" stroke="#f97316" stroke-width="2" marker-end="url(#parr)"/>
+<text x="437" y="67" text-anchor="middle" fill="#f97316" font-size="10" font-family="Hind Siliguri,sans-serif">.transform(df)</text>
+<rect x="476" y="40" width="190" height="75" rx="10" fill="#1a1a0a" stroke="#fbbf24" stroke-width="2"/>
+<text x="571" y="68" text-anchor="middle" fill="#fbbf24" font-size="13" font-weight="bold" font-family="Hind Siliguri,sans-serif">New DataFrame</text>
+<text x="571" y="86" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">prediction, probability,</text>
+<text x="571" y="102" text-anchor="middle" fill="#e2e8f0" font-size="10" font-family="Hind Siliguri,sans-serif">features... নতুন columns</text>
+<text x="87" y="165" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Hind Siliguri,sans-serif">parameters শেখে</text>
+<text x="320" y="165" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Hind Siliguri,sans-serif">learned params রাখে</text>
+<text x="571" y="165" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Hind Siliguri,sans-serif">prediction/transform result</text>
+</svg>
+<div class="diagram-caption">চিত্র ৪.১ — MLlib: Estimator → .fit() → Transformer → .transform()</div>
+</div>
+</div>
+
+<div id="s4-2" class="section">
+<h3 class="section-title">🔧 Feature Engineering</h3>
+<div class="callout important"><div class="callout-icon">⭐</div><div class="callout-body"><p><strong>সবচেয়ে গুরুত্বপূর্ণ নিয়ম:</strong> MLlib-এর সব ML model একটাই column input নেয়। সেই column-এ একটা <strong>Vector</strong> থাকে যেখানে সব feature-এর মান। এই vector তৈরি করতে <code>VectorAssembler</code> লাগে।</p></div></div>
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.ml.feature <span class="kw">import</span> (
+    VectorAssembler, StringIndexer, OneHotEncoder,
+    StandardScaler, Imputer
+)
+
+<span class="cm"># ── VectorAssembler: অনেক column → একটা vector column ──</span>
+df = spark.createDataFrame([
+    (<span class="num">1.0</span>, <span class="num">2.0</span>, <span class="num">3.0</span>, <span class="num">0</span>),
+    (<span class="num">4.0</span>, <span class="num">5.0</span>, <span class="num">6.0</span>, <span class="num">1</span>),
+], [<span class="str">"temp"</span>, <span class="str">"speed"</span>, <span class="str">"torque"</span>, <span class="str">"failure"</span>])
+
+assembler = <span class="cls">VectorAssembler</span>(
+    inputCols=[<span class="str">"temp"</span>, <span class="str">"speed"</span>, <span class="str">"torque"</span>],
+    outputCol=<span class="str">"features"</span>
+)
+df_vec = assembler.transform(df)
+df_vec.show(truncate=<span class="kw">False</span>)
+<span class="cm"># features: [1.0, 2.0, 3.0] — একটাই column এ সব</span>
+
+<span class="cm"># ── StringIndexer: text → number ──</span>
+<span class="cm"># ML model text বোঝে না, তাই convert দরকার</span>
+text_df = spark.createDataFrame([(<span class="str">"H"</span>,<span class="num">1</span>),(<span class="str">"M"</span>,<span class="num">0</span>),(<span class="str">"L"</span>,<span class="num">1</span>),(<span class="str">"H"</span>,<span class="num">0</span>)],[<span class="str">"type"</span>,<span class="str">"label"</span>])
+indexer = <span class="cls">StringIndexer</span>(inputCol=<span class="str">"type"</span>, outputCol=<span class="str">"type_idx"</span>, handleInvalid=<span class="str">"keep"</span>)
+indexed_df = indexer.fit(text_df).transform(text_df)
+indexed_df.show()
+<span class="cm"># H→0.0, L→1.0, M→2.0 (সবচেয়ে বেশি দেখা যায় সেটা 0)</span>
+
+<span class="cm"># ── OneHotEncoder: 0,1,2 → [1,0,0], [0,1,0], [0,0,1] ──</span>
+encoder = <span class="cls">OneHotEncoder</span>(inputCol=<span class="str">"type_idx"</span>, outputCol=<span class="str">"type_ohe"</span>)
+encoded_df = encoder.fit(indexed_df).transform(indexed_df)
+encoded_df.show(truncate=<span class="kw">False</span>)
+<span class="cm"># (3,[0],[1.0]) — sparse vector: size=3, index=0, value=1.0</span>
+
+<span class="cm"># ── StandardScaler: normalize ──</span>
+scaler = <span class="cls">StandardScaler</span>(
+    inputCol=<span class="str">"features"</span>,
+    outputCol=<span class="str">"scaled_features"</span>,
+    withStd=<span class="kw">True</span>,   <span class="cm"># std দিয়ে ভাগ করো</span>
+    withMean=<span class="kw">True</span>   <span class="cm"># mean বিয়োগ করো</span>
+)
+scaler_model = scaler.fit(df_vec)
+df_scaled = scaler_model.transform(df_vec)
+
+<span class="cm"># ── Imputer: missing value পূরণ ──</span>
+imputer = <span class="cls">Imputer</span>(
+    strategy=<span class="str">"mean"</span>,           <span class="cm"># "mean", "median", "mode"</span>
+    inputCols=[<span class="str">"temp"</span>, <span class="str">"speed"</span>],
+    outputCols=[<span class="str">"temp_f"</span>, <span class="str">"speed_f"</span>]
+)
+df_imputed = imputer.fit(df).transform(df)</code></pre>
+</div>
+
+<div id="s4-3" class="section">
+<h3 class="section-title">🎯 Model Training ও Evaluation</h3>
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.ml.classification <span class="kw">import</span> (
+    LogisticRegression, RandomForestClassifier, GBTClassifier
+)
+<span class="kw">from</span> pyspark.ml.regression <span class="kw">import</span> LinearRegression, RandomForestRegressor
+<span class="kw">from</span> pyspark.ml.evaluation <span class="kw">import</span> (
+    BinaryClassificationEvaluator,
+    MulticlassClassificationEvaluator,
+    RegressionEvaluator
+)
+
+<span class="cm"># Train/Test split</span>
+train_df, test_df = final_df.randomSplit([<span class="num">0.7</span>, <span class="num">0.3</span>], seed=<span class="num">42</span>)
+
+<span class="cm"># ── Logistic Regression ──</span>
+lr = <span class="cls">LogisticRegression</span>(
+    featuresCol=<span class="str">"features"</span>,
+    labelCol=<span class="str">"label"</span>,
+    maxIter=<span class="num">100</span>,
+    regParam=<span class="num">0.01</span>,
+    threshold=<span class="num">0.5</span>
+)
+lr_model = lr.fit(train_df)
+predictions = lr_model.transform(test_df)
+<span class="cm"># নতুন columns: rawPrediction, probability, prediction</span>
+predictions.select(<span class="str">"label"</span>, <span class="str">"prediction"</span>, <span class="str">"probability"</span>).show()
+
+<span class="cm"># ── Evaluation ──</span>
+<span class="cm"># Multi-class (3+ class)</span>
+multi_eval = <span class="cls">MulticlassClassificationEvaluator</span>(labelCol=<span class="str">"label"</span>)
+accuracy = multi_eval.evaluate(predictions, {multi_eval.metricName: <span class="str">"accuracy"</span>})
+f1 = multi_eval.evaluate(predictions, {multi_eval.metricName: <span class="str">"f1"</span>})
+<span class="fn">print</span>(<span class="str">f"Accuracy: {accuracy:.4f}, F1: {f1:.4f}"</span>)
+
+<span class="cm"># Binary classification</span>
+binary_eval = <span class="cls">BinaryClassificationEvaluator</span>(labelCol=<span class="str">"label"</span>)
+auc = binary_eval.evaluate(predictions)
+<span class="fn">print</span>(<span class="str">f"AUC-ROC: {auc:.4f}"</span>)
+
+<span class="cm"># Regression</span>
+reg_eval = <span class="cls">RegressionEvaluator</span>(labelCol=<span class="str">"label"</span>)
+rmse = reg_eval.evaluate(predictions, {reg_eval.metricName: <span class="str">"rmse"</span>})
+r2   = reg_eval.evaluate(predictions, {reg_eval.metricName: <span class="str">"r2"</span>})
+<span class="fn">print</span>(<span class="str">f"RMSE: {rmse:.4f}, R²: {r2:.4f}"</span>)</code></pre>
+</div>
+
+<div id="s4-4" class="section">
+<h3 class="section-title">🔄 Pipeline — সব ধাপ একসাথে</h3>
+<div class="diagram">
+<svg viewBox="0 0 680 110" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="parr2" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#f97316"/></marker></defs>
+<rect x="5" y="28" width="82" height="46" rx="7" fill="#1a1530" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="46" y="50" text-anchor="middle" fill="#a78bfa" font-size="9" font-family="Hind Siliguri,sans-serif">Imputer</text>
+<text x="46" y="64" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Hind Siliguri,sans-serif">null পূরণ</text>
+<line x1="89" y1="51" x2="103" y2="51" stroke="#f97316" stroke-width="1.5" marker-end="url(#parr2)"/>
+<rect x="105" y="28" width="88" height="46" rx="7" fill="#1a1530" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="149" y="50" text-anchor="middle" fill="#a78bfa" font-size="9" font-family="Hind Siliguri,sans-serif">StringIndexer</text>
+<text x="149" y="64" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Hind Siliguri,sans-serif">text→number</text>
+<line x1="195" y1="51" x2="209" y2="51" stroke="#f97316" stroke-width="1.5" marker-end="url(#parr2)"/>
+<rect x="211" y="28" width="90" height="46" rx="7" fill="#1a1530" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="256" y="50" text-anchor="middle" fill="#a78bfa" font-size="9" font-family="Hind Siliguri,sans-serif">OneHotEncoder</text>
+<text x="256" y="64" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Hind Siliguri,sans-serif">cat→vector</text>
+<line x1="303" y1="51" x2="317" y2="51" stroke="#f97316" stroke-width="1.5" marker-end="url(#parr2)"/>
+<rect x="319" y="28" width="95" height="46" rx="7" fill="#1a1530" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="366" y="50" text-anchor="middle" fill="#a78bfa" font-size="9" font-family="Hind Siliguri,sans-serif">VectorAssembler</text>
+<text x="366" y="64" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Hind Siliguri,sans-serif">cols→vector</text>
+<line x1="416" y1="51" x2="430" y2="51" stroke="#f97316" stroke-width="1.5" marker-end="url(#parr2)"/>
+<rect x="432" y="28" width="78" height="46" rx="7" fill="#1a1530" stroke="#a78bfa" stroke-width="1.5"/>
+<text x="471" y="50" text-anchor="middle" fill="#a78bfa" font-size="9" font-family="Hind Siliguri,sans-serif">Scaler</text>
+<text x="471" y="64" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="Hind Siliguri,sans-serif">normalize</text>
+<line x1="512" y1="51" x2="526" y2="51" stroke="#f97316" stroke-width="1.5" marker-end="url(#parr2)"/>
+<rect x="528" y="18" width="140" height="66" rx="8" fill="#0d1a0d" stroke="#34d399" stroke-width="2"/>
+<text x="598" y="46" text-anchor="middle" fill="#34d399" font-size="12" font-weight="bold" font-family="Hind Siliguri,sans-serif">ML Model</text>
+<text x="598" y="62" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Hind Siliguri,sans-serif">RandomForest / LR...</text>
+<text x="340" y="100" text-anchor="middle" fill="#fbbf24" font-size="10" font-family="Hind Siliguri,sans-serif">Pipeline.fit() → সব stage একসাথে train, .transform() → predict</text>
+</svg>
+<div class="diagram-caption">চিত্র ৪.২ — ML Pipeline: সব ধাপ একসাথে</div>
+</div>
+
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.ml <span class="kw">import</span> Pipeline
+
+<span class="cm"># প্রতিটা step define করো</span>
+imputer = <span class="cls">Imputer</span>(strategy=<span class="str">"mean"</span>,
+    inputCols=[<span class="str">"Air_Temp"</span>,<span class="str">"Torque"</span>], outputCols=[<span class="str">"Air_Temp_f"</span>,<span class="str">"Torque_f"</span>])
+indexer = <span class="cls">StringIndexer</span>(inputCol=<span class="str">"Type"</span>, outputCol=<span class="str">"Type_idx"</span>, handleInvalid=<span class="str">"keep"</span>)
+encoder = <span class="cls">OneHotEncoder</span>(inputCol=<span class="str">"Type_idx"</span>, outputCol=<span class="str">"Type_ohe"</span>)
+assembler = <span class="cls">VectorAssembler</span>(
+    inputCols=[<span class="str">"Type_ohe"</span>,<span class="str">"Air_Temp_f"</span>,<span class="str">"Torque_f"</span>],
+    outputCol=<span class="str">"features_raw"</span>)
+scaler = <span class="cls">StandardScaler</span>(inputCol=<span class="str">"features_raw"</span>, outputCol=<span class="str">"features"</span>)
+rf = <span class="cls">RandomForestClassifier</span>(featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"Target"</span>,
+    numTrees=<span class="num">100</span>, maxDepth=<span class="num">5</span>, seed=<span class="num">42</span>)
+
+<span class="cm"># Pipeline তৈরি</span>
+pipeline = <span class="cls">Pipeline</span>(stages=[imputer, indexer, encoder, assembler, scaler, rf])
+
+<span class="cm"># Train/Test split</span>
+train, test = df.randomSplit([<span class="num">0.8</span>, <span class="num">0.2</span>], seed=<span class="num">42</span>)
+
+<span class="cm"># একটা fit() — সব steps auto চলে</span>
+model = pipeline.fit(train)
+preds = model.transform(test)
+preds.select(<span class="str">"Target"</span>, <span class="str">"prediction"</span>, <span class="str">"probability"</span>).show()
+
+<span class="cm"># Pipeline save ও load</span>
+model.write().overwrite().save(<span class="str">"models/rf_pipeline"</span>)
+<span class="kw">from</span> pyspark.ml <span class="kw">import</span> PipelineModel
+loaded = <span class="cls">PipelineModel</span>.load(<span class="str">"models/rf_pipeline"</span>)</code></pre>
+</div>
+
+<div id="s4-5" class="section">
+<h3 class="section-title">🎛️ CrossValidator — Hyperparameter Tuning</h3>
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.ml.tuning <span class="kw">import</span> CrossValidator, ParamGridBuilder
+
+rf = <span class="cls">RandomForestClassifier</span>(featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"Target"</span>)
+
+<span class="cm"># কোন parameters পরীক্ষা করবে?</span>
+param_grid = <span class="cls">ParamGridBuilder</span>() \
+    .addGrid(rf.numTrees, [<span class="num">50</span>, <span class="num">100</span>, <span class="num">200</span>]) \   <span class="cm"># 3টা option</span>
+    .addGrid(rf.maxDepth, [<span class="num">3</span>, <span class="num">5</span>, <span class="num">7</span>]) \         <span class="cm"># 3টা option</span>
+    .build()
+<span class="cm"># মোট: 3×3 = 9 combination পরীক্ষা হবে</span>
+
+evaluator = <span class="cls">BinaryClassificationEvaluator</span>(labelCol=<span class="str">"Target"</span>)
+
+cv = <span class="cls">CrossValidator</span>(
+    estimator=pipeline,         <span class="cm"># Pipeline বা model</span>
+    estimatorParamMaps=param_grid,
+    evaluator=evaluator,
+    numFolds=<span class="num">5</span>,                <span class="cm"># 5-fold CV</span>
+    parallelism=<span class="num">4</span>              <span class="cm"># একসাথে ৪টা parallel</span>
+)
+
+cv_model = cv.fit(train)
+test_preds = cv_model.transform(test)
+<span class="fn">print</span>(<span class="str">f"Best AUC: {evaluator.evaluate(test_preds):.4f}"</span>)</code></pre>
+
+<div class="exercise">
+<div class="exercise-header"><div class="exercise-icon">💼</div><div class="exercise-title">অনুশীলন ৪.১ — Predictive Maintenance Full Pipeline (MLOps)</div><span class="exercise-difficulty diff-hard">কঠিন</span></div>
+<p>AI4I 2020 dataset-এ সম্পূর্ণ ML Pipeline তৈরি করো: imputation → encoding → scaling → RandomForest → evaluate → save।</p>
+<details class="solution"><summary>💡 সম্পূর্ণ সমাধান দেখো</summary><div class="solution-body">
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.ml <span class="kw">import</span> Pipeline
+<span class="kw">from</span> pyspark.ml.feature <span class="kw">import</span> StringIndexer, VectorAssembler, StandardScaler, Imputer
+<span class="kw">from</span> pyspark.ml.classification <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> pyspark.ml.evaluation <span class="kw">import</span> MulticlassClassificationEvaluator, BinaryClassificationEvaluator
+
+spark = <span class="cls">SparkSession</span>.builder.appName(<span class="str">"PredMaintenance"</span>).master(<span class="str">"local[*]"</span>).getOrCreate()
+
+df = spark.read.option(<span class="str">"header"</span>,<span class="kw">True</span>).option(<span class="str">"inferSchema"</span>,<span class="kw">True</span>).csv(<span class="str">"predictive_maintenance.csv"</span>)
+
+type_idx   = <span class="cls">StringIndexer</span>(inputCol=<span class="str">"Type"</span>, outputCol=<span class="str">"Type_idx"</span>, handleInvalid=<span class="str">"keep"</span>)
+assembler  = <span class="cls">VectorAssembler</span>(
+    inputCols=[<span class="str">"Air temperature [K]"</span>,<span class="str">"Process temperature [K]"</span>,
+               <span class="str">"Rotational speed [rpm]"</span>,<span class="str">"Torque [Nm]"</span>,<span class="str">"Tool wear [min]"</span>,<span class="str">"Type_idx"</span>],
+    outputCol=<span class="str">"features_raw"</span>, handleInvalid=<span class="str">"skip"</span>)
+scaler     = <span class="cls">StandardScaler</span>(inputCol=<span class="str">"features_raw"</span>, outputCol=<span class="str">"features"</span>)
+rf         = <span class="cls">RandomForestClassifier</span>(featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"Target"</span>,
+               numTrees=<span class="num">100</span>, maxDepth=<span class="num">5</span>, seed=<span class="num">42</span>)
+pipeline   = <span class="cls">Pipeline</span>(stages=[type_idx, assembler, scaler, rf])
+
+train, test = df.randomSplit([<span class="num">0.8</span>, <span class="num">0.2</span>], seed=<span class="num">42</span>)
+model = pipeline.fit(train)
+preds = model.transform(test)
+
+m = <span class="cls">MulticlassClassificationEvaluator</span>(labelCol=<span class="str">"Target"</span>)
+b = <span class="cls">BinaryClassificationEvaluator</span>(labelCol=<span class="str">"Target"</span>)
+<span class="fn">print</span>(<span class="str">f"Accuracy: {m.evaluate(preds,{m.metricName:'accuracy'}):.4f}"</span>)
+<span class="fn">print</span>(<span class="str">f"F1:       {m.evaluate(preds,{m.metricName:'f1'}):.4f}"</span>)
+<span class="fn">print</span>(<span class="str">f"AUC-ROC:  {b.evaluate(preds):.4f}"</span>)
+
+model.write().overwrite().save(<span class="str">"models/predictive_rf"</span>)
+<span class="fn">print</span>(<span class="str">"✅ Model saved"</span>)</code></pre>
+</div></details>
+</div>
+</div>
+</section>
+
+<!-- ===== CHAPTER 5 Evaluation ===== -->
+<section id="ch5" class="chapter">
+<div class="chapter-header"><div class="chapter-num">৫</div><div><div class="chapter-title">মূল্যায়ন প্রজেক্ট — End-to-End</div><div class="chapter-subtitle">GPS App Store data cleaning + Credit Card regression</div></div></div>
+<div class="section">
+<h3 class="section-title">🎯 GPS App Data Cleaning ও ML</h3>
+<pre data-lang="python"><code><span class="kw">from</span> urllib.request <span class="kw">import</span> urlretrieve
+<span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> *
+<span class="kw">from</span> pyspark.ml <span class="kw">import</span> Pipeline
+<span class="kw">from</span> pyspark.ml.feature <span class="kw">import</span> StringIndexer, VectorAssembler, StandardScaler
+<span class="kw">from</span> pyspark.ml.regression <span class="kw">import</span> RandomForestRegressor
+<span class="kw">from</span> pyspark.ml.evaluation <span class="kw">import</span> RegressionEvaluator
+
+BASE = <span class="str">"https://raw.githubusercontent.com/your-org/ml-datasets/main"</span>
+
+<span class="kw">def</span> <span class="fn">download_file</span>(filename):
+    <span class="str">"""Q.1 — ফাইল ডাউনলোড"""</span>
+    path = <span class="str">f"/tmp/{filename}"</span>
+    urlretrieve(<span class="str">f"{BASE}/{filename}"</span>, path)
+    <span class="fn">print</span>(<span class="str">f"✅ Downloaded: {filename}"</span>)
+    <span class="kw">return</span> path
+
+spark = <span class="cls">SparkSession</span>.builder.appName(<span class="str">"GPS"</span>).master(<span class="str">"local[*]"</span>).getOrCreate()
+
+app_path = download_file(<span class="str">"gps_app.csv"</span>)
+raw = spark.read.option(<span class="str">"header"</span>,<span class="kw">True</span>).option(<span class="str">"inferSchema"</span>,<span class="kw">True</span>).option(<span class="str">"escape"</span>,<span class="str">'"'</span>).csv(app_path)
+
+<span class="cm"># Q.2: Column rename (space→underscore, uppercase→lowercase)</span>
+raw = raw.toDF(*[c.replace(<span class="str">" "</span>,<span class="str">"_"</span>).lower() <span class="kw">for</span> c <span class="kw">in</span> raw.columns])
+
+<span class="cm"># Q.3.1: Rating — median দিয়ে পূরণ (outlier-robust)</span>
+med = raw.approxQuantile(<span class="str">"rating"</span>, [<span class="num">0.5</span>], <span class="num">0.0</span>)[<span class="num">0</span>]
+raw = raw.fillna({<span class="str">"rating"</span>: med})
+
+<span class="cm"># Q.3.2: type — শুধু "Free" ও "Paid" রাখো</span>
+raw = raw.filter(col(<span class="str">"type"</span>).isin([<span class="str">"Free"</span>, <span class="str">"Paid"</span>]))
+
+<span class="cm"># Q.3.4: current_ver ও android_ver — mode দিয়ে পূরণ</span>
+<span class="kw">for</span> c <span class="kw">in</span> [<span class="str">"current_ver"</span>, <span class="str">"android_ver"</span>]:
+    mode_val = raw.groupBy(c).count().orderBy(<span class="str">"count"</span>, ascending=<span class="kw">False</span>).first()[c]
+    raw = raw.fillna({c: mode_val})
+
+<span class="cm"># Q.4.2: Credit card regression pipeline</span>
+cc_path = download_file(<span class="str">"creditcard.csv"</span>)
+cc_df = spark.read.option(<span class="str">"header"</span>,<span class="kw">True</span>).option(<span class="str">"inferSchema"</span>,<span class="kw">True</span>).csv(cc_path)
+feature_cols = [c <span class="kw">for</span> c <span class="kw">in</span> cc_df.columns <span class="kw">if</span> c != <span class="str">"Amount"</span>]
+
+va = <span class="cls">VectorAssembler</span>(inputCols=feature_cols, outputCol=<span class="str">"features_raw"</span>, handleInvalid=<span class="str">"skip"</span>)
+sc2 = <span class="cls">StandardScaler</span>(inputCol=<span class="str">"features_raw"</span>, outputCol=<span class="str">"features"</span>)
+rfr = <span class="cls">RandomForestRegressor</span>(featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"Amount"</span>, numTrees=<span class="num">50</span>, seed=<span class="num">42</span>)
+pipe = <span class="cls">Pipeline</span>(stages=[va, sc2, rfr])
+
+tr, te = cc_df.randomSplit([<span class="num">0.8</span>, <span class="num">0.2</span>], seed=<span class="num">42</span>)
+pm = pipe.fit(tr)
+p2 = pm.transform(te)
+
+ev = <span class="cls">RegressionEvaluator</span>(labelCol=<span class="str">"Amount"</span>)
+<span class="fn">print</span>(<span class="str">f"RMSE: {ev.evaluate(p2,{ev.metricName:'rmse'}):.4f}"</span>)
+<span class="fn">print</span>(<span class="str">f"R²:   {ev.evaluate(p2,{ev.metricName:'r2'}):.4f}"</span>)</code></pre>
+</div>
+</section>
+<!-- ===== ALGORITHMS ===== -->
+<section id="algorithms" class="chapter">
+<div class="chapter-header"><div class="chapter-num">🧠</div><div><div class="chapter-title">সমস্ত ML অ্যালগরিদম</div><div class="chapter-subtitle">কিন্ডারগার্টেন ব্যাখ্যা + PySpark কোড + MLOps Exercise</div></div></div>
+
+<!-- Linear Regression -->
+<div id="algo-lr" class="section">
+<div class="algo-box">
+<div class="algo-title">📈 Linear Regression (রৈখিক প্রত্যাগমন)</div>
+<div class="callout note"><div class="callout-icon">🧸</div><div class="callout-body"><p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> তুমি কি কখনো scatter plot-এ এমন একটা সরল রেখা আঁকার চেষ্টা করেছ যেটা সব বিন্দুর মধ্য দিয়ে সবচেয়ে ভালো যায়? সেটাই Linear Regression! বাড়ির size বাড়লে দাম কেমন বাড়ে — এটা সরল রেখা দিয়ে প্রকাশ করা।</p></div></div>
+<p><strong>কাজ:</strong> সংখ্যা predict (regression)। যেমন: দাম, তাপমাত্রা, বেতন।</p>
+<p><strong>Formula:</strong> y = w₁x₁ + w₂x₂ + ... + b (w = weight/coefficient, b = intercept)</p>
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.ml.regression <span class="kw">import</span> LinearRegression
+<span class="kw">from</span> pyspark.ml.evaluation <span class="kw">import</span> RegressionEvaluator
+
+data = [(<span class="num">1200.0</span>,<span class="num">3</span>,<span class="num">5500000.0</span>),(<span class="num">1500.0</span>,<span class="num">4</span>,<span class="num">7000000.0</span>),
+        (<span class="num">800.0</span>,<span class="num">2</span>,<span class="num">3500000.0</span>),(<span class="num">2000.0</span>,<span class="num">5</span>,<span class="num">9500000.0</span>),
+        (<span class="num">1100.0</span>,<span class="num">3</span>,<span class="num">5000000.0</span>),(<span class="num">1800.0</span>,<span class="num">4</span>,<span class="num">8200000.0</span>)]
+df = spark.createDataFrame(data, [<span class="str">"size"</span>,<span class="str">"bedrooms"</span>,<span class="str">"price"</span>])
+va = <span class="cls">VectorAssembler</span>(inputCols=[<span class="str">"size"</span>,<span class="str">"bedrooms"</span>], outputCol=<span class="str">"features"</span>)
+df_vec = va.transform(df)
+
+lr = <span class="cls">LinearRegression</span>(
+    featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"price"</span>,
+    maxIter=<span class="num">100</span>,
+    regParam=<span class="num">0.1</span>,       <span class="cm"># L2 regularization — overfitting ঠেকায়</span>
+    elasticNetParam=<span class="num">0.0</span> <span class="cm"># 0=Ridge, 1=Lasso, 0.5=ElasticNet</span>
+)
+train, test = df_vec.randomSplit([<span class="num">0.8</span>,<span class="num">0.2</span>], seed=<span class="num">42</span>)
+model = lr.fit(train)
+preds = model.transform(test)
+
+<span class="fn">print</span>(<span class="str">f"Coefficients: {model.coefficients}"</span>)  <span class="cm"># প্রতিটা feature-এর weight</span>
+<span class="fn">print</span>(<span class="str">f"Intercept: {model.intercept:.0f}"</span>)
+
+ev = <span class="cls">RegressionEvaluator</span>(labelCol=<span class="str">"price"</span>)
+<span class="fn">print</span>(<span class="str">f"RMSE: {ev.evaluate(preds,{ev.metricName:'rmse'}):,.0f} টাকা"</span>)
+<span class="fn">print</span>(<span class="str">f"R²:   {ev.evaluate(preds,{ev.metricName:'r2'}):.4f}"</span>)</code></pre>
+</div>
+</div>
+
+<!-- Logistic Regression -->
+<div id="algo-logistic" class="section">
+<div class="algo-box">
+<div class="algo-title">🔀 Logistic Regression (লজিস্টিক প্রত্যাগমন)</div>
+<div class="callout note"><div class="callout-icon">🧸</div><div class="callout-body"><p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> নাম "regression" হলেও এটা classification করে! doctor বলছে "তোমার blood pressure ও age দেখে ৭৫% সম্ভাবনা তোমার heart disease আছে।" এই probability বের করা = Logistic Regression। S-shaped sigmoid curve ব্যবহার করে 0-1 এর মধ্যে probability দেয়।</p></div></div>
+<p><strong>কাজ:</strong> Binary (হ্যাঁ/না) বা Multi-class classification। Output: 0 থেকে 1 এর মধ্যে probability।</p>
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.ml.classification <span class="kw">import</span> LogisticRegression
+
+lr = <span class="cls">LogisticRegression</span>(
+    featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"label"</span>,
+    maxIter=<span class="num">100</span>,
+    regParam=<span class="num">0.01</span>,           <span class="cm"># regularization strength</span>
+    elasticNetParam=<span class="num">0.0</span>,     <span class="cm"># 0=L2, 1=L1</span>
+    threshold=<span class="num">0.5</span>,           <span class="cm"># > 0.5 → class 1</span>
+    family=<span class="str">"auto"</span>            <span class="cm"># auto, binomial, multinomial</span>
+)
+model = lr.fit(train)
+preds = model.transform(test)
+<span class="cm"># preds-এ: rawPrediction (log odds), probability, prediction</span>
+preds.select(<span class="str">"label"</span>,<span class="str">"prediction"</span>,<span class="str">"probability"</span>).show(truncate=<span class="kw">False</span>)</code></pre>
+</div>
+</div>
+
+<!-- Decision Tree -->
+<div id="algo-dt" class="section">
+<div class="algo-box">
+<div class="algo-title">🌳 Decision Tree (সিদ্ধান্ত গাছ)</div>
+<div class="callout note"><div class="callout-icon">🧸</div><div class="callout-body"><p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> "ছাতা নেব?" → প্রথম প্রশ্ন: "মেঘ আছে?" → হ্যাঁ → "বাতাস আছে?" → হ্যাঁ → "ছাতা নাও!" এভাবে প্রশ্নের গাছ তৈরি করে সিদ্ধান্তে পৌঁছানো। Decision Tree প্রতিটা node-এ সবচেয়ে ভালো feature দিয়ে data ভাগ করে।</p></div></div>
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.ml.classification <span class="kw">import</span> DecisionTreeClassifier
+<span class="kw">from</span> pyspark.ml.regression <span class="kw">import</span> DecisionTreeRegressor
+
+dt = <span class="cls">DecisionTreeClassifier</span>(
+    featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"label"</span>,
+    maxDepth=<span class="num">5</span>,              <span class="cm"># গাছের গভীরতা (বড় = overfitting)</span>
+    minInstancesPerNode=<span class="num">5</span>,  <span class="cm"># প্রতি leaf-এ minimum sample</span>
+    impurity=<span class="str">"gini"</span>,        <span class="cm"># "gini" বা "entropy"</span>
+    seed=<span class="num">42</span>
+)
+model = dt.fit(train)
+preds = model.transform(test)
+
+<span class="cm"># Feature importance — কোন feature বেশি কাজে লাগে</span>
+importances = model.featureImportances
+<span class="fn">print</span>(<span class="str">f"Feature importances: {importances}"</span>)
+
+<span class="cm"># গাছের structure দেখো</span>
+<span class="fn">print</span>(model.toDebugString)</code></pre>
+</div>
+</div>
+
+<!-- Random Forest -->
+<div id="algo-rf" class="section">
+<div class="algo-box">
+<div class="algo-title">🌲🌲🌲 Random Forest (র‍্যান্ডম ফরেস্ট)</div>
+<div class="callout note"><div class="callout-icon">🧸</div><div class="callout-body"><p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> একটা decision tree ভুল করতে পারে। কিন্তু ১০০টা tree যদি একই সাথে ভোট দেয় — সংখ্যাগরিষ্ঠের মত নেওয়া হয়। "Random" কারণ প্রতিটা tree random data ও random feature দিয়ে train হয় — তাই সবাই আলাদা এবং ভুল cancel করে। ML Engineering-এ সবচেয়ে নির্ভরযোগ্য অ্যালগরিদমের একটি।</p></div></div>
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.ml.classification <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> pyspark.ml.regression <span class="kw">import</span> RandomForestRegressor
+
+rf = <span class="cls">RandomForestClassifier</span>(
+    featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"label"</span>,
+    numTrees=<span class="num">100</span>,                     <span class="cm"># কতটা গাছ (বেশি = ভালো, কিন্তু ধীর)</span>
+    maxDepth=<span class="num">5</span>,                       <span class="cm"># প্রতি গাছের গভীরতা</span>
+    featureSubsetStrategy=<span class="str">"sqrt"</span>,    <span class="cm"># প্রতি split-এ √n features নাও</span>
+    subsamplingRate=<span class="num">0.8</span>,              <span class="cm"># প্রতি tree-তে ৮০% data</span>
+    minInstancesPerNode=<span class="num">3</span>,
+    seed=<span class="num">42</span>
+)
+model = rf.fit(train)
+preds = model.transform(test)
+
+<span class="cm"># Feature importance (বড় মান = বেশি গুরুত্বপূর্ণ)</span>
+<span class="fn">print</span>(<span class="str">f"Feature Importances: {model.featureImportances}"</span>)
+<span class="fn">print</span>(<span class="str">f"Total trees: {model.getNumTrees}"</span>)</code></pre>
+</div>
+</div>
+
+<!-- GBT -->
+<div id="algo-gbt" class="section">
+<div class="algo-box">
+<div class="algo-title">🚀 Gradient Boosted Trees (GBT)</div>
+<div class="callout note"><div class="callout-icon">🧸</div><div class="callout-body"><p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> Random Forest-এ সব tree একসাথে কাজ করে। GBT-তে tree গুলো <em>একের পর এক</em> শেখে। প্রথম tree ভুল করে → দ্বিতীয় tree সেই ভুল ঠিক করার চেষ্টা করে → তৃতীয় tree দ্বিতীয়ের ভুল ঠিক করে। প্রতিটা iteration-এ model আরো ভালো হয়। সাধারণত সর্বোচ্চ accuracy দেয়।</p></div></div>
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.ml.classification <span class="kw">import</span> GBTClassifier
+<span class="kw">from</span> pyspark.ml.regression <span class="kw">import</span> GBTRegressor
+
+gbt = <span class="cls">GBTClassifier</span>(
+    featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"label"</span>,
+    maxIter=<span class="num">50</span>,          <span class="cm"># কতটা tree (iteration)</span>
+    maxDepth=<span class="num">3</span>,          <span class="cm"># ছোট গাছ ভালো (weak learner)</span>
+    stepSize=<span class="num">0.1</span>,        <span class="cm"># learning rate — ছোট হলে ধীরে কিন্তু ভালো</span>
+    subsamplingRate=<span class="num">0.8</span>, <span class="cm"># overfitting ঠেকায়</span>
+    seed=<span class="num">42</span>
+)
+model = gbt.fit(train)
+preds = model.transform(test)
+<span class="fn">print</span>(<span class="str">f"Feature Importances: {model.featureImportances}"</span>)</code></pre>
+</div>
+</div>
+
+<!-- K-Means -->
+<div id="algo-kmeans" class="section">
+<div class="algo-box">
+<div class="algo-title">🎯 K-Means Clustering (কে-মিনস ক্লাস্টারিং)</div>
+<div class="callout note"><div class="callout-icon">🧸</div><div class="callout-body"><p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> ৫০ ছাত্র বড় মাঠে। "৩ গ্রুপে ভাগ হও!" → random ৩ জন leader → বাকি সবাই কাছের leader-এর কাছে যায় → প্রতিটা গ্রুপের মাঝখানে নতুন leader → আবার সবাই নতুন leader-এর কাছে → পরিবর্তন বন্ধ না হওয়া পর্যন্ত। Unsupervised — label ছাড়াই কাজ করে।</p></div></div>
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.ml.clustering <span class="kw">import</span> KMeans
+<span class="kw">from</span> pyspark.ml.evaluation <span class="kw">import</span> ClusteringEvaluator
+
+<span class="cm"># Elbow method — সেরা k খোঁজো</span>
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="num">2</span>, <span class="num">8</span>):
+    km = <span class="cls">KMeans</span>(featuresCol=<span class="str">"features"</span>, k=k, maxIter=<span class="num">20</span>, seed=<span class="num">42</span>)
+    m = km.fit(df_vec)
+    <span class="fn">print</span>(<span class="str">f"k={k}: Cost={m.summary.trainingCost:.2f}"</span>)
+
+<span class="cm"># Best k দিয়ে train</span>
+km_final = <span class="cls">KMeans</span>(featuresCol=<span class="str">"features"</span>, k=<span class="num">4</span>, seed=<span class="num">42</span>)
+km_model = km_final.fit(df_vec)
+clustered = km_model.transform(df_vec)
+
+<span class="fn">print</span>(<span class="str">"Cluster Centers:"</span>)
+<span class="kw">for</span> i, c <span class="kw">in</span> <span class="fn">enumerate</span>(km_model.clusterCenters()):
+    <span class="fn">print</span>(<span class="str">f"  Cluster {i}: {c}"</span>)
+
+<span class="cm"># Silhouette score (1 এর কাছে ভালো)</span>
+ev = <span class="cls">ClusteringEvaluator</span>()
+<span class="fn">print</span>(<span class="str">f"Silhouette: {ev.evaluate(clustered):.4f}"</span>)</code></pre>
+</div>
+</div>
+
+<!-- SVM -->
+<div id="algo-svm" class="section">
+<div class="algo-box">
+<div class="algo-title">✂️ Linear SVM (সাপোর্ট ভেক্টর মেশিন)</div>
+<div class="callout note"><div class="callout-icon">🧸</div><div class="callout-body"><p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> লাল বল ও নীল বল আলাদা করতে হবে। SVM এমন একটা রেখা টানে যেটা দুই দলের মধ্যে <em>সবচেয়ে বেশি ফাঁক</em> রাখে। এই ফাঁককে "margin" বলে। বড় margin = বেশি নিরাপদ সীমানা। High-dimensional data (অনেক feature)-এ ভালো কাজ করে।</p></div></div>
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.ml.classification <span class="kw">import</span> LinearSVC
+
+svm = <span class="cls">LinearSVC</span>(
+    featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"label"</span>,
+    maxIter=<span class="num">100</span>,
+    regParam=<span class="num">0.1</span>,   <span class="cm"># C এর inverse (ছোট = বড় margin কিন্তু ভুল বেশি)</span>
+    standardization=<span class="kw">True</span>
+)
+model = svm.fit(train)
+preds = model.transform(test)
+<span class="fn">print</span>(<span class="str">f"Coefficients: {model.coefficients}"</span>)  <span class="cm"># hyperplane normal vector</span></code></pre>
+</div>
+</div>
+
+<!-- Naive Bayes -->
+<div id="algo-nb" class="section">
+<div class="algo-box">
+<div class="algo-title">📊 Naive Bayes (নির্বোধ বায়েস)</div>
+<div class="callout note"><div class="callout-icon">🧸</div><div class="callout-body"><p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> "Naive" মানে সরল — এই algorithm ধরে নেয় সব feature একে অপরের উপর নির্ভরশীল নয় (বাস্তবে সত্য না, তবু কাজ করে!)। Bayes Theorem দিয়ে probability হিসাব করে। Email spam detection-এ এটা এখনো অনেক জনপ্রিয়।</p></div></div>
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.ml.classification <span class="kw">import</span> NaiveBayes
+
+nb = <span class="cls">NaiveBayes</span>(
+    featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"label"</span>,
+    modelType=<span class="str">"multinomial"</span>,  <span class="cm"># "multinomial": count; "gaussian": continuous; "complement": imbalanced</span>
+    smoothing=<span class="num">1.0</span>              <span class="cm"># Laplace smoothing (0 probability ঠেকায়)</span>
+)
+model = nb.fit(train)
+preds = model.transform(test)</code></pre>
+</div>
+</div>
+
+<!-- Comparison Table -->
+<div class="section">
+<h3 class="section-title">📊 সব অ্যালগরিদমের তুলনা</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>অ্যালগরিদম</th><th>Task</th><th>কখন ব্যবহার করবে</th><th>গতি</th><th>Accuracy</th><th>ব্যাখ্যাযোগ্যতা</th></tr></thead>
+<tbody>
+<tr><td>Linear Regression</td><td>Regression</td><td>Linear relationship, simple</td><td>🚀 দ্রুত</td><td>⚠️ সীমিত</td><td>✅ উচ্চ</td></tr>
+<tr><td>Logistic Regression</td><td>Classification</td><td>Binary/multi, linear boundary</td><td>🚀 দ্রুত</td><td>⚠️ সীমিত</td><td>✅ উচ্চ</td></tr>
+<tr><td>Decision Tree</td><td>Both</td><td>ব্যাখ্যা দরকার, non-linear</td><td>⚡ মাঝারি</td><td>⚠️ মাঝারি</td><td>✅ উচ্চ</td></tr>
+<tr><td><strong>Random Forest</strong></td><td>Both</td><td><strong>সাধারণত সেরা choice</strong></td><td>⚡ মাঝারি</td><td>✅ উচ্চ</td><td>⚠️ মাঝারি</td></tr>
+<tr><td>GBT</td><td>Both</td><td>সর্বোচ্চ accuracy দরকার</td><td>🐢 ধীর</td><td>✅ সর্বোচ্চ</td><td>❌ কম</td></tr>
+<tr><td>K-Means</td><td>Clustering</td><td>Label নেই, গ্রুপ করতে হবে</td><td>⚡ মাঝারি</td><td>—</td><td>⚠️ মাঝারি</td></tr>
+<tr><td>Linear SVM</td><td>Classification</td><td>High-dimensional (text)</td><td>⚡ মাঝারি</td><td>✅ উচ্চ</td><td>⚠️ মাঝারি</td></tr>
+<tr><td>Naive Bayes</td><td>Classification</td><td>Text/count data, fast needed</td><td>🚀 দ্রুত</td><td>⚠️ মাঝারি</td><td>✅ উচ্চ</td></tr>
+</tbody>
+</table></div>
+
+<div class="exercise">
+<div class="exercise-header"><div class="exercise-icon">💼</div><div class="exercise-title">অনুশীলন A.১ — Algorithm Comparison (MLOps Best Practice)</div><span class="exercise-difficulty diff-hard">কঠিন</span></div>
+<p>একটা dataset-এ তিনটা আলাদা classifier তুলনা করো এবং সেরাটা বেছে নাও:</p>
+<ol><li>LogisticRegression, RandomForestClassifier, GBTClassifier train করো</li><li>প্রতিটার Accuracy ও AUC-ROC compare করো</li><li>Training time measure করো</li><li>সেরা model-টা Pipeline সহ save করো</li></ol>
+<details class="solution"><summary>💡 সমাধান দেখো</summary><div class="solution-body">
+<pre data-lang="python"><code><span class="kw">import</span> time
+<span class="kw">from</span> pyspark.ml.classification <span class="kw">import</span> LogisticRegression, RandomForestClassifier, GBTClassifier
+<span class="kw">from</span> pyspark.ml.evaluation <span class="kw">import</span> BinaryClassificationEvaluator, MulticlassClassificationEvaluator
+
+models = {
+    <span class="str">"LogisticRegression"</span>: <span class="cls">LogisticRegression</span>(featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"label"</span>, maxIter=<span class="num">50</span>),
+    <span class="str">"RandomForest"</span>: <span class="cls">RandomForestClassifier</span>(featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"label"</span>, numTrees=<span class="num">100</span>, seed=<span class="num">42</span>),
+    <span class="str">"GBT"</span>: <span class="cls">GBTClassifier</span>(featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"label"</span>, maxIter=<span class="num">30</span>, seed=<span class="num">42</span>),
+}
+
+b_eval = <span class="cls">BinaryClassificationEvaluator</span>(labelCol=<span class="str">"label"</span>)
+m_eval = <span class="cls">MulticlassClassificationEvaluator</span>(labelCol=<span class="str">"label"</span>)
+
+results = {}
+<span class="kw">for</span> name, clf <span class="kw">in</span> models.items():
+    t0 = time.time()
+    m = clf.fit(train)
+    train_time = time.time() - t0
+    preds = m.transform(test)
+    auc = b_eval.evaluate(preds)
+    acc = m_eval.evaluate(preds, {m_eval.metricName: <span class="str">"accuracy"</span>})
+    results[name] = {<span class="str">"AUC"</span>: auc, <span class="str">"Accuracy"</span>: acc, <span class="str">"Time(s)"</span>: train_time, <span class="str">"model"</span>: m}
+    <span class="fn">print</span>(<span class="str">f"{name}: AUC={auc:.4f}, Acc={acc:.4f}, Time={train_time:.1f}s"</span>)
+
+best_name = <span class="fn">max</span>(results, key=<span class="kw">lambda</span> k: results[k][<span class="str">"AUC"</span>])
+<span class="fn">print</span>(<span class="str">f"\n🏆 সেরা model: {best_name}"</span>)
+results[best_name][<span class="str">"model"</span>].write().overwrite().save(<span class="str">f"models/best_{best_name}"</span>)</code></pre>
+</div></details>
+</div>
+</div>
+</section>
+<!-- ===== INTERVIEW ===== -->
+<section id="interview" class="chapter">
+<div class="chapter-header"><div class="chapter-num">💼</div><div><div class="chapter-title">ইন্টারভিউ প্রশ্ন ও উত্তর</div><div class="chapter-subtitle">ML Engineer / Data Engineer ইন্টারভিউতে যা জিজ্ঞেস করা হয়</div></div></div>
+
+<div class="interview-box">
+<div class="interview-title">🔥 Architecture ও Core Concepts</div>
+
+<div class="interview-q">Q1: Spark-এ Driver এবং Executor-এর পার্থক্য কী? উভয়ের কাজ ব্যাখ্যা করো।</div>
+<div class="interview-a"><strong>উত্তর:</strong> Driver হলো conductor — code পড়ে, task plan করে, executor-দের নির্দেশ দেয়, final result collect করে। Driver একটাই। SparkContext ও SparkSession Driver-এ থাকে। Executor হলো worker — driver-এর নির্দেশে actual computation করে। ডেটার partition নিজের কাছে রাখে। একাধিক executor থাকে। কাজ শেষে status Driver-কে জানায়।</div>
+
+<div class="interview-q">Q2: RDD, DataFrame এবং Dataset-এর পার্থক্য কী? Production-এ কোনটা ব্যবহার করবে?</div>
+<div class="interview-a"><strong>উত্তর:</strong> RDD: Low-level, untyped, schema নেই, manual optimization। DataFrame: High-level, schema আছে, Catalyst Optimizer স্বয়ংক্রিয়ভাবে optimize করে, SQL support। Dataset: Java/Scala-এ strongly typed DataFrame; Python-এ Dataset আলাদা নেই (DataFrame = Dataset[Row])। <em>Production-এ সবসময় DataFrame — দ্রুত, পরিষ্কার কোড, automatic optimization।</em></div>
+
+<div class="interview-q">Q3: Lazy Evaluation কী? কেন এটা performance-এর জন্য ভালো?</div>
+<div class="interview-a"><strong>উত্তর:</strong> Transformation-গুলো সাথে সাথে চালায় না — DAG (Directed Acyclic Graph) তৈরি করে রাখে। Action দেখলেই সব execute করে। ভালো কারণ: Catalyst Optimizer পুরো execution plan দেখে unnecessary computation বাদ দিতে পারে, predicates আগে push করতে পারে, পুরো pipeline optimize করতে পারে।</div>
+
+<div class="interview-q">Q4: Narrow Transformation ও Wide Transformation-এর পার্থক্য? কোনটা expensive?</div>
+<div class="interview-a"><strong>উত্তর:</strong> Narrow: একটা input partition থেকে একটা output partition (map, filter) — network transfer নেই, দ্রুত। Wide: অনেক input partition merge হয়ে নতুন partition তৈরি হয় — Shuffle লাগে, network transfer হয়, disk write হয় (groupByKey, join, sortBy)। Wide অনেক expensive, minimize করা উচিত।</div>
+
+<div class="interview-q">Q5: reduceByKey বনাম groupByKey — কোনটা ভালো এবং কেন?</div>
+<div class="interview-a"><strong>উত্তর:</strong> সবসময় <code>reduceByKey</code> ভালো। reduceByKey প্রতিটা partition-এ locally আগে reduce করে তারপর shuffle করে — network-এ অনেক কম data যায়। groupByKey সব value shuffle করে Driver-এ আনে — network-এ বেশি data, memory সমস্যা হতে পারে। Example: word count-এ groupByKey-এর চেয়ে reduceByKey ১০x দ্রুত হতে পারে।</div>
+</div>
+
+<div class="interview-box">
+<div class="interview-title">⚡ Performance Optimization</div>
+
+<div class="interview-q">Q6: Spark performance optimize করার ৫টা উপায় বলো।</div>
+<div class="interview-a"><strong>উত্তর:</strong>
+<ol style="margin:8px 0;padding-left:20px;color:var(--text2);">
+<li><strong>Partition সংখ্যা ঠিক রাখো</strong> — CPU cores × 2-3, বা <code>spark.sql.shuffle.partitions</code> adjust করো</li>
+<li><strong>Broadcast Join</strong> — ছোট DataFrame (<10MB) broadcast করো: <code>broadcast(small_df)</code></li>
+<li><strong>Cache/Persist</strong> — বারবার ব্যবহৃত DataFrame cache করো: <code>df.cache()</code></li>
+<li><strong>Parquet format</strong> — CSV-এর বদলে Parquet ব্যবহার করো (column-based, compressed)</li>
+<li><strong>Wide Transformation কম করো</strong> — join, groupBy-এর আগে filter করো (Predicate Pushdown)</li>
+</ol></div>
+
+<div class="interview-q">Q7: Spark caching কখন করবে? cache() ও persist()-এর পার্থক্য?</div>
+<div class="interview-a"><strong>উত্তর:</strong> যখন একটা DataFrame বারবার ব্যবহার হবে (multiple model training, multiple join)। <code>cache()</code> = <code>persist(MEMORY_AND_DISK)</code> — RAM-এ রাখে, পূর্ণ হলে disk-এ। <code>persist(StorageLevel.MEMORY_ONLY)</code> — শুধু RAM, কিন্তু যদি পূর্ণ হয় তাহলে পুনরায় compute করে। Production-এ <code>MEMORY_AND_DISK</code> নিরাপদ।</div>
+
+<div class="interview-q">Q8: Data skew কী? কীভাবে handle করবে?</div>
+<div class="interview-a"><strong>উত্তর:</strong> Data skew হলো যখন কিছু partition-এ অনেক বেশি data থাকে — কিছু Executor অনেক বেশি কাজ করে, বাকিরা idle থাকে। সমাধান: (1) Salting — key-এর সাথে random prefix যোগ করো; (2) repartition() দিয়ে redistribute করো; (3) AQE (Adaptive Query Execution) চালু রাখো।</div>
+</div>
+
+<div class="interview-box">
+<div class="interview-title">🤖 MLlib ও ML Engineering</div>
+
+<div class="interview-q">Q9: MLlib Pipeline কেন ব্যবহার করবে? কী সমস্যা সমাধান করে?</div>
+<div class="interview-a"><strong>উত্তর:</strong> Pipeline নিশ্চিত করে training ও inference-এ একই preprocessing steps চলে। Data leakage ঠেকায় — Scaler training data দিয়ে fit হয়, test data দিয়ে নয়। Code reusable ও maintainable হয়। Model deployment সহজ হয় — পুরো Pipeline একটাই artifact হিসেবে save/load করা যায়।</div>
+
+<div class="interview-q">Q10: Data leakage কী? PySpark Pipeline-এ কীভাবে এড়াবে?</div>
+<div class="interview-a"><strong>উत्तर:</strong> Data leakage হলো training-এ test data-র তথ্য ঢুকে যাওয়া — model artificially ভালো দেখায় কিন্তু production-এ ব্যর্থ হয়। এড়ানোর উপায়: Pipeline ব্যবহার করো — Pipeline.fit(train) করলে সব Estimator শুধু train data দেখে। তারপর Pipeline.transform(test) করলে শুধু transform হয়, fit হয় না।</div>
+
+<div class="interview-q">Q11: Overfitting কী? MLlib-এ কীভাবে ঠেকাবে?</div>
+<div class="interview-a"><strong>উত্তর:</strong> Overfitting = model training data মুখস্ত করে ফেলে, নতুন data-তে ভুল করে। MLlib-এ সমাধান: (1) regParam — L1/L2 regularization; (2) maxDepth কম রাখো decision tree-তে; (3) CrossValidator দিয়ে proper validation; (4) train/test split — সবসময় আলাদা test set; (5) Feature selection — অপ্রয়োজনীয় feature বাদ দাও।</div>
+
+<div class="interview-q">Q12: SparkContext ও SparkSession-এর পার্থক্য কী?</div>
+<div class="interview-a"><strong>উত্তর:</strong> SparkContext পুরনো API — শুধু RDD কাজের জন্য। SparkSession নতুন (Spark 2.0+) — DataFrame, SQL, Streaming, ML সব কিছুর জন্য। SparkSession-এর ভেতরে SparkContext থাকে (<code>spark.sparkContext</code>)। Production-এ সবসময় SparkSession ব্যবহার করো।</div>
+</div>
+
+<div class="interview-box">
+<div class="interview-title">💡 Coding Challenges — সরাসরি লিখতে বলবে</div>
+
+<div class="interview-q">Challenge ১: 0-100 পর্যন্ত 3 ও 5 উভয়ে বিভাজ্য সংখ্যা RDD দিয়ে বের করো</div>
+<div class="interview-a">
+<pre data-lang="python"><code>rdd = sc.parallelize(<span class="fn">range</span>(<span class="num">101</span>))
+result = rdd.filter(<span class="kw">lambda</span> x: x % <span class="num">3</span> == <span class="num">0</span> <span class="kw">and</span> x % <span class="num">5</span> == <span class="num">0</span>)
+<span class="fn">print</span>(result.collect())  <span class="cm"># [0, 15, 30, 45, 60, 75, 90]</span></code></pre>
+</div>
+
+<div class="interview-q">Challenge ২: একটা DataFrame-এ প্রতিটা column-এর missing value % বের করো</div>
+<div class="interview-a">
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> col, isnull, isnan, count, when
+
+total = df.count()
+missing_pct = df.select([
+    (count(when(isnull(c) | isnan(c), c)) * <span class="num">100.0</span> / total).alias(c)
+    <span class="kw">for</span> c <span class="kw">in</span> df.columns
+])
+missing_pct.show()</code></pre>
+</div>
+
+<div class="interview-q">Challenge ৩: একটা বড় DataFrame-এ sales-কে region ও product category অনুযায়ী group করে, শুধু যেগুলোর total sales > 100,000 সেগুলো দেখাও, descending order-এ</div>
+<div class="interview-a">
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> sum, col
+
+result = (df
+    .groupBy(<span class="str">"region"</span>, <span class="str">"category"</span>)
+    .agg(sum(<span class="str">"sales"</span>).alias(<span class="str">"total_sales"</span>))
+    .filter(col(<span class="str">"total_sales"</span>) > <span class="num">100000</span>)
+    .orderBy(col(<span class="str">"total_sales"</span>).desc())
+)
+result.show()</code></pre>
+</div>
+
+<div class="interview-q">Challenge ৪: Window Function দিয়ে প্রতিটা department-এ সর্বোচ্চ বেতনের কর্মীর rank বের করো</div>
+<div class="interview-a">
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.sql.window <span class="kw">import</span> Window
+<span class="kw">from</span> pyspark.sql.functions <span class="kw">import</span> rank, col
+
+window = Window.partitionBy(<span class="str">"department"</span>).orderBy(col(<span class="str">"salary"</span>).desc())
+result = df.withColumn(<span class="str">"rank"</span>, rank().over(window))
+result.filter(col(<span class="str">"rank"</span>) == <span class="num">1</span>).show()  <span class="cm"># প্রতিটা department-এ top salary</span></code></pre>
+</div>
+
+<div class="interview-q">Challenge ৫: Penguin dataset-এ একটা complete ML pipeline তৈরি করো — missing value imputation, encoding, scaling, logistic regression, 5-fold CV</div>
+<div class="interview-a">
+<pre data-lang="python"><code><span class="kw">from</span> pyspark.ml <span class="kw">import</span> Pipeline
+<span class="kw">from</span> pyspark.ml.feature <span class="kw">import</span> Imputer, StringIndexer, OneHotEncoder, VectorAssembler, StandardScaler
+<span class="kw">from</span> pyspark.ml.classification <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> pyspark.ml.tuning <span class="kw">import</span> CrossValidator, ParamGridBuilder
+<span class="kw">from</span> pyspark.ml.evaluation <span class="kw">import</span> MulticlassClassificationEvaluator
+
+imputer = <span class="cls">Imputer</span>(strategy=<span class="str">"mean"</span>,
+    inputCols=[<span class="str">"bill_length_mm"</span>,<span class="str">"bill_depth_mm"</span>,<span class="str">"flipper_length_mm"</span>,<span class="str">"body_mass_g"</span>],
+    outputCols=[<span class="str">"bl_f"</span>,<span class="str">"bd_f"</span>,<span class="str">"fl_f"</span>,<span class="str">"bm_f"</span>])
+sp_idx = <span class="cls">StringIndexer</span>(inputCols=[<span class="str">"species"</span>,<span class="str">"sex"</span>,<span class="str">"island"</span>],
+    outputCols=[<span class="str">"label"</span>,<span class="str">"sex_f"</span>,<span class="str">"island_f"</span>], handleInvalid=<span class="str">"keep"</span>)
+enc = <span class="cls">OneHotEncoder</span>(inputCol=<span class="str">"island_f"</span>, outputCol=<span class="str">"island_ohe"</span>)
+va = <span class="cls">VectorAssembler</span>(inputCols=[<span class="str">"bl_f"</span>,<span class="str">"bd_f"</span>,<span class="str">"fl_f"</span>,<span class="str">"bm_f"</span>,<span class="str">"sex_f"</span>,<span class="str">"island_ohe"</span>], outputCol=<span class="str">"feat_raw"</span>)
+sc = <span class="cls">StandardScaler</span>(inputCol=<span class="str">"feat_raw"</span>, outputCol=<span class="str">"features"</span>)
+lr = <span class="cls">LogisticRegression</span>(featuresCol=<span class="str">"features"</span>, labelCol=<span class="str">"label"</span>, maxIter=<span class="num">50</span>)
+pipe = <span class="cls">Pipeline</span>(stages=[imputer, sp_idx, enc, va, sc, lr])
+
+grid = <span class="cls">ParamGridBuilder</span>().addGrid(lr.regParam,[<span class="num">0.01</span>,<span class="num">0.1</span>]).addGrid(lr.maxIter,[<span class="num">50</span>,<span class="num">100</span>]).build()
+ev = <span class="cls">MulticlassClassificationEvaluator</span>(labelCol=<span class="str">"label"</span>)
+cv = <span class="cls">CrossValidator</span>(estimator=pipe, estimatorParamMaps=grid, evaluator=ev, numFolds=<span class="num">5</span>)
+
+df = spark.read.option(<span class="str">"header"</span>,<span class="kw">True</span>).option(<span class="str">"inferSchema"</span>,<span class="kw">True</span>).csv(<span class="str">"penguins.csv"</span>)
+train, test = df.randomSplit([<span class="num">0.8</span>,<span class="num">0.2</span>], seed=<span class="num">42</span>)
+cv_model = cv.fit(train)
+preds = cv_model.transform(test)
+<span class="fn">print</span>(<span class="str">f"Accuracy: {ev.evaluate(preds,{ev.metricName:'accuracy'}):.4f}"</span>)</code></pre>
+</div>
+</div>
+
+<div class="interview-box">
+<div class="interview-title">🌟 MLOps ও Production</div>
+<div class="interview-q">Q13: PySpark Model production-এ deploy করার steps কী?</div>
+<div class="interview-a"><strong>উত্তর:</strong>
+<ol style="margin:8px 0;padding-left:20px;color:var(--text2);">
+<li><strong>Pipeline তৈরি</strong> — preprocessing + model একসাথে</li>
+<li><strong>Save</strong> — <code>pipeline_model.write().overwrite().save("hdfs://path/model")</code></li>
+<li><strong>Model Registry</strong> — MLflow দিয়ে version track করো</li>
+<li><strong>Load ও Serve</strong> — <code>PipelineModel.load("path")</code> দিয়ে load, FastAPI দিয়ে REST API</li>
+<li><strong>Monitor</strong> — Evidently AI বা custom Spark job দিয়ে data drift check</li>
+<li><strong>Retrain</strong> — নতুন data আসলে DVC দিয়ে track করে retrain</li>
+</ol></div>
+
+<div class="interview-q">Q14: Spark Streaming কী? কীভাবে real-time ML inference করবে?</div>
+<div class="interview-a"><strong>উত্তর:</strong> Spark Structured Streaming দিয়ে real-time ডেটা প্রসেস করা যায়। Kafka থেকে stream পড়ে, batch-এ process করে। Real-time ML inference: (1) Kafka থেকে feature stream পড়ো; (2) saved PipelineModel load করো; (3) প্রতিটা micro-batch-এ transform() চালাও; (4) result আবার Kafka বা database-এ লেখো।</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>📚 PySpark সম্পূর্ণ গাইড — বাংলায় | ML Engineering Curriculum অনুসরণে</p>
+  <p style="margin-top:8px;font-size:.82rem;">Spark 3.5 · Python 3.8+ · MLlib · SparkSQL · PySpark ML Pipeline</p>
+  <p style="margin-top:12px;color:#4b5563;font-size:.8rem;">এই ডকুমেন্ট পড়ার পর আর internet দেখতে হবে না — সব এখানেই আছে ✅</p>
+</div>
+
+</div><!-- container -->
+</body>
+</html>

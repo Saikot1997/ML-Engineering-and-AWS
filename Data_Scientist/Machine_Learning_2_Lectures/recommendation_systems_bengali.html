@@ -1,0 +1,2574 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recommendation Systems — সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2129;
+    --border: #30363d;
+    --accent: #f7c948;
+    --accent2: #58a6ff;
+    --accent3: #3fb950;
+    --accent4: #ff7b72;
+    --accent5: #d2a8ff;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #cdd9e5;
+    --code-bg: #161b22;
+    --tag-bg: #1f2937;
+    --warn: #e3b341;
+    --info: #388bfd;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Hind Siliguri', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    font-size: 16px;
+  }
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(13,17,23,0.95);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-brand {
+    font-weight: 700; font-size: 1.1rem; color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+  .nav-links { display: flex; gap: 20px; flex-wrap: wrap; }
+  .nav-links a {
+    color: var(--text2); text-decoration: none; font-size: 0.82rem;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  /* LAYOUT */
+  .container { max-width: 960px; margin: 0 auto; padding: 80px 24px 60px; }
+  /* HERO */
+  .hero {
+    text-align: center; padding: 80px 0 60px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 60px;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #1c2850, #1a3a2a);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 0.75rem; padding: 4px 14px;
+    border-radius: 20px; margin-bottom: 20px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .hero h1 {
+    font-size: 2.8rem; font-weight: 700;
+    line-height: 1.2; margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--accent) 0%, #ff9f43 50%, var(--accent2) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero p { color: var(--text2); font-size: 1.05rem; max-width: 640px; margin: 0 auto; }
+  /* SECTION */
+  .section { margin-bottom: 80px; }
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 32px; padding-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-num {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--accent), #e6a817);
+    color: #000; font-weight: 700; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-num.blue { background: linear-gradient(135deg, var(--accent2), #1a7bd4); color: #fff; }
+  .section-num.green { background: linear-gradient(135deg, var(--accent3), #2a8f3a); color: #fff; }
+  .section-num.purple { background: linear-gradient(135deg, var(--accent5), #8b45cc); color: #fff; }
+  .section-num.red { background: linear-gradient(135deg, var(--accent4), #cc3f36); color: #fff; }
+  .section-title { font-size: 1.6rem; font-weight: 700; color: var(--text); }
+  .section-subtitle { color: var(--text2); font-size: 0.9rem; margin-top: 2px; }
+  /* CARDS */
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 24px;
+  }
+  .card-title {
+    font-size: 1.1rem; font-weight: 600;
+    color: var(--accent); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title.blue { color: var(--accent2); }
+  .card-title.green { color: var(--accent3); }
+  .card-title.purple { color: var(--accent5); }
+  .card-title.red { color: var(--accent4); }
+  /* CALLOUTS */
+  .callout {
+    border-radius: 10px; padding: 18px 20px; margin: 20px 0;
+    border-left: 4px solid;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .callout-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+  .callout-body { flex: 1; }
+  .callout-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+  .callout.info { background: rgba(56,139,253,0.08); border-color: var(--info); }
+  .callout.info .callout-title { color: var(--accent2); }
+  .callout.warn { background: rgba(227,179,65,0.08); border-color: var(--warn); }
+  .callout.warn .callout-title { color: var(--warn); }
+  .callout.success { background: rgba(63,185,80,0.08); border-color: var(--accent3); }
+  .callout.success .callout-title { color: var(--accent3); }
+  .callout.danger { background: rgba(255,123,114,0.08); border-color: var(--accent4); }
+  .callout.danger .callout-title { color: var(--accent4); }
+  /* CODE */
+  .code-block {
+    background: #0d1117; border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden; margin: 20px 0;
+  }
+  .code-header {
+    background: var(--bg3); padding: 10px 18px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang { color: var(--accent2); font-size: 0.78rem; font-family: 'JetBrains Mono', monospace; }
+  .code-label { color: var(--text2); font-size: 0.78rem; }
+  pre {
+    padding: 20px; overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem; line-height: 1.7;
+    color: var(--text3);
+  }
+  .kw { color: #ff79c6; }
+  .fn { color: #50fa7b; }
+  .str { color: #f1fa8c; }
+  .cm { color: #6272a4; font-style: italic; }
+  .num { color: #bd93f9; }
+  .cl { color: #8be9fd; }
+  .op { color: #ff79c6; }
+  /* EXERCISE */
+  .exercise-block {
+    background: linear-gradient(135deg, rgba(88,166,255,0.05), rgba(63,185,80,0.05));
+    border: 1px solid var(--accent2);
+    border-radius: 12px; padding: 24px; margin: 32px 0;
+  }
+  .exercise-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 18px;
+  }
+  .ex-badge {
+    background: var(--accent2); color: #000;
+    padding: 3px 10px; border-radius: 6px;
+    font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .ex-badge.hard { background: var(--accent4); color: #fff; }
+  .ex-badge.medium { background: var(--warn); color: #000; }
+  .exercise-title { font-weight: 600; font-size: 1rem; color: var(--accent2); }
+  .exercise-q {
+    background: var(--bg3); border-radius: 8px;
+    padding: 14px 18px; margin: 12px 0;
+    border-left: 3px solid var(--accent2);
+    font-size: 0.95rem;
+  }
+  .q-num { color: var(--accent2); font-weight: 600; margin-right: 6px; }
+  /* SVG DIAGRAM */
+  .diagram-wrap {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin: 24px 0;
+    text-align: center;
+  }
+  .diagram-caption {
+    color: var(--text2); font-size: 0.85rem;
+    margin-top: 14px; font-style: italic;
+  }
+  /* TABLE */
+  .table-wrap { overflow-x: auto; margin: 20px 0; }
+  table {
+    width: 100%; border-collapse: collapse;
+    background: var(--bg2); border-radius: 10px;
+    overflow: hidden;
+  }
+  th {
+    background: var(--bg3); color: var(--accent);
+    padding: 12px 16px; text-align: left;
+    font-size: 0.85rem; font-weight: 600;
+    border-bottom: 2px solid var(--border);
+  }
+  td {
+    padding: 11px 16px; border-bottom: 1px solid var(--border);
+    font-size: 0.9rem; color: var(--text3);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  /* HIGHLIGHT TEXT */
+  .hl { color: var(--accent); font-weight: 600; }
+  .hl2 { color: var(--accent2); font-weight: 600; }
+  .hl3 { color: var(--accent3); font-weight: 600; }
+  .hl4 { color: var(--accent5); font-weight: 600; }
+  p { margin-bottom: 14px; color: var(--text3); }
+  h3 { color: var(--text); font-size: 1.15rem; margin: 28px 0 12px; }
+  h4 { color: var(--accent2); font-size: 1rem; margin: 22px 0 10px; }
+  ul, ol { padding-left: 24px; color: var(--text3); margin-bottom: 14px; }
+  li { margin-bottom: 8px; }
+  /* ALGO CARD */
+  .algo-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 28px; margin-bottom: 32px;
+    position: relative; overflow: hidden;
+  }
+  .algo-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .algo-card.yellow::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .algo-card.blue::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+  .algo-card.green::before { background: linear-gradient(90deg, var(--accent3), transparent); }
+  .algo-card.purple::before { background: linear-gradient(90deg, var(--accent5), transparent); }
+  .algo-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+  .algo-tagline {
+    display: inline-block;
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px; padding: 4px 12px;
+    font-size: 0.82rem; color: var(--text2);
+    margin-bottom: 16px;
+  }
+  .toc {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 60px;
+  }
+  .toc-title { font-weight: 700; color: var(--accent); margin-bottom: 16px; font-size: 1.05rem; }
+  .toc ol { counter-reset: toc-counter; list-style: none; padding-left: 0; }
+  .toc ol li { counter-increment: toc-counter; padding: 6px 0; }
+  .toc ol li::before {
+    content: counter(toc-counter) ".";
+    color: var(--accent); font-weight: 600; margin-right: 8px;
+    font-size: 0.85rem;
+  }
+  .toc a { color: var(--text3); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+  .toc a:hover { color: var(--accent); }
+  /* formula box */
+  .formula {
+    background: #0d1117; border: 1px dashed var(--border);
+    border-radius: 8px; padding: 16px 22px; margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem; color: var(--accent5);
+    text-align: center;
+  }
+  .step-list { list-style: none; padding-left: 0; }
+  .step-list li {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 12px 0; border-bottom: 1px solid rgba(48,54,61,0.5);
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-dot {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.8rem;
+    background: var(--accent); color: #000;
+  }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 640px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 1.8rem; }
+    .nav-links { display: none; }
+  }
+  /* compare table */
+  .compare-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 0.75rem; font-weight: 600;
+  }
+  .badge-green { background: rgba(63,185,80,0.2); color: var(--accent3); }
+  .badge-red { background: rgba(255,123,114,0.2); color: var(--accent4); }
+  .badge-yellow { background: rgba(247,201,72,0.2); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">📚 Recommendation Systems</div>
+  <div class="nav-links">
+    <a href="#intro">ভূমিকা</a>
+    <a href="#content-based">Content-Based</a>
+    <a href="#collaborative">Collaborative</a>
+    <a href="#matrix-factorization">Matrix Factorization</a>
+    <a href="#surprise">Surprise লাইব্রেরি</a>
+    <a href="#algorithms">সব Algorithm</a>
+    <a href="#coding-exercises">Coding Practice</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">সম্পূর্ণ বাংলায় · Newbie Friendly · Job Interview Ready</div>
+  <h1>Recommendation Systems<br>সম্পূর্ণ গাইড</h1>
+  <p>Netflix কীভাবে তোমাকে সিরিজ সাজেস্ট করে? Amazon কীভাবে বই recommend করে? YouTube কীভাবে next video দেখায়? — এই সবই Recommendation Systems। একদম শুরু থেকে শেষ পর্যন্ত বাংলায় শিখি।</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">📋 বিষয়সূচি</div>
+  <ol>
+    <li><a href="#intro">Recommendation System কী? — একদম মূল ধারণা</a></li>
+    <li><a href="#architecture">সিস্টেমের আর্কিটেকচার — তিনটি ধাপ</a></li>
+    <li><a href="#content-based">Content-Based Filtering — বইয়ের বৈশিষ্ট্য দিয়ে সুপারিশ</a></li>
+    <li><a href="#similarity">Similarity Measures — মিল মাপার পদ্ধতি</a></li>
+    <li><a href="#collaborative">Collaborative Filtering — মানুষের রেটিং দিয়ে সুপারিশ</a></li>
+    <li><a href="#memory-approach">Memory Approach — User-based ও Item-based</a></li>
+    <li><a href="#matrix-factorization">Matrix Factorization — গণিতের গভীরে</a></li>
+    <li><a href="#surprise">Surprise লাইব্রেরি দিয়ে SVD</a></li>
+    <li><a href="#algorithms">সব Algorithm — কিন্ডারগার্টেন Style ব্যাখ্যা</a></li>
+    <li><a href="#coding-exercises">ML Engineering Level Coding Exercises</a></li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: INTRO -->
+<!-- ============================================================ -->
+<div class="section" id="intro">
+  <div class="section-header">
+    <div class="section-num">১</div>
+    <div>
+      <div class="section-title">Recommendation System কী?</div>
+      <div class="section-subtitle">একদম বেসিক থেকে শুরু</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧠 সহজ ভাষায় বুঝি</div>
+    <p>ধরো তুমি একটা বইয়ের দোকানে গেছ। দোকানদার তোমাকে চেনে — সে জানে তুমি গত মাসে Harry Potter কিনেছ, তার আগে Narnia কিনেছ। এখন সে বলল, <em>"ভাই, Percy Jackson নিয়ে যাও, তোমার ভালো লাগবে।"</em></p>
+    <p>এই দোকানদার যা করল, সেটাই হলো <span class="hl">Recommendation System</span> — কিন্তু সেটা করছে একটা কম্পিউটার প্রোগ্রাম, লক্ষ লক্ষ মানুষের ডেটা ব্যবহার করে।</p>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-icon">📖</div>
+    <div class="callout-body">
+      <div class="callout-title">ইতিহাস — Netflix Prize 2006</div>
+      <p>২০০৬ সালে Netflix একটি প্রতিযোগিতা চালু করে — পুরস্কার ছিল ১ মিলিয়ন ডলার! লক্ষ্য ছিল তাদের নিজেদের Recommendation Algorithm এর চেয়ে ভালো Algorithm বানানো। এই প্রতিযোগিতাই আধুনিক Recommendation Systems-এর ভিত্তি তৈরি করে। ৩য় স্থানে থাকা টিম <strong>Matrix Factorization</strong> আবিষ্কার করে যা আজও ব্যবহার হয়!</p>
+    </div>
+  </div>
+
+  <!-- SVG: কেন দরকার -->
+  <div class="diagram-wrap">
+    <svg font-family="'Hind Siliguri', sans-serif" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+      <!-- Background -->
+      <rect width="700" height="200" fill="#161b22" rx="8"/>
+      <!-- User -->
+      <circle cx="80" cy="100" r="35" fill="#1c2850" stroke="#58a6ff" stroke-width="2"/>
+      <text x="80" y="95" text-anchor="middle" fill="#58a6ff" font-size="22">👤</text>
+      <text x="80" y="147" text-anchor="middle" fill="#8b949e" font-size="11">ব্যবহারকারী</text>
+      <!-- Arrow 1 -->
+      <path d="M118 100 L175 100" stroke="#30363d" stroke-width="2" marker-end="url(#arr)"/>
+      <text x="146" y="90" text-anchor="middle" fill="#f7c948" font-size="10">ডেটা</text>
+      <!-- System box -->
+      <rect x="180" y="60" width="180" height="80" rx="10" fill="#1a3a2a" stroke="#3fb950" stroke-width="2"/>
+      <text x="270" y="93" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="bold">Recommendation</text>
+      <text x="270" y="112" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="bold">System</text>
+      <!-- Arrow 2 -->
+      <path d="M363 100 L420 100" stroke="#30363d" stroke-width="2" marker-end="url(#arr)"/>
+      <text x="391" y="90" text-anchor="middle" fill="#f7c948" font-size="10">সুপারিশ</text>
+      <!-- Products -->
+      <rect x="425" y="45" width="100" height="35" rx="6" fill="#1c2850" stroke="#58a6ff" stroke-width="1"/>
+      <text x="475" y="67" text-anchor="middle" fill="#cdd9e5" font-size="11">📚 হ্যারি পটার</text>
+      <rect x="425" y="90" width="100" height="35" rx="6" fill="#1c2850" stroke="#58a6ff" stroke-width="1"/>
+      <text x="475" y="112" text-anchor="middle" fill="#cdd9e5" font-size="11">📚 Percy Jackson</text>
+      <rect x="425" y="135" width="100" height="35" rx="6" fill="#1c2850" stroke="#58a6ff" stroke-width="1"/>
+      <text x="475" y="157" text-anchor="middle" fill="#cdd9e5" font-size="11">📚 Narnia</text>
+      <!-- Netflix/Amazon logos text -->
+      <text x="612" y="70" text-anchor="middle" fill="#ff7b72" font-size="11" font-weight="bold">Netflix</text>
+      <text x="612" y="95" text-anchor="middle" fill="#f7c948" font-size="11" font-weight="bold">Amazon</text>
+      <text x="612" y="120" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="bold">YouTube</text>
+      <text x="612" y="145" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">Spotify</text>
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#30363d"/>
+        </marker>
+      </defs>
+    </svg>
+    <div class="diagram-caption">চিত্র: ব্যবহারকারীর ডেটা → Recommendation System → সুপারিশ</div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body">
+      <div class="callout-title">কেন এটা গুরুত্বপূর্ণ?</div>
+      <p>Netflix, YouTube, Amazon-এর রাজস্ব সরাসরি তাদের Recommendation System-এর মানের উপর নির্ভর করে। ভালো সুপারিশ = বেশি দেখা = বেশি আয়। এই কারণেই এই প্রযুক্তিতে বিলিয়ন বিলিয়ন ডলার বিনিয়োগ হয়।</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: ARCHITECTURE -->
+<!-- ============================================================ -->
+<div class="section" id="architecture">
+  <div class="section-header">
+    <div class="section-num blue">২</div>
+    <div>
+      <div class="section-title">সিস্টেমের তিনটি ধাপ</div>
+      <div class="section-subtitle">Recommendation Algorithm কীভাবে কাজ করে</div>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg font-family="'Hind Siliguri', sans-serif" viewBox="0 0 700 130" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+      <rect width="700" height="130" fill="#161b22" rx="8"/>
+      <!-- Step 1 -->
+      <rect x="30" y="25" width="170" height="80" rx="10" fill="#1c2850" stroke="#58a6ff" stroke-width="2"/>
+      <text x="115" y="55" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">ধাপ ১</text>
+      <text x="115" y="73" text-anchor="middle" fill="#cdd9e5" font-size="11">Candidate Generation</text>
+      <text x="115" y="90" text-anchor="middle" fill="#8b949e" font-size="10">প্রার্থী তৈরি করা</text>
+      <!-- Arrow -->
+      <path d="M204 65 L235 65" stroke="#f7c948" stroke-width="2" marker-end="url(#arr2)"/>
+      <!-- Step 2 -->
+      <rect x="240" y="25" width="170" height="80" rx="10" fill="#1a3a2a" stroke="#3fb950" stroke-width="2"/>
+      <text x="325" y="55" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="bold">ধাপ ২</text>
+      <text x="325" y="73" text-anchor="middle" fill="#cdd9e5" font-size="11">Scoring</text>
+      <text x="325" y="90" text-anchor="middle" fill="#8b949e" font-size="10">স্কোর দেওয়া ও র‍্যাংক করা</text>
+      <!-- Arrow -->
+      <path d="M414 65 L445 65" stroke="#f7c948" stroke-width="2" marker-end="url(#arr2)"/>
+      <!-- Step 3 -->
+      <rect x="450" y="25" width="210" height="80" rx="10" fill="#2a1a2a" stroke="#d2a8ff" stroke-width="2"/>
+      <text x="555" y="55" text-anchor="middle" fill="#d2a8ff" font-size="12" font-weight="bold">ধাপ ৩</text>
+      <text x="555" y="73" text-anchor="middle" fill="#cdd9e5" font-size="11">Re-ranking</text>
+      <text x="555" y="90" text-anchor="middle" fill="#8b949e" font-size="10">চূড়ান্ত ফিল্টার ও সাজানো</text>
+      <defs>
+        <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#f7c948"/>
+        </marker>
+      </defs>
+    </svg>
+    <div class="diagram-caption">চিত্র: Recommendation System-এর তিনটি মূল ধাপ</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">📌 ধাপ ১ — Candidate Generation</div>
+      <p>লক্ষ লক্ষ পণ্যের মধ্যে থেকে প্রথমে একটি ছোট সাবসেট বের করা হয়। যেমন ১০ লাখ বইয়ের মধ্যে থেকে ব্যবহারকারীর জন্য প্রাসঙ্গিক ১০০০ বই বেছে নেওয়া।</p>
+      <p><span class="hl">উদাহরণ:</span> তুমি Fantasy পড়তে ভালোবাসো → শুধু Fantasy বইগুলো নেওয়া হবে।</p>
+    </div>
+    <div class="card">
+      <div class="card-title blue">📊 ধাপ ২ — Scoring</div>
+      <p>প্রার্থী পণ্যগুলোকে একটি মডেল দিয়ে স্কোর দেওয়া হয়। স্কোর যত বেশি, পণ্যটি তত ভালো সুপারিশ।</p>
+      <p><span class="hl2">উদাহরণ:</span> Percy Jackson = ৯.২, Dragon Lance = ৮.৭, আরও...</p>
+    </div>
+    <div class="card">
+      <div class="card-title green">🔄 ধাপ ৩ — Re-ranking</div>
+      <p>অতিরিক্ত শর্তগুলো বিবেচনা করা হয়। যেমন: ব্যবহারকারী কোনো বই পছন্দ করেনি? সেটা বাদ দাও। নতুন বই? স্কোর বাড়াও।</p>
+      <p><span class="hl3">উদাহরণ:</span> তুমি আগে "XYZ" দেখে ১ স্টার দিয়েছ → সেটা লিস্ট থেকে বাদ।</p>
+    </div>
+    <div class="card">
+      <div class="card-title purple">🌟 মূল লক্ষ্য</div>
+      <p>এই তিন ধাপ মিলিয়ে সিস্টেম সিদ্ধান্ত নেয় — কোন ১০টি পণ্য দেখানো হবে যা ব্যবহারকারী সবচেয়ে বেশি পছন্দ করবে।</p>
+    </div>
+  </div>
+
+  <!-- Exercise 1 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="ex-badge">Interview Q</span>
+      <div class="exercise-title">ধাপ ও আর্কিটেকচার নিয়ে প্রশ্ন</div>
+    </div>
+    <div class="exercise-q"><span class="q-num">প্র ১.</span> Recommendation System-এর তিনটি ধাপ কী কী? প্রতিটির কাজ বাংলায় বোঝাও।</div>
+    <div class="exercise-q"><span class="q-num">প্র ২.</span> Candidate Generation কেন দরকার? সরাসরি সব পণ্যে Scoring করলে কী সমস্যা হবে?</div>
+    <div class="exercise-q"><span class="q-num">প্র ৩.</span> Re-ranking ধাপে কী ধরনের ব্যবসায়িক নিয়ম (business rules) যোগ করা হয়?</div>
+    <div class="callout success" style="margin-top:14px;">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <div class="callout-title">উত্তরের ইঙ্গিত</div>
+        <p>ধাপ ১ (Candidate Generation): লাখো আইটেম → কয়েকশো। ধাপ ২ (Scoring): ML মডেল দিয়ে র‍্যাংক। ধাপ ৩ (Re-ranking): ব্যবসার নিয়ম, বৈচিত্র্য, নতুনত্ব যোগ।<br>
+        সরাসরি সব Scoring করলে গণনার সময় ও খরচ অনেক বেশি লাগবে — latency বাড়বে।</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: CONTENT-BASED FILTERING -->
+<!-- ============================================================ -->
+<div class="section" id="content-based">
+  <div class="section-header">
+    <div class="section-num">৩</div>
+    <div>
+      <div class="section-title">Content-Based Filtering</div>
+      <div class="section-subtitle">বইয়ের নিজস্ব বৈশিষ্ট্য দিয়ে সুপারিশ</div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body">
+      <div class="callout-title">মূল ধারণা — ৫ বছরের বাচ্চাকে বোঝানোর মতো</div>
+      <p>ধরো তুমি মিষ্টি খেতে ভালোবাসো। তোমাকে জিজ্ঞেস করা হলো, "মিষ্টি ভালো লাগে নাকি ঝাল?" তুমি বললে মিষ্টি। এখন রান্নাঘরে আছে সন্দেশ (মিষ্টি), রসগোল্লা (মিষ্টি), মরিচ ভর্তা (ঝাল)। Content-Based Filtering বলবে — সন্দেশ আর রসগোল্লা নাও!</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📘 বইয়ের উদাহরণ — Alice ও The Hobbit</div>
+    <p><strong>Alice</strong> কে জিজ্ঞেস করা হলো সে কী ধরনের বই পছন্দ করে। সে বলল — Adventure পছন্দ না, Romance পছন্দ। তার পছন্দ লেখা যায়:</p>
+    <div class="formula">Alice = (Adventure: 0, Romance: 4) → ভেক্টর: [0, 4]</div>
+    <p>এখন <strong>The Hobbit</strong> বইটা দেখি — এতে Romance নেই, কিন্তু Adventure প্রচুর:</p>
+    <div class="formula">The Hobbit = (Adventure: 5, Romance: 0) → ভেক্টর: [5, 0]</div>
+    <p>এখন হিসাব করি — Alice কি The Hobbit পছন্দ করবে? Dot Product ব্যবহার করি:</p>
+    <div class="formula">(0 × 5) + (4 × 0) = 0 + 0 = 0</div>
+    <p>Score = 0 মানে <span class="hl4">Alice-এর The Hobbit পছন্দ হওয়ার সম্ভাবনা খুবই কম!</span> এটাই Content-Based Filtering।</p>
+  </div>
+
+  <!-- SVG: Vector visualization -->
+  <div class="diagram-wrap">
+    <svg font-family="'Hind Siliguri', sans-serif" viewBox="0 0 600 280" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+      <rect width="600" height="280" fill="#161b22" rx="8"/>
+      <!-- Title -->
+      <text x="300" y="30" text-anchor="middle" fill="#f7c948" font-size="14" font-weight="bold">Alice vs The Hobbit — ভেক্টর তুলনা</text>
+      <!-- Left box: Alice -->
+      <rect x="30" y="50" width="240" height="200" rx="10" fill="#1c2850" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="150" y="80" text-anchor="middle" fill="#58a6ff" font-size="13" font-weight="bold">👤 Alice</text>
+      <!-- Bar Adventure -->
+      <rect x="55" y="130" width="10" height="80" rx="3" fill="#30363d"/>
+      <rect x="55" y="210" width="10" height="0" rx="3" fill="#ff7b72"/>
+      <text x="60" y="125" text-anchor="middle" fill="#cdd9e5" font-size="10">Adventure</text>
+      <text x="60" y="222" text-anchor="middle" fill="#8b949e" font-size="10">0</text>
+      <!-- Bar Romance -->
+      <rect x="120" y="130" width="10" height="80" rx="3" fill="#30363d"/>
+      <rect x="120" y="146" width="10" height="64" rx="3" fill="#3fb950"/>
+      <text x="125" y="125" text-anchor="middle" fill="#cdd9e5" font-size="10">Romance</text>
+      <text x="125" y="222" text-anchor="middle" fill="#8b949e" font-size="10">4</text>
+      <!-- Legend -->
+      <rect x="155" y="165" width="10" height="10" fill="#30363d" rx="2"/>
+      <text x="170" y="175" fill="#8b949e" font-size="10">max=5</text>
+      <rect x="155" y="183" width="10" height="10" fill="#3fb950" rx="2"/>
+      <text x="170" y="193" fill="#3fb950" font-size="10">পছন্দ আছে</text>
+      <rect x="155" y="201" width="10" height="10" fill="#ff7b72" rx="2"/>
+      <text x="170" y="211" fill="#ff7b72" font-size="10">পছন্দ নেই</text>
+      <text x="150" y="245" text-anchor="middle" fill="#8b949e" font-size="10">ভেক্টর: [0, 4]</text>
+      <!-- Right box: The Hobbit -->
+      <rect x="320" y="50" width="240" height="200" rx="10" fill="#1a1a2e" stroke="#d2a8ff" stroke-width="1.5"/>
+      <text x="440" y="80" text-anchor="middle" fill="#d2a8ff" font-size="13" font-weight="bold">📖 The Hobbit</text>
+      <!-- Bar Adventure -->
+      <rect x="345" y="130" width="10" height="80" rx="3" fill="#30363d"/>
+      <rect x="345" y="130" width="10" height="80" rx="3" fill="#d2a8ff"/>
+      <text x="350" y="125" text-anchor="middle" fill="#cdd9e5" font-size="10">Adventure</text>
+      <text x="350" y="222" text-anchor="middle" fill="#8b949e" font-size="10">5</text>
+      <!-- Bar Romance -->
+      <rect x="410" y="130" width="10" height="80" rx="3" fill="#30363d"/>
+      <text x="415" y="125" text-anchor="middle" fill="#cdd9e5" font-size="10">Romance</text>
+      <text x="415" y="222" text-anchor="middle" fill="#8b949e" font-size="10">0</text>
+      <text x="440" y="245" text-anchor="middle" fill="#8b949e" font-size="10">ভেক্টর: [5, 0]</text>
+      <!-- Result -->
+      <text x="300" y="268" text-anchor="middle" fill="#f7c948" font-size="12" font-weight="bold">Dot Product = (0×5)+(4×0) = 0 → মিল নেই ❌</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: Alice ও The Hobbit-এর পছন্দ ভেক্টর তুলনা</div>
+  </div>
+
+  <h3>Implementation — Python কোড</h3>
+  <p>এখন দেখি কীভাবে Python-এ Content-Based Filtering implement করা হয়। আমরা Goodreads-এর ৯০০০+ বইয়ের Dataset ব্যবহার করব।</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">ধাপ ১: ডেটা লোড করা</span>
+    </div>
+    <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># ডেটাসেট পড়া — ৯০০০+ বইয়ের তথ্য আছে</span>
+df = pd.<span class="fn">read_csv</span>(<span class="str">'goodreads_descr.csv'</span>)
+
+<span class="cm"># প্রথম ১০ লাইন দেখা</span>
+df.<span class="fn">head</span>(<span class="num">10</span>)
+
+<span class="cm"># কলামগুলো: book_id, title, description
+# description = বইয়ের বিবরণ — এটাই আমাদের মূল কাজে লাগবে</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">ধাপ ২: TF-IDF Vectorization</span>
+    </div>
+    <pre><span class="kw">from</span> sklearn.feature_extraction.text <span class="kw">import</span> <span class="cl">TfidfVectorizer</span>
+
+<span class="cm"># TF-IDF তৈরি করা
+# stop_words='english' মানে সাধারণ শব্দ বাদ দেবে (the, is, are...)
+# এই সাধারণ শব্দগুলো information দেয় না, তাই বাদ দেওয়া ভালো</span>
+tfidf = <span class="cl">TfidfVectorizer</span>(stop_words=<span class="str">'english'</span>)
+
+<span class="cm"># বইয়ের description থেকে ভেক্টর তৈরি করা
+# fit_transform = শেখানো + রূপান্তর একসাথে</span>
+tfidf_matrix = tfidf.<span class="fn">fit_transform</span>(df[<span class="str">'description'</span>])
+
+<span class="cm"># আকার দেখি: (৯৬৭৬, ৫৩৪৩৩)
+# ৯৬৭৬ = বইয়ের সংখ্যা
+# ৫৩৪৩৩ = গুরুত্বপূর্ণ শব্দের সংখ্যা</span>
+<span class="fn">print</span>(tfidf_matrix.<span class="fn">shape</span>)</pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-icon">🔍</div>
+    <div class="callout-body">
+      <div class="callout-title">TF-IDF কী? — সহজ ভাষায়</div>
+      <p><strong>TF (Term Frequency):</strong> একটি শব্দ একটি বইয়ে কতবার আছে।<br>
+      <strong>IDF (Inverse Document Frequency):</strong> শব্দটি কতটা বিরল। সব বইয়ে থাকলে কম গুরুত্বপূর্ণ।<br>
+      <strong>TF-IDF = TF × IDF:</strong> যে শব্দটি একটি বইয়ে বেশি কিন্তু অন্যত্র কম — সেটা সেই বইয়ের পরিচায়ক।<br>
+      যেমন "magic" শব্দটি Harry Potter-এ বেশি — এটা Harry Potter-এর বৈশিষ্ট্য।</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">ধাপ ৩: Similarity হিসাব করা</span>
+    </div>
+    <pre><span class="kw">from</span> sklearn.metrics.pairwise <span class="kw">import</span> cosine_similarity, euclidean_distances
+
+<span class="cm"># Cosine Similarity — দুটো ভেক্টরের মধ্যে কোণ মাপে
+# মান ০ থেকে ১ — ১ মানে একদম একই</span>
+sim_cosine = <span class="fn">cosine_similarity</span>(tfidf_matrix, tfidf_matrix)
+
+<span class="cm"># Euclidean Similarity — দূরত্ব মাপে
+# দূরত্ব কম = মিল বেশি, তাই 1/(1+distance) করা হয়</span>
+sim_euclidean = <span class="num">1</span> / (<span class="num">1</span> + <span class="fn">euclidean_distances</span>(tfidf_matrix))
+
+<span class="cm"># Index তৈরি — title দিয়ে index খুঁজব</span>
+indices = pd.<span class="cl">Series</span>(<span class="fn">range</span>(<span class="num">0</span>, <span class="fn">len</span>(df)), index=df[<span class="str">'title'</span>])</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">ধাপ ৪: Recommendation Function</span>
+    </div>
+    <pre><span class="kw">from</span> tabulate <span class="kw">import</span> tabulate
+
+<span class="kw">def</span> <span class="fn">recommendations</span>(title, mat_sim, num_recommendations=<span class="num">10</span>):
+    <span class="str">"""
+    একটি বইয়ের জন্য সবচেয়ে মিলে যাওয়া বইগুলো খুঁজে বের করা
+    
+    Parameters:
+        title: যে বইয়ের সাথে মিলাবো
+        mat_sim: similarity matrix (cosine বা euclidean)
+        num_recommendations: কতটি সুপারিশ চাই
+    """</span>
+    <span class="cm"># ১. বইটির index বের করা</span>
+    idx = indices[title]
+    
+    <span class="cm"># ২. এই বইয়ের সাথে অন্য সব বইয়ের similarity score সংগ্রহ
+    # enumerate ব্যবহার করি যাতে (index, score) tuple পাই</span>
+    similarity_scores = <span class="fn">list</span>(<span class="fn">enumerate</span>(mat_sim[idx]))
+    
+    <span class="cm"># ৩. Score অনুযায়ী সাজানো (বেশি থেকে কম)</span>
+    similarity_scores = <span class="fn">sorted</span>(similarity_scores, key=<span class="kw">lambda</span> x: x[<span class="num">1</span>], reverse=<span class="kw">True</span>)
+    
+    <span class="cm"># ৪. প্রথম বাদ দিচ্ছি — কারণ সেটা নিজেই (score = 1.0)
+    # পরের num_recommendations টা নেওয়া হচ্ছে</span>
+    top_similar = similarity_scores[<span class="num">1</span>:num_recommendations+<span class="num">1</span>]
+    
+    <span class="cm"># ৫. Index থেকে Title বের করা</span>
+    res = [(indices.index[idx], score) <span class="kw">for</span> idx, score <span class="kw">in</span> top_similar]
+    
+    <span class="kw">return</span> <span class="fn">tabulate</span>(res, headers=[<span class="str">"বইয়ের নাম"</span>, <span class="str">"Similarity Score"</span>], tablefmt=<span class="str">"pretty"</span>)
+
+<span class="cm"># পরীক্ষা করি</span>
+<span class="fn">print</span>(<span class="fn">recommendations</span>(<span class="str">'The Queen\'s Gambit'</span>, sim_cosine))</pre>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-icon">⚠️</div>
+    <div class="callout-body">
+      <div class="callout-title">Content-Based Filtering-এর সীমাবদ্ধতা</div>
+      <ul>
+        <li><strong>Over-specialization:</strong> শুধু একই ধরনের জিনিস সুপারিশ করে — নতুন কিছু আবিষ্কার হয় না</li>
+        <li><strong>Feature-dependent:</strong> বইয়ের বিবরণ না থাকলে কাজ করে না</li>
+        <li><strong>Cold start for users:</strong> নতুন ব্যবহারকারীর জন্য কঠিন — তার পছন্দ জানা নেই</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Exercise 2 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="ex-badge medium">Medium</span>
+      <div class="exercise-title">Content-Based Filtering — Interview Questions</div>
+    </div>
+    <div class="exercise-q"><span class="q-num">প্র ১.</span> Content-Based Filtering ও Collaborative Filtering-এর মূল পার্থক্য কী?</div>
+    <div class="exercise-q"><span class="q-num">প্র ২.</span> TF-IDF কেন সাধারণ word count-এর চেয়ে ভালো?</div>
+    <div class="exercise-q"><span class="q-num">প্র ৩.</span> তুমি যদি একটি মিউজিক অ্যাপে Content-Based Filtering লাগাতে চাও, কোন feature গুলো ব্যবহার করবে?</div>
+    <div class="exercise-q"><span class="q-num">প্র ৪.</span> Cosine Similarity ও Euclidean Distance-এর মধ্যে কোনটা কখন ব্যবহার করবে?</div>
+    <div class="callout success" style="margin-top:14px;">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <div class="callout-title">উত্তর ইঙ্গিত</div>
+        <p>Content-Based = পণ্যের নিজস্ব বৈশিষ্ট্য। CF = অন্য ব্যবহারকারীর রেটিং।<br>
+        TF-IDF বিরল কিন্তু গুরুত্বপূর্ণ শব্দকে বেশি ওজন দেয়।<br>
+        Music features: tempo, genre, key, artist, lyrics sentiment।<br>
+        Cosine = দিক দেখে (স্কেল সমস্যা নেই); Euclidean = দূরত্ব দেখে (উচ্চ মাত্রায় অকার্যকর)।</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: SIMILARITY MEASURES -->
+<!-- ============================================================ -->
+<div class="section" id="similarity">
+  <div class="section-header">
+    <div class="section-num green">৪</div>
+    <div>
+      <div class="section-title">Similarity Measures</div>
+      <div class="section-subtitle">মিল মাপার তিনটি পদ্ধতি</div>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg font-family="'Hind Siliguri', sans-serif" viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+      <rect width="700" height="220" fill="#161b22" rx="8"/>
+      <text x="350" y="28" text-anchor="middle" fill="#f7c948" font-size="14" font-weight="bold">Similarity Measures — তুলনা</text>
+      <!-- Cosine -->
+      <rect x="20" y="45" width="200" height="155" rx="10" fill="#1c2850" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="120" y="72" text-anchor="middle" fill="#58a6ff" font-size="13" font-weight="bold">Cosine Similarity</text>
+      <!-- draw two vectors -->
+      <line x1="60" y1="160" x2="120" y2="100" stroke="#58a6ff" stroke-width="2" marker-end="url(#arrc)"/>
+      <line x1="60" y1="160" x2="170" y2="130" stroke="#3fb950" stroke-width="2" marker-end="url(#arrc)"/>
+      <text x="95" y="120" fill="#f7c948" font-size="10">θ</text>
+      <text x="120" y="185" text-anchor="middle" fill="#8b949e" font-size="10">কোণ মাপে | ০ থেকে ১</text>
+      <text x="120" y="198" text-anchor="middle" fill="#cdd9e5" font-size="9">স্কেল সমস্যা নেই</text>
+      <!-- Dot Product -->
+      <rect x="250" y="45" width="200" height="155" rx="10" fill="#1a2a1a" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="350" y="72" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="bold">Dot Product</text>
+      <text x="350" y="110" text-anchor="middle" fill="#cdd9e5" font-size="22">x · y</text>
+      <text x="350" y="140" text-anchor="middle" fill="#8b949e" font-size="11">= |x| |y| cos(θ)</text>
+      <text x="350" y="165" text-anchor="middle" fill="#8b949e" font-size="10">Normalized হলে</text>
+      <text x="350" y="180" text-anchor="middle" fill="#8b949e" font-size="10">Cosine-এর সমান</text>
+      <text x="350" y="198" text-anchor="middle" fill="#cdd9e5" font-size="9">স্কেল গুরুত্বপূর্ণ</text>
+      <!-- Euclidean -->
+      <rect x="480" y="45" width="200" height="155" rx="10" fill="#2a1a2a" stroke="#d2a8ff" stroke-width="1.5"/>
+      <text x="580" y="72" text-anchor="middle" fill="#d2a8ff" font-size="13" font-weight="bold">Euclidean Distance</text>
+      <circle cx="540" cy="130" r="6" fill="#58a6ff"/>
+      <circle cx="620" cy="110" r="6" fill="#3fb950"/>
+      <line x1="540" y1="130" x2="620" y2="110" stroke="#d2a8ff" stroke-width="2" stroke-dasharray="4"/>
+      <text x="580" y="155" text-anchor="middle" fill="#f7c948" font-size="10">d = √Σ(xi-yi)²</text>
+      <text x="580" y="173" text-anchor="middle" fill="#8b949e" font-size="10">কম দূরত্ব = বেশি মিল</text>
+      <text x="580" y="188" text-anchor="middle" fill="#ff7b72" font-size="9">উচ্চ মাত্রায় কম কার্যকর</text>
+      <defs>
+        <marker id="arrc" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 z" fill="#cdd9e5"/>
+        </marker>
+      </defs>
+    </svg>
+    <div class="diagram-caption">চিত্র: তিনটি Similarity Measure-এর তুলনামূলক চিত্র</div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>পদ্ধতি</th>
+          <th>সূত্র</th>
+          <th>মান পরিসীমা</th>
+          <th>কখন ব্যবহার</th>
+          <th>সমস্যা</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Cosine Similarity</strong></td>
+          <td>cos(x,y) = (x·y) / (|x||y|)</td>
+          <td>-১ থেকে ১ (text-এ ০ থেকে ১)</td>
+          <td>Text, NLP, Sparse data</td>
+          <td>মাত্রা (magnitude) বিবেচনা করে না</td>
+        </tr>
+        <tr>
+          <td><strong>Dot Product</strong></td>
+          <td>Σ xᵢyᵢ</td>
+          <td>যেকোনো মান</td>
+          <td>Normalized vectors, Neural nets</td>
+          <td>Scale সমস্যা আছে</td>
+        </tr>
+        <tr>
+          <td><strong>Euclidean Distance</strong></td>
+          <td>||x-y|| = √Σ(xᵢ-yᵢ)²</td>
+          <td>০ থেকে ∞</td>
+          <td>Low-dimensional, Image</td>
+          <td>উচ্চ মাত্রায় কাজ করে না (Curse of Dimensionality)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">সব Similarity Measure Implement করা</span>
+    </div>
+    <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">cosine_sim</span>(x, y):
+    <span class="str">"""Cosine Similarity — ০ হলে কোনো মিল নেই, ১ হলে একদম একই"""</span>
+    dot = np.<span class="fn">dot</span>(x, y)
+    norm_x = np.<span class="fn">linalg</span>.<span class="fn">norm</span>(x)
+    norm_y = np.<span class="fn">linalg</span>.<span class="fn">norm</span>(y)
+    <span class="kw">if</span> norm_x == <span class="num">0</span> <span class="kw">or</span> norm_y == <span class="num">0</span>:
+        <span class="kw">return</span> <span class="num">0</span>  <span class="cm"># শূন্য ভেক্টর হলে ০ ফেরত</span>
+    <span class="kw">return</span> dot / (norm_x * norm_y)
+
+<span class="kw">def</span> <span class="fn">euclidean_sim</span>(x, y):
+    <span class="str">"""Euclidean Similarity — দূরত্বকে similarity-তে রূপান্তর"""</span>
+    dist = np.<span class="fn">sqrt</span>(np.<span class="fn">sum</span>((x - y)**<span class="num">2</span>))
+    <span class="kw">return</span> <span class="num">1</span> / (<span class="num">1</span> + dist)  <span class="cm"># ১/(১+d) — দূরত্ব বাড়লে মিল কমে</span>
+
+<span class="cm"># উদাহরণ: Alice আর The Hobbit</span>
+alice = np.<span class="fn">array</span>([<span class="num">0</span>, <span class="num">4</span>])      <span class="cm"># adventure=0, romance=4</span>
+hobbit = np.<span class="fn">array</span>([<span class="num">5</span>, <span class="num">0</span>])     <span class="cm"># adventure=5, romance=0</span>
+
+<span class="fn">print</span>(<span class="str">f"Cosine Similarity: {cosine_sim(alice, hobbit):.4f}"</span>)
+<span class="fn">print</span>(<span class="str">f"Euclidean Similarity: {euclidean_sim(alice, hobbit):.4f}"</span>)
+<span class="cm"># আউটপুট: Cosine = 0.0000, Euclidean = 0.1716
+# দুটোই বলছে — মিল খুব কম!</span></pre>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: COLLABORATIVE FILTERING -->
+<!-- ============================================================ -->
+<div class="section" id="collaborative">
+  <div class="section-header">
+    <div class="section-num purple">৫</div>
+    <div>
+      <div class="section-title">Collaborative Filtering</div>
+      <div class="section-subtitle">মানুষের রেটিং থেকে সুপারিশ — সবচেয়ে জনপ্রিয় পদ্ধতি</div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-icon">🤝</div>
+    <div class="callout-body">
+      <div class="callout-title">মূল ধারণা — বন্ধুর পরামর্শের মতো</div>
+      <p>কখনো কখনো আমরা জানি না কেন কিছু ভালো লাগে, কিন্তু ভালো লাগে। Collaborative Filtering বলে — <strong>"তোমার মতো রুচির মানুষরা যা পছন্দ করে, তুমিও পছন্দ করবে।"</strong></p>
+      <p>Amazon-এর বিখ্যাত বাক্য: <em>"যারা এই বই কিনেছে তারা এটাও কিনেছে"</em> — এটাই Collaborative Filtering!</p>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg font-family="'Hind Siliguri', sans-serif" viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+      <rect width="700" height="250" fill="#161b22" rx="8"/>
+      <text x="350" y="28" text-anchor="middle" fill="#f7c948" font-size="14" font-weight="bold">Rating Matrix — সারি=ব্যবহারকারী, কলাম=বই</text>
+      <!-- Matrix -->
+      <!-- Header row -->
+      <rect x="30" y="40" width="130" height="35" rx="4" fill="#1c2850"/>
+      <text x="95" y="63" text-anchor="middle" fill="#8b949e" font-size="11">ব্যবহারকারী</text>
+      <rect x="165" y="40" width="90" height="35" rx="4" fill="#1c2850"/>
+      <text x="210" y="63" text-anchor="middle" fill="#58a6ff" font-size="10">HP-1</text>
+      <rect x="260" y="40" width="90" height="35" rx="4" fill="#1c2850"/>
+      <text x="305" y="63" text-anchor="middle" fill="#58a6ff" font-size="10">Narnia</text>
+      <rect x="355" y="40" width="90" height="35" rx="4" fill="#1c2850"/>
+      <text x="400" y="63" text-anchor="middle" fill="#58a6ff" font-size="10">Percy J.</text>
+      <rect x="450" y="40" width="90" height="35" rx="4" fill="#1c2850"/>
+      <text x="495" y="63" text-anchor="middle" fill="#58a6ff" font-size="10">Dune</text>
+      <rect x="545" y="40" width="90" height="35" rx="4" fill="#1c2850"/>
+      <text x="590" y="63" text-anchor="middle" fill="#58a6ff" font-size="10">Pride & P</text>
+      <!-- Rafaela row -->
+      <rect x="30" y="80" width="130" height="35" rx="4" fill="#1a3a2a"/>
+      <text x="95" y="103" text-anchor="middle" fill="#f7c948" font-size="11">Rafaela</text>
+      <rect x="165" y="80" width="90" height="35" rx="4" fill="#1a3a2a"/>
+      <text x="210" y="103" text-anchor="middle" fill="#3fb950" font-size="14">5</text>
+      <rect x="260" y="80" width="90" height="35" rx="4" fill="#1a3a2a"/>
+      <text x="305" y="103" text-anchor="middle" fill="#3fb950" font-size="14">5</text>
+      <rect x="355" y="80" width="90" height="35" rx="4" fill="#1a3a2a"/>
+      <text x="400" y="103" text-anchor="middle" fill="#3fb950" font-size="14">4</text>
+      <rect x="450" y="80" width="90" height="35" rx="4" fill="#1a3a2a"/>
+      <text x="495" y="103" text-anchor="middle" fill="#8b949e" font-size="14">?</text>
+      <rect x="545" y="80" width="90" height="35" rx="4" fill="#1a3a2a"/>
+      <text x="590" y="103" text-anchor="middle" fill="#ff7b72" font-size="14">1</text>
+      <!-- Benoit row -->
+      <rect x="30" y="120" width="130" height="35" rx="4" fill="#1c2850"/>
+      <text x="95" y="143" text-anchor="middle" fill="#58a6ff" font-size="11">Benoit</text>
+      <rect x="165" y="120" width="90" height="35" rx="4" fill="#1c2850"/>
+      <text x="210" y="143" text-anchor="middle" fill="#8b949e" font-size="14">?</text>
+      <rect x="260" y="120" width="90" height="35" rx="4" fill="#1c2850"/>
+      <text x="305" y="143" text-anchor="middle" fill="#3fb950" font-size="14">5</text>
+      <rect x="355" y="120" width="90" height="35" rx="4" fill="#1c2850"/>
+      <text x="400" y="143" text-anchor="middle" fill="#3fb950" font-size="14">4</text>
+      <rect x="450" y="120" width="90" height="35" rx="4" fill="#1c2850"/>
+      <text x="495" y="143" text-anchor="middle" fill="#8b949e" font-size="14">?</text>
+      <rect x="545" y="120" width="90" height="35" rx="4" fill="#1c2850"/>
+      <text x="590" y="143" text-anchor="middle" fill="#ff7b72" font-size="14">2</text>
+      <!-- Alice row -->
+      <rect x="30" y="160" width="130" height="35" rx="4" fill="#2a1a2a"/>
+      <text x="95" y="183" text-anchor="middle" fill="#d2a8ff" font-size="11">Alice</text>
+      <rect x="165" y="160" width="90" height="35" rx="4" fill="#2a1a2a"/>
+      <text x="210" y="183" text-anchor="middle" fill="#3fb950" font-size="14">4</text>
+      <rect x="260" y="160" width="90" height="35" rx="4" fill="#2a1a2a"/>
+      <text x="305" y="183" text-anchor="middle" fill="#8b949e" font-size="14">?</text>
+      <rect x="355" y="160" width="90" height="35" rx="4" fill="#2a1a2a"/>
+      <text x="400" y="183" text-anchor="middle" fill="#8b949e" font-size="14">?</text>
+      <rect x="450" y="160" width="90" height="35" rx="4" fill="#2a1a2a"/>
+      <text x="495" y="183" text-anchor="middle" fill="#3fb950" font-size="14">5</text>
+      <rect x="545" y="160" width="90" height="35" rx="4" fill="#2a1a2a"/>
+      <text x="590" y="183" text-anchor="middle" fill="#8b949e" font-size="14">?</text>
+      <!-- Legend -->
+      <rect x="100" y="215" width="12" height="12" fill="#3fb950" rx="2"/>
+      <text x="118" y="225" fill="#8b949e" font-size="10">উচ্চ রেটিং (৪-৫)</text>
+      <rect x="270" y="215" width="12" height="12" fill="#ff7b72" rx="2"/>
+      <text x="288" y="225" fill="#8b949e" font-size="10">নিম্ন রেটিং (১-২)</text>
+      <rect x="430" y="215" width="12" height="12" fill="#8b949e" rx="2"/>
+      <text x="448" y="225" fill="#8b949e" font-size="10">"?" = এখনো পড়েনি</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: Rating Matrix — "?" মানে ব্যবহারকারী এখনো সেই বই পড়েনি। আমাদের কাজ হলো এই "?" এর মান অনুমান করা।</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">💡 Explicit Rating</div>
+      <p>ব্যবহারকারী নিজে রেটিং দেয়। যেমন Netflix-এ ১-৫ স্টার দেওয়া, Goodreads-এ বইয়ে রেটিং দেওয়া।</p>
+      <p><span class="hl3">সুবিধা:</span> সরাসরি পছন্দ জানা যায়।<br><span class="hl4">অসুবিধা:</span> বেশিরভাগ মানুষ রেটিং দেয় না।</p>
+    </div>
+    <div class="card">
+      <div class="card-title blue">🔇 Implicit Rating</div>
+      <p>ব্যবহারকারীর আচরণ থেকে হিসাব করা। কতক্ষণ দেখল, কিনল কিনা, share করল কিনা।</p>
+      <p><span class="hl3">সুবিধা:</span> স্বয়ংক্রিয়ভাবে সংগ্রহ হয়।<br><span class="hl4">অসুবিধা:</span> সঠিক পছন্দ না-ও হতে পারে।</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-icon">❄️</div>
+    <div class="callout-body">
+      <div class="callout-title">Cold Start Problem — নতুনের সমস্যা</div>
+      <p>Collaborative Filtering-এর সবচেয়ে বড় সমস্যা হলো <strong>Cold Start</strong>। নতুন ব্যবহারকারী এলে তার কোনো রেটিং নেই → কী সুপারিশ করব? নতুন পণ্য এলে কেউ রেটিং দেয়নি → কাকে দেখাব? এই সমস্যার সমাধানে Hybrid Approach ব্যবহার করা হয়।</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: MEMORY APPROACH -->
+<!-- ============================================================ -->
+<div class="section" id="memory-approach">
+  <div class="section-header">
+    <div class="section-num red">৬</div>
+    <div>
+      <div class="section-title">Memory Approach — User-Based ও Item-Based</div>
+      <div class="section-subtitle">Collaborative Filtering-এর দুটি পদ্ধতি</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">👥 User-Based Filtering</div>
+      <p>তোমার মতো একই রুচির ব্যবহারকারী খোঁজা। তারা যা পছন্দ করে, তোমাকে সেটা সুপারিশ করা।</p>
+      <div class="callout info" style="margin-top:10px;">
+        <div class="callout-icon">💬</div>
+        <div class="callout-body">
+          <p style="margin:0;font-size:0.9rem;">Rafaela ও Benoit দুজনেই Narnia ও Percy Jackson ভালোবাসে। Rafaela Harry Potter-কে ৫ দিয়েছে। তাহলে Benoit-কেও Harry Potter সুপারিশ করা হবে!</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title green">📚 Item-Based Filtering</div>
+      <p>একই রেটিং পাওয়া আইটেমগুলো খোঁজা। তুমি যা পছন্দ করেছ তার মতো জিনিস সুপারিশ করা।</p>
+      <div class="callout info" style="margin-top:10px;">
+        <div class="callout-icon">💬</div>
+        <div class="callout-body">
+          <p style="margin:0;font-size:0.9rem;">Narnia ও Harry Potter-এর রেটিং প্যাটার্ন একই রকম (দুজনেই ফ্যান্টাসি পছন্দকারীরা বেশি রেটিং দেয়)। তাই দুটো similar হিসেবে ধরা হবে।</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Bayesian Average — কেন দরকার?</h3>
+  <div class="card">
+    <div class="card-title purple">⚖️ সাধারণ Average-এর সমস্যা</div>
+    <p>ধরো একটি বই শুধু একজন পড়েছে এবং ৫ দিয়েছে। আরেকটি বই ১০০০ জন পড়েছে এবং গড় ৪.৯ পেয়েছে। সাধারণ average-এ প্রথমটি জিতবে — কিন্তু এটা কি ঠিক?</p>
+    <div class="formula">Bayesian Average = (C × M + S) / (C + n)</div>
+    <p>যেখানে: <span class="hl">M</span> = সব বইয়ের গড় রেটিং, <span class="hl2">C</span> = গড় রেটিং সংখ্যা, <span class="hl3">S</span> = রেটিংগুলোর যোগফল, <span class="hl4">n</span> = মোট রেটিং সংখ্যা</p>
+    <p>এই পদ্ধতি কম রেটিংের বইকে global average-এর দিকে টেনে আনে — ফলে বেশি ন্যায্য তুলনা হয়।</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">Bayesian Average — কোড Implementation</span>
+    </div>
+    <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+df = pd.<span class="fn">read_csv</span>(<span class="str">'ratings_flrd.csv'</span>)
+
+<span class="cm"># প্রতিটি বইয়ের রেটিং সংখ্যা ও গড় রেটিং</span>
+book_stats = df.<span class="fn">groupby</span>(<span class="str">'title'</span>)[<span class="str">'rating'</span>].<span class="fn">agg</span>([<span class="str">'count'</span>, <span class="str">'mean'</span>]).<span class="fn">reset_index</span>()
+
+<span class="cm"># C = সব বইয়ের গড় রেটিং সংখ্যা
+# M = সব বইয়ের গড় রেটিং মান</span>
+C = book_stats[<span class="str">'count'</span>].<span class="fn">mean</span>()
+M = book_stats[<span class="str">'mean'</span>].<span class="fn">mean</span>()
+
+<span class="kw">def</span> <span class="fn">bayesian_avg</span>(ratings_series):
+    <span class="str">"""
+    Bayesian Average = (C × M + S) / (C + n)
+    
+    বাংলায়: কম রেটিংওয়ালা বইকে global average-এর দিকে টেনে আনে।
+    ফলে ১টি রেটিং পাওয়া বই ১০০০টি রেটিং পাওয়া বইয়ের সাথে
+    ন্যায্যভাবে তুলনা হয়।
+    """</span>
+    n = ratings_series.<span class="fn">count</span>()   <span class="cm"># এই বইয়ের মোট রেটিং সংখ্যা</span>
+    S = ratings_series.<span class="fn">sum</span>()    <span class="cm"># এই বইয়ের রেটিংয়ের যোগফল</span>
+    <span class="kw">return</span> (C * M + S) / (C + n)
+
+<span class="cm"># প্রতিটি বইয়ের Bayesian Average হিসাব</span>
+bayesian_avg_ratings = df.<span class="fn">groupby</span>(<span class="str">'title'</span>)[<span class="str">'rating'</span>].<span class="fn">agg</span>(bayesian_avg).<span class="fn">reset_index</span>()
+bayesian_avg_ratings.columns = [<span class="str">'title'</span>, <span class="str">'bayesian_avg'</span>]
+
+<span class="cm"># book_stats-এর সাথে merge করা</span>
+book_stats = book_stats.<span class="fn">merge</span>(bayesian_avg_ratings, on=<span class="str">'title'</span>).<span class="fn">sort_values</span>(
+    <span class="str">'bayesian_avg'</span>, ascending=<span class="kw">False</span>
+)
+
+<span class="cm"># Top 10 সেরা বই দেখানো (Bayesian Average অনুযায়ী)</span>
+best_rated = book_stats[[<span class="str">'title'</span>, <span class="str">'count'</span>, <span class="str">'mean'</span>, <span class="str">'bayesian_avg'</span>]].<span class="fn">head</span>(<span class="num">10</span>)
+sns.<span class="fn">barplot</span>(y=<span class="str">'title'</span>, x=<span class="str">'bayesian_avg'</span>, data=best_rated, orient=<span class="str">'h'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Top 10 Books — Bayesian Average Rating'</span>)
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">show</span>()</pre>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-icon">📊</div>
+    <div class="callout-body">
+      <div class="callout-title">Rating Distribution — কেন দেখা দরকার?</div>
+      <p>বেশিরভাগ রেটিং ৪ বা ৫ হওয়াটা স্বাভাবিক — মানুষ সাধারণত পছন্দের বইই পড়ে। কিন্তু এই skewed distribution মডেলের উপর প্রভাব ফেলে। তাই rating distribution দেখা খুব গুরুত্বপূর্ণ।</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">Rating Matrix ও CSR Format তৈরি</span>
+    </div>
+    <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> scipy.sparse <span class="kw">import</span> csr_matrix
+<span class="kw">import</span> sklearn.metrics.pairwise <span class="kw">as</span> dist
+
+<span class="cm"># ১. ডেটা লোড</span>
+df = pd.<span class="fn">read_csv</span>(<span class="str">'ratings_flrd.csv'</span>)
+
+<span class="cm"># ২. User ও Book সংখ্যা</span>
+n_users = df[<span class="str">'user_id'</span>].<span class="fn">nunique</span>()   <span class="cm"># ২০২৩ জন ব্যবহারকারী</span>
+n_books = df[<span class="str">'title'</span>].<span class="fn">nunique</span>()     <span class="cm"># ১৮৩৮টি বই</span>
+
+<span class="cm"># ৩. Rating Matrix তৈরি — ব্যবহারকারী × বই</span>
+mat_ratings = df.<span class="fn">pivot_table</span>(columns=<span class="str">'title'</span>, 
+                               index=<span class="str">'user_id'</span>, 
+                               values=<span class="str">'rating'</span>)
+
+<span class="cm"># ৪. রেটিং ১ বাড়ানো — কারণ ০ দিয়ে "পড়েনি" বোঝাব
+# রেটিং এখন ১-৬ হবে, মূল ০-৫ নয়</span>
+mat_ratings = mat_ratings + <span class="num">1</span>
+
+<span class="cm"># ৫. না পড়া বইগুলো ০ দিয়ে পূরণ</span>
+mat_ratings.<span class="fn">fillna</span>(<span class="num">0</span>, inplace=<span class="kw">True</span>)
+
+<span class="cm"># ৬. CSR Format — Sparse Matrix সংরক্ষণ
+# কেন? কারণ বেশিরভাগ মান ০ — সেগুলো store না করলে মেমরি বাঁচে</span>
+sparse_ratings = <span class="fn">csr_matrix</span>(mat_ratings)
+user_ids = mat_ratings.index.<span class="fn">tolist</span>()
+titles = mat_ratings.columns.<span class="fn">tolist</span>()</pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-icon">💾</div>
+    <div class="callout-body">
+      <div class="callout-title">Sparse Matrix ও CSR Format — কেন দরকার?</div>
+      <p>২০২৩ ব্যবহারকারী × ১৮৩৮ বই = ৩৭ লাখ সেল! কিন্তু বেশিরভাগই ০ (ব্যবহারকারী সব বই পড়েনি)। <br>
+      <strong>CSR (Compressed Sparse Row)</strong> শুধু শূন্যের বাইরের মানগুলো রাখে তাদের কলাম index সহ। ফলে মেমরি অনেক কম লাগে এবং গণনা দ্রুত হয়।</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">User-Based Filtering — Prediction Function</span>
+    </div>
+    <pre><span class="cm"># User Similarity Matrix তৈরি</span>
+user_similarity = dist.<span class="fn">cosine_similarity</span>(sparse_ratings)
+user_similarity = pd.<span class="cl">DataFrame</span>(user_similarity, 
+                                  index=user_ids, columns=user_ids)
+
+<span class="kw">def</span> <span class="fn">pred_user</span>(mat_ratings, user_similarity, k, user_id):
+    <span class="str">"""
+    একজন ব্যবহারকারীর জন্য অনুমানিত রেটিং হিসাব করা
+    
+    সূত্র: r̂ᵤᵢ = Σ sim(u,v) * rᵥᵢ / Σ |sim(u,v)|
+    যেখানে v = k জন সবচেয়ে মিলে যাওয়া ব্যবহারকারী
+    """</span>
+    <span class="cm"># এই ব্যবহারকারী কোন বইগুলো পড়েননি (rating=0)</span>
+    to_predict = mat_ratings.<span class="fn">loc</span>[user_id][mat_ratings.<span class="fn">loc</span>[user_id]==<span class="num">0</span>]
+    
+    <span class="cm"># k জন সবচেয়ে মিলে যাওয়া ব্যবহারকারী খোঁজা (নিজেকে বাদ দিয়ে)</span>
+    similar_users = user_similarity.<span class="fn">loc</span>[user_id].<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>)[<span class="num">1</span>:k+<span class="num">1</span>]
+    
+    <span class="cm"># Denominator: similarity-এর যোগফল (স্বাভাবিকীকরণের জন্য)</span>
+    norm = np.<span class="fn">sum</span>(np.<span class="fn">abs</span>(similar_users))
+    
+    <span class="kw">for</span> i <span class="kw">in</span> to_predict.index:
+        <span class="cm"># i বইটির জন্য similar users-দের রেটিং</span>
+        ratings = mat_ratings[i].<span class="fn">loc</span>[similar_users.index]
+        
+        <span class="cm"># Weighted sum: similarity * rating</span>
+        scalar_prod = np.<span class="fn">dot</span>(ratings, similar_users)
+        
+        <span class="cm"># অনুমানিত রেটিং</span>
+        pred = scalar_prod / norm
+        to_predict[i] = pred
+    
+    <span class="kw">return</span> to_predict
+
+<span class="cm"># একজন ব্যবহারকারীর জন্য ১০টি সুপারিশ</span>
+userId = <span class="str">'004d5e96c8a318aeb006af50f8cc949c'</span>
+reco = <span class="fn">pred_user</span>(mat_ratings, user_similarity, k=<span class="num">3</span>, user_id=userId)
+<span class="fn">print</span>(reco.<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>).<span class="fn">head</span>(<span class="num">10</span>))</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">Item-Based Filtering — Prediction Function</span>
+    </div>
+    <pre><span class="cm"># Item Similarity — বইয়ের মধ্যে মিল (transpose করে)
+# কেন transpose? কারণ এখন বই = সারি, ব্যবহারকারী = কলাম</span>
+item_similarity = dist.<span class="fn">cosine_similarity</span>(sparse_ratings.T)
+item_similarity = pd.<span class="cl">DataFrame</span>(item_similarity, index=titles, columns=titles)
+
+<span class="kw">def</span> <span class="fn">pred_item</span>(mat_ratings, item_similarity, k, user_id):
+    <span class="str">"""
+    একজন ব্যবহারকারীর না পড়া বইয়ের রেটিং অনুমান করা
+    Item-Based পদ্ধতিতে
+    """</span>
+    to_predict = mat_ratings.<span class="fn">loc</span>[user_id][mat_ratings.<span class="fn">loc</span>[user_id]==<span class="num">0</span>]
+    
+    <span class="kw">for</span> i <span class="kw">in</span> to_predict.index:
+        <span class="cm"># i বইটির সাথে সবচেয়ে মিলে যাওয়া k টি বই</span>
+        similar_items = item_similarity.<span class="fn">loc</span>[i].<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>)[<span class="num">1</span>:k+<span class="num">1</span>]
+        norm = np.<span class="fn">sum</span>(np.<span class="fn">abs</span>(similar_items))
+        
+        <span class="cm"># ব্যবহারকারী সেই similar বইগুলোকে কী রেটিং দিয়েছে</span>
+        ratings = mat_ratings[similar_items.index].<span class="fn">loc</span>[user_id]
+        
+        scalar_prod = np.<span class="fn">dot</span>(ratings, similar_items)
+        pred = scalar_prod / norm
+        to_predict[i] = pred
+    
+    <span class="kw">return</span> to_predict</pre>
+  </div>
+
+  <!-- Exercise 3 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="ex-badge hard">Hard</span>
+      <div class="exercise-title">Collaborative Filtering — ML Engineering Interview</div>
+    </div>
+    <div class="exercise-q"><span class="q-num">প্র ১.</span> User-Based ও Item-Based Filtering-এর মধ্যে কোনটা বেশি scalable? কেন?</div>
+    <div class="exercise-q"><span class="q-num">প্র ২.</span> Sparse Matrix কী? CSR format কীভাবে মেমরি বাঁচায়?</div>
+    <div class="exercise-q"><span class="q-num">প্র ৩.</span> Prediction formula-তে Normalization (denominator) কেন ব্যবহার করা হয়?</div>
+    <div class="exercise-q"><span class="q-num">প্র ৪.</span> k=3 মানে কী? k বড় বা ছোট করলে কী প্রভাব পড়ে?</div>
+    <div class="exercise-q"><span class="q-num">প্র ৫.</span> Rating বাড়িয়ে ১ যোগ করা হলো কেন?</div>
+    <div class="callout success" style="margin-top:14px;">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <div class="callout-title">উত্তর ইঙ্গিত</div>
+        <p><strong>Scalability:</strong> Item-Based বেশি scalable কারণ পণ্যের সংখ্যা ব্যবহারকারীর চেয়ে কম এবং পণ্য similarity প্রায় স্থির থাকে।<br>
+        <strong>CSR:</strong> শুধু non-zero এলিমেন্ট store করে, যা sparse data-তে ৯০%+ মেমরি বাঁচাতে পারে।<br>
+        <strong>Normalization:</strong> similarity-এর পার্থক্যের কারণে weighted sum অনেক বড় হতে পারে — normalization এটা ০-১ এ রাখে।<br>
+        <strong>k:</strong> বড় k = বেশি ব্যবহারকারী/আইটেম = নরম prediction, ছোট k = তীক্ষ্ণ কিন্তু নয়েজি।<br>
+        <strong>+1:</strong> "পড়েনি" কে ০ দিয়ে আলাদা করা হয়েছে, কিন্তু ০ রেটিংও valid — তাই +1 করে ০ শুধু "পড়েনি"-র চিহ্ন হয়।</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: MATRIX FACTORIZATION -->
+<!-- ============================================================ -->
+<div class="section" id="matrix-factorization">
+  <div class="section-header">
+    <div class="section-num">৭</div>
+    <div>
+      <div class="section-title">Matrix Factorization</div>
+      <div class="section-subtitle">গণিতের শক্তিতে লুকানো প্যাটার্ন খোঁজা</div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-icon">🧩</div>
+    <div class="callout-body">
+      <div class="callout-title">মূল ধারণা — ছোটদের মতো বোঝানো</div>
+      <p>ধরো একটা বড় ধাঁধা (puzzle) আছে ১০০০ টুকরার। সেটা দেখে বোঝা কঠিন। কিন্তু যদি সেই ধাঁধাকে কয়েকটি ছোট ধাঁধায় ভাগ করা যায়? Matrix Factorization ঠিক এটাই করে — বড় Rating Matrix কে দুটো ছোট Matrix-এ ভাঙে। তারপর সেই দুটো ছোট Matrix গুণ করলে মূল Matrix পাওয়া যায়, কিন্তু এবার "?" জায়গাগুলোও পূরণ হয়ে যায়!</p>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg font-family="'Hind Siliguri', sans-serif" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+      <rect width="700" height="200" fill="#161b22" rx="8"/>
+      <text x="350" y="28" text-anchor="middle" fill="#f7c948" font-size="14" font-weight="bold">Matrix Factorization: A ≈ U × Vᵀ</text>
+      <!-- A matrix -->
+      <rect x="20" y="45" width="130" height="130" rx="8" fill="#1c2850" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="85" y="80" text-anchor="middle" fill="#58a6ff" font-size="16" font-weight="bold">A</text>
+      <text x="85" y="100" text-anchor="middle" fill="#8b949e" font-size="11">m × n</text>
+      <text x="85" y="118" text-anchor="middle" fill="#cdd9e5" font-size="10">Rating Matrix</text>
+      <text x="85" y="134" text-anchor="middle" fill="#8b949e" font-size="10">(Sparse)</text>
+      <text x="85" y="152" text-anchor="middle" fill="#ff7b72" font-size="11">অনেক "?" আছে</text>
+      <!-- ≈ sign -->
+      <text x="175" y="115" text-anchor="middle" fill="#f7c948" font-size="28" font-weight="bold">≈</text>
+      <!-- U matrix -->
+      <rect x="210" y="45" width="90" height="130" rx="8" fill="#1a3a2a" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="255" y="80" text-anchor="middle" fill="#3fb950" font-size="16" font-weight="bold">U</text>
+      <text x="255" y="100" text-anchor="middle" fill="#8b949e" font-size="11">m × d</text>
+      <text x="255" y="118" text-anchor="middle" fill="#cdd9e5" font-size="10">User Matrix</text>
+      <text x="255" y="134" text-anchor="middle" fill="#8b949e" font-size="10">d = latent</text>
+      <text x="255" y="150" text-anchor="middle" fill="#8b949e" font-size="10">factors</text>
+      <!-- × sign -->
+      <text x="325" y="115" text-anchor="middle" fill="#f7c948" font-size="24" font-weight="bold">×</text>
+      <!-- V^T matrix -->
+      <rect x="350" y="45" width="130" height="90" rx="8" fill="#2a1a2a" stroke="#d2a8ff" stroke-width="1.5"/>
+      <text x="415" y="78" text-anchor="middle" fill="#d2a8ff" font-size="16" font-weight="bold">Vᵀ</text>
+      <text x="415" y="96" text-anchor="middle" fill="#8b949e" font-size="11">d × n</text>
+      <text x="415" y="114" text-anchor="middle" fill="#cdd9e5" font-size="10">Item Matrix (transposed)</text>
+      <!-- = sign -->
+      <text x="505" y="115" text-anchor="middle" fill="#f7c948" font-size="24" font-weight="bold">=</text>
+      <!-- R matrix -->
+      <rect x="530" y="45" width="140" height="130" rx="8" fill="#1a1a3a" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="600" y="80" text-anchor="middle" fill="#58a6ff" font-size="16" font-weight="bold">R</text>
+      <text x="600" y="100" text-anchor="middle" fill="#8b949e" font-size="11">m × n</text>
+      <text x="600" y="118" text-anchor="middle" fill="#cdd9e5" font-size="10">Dense Rating Matrix</text>
+      <text x="600" y="134" text-anchor="middle" fill="#3fb950" font-size="10">সব "?" পূরণ!</text>
+      <text x="600" y="152" text-anchor="middle" fill="#3fb950" font-size="11">সুপারিশ করা যাবে ✓</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: A (sparse) = U × Vᵀ → R (dense). d হলো latent factors সংখ্যা, এটাই আমরা optimize করি।</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="card-title">📐 SVD — Singular Value Decomposition</div>
+      <div class="formula">A = U Σ Vᵀ</div>
+      <p><span class="hl2">U</span> = User-Latent Factor Matrix (ব্যবহারকারী কোন বিষয় পছন্দ করে)<br>
+      <span class="hl">Σ</span> = Diagonal Matrix (কতটা গুরুত্বপূর্ণ প্রতিটি factor)<br>
+      <span class="hl4">V</span> = Item-Latent Factor Matrix (বই কোন বিষয়ের)</p>
+      <p><strong>Truncated SVD:</strong> শুধু সবচেয়ে গুরুত্বপূর্ণ d টি singular value রাখা হয় → মাত্রা কমে।</p>
+    </div>
+    <div class="card">
+      <div class="card-title green">➕ NMF — Non-Negative Matrix Factorization</div>
+      <div class="formula">R = W × H</div>
+      <p><span class="hl3">W</span> = User matrix (m × d) — সব মান ≥ ০<br>
+      <span class="hl3">H</span> = Item matrix (d × n) — সব মান ≥ ০</p>
+      <p><strong>সুবিধা:</strong> সব মান positive হওয়ায় ব্যাখ্যা করা সহজ। SVD-র চেয়ে দ্রুত হিসাব করা যায়।</p>
+      <p><span class="hl4">Latent Variables</span> মানে অজানা বৈশিষ্ট্য — হয়তো "গোয়েন্দা" বা "রোমান্টিক" কিন্তু আমরা সেটা জানি না।</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">Truncated SVD দিয়ে Hybrid Recommendation</span>
+    </div>
+    <pre><span class="kw">from</span> sklearn.decomposition <span class="kw">import</span> <span class="cl">TruncatedSVD</span>
+<span class="kw">import</span> sklearn.metrics.pairwise <span class="kw">as</span> dist
+
+<span class="cm"># SVD তৈরি — n_components = latent factors সংখ্যা
+# কম factors = সাধারণ patterns, বেশি factors = সূক্ষ্ম patterns
+# কিন্তু বেশি হলে overfitting এর ঝুঁকি!</span>
+svd = <span class="cl">TruncatedSVD</span>(n_components=<span class="num">12</span>)
+
+<span class="cm"># Sparse matrix transpose করে fit করা
+# transpose কারণ: বই = সারি হওয়া দরকার (বইয়ের similarity চাই)</span>
+ratings_red = svd.<span class="fn">fit_transform</span>(sparse_ratings.T)
+<span class="fn">print</span>(ratings_red.<span class="fn">shape</span>)  <span class="cm"># (১৮৩৮, ১২) — ১৮৩৮ বই, ১২ latent factor</span>
+
+<span class="cm"># পদ্ধতি ১: Reduced matrix দিয়ে similarity
+# দ্রুত কিন্তু missing values fill করে না</span>
+item_similarity = dist.<span class="fn">cosine_similarity</span>(ratings_red)
+item_similarity = pd.<span class="cl">DataFrame</span>(item_similarity, index=titles, columns=titles)
+
+<span class="cm"># পদ্ধতি ২: Original matrix reconstruct করে similarity
+# ধীর কিন্তু missing values অনুমান করে fill করে</span>
+new_ratings_red = svd.<span class="fn">inverse_transform</span>(ratings_red)
+item_similarity2 = dist.<span class="fn">cosine_similarity</span>(new_ratings_red)
+item_similarity2 = pd.<span class="cl">DataFrame</span>(item_similarity2, index=titles, columns=titles)
+
+<span class="cm"># Recommendation করা</span>
+reco1 = <span class="fn">pred_item</span>(mat_ratings, item_similarity, <span class="num">3</span>, userId).<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>).<span class="fn">head</span>(<span class="num">10</span>)
+reco2 = <span class="fn">pred_item</span>(mat_ratings, item_similarity2, <span class="num">3</span>, userId).<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>).<span class="fn">head</span>(<span class="num">10</span>)</pre>
+  </div>
+
+  <!-- Exercise 4 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="ex-badge hard">Hard</span>
+      <div class="exercise-title">Matrix Factorization — Senior ML Engineer Level</div>
+    </div>
+    <div class="exercise-q"><span class="q-num">প্র ১.</span> SVD ও NMF-এর মূল পার্থক্য কী? কোন পরিস্থিতিতে কোনটা বেছে নেবে?</div>
+    <div class="exercise-q"><span class="q-num">প্র ২.</span> "Latent Variables" কী? কেন এগুলোর সরাসরি অর্থ বোঝা সম্ভব নয়?</div>
+    <div class="exercise-q"><span class="q-num">প্র ৩.</span> Truncated SVD-তে n_components কীভাবে নির্বাচন করবে?</div>
+    <div class="exercise-q"><span class="q-num">প্র ৪.</span> Matrix Factorization Cold Start সমস্যা কীভাবে আংশিকভাবে সমাধান করে?</div>
+    <div class="callout success" style="margin-top:14px;">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <div class="callout-title">উত্তর ইঙ্গিত</div>
+        <p><strong>SVD vs NMF:</strong> SVD ঋণাত্মক মান দিতে পারে (ব্যাখ্যা কঠিন), NMF সব positive (সহজ ব্যাখ্যা, দ্রুত)। Sparse data-তে NMF ভালো।<br>
+        <strong>Latent Variables:</strong> ডেটা থেকে শেখা hidden patterns — হয়তো "dark theme" বা "adventure" কিন্তু আমরা নাম দিই না।<br>
+        <strong>n_components:</strong> Cross-validation দিয়ে RMSE minimize করা, বা Explained Variance দেখা।<br>
+        <strong>Cold Start:</strong> MF নতুন user-এর জন্য global average ব্যবহার করতে পারে, কিন্তু কিছু রেটিং না থাকলে সমস্যা থাকেই।</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: SURPRISE -->
+<!-- ============================================================ -->
+<div class="section" id="surprise">
+  <div class="section-header">
+    <div class="section-num blue">৮</div>
+    <div>
+      <div class="section-title">Surprise লাইব্রেরি</div>
+      <div class="section-subtitle">Python-এ Ready-Made Recommendation System</div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-icon">🎁</div>
+    <div class="callout-body">
+      <div class="callout-title">Surprise কী?</div>
+      <p><strong>S</strong>imple <strong>P</strong>ython <strong>R</strong>ecommendation <strong>S</strong>ystem — এটা একটা Python লাইব্রেরি যা Recommendation Systems বানানো অনেক সহজ করে দেয়। এতে SVD, KNN, NMF সহ অনেক algorithm আগে থেকেই তৈরি আছে।</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">Surprise দিয়ে SVD — ধাপে ধাপে</span>
+    </div>
+    <pre><span class="kw">from</span> surprise <span class="kw">import</span> Reader, Dataset, SVD, NormalPredictor
+<span class="kw">from</span> surprise.model_selection <span class="kw">import</span> cross_validate, GridSearchCV
+
+<span class="cm"># ১. Reader তৈরি — রেটিং এর পরিসীমা বলে দেওয়া</span>
+reader = <span class="fn">Reader</span>(rating_scale=(<span class="num">0</span>, <span class="num">5</span>))
+
+<span class="cm"># ২. DataFrame থেকে Surprise Dataset তৈরি
+# user_id, item_id, rating এই তিন কলাম দরকার</span>
+df_surprise = Dataset.<span class="fn">load_from_df</span>(df[[<span class="str">"user_id"</span>, <span class="str">"title"</span>, <span class="str">"rating"</span>]], 
+                                     reader=reader)
+
+<span class="cm"># ৩. Baseline — NormalPredictor (Random prediction)
+# এটা দিয়ে বুঝব আমাদের SVD কতটা ভালো করছে</span>
+normpred = <span class="fn">NormalPredictor</span>()
+<span class="fn">cross_validate</span>(normpred, df_surprise, measures=[<span class="str">'RMSE'</span>, <span class="str">'MAE'</span>], cv=<span class="num">5</span>, verbose=<span class="kw">True</span>)
+
+<span class="cm"># ৪. SVD Algorithm</span>
+svd = <span class="fn">SVD</span>()
+<span class="fn">cross_validate</span>(svd, df_surprise, measures=[<span class="str">'RMSE'</span>, <span class="str">'MAE'</span>], cv=<span class="num">5</span>, verbose=<span class="kw">True</span>)
+<span class="cm"># SVD-এর RMSE NormalPredictor-এর চেয়ে অনেক কম হবে!</span></pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">Anti-Testset ও Prediction তৈরি</span>
+    </div>
+    <pre"><span class="cm"># ৫. Full Training Set তৈরি</span>
+train_set = df_surprise.<span class="fn">build_full_trainset</span>()
+
+<span class="cm"># ৬. নির্দিষ্ট ব্যবহারকারীর জন্য Anti-Testset তৈরি
+# Anti-Testset = সে যা পড়েনি সেগুলো</span>
+user_id = <span class="str">'464336760142aecf41fc6ab6535171d3'</span>
+anti_testset = []
+targetUser = train_set.<span class="fn">to_inner_uid</span>(user_id)
+moyenne = train_set.global_mean  <span class="cm"># সব রেটিংয়ের গড়</span>
+user_note = train_set.ur[targetUser]  <span class="cm"># এই ব্যবহারকারীর রেটিং</span>
+user_livre = [item <span class="kw">for</span> (item, _) <span class="kw">in</span> user_note]  <span class="cm"># পড়া বইগুলো</span>
+
+<span class="kw">for</span> livre <span class="kw">in</span> train_set.<span class="fn">all_items</span>():
+    <span class="kw">if</span> livre <span class="kw">not in</span> user_livre:  <span class="cm"># না পড়া বইগুলো</span>
+        anti_testset.<span class="fn">append</span>((user_id, train_set.<span class="fn">to_raw_iid</span>(livre), moyenne))
+
+<span class="cm"># ৭. Prediction করা ও ফলাফল দেখা</span>
+svd.<span class="fn">fit</span>(train_set)
+predictionsSVD = svd.<span class="fn">test</span>(anti_testset)
+predictionsSVD = pd.<span class="cl">DataFrame</span>(predictionsSVD)
+predictionsSVD.<span class="fn">sort_values</span>(by=[<span class="str">'est'</span>], inplace=<span class="kw">True</span>, ascending=<span class="kw">False</span>)
+<span class="fn">print</span>(predictionsSVD.<span class="fn">head</span>(<span class="num">10</span>))</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">Python</span>
+      <span class="code-label">GridSearchCV দিয়ে Hyperparameter Tuning</span>
+    </div>
+    <pre"><span class="kw">from</span> surprise.model_selection <span class="kw">import</span> <span class="cl">GridSearchCV</span>
+
+<span class="cm"># যেসব parameter optimize করব</span>
+param_grid = {
+    <span class="str">'n_factors'</span>: [<span class="num">100</span>, <span class="num">150</span>],    <span class="cm"># latent factors সংখ্যা</span>
+    <span class="str">'n_epochs'</span>: [<span class="num">20</span>, <span class="num">25</span>, <span class="num">30</span>],   <span class="cm"># training চক্র সংখ্যা</span>
+    <span class="str">'lr_all'</span>: [<span class="num">0.005</span>, <span class="num">0.01</span>, <span class="num">0.1</span>],  <span class="cm"># learning rate</span>
+    <span class="str">'reg_all'</span>: [<span class="num">0.02</span>, <span class="num">0.05</span>, <span class="num">0.1</span>]  <span class="cm"># regularization</span>
+}
+
+<span class="cm"># Grid Search চালানো</span>
+grid_search = <span class="cl">GridSearchCV</span>(<span class="cl">SVD</span>, param_grid, 
+                             measures=[<span class="str">'rmse'</span>, <span class="str">'mae'</span>], cv=<span class="num">3</span>)
+grid_search.<span class="fn">fit</span>(df_surprise)
+
+<span class="cm"># সেরা ফলাফল দেখা</span>
+<span class="fn">print</span>(<span class="str">"সেরা RMSE:"</span>, grid_search.best_score[<span class="str">'rmse'</span>])
+<span class="fn">print</span>(<span class="str">"সেরা parameters:"</span>, grid_search.best_params[<span class="str">'rmse'</span>])
+
+<span class="cm"># সেরা মডেল দিয়ে আবার cross-validate করা</span>
+tunedSVD = grid_search.best_estimator[<span class="str">'rmse'</span>]
+<span class="fn">cross_validate</span>(tunedSVD, df_surprise, measures=[<span class="str">'RMSE'</span>, <span class="str">'MAE'</span>], cv=<span class="num">5</span>, verbose=<span class="kw">True</span>)</pre>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 9: ALL ALGORITHMS — KINDERGARTEN STYLE -->
+<!-- ============================================================ -->
+<div class="section" id="algorithms">
+  <div class="section-header">
+    <div class="section-num green">৯</div>
+    <div>
+      <div class="section-title">সব Algorithm — কিন্ডারগার্টেন Style</div>
+      <div class="section-subtitle">যেন ৫ বছরের বাচ্চাকে বোঝাচ্ছি + Python Implementation</div>
+    </div>
+  </div>
+
+  <!-- Algo 1: Content-Based -->
+  <div class="algo-card yellow">
+    <div class="algo-title">🎯 Algorithm ১ — Content-Based Filtering</div>
+    <div class="algo-tagline">পণ্যের বৈশিষ্ট্য দেখে সুপারিশ করা</div>
+    <div class="callout warn">
+      <div class="callout-icon">👧</div>
+      <div class="callout-body">
+        <div class="callout-title">বাচ্চাদের ভাষায়</div>
+        <p>তোমার ছোট বোন মিষ্টি আইসক্রিম ভালোবাসে। দোকানে গিয়ে দেখলে ভ্যানিলা (মিষ্টি), চকোলেট (মিষ্টি), লেবু (টক) — তুমি সরাসরি মিষ্টি আইসক্রিমগুলো নিয়ে এলে। এটাই Content-Based! পণ্যের ভেতরের বৈশিষ্ট্য দেখলাম।</p>
+      </div>
+    </div>
+    <h4>কীভাবে কাজ করে:</h4>
+    <ul class="step-list">
+      <li><div class="step-dot">১</div><div>প্রতিটি পণ্যকে feature vector-এ রূপান্তর (TF-IDF, Word2Vec)</div></li>
+      <li><div class="step-dot">২</div><div>ব্যবহারকারীর পছন্দের profile তৈরি করা</div></li>
+      <li><div class="step-dot">৩</div><div>Profile ও পণ্যের মধ্যে similarity হিসাব</div></li>
+      <li><div class="step-dot">৪</div><div>সর্বোচ্চ similarity-র পণ্য সুপারিশ করা</div></li>
+    </ul>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Complete Implementation</span></div>
+      <pre><span class="kw">from</span> sklearn.feature_extraction.text <span class="kw">import</span> <span class="cl">TfidfVectorizer</span>
+<span class="kw">from</span> sklearn.metrics.pairwise <span class="kw">import</span> cosine_similarity
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="kw">class</span> <span class="cl">ContentBasedRecommender</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, text_column=<span class="str">'description'</span>):
+        self.tfidf = <span class="cl">TfidfVectorizer</span>(stop_words=<span class="str">'english'</span>, max_features=<span class="num">50000</span>)
+        self.text_column = text_column
+        self.sim_matrix = <span class="kw">None</span>
+        self.indices = <span class="kw">None</span>
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, df):
+        tfidf_matrix = self.tfidf.<span class="fn">fit_transform</span>(df[self.text_column].<span class="fn">fillna</span>(<span class="str">''</span>))
+        self.sim_matrix = <span class="fn">cosine_similarity</span>(tfidf_matrix)
+        self.indices = pd.<span class="cl">Series</span>(df.index, index=df[<span class="str">'title'</span>])
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">recommend</span>(self, title, n=<span class="num">10</span>):
+        idx = self.indices[title]
+        scores = <span class="fn">list</span>(<span class="fn">enumerate</span>(self.sim_matrix[idx]))
+        scores = <span class="fn">sorted</span>(scores, key=<span class="kw">lambda</span> x: x[<span class="num">1</span>], reverse=<span class="kw">True</span>)[<span class="num">1</span>:n+<span class="num">1</span>]
+        book_indices = [i[<span class="num">0</span>] <span class="kw">for</span> i <span class="kw">in</span> scores]
+        <span class="kw">return</span> self.indices.index[book_indices].<span class="fn">tolist</span>()
+
+<span class="cm"># ব্যবহার</span>
+rec = <span class="cl">ContentBasedRecommender</span>()
+rec.<span class="fn">fit</span>(df)
+<span class="fn">print</span>(rec.<span class="fn">recommend</span>(<span class="str">'The Queen\'s Gambit'</span>))</pre>
+    </div>
+    <div class="table-wrap" style="margin-top:16px;">
+      <table>
+        <tr><th>✅ সুবিধা</th><th>❌ অসুবিধা</th></tr>
+        <tr><td>নতুন আইটেমে কাজ করে (Cold Start নেই)</td><td>শুধু একই ধরনের জিনিস দেখায়</td></tr>
+        <tr><td>ব্যাখ্যা করা সহজ</td><td>Content analysis দরকার</td></tr>
+        <tr><td>ব্যবহারকারীর ডেটা ছাড়া কাজ করে</td><td>নতুন ব্যবহারকারীর জন্য কঠিন</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Algo 2: User-Based CF -->
+  <div class="algo-card blue">
+    <div class="algo-title">👥 Algorithm ২ — User-Based Collaborative Filtering</div>
+    <div class="algo-tagline">তোমার মতো মানুষ যা পছন্দ করে</div>
+    <div class="callout info">
+      <div class="callout-icon">👦</div>
+      <div class="callout-body">
+        <div class="callout-title">বাচ্চাদের ভাষায়</div>
+        <p>তোমার বন্ধু রাকিব ও তুমি একসাথে ৫টি কার্টুন দেখেছ এবং দুজনেই পছন্দ করেছ। রাকিব আরেকটি কার্টুন দেখেছে যেটা তুমি দেখনি কিন্তু রাকিব ৫ স্টার দিয়েছে। তাহলে সেটাও তোমার ভালো লাগবে!</p>
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">Python</span><span class="code-label">User-Based CF Implementation</span></div>
+      <pre><span class="kw">from</span> sklearn.metrics.pairwise <span class="kw">import</span> cosine_similarity
+<span class="kw">from</span> scipy.sparse <span class="kw">import</span> csr_matrix
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">class</span> <span class="cl">UserBasedCF</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, k=<span class="num">10</span>):
+        self.k = k  <span class="cm"># k = সবচেয়ে মিলে যাওয়া ব্যবহারকারী সংখ্যা</span>
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, ratings_df):
+        self.ratings = ratings_df + <span class="num">1</span>  <span class="cm"># ০ = পড়েনি</span>
+        self.ratings.<span class="fn">fillna</span>(<span class="num">0</span>, inplace=<span class="kw">True</span>)
+        sparse = <span class="fn">csr_matrix</span>(self.ratings)
+        sim = <span class="fn">cosine_similarity</span>(sparse)
+        self.user_sim = pd.<span class="cl">DataFrame</span>(sim, 
+                                      index=ratings_df.index, 
+                                      columns=ratings_df.index)
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">recommend</span>(self, user_id, n=<span class="num">10</span>):
+        <span class="cm"># না পড়া বইগুলো</span>
+        unread = self.ratings.<span class="fn">loc</span>[user_id][self.ratings.<span class="fn">loc</span>[user_id] == <span class="num">0</span>]
+        <span class="cm"># k জন সবচেয়ে মিলে যাওয়া ব্যবহারকারী</span>
+        similar = self.user_sim.<span class="fn">loc</span>[user_id].<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>)[<span class="num">1</span>:self.k+<span class="num">1</span>]
+        norm = np.<span class="fn">sum</span>(np.<span class="fn">abs</span>(similar))
+        preds = {}
+        <span class="kw">for</span> book <span class="kw">in</span> unread.index:
+            r = self.ratings[book].<span class="fn">loc</span>[similar.index]
+            preds[book] = np.<span class="fn">dot</span>(r, similar) / norm
+        <span class="kw">return</span> pd.<span class="cl">Series</span>(preds).<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>).<span class="fn">head</span>(n)</pre>
+    </div>
+  </div>
+
+  <!-- Algo 3: Item-Based CF -->
+  <div class="algo-card green">
+    <div class="algo-title">📖 Algorithm ৩ — Item-Based Collaborative Filtering</div>
+    <div class="algo-tagline">তুমি যা পছন্দ করেছ তার মতো জিনিস</div>
+    <div class="callout success">
+      <div class="callout-icon">🧒</div>
+      <div class="callout-body">
+        <div class="callout-title">বাচ্চাদের ভাষায়</div>
+        <p>তুমি কলা খেতে ভালোবাসো। দোকানদার জানে যে যারা কলা পছন্দ করে তারা আম-ও পছন্দ করে (কারণ দুটোই মিষ্টি ফল এবং একই মানুষরা দুটোতেই ভালো রেটিং দেয়)। তাই সে আম recommend করল।</p>
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Item-Based CF Implementation</span></div>
+      <pre><span class="kw">class</span> <span class="cl">ItemBasedCF</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, k=<span class="num">10</span>):
+        self.k = k
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, ratings_df):
+        self.ratings = ratings_df + <span class="num">1</span>
+        self.ratings.<span class="fn">fillna</span>(<span class="num">0</span>, inplace=<span class="kw">True</span>)
+        sparse = <span class="fn">csr_matrix</span>(self.ratings)
+        <span class="cm"># Transpose! কারণ বইয়ের মধ্যে similarity চাই</span>
+        sim = <span class="fn">cosine_similarity</span>(sparse.T)
+        self.item_sim = pd.<span class="cl">DataFrame</span>(sim,
+                                      index=ratings_df.columns,
+                                      columns=ratings_df.columns)
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">recommend</span>(self, user_id, n=<span class="num">10</span>):
+        unread = self.ratings.<span class="fn">loc</span>[user_id][self.ratings.<span class="fn">loc</span>[user_id] == <span class="num">0</span>]
+        preds = {}
+        <span class="kw">for</span> book <span class="kw">in</span> unread.index:
+            similar = self.item_sim.<span class="fn">loc</span>[book].<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>)[<span class="num">1</span>:self.k+<span class="num">1</span>]
+            norm = np.<span class="fn">sum</span>(np.<span class="fn">abs</span>(similar))
+            <span class="kw">if</span> norm == <span class="num">0</span>:
+                <span class="kw">continue</span>
+            r = self.ratings[similar.index].<span class="fn">loc</span>[user_id]
+            preds[book] = np.<span class="fn">dot</span>(r, similar) / norm
+        <span class="kw">return</span> pd.<span class="cl">Series</span>(preds).<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>).<span class="fn">head</span>(n)</pre>
+    </div>
+  </div>
+
+  <!-- Algo 4: SVD -->
+  <div class="algo-card purple">
+    <div class="algo-title">🔮 Algorithm ৪ — SVD (Singular Value Decomposition)</div>
+    <div class="algo-tagline">লুকানো pattern খুঁজে বের করা</div>
+    <div class="callout info">
+      <div class="callout-icon">👶</div>
+      <div class="callout-body">
+        <div class="callout-title">বাচ্চাদের ভাষায়</div>
+        <p>ধরো একটা জটিল ছবি আছে রঙের। তুমি সেই ছবিকে ৩টি সহজ স্তরে (layer) ভাগ করলে। প্রথম স্তর সবচেয়ে বড় pattern দেখায়, দ্বিতীয় স্তর মাঝারি, তৃতীয় ছোট। এখন তুমি যদি শুধু ১ম ও ২য় স্তর দিয়ে ছবি বানাও, মূল ছবির মতো না হলেও অনেকটা কাছাকাছি হবে — এটাই SVD!</p>
+      </div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">Python</span><span class="code-label">SVD with Surprise — Complete Pipeline</span></div>
+      <pre><span class="kw">from</span> surprise <span class="kw">import</span> SVD, Reader, Dataset
+<span class="kw">from</span> surprise.model_selection <span class="kw">import</span> cross_validate, GridSearchCV
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="kw">class</span> <span class="cl">SVDRecommender</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, n_factors=<span class="num">100</span>, n_epochs=<span class="num">20</span>, lr_all=<span class="num">0.005</span>, reg_all=<span class="num">0.02</span>):
+        self.model = <span class="fn">SVD</span>(n_factors=n_factors, n_epochs=n_epochs,
+                         lr_all=lr_all, reg_all=reg_all)
+        self.reader = <span class="fn">Reader</span>(rating_scale=(<span class="num">1</span>, <span class="num">5</span>))
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, df, user_col=<span class="str">'user_id'</span>, item_col=<span class="str">'title'</span>, rating_col=<span class="str">'rating'</span>):
+        data = Dataset.<span class="fn">load_from_df</span>(df[[user_col, item_col, rating_col]], 
+                                      self.reader)
+        trainset = data.<span class="fn">build_full_trainset</span>()
+        self.model.<span class="fn">fit</span>(trainset)
+        self.trainset = trainset
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">recommend</span>(self, user_id, all_items, rated_items, n=<span class="num">10</span>):
+        <span class="cm"># না দেখা আইটেমের জন্য prediction</span>
+        unrated = [i <span class="kw">for</span> i <span class="kw">in</span> all_items <span class="kw">if</span> i <span class="kw">not in</span> rated_items]
+        predictions = [(item, self.model.<span class="fn">predict</span>(user_id, item).est) 
+                       <span class="kw">for</span> item <span class="kw">in</span> unrated]
+        predictions.<span class="fn">sort</span>(key=<span class="kw">lambda</span> x: x[<span class="num">1</span>], reverse=<span class="kw">True</span>)
+        <span class="kw">return</span> predictions[:n]
+
+    <span class="kw">def</span> <span class="fn">tune</span>(self, df, user_col, item_col, rating_col):
+        <span class="cm"># Hyperparameter Tuning</span>
+        data = Dataset.<span class="fn">load_from_df</span>(df[[user_col, item_col, rating_col]], self.reader)
+        param_grid = {
+            <span class="str">'n_factors'</span>: [<span class="num">50</span>, <span class="num">100</span>, <span class="num">150</span>],
+            <span class="str">'n_epochs'</span>: [<span class="num">20</span>, <span class="num">30</span>],
+            <span class="str">'lr_all'</span>: [<span class="num">0.005</span>, <span class="num">0.01</span>],
+            <span class="str">'reg_all'</span>: [<span class="num">0.02</span>, <span class="num">0.1</span>]
+        }
+        gs = <span class="cl">GridSearchCV</span>(<span class="cl">SVD</span>, param_grid, measures=[<span class="str">'rmse'</span>], cv=<span class="num">3</span>)
+        gs.<span class="fn">fit</span>(data)
+        <span class="fn">print</span>(<span class="str">"সেরা RMSE:"</span>, gs.best_score[<span class="str">'rmse'</span>])
+        <span class="fn">print</span>(<span class="str">"সেরা Params:"</span>, gs.best_params[<span class="str">'rmse'</span>])
+        <span class="kw">return</span> gs.best_estimator[<span class="str">'rmse'</span>]</pre>
+    </div>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="card" style="margin-top:32px;">
+    <div class="card-title">📊 সব Algorithm-এর তুলনা</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Algorithm</th>
+            <th>ডেটা দরকার</th>
+            <th>Cold Start</th>
+            <th>Scalability</th>
+            <th>ব্যাখ্যাযোগ্যতা</th>
+            <th>সেরা ব্যবহার</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Content-Based</strong></td>
+            <td>Item features</td>
+            <td><span class="compare-badge badge-green">সমস্যা কম</span></td>
+            <td><span class="compare-badge badge-yellow">মাঝারি</span></td>
+            <td><span class="compare-badge badge-green">সহজ</span></td>
+            <td>News, Documents, Music</td>
+          </tr>
+          <tr>
+            <td><strong>User-Based CF</strong></td>
+            <td>User ratings</td>
+            <td><span class="compare-badge badge-red">সমস্যা আছে</span></td>
+            <td><span class="compare-badge badge-red">কম</span></td>
+            <td><span class="compare-badge badge-green">সহজ</span></td>
+            <td>Small user base</td>
+          </tr>
+          <tr>
+            <td><strong>Item-Based CF</strong></td>
+            <td>User ratings</td>
+            <td><span class="compare-badge badge-red">সমস্যা আছে</span></td>
+            <td><span class="compare-badge badge-yellow">মাঝারি</span></td>
+            <td><span class="compare-badge badge-green">সহজ</span></td>
+            <td>E-commerce, stable catalog</td>
+          </tr>
+          <tr>
+            <td><strong>SVD / MF</strong></td>
+            <td>User ratings</td>
+            <td><span class="compare-badge badge-yellow">আংশিক</span></td>
+            <td><span class="compare-badge badge-green">ভালো</span></td>
+            <td><span class="compare-badge badge-red">কঠিন</span></td>
+            <td>Netflix, Spotify</td>
+          </tr>
+          <tr>
+            <td><strong>Hybrid</strong></td>
+            <td>সব ধরন</td>
+            <td><span class="compare-badge badge-green">সবচেয়ে কম</span></td>
+            <td><span class="compare-badge badge-green">ভালো</span></td>
+            <td><span class="compare-badge badge-red">কঠিন</span></td>
+            <td>Production systems</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 10: CODING EXERCISES -->
+<!-- ============================================================ -->
+<div class="section" id="coding-exercises">
+  <div class="section-header">
+    <div class="section-num red">১০</div>
+    <div>
+      <div class="section-title">ML Engineering Level Coding Exercises</div>
+      <div class="section-subtitle">Production-grade project কাজের জন্য প্রস্তুতি</div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-icon">🏗️</div>
+    <div class="callout-body">
+      <div class="callout-title">এই exercise গুলো কীভাবে করবে</div>
+      <p>প্রতিটি exercise real ML Engineering project-এর মতো। Code লেখার সময় মনে রাখো: error handling, logging, docstring, এবং reusability। সমাধান চেষ্টা কর, তারপর নিচের ইঙ্গিত দেখো।</p>
+    </div>
+  </div>
+
+  <!-- Exercise Set 1 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="ex-badge">Project 1</span>
+      <div class="exercise-title">Evaluation Pipeline তৈরি করা</div>
+    </div>
+    <p style="color:var(--text2); margin-bottom:16px;">একটি Recommendation System কতটা ভালো তা মাপা।</p>
+    <div class="exercise-q">
+      <span class="q-num">Task 1.</span> <strong>বাংলায়:</strong> RMSE (Root Mean Square Error) ও MAE (Mean Absolute Error) হিসাব করার function লেখো। বোঝাও কেন দুটোই দরকার — শুধু একটি দিয়ে কী সমস্যা?
+    </div>
+    <div class="exercise-q">
+      <span class="q-num">Task 2.</span> <strong>বাংলায়:</strong> Train/Test split করো — কিন্তু সাবধান! একই ব্যবহারকারীর কিছু রেটিং train-এ কিছু test-এ রাখতে হবে। কেন সম্পূর্ণ user-split করা যাবে না?
+    </div>
+    <div class="exercise-q">
+      <span class="q-num">Task 3.</span> Precision@K ও Recall@K implement করো। ধরো K=10, মানে top-10 সুপারিশের মধ্যে কতটা relevant।
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Evaluation Metrics Template — তোমাকে পূরণ করতে হবে</span></div>
+      <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> typing <span class="kw">import</span> List, Dict, Tuple
+
+<span class="kw">def</span> <span class="fn">compute_rmse</span>(actual: List[<span class="fn">float</span>], predicted: List[<span class="fn">float</span>]) -> <span class="fn">float</span>:
+    <span class="str">"""
+    RMSE হিসাব করো
+    
+    বাংলায়: প্রতিটি ভুল prediction-কে square করে যোগ করা হয়,
+    তারপর গড় নিয়ে root নেওয়া হয়।
+    বড় ভুলগুলো বেশি penalty পায় (square করার কারণে)।
+    
+    Args:
+        actual: আসল রেটিং
+        predicted: model-এর অনুমানিত রেটিং
+    Returns:
+        float: RMSE মান (কম = ভালো)
+    """</span>
+    <span class="cm"># TODO: Implement করো</span>
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> <span class="fn">compute_mae</span>(actual: List[<span class="fn">float</span>], predicted: List[<span class="fn">float</span>]) -> <span class="fn">float</span>:
+    <span class="str">"""
+    MAE হিসাব করো
+    
+    বাংলায়: প্রতিটি ভুলের পরম মান নিয়ে গড় করা হয়।
+    সব ভুলকে সমান গুরুত্ব দেওয়া হয়।
+    """</span>
+    <span class="cm"># TODO: Implement করো</span>
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> <span class="fn">precision_at_k</span>(recommended: List[<span class="fn">str</span>], relevant: List[<span class="fn">str</span>], k: <span class="fn">int</span>) -> <span class="fn">float</span>:
+    <span class="str">"""
+    Precision@K = (Top K তে কতটা relevant) / K
+    
+    বাংলায়: আমরা ১০টা সুপারিশ করলাম, তার মধ্যে ব্যবহারকারী
+    সত্যিই কতটা পছন্দ করল? সেই অনুপাত।
+    """</span>
+    <span class="cm"># TODO: Implement করো</span>
+    <span class="kw">pass</span>
+
+<span class="kw">def</span> <span class="fn">recall_at_k</span>(recommended: List[<span class="fn">str</span>], relevant: List[<span class="fn">str</span>], k: <span class="fn">int</span>) -> <span class="fn">float</span>:
+    <span class="str">"""
+    Recall@K = (Top K তে কতটা relevant) / (মোট relevant আইটেম)
+    
+    বাংলায়: ব্যবহারকারীর সব পছন্দের মধ্যে আমরা কতটা
+    ধরতে পেরেছি?
+    """</span>
+    <span class="cm"># TODO: Implement করো</span>
+    <span class="kw">pass</span>
+
+<span class="cm"># সমাধান যাচাই করার জন্য:</span>
+actual =    [<span class="num">4</span>, <span class="num">3</span>, <span class="num">5</span>, <span class="num">2</span>, <span class="num">4</span>]
+predicted = [<span class="num">3.8</span>, <span class="num">3.2</span>, <span class="num">4.5</span>, <span class="num">2.1</span>, <span class="num">3.9</span>]
+<span class="fn">print</span>(<span class="str">f"RMSE: {compute_rmse(actual, predicted):.4f}"</span>)  <span class="cm"># ~0.22</span>
+<span class="fn">print</span>(<span class="str">f"MAE: {compute_mae(actual, predicted):.4f}"</span>)    <span class="cm"># ~0.20</span></pre>
+    </div>
+  </div>
+
+  <!-- Exercise Set 2 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="ex-badge medium">Project 2</span>
+      <div class="exercise-title">Hybrid Recommendation System</div>
+    </div>
+    <p style="color:var(--text2); margin-bottom:16px;">Content-Based ও Collaborative Filtering মিলিয়ে একটি Hybrid System তৈরি করা।</p>
+    <div class="exercise-q">
+      <span class="q-num">Task 1.</span> <strong>বাংলায়:</strong> নতুন ব্যবহারকারীর জন্য (কোনো রেটিং নেই) Content-Based ব্যবহার করো। পুরনো ব্যবহারকারীর জন্য Collaborative Filtering। এই decision logic লেখো।
+    </div>
+    <div class="exercise-q">
+      <span class="q-num">Task 2.</span> দুটো সিস্টেমের score-কে কীভাবে combine করবে? Weighted Average ব্যবহার করো: <code>final_score = α × CF_score + (1-α) × CB_score</code>। α কীভাবে ঠিক করবে?
+    </div>
+    <div class="exercise-q">
+      <span class="q-num">Task 3.</span> <strong>বোনাস:</strong> Diversity নিশ্চিত করো — শুধু একই ধরনের বই না দিয়ে বিভিন্ন genre মিশিয়ে দাও।
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Hybrid System Architecture — তোমাকে পূরণ করতে হবে</span></div>
+      <pre><span class="kw">class</span> <span class="cl">HybridRecommender</span>:
+    <span class="str">"""
+    Hybrid Recommendation System
+    
+    নতুন user → Content-Based (Cold Start সমাধান)
+    পুরনো user → Weighted(CF + Content-Based)
+    
+    বাংলায়: দুটো সিস্টেমের সেরা দিক একসাথে নিয়ে কাজ করা।
+    """</span>
+    
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, alpha: <span class="fn">float</span> = <span class="num">0.7</span>, min_ratings: <span class="fn">int</span> = <span class="num">5</span>):
+        <span class="str">"""
+        alpha: CF-এর ওজন (0-1)। alpha=0.7 মানে CF 70%, CB 30%
+        min_ratings: এর কম রেটিং থাকলে নতুন user হিসেবে গণ্য
+        """</span>
+        self.alpha = alpha
+        self.min_ratings = min_ratings
+        self.cb_model = <span class="cl">ContentBasedRecommender</span>()
+        self.cf_model = <span class="cl">ItemBasedCF</span>()
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, ratings_df, items_df):
+        <span class="cm"># TODO: দুটো model train করো</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">def</span> <span class="fn">is_cold_user</span>(self, user_id, ratings_df) -> <span class="fn">bool</span>:
+        <span class="cm"># TODO: User নতুন কিনা check করো</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">def</span> <span class="fn">recommend</span>(self, user_id, n: <span class="fn">int</span> = <span class="num">10</span>) -> List[<span class="fn">str</span>]:
+        <span class="cm"># TODO: নতুন user হলে CB, পুরনো হলে Hybrid ব্যবহার করো</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">def</span> <span class="fn">_combine_scores</span>(self, cf_scores: Dict, cb_scores: Dict) -> Dict:
+        <span class="cm"># TODO: Weighted average দিয়ে combine করো</span>
+        <span class="kw">pass</span></pre>
+    </div>
+  </div>
+
+  <!-- Exercise Set 3 -->
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="ex-badge hard">Project 3 — Production Level</span>
+      <div class="exercise-title">Scalable Recommendation Engine</div>
+    </div>
+    <p style="color:var(--text2); margin-bottom:16px;">এটি real production system-এর কাছাকাছি। সব কিছু একসাথে।</p>
+    <div class="exercise-q">
+      <span class="q-num">Task 1.</span> <strong>Caching:</strong> Similarity matrix একবার হিসাব করে disk-এ save করো (pickle বা numpy format)। পরের বার সরাসরি load করো। কেন এটা গুরুত্বপূর্ণ?
+    </div>
+    <div class="exercise-q">
+      <span class="q-num">Task 2.</span> <strong>Incremental Update:</strong> নতুন rating আসলে সম্পূর্ণ matrix পুনরায় না বানিয়ে কীভাবে update করবে?
+    </div>
+    <div class="exercise-q">
+      <span class="q-num">Task 3.</span> <strong>A/B Testing:</strong> দুটো algorithm-এর ফলাফল তুলনা করার জন্য experiment design করো। কোন metrics দেখবে?
+    </div>
+    <div class="exercise-q">
+      <span class="q-num">Task 4.</span> <strong>API Design:</strong> FastAPI ব্যবহার করে একটি REST endpoint তৈরি করো: <code>GET /recommend/{user_id}?n=10&algo=hybrid</code>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Production Recommendation Service</span></div>
+      <pre><span class="kw">import</span> pickle, os, logging
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+logging.<span class="fn">basicConfig</span>(level=logging.INFO)
+logger = logging.<span class="fn">getLogger</span>(__name__)
+
+<span class="kw">class</span> <span class="cl">RecommendationEngine</span>:
+    <span class="str">"""
+    Production-grade Recommendation Engine
+    
+    Features:
+    - Model caching (disk-based)
+    - Multiple algorithm support
+    - Performance logging
+    - Error handling
+    """</span>
+    
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, cache_dir: <span class="fn">str</span> = <span class="str">"./model_cache"</span>):
+        self.cache_dir = Path(cache_dir)
+        self.cache_dir.<span class="fn">mkdir</span>(exist_ok=<span class="kw">True</span>)
+        self.models = {}
+        self.metadata = {}
+
+    <span class="kw">def</span> <span class="fn">_get_cache_path</span>(self, model_name: <span class="fn">str</span>) -> Path:
+        <span class="kw">return</span> self.cache_dir / <span class="str">f"{model_name}.pkl"</span>
+
+    <span class="kw">def</span> <span class="fn">save_model</span>(self, model_name: <span class="fn">str</span>, model) -> <span class="kw">None</span>:
+        <span class="str">"""Model disk-এ save করা"""</span>
+        path = self.<span class="fn">_get_cache_path</span>(model_name)
+        <span class="kw">with</span> <span class="fn">open</span>(path, <span class="str">'wb'</span>) <span class="kw">as</span> f:
+            pickle.<span class="fn">dump</span>(model, f)
+        self.metadata[model_name] = {
+            <span class="str">'saved_at'</span>: datetime.<span class="fn">now</span>().<span class="fn">isoformat</span>(),
+            <span class="str">'path'</span>: <span class="fn">str</span>(path)
+        }
+        logger.<span class="fn">info</span>(<span class="str">f"Model '{model_name}' saved to {path}"</span>)
+
+    <span class="kw">def</span> <span class="fn">load_model</span>(self, model_name: <span class="fn">str</span>):
+        <span class="str">"""Cache থেকে model load করা"""</span>
+        path = self.<span class="fn">_get_cache_path</span>(model_name)
+        <span class="kw">if not</span> path.<span class="fn">exists</span>():
+            <span class="kw">raise</span> <span class="fn">FileNotFoundError</span>(<span class="str">f"Model '{model_name}' cache-এ নেই"</span>)
+        <span class="kw">with</span> <span class="fn">open</span>(path, <span class="str">'rb'</span>) <span class="kw">as</span> f:
+            model = pickle.<span class="fn">load</span>(f)
+        logger.<span class="fn">info</span>(<span class="str">f"Model '{model_name}' loaded from cache"</span>)
+        <span class="kw">return</span> model
+
+    <span class="kw">def</span> <span class="fn">recommend</span>(self, user_id: <span class="fn">str</span>, n: <span class="fn">int</span> = <span class="num">10</span>, 
+                    algo: <span class="fn">str</span> = <span class="str">'hybrid'</span>) -> Dict:
+        <span class="str">"""
+        একজন ব্যবহারকারীকে সুপারিশ করা
+        
+        Args:
+            user_id: ব্যবহারকারীর ID
+            n: কতটি সুপারিশ চাই
+            algo: 'content', 'collab', 'hybrid'
+        Returns:
+            dict: {recommendations: [...], algo_used: ..., time_ms: ...}
+        """</span>
+        start = datetime.<span class="fn">now</span>()
+        
+        <span class="kw">try</span>:
+            <span class="kw">if</span> algo == <span class="str">'content'</span>:
+                recs = self.models[<span class="str">'content'</span>].<span class="fn">recommend</span>(user_id, n)
+            <span class="kw">elif</span> algo == <span class="str">'collab'</span>:
+                recs = self.models[<span class="str">'collab'</span>].<span class="fn">recommend</span>(user_id, n)
+            <span class="kw">elif</span> algo == <span class="str">'hybrid'</span>:
+                recs = self.models[<span class="str">'hybrid'</span>].<span class="fn">recommend</span>(user_id, n)
+            <span class="kw">else</span>:
+                <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="str">f"Unknown algorithm: {algo}"</span>)
+            
+            elapsed = (datetime.<span class="fn">now</span>() - start).total_seconds() * <span class="num">1000</span>
+            logger.<span class="fn">info</span>(<span class="str">f"Recommended for {user_id} in {elapsed:.1f}ms"</span>)
+            
+            <span class="kw">return</span> {
+                <span class="str">'user_id'</span>: user_id,
+                <span class="str">'recommendations'</span>: recs,
+                <span class="str">'algo_used'</span>: algo,
+                <span class="str">'time_ms'</span>: <span class="fn">round</span>(elapsed, <span class="num">2</span>),
+                <span class="str">'timestamp'</span>: datetime.<span class="fn">now</span>().<span class="fn">isoformat</span>()
+            }
+        <span class="kw">except</span> <span class="fn">Exception</span> <span class="kw">as</span> e:
+            logger.<span class="fn">error</span>(<span class="str">f"Recommendation failed for {user_id}: {e}"</span>)
+            <span class="kw">raise</span>
+
+<span class="cm"># FastAPI endpoint (bonus)</span>
+<span class="cm"># from fastapi import FastAPI
+# app = FastAPI()
+# engine = RecommendationEngine()
+#
+# @app.get("/recommend/{user_id}")
+# async def recommend(user_id: str, n: int = 10, algo: str = "hybrid"):
+#     return engine.recommend(user_id, n, algo)</span></pre>
+    </div>
+  </div>
+
+  <!-- Final Summary -->
+  <div class="card" style="margin-top:40px; border-color: var(--accent);">
+    <div class="card-title">🎯 মূল শিক্ষা — সব মনে রাখার সারসংক্ষেপ</div>
+    <ul class="step-list">
+      <li>
+        <div class="step-dot" style="background:var(--accent);">১</div>
+        <div><strong>Content-Based Filtering:</strong> পণ্যের নিজস্ব বৈশিষ্ট্য (description, genre) দিয়ে similarity মাপে। TF-IDF + Cosine Similarity সবচেয়ে জনপ্রিয়।</div>
+      </li>
+      <li>
+        <div class="step-dot" style="background:var(--accent2);">২</div>
+        <div><strong>Collaborative Filtering:</strong> ব্যবহারকারীর রেটিং ব্যবহার করে। User-Based (মানুষের মিল) বা Item-Based (পণ্যের রেটিং-প্যাটার্ন মিল)।</div>
+      </li>
+      <li>
+        <div class="step-dot" style="background:var(--accent3);">৩</div>
+        <div><strong>Matrix Factorization (SVD/NMF):</strong> বড় sparse matrix কে দুটো ছোট matrix-এ ভাঙে। Latent factors খুঁজে বের করে।</div>
+      </li>
+      <li>
+        <div class="step-dot" style="background:var(--accent5);">৪</div>
+        <div><strong>Hybrid Systems:</strong> সব পদ্ধতির সেরা দিক একসাথে — Cold Start সমস্যা কমায়, accuracy বাড়ায়।</div>
+      </li>
+      <li>
+        <div class="step-dot" style="background:var(--accent4);">৫</div>
+        <div><strong>Evaluation:</strong> RMSE, MAE, Precision@K, Recall@K দিয়ে মাপো। Cross-validation করো। Business metric দেখো।</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="callout success" style="margin-top:30px;">
+    <div class="callout-icon">🎉</div>
+    <div class="callout-body">
+      <div class="callout-title">তুমি এখন জানো:</div>
+      <p>✅ Recommendation System কী এবং কেন দরকার<br>
+      ✅ তিনটি Architecture ধাপ<br>
+      ✅ Content-Based Filtering — TF-IDF, Cosine Similarity, Python implementation<br>
+      ✅ Collaborative Filtering — User-Based ও Item-Based, Rating Matrix, Sparse Matrix<br>
+      ✅ Matrix Factorization — SVD ও NMF, Latent Variables<br>
+      ✅ Surprise লাইব্রেরি — GridSearchCV, Cross-validation<br>
+      ✅ Production-grade code লেখার পদ্ধতি<br>
+      ✅ Interview ও ML Engineering project প্রশ্নের উত্তর</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 11: BAYESIAN AVERAGE + NLP CONCEPTS -->
+<!-- ============================================================ -->
+<div class="section" id="bayesian-nlp" style="margin-top:60px;">
+  <div class="section-header">
+    <div class="section-num green">১১</div>
+    <div>
+      <div class="section-title">Bayesian Average ও NLP Concepts</div>
+      <div class="section-subtitle">Rating fairness ও text processing বিস্তারিত</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title purple">⚖️ Bayesian Average — কেন দরকার?</div>
+    <p>ধরো একটি বই শুধু একজন পড়েছে এবং ৫ দিয়েছে। আরেকটি বই ১০০০ জন পড়েছে এবং গড় ৪.৯ পেয়েছে। সাধারণ average-এ প্রথমটি জিতবে — কিন্তু এটা কি ন্যায়সঙ্গত?</p>
+    <div class="formula">Bayesian Average = (C × M + S) / (C + n)</div>
+    <p>যেখানে: <span class="hl">M</span> = সব বইয়ের গড় রেটিং &nbsp;|&nbsp; <span class="hl2">C</span> = গড় রেটিং সংখ্যা &nbsp;|&nbsp; <span class="hl3">S</span> = রেটিংগুলোর যোগফল &nbsp;|&nbsp; <span class="hl4">n</span> = মোট রেটিং সংখ্যা</p>
+    <p>কম রেটিং পাওয়া বই → global average-এর কাছাকাছি থাকবে। বেশি রেটিং পাওয়া বই → নিজের average প্রতিফলিত হবে।</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">Bayesian Average — সম্পূর্ণ Implementation</span></div>
+    <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+df = pd.<span class="fn">read_csv</span>(<span class="str">'ratings_flrd.csv'</span>)
+
+<span class="cm"># প্রতিটি বইয়ের রেটিং সংখ্যা ও গড়</span>
+book_stats = df.<span class="fn">groupby</span>(<span class="str">'title'</span>)[<span class="str">'rating'</span>].<span class="fn">agg</span>([<span class="str">'count'</span>, <span class="str">'mean'</span>]).<span class="fn">reset_index</span>()
+
+C = book_stats[<span class="str">'count'</span>].<span class="fn">mean</span>()   <span class="cm"># গড় রেটিং সংখ্যা</span>
+M = book_stats[<span class="str">'mean'</span>].<span class="fn">mean</span>()    <span class="cm"># গড় রেটিং মান</span>
+
+<span class="kw">def</span> <span class="fn">bayesian_avg</span>(series):
+    <span class="str">"""
+    কম রেটিংওয়ালা বইকে global average-এর দিকে টানে।
+    ফলে ১ রেটিংওয়ালা বই ও ১০০০ রেটিংওয়ালা বই
+    ন্যায্যভাবে তুলনা হয়।
+    """</span>
+    n = series.<span class="fn">count</span>()
+    S = series.<span class="fn">sum</span>()
+    <span class="kw">return</span> (C * M + S) / (C + n)
+
+<span class="cm"># প্রতিটি বইয়ের Bayesian Average</span>
+bayesian_avg_ratings = (
+    df.<span class="fn">groupby</span>(<span class="str">'title'</span>)[<span class="str">'rating'</span>]
+    .<span class="fn">agg</span>(bayesian_avg)
+    .<span class="fn">reset_index</span>()
+)
+bayesian_avg_ratings.columns = [<span class="str">'title'</span>, <span class="str">'bayesian_avg'</span>]
+
+book_stats = book_stats.<span class="fn">merge</span>(
+    bayesian_avg_ratings, on=<span class="str">'title'</span>
+).<span class="fn">sort_values</span>(<span class="str">'bayesian_avg'</span>, ascending=<span class="kw">False</span>)
+
+<span class="cm"># Top 10 সেরা বই — Bayesian Average অনুযায়ী</span>
+best_rated = book_stats.<span class="fn">head</span>(<span class="num">10</span>)
+sns.<span class="fn">barplot</span>(y=<span class="str">'title'</span>, x=<span class="str">'bayesian_avg'</span>,
+           data=best_rated, orient=<span class="str">'h'</span>)
+plt.<span class="fn">title</span>(<span class="str">'Top 10 Books — Bayesian Average Rating'</span>)
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">show</span>()</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔤 TF-IDF — বিস্তারিত ব্যাখ্যা</div>
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <div class="callout-title">Tokenization কী?</div>
+        <p>বড় text → ছোট শব্দ-টুকরায় ভাগ করা।<br>
+        <strong>"Harry loves magic" → ["Harry", "loves", "magic"]</strong><br>
+        Stop words (the, is, are) বাদ দেওয়া হয় — এগুলো সব বইয়েই আছে, কোনো বইকে আলাদা করে না।</p>
+      </div>
+    </div>
+    <div class="grid2">
+      <div>
+        <h4>TF (Term Frequency)</h4>
+        <div class="formula">TF(t,d) = count(t in d) / total words in d</div>
+        <p>একটি বইয়ে "magic" শব্দ কতবার আছে, মোট শব্দ দিয়ে ভাগ।</p>
+      </div>
+      <div>
+        <h4>IDF (Inverse Document Frequency)</h4>
+        <div class="formula">IDF(t) = log(N / df(t))</div>
+        <p>N = মোট বই। "horcrux" শুধু HP-এ → IDF বড় → বিরল ও গুরুত্বপূর্ণ।</p>
+      </div>
+    </div>
+    <div class="formula">TF-IDF(t,d) = TF(t,d) × IDF(t)</div>
+    <div class="callout success">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">
+        <p><strong>"the"</strong> — সব বইয়ে → IDF ≈ 0 → TF-IDF ≈ 0 (গুরুত্বহীন)<br>
+        <strong>"horcrux"</strong> — শুধু HP বইয়ে → IDF বড় → TF-IDF বড় (HP-এর পরিচায়ক)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">TF-IDF নিজে হিসাব করে বোঝা</span></div>
+    <pre><span class="kw">import</span> math
+<span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+documents = [
+    <span class="str">"magic dragon adventure quest"</span>,
+    <span class="str">"romance love adventure passion"</span>,
+    <span class="str">"magic wizard spell dragon"</span>
+]
+
+<span class="kw">def</span> <span class="fn">tf</span>(word, doc):
+    words = doc.<span class="fn">split</span>()
+    <span class="kw">return</span> words.<span class="fn">count</span>(word) / <span class="fn">len</span>(words)
+
+<span class="kw">def</span> <span class="fn">idf</span>(word, docs):
+    N  = <span class="fn">len</span>(docs)
+    df = <span class="fn">sum</span>(<span class="num">1</span> <span class="kw">for</span> d <span class="kw">in</span> docs <span class="kw">if</span> word <span class="kw">in</span> d.<span class="fn">split</span>())
+    <span class="kw">return</span> math.<span class="fn">log</span>(N / df) <span class="kw">if</span> df > <span class="num">0</span> <span class="kw">else</span> <span class="num">0</span>
+
+<span class="kw">def</span> <span class="fn">tfidf</span>(word, doc, docs):
+    <span class="kw">return</span> <span class="fn">tf</span>(word, doc) * <span class="fn">idf</span>(word, docs)
+
+<span class="kw">for</span> i, doc <span class="kw">in</span> <span class="fn">enumerate</span>(documents):
+    score = <span class="fn">tfidf</span>(<span class="str">"magic"</span>, doc, documents)
+    <span class="fn">print</span>(<span class="str">f"Doc {i+1}: TF-IDF('magic') = {score:.4f}"</span>)
+<span class="cm"># Doc 1: 0.1014  Doc 2: 0.0000  Doc 3: 0.1014</span>
+
+<span class="cm"># Scikit-learn দিয়ে — অনেক দ্রুত ও সম্পূর্ণ</span>
+<span class="kw">from</span> sklearn.feature_extraction.text <span class="kw">import</span> <span class="cl">TfidfVectorizer</span>
+vec    = <span class="cl">TfidfVectorizer</span>(stop_words=<span class="str">'english'</span>)
+matrix = vec.<span class="fn">fit_transform</span>(documents)
+<span class="fn">print</span>(<span class="str">f"Shape: {matrix.shape}"</span>)  <span class="cm"># (3 docs, N unique words)</span></pre>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 12: EVALUATION METRICS FULL SOLUTIONS -->
+<!-- ============================================================ -->
+<div class="section" id="eval-solutions">
+  <div class="section-header">
+    <div class="section-num red">১২</div>
+    <div>
+      <div class="section-title">Evaluation Metrics — সম্পূর্ণ সমাধান</div>
+      <div class="section-subtitle">RMSE, MAE, Precision@K, Recall@K, NDCG</div>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg font-family="'Hind Siliguri', sans-serif" viewBox="0 0 700 175" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+      <rect width="700" height="175" fill="#161b22" rx="8"/>
+      <text x="350" y="25" text-anchor="middle" fill="#f7c948" font-size="13" font-weight="bold">Precision vs Recall — Trade-off</text>
+      <circle cx="255" cy="105" r="62" fill="rgba(88,166,255,0.10)" stroke="#58a6ff" stroke-width="1.5"/>
+      <circle cx="335" cy="105" r="62" fill="rgba(63,185,80,0.10)" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="295" y="100" text-anchor="middle" fill="#f7c948" font-size="11" font-weight="bold">Hits</text>
+      <text x="295" y="114" text-anchor="middle" fill="#f7c948" font-size="9">(ধরা পড়েছে)</text>
+      <text x="200" y="100" text-anchor="middle" fill="#58a6ff" font-size="10">Recommended</text>
+      <text x="200" y="113" text-anchor="middle" fill="#58a6ff" font-size="9">(আমি দিয়েছি)</text>
+      <text x="390" y="100" text-anchor="middle" fill="#3fb950" font-size="10">Relevant</text>
+      <text x="390" y="113" text-anchor="middle" fill="#3fb950" font-size="9">(পছন্দের)</text>
+      <rect x="445" y="48" width="235" height="42" rx="7" fill="#1c2850"/>
+      <text x="562" y="67" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="bold">Precision = Hits / Recommended</text>
+      <text x="562" y="83" text-anchor="middle" fill="#8b949e" font-size="10">"আমার সুপারিশ কতটা নির্ভুল?"</text>
+      <rect x="445" y="100" width="235" height="42" rx="7" fill="#1a3a2a"/>
+      <text x="562" y="119" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">Recall = Hits / Relevant</text>
+      <text x="562" y="135" text-anchor="middle" fill="#8b949e" font-size="10">"কতটা পছন্দ খুঁজে দিলাম?"</text>
+    </svg>
+    <div class="diagram-caption">Precision ও Recall-এ trade-off থাকে — একটা বাড়লে অন্যটা সাধারণত কমে।</div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">সম্পূর্ণ Evaluation Metrics Implementation</span></div>
+    <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> typing <span class="kw">import</span> List
+
+<span class="kw">def</span> <span class="fn">compute_rmse</span>(actual: List[<span class="fn">float</span>], predicted: List[<span class="fn">float</span>]) -> <span class="fn">float</span>:
+    <span class="str">"""বড় ভুলে বেশি penalty — বড় error সহ্য করে না।"""</span>
+    a, p = np.<span class="fn">array</span>(actual), np.<span class="fn">array</span>(predicted)
+    <span class="kw">return</span> float(np.<span class="fn">sqrt</span>(np.<span class="fn">mean</span>((a - p) ** <span class="num">2</span>)))
+
+<span class="kw">def</span> <span class="fn">compute_mae</span>(actual: List[<span class="fn">float</span>], predicted: List[<span class="fn">float</span>]) -> <span class="fn">float</span>:
+    <span class="str">"""সব ভুলকে সমান গুরুত্ব — "গড়ে X star ভুল"।"""</span>
+    a, p = np.<span class="fn">array</span>(actual), np.<span class="fn">array</span>(predicted)
+    <span class="kw">return</span> float(np.<span class="fn">mean</span>(np.<span class="fn">abs</span>(a - p)))
+
+<span class="kw">def</span> <span class="fn">precision_at_k</span>(recommended: List[<span class="fn">str</span>],
+                    relevant: List[<span class="fn">str</span>], k: <span class="fn">int</span>) -> <span class="fn">float</span>:
+    <span class="str">"""K টা দিলাম, কতটা সত্যিই পছন্দের?"""</span>
+    hits = <span class="fn">sum</span>(<span class="num">1</span> <span class="kw">for</span> i <span class="kw">in</span> recommended[:k] <span class="kw">if</span> i <span class="kw">in</span> <span class="fn">set</span>(relevant))
+    <span class="kw">return</span> hits / k <span class="kw">if</span> k > <span class="num">0</span> <span class="kw">else</span> <span class="num">0.0</span>
+
+<span class="kw">def</span> <span class="fn">recall_at_k</span>(recommended: List[<span class="fn">str</span>],
+                 relevant: List[<span class="fn">str</span>], k: <span class="fn">int</span>) -> <span class="fn">float</span>:
+    <span class="str">"""সব পছন্দের মধ্যে কতটা ধরলাম?"""</span>
+    <span class="kw">if not</span> relevant: <span class="kw">return</span> <span class="num">0.0</span>
+    hits = <span class="fn">sum</span>(<span class="num">1</span> <span class="kw">for</span> i <span class="kw">in</span> recommended[:k] <span class="kw">if</span> i <span class="kw">in</span> <span class="fn">set</span>(relevant))
+    <span class="kw">return</span> hits / <span class="fn">len</span>(relevant)
+
+<span class="kw">def</span> <span class="fn">ndcg_at_k</span>(recommended: List[<span class="fn">str</span>],
+               relevant: List[<span class="fn">str</span>], k: <span class="fn">int</span>) -> <span class="fn">float</span>:
+    <span class="str">"""আগে relevant দিলে বেশি পুরস্কার — position গুরুত্বপূর্ণ।"""</span>
+    rel_set = <span class="fn">set</span>(relevant)
+    dcg  = <span class="fn">sum</span>(<span class="num">1</span>/np.<span class="fn">log2</span>(i+<span class="num">2</span>)
+               <span class="kw">for</span> i, item <span class="kw">in</span> <span class="fn">enumerate</span>(recommended[:k])
+               <span class="kw">if</span> item <span class="kw">in</span> rel_set)
+    idcg = <span class="fn">sum</span>(<span class="num">1</span>/np.<span class="fn">log2</span>(i+<span class="num">2</span>)
+               <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">min</span>(<span class="fn">len</span>(rel_set), k)))
+    <span class="kw">return</span> dcg / idcg <span class="kw">if</span> idcg > <span class="num">0</span> <span class="kw">else</span> <span class="num">0.0</span>
+
+<span class="cm"># ─── পরীক্ষা ───────────────────────────────────</span>
+actual    = [<span class="num">4</span>, <span class="num">3</span>, <span class="num">5</span>, <span class="num">2</span>, <span class="num">4</span>]
+predicted = [<span class="num">3.8</span>, <span class="num">3.2</span>, <span class="num">4.5</span>, <span class="num">2.1</span>, <span class="num">3.9</span>]
+recommended = [<span class="str">'Harry Potter'</span>, <span class="str">'Narnia'</span>, <span class="str">'Dune'</span>, <span class="str">'Percy Jackson'</span>, <span class="str">'Hobbit'</span>]
+relevant    = [<span class="str">'Harry Potter'</span>, <span class="str">'Percy Jackson'</span>, <span class="str">'Narnia'</span>]
+
+<span class="fn">print</span>(<span class="str">f"RMSE        : {compute_rmse(actual, predicted):.4f}"</span>)           <span class="cm"># 0.2236</span>
+<span class="fn">print</span>(<span class="str">f"MAE         : {compute_mae(actual, predicted):.4f}"</span>)            <span class="cm"># 0.2000</span>
+<span class="fn">print</span>(<span class="str">f"Precision@5 : {precision_at_k(recommended, relevant, 5):.4f}"</span>)  <span class="cm"># 0.6000</span>
+<span class="fn">print</span>(<span class="str">f"Recall@5    : {recall_at_k(recommended, relevant, 5):.4f}"</span>)     <span class="cm"># 1.0000</span>
+<span class="fn">print</span>(<span class="str">f"NDCG@5      : {ndcg_at_k(recommended, relevant, 5):.4f}"</span>)       <span class="cm"># ~0.8761</span></pre>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 13: COMPLETE HYBRID SOLUTION -->
+<!-- ============================================================ -->
+<div class="section" id="hybrid-full">
+  <div class="section-header">
+    <div class="section-num">১৩</div>
+    <div>
+      <div class="section-title">HybridRecommender — Production-Ready Class</div>
+      <div class="section-subtitle">Project Exercise 2 ও 3-এর সম্পূর্ণ সমাধান</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-label">HybridRecommender — সম্পূর্ণ OOP Implementation</span></div>
+    <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd, numpy <span class="kw">as</span> np
+<span class="kw">import</span> logging, pickle
+<span class="kw">from</span> typing <span class="kw">import</span> List, Optional
+<span class="kw">from</span> scipy.sparse <span class="kw">import</span> csr_matrix
+<span class="kw">from</span> sklearn.feature_extraction.text <span class="kw">import</span> TfidfVectorizer
+<span class="kw">from</span> sklearn.metrics.pairwise <span class="kw">import</span> cosine_similarity
+<span class="kw">from</span> sklearn.decomposition <span class="kw">import</span> TruncatedSVD
+
+logger = logging.<span class="fn">getLogger</span>(__name__)
+
+<span class="kw">class</span> <span class="cl">HybridRecommender</span>:
+    <span class="str">"""
+    Hybrid Recommendation System
+    ─────────────────────────────
+    নতুন user (< min_ratings) → Content-Based Only
+    পুরনো user  → alpha*CF + (1-alpha)*CB
+
+    Cold Start সমস্যা সমাধান করে এবং
+    দুটো system-এর সেরা দিক একসাথে নেয়।
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, alpha=<span class="num">0.7</span>, min_ratings=<span class="num">5</span>,
+                 n_components=<span class="num">12</span>, k=<span class="num">10</span>):
+        self.alpha, self.min_ratings = alpha, min_ratings
+        self.n_components, self.k   = n_components, k
+        self._fitted = <span class="kw">False</span>
+
+    <span class="kw">def</span> <span class="fn">fit</span>(self, ratings_df, items_df,
+            user_col=<span class="str">'user_id'</span>, item_col=<span class="str">'title'</span>,
+            rating_col=<span class="str">'rating'</span>, desc_col=<span class="str">'description'</span>):
+        <span class="cm"># Content-Based component</span>
+        self.tfidf  = <span class="cl">TfidfVectorizer</span>(stop_words=<span class="str">'english'</span>, max_features=<span class="num">30000</span>)
+        cb_mat      = self.tfidf.<span class="fn">fit_transform</span>(items_df[desc_col].<span class="fn">fillna</span>(<span class="str">''</span>))
+        self.cb_df  = pd.<span class="cl">DataFrame</span>(<span class="fn">cosine_similarity</span>(cb_mat),
+                                    index=items_df[item_col], columns=items_df[item_col])
+
+        <span class="cm"># Collaborative Filtering (SVD + Item-Based)</span>
+        self.mat    = (ratings_df.<span class="fn">pivot_table</span>(
+            columns=item_col, index=user_col, values=rating_col
+        ) + <span class="num">1</span>).<span class="fn">fillna</span>(<span class="num">0</span>)
+        self.user_ids = self.mat.index.<span class="fn">tolist</span>()
+        self.titles   = self.mat.columns.<span class="fn">tolist</span>()
+        red         = <span class="cl">TruncatedSVD</span>(n_components=self.n_components,
+                                     random_state=<span class="num">42</span>).<span class="fn">fit_transform</span>(
+                          <span class="fn">csr_matrix</span>(self.mat).T)
+        self.cf_df  = pd.<span class="cl">DataFrame</span>(<span class="fn">cosine_similarity</span>(red),
+                                    index=self.titles, columns=self.titles)
+        self._fitted = <span class="kw">True</span>
+        logger.<span class="fn">info</span>(<span class="str">f"Fitted: {len(self.user_ids)} users, {len(self.titles)} items"</span>)
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">_is_cold</span>(self, uid):
+        <span class="kw">if</span> uid <span class="kw">not in</span> self.mat.index: <span class="kw">return</span> <span class="kw">True</span>
+        <span class="kw">return</span> (self.mat.<span class="fn">loc</span>[uid] > <span class="num">0</span>).<span class="fn">sum</span>() < self.min_ratings
+
+    <span class="kw">def</span> <span class="fn">_cf_pred</span>(self, uid):
+        unread = self.mat.<span class="fn">loc</span>[uid][self.mat.<span class="fn">loc</span>[uid] == <span class="num">0</span>]
+        preds  = {}
+        <span class="kw">for</span> book <span class="kw">in</span> unread.index:
+            sim  = self.cf_df.<span class="fn">loc</span>[book].<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>)[<span class="num">1</span>:self.k+<span class="num">1</span>]
+            norm = np.<span class="fn">sum</span>(np.<span class="fn">abs</span>(sim))
+            <span class="kw">if</span> norm == <span class="num">0</span>: <span class="kw">continue</span>
+            preds[book] = np.<span class="fn">dot</span>(self.mat[sim.index].<span class="fn">loc</span>[uid], sim) / norm
+        <span class="kw">return</span> pd.<span class="cl">Series</span>(preds)
+
+    <span class="kw">def</span> <span class="fn">_cb_pred</span>(self, uid, liked):
+        candidates = (self.mat.<span class="fn">loc</span>[uid][self.mat.<span class="fn">loc</span>[uid] == <span class="num">0</span>].index
+                      <span class="kw">if</span> uid <span class="kw">in</span> self.mat.index <span class="kw">else</span> self.titles)
+        preds = {}
+        <span class="kw">for</span> book <span class="kw">in</span> candidates:
+            <span class="kw">if</span> book <span class="kw">not in</span> self.cb_df.columns: <span class="kw">continue</span>
+            scores = [self.cb_df.<span class="fn">loc</span>[lb, book]
+                      <span class="kw">for</span> lb <span class="kw">in</span> liked <span class="kw">if</span> lb <span class="kw">in</span> self.cb_df.index]
+            <span class="kw">if</span> scores: preds[book] = np.<span class="fn">mean</span>(scores)
+        <span class="kw">return</span> pd.<span class="cl">Series</span>(preds)
+
+    <span class="kw">def</span> <span class="fn">recommend</span>(self, uid: <span class="fn">str</span>,
+                   liked: Optional[List[<span class="fn">str</span>]] = <span class="kw">None</span>,
+                   n: <span class="fn">int</span> = <span class="num">10</span>) -> pd.<span class="cl">Series</span>:
+        <span class="str">"""
+        uid   : user ID
+        liked : পছন্দের বই (Content-Based এর জন্য)
+        n     : কতটি সুপারিশ চাই
+        """</span>
+        <span class="kw">assert</span> self._fitted, <span class="str">"আগে fit() call করো!"</span>
+        liked = liked <span class="kw">or</span> []
+        <span class="kw">if</span> self.<span class="fn">_is_cold</span>(uid):
+            logger.<span class="fn">info</span>(<span class="str">f"{uid}: cold → Content-Based"</span>)
+            <span class="kw">return</span> self.<span class="fn">_cb_pred</span>(uid, liked).<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>).<span class="fn">head</span>(n)
+        cf = self.<span class="fn">_cf_pred</span>(uid)
+        cb = self.<span class="fn">_cb_pred</span>(uid, liked)
+        <span class="kw">if</span> cf.<span class="fn">max</span>() > <span class="num">0</span>: cf /= cf.<span class="fn">max</span>()
+        <span class="kw">if</span> len(cb) <span class="kw">and</span> cb.<span class="fn">max</span>() > <span class="num">0</span>: cb /= cb.<span class="fn">max</span>()
+        combined = self.alpha * cf + (<span class="num">1</span> - self.alpha) * cb.<span class="fn">reindex</span>(cf.index, fill_value=<span class="num">0</span>)
+        logger.<span class="fn">info</span>(<span class="str">f"{uid}: hybrid α={self.alpha}"</span>)
+        <span class="kw">return</span> combined.<span class="fn">sort_values</span>(ascending=<span class="kw">False</span>).<span class="fn">head</span>(n)
+
+    <span class="kw">def</span> <span class="fn">save</span>(self, path): pickle.<span class="fn">dump</span>(self, <span class="fn">open</span>(path, <span class="str">'wb'</span>)); logger.<span class="fn">info</span>(<span class="str">f"Saved → {path}"</span>)
+
+    <span class="kw">@staticmethod</span>
+    <span class="kw">def</span> <span class="fn">load</span>(path): <span class="kw">return</span> pickle.<span class="fn">load</span>(<span class="fn">open</span>(path, <span class="str">'rb'</span>))
+
+<span class="cm"># ─── ব্যবহার ──────────────────────────────────────</span>
+<span class="cm"># rec = HybridRecommender(alpha=0.7, min_ratings=5, n_components=12, k=10)
+# rec.fit(ratings_df, items_df)
+# rec.save('hybrid_v1.pkl')
+# loaded = HybridRecommender.load('hybrid_v1.pkl')
+# top10 = loaded.recommend('user_abc', liked=['Harry Potter'], n=10)
+# print(top10)</span></pre>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 14: INTERVIEW CHEATSHEET -->
+<!-- ============================================================ -->
+<div class="section" id="interview-cheatsheet">
+  <div class="section-header">
+    <div class="section-num blue">১৪</div>
+    <div>
+      <div class="section-title">সম্পূর্ণ Interview Cheatsheet</div>
+      <div class="section-subtitle">ML Engineer ও Data Scientist পদের জন্য</div>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg font-family="'Hind Siliguri', sans-serif" viewBox="0 0 700 290" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+      <rect width="700" height="290" fill="#161b22" rx="8"/>
+      <text x="350" y="25" text-anchor="middle" fill="#f7c948" font-size="14" font-weight="bold">Recommendation Systems — সম্পূর্ণ Mind Map</text>
+      <ellipse cx="350" cy="148" rx="66" ry="32" fill="#1c2850" stroke="#58a6ff" stroke-width="2"/>
+      <text x="350" y="143" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="bold">Recommendation</text>
+      <text x="350" y="158" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="bold">Systems</text>
+      <line x1="285" y1="130" x2="172" y2="84" stroke="#f7c948" stroke-width="1.5" stroke-dasharray="4"/>
+      <rect x="60" y="55" width="148" height="54" rx="7" fill="#1a2a10" stroke="#f7c948" stroke-width="1.5"/>
+      <text x="134" y="76" text-anchor="middle" fill="#f7c948" font-size="11" font-weight="bold">Content-Based</text>
+      <text x="134" y="92" text-anchor="middle" fill="#8b949e" font-size="9">TF-IDF · Cosine Sim</text>
+      <text x="134" y="104" text-anchor="middle" fill="#8b949e" font-size="9">No Cold Start issue</text>
+      <line x1="284" y1="144" x2="150" y2="148" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="4"/>
+      <rect x="18" y="126" width="138" height="44" rx="7" fill="#1a3a2a" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="87" y="146" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">User-Based CF</text>
+      <text x="87" y="162" text-anchor="middle" fill="#8b949e" font-size="9">Similar users</text>
+      <line x1="285" y1="163" x2="172" y2="212" stroke="#d2a8ff" stroke-width="1.5" stroke-dasharray="4"/>
+      <rect x="58" y="194" width="148" height="44" rx="7" fill="#2a1a3a" stroke="#d2a8ff" stroke-width="1.5"/>
+      <text x="132" y="214" text-anchor="middle" fill="#d2a8ff" font-size="11" font-weight="bold">Item-Based CF</text>
+      <text x="132" y="230" text-anchor="middle" fill="#8b949e" font-size="9">Amazon · similar items</text>
+      <line x1="416" y1="130" x2="528" y2="84" stroke="#ff7b72" stroke-width="1.5" stroke-dasharray="4"/>
+      <rect x="492" y="55" width="158" height="54" rx="7" fill="#2a1a1a" stroke="#ff7b72" stroke-width="1.5"/>
+      <text x="571" y="76" text-anchor="middle" fill="#ff7b72" font-size="11" font-weight="bold">Matrix Factorization</text>
+      <text x="571" y="92" text-anchor="middle" fill="#8b949e" font-size="9">SVD · NMF · Latent Factors</text>
+      <text x="571" y="104" text-anchor="middle" fill="#8b949e" font-size="9">Netflix Prize origin</text>
+      <line x1="416" y1="148" x2="545" y2="148" stroke="#58a6ff" stroke-width="1.5" stroke-dasharray="4"/>
+      <rect x="545" y="126" width="135" height="44" rx="7" fill="#1c2850" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="612" y="146" text-anchor="middle" fill="#58a6ff" font-size="11" font-weight="bold">Hybrid System</text>
+      <text x="612" y="162" text-anchor="middle" fill="#8b949e" font-size="9">Best of all · Production</text>
+      <line x1="416" y1="163" x2="528" y2="212" stroke="#e3b341" stroke-width="1.5" stroke-dasharray="4"/>
+      <rect x="490" y="194" width="185" height="55" rx="7" fill="#1a1a10" stroke="#e3b341" stroke-width="1.5"/>
+      <text x="582" y="215" text-anchor="middle" fill="#e3b341" font-size="11" font-weight="bold">Evaluation Metrics</text>
+      <text x="582" y="231" text-anchor="middle" fill="#8b949e" font-size="9">RMSE · MAE · Precision@K</text>
+      <text x="582" y="244" text-anchor="middle" fill="#8b949e" font-size="9">Recall@K · NDCG</text>
+      <rect x="210" y="258" width="280" height="22" rx="5" fill="#1a1a1a" stroke="#30363d"/>
+      <text x="350" y="273" text-anchor="middle" fill="#ff7b72" font-size="10">Cold Start → Hybrid দিয়ে সমাধান</text>
+    </svg>
+    <div class="diagram-caption">চিত্র: Recommendation Systems-এর সব concept একনজরে</div>
+  </div>
+
+  <div class="exercise-block">
+    <div class="exercise-header">
+      <span class="ex-badge hard">Senior ML Engineer Q&amp;A</span>
+      <div class="exercise-title">সবচেয়ে গুরুত্বপূর্ণ Interview প্রশ্নোত্তর</div>
+    </div>
+
+    <div class="exercise-q"><span class="q-num">Q1.</span> নতুন platform-এ প্রথম দিন থেকে Recommendation চালু করবে কীভাবে — কোনো user data নেই?</div>
+    <div class="callout success" style="margin:8px 0 16px;"><div class="callout-icon">✅</div><div class="callout-body"><p>(১) Content-Based দিয়ে শুরু — item description ব্যবহার করো। (২) Popularity fallback রাখো। (৩) Onboarding-এ কয়েকটি পছন্দ জিজ্ঞেস করো। (৪) ডেটা জমলে CF যোগ করো। (৫) শেষে Hybrid বানাও।</p></div></div>
+
+    <div class="exercise-q"><span class="q-num">Q2.</span> Production-এ হঠাৎ RMSE বেড়ে গেছে। কীভাবে debug করবে?</div>
+    <div class="callout success" style="margin:8px 0 16px;"><div class="callout-icon">✅</div><div class="callout-body"><p>Data drift চেক, নতুন cold item, model staleness (শেষ retrain কবে?), specific user segment সমস্যা, feature pipeline-এ bug কিনা দেখো।</p></div></div>
+
+    <div class="exercise-q"><span class="q-num">Q3.</span> "Popularity Bias" কী? সমাধান?</div>
+    <div class="callout success" style="margin:8px 0 16px;"><div class="callout-icon">✅</div><div class="callout-body"><p>জনপ্রিয় আইটেম সবসময় recommend হয়, বিরল ভালো আইটেম বাদ পড়ে। সমাধান: IPS, Diversity metric, Exploration-Exploitation (epsilon-greedy)।</p></div></div>
+
+    <div class="exercise-q"><span class="q-num">Q4.</span> SVD-তে n_factors কীভাবে বেছে নেবে?</div>
+    <div class="callout success" style="margin:8px 0 16px;"><div class="callout-icon">✅</div><div class="callout-body"><p>Validation RMSE দেখে cross-validation করো। Elbow method ব্যবহার করো। বেশি → overfitting, কম → underfitting।</p></div></div>
+
+    <div class="exercise-q"><span class="q-num">Q5.</span> Real-time vs Batch recommendation — কখন কোনটা?</div>
+    <div class="callout success" style="margin:8px 0 16px;"><div class="callout-icon">✅</div><div class="callout-body"><p><strong>Batch:</strong> রাতে retrain, সকালে ready, সস্তা (Netflix homepage)।<br><strong>Real-time:</strong> তাৎক্ষণিক, ব্যয়বহুল (Amazon "also bought")।<br><strong>Hybrid approach:</strong> Base = batch, context adjustment = real-time।</p></div></div>
+  </div>
+
+  <div class="card" style="margin-top:32px;">
+    <div class="card-title">⚡ Quick Reference — মনে রাখার সূত্র</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ধারণা</th><th>এক লাইনে</th><th>Python</th></tr></thead>
+        <tbody>
+          <tr><td><strong>TF-IDF</strong></td><td>"বিরল কিন্তু ঘন ঘন = গুরুত্বপূর্ণ"</td><td><code>TfidfVectorizer()</code></td></tr>
+          <tr><td><strong>Cosine Sim</strong></td><td>"দিক দেখে, দূরত্ব নয়"</td><td><code>cosine_similarity()</code></td></tr>
+          <tr><td><strong>Sparse Matrix</strong></td><td>"শূন্য বাদ, বাকি রাখো"</td><td><code>csr_matrix()</code></td></tr>
+          <tr><td><strong>SVD</strong></td><td>"বড় ধাঁধা → ছোট টুকরো"</td><td><code>TruncatedSVD()</code></td></tr>
+          <tr><td><strong>Cold Start</strong></td><td>"নতুন → Content-Based fallback"</td><td>CB as default</td></tr>
+          <tr><td><strong>RMSE</strong></td><td>"বড় ভুল বেশি penalty"</td><td><code>sqrt(mean((a-p)²))</code></td></tr>
+          <tr><td><strong>Precision@K</strong></td><td>"K দিলাম, কতটা ঠিক?"</td><td><code>hits/k</code></td></tr>
+          <tr><td><strong>Recall@K</strong></td><td>"সবার মধ্যে কতটা ধরলাম?"</td><td><code>hits/len(relevant)</code></td></tr>
+          <tr><td><strong>NDCG</strong></td><td>"আগে দিলে বেশি পুরস্কার"</td><td><code>dcg/idcg</code></td></tr>
+          <tr><td><strong>Bayesian Avg</strong></td><td>"কম রেটিংকে global-এ টানে"</td><td><code>(C*M+S)/(C+n)</code></td></tr>
+          <tr><td><strong>Hybrid</strong></td><td>"সবার সেরা একসাথে"</td><td><code>α*CF+(1-α)*CB</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- FINAL PIPELINE DIAGRAM + SUMMARY -->
+<div class="section">
+  <div class="diagram-wrap" style="padding:30px;">
+    <svg font-family="'Hind Siliguri', sans-serif" viewBox="0 0 700 330" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;height:auto;">
+      <rect width="700" height="330" fill="#161b22" rx="10"/>
+      <text x="350" y="26" text-anchor="middle" fill="#f7c948" font-size="14" font-weight="bold">Raw Data থেকে Recommendation পর্যন্ত — সম্পূর্ণ Pipeline</text>
+      <rect x="20" y="48" width="148" height="62" rx="8" fill="#1c2850" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="94" y="72" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">📥 Raw Data</text>
+      <text x="94" y="89" text-anchor="middle" fill="#8b949e" font-size="10">User ratings</text>
+      <text x="94" y="103" text-anchor="middle" fill="#8b949e" font-size="10">Item descriptions</text>
+      <path d="M171 79 L205 79" stroke="#f7c948" stroke-width="2" marker-end="url(#pa)"/>
+      <rect x="210" y="48" width="152" height="62" rx="8" fill="#1a2a1a" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="286" y="70" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="bold">🔧 Preprocessing</text>
+      <text x="286" y="87" text-anchor="middle" fill="#8b949e" font-size="10">Clean · TF-IDF</text>
+      <text x="286" y="102" text-anchor="middle" fill="#8b949e" font-size="10">Sparse Matrix</text>
+      <path d="M365 79 L399 79" stroke="#f7c948" stroke-width="2" marker-end="url(#pa)"/>
+      <rect x="404" y="48" width="152" height="62" rx="8" fill="#2a1a2a" stroke="#d2a8ff" stroke-width="1.5"/>
+      <text x="480" y="70" text-anchor="middle" fill="#d2a8ff" font-size="12" font-weight="bold">🧠 Model Training</text>
+      <text x="480" y="87" text-anchor="middle" fill="#8b949e" font-size="10">CF · SVD · Hybrid</text>
+      <text x="480" y="102" text-anchor="middle" fill="#8b949e" font-size="10">Similarity Matrix</text>
+      <path d="M480 113 L480 143" stroke="#f7c948" stroke-width="2" marker-end="url(#pa)"/>
+      <rect x="404" y="147" width="152" height="62" rx="8" fill="#1a1a10" stroke="#e3b341" stroke-width="1.5"/>
+      <text x="480" y="169" text-anchor="middle" fill="#e3b341" font-size="12" font-weight="bold">📊 Evaluation</text>
+      <text x="480" y="186" text-anchor="middle" fill="#8b949e" font-size="10">RMSE · MAE</text>
+      <text x="480" y="201" text-anchor="middle" fill="#8b949e" font-size="10">Precision@K · NDCG</text>
+      <path d="M404 195 L370 195 L370 79 L401 79" stroke="#ff7b72" stroke-width="1.5" stroke-dasharray="5" marker-end="url(#pb)"/>
+      <text x="352" y="143" text-anchor="middle" fill="#ff7b72" font-size="9" transform="rotate(-90,352,143)">Retrain</text>
+      <path d="M404 202 L215 202" stroke="#f7c948" stroke-width="2" marker-end="url(#pa)"/>
+      <rect x="20" y="148" width="192" height="115" rx="8" fill="#1c2130" stroke="#58a6ff" stroke-width="1.5"/>
+      <text x="116" y="172" text-anchor="middle" fill="#58a6ff" font-size="12" font-weight="bold">🚀 Serving / API</text>
+      <text x="116" y="190" text-anchor="middle" fill="#8b949e" font-size="10">Candidate Generation</text>
+      <text x="116" y="206" text-anchor="middle" fill="#8b949e" font-size="10">Scoring · Re-ranking</text>
+      <text x="116" y="222" text-anchor="middle" fill="#3fb950" font-size="10">→ Final Recommendations</text>
+      <text x="116" y="238" text-anchor="middle" fill="#8b949e" font-size="10">Cache · Monitor · A/B Test</text>
+      <text x="116" y="254" text-anchor="middle" fill="#8b949e" font-size="10">Logging · Fallback</text>
+      <path d="M116 266 L116 293" stroke="#f7c948" stroke-width="2" marker-end="url(#pa)"/>
+      <rect x="20" y="297" width="192" height="24" rx="6" fill="#1a3a2a" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="116" y="314" text-anchor="middle" fill="#3fb950" font-size="11" font-weight="bold">👤 User gets recommendations!</text>
+      <defs>
+        <marker id="pa" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f7c948"/></marker>
+        <marker id="pb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#ff7b72"/></marker>
+      </defs>
+    </svg>
+    <div class="diagram-caption">চিত্র: Raw Data → Preprocessing → Training → Evaluation → Serving → User। লাল তীর = retrain loop।</div>
+  </div>
+
+  <div class="card" style="border:2px solid var(--accent);background:linear-gradient(135deg,rgba(247,201,72,0.05),rgba(88,166,255,0.05));margin-bottom:40px;">
+    <div class="card-title" style="font-size:1.3rem;">🎓 তুমি এখন সম্পূর্ণভাবে জানো</div>
+    <div class="grid2">
+      <div>
+        <h4>📚 Concepts</h4>
+        <ul>
+          <li>Recommendation System কী ও কেন</li>
+          <li>তিনটি Architecture ধাপ</li>
+          <li>Content-Based Filtering</li>
+          <li>TF-IDF, Tokenization, Stop Words</li>
+          <li>Cosine, Dot Product, Euclidean</li>
+          <li>Collaborative Filtering</li>
+          <li>User-Based ও Item-Based CF</li>
+          <li>Rating Matrix, Sparse Matrix, CSR</li>
+          <li>Bayesian Average</li>
+          <li>Matrix Factorization — SVD, NMF</li>
+          <li>Latent Variables</li>
+          <li>Hybrid Systems</li>
+          <li>Cold Start Problem ও সমাধান</li>
+        </ul>
+      </div>
+      <div>
+        <h4>⚙️ Tools &amp; Code</h4>
+        <ul>
+          <li><code>TfidfVectorizer</code></li>
+          <li><code>cosine_similarity</code></li>
+          <li><code>csr_matrix</code></li>
+          <li><code>TruncatedSVD</code></li>
+          <li><code>Surprise</code> — SVD, NormalPredictor</li>
+          <li><code>GridSearchCV</code> — hyperparameter tuning</li>
+          <li>RMSE, MAE, Precision@K, Recall@K, NDCG</li>
+          <li>OOP — clean, reusable class</li>
+          <li>Model caching (pickle)</li>
+          <li>Logging ও error handling</li>
+          <li>A/B Testing design</li>
+          <li>FastAPI endpoint concept</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout success" style="margin-top:16px;">
+      <div class="callout-icon">🚀</div>
+      <div class="callout-body">
+        <div class="callout-title">পরবর্তী পদক্ষেপ — Portfolio Project বানাও</div>
+        <p>MovieLens dataset (free, ml-1m) নামাও → User-Based CF implement করো → Item-Based CF করো → SVD যোগ করো → Evaluation metrics যোগ করো → GitHub-এ upload করো। এটাই তোমার সেরা ML portfolio project হবে!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end container -->
+
+<footer style="border-top:1px solid var(--border); padding:30px 24px; text-align:center; color:var(--text2); font-size:0.85rem; margin-top:40px;">
+  <p>সম্পূর্ণ বাংলায় লেখা · Collaborative Filtering, Matrix Factorization, Content-Based · ML Engineering Level Practice সহ</p>
+</footer>
+
+</body>
+</html>

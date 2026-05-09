@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python for Data Science — সম্পূর্ণ বাংলা কোর্স</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Tiro+Bangla:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0d1117;
+    --bg2:       #161b22;
+    --bg3:       #1c2330;
+    --bg4:       #21262d;
+    --border:    #30363d;
+    --text:      #e6edf3;
+    --text2:     #8b949e;
+    --text3:     #6e7681;
+    --blue:      #58a6ff;
+    --green:     #3fb950;
+    --orange:    #f0883e;
+    --purple:    #bc8cff;
+    --yellow:    #e3b341;
+    --red:       #f85149;
+    --teal:      #39d0d8;
+    --pink:      #ff7eb6;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Hind Siliguri', sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    min-height: 100vh;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 3px; }
+
+  /* ── HERO ─────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    padding: 80px 24px 70px;
+    text-align: center;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 50% -10%, rgba(88,166,255,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 80% 80%, rgba(188,140,255,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 56px 56px;
+    opacity: 0.18;
+    pointer-events: none;
+  }
+  .hero-inner { position: relative; z-index: 2; max-width: 820px; margin: 0 auto; }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(88,166,255,0.1);
+    border: 1px solid rgba(88,166,255,0.3);
+    color: var(--blue);
+    font-size: 12px; font-weight: 700;
+    padding: 5px 16px; border-radius: 24px;
+    letter-spacing: 0.5px; margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #e6edf3 0%, #79c0ff 40%, #d2a8ff 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--text2);
+    max-width: 580px;
+    margin: 0 auto 36px;
+    line-height: 1.7;
+  }
+
+  .stats {
+    display: flex; justify-content: center; gap: 40px;
+    flex-wrap: wrap; margin-bottom: 42px;
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem; font-weight: 700; color: var(--blue);
+    display: block; line-height: 1.1;
+  }
+  .stat-lbl { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px; }
+
+  /* ── PATH VISUALIZER ──────────────────────────────── */
+  .path-section {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 24px;
+  }
+  .path-inner { max-width: 1000px; margin: 0 auto; }
+  .path-section h3 {
+    font-family: 'Tiro Bangla', serif;
+    font-size: 1.3rem; margin-bottom: 28px;
+    color: var(--text);
+  }
+  .path-flow {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0;
+    row-gap: 16px;
+  }
+  .path-node {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 6px; min-width: 76px;
+  }
+  .path-circle {
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.05rem;
+    border: 2px solid var(--border);
+    background: var(--bg3);
+    transition: all 0.2s;
+  }
+  .path-node:hover .path-circle { border-color: var(--blue); transform: scale(1.1); }
+  .path-node-lbl { font-size: 9px; color: var(--text3); text-align: center; max-width: 68px; line-height: 1.3; }
+  .path-arrow { font-size: 0.9rem; color: var(--text3); padding: 0 2px; flex-shrink: 0; margin-top: -18px; }
+
+  .path-node.ph1 .path-circle { border-color: rgba(63,185,80,0.55); }
+  .path-node.ph2 .path-circle { border-color: rgba(188,140,255,0.55); }
+  .path-node.ph3 .path-circle { border-color: rgba(88,166,255,0.55); }
+  .path-node.ph4 .path-circle { border-color: rgba(240,136,62,0.55); }
+  .path-node.ph5 .path-circle { border-color: rgba(57,208,216,0.55); }
+  .path-node.ph6 .path-circle { border-color: rgba(248,81,73,0.55); }
+
+  /* ── SYLLABUS ─────────────────────────────────────── */
+  .syllabus {
+    max-width: 1060px; margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+  .section-hdr {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 36px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-hdr h2 { font-family: 'Tiro Bangla', serif; font-size: 1.5rem; color: var(--text); }
+  .section-hdr .chip {
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--text2); font-size: 11px; font-family: 'JetBrains Mono', monospace;
+    padding: 3px 10px; border-radius: 20px;
+  }
+
+  .phase { margin-bottom: 52px; }
+  .phase-title { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+  .phase-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700;
+    color: var(--text3); text-transform: uppercase; letter-spacing: 1px;
+  }
+  .phase-name { font-size: 0.95rem; font-weight: 600; }
+  .phase-line { flex: 1; height: 1px; background: var(--border); }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 18px;
+  }
+
+  /* lecture card */
+  .lec-card {
+    position: relative;
+    display: flex; flex-direction: column;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .lec-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: 14px 14px 0 0;
+    background: var(--card-accent, var(--blue));
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .lec-card:hover {
+    border-color: var(--card-accent, var(--blue));
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .lec-card:hover::before { opacity: 1; }
+
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+  .lec-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 700;
+    color: var(--card-accent, var(--blue));
+    background: rgba(88,166,255,0.1);
+    padding: 3px 9px; border-radius: 20px;
+    border: 1px solid rgba(88,166,255,0.2);
+  }
+  .lec-tag {
+    font-size: 10px; color: var(--text3);
+    background: var(--bg4); border: 1px solid var(--border);
+    padding: 2px 8px; border-radius: 20px;
+  }
+  .lec-icon { font-size: 2rem; margin-bottom: 12px; display: block; }
+  .lec-title {
+    font-family: 'Tiro Bangla', serif;
+    font-size: 1.1rem; font-weight: 700;
+    color: var(--text); margin-bottom: 8px; line-height: 1.35;
+  }
+  .lec-title-en {
+    font-size: 0.78rem; color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 10px; display: block;
+  }
+  .lec-desc { font-size: 0.88rem; color: var(--text2); line-height: 1.6; flex: 1; margin-bottom: 18px; }
+  .topics-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+  .topic-chip {
+    font-size: 10px;
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--text3);
+    padding: 2px 8px; border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--border); padding-top: 14px; margin-top: auto;
+  }
+  .card-meta { font-size: 11px; color: var(--text3); }
+  .open-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--card-accent, var(--blue));
+    color: #000; font-size: 11px; font-weight: 700;
+    padding: 5px 13px; border-radius: 20px;
+    text-decoration: none; transition: opacity 0.2s; letter-spacing: 0.3px;
+  }
+  .open-btn:hover { opacity: 0.85; }
+
+  /* NEW badge */
+  .new-badge {
+    display: inline-flex; align-items: center;
+    background: rgba(57,208,216,0.15);
+    border: 1px solid rgba(57,208,216,0.45);
+    color: var(--teal);
+    font-size: 9px; font-weight: 700;
+    padding: 2px 7px; border-radius: 10px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    position: absolute; top: 14px; right: 14px;
+  }
+
+  /* ── PHASE COLOR ACCENTS ──────────────────────────── */
+  /* Phase 1 — Python Fundamentals — green */
+  .phase-python .lec-card  { --card-accent: var(--green); }
+  .phase-python .lec-card .lec-num { color: var(--green); background: rgba(63,185,80,0.1); border-color: rgba(63,185,80,0.25); }
+  .phase-python .open-btn  { background: var(--green); }
+  .phase-python .phase-name { color: var(--green); }
+
+  /* Phase 2 — OOP & Advanced — purple */
+  .phase-oop .lec-card     { --card-accent: var(--purple); }
+  .phase-oop .lec-card .lec-num { color: var(--purple); background: rgba(188,140,255,0.1); border-color: rgba(188,140,255,0.25); }
+  .phase-oop .open-btn     { background: var(--purple); }
+  .phase-oop .phase-name   { color: var(--purple); }
+
+  /* Phase 3 — NumPy — blue */
+  .phase-numpy .lec-card   { --card-accent: var(--blue); }
+  .phase-numpy .lec-card .lec-num { color: var(--blue); background: rgba(88,166,255,0.1); border-color: rgba(88,166,255,0.25); }
+  .phase-numpy .open-btn   { background: var(--blue); }
+  .phase-numpy .phase-name { color: var(--blue); }
+
+  /* Phase 4 — Pandas — orange */
+  .phase-pandas .lec-card  { --card-accent: var(--orange); }
+  .phase-pandas .lec-card .lec-num { color: var(--orange); background: rgba(240,136,62,0.1); border-color: rgba(240,136,62,0.25); }
+  .phase-pandas .open-btn  { background: var(--orange); }
+  .phase-pandas .phase-name { color: var(--orange); }
+
+  /* Phase 5 — Stats & Quality — teal */
+  .phase-stats .lec-card   { --card-accent: var(--teal); }
+  .phase-stats .lec-card .lec-num { color: var(--teal); background: rgba(57,208,216,0.1); border-color: rgba(57,208,216,0.25); }
+  .phase-stats .open-btn   { background: var(--teal); }
+  .phase-stats .phase-name { color: var(--teal); }
+
+  /* Phase 6 — ML — red */
+  .phase-ml .lec-card      { --card-accent: var(--red); }
+  .phase-ml .lec-card .lec-num { color: var(--red); background: rgba(248,81,73,0.1); border-color: rgba(248,81,73,0.25); }
+  .phase-ml .open-btn      { background: var(--red); }
+  .phase-ml .phase-name    { color: var(--red); }
+
+  /* ── FOOTER ───────────────────────────────────────── */
+  footer {
+    text-align: center; padding: 40px 24px;
+    color: var(--text3); font-size: 12px;
+    border-top: 1px solid var(--border);
+  }
+  footer span { color: var(--text2); }
+
+  @media (max-width: 600px) {
+    .stats { gap: 24px; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .path-flow { gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span>🐍</span> সম্পূর্ণ বাংলায় · বিগিনার থেকে ML পর্যন্ত
+    </div>
+    <h1>Python for Data Science<br>সম্পূর্ণ বাংলা কোর্স</h1>
+    <p class="hero-sub">
+      Python-এর একদম শুরু থেকে Machine Learning Classification পর্যন্ত — সব লেকচার একসাথে।
+      প্রতিটি লেকচার স্বয়ংসম্পূর্ণ, কোড উদাহরণ ও SVG চিত্রসহ।
+    </p>
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-num">১৩</span>
+        <div class="stat-lbl">লেকচার ফাইল</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">৬</span>
+        <div class="stat-lbl">ধাপ / Phase</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">১২০+</span>
+        <div class="stat-lbl">SVG ডায়াগ্রাম</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">৩৫০+</span>
+        <div class="stat-lbl">কোড উদাহরণ</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ LEARNING PATH ═══════════════════ -->
+<section class="path-section">
+  <div class="path-inner">
+    <h3>📍 শেখার পথ — Learning Roadmap</h3>
+    <div class="path-flow">
+
+      <div class="path-node ph1">
+        <div class="path-circle">🐣</div>
+        <div class="path-node-lbl">Python পরিচিতি</div>
+      </div>
+      <div class="path-arrow">→</div>
+      <div class="path-node ph1">
+        <div class="path-circle">🔁</div>
+        <div class="path-node-lbl">Loops &amp; Control</div>
+      </div>
+      <div class="path-arrow">→</div>
+      <div class="path-node ph1">
+        <div class="path-circle">📦</div>
+        <div class="path-node-lbl">Data Structures</div>
+      </div>
+      <div class="path-arrow">→</div>
+      <div class="path-node ph1">
+        <div class="path-circle">⚙️</div>
+        <div class="path-node-lbl">Functions &amp; OOP ভূমিকা</div>
+      </div>
+      <div class="path-arrow">→</div>
+
+      <div class="path-node ph2">
+        <div class="path-circle">🏗️</div>
+        <div class="path-node-lbl">OOP গভীর</div>
+      </div>
+      <div class="path-arrow">→</div>
+      <div class="path-node ph2">
+        <div class="path-circle">🚀</div>
+        <div class="path-node-lbl">Advanced Python</div>
+      </div>
+      <div class="path-arrow">→</div>
+
+      <div class="path-node ph3">
+        <div class="path-circle">🔢</div>
+        <div class="path-node-lbl">NumPy</div>
+      </div>
+      <div class="path-arrow">→</div>
+
+      <div class="path-node ph4">
+        <div class="path-circle">🐼</div>
+        <div class="path-node-lbl">Pandas ভিত্তি</div>
+      </div>
+      <div class="path-arrow">→</div>
+      <div class="path-node ph4">
+        <div class="path-circle">🔧</div>
+        <div class="path-node-lbl">Pandas + sklearn</div>
+      </div>
+      <div class="path-arrow">→</div>
+      <div class="path-node ph4">
+        <div class="path-circle">🐛</div>
+        <div class="path-node-lbl">Error &amp; EDA</div>
+      </div>
+      <div class="path-arrow">→</div>
+
+      <div class="path-node ph5">
+        <div class="path-circle">🧹</div>
+        <div class="path-node-lbl">Data Quality</div>
+      </div>
+      <div class="path-arrow">→</div>
+      <div class="path-node ph5">
+        <div class="path-circle">📊</div>
+        <div class="path-node-lbl">Statistics</div>
+      </div>
+      <div class="path-arrow">→</div>
+
+      <div class="path-node ph6">
+        <div class="path-circle">🎯</div>
+        <div class="path-node-lbl">ML Classification</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SYLLABUS ═══════════════════ -->
+<main class="syllabus">
+
+  <div class="section-hdr">
+    <h2>📚 কোর্স সিলেবাস</h2>
+    <span class="chip">১৩ Lectures</span>
+    <span class="chip">৬ Phases</span>
+    <span class="chip">Bengali + Code</span>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       PHASE 1 — Python Fundamentals
+  ════════════════════════════════════════ -->
+  <div class="phase phase-python">
+    <div class="phase-title">
+      <span class="phase-num">Phase 01</span>
+      <span class="phase-name">🐍 Python ভিত্তি — Fundamentals</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- Lecture 01 -->
+      <a class="lec-card" href="Python_for_Data_Science_Lectures/python_bengali_tutorial---.html" target="_blank">
+        <div class="card-top">
+          <span class="lec-num">Lecture 01</span>
+          <span class="lec-tag">Beginner</span>
+        </div>
+        <span class="lec-icon">🐣</span>
+        <div class="lec-title">Python পরিচিতি ও মূল ধারণাসমূহ</div>
+        <span class="lec-title-en">Python Intro · Variables · Lists · Dicts</span>
+        <p class="lec-desc">
+          Python কী, কেন Data Science-এ জনপ্রিয়, Variable বানানো, List, Tuple, Dictionary —
+          একদম শুরু থেকে সহজ বাংলায়। প্রতিটি ধারণা উদাহরণসহ।
+        </p>
+        <div class="topics-list">
+          <span class="topic-chip">variable</span>
+          <span class="topic-chip">list</span>
+          <span class="topic-chip">tuple</span>
+          <span class="topic-chip">dict</span>
+          <span class="topic-chip">indexing</span>
+          <span class="topic-chip">slicing</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">📄 152 KB · 11 diagrams</span>
+          <span class="open-btn">খুলুন →</span>
+        </div>
+      </a>
+
+      <!-- Lecture 02 -->
+      <a class="lec-card" href="Python_for_Data_Science_Lectures/python_loops_bengali.html" target="_blank">
+        <div class="card-top">
+          <span class="lec-num">Lecture 02</span>
+          <span class="lec-tag">Beginner</span>
+        </div>
+        <span class="lec-icon">🔁</span>
+        <div class="lec-title">Python Loops — while ও for লুপ</div>
+        <span class="lec-title-en">while loop · for loop · range() · break · continue</span>
+        <p class="lec-desc">
+          while loop ও for loop-এর পুরো গঠন, Infinite Loop থেকে বাঁচার উপায়,
+          range() ব্যবহার, break/continue/pass — ফ্লোচার্ট ও বাস্তব উদাহরণসহ।
+        </p>
+        <div class="topics-list">
+          <span class="topic-chip">while</span>
+          <span class="topic-chip">for</span>
+          <span class="topic-chip">range()</span>
+          <span class="topic-chip">break</span>
+          <span class="topic-chip">continue</span>
+          <span class="topic-chip">nested loops</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">📄 141 KB · 10 diagrams</span>
+          <span class="open-btn">খুলুন →</span>
+        </div>
+      </a>
+
+      <!-- Lecture 03 -->
+      <a class="lec-card" href="Python_for_Data_Science_Lectures/Python_Bangla_Guide---.html" target="_blank">
+        <div class="card-top">
+          <span class="lec-num">Lecture 03</span>
+          <span class="lec-tag">Beginner–Intermediate</span>
+        </div>
+        <span class="lec-icon">📦</span>
+        <div class="lec-title">Python সম্পূর্ণ গাইড — Data Types থেকে Algorithms</div>
+        <span class="lec-title-en">Data Types · Logic · Functions · Pandas · Algorithms</span>
+        <p class="lec-desc">
+          Variables, Data Types, Indexing, List/Tuple/Dict, IF-ELSE, Loops, Functions,
+          Pandas প্রবেশ এবং ML Algorithms-এর ভূমিকা। সবচেয়ে বিস্তৃত রেফারেন্স গাইড।
+        </p>
+        <div class="topics-list">
+          <span class="topic-chip">data types</span>
+          <span class="topic-chip">if/else</span>
+          <span class="topic-chip">functions</span>
+          <span class="topic-chip">OOP ভূমিকা</span>
+          <span class="topic-chip">algorithms</span>
+          <span class="topic-chip">pandas intro</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">📄 176 KB · 8 diagrams</span>
+          <span class="open-btn">খুলুন →</span>
+        </div>
+      </a>
+
+      <!-- Lecture 04 -->
+      <a class="lec-card" href="Python_for_Data_Science_Lectures/python_bengali_tutorial.html" target="_blank">
+        <div class="card-top">
+          <span class="lec-num">Lecture 04</span>
+          <span class="lec-tag">Intermediate</span>
+        </div>
+        <span class="lec-icon">⚙️</span>
+        <div class="lec-title">Python অ্যাডভান্সড — Functions, OOP ও Algorithms</div>
+        <span class="lec-title-en">Functions · Recursion · OOP · Complexity · NumPy Intro</span>
+        <p class="lec-desc">
+          Fibonacci recursion, Complex Number Class (OOP), Array তৈরির পদ্ধতি,
+          Algorithm Complexity (Big-O), odd/even, unique values, rate of change —
+          interview-level Python।
+        </p>
+        <div class="topics-list">
+          <span class="topic-chip">recursion</span>
+          <span class="topic-chip">OOP / class</span>
+          <span class="topic-chip">Big-O</span>
+          <span class="topic-chip">numpy array</span>
+          <span class="topic-chip">lambda</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">📄 127 KB · 9 diagrams</span>
+          <span class="open-btn">খুলুন →</span>
+        </div>
+      </a>
+
+    </div>
+  </div><!-- /phase 1 -->
+
+
+  <!-- ════════════════════════════════════════
+       PHASE 2 — OOP & Advanced Python
+  ════════════════════════════════════════ -->
+  <div class="phase phase-oop">
+    <div class="phase-title">
+      <span class="phase-num">Phase 02</span>
+      <span class="phase-name">🏗️ OOP ও Advanced Python — গভীরে যাও</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- Lecture 05 — NEW -->
+      <a class="lec-card" href="Python_for_Data_Science_Lectures/Python_OOP_Bengali_Guide.html" target="_blank">
+        <span class="new-badge">✦ নতুন</span>
+        <div class="card-top">
+          <span class="lec-num">Lecture 05</span>
+          <span class="lec-tag">Intermediate</span>
+        </div>
+        <span class="lec-icon">🏗️</span>
+        <div class="lec-title">Python OOP — সম্পূর্ণ বাংলা গাইড</div>
+        <span class="lec-title-en">Classes · Inheritance · Predefined Classes · Built-in Methods</span>
+        <p class="lec-desc">
+          Class ও Object তৈরি, Inheritance (উত্তরাধিকার), Predefined Classes,
+          Built-in Methods (__init__, __str__, __len__), Polymorphism —
+          এবং Kindergarten থেকে ML পর্যন্ত Algorithms-এর ধারাবাহিক পরিচয়।
+        </p>
+        <div class="topics-list">
+          <span class="topic-chip">class / object</span>
+          <span class="topic-chip">inheritance</span>
+          <span class="topic-chip">__init__</span>
+          <span class="topic-chip">polymorphism</span>
+          <span class="topic-chip">encapsulation</span>
+          <span class="topic-chip">dunder methods</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">📄 ~180 KB · 4 diagrams</span>
+          <span class="open-btn">খুলুন →</span>
+        </div>
+      </a>
+
+      <!-- Lecture 06 — NEW -->
+      <a class="lec-card" href="Python_for_Data_Science_Lectures/advanced_python_bengali.html" target="_blank">
+        <span class="new-badge">✦ নতুন</span>
+        <div class="card-top">
+          <span class="lec-num">Lecture 06</span>
+          <span class="lec-tag">Advanced</span>
+        </div>
+        <span class="lec-icon">🚀</span>
+        <div class="lec-title">Advanced Python — সম্পূর্ণ বাংলা গাইড</div>
+        <span class="lec-title-en">Type Annotations · Decorators · Async · Threads · Interview</span>
+        <p class="lec-desc">
+          Type Annotations ও Typing, Decorators (Function-এর রূপ বদলাও),
+          Multithreading ও Multiprocessing, Asynchronous Functions ও Coroutines —
+          এবং Top 15 Interview Q&amp;A। Professional Python-এর চূড়ান্ত গাইড।
+        </p>
+        <div class="topics-list">
+          <span class="topic-chip">type hints</span>
+          <span class="topic-chip">@decorator</span>
+          <span class="topic-chip">threading</span>
+          <span class="topic-chip">multiprocessing</span>
+          <span class="topic-chip">async / await</span>
+          <span class="topic-chip">interview prep</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">📄 ~220 KB · 9 diagrams</span>
+          <span class="open-btn">খুলুন →</span>
+        </div>
+      </a>
+
+    </div>
+  </div><!-- /phase 2 -->
+
+
+  <!-- ════════════════════════════════════════
+       PHASE 3 — NumPy
+  ════════════════════════════════════════ -->
+  <div class="phase phase-numpy">
+    <div class="phase-title">
+      <span class="phase-num">Phase 03</span>
+      <span class="phase-name">🔢 NumPy — সংখ্যার শক্তি</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- Lecture 07 -->
+      <a class="lec-card" href="Python_for_Data_Science_Lectures/numpy_bangla_complete.html" target="_blank">
+        <div class="card-top">
+          <span class="lec-num">Lecture 07</span>
+          <span class="lec-tag">Intermediate</span>
+        </div>
+        <span class="lec-icon">🔢</span>
+        <div class="lec-title">NumPy সম্পূর্ণ বাংলা গাইড</div>
+        <span class="lec-title-en">Array · Indexing · Reshape · Broadcasting · Dot Product</span>
+        <p class="lec-desc">
+          Conditional Indexing, Array Iteration (RGB→Grayscale), Reshape (ML digit dataset),
+          Concatenation, Arithmetic Operators, Dot Product, Matrix Power —
+          বাস্তব উদাহরণসহ।
+        </p>
+        <div class="topics-list">
+          <span class="topic-chip">np.array</span>
+          <span class="topic-chip">reshape</span>
+          <span class="topic-chip">broadcast</span>
+          <span class="topic-chip">dot product</span>
+          <span class="topic-chip">concatenate</span>
+          <span class="topic-chip">boolean index</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">📄 119 KB · 11 diagrams</span>
+          <span class="open-btn">খুলুন →</span>
+        </div>
+      </a>
+
+    </div>
+  </div><!-- /phase 3 -->
+
+
+  <!-- ════════════════════════════════════════
+       PHASE 4 — Pandas & Data Wrangling
+  ════════════════════════════════════════ -->
+  <div class="phase phase-pandas">
+    <div class="phase-title">
+      <span class="phase-num">Phase 04</span>
+      <span class="phase-name">🐼 Pandas ও Data Wrangling</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- Lecture 08 -->
+      <a class="lec-card" href="Python_for_Data_Science_Lectures/pandas_bangla_01.html" target="_blank">
+        <div class="card-top">
+          <span class="lec-num">Lecture 08</span>
+          <span class="lec-tag">Intermediate</span>
+        </div>
+        <span class="lec-icon">🐼</span>
+        <div class="lec-title">Pandas — ডেটা সায়েন্সের প্রথম পদক্ষেপ</div>
+        <span class="lec-title-en">DataFrame · loc/iloc · Conditional Filter · Statistics</span>
+        <p class="lec-desc">
+          DataFrame কী, NumPy বনাম Pandas, CSV লোড, কলাম/সারি নির্বাচন,
+          loc ও iloc, Conditional Indexing, দ্রুত পরিসংখ্যান — Pandas-এর শুরু।
+        </p>
+        <div class="topics-list">
+          <span class="topic-chip">DataFrame</span>
+          <span class="topic-chip">loc / iloc</span>
+          <span class="topic-chip">read_csv</span>
+          <span class="topic-chip">describe()</span>
+          <span class="topic-chip">filtering</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">📄 111 KB · 8 diagrams</span>
+          <span class="open-btn">খুলুন →</span>
+        </div>
+      </a>
+
+      <!-- Lecture 09 -->
+      <a class="lec-card" href="Python_for_Data_Science_Lectures/pandas_sklearn_bengali_guide.html" target="_blank">
+        <div class="card-top">
+          <span class="lec-num">Lecture 09</span>
+          <span class="lec-tag">Intermediate–Advanced</span>
+        </div>
+        <span class="lec-icon">🔧</span>
+        <div class="lec-title">Pandas অ্যাডভান্সড ও Scikit-Learn ওয়ার্কফ্লো</div>
+        <span class="lec-title-en">Data Cleaning · Scikit-Learn Pipeline · Model Eval</span>
+        <p class="lec-desc">
+          drop_duplicates, replace, rename, astype, Missing Value (fillna/dropna),
+          crosstab, সম্পূর্ণ Scikit-Learn Workflow, MSE ও MAE মডেল মূল্যায়ন।
+        </p>
+        <div class="topics-list">
+          <span class="topic-chip">data cleaning</span>
+          <span class="topic-chip">fillna</span>
+          <span class="topic-chip">sklearn</span>
+          <span class="topic-chip">train_test_split</span>
+          <span class="topic-chip">MSE / MAE</span>
+          <span class="topic-chip">pipeline</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">📄 130 KB · 13 diagrams</span>
+          <span class="open-btn">খুলুন →</span>
+        </div>
+      </a>
+
+      <!-- Lecture 10 — NEW -->
+      <a class="lec-card" href="Python_for_Data_Science_Lectures/python_bengali_guide.html" target="_blank">
+        <span class="new-badge">✦ নতুন</span>
+        <div class="card-top">
+          <span class="lec-num">Lecture 10</span>
+          <span class="lec-tag">Intermediate</span>
+        </div>
+        <span class="lec-icon">🐛</span>
+        <div class="lec-title">Error Handling, Pandas EDA ও DS প্রস্তুতি</div>
+        <span class="lec-title-en">Exceptions · EDA · Missing Values · Normalization · ML Intro</span>
+        <p class="lec-desc">
+          Python-এর সব ধরনের Error ও Exception Handling, Error সমাধানের কৌশল,
+          Pandas দিয়ে পুরো EDA, Missing Values পূরণ করা, Normalization কৌশল,
+          ভালো কোড লেখার নিয়ম এবং Machine Learning Algorithms-এর পরিচয়।
+        </p>
+        <div class="topics-list">
+          <span class="topic-chip">try / except</span>
+          <span class="topic-chip">error types</span>
+          <span class="topic-chip">EDA</span>
+          <span class="topic-chip">missing values</span>
+          <span class="topic-chip">normalization</span>
+          <span class="topic-chip">good practices</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">📄 ~190 KB · 8 diagrams</span>
+          <span class="open-btn">খুলুন →</span>
+        </div>
+      </a>
+
+    </div>
+  </div><!-- /phase 4 -->
+
+
+  <!-- ════════════════════════════════════════
+       PHASE 5 — Data Quality & Statistics
+  ════════════════════════════════════════ -->
+  <div class="phase phase-stats">
+    <div class="phase-title">
+      <span class="phase-num">Phase 05</span>
+      <span class="phase-name">📊 Data Quality ও Exploratory Statistics</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- Lecture 11 — NEW -->
+      <a class="lec-card" href="Python_for_Data_Science_Lectures/data_quality_bengali_complete.html" target="_blank">
+        <span class="new-badge">✦ নতুন</span>
+        <div class="card-top">
+          <span class="lec-num">Lecture 11</span>
+          <span class="lec-tag">Intermediate–Advanced</span>
+        </div>
+        <span class="lec-icon">🧹</span>
+        <div class="lec-title">ডেটা কোয়ালিটি — সম্পূর্ণ বাংলা গাইড</div>
+        <span class="lec-title-en">Inspection · Standardization · Missing Values · Text · Pipeline</span>
+        <p class="lec-desc">
+          ডেটা কোয়ালিটি কী ও কেন দরকার, ডেটা ইন্সপেকশন ও স্ট্যান্ডার্ডাইজেশন,
+          নিউমেরিক ও তারিখ ফরম্যাট স্ট্যান্ডার্ডাইজেশন, Missing Values সামলানো,
+          Text Processing এবং সম্পূর্ণ Data Cleaning Pipeline — গাইডেড এক্সারসাইজসহ।
+        </p>
+        <div class="topics-list">
+          <span class="topic-chip">data quality</span>
+          <span class="topic-chip">df.info()</span>
+          <span class="topic-chip">standardization</span>
+          <span class="topic-chip">fillna / dropna</span>
+          <span class="topic-chip">text processing</span>
+          <span class="topic-chip">cleaning pipeline</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">📄 ~175 KB · 9 diagrams</span>
+          <span class="open-btn">খুলুন →</span>
+        </div>
+      </a>
+
+      <!-- Lecture 12 — NEW -->
+      <a class="lec-card" href="Python_for_Data_Science_Lectures/exploratory_stats_bangla.html" target="_blank">
+        <span class="new-badge">✦ নতুন</span>
+        <div class="card-top">
+          <span class="lec-num">Lecture 12</span>
+          <span class="lec-tag">Intermediate–Advanced</span>
+        </div>
+        <span class="lec-icon">📊</span>
+        <div class="lec-title">Exploratory Statistics — ডেটার গল্প পড়তে শেখো</div>
+        <span class="lec-title-en">Series · IQR · Boxplot · Normal Dist · Q-Q Plot · Correlation</span>
+        <p class="lec-desc">
+          Statistical Series, Position Indicators, Quartile ও IQR, Extreme Value বনাম Outlier,
+          Mean ও Standard Deviation, Boxplot, Normal Distribution, Q-Q Plot,
+          Correlation এবং Categorical Variable বিশ্লেষণ।
+        </p>
+        <div class="topics-list">
+          <span class="topic-chip">IQR / quartile</span>
+          <span class="topic-chip">boxplot</span>
+          <span class="topic-chip">outlier</span>
+          <span class="topic-chip">std deviation</span>
+          <span class="topic-chip">normal dist</span>
+          <span class="topic-chip">correlation</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">📄 ~105 KB · 7 diagrams</span>
+          <span class="open-btn">খুলুন →</span>
+        </div>
+      </a>
+
+    </div>
+  </div><!-- /phase 5 -->
+
+
+  <!-- ════════════════════════════════════════
+       PHASE 6 — Machine Learning
+  ════════════════════════════════════════ -->
+  <div class="phase phase-ml">
+    <div class="phase-title">
+      <span class="phase-num">Phase 06</span>
+      <span class="phase-name">🤖 Machine Learning — Classification</span>
+      <div class="phase-line"></div>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- Lecture 13 -->
+      <a class="lec-card" href="Python_for_Data_Science_Lectures/ml_classification_bengali.html" target="_blank">
+        <div class="card-top">
+          <span class="lec-num">Lecture 13</span>
+          <span class="lec-tag">Advanced</span>
+        </div>
+        <span class="lec-icon">🎯</span>
+        <div class="lec-title">মেশিন লার্নিং — ক্লাসিফিকেশন সম্পূর্ণ গাইড</div>
+        <span class="lec-title-en">Logistic Reg · SVM · Random Forest · KNN · Evaluation</span>
+        <p class="lec-desc">
+          Classification কী, Regression বনাম Classification, Linear Separation,
+          Congressional Votes Dataset দিয়ে Logistic Regression, SVM (Support Vector Machine),
+          Random Forest, KNN — সম্পূর্ণ বাস্তব উদাহরণসহ।
+        </p>
+        <div class="topics-list">
+          <span class="topic-chip">logistic reg</span>
+          <span class="topic-chip">SVM</span>
+          <span class="topic-chip">random forest</span>
+          <span class="topic-chip">KNN</span>
+          <span class="topic-chip">confusion matrix</span>
+          <span class="topic-chip">accuracy / F1</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-meta">📄 146 KB · 12 diagrams</span>
+          <span class="open-btn">খুলুন →</span>
+        </div>
+      </a>
+
+    </div>
+  </div><!-- /phase 6 -->
+
+</main>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <p>🐍 <span>Python for Data Science</span> — সম্পূর্ণ বাংলা কোর্স · ১৩ লেকচার · ৬ Phase</p>
+  <p style="margin-top:6px;">সব লেকচার <code style="background:#21262d;padding:2px 6px;border-radius:4px;font-size:11px;">Python_for_Data_Science_Lectures/</code> ফোল্ডারে আছে</p>
+</footer>
+
+</body>
+</html>

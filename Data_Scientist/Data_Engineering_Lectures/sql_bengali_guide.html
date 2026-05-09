@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL সম্পূর্ণ গাইড — বাংলায়</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f1a;--bg2:#131629;--bg3:#1a1f35;--bg4:#1f2540;--card:#161b2e;--card2:#1c2238;--border:#2a3050;--border2:#3a4570;--accent:#4f8ef7;--accent2:#7c5cbf;--accent3:#e85d75;--accent4:#2ec4a0;--accent5:#f5a623;--text:#e8ecf5;--text2:#a8b3d0;--text3:#6878a0;--code-bg:#0a0c18;--sql-kw:#79b8ff;--sql-fn:#b392f0;--sql-str:#9ecbff;--sql-num:#f8c555;--sql-cm:#586e75}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:"Hind Siliguri",sans-serif;background:var(--bg);color:var(--text);line-height:1.8;font-size:17px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.hero{background:linear-gradient(135deg,#0d0f1a 0%,#0f1528 40%,#1a1035 100%);padding:80px 20px 60px;text-align:center;position:relative;overflow:hidden;border-bottom:1px solid var(--border)}
+.hero::before{content:"";position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 60% 40%,rgba(79,142,247,.07) 0%,transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(124,92,191,.07) 0%,transparent 50%);pointer-events:none}
+.hero-badge{display:inline-block;background:rgba(79,142,247,.15);border:1px solid rgba(79,142,247,.3);color:var(--accent);padding:6px 18px;border-radius:20px;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
+.hero h1{font-family:"Playfair Display",serif;font-size:clamp(2.5rem,6vw,5rem);font-weight:900;background:linear-gradient(135deg,#fff 0%,#a8c4ff 50%,#c4a8ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;margin-bottom:16px}
+.hero p{color:var(--text2);font-size:1.1rem;max-width:650px;margin:0 auto 40px}
+.hero-stats{display:flex;justify-content:center;gap:40px;flex-wrap:wrap}
+.hero-stat .num{font-size:2rem;font-weight:700;color:var(--accent);display:block}
+.hero-stat .lbl{font-size:.8rem;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.toc-nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:0;position:sticky;top:0;z-index:100;overflow-x:auto;white-space:nowrap}
+.toc-inner{display:inline-flex;padding:0 20px}
+.toc-link{display:inline-block;padding:14px 16px;color:var(--text3);text-decoration:none;font-size:13px;font-weight:500;border-bottom:2px solid transparent;transition:all .2s}
+.toc-link:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.container{max-width:1100px;margin:0 auto;padding:60px 24px}
+.section-header{display:flex;align-items:center;gap:16px;margin-bottom:40px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.section-num{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;flex-shrink:0}
+.section-num.blue{background:rgba(79,142,247,.15);color:var(--accent);border:1px solid rgba(79,142,247,.3)}
+.section-num.purple{background:rgba(124,92,191,.15);color:var(--accent2);border:1px solid rgba(124,92,191,.3)}
+.section-num.red{background:rgba(232,93,117,.15);color:var(--accent3);border:1px solid rgba(232,93,117,.3)}
+.section-num.green{background:rgba(46,196,160,.15);color:var(--accent4);border:1px solid rgba(46,196,160,.3)}
+.section-num.orange{background:rgba(245,166,35,.15);color:var(--accent5);border:1px solid rgba(245,166,35,.3)}
+.section-title h2{font-family:"Playfair Display",serif;font-size:1.9rem;font-weight:700;color:var(--text);margin-bottom:4px}
+.section-title p{color:var(--text3);font-size:.9rem}
+h3{font-size:1.25rem;font-weight:600;color:var(--text);margin:36px 0 14px;display:flex;align-items:center;gap:10px}
+h3::before{content:"";width:4px;height:22px;background:var(--accent);border-radius:2px;flex-shrink:0}
+h4{font-size:1.05rem;font-weight:600;color:var(--accent);margin:24px 0 10px}
+p{margin-bottom:16px;color:var(--text2)}
+strong{color:var(--text)}
+.box{border-radius:12px;padding:20px 24px;margin:24px 0;border-left:4px solid}
+.box h4{margin-top:0;margin-bottom:8px;font-size:1rem}
+.box p{margin-bottom:0;font-size:.95rem}
+.box.info{background:rgba(79,142,247,.08);border-color:var(--accent)}
+.box.info h4{color:var(--accent)}
+.box.warning{background:rgba(245,166,35,.08);border-color:var(--accent5)}
+.box.warning h4{color:var(--accent5)}
+.box.success{background:rgba(46,196,160,.08);border-color:var(--accent4)}
+.box.success h4{color:var(--accent4)}
+.box.danger{background:rgba(232,93,117,.08);border-color:var(--accent3)}
+.box.danger h4{color:var(--accent3)}
+.box.tip{background:rgba(124,92,191,.08);border-color:var(--accent2)}
+.box.tip h4{color:var(--accent2)}
+.code-wrap{background:var(--code-bg);border:1px solid var(--border);border-radius:12px;margin:20px 0;overflow:hidden}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)}
+.code-lang{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3)}
+.code-dots{display:flex;gap:6px}
+.code-dots span{width:10px;height:10px;border-radius:50%}
+.code-dots span:nth-child(1){background:#ff5f57}
+.code-dots span:nth-child(2){background:#ffbd2e}
+.code-dots span:nth-child(3){background:#28c840}
+pre{padding:20px;overflow-x:auto;font-family:"JetBrains Mono",monospace;font-size:13.5px;line-height:1.75}
+.kw{color:var(--sql-kw);font-weight:600}.fn{color:var(--sql-fn)}.str{color:var(--sql-str)}.num{color:var(--sql-num)}.cm{color:var(--sql-cm);font-style:italic}.tbl{color:#85e89d}.col{color:#e8e8e8}
+.py-kw{color:#cc99cd;font-weight:600}.py-fn{color:#6699cc}.py-str{color:#7ec8e3}.py-num{color:var(--sql-num)}.py-cm{color:var(--sql-cm);font-style:italic}.py-cls{color:#f5a623;font-weight:600}.py-bi{color:#85e89d}
+.table-wrap{overflow-x:auto;margin:20px 0;border-radius:12px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse}
+thead tr{background:rgba(79,142,247,.12)}
+thead th{padding:14px 18px;text-align:left;font-weight:600;color:var(--accent);font-size:.9rem;border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+tbody td{padding:12px 18px;color:var(--text2);font-size:.95rem}
+tbody td:first-child{color:var(--text);font-weight:500}
+td code,th code{font-family:"JetBrains Mono",monospace;background:rgba(79,142,247,.12);color:var(--accent);padding:2px 7px;border-radius:4px;font-size:.85rem}
+.diagram-container{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px 24px;margin:28px 0;overflow-x:auto;text-align:center}
+.diagram-title{font-size:.85rem;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:20px;font-weight:500}
+.exercise-section{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px;margin:40px 0}
+.exercise-section-title{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.exercise-section-title h3{margin:0;font-size:1.1rem;color:var(--accent5)}
+.exercise-section-title h3::before{background:var(--accent5)}
+.badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;letter-spacing:.5px}
+.badge.interview{background:rgba(232,93,117,.15);color:var(--accent3);border:1px solid rgba(232,93,117,.3)}
+.badge.ml{background:rgba(124,92,191,.15);color:var(--accent2);border:1px solid rgba(124,92,191,.3)}
+.badge.easy{background:rgba(46,196,160,.15);color:var(--accent4)}
+.badge.medium{background:rgba(245,166,35,.15);color:var(--accent5)}
+.badge.hard{background:rgba(232,93,117,.15);color:var(--accent3)}
+.exercise-card{background:var(--code-bg);border:1px solid var(--border);border-radius:12px;margin-bottom:20px;overflow:hidden}
+.exercise-card:last-child{margin-bottom:0}
+.exercise-header{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;gap:12px}
+.exercise-q{font-weight:600;color:var(--text);font-size:.95rem;flex:1}
+.toggle-btn{background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.2);color:var(--accent);padding:4px 12px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .2s;white-space:nowrap;font-family:"Hind Siliguri",sans-serif}
+.toggle-btn:hover{background:rgba(79,142,247,.2)}
+.exercise-body{display:none;padding:20px}
+.exercise-body.open{display:block}
+.explanation{background:rgba(46,196,160,.06);border:1px solid rgba(46,196,160,.2);border-radius:8px;padding:14px 18px;margin-top:12px;font-size:.92rem;color:var(--text2)}
+.explanation strong{color:var(--accent4)}
+.concept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:24px 0}
+.concept-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:border-color .2s,transform .2s}
+.concept-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.concept-icon{font-size:2rem;margin-bottom:10px;display:block}
+.concept-title{font-weight:600;color:var(--text);margin-bottom:8px;font-size:1rem}
+.concept-desc{color:var(--text3);font-size:.88rem;line-height:1.6}
+.section-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:60px 0}
+code:not(pre code){font-family:"JetBrains Mono",monospace;background:rgba(79,142,247,.1);color:var(--accent);padding:2px 8px;border-radius:4px;font-size:.87em}
+ul.bn-list{list-style:none;margin:12px 0 20px}
+ul.bn-list li{padding:6px 0 6px 24px;position:relative;color:var(--text2);font-size:.95rem;border-bottom:1px solid rgba(255,255,255,.04)}
+ul.bn-list li:last-child{border-bottom:none}
+ul.bn-list li::before{content:"▸";position:absolute;left:0;color:var(--accent)}
+mark{background:rgba(79,142,247,.2);color:var(--accent);padding:1px 6px;border-radius:3px}
+mark.green{background:rgba(46,196,160,.15);color:var(--accent4)}
+mark.orange{background:rgba(245,166,35,.15);color:var(--accent5)}
+mark.red{background:rgba(232,93,117,.15);color:var(--accent3)}
+.algo-card{background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:40px;overflow:hidden}
+.algo-header{background:linear-gradient(135deg,var(--bg3),var(--bg4));padding:24px 28px;border-bottom:1px solid var(--border)}
+.algo-name{font-family:"Playfair Display",serif;font-size:1.5rem;font-weight:700;color:var(--text);margin-bottom:6px}
+.algo-subtitle{color:var(--text3);font-size:.9rem}
+.algo-body{padding:28px}
+.complexity-badges{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 24px}
+.complexity-badge{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:.85rem}
+.complexity-badge .label{color:var(--text3);font-size:.75rem;display:block;margin-bottom:2px}
+.complexity-badge .value{color:var(--accent);font-family:"JetBrains Mono",monospace;font-weight:600}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
+.compare-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+.compare-card h5{font-size:.9rem;font-weight:700;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.compare-card ul{list-style:none}
+.compare-card ul li{padding:6px 0;color:var(--text2);font-size:.9rem;border-bottom:1px solid var(--border)}
+.compare-card ul li:last-child{border-bottom:none}
+footer{text-align:center;padding:60px 20px;border-top:1px solid var(--border);background:var(--bg2)}
+footer p{color:var(--text3);font-size:.9rem}
+footer strong{color:var(--accent)}
+@media(max-width:768px){.hero h1{font-size:2.5rem}.section-header{flex-direction:column;align-items:flex-start;gap:10px}.compare-grid{grid-template-columns:1fr}pre{font-size:12px}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">সম্পূর্ণ বাংলা গাইড</div>
+  <h1>SQL সম্পূর্ণ গাইড</h1>
+  <p>ডেটাবেস থেকে অ্যালগরিদম — সবকিছু বাংলায়, একদম শূন্য থেকে Machine Learning Engineer পর্যন্ত।</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="num">৫</span><span class="lbl">নোটবুক</span></div>
+    <div class="hero-stat"><span class="num">৩৫+</span><span class="lbl">ইন্টারভিউ প্রশ্ন</span></div>
+    <div class="hero-stat"><span class="num">১০+</span><span class="lbl">অ্যালগরিদম</span></div>
+    <div class="hero-stat"><span class="num">২০+</span><span class="lbl">ML কোড এক্সারসাইজ</span></div>
+  </div>
+</div>
+
+<nav class="toc-nav">
+  <div class="toc-inner">
+    <a class="toc-link" href="#sec1">১. রিলেশনাল ডেটাবেস</a>
+    <a class="toc-link" href="#sec2">২. SQL কোয়েরি</a>
+    <a class="toc-link" href="#sec3">৩. JOINs ও অ্যাডভান্সড</a>
+    <a class="toc-link" href="#sec4">৪. টেবিল অপারেশন</a>
+    <a class="toc-link" href="#sec5">৫. MCQ রিভিউ</a>
+    <a class="toc-link" href="#sec6">৬. অ্যালগরিদম</a>
+  </div>
+</nav>
+
+<!-- ==================== SECTION 1 ==================== -->
+<div class="container" id="sec1">
+  <div class="section-header">
+    <div class="section-num blue">১</div>
+    <div class="section-title">
+      <h2>রিলেশনাল ডেটাবেস — ভিত্তি থেকে শুরু</h2>
+      
+    </div>
+  </div>
+
+  <h3>ডেটাবেস কী?</h3>
+  <p>ভাবো তুমি একটা স্কুলের অফিস ম্যানেজার। তোমার কাছে শত শত ছাত্রের তথ্য আছে — নাম, রোল, ক্লাস, মার্কস। এই তথ্যগুলো যদি তুমি অগোছালোভাবে রাখো, তাহলে যখন দরকার তখন খুঁজে পাওয়া কঠিন হবে। <strong>ডেটাবেস</strong> হলো সেই সংগঠিত, নিয়মতান্ত্রিক তথ্যভাণ্ডার।</p>
+
+  <h3>DBMS (Database Management System)</h3>
+  <p><strong>DBMS</strong> হলো সেই সফটওয়্যার যেটা ডেটাবেস পরিচালনা করে। তুমি সরাসরি ডেটাবেসে ঢুকতে পারবে না — DBMS তোমার হয়ে কাজটা করে। SQL query লিখলে DBMS সেটা parse করে, security check করে, ডেটাবেস থেকে তথ্য আনে এবং তোমাকে result দেখায়।</p>
+
+  <div class="concept-grid">
+    <div class="concept-card"><span class="concept-icon">🐘</span><div class="concept-title">PostgreSQL</div><div class="concept-desc">সবচেয়ে শক্তিশালী open-source DBMS। ML projects-এ বেশি ব্যবহৃত হয়।</div></div>
+    <div class="concept-card"><span class="concept-icon">🐬</span><div class="concept-title">MySQL</div><div class="concept-desc">ওয়েব অ্যাপের জন্য বহুল ব্যবহৃত। Facebook, Twitter এটা ব্যবহার করে।</div></div>
+    <div class="concept-card"><span class="concept-icon">🔶</span><div class="concept-title">Oracle DB</div><div class="concept-desc">বড় কর্পোরেট সিস্টেমে ব্যবহৃত। অনেক শক্তিশালী কিন্তু দামি।</div></div>
+    <div class="concept-card"><span class="concept-icon">🪟</span><div class="concept-title">MS SQL Server</div><div class="concept-desc">Microsoft-এর DBMS। Windows environment-এ বেশি ব্যবহৃত হয়।</div></div>
+  </div>
+
+  <h3>টেবিল কী? (What is a Table?)</h3>
+  <p>একটা টেবিল হলো ঠিক Excel spreadsheet-এর মতো — <strong>সারি (row)</strong> আর <strong>কলাম (column)</strong> নিয়ে তৈরি।<br>
+  প্রতিটা সারি = একটা রেকর্ড (যেমন: একটা সিনেমার তথ্য)<br>
+  প্রতিটা কলাম = একটা বৈশিষ্ট্য (যেমন: নাম, পরিচালক)</p>
+
+  <div class="diagram-container">
+    <div class="diagram-title">টেবিল কাঠামো — Films উদাহরণ</div>
+    <svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg" style="max-width:640px;width:100%;height:auto;">
+      <defs><marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#4f8ef7"/></marker></defs>
+      <rect x="10" y="10" width="620" height="210" rx="10" fill="#0f1220" stroke="#2a3050" stroke-width="1"/>
+      <rect x="10" y="10" width="620" height="42" rx="10" fill="#1a2545"/>
+      <rect x="10" y="40" width="620" height="12" fill="#1a2545"/>
+      <text x="320" y="34" text-anchor="middle" fill="#6878a0" font-size="12" font-family="Hind Siliguri,sans-serif">Films(<tspan text-decoration="underline" fill="#4f8ef7">FilmId</tspan>, Name, Director) — ফর্মাল রিপ্রেজেন্টেশন</text>
+      <!-- Header -->
+      <rect x="20" y="55" width="170" height="34" fill="rgba(79,142,247,.2)" stroke="#2a3050" stroke-width=".5"/>
+      <rect x="195" y="55" width="230" height="34" fill="rgba(79,142,247,.2)" stroke="#2a3050" stroke-width=".5"/>
+      <rect x="430" y="55" width="195" height="34" fill="rgba(79,142,247,.2)" stroke="#2a3050" stroke-width=".5"/>
+      <text x="105" y="77" text-anchor="middle" fill="#4f8ef7" font-size="13" font-family="JetBrains Mono,monospace" font-weight="600">FilmId (PK)</text>
+      <text x="310" y="77" text-anchor="middle" fill="#4f8ef7" font-size="13" font-family="JetBrains Mono,monospace" font-weight="600">Name</text>
+      <text x="527" y="77" text-anchor="middle" fill="#4f8ef7" font-size="13" font-family="JetBrains Mono,monospace" font-weight="600">Director</text>
+      <!-- Row 1 -->
+      <rect x="20" y="89" width="170" height="34" fill="#131a30" stroke="#2a3050" stroke-width=".5"/>
+      <rect x="195" y="89" width="230" height="34" fill="#131a30" stroke="#2a3050" stroke-width=".5"/>
+      <rect x="430" y="89" width="195" height="34" fill="#131a30" stroke="#2a3050" stroke-width=".5"/>
+      <text x="105" y="111" text-anchor="middle" fill="#f5a623" font-size="13" font-family="JetBrains Mono,monospace">1</text>
+      <text x="310" y="111" text-anchor="middle" fill="#e8ecf5" font-size="12" font-family="Hind Siliguri,sans-serif">Bohemian Rhapsody</text>
+      <text x="527" y="111" text-anchor="middle" fill="#a8b3d0" font-size="12" font-family="Hind Siliguri,sans-serif">Bryan Singer</text>
+      <!-- Row 2 -->
+      <rect x="20" y="123" width="170" height="34" fill="#0f1525" stroke="#2a3050" stroke-width=".5"/>
+      <rect x="195" y="123" width="230" height="34" fill="#0f1525" stroke="#2a3050" stroke-width=".5"/>
+      <rect x="430" y="123" width="195" height="34" fill="#0f1525" stroke="#2a3050" stroke-width=".5"/>
+      <text x="105" y="145" text-anchor="middle" fill="#f5a623" font-size="13" font-family="JetBrains Mono,monospace">2</text>
+      <text x="310" y="145" text-anchor="middle" fill="#e8ecf5" font-size="12" font-family="Hind Siliguri,sans-serif">Avengers: Infinity War</text>
+      <text x="527" y="145" text-anchor="middle" fill="#a8b3d0" font-size="11" font-family="Hind Siliguri,sans-serif">Joe &amp; Anthony Russo</text>
+      <!-- Row 3 -->
+      <rect x="20" y="157" width="170" height="34" fill="#131a30" stroke="#2a3050" stroke-width=".5"/>
+      <rect x="195" y="157" width="230" height="34" fill="#131a30" stroke="#2a3050" stroke-width=".5"/>
+      <rect x="430" y="157" width="195" height="34" fill="#131a30" stroke="#2a3050" stroke-width=".5"/>
+      <text x="105" y="179" text-anchor="middle" fill="#f5a623" font-size="13" font-family="JetBrains Mono,monospace">3</text>
+      <text x="310" y="179" text-anchor="middle" fill="#e8ecf5" font-size="12" font-family="Hind Siliguri,sans-serif">The Batman</text>
+      <text x="527" y="179" text-anchor="middle" fill="#a8b3d0" font-size="12" font-family="Hind Siliguri,sans-serif">Matt Reeves</text>
+      <!-- Annotations -->
+      <text x="20" y="210" fill="#6878a0" font-size="11" font-family="Hind Siliguri,sans-serif">↕ প্রতিটা সারি = একটা সিনেমার সম্পূর্ণ তথ্য (Record/Tuple/Row)</text>
+      <!-- col arrow -->
+      <line x1="14" y1="105" x2="14" y2="175" stroke="#2ec4a0" stroke-width="2" marker-end="url(#arr)"/>
+    </svg>
+  </div>
+
+  <h3>SQL ডেটা টাইপ</h3>
+  <p>প্রতিটা কলামের একটা নির্দিষ্ট <strong>টাইপ</strong> থাকে। নাম সবসময় text, বয়স সবসময় সংখ্যা — SQL-এ এটা আগে থেকে নির্ধারণ করতে হয়।</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>SQL টাইপ</th><th>অর্থ</th><th>উদাহরণ</th><th>কখন ব্যবহার</th></tr></thead>
+    <tbody>
+      <tr><td><code>INTEGER</code></td><td>পূর্ণ সংখ্যা</td><td>1, 42, -5</td><td>ID, বয়স, পরিমাণ</td></tr>
+      <tr><td><code>FLOAT / DOUBLE</code></td><td>দশমিক সংখ্যা</td><td>3.14, 99.99</td><td>দাম, তাপমাত্রা, ML score</td></tr>
+      <tr><td><code>BOOLEAN</code></td><td>সত্য/মিথ্যা</td><td>TRUE, FALSE</td><td>পাস/ফেল, active/inactive</td></tr>
+      <tr><td><code>DATE</code></td><td>তারিখ</td><td>2024-01-15</td><td>জন্মতারিখ, order date</td></tr>
+      <tr><td><code>DATETIME</code></td><td>তারিখ + সময়</td><td>2024-01-15 14:30:00</td><td>Transaction সময়, log</td></tr>
+      <tr><td><code>VARCHAR(n)</code></td><td>পরিবর্তনশীল text</td><td>"নাম", "ইমেইল"</td><td>নাম, ঠিকানা, যেকোনো text</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>ACID Properties — ডেটাবেসের ৪টি গ্যারান্টি</h3>
+  <p>ব্যাংকে ১০০০ টাকা transfer করার কথা ভাবো। তোমার account থেকে কাটার পর যদি বিদ্যুৎ যায় এবং অন্যজনের account-এ যোগ না হয় — এই সমস্যা সমাধান করে ACID।</p>
+
+  <div class="diagram-container">
+    <div class="diagram-title">ACID Properties</div>
+    <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;height:auto;">
+      <rect x="10" y="15" width="155" height="165" rx="12" fill="rgba(79,142,247,.08)" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="87" y="48" text-anchor="middle" fill="#4f8ef7" font-size="26" font-weight="700" font-family="Playfair Display,serif">A</text>
+      <text x="87" y="66" text-anchor="middle" fill="#4f8ef7" font-size="13" font-family="Hind Siliguri,sans-serif" font-weight="600">Atomicity</text>
+      <text x="87" y="82" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">পারমাণবিকতা</text>
+      <line x1="20" y1="90" x2="155" y2="90" stroke="#2a3050" stroke-width="1"/>
+      <text x="87" y="108" text-anchor="middle" fill="#a8b3d0" font-size="11" font-family="Hind Siliguri,sans-serif">সব হবে অথবা</text>
+      <text x="87" y="124" text-anchor="middle" fill="#a8b3d0" font-size="11" font-family="Hind Siliguri,sans-serif">কিছুই হবে না</text>
+      <text x="87" y="150" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">একটা ধাপ ব্যর্থ</text>
+      <text x="87" y="165" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">→ সব বাতিল</text>
+
+      <rect x="178" y="15" width="155" height="165" rx="12" fill="rgba(46,196,160,.08)" stroke="#2ec4a0" stroke-width="1.5"/>
+      <text x="255" y="48" text-anchor="middle" fill="#2ec4a0" font-size="26" font-weight="700" font-family="Playfair Display,serif">C</text>
+      <text x="255" y="66" text-anchor="middle" fill="#2ec4a0" font-size="13" font-family="Hind Siliguri,sans-serif" font-weight="600">Consistency</text>
+      <text x="255" y="82" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">সামঞ্জস্যতা</text>
+      <line x1="188" y1="90" x2="323" y2="90" stroke="#2a3050" stroke-width="1"/>
+      <text x="255" y="108" text-anchor="middle" fill="#a8b3d0" font-size="11" font-family="Hind Siliguri,sans-serif">Before ও After</text>
+      <text x="255" y="124" text-anchor="middle" fill="#a8b3d0" font-size="11" font-family="Hind Siliguri,sans-serif">ডেটা সঠিক থাকে</text>
+      <text x="255" y="150" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">Constraints সবসময়</text>
+      <text x="255" y="165" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">মানতে হবে</text>
+
+      <rect x="346" y="15" width="155" height="165" rx="12" fill="rgba(245,166,35,.08)" stroke="#f5a623" stroke-width="1.5"/>
+      <text x="423" y="48" text-anchor="middle" fill="#f5a623" font-size="26" font-weight="700" font-family="Playfair Display,serif">I</text>
+      <text x="423" y="66" text-anchor="middle" fill="#f5a623" font-size="13" font-family="Hind Siliguri,sans-serif" font-weight="600">Isolation</text>
+      <text x="423" y="82" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">বিচ্ছিন্নতা</text>
+      <line x1="356" y1="90" x2="491" y2="90" stroke="#2a3050" stroke-width="1"/>
+      <text x="423" y="108" text-anchor="middle" fill="#a8b3d0" font-size="11" font-family="Hind Siliguri,sans-serif">একটি Transaction</text>
+      <text x="423" y="124" text-anchor="middle" fill="#a8b3d0" font-size="11" font-family="Hind Siliguri,sans-serif">অন্যটিকে দেখে না</text>
+      <text x="423" y="150" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">একযোগে অনেক</text>
+      <text x="423" y="165" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">user কাজ করতে পারে</text>
+
+      <rect x="514" y="15" width="155" height="165" rx="12" fill="rgba(232,93,117,.08)" stroke="#e85d75" stroke-width="1.5"/>
+      <text x="591" y="48" text-anchor="middle" fill="#e85d75" font-size="26" font-weight="700" font-family="Playfair Display,serif">D</text>
+      <text x="591" y="66" text-anchor="middle" fill="#e85d75" font-size="13" font-family="Hind Siliguri,sans-serif" font-weight="600">Durability</text>
+      <text x="591" y="82" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">স্থায়িত্ব</text>
+      <line x1="524" y1="90" x2="659" y2="90" stroke="#2a3050" stroke-width="1"/>
+      <text x="591" y="108" text-anchor="middle" fill="#a8b3d0" font-size="11" font-family="Hind Siliguri,sans-serif">একবার save হলে</text>
+      <text x="591" y="124" text-anchor="middle" fill="#a8b3d0" font-size="11" font-family="Hind Siliguri,sans-serif">সবসময় থাকবে</text>
+      <text x="591" y="150" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">বিদ্যুৎ গেলেও</text>
+      <text x="591" y="165" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">ডেটা থাকবে</text>
+    </svg>
+  </div>
+
+  <h3>Primary Key, Foreign Key ও Composite Key</h3>
+  <p><strong>Primary Key (PK):</strong> প্রতিটা সারিকে uniquely চেনার উপায়। যেমন জাতীয় পরিচয়পত্র নম্বর — সবার আলাদা, কখনো NULL নয়।</p>
+  <p><strong>Foreign Key (FK):</strong> অন্য টেবিলের PK-কে refer করে। দুটো টেবিলের মধ্যে সম্পর্ক তৈরি করে। FK চিহ্নিত করা হয় <code>#</code> দিয়ে।</p>
+  <p><strong>Composite Key:</strong> দুই বা তার বেশি কলাম মিলিয়ে PK তৈরি। যেমন Casting টেবিলে (ActorId, FilmId) মিলিয়ে unique।</p>
+
+  <div class="box info">
+    <h4>📌 ফর্মাল রিপ্রেজেন্টেশন নিয়ম</h4>
+    <p>PK = underline: <code>Films(<u>FilmId</u>, Name, Director)</code><br>
+    FK = # চিহ্ন: <code>Actors(<u>ActorId</u>, Firstname, Lastname, #CountryId)</code><br>
+    Composite PK: <code>Casting(#<u>ActorId</u>, #<u>FilmId</u>, Role)</code></p>
+  </div>
+
+  <h3>Table Relations — টেবিলের সম্পর্ক</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>সম্পর্কের ধরন</th><th>উদাহরণ</th><th>বাস্তব উদাহরণ</th></tr></thead>
+    <tbody>
+      <tr><td>One-to-One (১:১)</td><td>Films ↔ Synopsis</td><td>একজন মানুষ ↔ একটা পাসপোর্ট</td></tr>
+      <tr><td>One-to-Many (১:N)</td><td>Films → Casting rows</td><td>একজন শিক্ষক → অনেক ছাত্র</td></tr>
+      <tr><td>Many-to-Many (M:N)</td><td>Films ↔ Actors</td><td>অনেক ছাত্র ↔ অনেক কোর্স</td></tr>
+    </tbody>
+  </table></div>
+
+  <!-- EXERCISES SEC 1 -->
+  <div class="exercise-section">
+    <div class="exercise-section-title">
+      <h3>🎯 ইন্টারভিউ প্রশ্ন — Section ১</h3>
+      <span class="badge interview">চাকরির ইন্টারভিউ</span>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">Q1. Primary Key আর Unique Key-এর পার্থক্য কী?</span>
+        <span class="badge easy">সহজ</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="table-wrap"><table>
+          <thead><tr><th>বিষয়</th><th>Primary Key</th><th>Unique Key</th></tr></thead>
+          <tbody>
+            <tr><td>প্রতি টেবিলে কতটা?</td><td>শুধু একটা</td><td>একাধিক হতে পারে</td></tr>
+            <tr><td>NULL হতে পারে?</td><td>না (NOT NULL mandatory)</td><td>হ্যাঁ (একবার)</td></tr>
+            <tr><td>Index টাইপ</td><td>Clustered Index</td><td>Non-clustered Index</td></tr>
+          </tbody>
+        </table></div>
+        <div class="explanation"><strong>সহজ ভাষায়:</strong> স্কুলে Roll Number = Primary Key (সবার আলাদা, কখনো ফাঁকা না), Email = Unique Key (সবার আলাদা, কিন্তু না দিলে NULL রাখা যায়)।</div>
+      </div>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">Q2. একটা ML Feature Store-এর জন্য টেবিল schema ডিজাইন করো যেখানে user ও time উভয়ই key।</span>
+        <span class="badge hard">কঠিন</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="code-wrap"><div class="code-header"><span class="code-lang">SQL</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+        <pre><span class="kw">CREATE TABLE</span> <span class="tbl">ml_features</span> (
+    user_id     <span class="kw">INTEGER</span>  <span class="kw">NOT NULL</span>,
+    event_time  <span class="kw">DATETIME</span> <span class="kw">NOT NULL</span>,
+    feature_1   <span class="kw">FLOAT</span>,
+    feature_2   <span class="kw">FLOAT</span>,
+    feature_3   <span class="kw">FLOAT</span>,
+    label       <span class="kw">BOOLEAN</span>,
+    <span class="kw">PRIMARY KEY</span> (user_id, event_time)  <span class="cm">-- Composite PK</span>
+);
+<span class="cm">-- formal: ml_features(user_id+event_time PK, feature_1, feature_2, feature_3, label)</span></pre></div>
+        <div class="explanation"><strong>কেন Composite PK?</strong> একই user-এর একাধিক event থাকতে পারে, কিন্তু একই user-এর একই সময়ে দুটো row থাকতে পারবে না। Real ML projects-এ (user_id, timestamp) দিয়েই feature store index করা হয়।</div>
+      </div>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">Q3. Referential Integrity কী? Foreign Key delete করতে গেলে কী সমস্যা হয়?</span>
+        <span class="badge medium">মাঝারি</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="explanation"><strong>Referential Integrity</strong> মানে হলো: যে row অন্য টেবিলে reference আছে, সেটা delete করা যাবে না।<br><br>
+        উদাহরণ: <code>courses</code> table-এ id=2 (Data Science) আছে এবং <code>students</code> table-এ একজন student এই course-এ ভর্তি। এখন courses থেকে id=2 delete করতে গেলে ERROR আসবে — কারণ students table এই row reference করছে।<br><br>
+        <strong>সমাধান:</strong> আগে students table থেকে সেই student-কে delete করো, তারপর courses table থেকে delete করো। অথবা ON DELETE CASCADE ব্যবহার করো।</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<!-- ==================== SECTION 2 ==================== -->
+<div class="container" id="sec2">
+  <div class="section-header">
+    <div class="section-num purple">২</div>
+    <div class="section-title">
+      <h2>SQL কোয়েরি — ডেটা জিজ্ঞেস করার ভাষা</h2>
+      
+    </div>
+  </div>
+
+  <p>SQL কোয়েরি হলো ডেটাবেসকে প্রশ্ন করার উপায়। তুমি একটা বিশাল লাইব্রেরিতে আছো এবং লাইব্রেরিয়ানকে বলছো: "আমাকে ২০২৩ সালের পরে প্রকাশিত সব বাংলা বই দেখাও।" SQL ঠিক এই কাজটাই করে, কম্পিউটারের ভাষায়।</p>
+
+  <h3>SELECT — Projection (তথ্য দেখানো)</h3>
+  <div class="diagram-container">
+    <div class="diagram-title">SQL Query-র কাঠামো</div>
+    <svg viewBox="0 0 680 100" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;height:auto;">
+      <rect x="10" y="20" width="110" height="50" rx="8" fill="rgba(79,142,247,.15)" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="65" y="41" text-anchor="middle" fill="#4f8ef7" font-size="14" font-family="JetBrains Mono,monospace" font-weight="600">SELECT</text>
+      <text x="65" y="58" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">কোন কলাম?</text>
+      <text x="65" y="88" text-anchor="middle" fill="#6878a0" font-size="9" font-family="Hind Siliguri,sans-serif">① প্রথমে</text>
+      <rect x="135" y="20" width="155" height="50" rx="8" fill="rgba(124,92,191,.15)" stroke="#7c5cbf" stroke-width="1.5"/>
+      <text x="212" y="41" text-anchor="middle" fill="#b392f0" font-size="13" font-family="JetBrains Mono,monospace">col1, col2</text>
+      <text x="212" y="58" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">কমা দিয়ে আলাদা। * = সব</text>
+      <rect x="305" y="20" width="90" height="50" rx="8" fill="rgba(46,196,160,.15)" stroke="#2ec4a0" stroke-width="1.5"/>
+      <text x="350" y="41" text-anchor="middle" fill="#2ec4a0" font-size="14" font-family="JetBrains Mono,monospace" font-weight="600">FROM</text>
+      <text x="350" y="58" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">কোন টেবিল?</text>
+      <text x="350" y="88" text-anchor="middle" fill="#6878a0" font-size="9" font-family="Hind Siliguri,sans-serif">② এরপর</text>
+      <rect x="410" y="20" width="130" height="50" rx="8" fill="rgba(245,166,35,.15)" stroke="#f5a623" stroke-width="1.5"/>
+      <text x="475" y="41" text-anchor="middle" fill="#f5a623" font-size="13" font-family="JetBrains Mono,monospace">table_name</text>
+      <text x="475" y="58" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">টেবিলের নাম লেখো</text>
+      <rect x="555" y="20" width="90" height="50" rx="8" fill="rgba(232,93,117,.15)" stroke="#e85d75" stroke-width="1.5"/>
+      <text x="600" y="50" text-anchor="middle" fill="#e85d75" font-size="22" font-family="JetBrains Mono,monospace" font-weight="700">;</text>
+      <text x="600" y="88" text-anchor="middle" fill="#e85d75" font-size="9" font-family="Hind Siliguri,sans-serif">শেষে অবশ্যই!</text>
+    </svg>
+  </div>
+
+  <div class="code-wrap"><div class="code-header"><span class="code-lang">SQL — SELECT উদাহরণ</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+  <pre><span class="cm">-- সব কলাম দেখাও (asterisk = সব)</span>
+<span class="kw">SELECT</span> *
+<span class="kw">FROM</span> <span class="tbl">albums</span>;
+
+<span class="cm">-- শুধু নির্দিষ্ট কলাম</span>
+<span class="kw">SELECT</span> <span class="col">AlbumId</span>, <span class="col">ArtistId</span>
+<span class="kw">FROM</span> <span class="tbl">albums</span>;
+
+<span class="cm">-- DISTINCT: duplicate বাদ দাও</span>
+<span class="kw">SELECT DISTINCT</span> <span class="col">ArtistId</span>
+<span class="kw">FROM</span> <span class="tbl">albums</span>;
+
+<span class="cm">-- AS: কলামের নাম পরিবর্তন করো</span>
+<span class="kw">SELECT</span> <span class="col">LastName</span> <span class="kw">AS</span> <span class="str">'পদবী'</span>, <span class="col">FirstName</span> <span class="kw">AS</span> <span class="str">'নাম'</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>;</pre></div>
+
+  <h3>WHERE — Selection (ফিল্টার করা)</h3>
+  <p>WHERE clause দিয়ে শর্ত দেওয়া যায় — শুধু সেই rows দেখাবে যেগুলো শর্ত পূরণ করে।</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>অপারেটর</th><th>অর্থ</th><th>উদাহরণ</th></tr></thead>
+    <tbody>
+      <tr><td><code>=</code></td><td>সমান</td><td><code>City = 'Dhaka'</code></td></tr>
+      <tr><td><code>&lt;&gt;</code></td><td>সমান নয়</td><td><code>City &lt;&gt; 'Dhaka'</code></td></tr>
+      <tr><td><code>&gt;, &lt;, &gt;=, &lt;=</code></td><td>তুলনা</td><td><code>Age &gt;= 25</code></td></tr>
+      <tr><td><code>BETWEEN</code></td><td>পরিসরের মধ্যে (inclusive)</td><td><code>Age BETWEEN 20 AND 30</code></td></tr>
+      <tr><td><code>IN</code></td><td>তালিকার মধ্যে</td><td><code>City IN ('Dhaka','Ctg')</code></td></tr>
+      <tr><td><code>LIKE</code></td><td>প্যাটার্ন মেলানো</td><td><code>Name LIKE 'A%'</code></td></tr>
+      <tr><td><code>IS NULL</code></td><td>খালি কিনা</td><td><code>Manager IS NULL</code></td></tr>
+      <tr><td><code>IS NOT NULL</code></td><td>খালি নয়</td><td><code>Email IS NOT NULL</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="code-wrap"><div class="code-header"><span class="code-lang">SQL — WHERE উদাহরণ</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+  <pre><span class="cm">-- Calgary-তে থাকা কর্মীরা</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">employees</span> <span class="kw">WHERE</span> <span class="col">City</span> = <span class="str">'Calgary'</span>;
+
+<span class="cm">-- Edmonton বা Lethbridge (OR দিয়ে)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">WHERE</span> <span class="col">City</span> = <span class="str">'Edmonton'</span> <span class="kw">OR</span> <span class="col">City</span> = <span class="str">'Lethbridge'</span>;
+
+<span class="cm">-- যাদের বস আছে (NULL নয়)</span>
+<span class="kw">SELECT</span> <span class="col">LastName</span>, <span class="col">FirstName</span>, <span class="col">Title</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">WHERE</span> <span class="col">ReportsTo</span> <span class="kw">IS NOT NULL</span>;
+
+<span class="cm">-- ID 2 থেকে 7 এর মধ্যে</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">WHERE</span> <span class="col">EmployeeId</span> <span class="kw">BETWEEN</span> <span class="num">2</span> <span class="kw">AND</span> <span class="num">7</span>;
+
+<span class="cm">-- ১৯৭৩-এর আগে জন্ম</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">WHERE</span> <span class="col">BirthDate</span> &lt;= <span class="str">'1973-05-10'</span>;</pre></div>
+
+  <h3>LIKE — প্যাটার্ন দিয়ে খোঁজা</h3>
+  <div class="diagram-container">
+    <div class="diagram-title">LIKE Wildcards — % এবং _</div>
+    <svg viewBox="0 0 620 160" xmlns="http://www.w3.org/2000/svg" style="max-width:620px;width:100%;height:auto;">
+      <rect x="15" y="15" width="270" height="130" rx="10" fill="rgba(79,142,247,.08)" stroke="#4f8ef7" stroke-width="1.5"/>
+      <text x="150" y="48" text-anchor="middle" fill="#4f8ef7" font-size="30" font-family="JetBrains Mono,monospace" font-weight="700">%</text>
+      <text x="150" y="68" text-anchor="middle" fill="#a8b3d0" font-size="12" font-family="Hind Siliguri,sans-serif">যেকোনো সংখ্যক অক্ষর</text>
+      <line x1="25" y1="76" x2="275" y2="76" stroke="#2a3050" stroke-width="1"/>
+      <text x="150" y="96" text-anchor="middle" fill="#6878a0" font-size="11" font-family="JetBrains Mono,monospace">'A%' → A দিয়ে শুরু যেকোনো</text>
+      <text x="150" y="114" text-anchor="middle" fill="#6878a0" font-size="11" font-family="JetBrains Mono,monospace">'%n' → n দিয়ে শেষ যেকোনো</text>
+      <text x="150" y="132" text-anchor="middle" fill="#6878a0" font-size="11" font-family="JetBrains Mono,monospace">'%SQL%' → মাঝে SQL আছে</text>
+      <rect x="335" y="15" width="270" height="130" rx="10" fill="rgba(245,166,35,.08)" stroke="#f5a623" stroke-width="1.5"/>
+      <text x="470" y="48" text-anchor="middle" fill="#f5a623" font-size="30" font-family="JetBrains Mono,monospace" font-weight="700">_</text>
+      <text x="470" y="68" text-anchor="middle" fill="#a8b3d0" font-size="12" font-family="Hind Siliguri,sans-serif">ঠিক একটা অক্ষর</text>
+      <line x1="345" y1="76" x2="595" y2="76" stroke="#2a3050" stroke-width="1"/>
+      <text x="470" y="96" text-anchor="middle" fill="#6878a0" font-size="11" font-family="JetBrains Mono,monospace">'__' → মাত্র ২ অক্ষর</text>
+      <text x="470" y="114" text-anchor="middle" fill="#6878a0" font-size="11" font-family="JetBrains Mono,monospace">'a_' → a দিয়ে শুরু, ২ অক্ষর</text>
+      <text x="470" y="132" text-anchor="middle" fill="#6878a0" font-size="11" font-family="JetBrains Mono,monospace">'___' → ঠিক ৩ অক্ষর</text>
+    </svg>
+  </div>
+
+  <div class="code-wrap"><div class="code-header"><span class="code-lang">SQL — LIKE + ORDER BY</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+  <pre><span class="cm">-- P দিয়ে শুরু হওয়া গান</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">tracks</span> <span class="kw">WHERE</span> <span class="col">Name</span> <span class="kw">LIKE</span> <span class="str">'P%'</span>;
+
+<span class="cm">-- ঠিক ৩ অক্ষরের গান</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">tracks</span> <span class="kw">WHERE</span> <span class="col">Name</span> <span class="kw">LIKE</span> <span class="str">'___'</span>;
+
+<span class="cm">-- ৫ অক্ষরের কম শিরোনাম</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">tracks</span> <span class="kw">WHERE</span> <span class="col">Name</span> <span class="kw">NOT LIKE</span> <span class="str">'_____%'</span>;
+
+<span class="cm">-- Jimi Hendrix-এর গান (নাম যেকোনো ক্রমে)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="tbl">tracks</span>
+<span class="kw">WHERE</span> <span class="col">Composer</span> <span class="kw">LIKE</span> <span class="str">'%Jimi%'</span> <span class="kw">AND</span> <span class="col">Composer</span> <span class="kw">LIKE</span> <span class="str">'%Hendrix%'</span>;
+
+<span class="cm">-- A-Z ক্রমে প্রথম ১০টা গান</span>
+<span class="kw">SELECT</span> <span class="col">Name</span> <span class="kw">FROM</span> <span class="tbl">tracks</span>
+<span class="kw">ORDER BY</span> <span class="col">Name</span> <span class="kw">ASC</span>  <span class="cm">-- ASC = A থেকে Z (default)</span>
+<span class="kw">LIMIT</span> <span class="num">10</span>;
+
+<span class="cm">-- সবচেয়ে দীর্ঘ ৫টা গান</span>
+<span class="kw">SELECT</span> <span class="col">Name</span>, <span class="col">Milliseconds</span> <span class="kw">FROM</span> <span class="tbl">tracks</span>
+<span class="kw">ORDER BY</span> <span class="col">Milliseconds</span> <span class="kw">DESC</span>  <span class="cm">-- DESC = বড় থেকে ছোট</span>
+<span class="kw">LIMIT</span> <span class="num">5</span>;</pre></div>
+
+  <div class="exercise-section">
+    <div class="exercise-section-title">
+      <h3>🎯 ML Engineering প্রশ্ন — Section ২</h3>
+      <span class="badge ml">ML Engineering</span>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">Q1. ML dataset-এ NULL values SQL দিয়ে কিভাবে detect করবে?</span>
+        <span class="badge medium">মাঝারি</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="code-wrap"><div class="code-header"><span class="code-lang">SQL</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+        <pre><span class="cm">-- প্রতিটা feature-এর NULL count</span>
+<span class="kw">SELECT</span>
+    <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total,
+    <span class="fn">COUNT</span>(*) - <span class="fn">COUNT</span>(<span class="col">feature_1</span>) <span class="kw">AS</span> null_f1,
+    <span class="fn">COUNT</span>(*) - <span class="fn">COUNT</span>(<span class="col">feature_2</span>) <span class="kw">AS</span> null_f2,
+    <span class="fn">ROUND</span>((<span class="fn">COUNT</span>(*)-<span class="fn">COUNT</span>(<span class="col">feature_1</span>))*<span class="num">100.0</span>/<span class="fn">COUNT</span>(*),<span class="num">2</span>) <span class="kw">AS</span> null_pct_f1
+<span class="kw">FROM</span> <span class="tbl">ml_features</span>;</pre></div>
+        <div class="explanation"><strong>ML Pipeline-এ:</strong> Data cleaning-এর আগে NULL check করা বাধ্যতামূলক। NULL থাকলে model training-এ error আসে।</div>
+      </div>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">Q2. Model prediction table থেকে high-confidence predictions বের করো (score > 0.9 বা score &lt; 0.1), confidence অনুযায়ী sort করে।</span>
+        <span class="badge medium">মাঝারি</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="code-wrap"><div class="code-header"><span class="code-lang">SQL</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+        <pre><span class="kw">SELECT</span>
+    <span class="col">prediction_id</span>,
+    <span class="col">predicted_label</span>,
+    <span class="col">score</span>,
+    <span class="fn">ABS</span>(<span class="col">score</span> - <span class="num">0.5</span>) <span class="kw">AS</span> confidence
+<span class="kw">FROM</span> <span class="tbl">model_predictions</span>
+<span class="kw">WHERE</span> <span class="col">score</span> &gt; <span class="num">0.9</span> <span class="kw">OR</span> <span class="col">score</span> &lt; <span class="num">0.1</span>
+<span class="kw">ORDER BY</span> <span class="fn">ABS</span>(<span class="col">score</span> - <span class="num">0.5</span>) <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">100</span>;</pre></div>
+        <div class="explanation"><strong>কৌশল:</strong> ABS(score - 0.5) দিয়ে 0.5 থেকে দূরত্ব মাপা হচ্ছে। যত বেশি দূরে = তত confident। Production ML monitoring-এ এই ধরনের query নিয়মিত ব্যবহৃত হয়।</div>
+      </div>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">Q3. LIKE '%A%' বনাম LIKE 'A%' — performance-এ পার্থক্য কী এবং ML-এ কোনটা ব্যবহার করবে?</span>
+        <span class="badge hard">কঠিন</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="explanation">
+          <strong>LIKE 'A%'</strong> (leading wildcard নেই) → Database Index ব্যবহার করতে পারে → O(log n) → দ্রুত<br><br>
+          <strong>LIKE '%A%'</strong> (leading wildcard আছে) → সব row scan করতে হয় → O(n) → ধীর<br><br>
+          <strong>ML Recommendation:</strong> বড় dataset-এ leading wildcard এড়াও। Full-text search দরকার হলে PostgreSQL-এর <code>tsvector/tsquery</code> অথবা Elasticsearch ব্যবহার করো। ML project-এ text matching সাধারণত Python-এ (Pandas) করা হয়, SQL-এ LIKE শুধু simple filtering-এ।
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<!-- ==================== SECTION 3 ==================== -->
+<div class="container" id="sec3">
+  <div class="section-header">
+    <div class="section-num red">৩</div>
+    <div class="section-title">
+      <h2>JOINs ও Aggregate Functions</h2>
+      
+    </div>
+  </div>
+
+  <p>JOIN হলো SQL-এর সবচেয়ে শক্তিশালী ফিচার। একাধিক টেবিলের ডেটা একসাথে দেখার জন্য JOIN ব্যবহার হয়। ভাবো দুটো Excel sheet — একটায় ছাত্রের নাম, অন্যটায় মার্কস — JOIN দিয়ে এই দুটো একসাথে দেখা যায়।</p>
+
+  <div class="diagram-container">
+    <div class="diagram-title">JOIN-এর ধরন</div>
+    <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;height:auto;">
+      <!-- INNER -->
+      <g transform="translate(15,15)">
+        <text x="78" y="14" text-anchor="middle" fill="#4f8ef7" font-size="11" font-weight="600" font-family="Hind Siliguri,sans-serif">INNER JOIN</text>
+        <ellipse cx="52" cy="95" rx="46" ry="65" fill="rgba(79,142,247,.12)" stroke="#4f8ef7" stroke-width="1.5"/>
+        <ellipse cx="104" cy="95" rx="46" ry="65" fill="rgba(79,142,247,.12)" stroke="#4f8ef7" stroke-width="1.5"/>
+        <clipPath id="ic"><ellipse cx="52" cy="95" rx="46" ry="65"/></clipPath>
+        <ellipse cx="104" cy="95" rx="46" ry="65" fill="rgba(79,142,247,.55)" clip-path="url(#ic)"/>
+        <text x="78" y="99" text-anchor="middle" fill="#fff" font-size="10" font-family="Hind Siliguri,sans-serif">মিল</text>
+        <text x="78" y="175" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">শুধু match করা row</text>
+        <text x="78" y="190" text-anchor="middle" fill="#6878a0" font-size="9" font-family="Hind Siliguri,sans-serif">NULL নেই</text>
+      </g>
+      <!-- LEFT -->
+      <g transform="translate(190,15)">
+        <text x="78" y="14" text-anchor="middle" fill="#2ec4a0" font-size="11" font-weight="600" font-family="Hind Siliguri,sans-serif">LEFT JOIN</text>
+        <ellipse cx="52" cy="95" rx="46" ry="65" fill="rgba(46,196,160,.5)" stroke="#2ec4a0" stroke-width="1.5"/>
+        <ellipse cx="104" cy="95" rx="46" ry="65" fill="rgba(46,196,160,.12)" stroke="#2ec4a0" stroke-width="1.5"/>
+        <clipPath id="lc"><ellipse cx="52" cy="95" rx="46" ry="65"/></clipPath>
+        <ellipse cx="104" cy="95" rx="46" ry="65" fill="rgba(46,196,160,.5)" clip-path="url(#lc)"/>
+        <text x="30" y="99" text-anchor="middle" fill="#fff" font-size="9" font-family="Hind Siliguri,sans-serif">বাম সব</text>
+        <text x="78" y="175" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">বাম টেবিলের সব row</text>
+        <text x="78" y="190" text-anchor="middle" fill="#6878a0" font-size="9" font-family="Hind Siliguri,sans-serif">ডান miss → NULL</text>
+      </g>
+      <!-- RIGHT -->
+      <g transform="translate(365,15)">
+        <text x="78" y="14" text-anchor="middle" fill="#e85d75" font-size="11" font-weight="600" font-family="Hind Siliguri,sans-serif">RIGHT JOIN</text>
+        <ellipse cx="52" cy="95" rx="46" ry="65" fill="rgba(232,93,117,.12)" stroke="#e85d75" stroke-width="1.5"/>
+        <ellipse cx="104" cy="95" rx="46" ry="65" fill="rgba(232,93,117,.5)" stroke="#e85d75" stroke-width="1.5"/>
+        <clipPath id="rc"><ellipse cx="104" cy="95" rx="46" ry="65"/></clipPath>
+        <ellipse cx="52" cy="95" rx="46" ry="65" fill="rgba(232,93,117,.5)" clip-path="url(#rc)"/>
+        <text x="126" y="99" text-anchor="middle" fill="#fff" font-size="9" font-family="Hind Siliguri,sans-serif">ডান সব</text>
+        <text x="78" y="175" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">ডান টেবিলের সব row</text>
+        <text x="78" y="190" text-anchor="middle" fill="#6878a0" font-size="9" font-family="Hind Siliguri,sans-serif">বাম miss → NULL</text>
+      </g>
+      <!-- OUTER -->
+      <g transform="translate(540,15)">
+        <text x="68" y="14" text-anchor="middle" fill="#f5a623" font-size="11" font-weight="600" font-family="Hind Siliguri,sans-serif">OUTER JOIN</text>
+        <ellipse cx="42" cy="95" rx="40" ry="65" fill="rgba(245,166,35,.4)" stroke="#f5a623" stroke-width="1.5"/>
+        <ellipse cx="94" cy="95" rx="40" ry="65" fill="rgba(245,166,35,.4)" stroke="#f5a623" stroke-width="1.5"/>
+        <text x="68" y="175" text-anchor="middle" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">উভয়ের সব row</text>
+        <text x="68" y="190" text-anchor="middle" fill="#6878a0" font-size="9" font-family="Hind Siliguri,sans-serif">miss → NULL</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="code-wrap"><div class="code-header"><span class="code-lang">SQL — সব JOIN উদাহরণ</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+  <pre><span class="cm">-- INNER JOIN: tracks + genres একসাথে</span>
+<span class="kw">SELECT</span>
+    <span class="tbl">tracks</span>.<span class="col">Name</span>    <span class="kw">AS</span> Title,
+    <span class="tbl">genres</span>.<span class="col">Name</span>    <span class="kw">AS</span> Genre
+<span class="kw">FROM</span> <span class="tbl">tracks</span>
+<span class="kw">JOIN</span> <span class="tbl">genres</span> <span class="kw">ON</span> <span class="tbl">tracks</span>.<span class="col">GenreId</span> = <span class="tbl">genres</span>.<span class="col">GenreId</span>;
+
+<span class="cm">-- LEFT JOIN: সব artists দেখাও + তাদের গান (না থাকলে NULL)</span>
+<span class="kw">SELECT</span> <span class="tbl">artists</span>.<span class="col">Name</span>, <span class="tbl">tracks</span>.<span class="col">Name</span> <span class="kw">AS</span> Song
+<span class="kw">FROM</span> <span class="tbl">artists</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">tracks</span> <span class="kw">ON</span> <span class="tbl">tracks</span>.<span class="col">Composer</span> = <span class="tbl">artists</span>.<span class="col">Name</span>;
+
+<span class="cm">-- SELF JOIN: কর্মী + তার বস (একই টেবিল)</span>
+<span class="kw">SELECT</span>
+    a.<span class="col">LastName</span>  <span class="kw">AS</span> Employee,
+    e.<span class="col">LastName</span>  <span class="kw">AS</span> Manager
+<span class="kw">FROM</span> <span class="tbl">employees</span> <span class="kw">AS</span> a
+<span class="kw">JOIN</span> <span class="tbl">employees</span> <span class="kw">AS</span> e <span class="kw">ON</span> a.<span class="col">ReportsTo</span> = e.<span class="col">EmployeeId</span>;
+
+<span class="cm">-- NESTED JOIN: tracks + albums + artists (৩ টেবিল)</span>
+<span class="kw">SELECT</span> <span class="tbl">tracks</span>.<span class="col">Name</span> <span class="kw">AS</span> Song, a.<span class="col">Title</span> <span class="kw">AS</span> Album, a.<span class="col">Name</span> <span class="kw">AS</span> Artist
+<span class="kw">FROM</span> <span class="tbl">tracks</span>
+<span class="kw">JOIN</span> (
+    <span class="kw">SELECT</span> *
+    <span class="kw">FROM</span> <span class="tbl">albums</span>
+    <span class="kw">JOIN</span> <span class="tbl">artists</span> <span class="kw">ON</span> <span class="tbl">artists</span>.<span class="col">ArtistId</span> = <span class="tbl">albums</span>.<span class="col">ArtistId</span>
+) <span class="kw">AS</span> a <span class="kw">ON</span> <span class="tbl">tracks</span>.<span class="col">AlbumId</span> = a.<span class="col">AlbumId</span>;</pre></div>
+
+  <h3>Aggregate Functions + GROUP BY + HAVING</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>ফাংশন</th><th>কাজ</th><th>উদাহরণ</th></tr></thead>
+    <tbody>
+      <tr><td><code>COUNT()</code></td><td>কতটা row গণনা করো</td><td><code>COUNT(TrackId)</code></td></tr>
+      <tr><td><code>SUM()</code></td><td>সব মান যোগ</td><td><code>SUM(Price)</code></td></tr>
+      <tr><td><code>AVG()</code></td><td>গড় বের করো</td><td><code>AVG(Milliseconds)</code></td></tr>
+      <tr><td><code>MAX()</code></td><td>সর্বোচ্চ মান</td><td><code>MAX(Score)</code></td></tr>
+      <tr><td><code>MIN()</code></td><td>সর্বনিম্ন মান</td><td><code>MIN(Price)</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box info">
+    <h4>💡 WHERE vs HAVING — গুরুত্বপূর্ণ পার্থক্য</h4>
+    <p><mark>WHERE</mark> = GROUP BY-র <strong>আগে</strong> ফিল্টার → Individual rows-এ কাজ করে<br>
+    <mark class="orange">HAVING</mark> = GROUP BY-র <strong>পরে</strong> ফিল্টার → Grouped results-এ কাজ করে, Aggregate functions ব্যবহার করতে পারে</p>
+  </div>
+
+  <div class="code-wrap"><div class="code-header"><span class="code-lang">SQL — GROUP BY + HAVING উদাহরণ</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+  <pre><span class="cm">-- প্রতি artist-এর album সংখ্যা</span>
+<span class="kw">SELECT</span> <span class="col">ArtistId</span>, <span class="fn">COUNT</span>(<span class="col">AlbumId</span>) <span class="kw">AS</span> Albums
+<span class="kw">FROM</span> <span class="tbl">albums</span>
+<span class="kw">GROUP BY</span> <span class="col">ArtistId</span>;
+
+<span class="cm">-- WHERE (before): ৪০০ সেকেন্ডের বেশি গান কোন album-এ কতটা</span>
+<span class="kw">SELECT</span> <span class="col">AlbumId</span>, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> LongTracks
+<span class="kw">FROM</span> <span class="tbl">tracks</span>
+<span class="kw">WHERE</span> <span class="col">Milliseconds</span> &gt; <span class="num">400000</span>
+<span class="kw">GROUP BY</span> <span class="col">AlbumId</span>;
+
+<span class="cm">-- HAVING (after): কমপক্ষে ২টা গান আছে এমন album</span>
+<span class="kw">SELECT</span> <span class="col">AlbumId</span>, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> TrackCount
+<span class="kw">FROM</span> <span class="tbl">tracks</span>
+<span class="kw">GROUP BY</span> <span class="col">AlbumId</span>
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) &gt;= <span class="num">2</span>;</pre></div>
+
+  <div class="exercise-section">
+    <div class="exercise-section-title">
+      <h3>🎯 ML Engineering — Section ৩</h3>
+      <span class="badge ml">ML Engineering</span>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">Q1. [ML Feature Engineering] User-level aggregated features: avg purchase, max purchase, purchase count। শুধু ৫টার বেশি purchase আছে এমন user।</span>
+        <span class="badge hard">কঠিন</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="code-wrap"><div class="code-header"><span class="code-lang">SQL</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+        <pre><span class="kw">SELECT</span>
+    u.<span class="col">user_id</span>,
+    u.<span class="col">user_name</span>,
+    <span class="fn">COUNT</span>(p.<span class="col">purchase_id</span>)     <span class="kw">AS</span> purchase_count,
+    <span class="fn">ROUND</span>(<span class="fn">AVG</span>(p.<span class="col">amount</span>),<span class="num">2</span>)  <span class="kw">AS</span> avg_purchase,
+    <span class="fn">MAX</span>(p.<span class="col">amount</span>)            <span class="kw">AS</span> max_purchase,
+    <span class="fn">SUM</span>(p.<span class="col">amount</span>)            <span class="kw">AS</span> total_spent,
+    <span class="fn">MIN</span>(p.<span class="col">purchase_date</span>)     <span class="kw">AS</span> first_purchase,
+    <span class="fn">MAX</span>(p.<span class="col">purchase_date</span>)     <span class="kw">AS</span> last_purchase
+<span class="kw">FROM</span> <span class="tbl">users</span> u
+<span class="kw">LEFT JOIN</span> <span class="tbl">purchases</span> p <span class="kw">ON</span> u.<span class="col">user_id</span> = p.<span class="col">user_id</span>
+<span class="kw">GROUP BY</span> u.<span class="col">user_id</span>, u.<span class="col">user_name</span>
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(p.<span class="col">purchase_id</span>) &gt; <span class="num">5</span>
+<span class="kw">ORDER BY</span> total_spent <span class="kw">DESC</span>;</pre></div>
+        <div class="explanation"><strong>ML Context:</strong> Customer churn prediction বা recommendation system-এর জন্য user-level features তৈরি। Real ML projects-এ 80% সময় এই ধরনের SQL-ই লিখতে হয়।</div>
+      </div>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">Q2. [MLflow] Experiment tracking: প্রতিটা model version-এর avg val_accuracy। শুধু avg > 0.85 এবং status = 'completed'।</span>
+        <span class="badge hard">কঠিন</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="code-wrap"><div class="code-header"><span class="code-lang">SQL</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+        <pre><span class="kw">SELECT</span>
+    m.<span class="col">model_version</span>,
+    m.<span class="col">architecture</span>,
+    <span class="fn">COUNT</span>(r.<span class="col">run_id</span>)               <span class="kw">AS</span> total_runs,
+    <span class="fn">ROUND</span>(<span class="fn">AVG</span>(r.<span class="col">val_accuracy</span>),<span class="num">4</span>)  <span class="kw">AS</span> avg_val_acc,
+    <span class="fn">MAX</span>(r.<span class="col">val_accuracy</span>)            <span class="kw">AS</span> best_acc,
+    <span class="fn">MIN</span>(r.<span class="col">val_loss</span>)               <span class="kw">AS</span> best_loss
+<span class="kw">FROM</span> <span class="tbl">models</span> m
+<span class="kw">JOIN</span> <span class="tbl">runs</span> r <span class="kw">ON</span> m.<span class="col">model_id</span> = r.<span class="col">model_id</span>
+<span class="kw">WHERE</span> r.<span class="col">status</span> = <span class="str">'completed'</span>
+<span class="kw">GROUP BY</span> m.<span class="col">model_version</span>, m.<span class="col">architecture</span>
+<span class="kw">HAVING</span> <span class="fn">AVG</span>(r.<span class="col">val_accuracy</span>) &gt; <span class="num">0.85</span>
+<span class="kw">ORDER BY</span> avg_val_acc <span class="kw">DESC</span>;</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<!-- ==================== SECTION 4 ==================== -->
+<div class="container" id="sec4">
+  <div class="section-header">
+    <div class="section-num green">৪</div>
+    <div class="section-title">
+      <h2>টেবিল অপারেশন — ডেটাবেস তৈরি ও পরিচালনা</h2>
+      
+    </div>
+  </div>
+
+  <div class="code-wrap"><div class="code-header"><span class="code-lang">SQL — সব DDL + DML কমান্ড</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+  <pre><span class="cm">-- ===== টেবিল তৈরি =====</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">students</span> (
+    <span class="col">id</span>         <span class="kw">INTEGER</span>     <span class="kw">NOT NULL</span>,
+    <span class="col">firstname</span>  <span class="kw">VARCHAR</span>(<span class="num">100</span>),
+    <span class="col">lastname</span>   <span class="kw">VARCHAR</span>(<span class="num">100</span>),
+    <span class="col">course_id</span>  <span class="kw">INTEGER</span>,
+    <span class="kw">PRIMARY KEY</span> (<span class="col">id</span>),
+    <span class="kw">FOREIGN KEY</span> (<span class="col">course_id</span>) <span class="kw">REFERENCES</span> <span class="tbl">courses</span> (<span class="col">id</span>)
+);
+
+<span class="cm">-- ===== Temporary Table (session শেষে অটো delete) =====</span>
+<span class="kw">CREATE TEMPORARY TABLE</span> <span class="tbl">temp_work</span> (
+    <span class="col">id</span>   <span class="kw">INTEGER</span>,
+    <span class="col">val</span>  <span class="kw">FLOAT</span>
+);
+
+<span class="cm">-- ===== Constraint যোগ করা =====</span>
+<span class="kw">ALTER TABLE</span> <span class="tbl">students</span>
+<span class="kw">ADD CONSTRAINT</span> ck_age <span class="kw">CHECK</span> (<span class="col">age</span> <span class="kw">BETWEEN</span> <span class="num">0</span> <span class="kw">AND</span> <span class="num">100</span>);
+
+<span class="cm">-- ===== ডেটা যোগ =====</span>
+<span class="kw">INSERT INTO</span> <span class="tbl">courses</span> <span class="kw">VALUES</span>
+    (<span class="num">1</span>, <span class="str">"Data Engineering"</span>),
+    (<span class="num">2</span>, <span class="str">"Data Science"</span>);
+
+<span class="cm">-- ===== ডেটা পরিবর্তন =====</span>
+<span class="kw">UPDATE</span> <span class="tbl">students</span>
+<span class="kw">SET</span> <span class="col">lastname</span> = <span class="str">'Durand'</span>, <span class="col">firstname</span> = <span class="str">'Marin'</span>
+<span class="kw">WHERE</span> <span class="col">id</span> = <span class="num">2</span>;
+
+<span class="cm">-- ===== ডেটা মুছে ফেলা =====</span>
+<span class="kw">DELETE FROM</span> <span class="tbl">students</span>
+<span class="kw">WHERE</span> <span class="col">id</span> = <span class="num">1</span>;
+<span class="cm">-- ⚠️ WHERE ছাড়া সব row মুছে যাবে!</span>
+
+<span class="cm">-- ===== টেবিল মুছে ফেলা =====</span>
+<span class="kw">DROP TABLE IF EXISTS</span> <span class="tbl">students</span>;
+
+<span class="cm">-- ===== View তৈরি =====</span>
+<span class="kw">CREATE VIEW</span> v_tracks <span class="kw">AS</span>
+<span class="kw">SELECT</span> <span class="tbl">tracks</span>.<span class="col">name</span>, <span class="tbl">albums</span>.<span class="col">Title</span> <span class="kw">AS</span> album, <span class="tbl">genres</span>.<span class="col">Name</span> <span class="kw">AS</span> genre
+<span class="kw">FROM</span> <span class="tbl">tracks</span>
+<span class="kw">JOIN</span> <span class="tbl">albums</span>  <span class="kw">ON</span> <span class="tbl">albums</span>.<span class="col">AlbumId</span> = <span class="tbl">tracks</span>.<span class="col">AlbumId</span>
+<span class="kw">JOIN</span> <span class="tbl">genres</span>  <span class="kw">ON</span> <span class="tbl">genres</span>.<span class="col">GenreId</span> = <span class="tbl">tracks</span>.<span class="col">GenreId</span>;
+
+<span class="cm">-- View ব্যবহার করা</span>
+<span class="kw">SELECT DISTINCT</span> album <span class="kw">FROM</span> v_tracks <span class="kw">WHERE</span> genre = <span class="str">"Reggae"</span>;
+
+<span class="cm">-- View মুছে ফেলা</span>
+<span class="kw">DROP VIEW</span> v_tracks;</pre></div>
+
+  <div class="exercise-section">
+    <div class="exercise-section-title">
+      <h3>🎯 ইন্টারভিউ প্রশ্ন — Section ৪</h3>
+      <span class="badge interview">চাকরির ইন্টারভিউ</span>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">Q1. DELETE বনাম TRUNCATE বনাম DROP — পার্থক্য বলো।</span>
+        <span class="badge medium">মাঝারি</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="table-wrap"><table>
+          <thead><tr><th>Command</th><th>কাজ</th><th>WHERE</th><th>Rollback</th><th>গতি</th></tr></thead>
+          <tbody>
+            <tr><td><code>DELETE</code></td><td>নির্দিষ্ট row মুছে</td><td>হ্যাঁ</td><td>সম্ভব</td><td>ধীর (row by row)</td></tr>
+            <tr><td><code>TRUNCATE</code></td><td>সব row মুছে</td><td>না</td><td>বেশিরভাগ ক্ষেত্রে না</td><td>দ্রুত</td></tr>
+            <tr><td><code>DROP</code></td><td>পুরো টেবিল মুছে</td><td>না</td><td>না</td><td>তাৎক্ষণিক</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">Q2. [ML] ML experiment tracking টেবিল CREATE করো এবং একটা experiment INSERT করো।</span>
+        <span class="badge hard">কঠিন</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="code-wrap"><div class="code-header"><span class="code-lang">SQL</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+        <pre><span class="kw">CREATE TABLE</span> <span class="tbl">ml_experiments</span> (
+    <span class="col">experiment_id</span>   <span class="kw">INTEGER</span>      <span class="kw">NOT NULL</span>,
+    <span class="col">model_name</span>      <span class="kw">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+    <span class="col">hyperparams</span>     <span class="kw">VARCHAR</span>(<span class="num">2000</span>),
+    <span class="col">train_accuracy</span>  <span class="kw">FLOAT</span>,
+    <span class="col">val_accuracy</span>    <span class="kw">FLOAT</span>,
+    <span class="col">created_at</span>      <span class="kw">DATETIME</span>     <span class="kw">NOT NULL</span>,
+    <span class="kw">PRIMARY KEY</span> (<span class="col">experiment_id</span>),
+    <span class="kw">CHECK</span> (<span class="col">train_accuracy</span> <span class="kw">BETWEEN</span> <span class="num">0</span> <span class="kw">AND</span> <span class="num">1</span>),
+    <span class="kw">CHECK</span> (<span class="col">val_accuracy</span>   <span class="kw">BETWEEN</span> <span class="num">0</span> <span class="kw">AND</span> <span class="num">1</span>)
+);
+
+<span class="kw">INSERT INTO</span> <span class="tbl">ml_experiments</span> <span class="kw">VALUES</span> (
+    <span class="num">1</span>,
+    <span class="str">'RandomForest'</span>,
+    <span class="str">'{"n_estimators":100,"max_depth":5}'</span>,
+    <span class="num">0.94</span>, <span class="num">0.88</span>,
+    <span class="str">'2024-01-15 14:30:00'</span>
+);</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section-divider"></div>
+
+<!-- ==================== SECTION 5: MCQ ==================== -->
+<div class="container" id="sec5">
+  <div class="section-header">
+    <div class="section-num orange">৫</div>
+    <div class="section-title">
+      <h2>MCQ রিভিউ — সব ধারণার পুনরালোচনা</h2>
+      
+    </div>
+  </div>
+
+  <div class="exercise-section">
+    <div class="exercise-section-title">
+      <h3>🎯 গুরুত্বপূর্ণ MCQ — পরীক্ষা ও ইন্টারভিউ</h3>
+      <span class="badge interview">পরীক্ষা / ইন্টারভিউ</span>
+    </div>
+
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">MCQ 1: একটা টেবিলে কতটা Primary Key থাকতে পারে?</span>
+        <span class="badge easy">সহজ</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="explanation"><strong>উত্তর: শুধু একটা Primary Key</strong> — কিন্তু সেটা একাধিক কলাম নিয়ে তৈরি হতে পারে (Composite Key)। একটা টেবিলে একাধিক Unique Key থাকতে পারে, কিন্তু Primary Key সবসময় একটাই।</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">MCQ 2: NULL values এড়াতে কোন JOIN ব্যবহার করবে?</span>
+        <span class="badge easy">সহজ</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="explanation"><strong>উত্তর: INNER JOIN</strong> — INNER JOIN শুধু সেই rows দেখায় যেগুলো উভয় টেবিলে match করে। LEFT/RIGHT/OUTER JOIN-এ match না হলে NULL আসে।</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">MCQ 3: WHERE আর HAVING-এর পার্থক্য কোথায়?</span>
+        <span class="badge medium">মাঝারি</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="explanation">
+          <strong>WHERE:</strong> GROUP BY-র আগে কাজ করে। Individual rows-এ condition। Aggregate functions ব্যবহার করতে পারে না।<br><br>
+          <strong>HAVING:</strong> GROUP BY-র পরে কাজ করে। Grouped results-এ condition। COUNT, SUM, AVG ব্যবহার করতে পারে।<br><br>
+          <code>SELECT dept, AVG(salary) FROM emp WHERE age > 25 GROUP BY dept HAVING AVG(salary) > 50000;</code>
+        </div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">MCQ 4: ORDER BY-র default order কী?</span>
+        <span class="badge easy">সহজ</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="explanation"><strong>উত্তর: ASC (Ascending — ছোট থেকে বড়)</strong><br>A-Z, 1-100 এই ক্রমে। Descending চাইলে explicitly DESC লিখতে হবে।</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">MCQ 5: LENGTH() কি একটা Aggregate Function?</span>
+        <span class="badge easy">সহজ</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="explanation"><strong>উত্তর: না।</strong> LENGTH() একটা Scalar Function — একটা input নিয়ে একটা output দেয় (string-এর দৈর্ঘ্য)।<br>Aggregate Functions (COUNT, SUM, AVG, MAX, MIN) অনেক row নিয়ে একটা মান দেয়।</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">MCQ 6: EXTERNAL JOIN কি SQL-এ বিদ্যমান?</span>
+        <span class="badge easy">সহজ</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="explanation"><strong>উত্তর: না।</strong> Standard SQL-এ INNER JOIN, LEFT JOIN, RIGHT JOIN, OUTER JOIN (FULL OUTER JOIN) বিদ্যমান। "EXTERNAL JOIN" বলে কোনো JOIN নেই। SQLite-এ FULL OUTER JOIN-ও নেই — তখন LEFT JOIN UNION RIGHT JOIN দিয়ে simulate করতে হয়।</div>
+      </div>
+    </div>
+
+    <div class="exercise-card">
+      <div class="exercise-header" onclick="toggleEx(this)">
+        <span class="exercise-q">MCQ 7: Foreign Key কোথায় reference করতে পারে?</span>
+        <span class="badge medium">মাঝারি</span>
+        <button class="toggle-btn">উত্তর দেখো</button>
+      </div>
+      <div class="exercise-body">
+        <div class="explanation"><strong>উত্তর: শুধু Primary Key বা UNIQUE column-এ।</strong><br>একটা FK যেকোনো column reference করতে পারে না — শুধু অন্য টেবিলের PK বা UNIQUE constraint আছে এমন column। এটাই Referential Integrity।</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SQL Cheat Sheet -->
+  <h3>📋 সম্পূর্ণ SQL Cheat Sheet</h3>
+  <div class="code-wrap"><div class="code-header"><span class="code-lang">SQL — সব কমান্ড একজায়গায়</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+  <pre><span class="cm">-- ===== PROJECTION =====</span>
+<span class="kw">SELECT</span> col1, col2  <span class="kw">FROM</span> table;
+<span class="kw">SELECT DISTINCT</span> col  <span class="kw">FROM</span> table;
+<span class="kw">SELECT</span> col <span class="kw">AS</span> <span class="str">'alias'</span>  <span class="kw">FROM</span> table;
+
+<span class="cm">-- ===== SELECTION =====</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> table <span class="kw">WHERE</span> condition;
+<span class="cm">-- Operators: =  &lt;&gt;  &gt;  &lt;  &gt;=  &lt;=  BETWEEN  IN  LIKE  IS NULL  IS NOT NULL</span>
+<span class="cm">-- Logical:   AND  OR  NOT</span>
+<span class="cm">-- Pattern:   'A%' '%n' '%X%' '___' 'a_'</span>
+
+<span class="cm">-- ===== SORTING =====</span>
+<span class="kw">ORDER BY</span> col <span class="kw">ASC</span>;   <span class="cm">-- A→Z, 1→100 (default)</span>
+<span class="kw">ORDER BY</span> col <span class="kw">DESC</span>;  <span class="cm">-- Z→A, 100→1</span>
+<span class="kw">LIMIT</span> n;
+
+<span class="cm">-- ===== JOINS =====</span>
+<span class="kw">FROM</span> t1 <span class="kw">JOIN</span> t2 <span class="kw">ON</span> t1.col = t2.col;          <span class="cm">-- INNER</span>
+<span class="kw">FROM</span> t1 <span class="kw">LEFT JOIN</span> t2 <span class="kw">ON</span> t1.col = t2.col;     <span class="cm">-- LEFT</span>
+<span class="kw">FROM</span> t1 <span class="kw">AS</span> a <span class="kw">JOIN</span> t1 <span class="kw">AS</span> b <span class="kw">ON</span> a.id = b.ref;  <span class="cm">-- SELF</span>
+
+<span class="cm">-- ===== AGGREGATE + GROUP =====</span>
+<span class="kw">SELECT</span> col, <span class="fn">COUNT</span>(*), <span class="fn">SUM</span>(x), <span class="fn">AVG</span>(x), <span class="fn">MAX</span>(x), <span class="fn">MIN</span>(x)
+<span class="kw">FROM</span> t
+<span class="kw">WHERE</span> condition          <span class="cm">-- আগে ফিল্টার</span>
+<span class="kw">GROUP BY</span> col
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) &gt; n;    <span class="cm">-- পরে ফিল্টার</span>
+
+<span class="cm">-- ===== DDL =====</span>
+<span class="kw">CREATE TABLE</span> t (col <span class="kw">TYPE CONSTRAINT</span>, <span class="kw">PRIMARY KEY</span>(col));
+<span class="kw">ALTER TABLE</span> t <span class="kw">ADD CONSTRAINT</span> name <span class="kw">CHECK</span>(cond);
+<span class="kw">DROP TABLE IF EXISTS</span> t;
+<span class="kw">CREATE VIEW</span> v <span class="kw">AS SELECT</span> ...;
+<span class="kw">DROP VIEW</span> v;
+
+<span class="cm">-- ===== DML =====</span>
+<span class="kw">INSERT INTO</span> t <span class="kw">VALUES</span> (v1, v2);
+<span class="kw">UPDATE</span> t <span class="kw">SET</span> col=val <span class="kw">WHERE</span> cond;
+<span class="kw">DELETE FROM</span> t <span class="kw">WHERE</span> cond;</pre></div>
+</div>
+<div class="section-divider"></div>
+
+<!-- ==================== SECTION 6: ALGORITHMS ==================== -->
+<div class="container" id="sec6">
+  <div class="section-header">
+    <div class="section-num blue">৬</div>
+    <div class="section-title">
+      <h2>অ্যালগরিদম — কিন্ডারগার্টেন থেকে ML Engineer</h2>
+      <p>সব ধরনের অ্যালগরিদম বাংলায় + Python Implementation</p>
+    </div>
+  </div>
+
+  <p>অ্যালগরিদম হলো সমস্যা সমাধানের ধাপে ধাপে নির্দেশনা। ভাবো রেসিপি বই — কতটা উপাদান, কোন ক্রমে, কতক্ষণ। এটাই অ্যালগরিদম।</p>
+
+  <h3>🔢 Sorting Algorithms — সাজানোর অ্যালগরিদম</h3>
+
+  <!-- Bubble Sort -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-name">Bubble Sort — বুদবুদ বাছাই</div>
+      <div class="algo-subtitle">পাশাপাশি compare করে বড়টা পেছনে পাঠাও</div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> ৫ জন বাচ্চা এলোমেলো উচ্চতায় দাঁড়িয়ে। পাশাপাশি দুজনকে তুলনা করো — যে লম্বা সে পরে যাবে। বারবার করলে সবচেয়ে লম্বা জন শেষে চলে যাবে — ঠিক পানির বুদবুদের মতো উপরে উঠে আসে।</p>
+
+      <div class="diagram-container">
+        <div class="diagram-title">[5, 3, 8, 1, 4] → Bubble Sort</div>
+        <svg viewBox="0 0 580 170" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;width:100%;height:auto;">
+          <text x="8" y="28" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">শুরু:</text>
+          <rect x="55" y="12" width="36" height="28" rx="4" fill="rgba(79,142,247,.3)" stroke="#4f8ef7" stroke-width="1"/><text x="73" y="31" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">5</text>
+          <rect x="96" y="12" width="36" height="28" rx="4" fill="rgba(79,142,247,.3)" stroke="#4f8ef7" stroke-width="1"/><text x="114" y="31" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">3</text>
+          <rect x="137" y="12" width="36" height="28" rx="4" fill="rgba(79,142,247,.3)" stroke="#4f8ef7" stroke-width="1"/><text x="155" y="31" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">8</text>
+          <rect x="178" y="12" width="36" height="28" rx="4" fill="rgba(79,142,247,.3)" stroke="#4f8ef7" stroke-width="1"/><text x="196" y="31" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">1</text>
+          <rect x="219" y="12" width="36" height="28" rx="4" fill="rgba(79,142,247,.3)" stroke="#4f8ef7" stroke-width="1"/><text x="237" y="31" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">4</text>
+          <text x="265" y="28" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">→ Pass 1 পরে: 3,5,1,4,</text>
+          <rect x="415" y="12" width="36" height="28" rx="4" fill="rgba(232,93,117,.6)" stroke="#e85d75" stroke-width="2"/><text x="433" y="31" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">8</text>
+          <text x="455" y="28" fill="#e85d75" font-size="10" font-family="Hind Siliguri,sans-serif">← উপরে!</text>
+
+          <text x="8" y="78" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">Pass 2:</text>
+          <rect x="55" y="62" width="36" height="28" rx="4" fill="rgba(46,196,160,.3)" stroke="#2ec4a0" stroke-width="1"/><text x="73" y="81" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">3</text>
+          <rect x="96" y="62" width="36" height="28" rx="4" fill="rgba(46,196,160,.3)" stroke="#2ec4a0" stroke-width="1"/><text x="114" y="81" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">1</text>
+          <rect x="137" y="62" width="36" height="28" rx="4" fill="rgba(46,196,160,.3)" stroke="#2ec4a0" stroke-width="1"/><text x="155" y="81" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">4</text>
+          <rect x="178" y="62" width="36" height="28" rx="4" fill="rgba(232,93,117,.5)" stroke="#e85d75" stroke-width="2"/><text x="196" y="81" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">5</text>
+          <rect x="219" y="62" width="36" height="28" rx="4" fill="rgba(232,93,117,.5)" stroke="#e85d75" stroke-width="2"/><text x="237" y="81" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">8</text>
+
+          <text x="8" y="138" fill="#6878a0" font-size="10" font-family="Hind Siliguri,sans-serif">সম্পন্ন:</text>
+          <rect x="55" y="122" width="36" height="28" rx="4" fill="rgba(46,196,160,.7)" stroke="#2ec4a0" stroke-width="2"/><text x="73" y="141" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">1</text>
+          <rect x="96" y="122" width="36" height="28" rx="4" fill="rgba(46,196,160,.7)" stroke="#2ec4a0" stroke-width="2"/><text x="114" y="141" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">3</text>
+          <rect x="137" y="122" width="36" height="28" rx="4" fill="rgba(46,196,160,.7)" stroke="#2ec4a0" stroke-width="2"/><text x="155" y="141" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">4</text>
+          <rect x="178" y="122" width="36" height="28" rx="4" fill="rgba(46,196,160,.7)" stroke="#2ec4a0" stroke-width="2"/><text x="196" y="141" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">5</text>
+          <rect x="219" y="122" width="36" height="28" rx="4" fill="rgba(46,196,160,.7)" stroke="#2ec4a0" stroke-width="2"/><text x="237" y="141" text-anchor="middle" fill="#fff" font-size="13" font-family="JetBrains Mono,monospace">8</text>
+          <text x="265" y="138" fill="#2ec4a0" font-size="11" font-family="Hind Siliguri,sans-serif">✓ সাজানো সম্পন্ন!</text>
+        </svg>
+      </div>
+
+      <div class="complexity-badges">
+        <div class="complexity-badge"><span class="label">Worst Case</span><span class="value">O(n²)</span></div>
+        <div class="complexity-badge"><span class="label">Best Case</span><span class="value">O(n)</span></div>
+        <div class="complexity-badge"><span class="label">Space</span><span class="value">O(1)</span></div>
+        <div class="complexity-badge"><span class="label">Stable</span><span class="value">হ্যাঁ ✓</span></div>
+        <div class="complexity-badge"><span class="label">ML Use</span><span class="value">ছোট dataset, debug</span></div>
+      </div>
+
+      <div class="code-wrap"><div class="code-header"><span class="code-lang">Python — Bubble Sort</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><span class="py-kw">def</span> <span class="py-fn">bubble_sort</span>(arr):
+    <span class="py-str">"""Bubble Sort — O(n²). ML use: ছোট dataset, feature importance rank।"""</span>
+    n = <span class="py-bi">len</span>(arr)
+    arr = arr.copy()
+    <span class="py-kw">for</span> i <span class="py-kw">in</span> <span class="py-bi">range</span>(n):
+        swapped = <span class="py-bi">False</span>
+        <span class="py-kw">for</span> j <span class="py-kw">in</span> <span class="py-bi">range</span>(<span class="py-num">0</span>, n - i - <span class="py-num">1</span>):
+            <span class="py-kw">if</span> arr[j] > arr[j + <span class="py-num">1</span>]:
+                arr[j], arr[j+<span class="py-num">1</span>] = arr[j+<span class="py-num">1</span>], arr[j]
+                swapped = <span class="py-bi">True</span>
+        <span class="py-kw">if not</span> swapped:  <span class="py-cm"># আর swap না হলে সাজানো শেষ</span>
+            <span class="py-kw">break</span>
+    <span class="py-kw">return</span> arr
+
+<span class="py-cm"># ML: feature importance সাজানো</span>
+features = {<span class="py-str">"age"</span>: <span class="py-num">0.23</span>, <span class="py-str">"income"</span>: <span class="py-num">0.67</span>, <span class="py-str">"clicks"</span>: <span class="py-num">0.45</span>}
+sorted_vals = bubble_sort(<span class="py-bi">list</span>(features.values()))
+<span class="py-bi">print</span>(sorted_vals)  <span class="py-cm"># [0.23, 0.45, 0.67]</span></pre></div>
+    </div>
+  </div>
+
+  <!-- Merge Sort -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-name">Merge Sort — ভাগ করো, সমাধান করো, মেলাও</div>
+      <div class="algo-subtitle">Divide and Conquer — O(n log n) guaranteed</div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> ৮টা তাস সাজাতে হবে। ২ ভাগে ভাগ করো → প্রতি ভাগকে আবার ২ ভাগে → একদম এক-এক হলে সাজানো। এরপর জোড়ায় জোড়ায় মেলাও — ছোটটা আগে, বড়টা পরে।</p>
+      <div class="complexity-badges">
+        <div class="complexity-badge"><span class="label">সব ক্ষেত্রে</span><span class="value">O(n log n)</span></div>
+        <div class="complexity-badge"><span class="label">Space</span><span class="value">O(n)</span></div>
+        <div class="complexity-badge"><span class="label">Stable</span><span class="value">হ্যাঁ ✓</span></div>
+        <div class="complexity-badge"><span class="label">ML Use</span><span class="value">বড় dataset sort</span></div>
+      </div>
+      <div class="code-wrap"><div class="code-header"><span class="code-lang">Python — Merge Sort</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><span class="py-kw">def</span> <span class="py-fn">merge_sort</span>(arr):
+    <span class="py-str">"""Merge Sort — O(n log n). ML: large dataset, stable sort।"""</span>
+    <span class="py-kw">if</span> <span class="py-bi">len</span>(arr) &lt;= <span class="py-num">1</span>:
+        <span class="py-kw">return</span> arr
+    mid = <span class="py-bi">len</span>(arr) // <span class="py-num">2</span>
+    left  = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    <span class="py-kw">return</span> _merge(left, right)
+
+<span class="py-kw">def</span> <span class="py-fn">_merge</span>(left, right):
+    result, i, j = [], <span class="py-num">0</span>, <span class="py-num">0</span>
+    <span class="py-kw">while</span> i &lt; <span class="py-bi">len</span>(left) <span class="py-kw">and</span> j &lt; <span class="py-bi">len</span>(right):
+        <span class="py-kw">if</span> left[i] &lt;= right[j]:
+            result.append(left[i]); i += <span class="py-num">1</span>
+        <span class="py-kw">else</span>:
+            result.append(right[j]); j += <span class="py-num">1</span>
+    result.extend(left[i:]); result.extend(right[j:])
+    <span class="py-kw">return</span> result
+
+<span class="py-cm"># ML: prediction scores sort করা</span>
+scores = [<span class="py-num">0.87</span>, <span class="py-num">0.43</span>, <span class="py-num">0.95</span>, <span class="py-num">0.61</span>, <span class="py-num">0.72</span>]
+<span class="py-bi">print</span>(merge_sort(scores))  <span class="py-cm"># [0.43, 0.61, 0.72, 0.87, 0.95]</span></pre></div>
+    </div>
+  </div>
+
+  <!-- Quick Sort -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-name">Quick Sort — Pivot দিয়ে দ্রুত সাজানো</div>
+      <div class="algo-subtitle">Average O(n log n), in-place — practical fastest</div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> একটা বাচ্চাকে মাঝে রাখো (pivot)। তার চেয়ে ছোট → বাম, বড় → ডান। এরপর বাম ও ডান দলে একইভাবে আবার করো।</p>
+      <div class="complexity-badges">
+        <div class="complexity-badge"><span class="label">Average</span><span class="value">O(n log n)</span></div>
+        <div class="complexity-badge"><span class="label">Worst</span><span class="value">O(n²)</span></div>
+        <div class="complexity-badge"><span class="label">Space</span><span class="value">O(log n)</span></div>
+        <div class="complexity-badge"><span class="label">In-place</span><span class="value">হ্যাঁ ✓</span></div>
+      </div>
+      <div class="code-wrap"><div class="code-header"><span class="code-lang">Python — Quick Sort</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><span class="py-kw">def</span> <span class="py-fn">quick_sort</span>(arr):
+    <span class="py-str">"""Quick Sort — avg O(n log n). ML: memory-efficient sorting।"""</span>
+    <span class="py-kw">if</span> <span class="py-bi">len</span>(arr) &lt;= <span class="py-num">1</span>:
+        <span class="py-kw">return</span> arr
+    pivot  = arr[<span class="py-bi">len</span>(arr) // <span class="py-num">2</span>]
+    left   = [x <span class="py-kw">for</span> x <span class="py-kw">in</span> arr <span class="py-kw">if</span> x &lt; pivot]
+    middle = [x <span class="py-kw">for</span> x <span class="py-kw">in</span> arr <span class="py-kw">if</span> x == pivot]
+    right  = [x <span class="py-kw">for</span> x <span class="py-kw">in</span> arr <span class="py-kw">if</span> x &gt; pivot]
+    <span class="py-kw">return</span> quick_sort(left) + middle + quick_sort(right)
+
+<span class="py-bi">print</span>(quick_sort([<span class="py-num">3</span>,<span class="py-num">6</span>,<span class="py-num">8</span>,<span class="py-num">10</span>,<span class="py-num">1</span>,<span class="py-num">2</span>,<span class="py-num">1</span>]))  <span class="py-cm"># [1,1,2,3,6,8,10]</span></pre></div>
+    </div>
+  </div>
+
+  <h3>🔍 Search Algorithms — খোঁজার অ্যালগরিদম</h3>
+
+  <!-- Binary Search -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-name">Binary Search — দ্বিভাজন অনুসন্ধান</div>
+      <div class="algo-subtitle">Sorted array-তে প্রতিবার অর্ধেক বাদ দিয়ে খোঁজো</div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> ডিকশনারিতে "Mathematics" খুঁজছো। মাঝখানে খুলো। সেটা M-এর পরে হলে আগের অর্ধেক বাদ দাও, আগে হলে পরের অর্ধেক বাদ দাও। প্রতিবার অর্ধেক বাদ পড়ে।</p>
+      <div class="complexity-badges">
+        <div class="complexity-badge"><span class="label">Time</span><span class="value">O(log n)</span></div>
+        <div class="complexity-badge"><span class="label">Space</span><span class="value">O(1)</span></div>
+        <div class="complexity-badge"><span class="label">প্রয়োজন</span><span class="value">Sorted Array</span></div>
+        <div class="complexity-badge"><span class="label">ML Use</span><span class="value">Threshold search, hyperparameter</span></div>
+      </div>
+      <div class="code-wrap"><div class="code-header"><span class="code-lang">Python — Binary Search</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><span class="py-kw">def</span> <span class="py-fn">binary_search</span>(arr, target):
+    <span class="py-str">"""Binary Search — O(log n). ML: threshold finding।"""</span>
+    left, right = <span class="py-num">0</span>, <span class="py-bi">len</span>(arr) - <span class="py-num">1</span>
+    <span class="py-kw">while</span> left &lt;= right:
+        mid = (left + right) // <span class="py-num">2</span>
+        <span class="py-kw">if</span>   arr[mid] == target: <span class="py-kw">return</span> mid
+        <span class="py-kw">elif</span> arr[mid] &lt; target:  left  = mid + <span class="py-num">1</span>
+        <span class="py-kw">else</span>:                    right = mid - <span class="py-num">1</span>
+    <span class="py-kw">return</span> -<span class="py-num">1</span>
+
+<span class="py-cm"># ML: best decision threshold খোঁজা</span>
+thresholds = [<span class="py-num">0.1</span>, <span class="py-num">0.2</span>, <span class="py-num">0.3</span>, <span class="py-num">0.5</span>, <span class="py-num">0.7</span>, <span class="py-num">0.8</span>, <span class="py-num">0.9</span>]
+idx = binary_search(thresholds, <span class="py-num">0.5</span>)
+<span class="py-bi">print</span>(<span class="py-str">f"0.5 found at index: {idx}"</span>)  <span class="py-cm"># 3</span></pre></div>
+    </div>
+  </div>
+
+  <h3>🕸️ Graph Algorithms — গ্রাফ অ্যালগরিদম</h3>
+
+  <!-- BFS + DFS -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-name">BFS ও DFS — গ্রাফ ট্র্যাভার্সাল</div>
+      <div class="algo-subtitle">BFS = স্তরে স্তরে | DFS = গভীরে গভীরে</div>
+    </div>
+    <div class="algo-body">
+      <p><strong>BFS কিন্ডারগার্টেন:</strong> মাঠে দাঁড়িয়ে চারপাশের বন্ধুদের ডাকো, তারপর তাদের বন্ধুদের — গোলাকারে ছড়িয়ে যাওয়া।</p>
+      <p><strong>DFS কিন্ডারগার্টেন:</strong> গোলকধাঁধায় একটা পথ ধরে যতদূর সম্ভব যাও, আটকে গেলে ফিরে এসো অন্য পথে যাও।</p>
+      <div class="complexity-badges">
+        <div class="complexity-badge"><span class="label">BFS/DFS Time</span><span class="value">O(V + E)</span></div>
+        <div class="complexity-badge"><span class="label">BFS Space</span><span class="value">O(V) — Queue</span></div>
+        <div class="complexity-badge"><span class="label">DFS Space</span><span class="value">O(V) — Stack/Recursion</span></div>
+        <div class="complexity-badge"><span class="label">BFS ML Use</span><span class="value">Graph Neural Networks</span></div>
+        <div class="complexity-badge"><span class="label">DFS ML Use</span><span class="value">Decision Tree, Pipeline DAG</span></div>
+      </div>
+      <div class="code-wrap"><div class="code-header"><span class="code-lang">Python — BFS + DFS</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><span class="py-kw">from</span> collections <span class="py-kw">import</span> deque
+
+<span class="py-kw">def</span> <span class="py-fn">bfs</span>(graph, start):
+    <span class="py-str">"""BFS — স্তরে স্তরে। ML: GNN, social network analysis।"""</span>
+    visited, queue, result = <span class="py-bi">set</span>(), deque([start]), []
+    <span class="py-kw">while</span> queue:
+        node = queue.popleft()
+        <span class="py-kw">if</span> node <span class="py-kw">not in</span> visited:
+            visited.add(node); result.append(node)
+            <span class="py-kw">for</span> nb <span class="py-kw">in</span> graph.get(node, []):
+                <span class="py-kw">if</span> nb <span class="py-kw">not in</span> visited: queue.append(nb)
+    <span class="py-kw">return</span> result
+
+<span class="py-kw">def</span> <span class="py-fn">dfs</span>(graph, start, visited=<span class="py-bi">None</span>):
+    <span class="py-str">"""DFS — গভীরে গভীরে। ML: Decision Tree, Pipeline ordering।"""</span>
+    <span class="py-kw">if</span> visited <span class="py-kw">is None</span>: visited = <span class="py-bi">set</span>()
+    visited.add(start); result = [start]
+    <span class="py-kw">for</span> nb <span class="py-kw">in</span> graph.get(start, []):
+        <span class="py-kw">if</span> nb <span class="py-kw">not in</span> visited:
+            result.extend(dfs(graph, nb, visited))
+    <span class="py-kw">return</span> result
+
+<span class="py-cm"># ML Pipeline DAG traversal</span>
+ml_pipeline = {
+    <span class="py-str">"ingest"</span>:     [<span class="py-str">"preprocess"</span>],
+    <span class="py-str">"preprocess"</span>: [<span class="py-str">"feature_eng"</span>, <span class="py-str">"split"</span>],
+    <span class="py-str">"feature_eng"</span>:[<span class="py-str">"train"</span>],
+    <span class="py-str">"split"</span>:      [<span class="py-str">"train"</span>],
+    <span class="py-str">"train"</span>:      [<span class="py-str">"evaluate"</span>],
+    <span class="py-str">"evaluate"</span>:   [<span class="py-str">"deploy"</span>],
+    <span class="py-str">"deploy"</span>:     []
+}
+<span class="py-bi">print</span>(<span class="py-str">"BFS:"</span>, bfs(ml_pipeline, <span class="py-str">"ingest"</span>))
+<span class="py-bi">print</span>(<span class="py-str">"DFS:"</span>, dfs(ml_pipeline, <span class="py-str">"ingest"</span>))</pre></div>
+    </div>
+  </div>
+
+  <h3>🤖 Machine Learning Algorithms</h3>
+
+  <!-- KNN -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-name">K-Nearest Neighbors (KNN)</div>
+      <div class="algo-subtitle">কাছের প্রতিবেশীরা যেমন, তুমিও তেমন</div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> নতুন বাচ্চা স্কুলে এলো। সে ক্রিকেট পছন্দ করে কিনা বুঝতে তার ৫ জন কাছের বন্ধু দেখো — ৪ জন ক্রিকেট পছন্দ করলে সেও সম্ভবত করে। এটাই KNN!</p>
+      <div class="complexity-badges">
+        <div class="complexity-badge"><span class="label">Training</span><span class="value">O(1)</span></div>
+        <div class="complexity-badge"><span class="label">Prediction</span><span class="value">O(n·d)</span></div>
+        <div class="complexity-badge"><span class="label">Use Case</span><span class="value">Classification, Regression</span></div>
+      </div>
+      <div class="code-wrap"><div class="code-header"><span class="code-lang">Python — KNN from scratch</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
+<span class="py-kw">from</span> collections <span class="py-kw">import</span> Counter
+
+<span class="py-kw">class</span> <span class="py-cls">KNN</span>:
+    <span class="py-str">"""K-Nearest Neighbors Classifier from scratch."""</span>
+    <span class="py-kw">def</span> <span class="py-fn">__init__</span>(self, k=<span class="py-num">3</span>): self.k = k
+
+    <span class="py-kw">def</span> <span class="py-fn">fit</span>(self, X, y):
+        self.X_train, self.y_train = X, y
+
+    <span class="py-kw">def</span> <span class="py-fn">predict</span>(self, X):
+        <span class="py-kw">return</span> [self._pred(x) <span class="py-kw">for</span> x <span class="py-kw">in</span> X]
+
+    <span class="py-kw">def</span> <span class="py-fn">_pred</span>(self, x):
+        dists = [np.sqrt(np.<span class="py-fn">sum</span>((x - xt)**<span class="py-num">2</span>)) <span class="py-kw">for</span> xt <span class="py-kw">in</span> self.X_train]
+        k_idx = np.argsort(dists)[:self.k]
+        labels = [self.y_train[i] <span class="py-kw">for</span> i <span class="py-kw">in</span> k_idx]
+        <span class="py-kw">return</span> Counter(labels).most_common(<span class="py-num">1</span>)[<span class="py-num">0</span>][<span class="py-num">0</span>]
+
+<span class="py-cm"># ML: Churn prediction demo</span>
+X_train = np.array([[<span class="py-num">1</span>,<span class="py-num">2</span>],[<span class="py-num">2</span>,<span class="py-num">3</span>],[<span class="py-num">5</span>,<span class="py-num">6</span>],[<span class="py-num">6</span>,<span class="py-num">5</span>]])
+y_train = [<span class="py-num">0</span>, <span class="py-num">0</span>, <span class="py-num">1</span>, <span class="py-num">1</span>]
+knn = <span class="py-cls">KNN</span>(k=<span class="py-num">3</span>)
+knn.fit(X_train, y_train)
+<span class="py-bi">print</span>(knn.predict([np.array([<span class="py-num">3</span>,<span class="py-num">3</span>])]))  <span class="py-cm"># [0]</span></pre></div>
+    </div>
+  </div>
+
+  <!-- Linear Regression -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-name">Linear Regression — রৈখিক প্রতিগমন</div>
+      <div class="algo-subtitle">y = wx + b — সরলরেখা দিয়ে ভবিষ্যৎ অনুমান</div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> তুমি দেখলে যত বেশি পড়াশোনা করো, তত ভালো মার্কস। এই সম্পর্কটা একটা সরলরেখা দিয়ে দেখানো — নতুন ছাত্র ১০ ঘণ্টা পড়লে কত মার্কস পাবে তা এই রেখা দিয়ে বলা যায়।</p>
+      <div class="complexity-badges">
+        <div class="complexity-badge"><span class="label">Training</span><span class="value">O(n·d·iterations)</span></div>
+        <div class="complexity-badge"><span class="label">Prediction</span><span class="value">O(d)</span></div>
+        <div class="complexity-badge"><span class="label">Use Case</span><span class="value">Price, demand forecasting</span></div>
+      </div>
+      <div class="code-wrap"><div class="code-header"><span class="code-lang">Python — Linear Regression from scratch</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
+
+<span class="py-kw">class</span> <span class="py-cls">LinearRegression</span>:
+    <span class="py-str">"""Linear Regression via Gradient Descent. y = w·x + b"""</span>
+    <span class="py-kw">def</span> <span class="py-fn">__init__</span>(self, lr=<span class="py-num">0.01</span>, iters=<span class="py-num">1000</span>):
+        self.lr, self.iters = lr, iters
+        self.w, self.b = <span class="py-bi">None</span>, <span class="py-num">0</span>
+
+    <span class="py-kw">def</span> <span class="py-fn">fit</span>(self, X, y):
+        n, d = X.shape
+        self.w = np.zeros(d)
+        <span class="py-kw">for</span> _ <span class="py-kw">in</span> <span class="py-bi">range</span>(self.iters):
+            y_hat = X @ self.w + self.b
+            err   = y_hat - y
+            self.w -= self.lr * (X.T @ err) / n
+            self.b -= self.lr * err.mean()
+
+    <span class="py-kw">def</span> <span class="py-fn">predict</span>(self, X): <span class="py-kw">return</span> X @ self.w + self.b
+    <span class="py-kw">def</span> <span class="py-fn">mse</span>(self, y, yp): <span class="py-kw">return</span> np.mean((y-yp)**<span class="py-num">2</span>)
+
+<span class="py-cm"># ML: house price prediction</span>
+np.random.seed(<span class="py-num">42</span>)
+X = np.random.randn(<span class="py-num">200</span>, <span class="py-num">1</span>)
+y = <span class="py-num">3.5</span> * X.squeeze() + <span class="py-num">2.0</span> + np.random.randn(<span class="py-num">200</span>) * <span class="py-num">0.2</span>
+
+model = <span class="py-cls">LinearRegression</span>(lr=<span class="py-num">0.1</span>, iters=<span class="py-num">500</span>)
+model.fit(X, y)
+preds = model.predict(X)
+<span class="py-bi">print</span>(<span class="py-str">f"Weight: {model.w[0]:.3f}"</span>)   <span class="py-cm"># ≈ 3.5</span>
+<span class="py-bi">print</span>(<span class="py-str">f"Bias:   {model.b:.3f}"</span>)      <span class="py-cm"># ≈ 2.0</span>
+<span class="py-bi">print</span>(<span class="py-str">f"MSE:    {model.mse(y,preds):.5f}"</span>)</pre></div>
+    </div>
+  </div>
+
+  <!-- Decision Tree -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-name">Decision Tree — সিদ্ধান্ত বৃক্ষ</div>
+      <div class="algo-subtitle">প্রশ্নের উপর প্রশ্ন করে সিদ্ধান্তে পৌঁছানো</div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> ডাক্তার জিজ্ঞেস করে: "জ্বর আছে?" হ্যাঁ → "কাশি আছে?" হ্যাঁ → "ফ্লু হতে পারে।" গাছের ডালের মতো প্রশ্ন করতে থাকে — এটাই Decision Tree।</p>
+      <div class="complexity-badges">
+        <div class="complexity-badge"><span class="label">Training</span><span class="value">O(n·d·log n)</span></div>
+        <div class="complexity-badge"><span class="label">Prediction</span><span class="value">O(log n)</span></div>
+        <div class="complexity-badge"><span class="label">Use Case</span><span class="value">Classification, Regression</span></div>
+      </div>
+      <div class="code-wrap"><div class="code-header"><span class="code-lang">Python — Decision Tree (sklearn) ML Project</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><span class="py-kw">from</span> sklearn.tree <span class="py-kw">import</span> DecisionTreeClassifier
+<span class="py-kw">from</span> sklearn.model_selection <span class="py-kw">import</span> train_test_split
+<span class="py-kw">from</span> sklearn.metrics <span class="py-kw">import</span> accuracy_score, classification_report
+<span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
+
+<span class="py-cm"># ML Project: Credit Risk Classification</span>
+np.random.seed(<span class="py-num">42</span>)
+n = <span class="py-num">1000</span>
+X = np.column_stack([
+    np.random.randint(<span class="py-num">18</span>, <span class="py-num">70</span>, n),        <span class="py-cm"># বয়স</span>
+    np.random.randint(<span class="py-num">20000</span>,<span class="py-num">150000</span>,n),  <span class="py-cm"># আয়</span>
+    np.random.uniform(<span class="py-num">0</span>, <span class="py-num">1</span>, n),          <span class="py-cm"># ঋণ অনুপাত</span>
+    np.random.randint(<span class="py-num">300</span>, <span class="py-num">850</span>, n)       <span class="py-cm"># ক্রেডিট স্কোর</span>
+])
+y = ((X[:,<span class="py-num">2</span>] > <span class="py-num">0.5</span>) &amp; (X[:,<span class="py-num">3</span>] &lt; <span class="py-num">600</span>)).astype(<span class="py-bi">int</span>)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=<span class="py-num">0.2</span>, random_state=<span class="py-num">42</span>)
+
+model = DecisionTreeClassifier(max_depth=<span class="py-num">5</span>, min_samples_split=<span class="py-num">20</span>, random_state=<span class="py-num">42</span>)
+model.fit(X_tr, y_tr)
+y_pred = model.predict(X_te)
+<span class="py-bi">print</span>(<span class="py-str">f"Accuracy: {accuracy_score(y_te, y_pred):.4f}"</span>)
+<span class="py-bi">print</span>(classification_report(y_te, y_pred))
+
+features = [<span class="py-str">"বয়স"</span>, <span class="py-str">"আয়"</span>, <span class="py-str">"ঋণ অনুপাত"</span>, <span class="py-str">"ক্রেডিট স্কোর"</span>]
+<span class="py-kw">for</span> f, imp <span class="py-kw">in</span> <span class="py-bi">zip</span>(features, model.feature_importances_):
+    <span class="py-bi">print</span>(<span class="py-str">f"  {f}: {imp:.4f}"</span>)</pre></div>
+    </div>
+  </div>
+
+  <!-- HashMap -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-name">Hash Map / Dictionary</div>
+      <div class="algo-subtitle">চাবি দিয়ে O(1)-এ তথ্য খোঁজো</div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> স্কুলের লকার — তোমার নম্বর মনে থাকলে সরাসরি সেই লকারে যেতে পারো, এক-এক করে খুঁজতে হয় না। Hash Map ঠিক এভাবেই key দিয়ে সরাসরি value পায়।</p>
+      <div class="complexity-badges">
+        <div class="complexity-badge"><span class="label">Get/Set/Delete</span><span class="value">O(1) avg</span></div>
+        <div class="complexity-badge"><span class="label">Space</span><span class="value">O(n)</span></div>
+        <div class="complexity-badge"><span class="label">ML Use</span><span class="value">Feature store, caching, deduplication</span></div>
+      </div>
+      <div class="code-wrap"><div class="code-header"><span class="code-lang">Python — HashMap (ML Feature Store)</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><span class="py-kw">class</span> <span class="py-cls">MLFeatureStore</span>:
+    <span class="py-str">"""In-memory feature store using HashMap. Real-world: Redis, Feast।"""</span>
+    <span class="py-kw">def</span> <span class="py-fn">__init__</span>(self): self._store = {}
+
+    <span class="py-kw">def</span> <span class="py-fn">set</span>(self, user_id, features):
+        self._store[user_id] = features        <span class="py-cm"># O(1)</span>
+
+    <span class="py-kw">def</span> <span class="py-fn">get</span>(self, user_id):
+        <span class="py-kw">return</span> self._store.get(user_id)         <span class="py-cm"># O(1)</span>
+
+    <span class="py-kw">def</span> <span class="py-fn">batch_get</span>(self, user_ids):
+        <span class="py-kw">return</span> {uid: self._store.get(uid) <span class="py-kw">for</span> uid <span class="py-kw">in</span> user_ids}
+
+<span class="py-cm"># ব্যবহার</span>
+store = <span class="py-cls">MLFeatureStore</span>()
+store.<span class="py-fn">set</span>(<span class="py-str">"user_001"</span>, {<span class="py-str">"age"</span>: <span class="py-num">28</span>, <span class="py-str">"income"</span>: <span class="py-num">75000</span>, <span class="py-str">"score"</span>: <span class="py-num">720</span>})
+store.<span class="py-fn">set</span>(<span class="py-str">"user_002"</span>, {<span class="py-str">"age"</span>: <span class="py-num">45</span>, <span class="py-str">"income"</span>: <span class="py-num">120000</span>, <span class="py-str">"score"</span>: <span class="py-num">800</span>})
+
+feats = store.<span class="py-fn">get</span>(<span class="py-str">"user_001"</span>)
+<span class="py-bi">print</span>(<span class="py-str">f"Features: {feats}"</span>)
+
+<span class="py-cm"># Word frequency (NLP preprocessing)</span>
+text = <span class="py-str">"machine learning is fun and machine learning is powerful"</span>
+freq = {}
+<span class="py-kw">for</span> word <span class="py-kw">in</span> text.split():
+    freq[word] = freq.get(word, <span class="py-num">0</span>) + <span class="py-num">1</span>
+<span class="py-bi">print</span>(<span class="py-bi">sorted</span>(freq.items(), key=<span class="py-kw">lambda</span> x: -x[<span class="py-num">1</span>]))</pre></div>
+    </div>
+  </div>
+
+  <!-- Two Pointers / Sliding Window -->
+  <div class="algo-card">
+    <div class="algo-header">
+      <div class="algo-name">Sliding Window — স্লাইডিং উইন্ডো</div>
+      <div class="algo-subtitle">একটা জানালা নিয়ে array-র উপর দিয়ে সরাও</div>
+    </div>
+    <div class="algo-body">
+      <p><strong>কিন্ডারগার্টেন ব্যাখ্যা:</strong> ট্রেনের জানালা দিয়ে বাইরে তাকাও। জানালাটা স্থির, কিন্তু ট্রেন চলছে — তুমি একবারে কিছুটা অংশ দেখতে পাচ্ছো। Sliding Window ঠিক এভাবেই array-র একটা অংশ নিয়ে কাজ করে।</p>
+      <div class="complexity-badges">
+        <div class="complexity-badge"><span class="label">Time</span><span class="value">O(n)</span></div>
+        <div class="complexity-badge"><span class="label">Space</span><span class="value">O(1) বা O(k)</span></div>
+        <div class="complexity-badge"><span class="label">ML Use</span><span class="value">Time series, moving avg, anomaly detection</span></div>
+      </div>
+      <div class="code-wrap"><div class="code-header"><span class="code-lang">Python — Sliding Window (ML Time Series)</span><div class="code-dots"><span></span><span></span><span></span></div></div>
+      <pre><span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
+
+<span class="py-kw">def</span> <span class="py-fn">moving_average</span>(data, window):
+    <span class="py-str">"""Moving Average — time series smoothing। O(n)"""</span>
+    result = []
+    window_sum = <span class="py-bi">sum</span>(data[:window])
+    result.append(window_sum / window)
+    <span class="py-kw">for</span> i <span class="py-kw">in</span> <span class="py-bi">range</span>(window, <span class="py-bi">len</span>(data)):
+        window_sum += data[i] - data[i - window]  <span class="py-cm"># slide!</span>
+        result.append(window_sum / window)
+    <span class="py-kw">return</span> result
+
+<span class="py-kw">def</span> <span class="py-fn">create_sequences</span>(data, seq_len, horizon=<span class="py-num">1</span>):
+    <span class="py-str">"""
+    ML Time Series: input-output pairs তৈরি।
+    LSTM/RNN training-এর জন্য।
+    """</span>
+    X, y = [], []
+    <span class="py-kw">for</span> i <span class="py-kw">in</span> <span class="py-bi">range</span>(<span class="py-bi">len</span>(data) - seq_len - horizon + <span class="py-num">1</span>):
+        X.append(data[i : i + seq_len])
+        y.append(data[i + seq_len : i + seq_len + horizon])
+    <span class="py-kw">return</span> np.array(X), np.array(y)
+
+<span class="py-cm"># ML: sensor data anomaly detection</span>
+sensor_data = [<span class="py-num">10</span>,<span class="py-num">11</span>,<span class="py-num">10</span>,<span class="py-num">12</span>,<span class="py-num">11</span>,<span class="py-num">50</span>,<span class="py-num">11</span>,<span class="py-num">10</span>,<span class="py-num">12</span>,<span class="py-num">11</span>]  <span class="py-cm"># 50 = anomaly</span>
+ma = moving_average(sensor_data, window=<span class="py-num">3</span>)
+threshold = np.mean(ma) + <span class="py-num">2</span> * np.std(ma)
+anomalies = [i <span class="py-kw">for</span> i, v <span class="py-kw">in</span> <span class="py-bi">enumerate</span>(sensor_data) <span class="py-kw">if</span> v > threshold]
+<span class="py-bi">print</span>(<span class="py-str">f"Anomaly at index: {anomalies}"</span>)  <span class="py-cm"># [5]</span>
+
+<span class="py-cm"># LSTM sequence তৈরি</span>
+X_seq, y_seq = create_sequences(np.array(sensor_data, dtype=float), seq_len=<span class="py-num">3</span>)
+<span class="py-bi">print</span>(<span class="py-str">f"Input shape: {X_seq.shape}, Target shape: {y_seq.shape}"</span>)</pre></div>
+    </div>
+  </div>
+
+  <!-- Algorithm Complexity Comparison -->
+  <h3>📊 সব অ্যালগরিদমের Complexity তুলনা</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>অ্যালগরিদম</th><th>Time (Best)</th><th>Time (Average)</th><th>Time (Worst)</th><th>Space</th><th>ML ব্যবহার</th></tr></thead>
+    <tbody>
+      <tr><td>Bubble Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>ছোট dataset debug</td></tr>
+      <tr><td>Merge Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>Stable sort, large data</td></tr>
+      <tr><td>Quick Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td>Memory-efficient sort</td></tr>
+      <tr><td>Binary Search</td><td>O(1)</td><td>O(log n)</td><td>O(log n)</td><td>O(1)</td><td>Threshold finding</td></tr>
+      <tr><td>BFS</td><td>O(V+E)</td><td>O(V+E)</td><td>O(V+E)</td><td>O(V)</td><td>GNN, shortest path</td></tr>
+      <tr><td>DFS</td><td>O(V+E)</td><td>O(V+E)</td><td>O(V+E)</td><td>O(V)</td><td>Decision Tree, DAG</td></tr>
+      <tr><td>KNN</td><td>O(n·d)</td><td>O(n·d)</td><td>O(n·d)</td><td>O(n·d)</td><td>Classification, Regression</td></tr>
+      <tr><td>Hash Map</td><td>O(1)</td><td>O(1)</td><td>O(n)*</td><td>O(n)</td><td>Feature store, caching</td></tr>
+      <tr><td>Sliding Window</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>O(k)</td><td>Time series, moving avg</td></tr>
+    </tbody>
+  </table></div>
+  <p style="font-size:.85rem;color:var(--text3)">* Hash Map worst case O(n) — collision হলে। সাধারণত O(1)।</p>
+
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <p>📚 <strong>SQL সম্পূর্ণ গাইড — বাংলায়</strong></p>
+  <p>বাংলা SQL সম্পূর্ণ গাইড</p>
+  <p style="margin-top:12px;font-size:.8rem;">Notebooks: Relational DB · SQL Queries · Advanced Queries · Table Operations · MCQ | Algorithms: Sorting · Search · Graph · ML</p>
+</footer>
+
+<script>
+function toggleEx(header) {
+  const body = header.nextElementSibling;
+  const btn = header.querySelector('.toggle-btn');
+  if (body.classList.contains('open')) {
+    body.classList.remove('open');
+    btn.textContent = 'উত্তর দেখো';
+  } else {
+    body.classList.add('open');
+    btn.textContent = 'লুকাও';
+  }
+}
+</script>
+</body>
+</html>

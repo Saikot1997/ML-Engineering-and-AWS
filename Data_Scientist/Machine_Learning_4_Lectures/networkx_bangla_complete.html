@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>গ্রাফ থিওরি ও NetworkX — সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#1c2230;--bg4:#21262d;--border:#30363d;--accent:#75DFC1;--accent2:#f7c948;--accent3:#e06c75;--accent4:#61afef;--accent5:#c678dd;--text:#e6edf3;--text2:#8b949e;--text3:#b1bac4;--green:#3fb950;--radius:12px;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Hind Siliguri',sans-serif;font-size:17px;line-height:1.85;}
+#sidebar{position:fixed;left:0;top:0;width:268px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;z-index:100;padding:0 0 40px;}
+#sidebar::-webkit-scrollbar{width:4px;}#sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.sidebar-header{padding:18px 16px 12px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:2;}
+.sidebar-header h2{font-size:12px;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;font-weight:700;}
+.sidebar-header p{font-size:11px;color:var(--text2);margin-top:3px;}
+.nav-sect{padding:8px 0;}.nav-sect-title{padding:7px 16px 3px;font-size:10px;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;font-weight:700;}
+.nav-link{display:block;padding:6px 16px 6px 20px;font-size:12.5px;color:var(--text3);text-decoration:none;border-left:2px solid transparent;transition:all .2s;line-height:1.4;}
+.nav-link:hover,.nav-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(117,223,193,.07);}
+#main{margin-left:268px;min-height:100vh;}
+.hero{background:linear-gradient(135deg,#0d1117,#1a2332 50%,#0d1117);border-bottom:1px solid var(--border);padding:55px 56px 48px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:450px;height:450px;border-radius:50%;background:radial-gradient(circle,rgba(117,223,193,.07) 0%,transparent 70%);}
+.hero-badge{display:inline-block;padding:4px 13px;background:rgba(117,223,193,.1);border:1px solid rgba(117,223,193,.28);border-radius:20px;font-size:11px;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-bottom:18px;}
+.hero h1{font-size:2.3rem;font-weight:700;line-height:1.3;margin-bottom:14px;}
+.hero h1 span{color:var(--accent);}
+.hero p{font-size:.97rem;color:var(--text2);max-width:580px;line-height:1.75;}
+.hero-meta{display:flex;gap:28px;margin-top:28px;flex-wrap:wrap;}
+.hero-stat .num{font-size:1.7rem;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace;}
+.hero-stat .lbl{font-size:11px;color:var(--text2);}
+.content{padding:0 56px 80px;}
+.section{padding:46px 0 28px;border-bottom:1px solid var(--border);}
+.section:last-child{border-bottom:none;}
+.section-badge{display:inline-flex;align-items:center;gap:7px;padding:3px 13px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:14px;}
+.b1{background:rgba(97,175,239,.1);color:var(--accent4);border:1px solid rgba(97,175,239,.28);}
+.b2{background:rgba(198,120,221,.1);color:var(--accent5);border:1px solid rgba(198,120,221,.28);}
+.b3{background:rgba(240,198,116,.1);color:var(--accent2);border:1px solid rgba(240,198,116,.28);}
+.b4{background:rgba(224,108,117,.1);color:var(--accent3);border:1px solid rgba(224,108,117,.28);}
+.b5{background:rgba(117,223,193,.1);color:var(--accent);border:1px solid rgba(117,223,193,.28);}
+.ba{background:rgba(63,185,80,.1);color:var(--green);border:1px solid rgba(63,185,80,.28);}
+.be{background:rgba(247,201,72,.1);color:var(--accent2);border:1px solid rgba(247,201,72,.28);}
+h2.st{font-size:1.72rem;font-weight:700;margin-bottom:12px;line-height:1.3;}
+h3.sub{font-size:1.15rem;font-weight:600;color:var(--accent4);margin:26px 0 10px;padding-left:11px;border-left:3px solid var(--accent4);}
+h4.mini{font-size:.97rem;font-weight:600;color:var(--accent2);margin:18px 0 7px;}
+p{color:var(--text3);margin-bottom:11px;}p strong{color:var(--text);font-weight:600;}
+.box{border-radius:var(--radius);margin:18px 0;padding:18px 22px;border-left:4px solid;}
+.bi{background:rgba(97,175,239,.05);border-color:var(--accent4);}
+.bt{background:rgba(63,185,80,.05);border-color:var(--green);}
+.bw{background:rgba(247,201,72,.05);border-color:var(--accent2);}
+.bk{background:rgba(117,223,193,.05);border-color:var(--accent);}
+.bd{background:rgba(198,120,221,.05);border-color:var(--accent5);}
+.box-t{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px;}
+.bi .box-t{color:var(--accent4);}.bt .box-t{color:var(--green);}.bw .box-t{color:var(--accent2);}.bk .box-t{color:var(--accent);}.bd .box-t{color:var(--accent5);}
+.cb{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin:14px 0;overflow:hidden;}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:9px 15px;background:var(--bg3);border-bottom:1px solid var(--border);}
+.cl{font-size:10px;color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.ct{font-size:11px;color:var(--text2);}
+pre{padding:18px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.7;overflow-x:auto;color:#abb2bf;  white-space: pre-wrap;
+  word-break: break-all;
+}
+pre::-webkit-scrollbar{height:4px;}pre::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.kw{color:#c678dd;}.fn{color:#61afef;}.str{color:#98c379;}.cm{color:#5c6370;font-style:italic;}.nm{color:#d19a66;}.cls{color:#e5c07b;}
+.dc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin:20px 0;text-align:center;overflow-x:auto;}
+.dc-cap{font-size:12px;color:var(--text2);margin-top:12px;font-style:italic;}
+.exb{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin:24px 0;overflow:hidden;}
+.exh{background:linear-gradient(90deg,rgba(247,201,72,.1),transparent);padding:14px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px;}
+.exn{width:30px;height:30px;border-radius:50%;background:var(--accent2);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.exh h4{font-size:.97rem;font-weight:600;color:var(--text);}
+.exh p{font-size:12px;color:var(--text2);margin:2px 0 0;}
+.exbody{padding:18px 22px;}
+.ht{display:inline-flex;align-items:center;gap:5px;background:rgba(97,175,239,.08);border:1px solid rgba(97,175,239,.25);color:var(--accent4);border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;margin-top:8px;font-family:'Hind Siliguri',sans-serif;transition:all .2s;}
+.ht:hover{background:rgba(97,175,239,.18);}
+.st2{display:inline-flex;align-items:center;gap:5px;background:rgba(117,223,193,.06);border:1px solid rgba(117,223,193,.22);color:var(--accent);border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;margin-top:8px;margin-left:6px;font-family:'Hind Siliguri',sans-serif;transition:all .2s;}
+.st2:hover{background:rgba(117,223,193,.14);}
+.hc,.sc{display:none;margin-top:10px;}
+.hc.open,.sc.open{display:block;}
+.hc{padding:12px 15px;background:rgba(97,175,239,.04);border:1px solid rgba(97,175,239,.13);border-radius:8px;font-size:13px;color:var(--text3);}
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:18px 0;}
+.cc{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:border-color .2s,transform .2s;}
+.cc:hover{border-color:var(--accent);transform:translateY(-2px);}
+.cc .ic{font-size:1.8rem;margin-bottom:8px;}
+.cc h4{font-size:.95rem;font-weight:600;margin-bottom:6px;color:var(--text);}
+.cc p{font-size:13px;color:var(--text2);margin:0;}
+.tbl{width:100%;border-collapse:collapse;margin:18px 0;border-radius:var(--radius);overflow:hidden;}
+.tbl th{background:var(--bg3);padding:11px 15px;text-align:left;font-size:12px;font-weight:700;color:var(--accent);border-bottom:1px solid var(--border);}
+.tbl td{padding:10px 15px;font-size:13px;color:var(--text3);border-bottom:1px solid var(--border);}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(255,255,255,.02);}
+.ul{list-style:none;padding:0;margin:10px 0;}
+.ul li{padding:7px 0 7px 18px;position:relative;color:var(--text3);font-size:14px;border-bottom:1px solid rgba(255,255,255,.03);}
+.ul li::before{content:'▸';position:absolute;left:0;color:var(--accent);}
+.sl{list-style:none;counter-reset:s;margin:10px 0;}
+.sl li{counter-increment:s;display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:13.5px;color:var(--text3);}
+.sl li:last-child{border-bottom:none;}
+.sl li::before{content:counter(s);min-width:24px;height:24px;border-radius:50%;background:rgba(117,223,193,.14);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.ac{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);margin:22px 0;overflow:hidden;}
+.ach{padding:16px 22px;display:flex;align-items:flex-start;gap:14px;border-bottom:1px solid var(--border);background:var(--bg3);}
+.ai{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+.ach h3{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:3px;}
+.ach p{font-size:12px;color:var(--text2);margin:0;}
+.acb{padding:18px 22px;}
+.cr{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0;}
+.cb2{padding:3px 11px;border-radius:20px;font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.ct2{background:rgba(117,223,193,.08);color:var(--accent);border:1px solid rgba(117,223,193,.22);}
+.cs{background:rgba(97,175,239,.08);color:var(--accent4);border:1px solid rgba(97,175,239,.22);}
+.prog{position:fixed;top:0;left:268px;right:0;height:3px;background:var(--border);z-index:99;}
+.progbar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent4));width:0%;transition:width .1s;}
+#btt{position:fixed;bottom:28px;right:28px;width:42px;height:42px;background:var(--accent);color:#0d1117;border:none;border-radius:50%;font-size:17px;cursor:pointer;opacity:0;transition:opacity .3s;z-index:200;display:flex;align-items:center;justify-content:center;}
+#btt.vis{opacity:1;}#btt:hover{background:#5bc9aa;}
+code{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--accent4);}
+#mt{display:none;position:fixed;top:13px;left:13px;z-index:300;background:var(--accent);border:none;border-radius:8px;color:#0d1117;width:37px;height:37px;font-size:17px;cursor:pointer;}
+@media(max-width:900px){#sidebar{transform:translateX(-100%);}#sidebar.open{transform:translateX(0);}#main{margin-left:0;}.hero{padding:44px 22px 36px;}.content{padding:0 22px 60px;}#mt{display:flex;align-items:center;justify-content:center;}.prog{left:0;}}
+</style>
+</head>
+<body>
+<div class="prog"><div class="progbar" id="pb"></div></div>
+<button id="mt" onclick="toggleSidebar()">☰</button>
+<nav id="sidebar">
+  <div class="sidebar-header"><h2>গ্রাফ থিওরি · NetworkX</h2><p>সম্পূর্ণ বাংলা গাইড</p></div>
+  <div class="nav-sect"><div class="nav-sect-title">ভূমিকা</div>
+    <a class="nav-link" href="#intro">📖 পরিচয় ও লক্ষ্য</a>
+    <a class="nav-link" href="#what-graph">🔵 গ্রাফ কী?</a>
+  </div>
+  <div class="nav-sect"><div class="nav-sect-title">মূল ধারণা</div>
+    <a class="nav-link" href="#graph-types">গ্রাফের প্রকারভেদ</a>
+    <a class="nav-link" href="#nx-start">NetworkX শুরু</a>
+    <a class="nav-link" href="#create-g">গ্রাফ তৈরি</a>
+    <a class="nav-link" href="#add-nodes">Node যোগ</a>
+    <a class="nav-link" href="#add-edges">Edge যোগ</a>
+    <a class="nav-link" href="#del">মুছে ফেলা</a>
+    <a class="nav-link" href="#access">Accessors</a>
+    <a class="nav-link" href="#degree">Degree</a>
+    <a class="nav-link" href="#viz">Visualization</a>
+    <a class="nav-link" href="#ex1">💪 অনুশীলন — মূল ধারণা</a>
+  </div>
+  <div class="nav-sect"><div class="nav-sect-title">অ্যালগরিদম</div>
+    <a class="nav-link" href="#adj-mat">Adjacency Matrix</a>
+    <a class="nav-link" href="#adj-list">Adjacency List</a>
+    <a class="nav-link" href="#connect">Connectivity</a>
+    <a class="nav-link" href="#cycles">Cycle · Tree · Forest</a>
+    <a class="nav-link" href="#bfsdfs">BFS ও DFS</a>
+    <a class="nav-link" href="#kruskal">Kruskal (MST)</a>
+    <a class="nav-link" href="#dijkstra">Dijkstra</a>
+    <a class="nav-link" href="#ex2">💪 অনুশীলন — অ্যালগরিদম</a>
+  </div>
+  <div class="nav-sect"><div class="nav-sect-title">Community ও Centrality</div>
+    <a class="nav-link" href="#comm-intro">Community কী?</a>
+    <a class="nav-link" href="#karate">Karate Network</a>
+    <a class="nav-link" href="#agglo">Agglomerative</a>
+    <a class="nav-link" href="#louvain">Louvain Method</a>
+    <a class="nav-link" href="#girvan">Girvan-Newman</a>
+    <a class="nav-link" href="#ex3">💪 অনুশীলন — Community</a>
+  </div>
+  <div class="nav-sect"><div class="nav-sect-title">Advanced Topics</div>
+    <a class="nav-link" href="#pr-intro">PageRank কী?</a>
+    <a class="nav-link" href="#pr-simple">Simple Algorithm</a>
+    <a class="nav-link" href="#pr-df">Damping Factor</a>
+    <a class="nav-link" href="#pr-mat">Matrix Form</a>
+    <a class="nav-link" href="#ex4">💪 অনুশীলন — Advanced</a>
+  </div>
+  <div class="nav-sect"><div class="nav-sect-title">Use Case</div>
+    <a class="nav-link" href="#lesmis">Les Misérables</a>
+    <a class="nav-link" href="#ex5">💪 অনুশীলন — Use Case</a>
+  </div>
+  <div class="nav-sect"><div class="nav-sect-title">Algorithm Reference</div>
+    <a class="nav-link" href="#ref-bfs">BFS</a>
+    <a class="nav-link" href="#ref-dfs">DFS</a>
+    <a class="nav-link" href="#ref-kruskal">Kruskal</a>
+    <a class="nav-link" href="#ref-dijkstra">Dijkstra</a>
+    <a class="nav-link" href="#ref-louvain">Louvain</a>
+    <a class="nav-link" href="#ref-girvan">Girvan-Newman</a>
+    <a class="nav-link" href="#ref-pr">PageRank</a>
+    <a class="nav-link" href="#ml-ex">🏭 ML Engineering Projects</a>
+  </div>
+</nav>
+<main id="main">
+<div class="hero">
+  <div class="hero-badge">📚 সম্পূর্ণ বাংলা · শুরু থেকে শেষ</div>
+  <h1>গ্রাফ থিওরি ও<br><span>NetworkX</span></h1>
+  <p>একদম নতুনদের জন্য — গ্রাফ থিওরির সম্পূর্ণ ধারণা, সব অ্যালগরিদম, interview-level exercise এবং ML Engineering প্রজেক্টে প্রয়োগ।</p>
+  <div class="hero-meta">
+    <div class="hero-stat"><div class="num">5</div><div class="lbl">Notebooks</div></div>
+    <div class="hero-stat"><div class="num">7</div><div class="lbl">Algorithms</div></div>
+    <div class="hero-stat"><div class="num">15+</div><div class="lbl">Exercises</div></div>
+    <div class="hero-stat"><div class="num">SVG</div><div class="lbl">Diagrams</div></div>
+  </div>
+</div>
+<div class="content">
+
+<!-- ══════════════════════════════════════════
+     SECTION: INTRO
+══════════════════════════════════════════ -->
+<section class="section" id="intro">
+  <div class="section-badge b1">ভূমিকা</div>
+  <h2 class="st">এই গাইড কেন পড়বে?</h2>
+  <p>গ্রাফ থিওরি — শুনতে কঠিন লাগছে? একদম চিন্তা করো না। এই পুরো গাইড লেখা হয়েছে ধরে নিয়ে যে তুমি এই বিষয়ে <strong>একেবারে নতুন</strong>। প্রতিটি ধারণা সহজ ভাষায়, উদাহরণ দিয়ে, এবং ছবি দিয়ে বোঝানো হয়েছে।</p>
+  <div class="box bk">
+    <div class="box-t">🎯 এই গাইড থেকে কী শিখবে</div>
+    <ul class="ul">
+      <li>গ্রাফ কী, কেন দরকার, বাস্তব জীবনে কোথায় ব্যবহার হয়</li>
+      <li>Python-এ NetworkX দিয়ে গ্রাফ বানানো, দেখানো, বিশ্লেষণ করা</li>
+      <li>BFS, DFS, Kruskal, Dijkstra — প্রতিটি অ্যালগরিদম শিশুদের মতো বোঝানো</li>
+      <li>Community Detection — Louvain ও Girvan-Newman</li>
+      <li>PageRank — Google কীভাবে ওয়েবপেজ র‍্যাংক করে</li>
+      <li>ML Engineering প্রজেক্টে গ্রাফের ব্যবহার</li>
+    </ul>
+  </div>
+  <div class="box bt">
+    <div class="box-t">💡 কীভাবে পড়বে</div>
+    <p>ক্রমানুসারে পড়ো। প্রতিটি ধারণা বুঝে তারপর পরেরটায় যাও। <strong>হিন্ট</strong> ও <strong>সমাধান</strong> বাটন আছে — আগে নিজে চেষ্টা করো, তারপর দেখো।</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     SECTION: WHAT IS A GRAPH
+══════════════════════════════════════════ -->
+<section class="section" id="what-graph">
+  <div class="section-badge b1">মূল ধারণা</div>
+  <h2 class="st">গ্রাফ কী? (What is a Graph?)</h2>
+  <p><strong>গ্রাফ</strong> হলো একটি ডেটা স্ট্রাকচার যেখানে দুটো জিনিস থাকে — <strong>নোড (Node/Vertex)</strong> এবং <strong>এজ (Edge)</strong>।</p>
+  <div class="cg">
+    <div class="cc"><div class="ic">🔵</div><h4>Node (নোড / বিন্দু)</h4><p>গ্রাফের প্রতিটি সত্তা। মানুষ, শহর, ওয়েবপেজ, কম্পিউটার — যেকোনো কিছু নোড হতে পারে।</p></div>
+    <div class="cc"><div class="ic">🔗</div><h4>Edge (এজ / সংযোগ)</h4><p>দুটি নোডের মধ্যে সম্পর্ক। বন্ধুত্ব, রাস্তা, লিংক, তার — এগুলো edge।</p></div>
+  </div>
+  <div class="box bi">
+    <div class="box-t">🌍 বাস্তব জীবনের উদাহরণ</div>
+    <ul class="ul">
+      <li><strong>Facebook/Instagram:</strong> প্রতিটি মানুষ = নোড | বন্ধুত্ব / ফলো = edge</li>
+      <li><strong>Google Maps:</strong> প্রতিটি স্থান = নোড | রাস্তা = edge | দূরত্ব = weight</li>
+      <li><strong>ইন্টারনেট:</strong> প্রতিটি ওয়েবপেজ = নোড | হাইপারলিংক = edge</li>
+      <li><strong>ML Pipeline:</strong> প্রতিটি ধাপ = নোড | নির্ভরতা (dependency) = edge</li>
+      <li><strong>Fraud Detection:</strong> লেনদেন ও অ্যাকাউন্ট = নোড | টাকার প্রবাহ = edge</li>
+    </ul>
+  </div>
+
+  <div class="dc">
+    <svg viewBox="0 0 680 290" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;width:100%;">
+      <rect width="680" height="290" fill="#161b22" rx="10"/>
+      <text x="340" y="28" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="14" fill="#8b949e">সামাজিক নেটওয়ার্ক — গ্রাফের উদাহরণ</text>
+      <line x1="160" y1="100" x2="290" y2="150" stroke="#30363d" stroke-width="2"/>
+      <line x1="160" y1="100" x2="110" y2="195" stroke="#30363d" stroke-width="2"/>
+      <line x1="290" y1="150" x2="400" y2="95" stroke="#30363d" stroke-width="2"/>
+      <line x1="290" y1="150" x2="370" y2="220" stroke="#30363d" stroke-width="2"/>
+      <line x1="400" y1="95" x2="520" y2="130" stroke="#30363d" stroke-width="2"/>
+      <line x1="370" y1="220" x2="520" y2="130" stroke="#30363d" stroke-width="2"/>
+      <line x1="110" y1="195" x2="260" y2="255" stroke="#30363d" stroke-width="2"/>
+      <line x1="370" y1="220" x2="260" y2="255" stroke="#30363d" stroke-width="2"/>
+      <!-- Edge label -->
+      <text x="228" y="118" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#5c6370">বন্ধু</text>
+      <circle cx="160" cy="100" r="30" fill="#1c2230" stroke="#75DFC1" stroke-width="2.5"/>
+      <text x="160" y="96" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#75DFC1" font-weight="600">রাহেল</text>
+      <text x="160" y="112" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#5c6370">নোড</text>
+      <circle cx="290" cy="150" r="30" fill="#1c2230" stroke="#61afef" stroke-width="2.5"/>
+      <text x="290" y="146" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#61afef" font-weight="600">সায়কোট</text>
+      <text x="290" y="162" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#5c6370">নোড</text>
+      <circle cx="400" cy="95" r="28" fill="#1c2230" stroke="#c678dd" stroke-width="2"/>
+      <text x="400" y="91" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#c678dd" font-weight="600">মারিয়া</text>
+      <text x="400" y="106" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#5c6370">নোড</text>
+      <circle cx="110" cy="195" r="27" fill="#1c2230" stroke="#e06c75" stroke-width="2"/>
+      <text x="110" y="199" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#e06c75" font-weight="600">করিম</text>
+      <circle cx="520" cy="130" r="27" fill="#1c2230" stroke="#f7c948" stroke-width="2"/>
+      <text x="520" y="134" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#f7c948" font-weight="600">সোফি</text>
+      <circle cx="370" cy="220" r="27" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/>
+      <text x="370" y="224" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#75DFC1" font-weight="600">আলী</text>
+      <circle cx="260" cy="255" r="27" fill="#1c2230" stroke="#61afef" stroke-width="2"/>
+      <text x="260" y="259" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#61afef" font-weight="600">নীলা</text>
+      <circle cx="38" cy="275" r="6" fill="#75DFC1"/>
+      <text x="52" y="279" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#8b949e">= মানুষ (নোড)</text>
+      <line x1="170" y1="275" x2="195" y2="275" stroke="#30363d" stroke-width="2"/>
+      <text x="200" y="279" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#8b949e">= বন্ধুত্ব (edge)</text>
+    </svg>
+    <div class="dc-cap">চিত্র ১ — সামাজিক নেটওয়ার্ক গ্রাফ: প্রতিটি বৃত্ত = একজন মানুষ (নোড), প্রতিটি রেখা = বন্ধুত্ব (edge)</div>
+  </div>
+
+  <div class="box bd">
+    <div class="box-t">📐 গণিতের ভাষায়</div>
+    <p>গ্রাফ G = (V, E) যেখানে <strong>V</strong> = নোডের সেট এবং <strong>E</strong> = edge-এর সেট।<br>
+    উদাহরণ: V = {A, B, C, D} এবং E = {(A,B), (B,C), (C,D), (D,A)}</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     GRAPH TYPES
+══════════════════════════════════════════ -->
+<section class="section" id="graph-types">
+  <div class="section-badge b1">মূল ধারণা</div>
+  <h2 class="st">গ্রাফের প্রকারভেদ</h2>
+  <div class="cg">
+    <div class="cc"><div class="ic">↔️</div><h4>Undirected Graph</h4><p>Edge-এ কোনো দিক নেই। A-B মানে B-Aও। যেমন: Facebook বন্ধুত্ব — দুজনেই বন্ধু।</p></div>
+    <div class="cc"><div class="ic">→</div><h4>Directed Graph (DiGraph)</h4><p>Edge-এ দিক আছে (তীর)। A→B মানে A থেকে B, কিন্তু B থেকে A নাও হতে পারে। যেমন: Twitter follow।</p></div>
+    <div class="cc"><div class="ic">⚖️</div><h4>Weighted Graph</h4><p>প্রতিটি edge-এর একটি সংখ্যা (weight) আছে। যেমন: দূরত্ব, সময়, খরচ।</p></div>
+    <div class="cc"><div class="ic">🔄</div><h4>Loop</h4><p>একটি নোড থেকে সেই নোডেই ফিরে আসা edge। বিশেষ ক্ষেত্রে ব্যবহার।</p></div>
+  </div>
+
+  <div class="dc">
+    <svg viewBox="0 0 660 230" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%;">
+      <rect width="660" height="230" fill="#161b22" rx="10"/>
+      <!-- Undirected -->
+      <text x="155" y="26" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#75DFC1" font-weight="600">Undirected Graph</text>
+      <line x1="90" y1="110" x2="180" y2="70" stroke="#30363d" stroke-width="2.5"/>
+      <line x1="180" y1="70" x2="230" y2="150" stroke="#30363d" stroke-width="2.5"/>
+      <line x1="90" y1="110" x2="230" y2="150" stroke="#30363d" stroke-width="2.5"/>
+      <line x1="180" y1="70" x2="120" y2="180" stroke="#30363d" stroke-width="2.5"/>
+      <circle cx="90" cy="110" r="22" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="90" y="115" text-anchor="middle" font-family="monospace" font-size="14" fill="#75DFC1" font-weight="700">A</text>
+      <circle cx="180" cy="70" r="22" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="180" y="75" text-anchor="middle" font-family="monospace" font-size="14" fill="#75DFC1" font-weight="700">B</text>
+      <circle cx="230" cy="150" r="22" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="230" y="155" text-anchor="middle" font-family="monospace" font-size="14" fill="#75DFC1" font-weight="700">C</text>
+      <circle cx="120" cy="180" r="22" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="120" y="185" text-anchor="middle" font-family="monospace" font-size="14" fill="#75DFC1" font-weight="700">D</text>
+      <text x="155" y="215" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#5c6370">A-B একই সাথে B-A</text>
+      <!-- Divider -->
+      <line x1="330" y1="15" x2="330" y2="215" stroke="#21262d" stroke-width="1.5"/>
+      <!-- Directed -->
+      <text x="500" y="26" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#61afef" font-weight="600">Directed Graph (DiGraph)</text>
+      <defs>
+        <marker id="a1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#61afef"/></marker>
+        <marker id="a2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#e06c75"/></marker>
+      </defs>
+      <line x1="420" y1="105" x2="513" y2="73" stroke="#61afef" stroke-width="2" marker-end="url(#a1)"/>
+      <line x1="530" y1="85" x2="580" y2="135" stroke="#61afef" stroke-width="2" marker-end="url(#a1)"/>
+      <line x1="568" y1="158" x2="466" y2="172" stroke="#61afef" stroke-width="2" marker-end="url(#a1)"/>
+      <line x1="450" y1="165" x2="430" y2="120" stroke="#e06c75" stroke-width="2" marker-end="url(#a2)" stroke-dasharray="4,3"/>
+      <circle cx="420" cy="110" r="22" fill="#1c2230" stroke="#61afef" stroke-width="2"/><text x="420" y="115" text-anchor="middle" font-family="monospace" font-size="14" fill="#61afef" font-weight="700">A</text>
+      <circle cx="525" cy="70" r="22" fill="#1c2230" stroke="#61afef" stroke-width="2"/><text x="525" y="75" text-anchor="middle" font-family="monospace" font-size="14" fill="#61afef" font-weight="700">B</text>
+      <circle cx="584" cy="150" r="22" fill="#1c2230" stroke="#61afef" stroke-width="2"/><text x="584" y="155" text-anchor="middle" font-family="monospace" font-size="14" fill="#61afef" font-weight="700">C</text>
+      <circle cx="450" cy="175" r="22" fill="#1c2230" stroke="#e06c75" stroke-width="2"/><text x="450" y="180" text-anchor="middle" font-family="monospace" font-size="14" fill="#e06c75" font-weight="700">D</text>
+      <text x="500" y="215" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#5c6370">A→B কিন্তু B→A নাও হতে পারে</text>
+    </svg>
+    <div class="dc-cap">চিত্র ২ — Undirected (বাম): দুই দিকে যাওয়া যায় | Directed (ডান): তীরের দিকেই যাওয়া যায়</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     NETWORKX START
+══════════════════════════════════════════ -->
+<section class="section" id="nx-start">
+  <div class="section-badge b1">মূল ধারণা</div>
+  <h2 class="st">NetworkX — প্রথম পদক্ষেপ</h2>
+  <p><strong>NetworkX</strong> হলো Python-এর একটি শক্তিশালী লাইব্রেরি যেটা দিয়ে গ্রাফ তৈরি, বিশ্লেষণ এবং ভিজ্যুয়ালাইজ করা যায়। NetworkX-এ নোড হতে পারে যেকোনো Python object — সংখ্যা, স্ট্রিং, এমনকি function!</p>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">প্রয়োজনীয় import ও প্রথম গ্রাফ</span></div>
+    <pre><span class="kw">import</span> networkx <span class="kw">as</span> nx          <span class="cm"># গ্রাফ কাজের জন্য</span>
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt  <span class="cm"># গ্রাফ আঁকার জন্য</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd              <span class="cm"># ডেটা প্রসেসিং</span>
+
+<span class="cm"># CSV থেকে edge list লোড করা</span>
+df = pd.<span class="fn">read_csv</span>(<span class="str">'edgelist.csv'</span>, index_col=<span class="nm">0</span>)
+<span class="fn">print</span>(df.<span class="fn">head</span>())  <span class="cm"># প্রথম ৫ সারি দেখা</span>
+
+<span class="cm"># DataFrame থেকে NetworkX গ্রাফ তৈরি</span>
+G = nx.<span class="fn">from_pandas_edgelist</span>(df)
+nx.<span class="fn">draw_networkx</span>(G, font_color=<span class="str">"white"</span>)
+plt.<span class="fn">show</span>()</pre>
+  </div>
+  <div class="box bi">
+    <div class="box-t">🧮 ১২ নোডের Complete Graph-এ কতটি Edge?</div>
+    <p>প্রতিটি নোড বাকি সব নোডের সাথে যুক্ত। সূত্র: <strong>n(n-1)/2 = 12×11/2 = 66 টি edge</strong>।</p>
+    <p>ভাবো: নোড ০ থেকে ১১টি edge, নোড ১ থেকে নতুন ১০টি, ... মোট = 11+10+...+1 = 66।</p>
+  </div>
+</section>
+
+<!-- CREATE GRAPH -->
+<section class="section" id="create-g">
+  <div class="section-badge b1">মূল ধারণা</div>
+  <h2 class="st">গ্রাফ তৈরি করা</h2>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Undirected ও Directed Graph</span></div>
+    <pre><span class="cm"># Undirected — দুই দিকে যাওয়া যায় (Facebook friendship)</span>
+G1 = nx.<span class="cls">Graph</span>()
+
+<span class="cm"># Directed — একদিকে যাওয়া যায় (Twitter follow)</span>
+G2 = nx.<span class="cls">DiGraph</span>()</pre>
+  </div>
+  <div class="box bw"><div class="box-t">⚠️ মনে রেখো</div><p><code>Graph()</code> = undirected | <code>DiGraph()</code> = directed। কিছু algorithm শুধু <code>Graph()</code>-এ কাজ করে।</p></div>
+</section>
+
+<!-- ADD NODES -->
+<section class="section" id="add-nodes">
+  <div class="section-badge b1">মূল ধারণা</div>
+  <h2 class="st">Node যোগ করা</h2>
+  <div class="dc">
+    <svg viewBox="0 0 580 130" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;width:100%;">
+      <rect width="580" height="130" fill="#161b22" rx="10"/>
+      <text x="290" y="24" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#75DFC1" font-weight="600">path_graph(5) — রৈখিক চেইন গ্রাফ: 0-1-2-3-4</text>
+      <line x1="70" y1="75" x2="170" y2="75" stroke="#30363d" stroke-width="2.5"/>
+      <line x1="170" y1="75" x2="270" y2="75" stroke="#30363d" stroke-width="2.5"/>
+      <line x1="270" y1="75" x2="370" y2="75" stroke="#30363d" stroke-width="2.5"/>
+      <line x1="370" y1="75" x2="470" y2="75" stroke="#30363d" stroke-width="2.5"/>
+      <circle cx="70" cy="75" r="24" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="70" y="80" text-anchor="middle" font-family="monospace" font-size="16" fill="#75DFC1" font-weight="700">0</text>
+      <circle cx="170" cy="75" r="24" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="170" y="80" text-anchor="middle" font-family="monospace" font-size="16" fill="#75DFC1" font-weight="700">1</text>
+      <circle cx="270" cy="75" r="24" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="270" y="80" text-anchor="middle" font-family="monospace" font-size="16" fill="#75DFC1" font-weight="700">2</text>
+      <circle cx="370" cy="75" r="24" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="370" y="80" text-anchor="middle" font-family="monospace" font-size="16" fill="#75DFC1" font-weight="700">3</text>
+      <circle cx="470" cy="75" r="24" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="470" y="80" text-anchor="middle" font-family="monospace" font-size="16" fill="#75DFC1" font-weight="700">4</text>
+      <text x="290" y="118" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#5c6370">৫টি নোড সরলরেখায় — প্রতিটি শুধু পাশের নোডের সাথে যুক্ত</text>
+    </svg>
+    <div class="dc-cap">চিত্র ৩ — path_graph(5): ০ থেকে ৪ পর্যন্ত ৫টি নোড, ৪টি edge</div>
+  </div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Node যোগের ৩ উপায়</span></div>
+    <pre><span class="cm"># পদ্ধতি ১: একটি নোড</span>
+G1.<span class="fn">add_node</span>(<span class="nm">1</span>)
+G1.<span class="fn">add_node</span>(<span class="str">"Alice"</span>)
+G1.<span class="fn">add_node</span>(<span class="nm">7</span>, weight=<span class="str">"2"</span>)          <span class="cm"># attribute সহ</span>
+G1.<span class="fn">add_node</span>(<span class="nm">4</span>, name=<span class="str">'ঢাকা'</span>, role=<span class="str">'capital'</span>)
+
+<span class="cm"># পদ্ধতি ২: একসাথে অনেক নোড</span>
+G1.<span class="fn">add_nodes_from</span>([<span class="nm">10</span>, <span class="nm">11</span>, <span class="nm">12</span>], color=<span class="str">'blue'</span>)  <span class="cm"># সবগুলোতে color='blue'</span>
+
+<span class="cm"># পদ্ধতি ৩: path_graph ব্যবহার করে</span>
+H = nx.<span class="fn">path_graph</span>(<span class="nm">3</span>)       <span class="cm"># নোড 0,1,2 এবং edge (0,1),(1,2)</span>
+G1 = nx.<span class="fn">compose</span>(G1, H)     <span class="cm"># G1 ও H একত্রিত</span>
+
+<span class="cm"># প্রতিবেশী দেখা</span>
+<span class="fn">print</span>(<span class="fn">list</span>(G1.adj[<span class="nm">1</span>]))       <span class="cm"># নোড ১ এর সব প্রতিবেশী</span>
+
+nx.<span class="fn">draw</span>(G1, with_labels=<span class="kw">True</span>, node_size=<span class="nm">500</span>, node_color=<span class="str">'#75DFC1'</span>)
+plt.<span class="fn">show</span>()</pre>
+  </div>
+</section>
+
+<!-- ADD EDGES -->
+<section class="section" id="add-edges">
+  <div class="section-badge b1">মূল ধারণা</div>
+  <h2 class="st">Edge যোগ করা</h2>
+  <div class="box bt"><div class="box-t">💡 মজার বিষয়</div><p>NetworkX-এ edge যোগ করার সময় নোড না থাকলে <strong>স্বয়ংক্রিয়ভাবে নোড তৈরি হয়</strong>। আলাদা করে আগে নোড বানাতে হয় না!</p></div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Edge যোগের উপায়</span></div>
+    <pre><span class="cm"># একটি edge</span>
+G1.<span class="fn">add_edge</span>(<span class="nm">1</span>, <span class="nm">2</span>)
+G1.<span class="fn">add_edge</span>(<span class="nm">1</span>, <span class="nm">2</span>, weight=<span class="nm">4</span>)    <span class="cm"># weight সহ</span>
+
+<span class="cm"># অনেক edge একসাথে</span>
+edge_list = [(<span class="nm">2</span>,<span class="nm">3</span>), (<span class="nm">3</span>,<span class="nm">4</span>), (<span class="nm">8</span>,<span class="nm">7</span>), (<span class="nm">6</span>,<span class="str">"Daniel"</span>),
+             (<span class="nm">8</span>,<span class="nm">9</span>), (<span class="nm">9</span>,<span class="nm">10</span>), (<span class="nm">10</span>,<span class="nm">11</span>), (<span class="nm">11</span>,<span class="nm">12</span>), (<span class="nm">12</span>,<span class="nm">0</span>)]
+G1.<span class="fn">add_edges_from</span>(edge_list)
+
+<span class="cm"># Weighted edges (u, v, weight)</span>
+weighted = [(<span class="str">'A'</span>,<span class="str">'B'</span>,<span class="nm">1</span>), (<span class="str">'B'</span>,<span class="str">'C'</span>,<span class="nm">2</span>), (<span class="str">'C'</span>,<span class="str">'D'</span>,<span class="nm">5</span>)]
+G1.<span class="fn">add_weighted_edges_from</span>(weighted)</pre>
+  </div>
+</section>
+
+<!-- DELETE -->
+<section class="section" id="del">
+  <div class="section-badge b1">মূল ধারণা</div>
+  <h2 class="st">Node ও Edge মুছে ফেলা</h2>
+  <div class="box bw"><div class="box-t">⚠️ সাবধান!</div><p>নোড মুছলে সেই নোডের <strong>সব edge-ও মুছে যায়</strong>।</p></div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">মুছে ফেলা</span></div>
+    <pre><span class="cm"># নোড মুছা</span>
+G1.<span class="fn">remove_node</span>(<span class="nm">1</span>)
+G1.<span class="fn">remove_nodes_from</span>([<span class="str">"Daniel"</span>, <span class="nm">0</span>])
+
+<span class="cm"># edge মুছা</span>
+G1.<span class="fn">remove_edge</span>(<span class="nm">5</span>, <span class="nm">6</span>)
+G1.<span class="fn">remove_edges_from</span>([(<span class="nm">2</span>,<span class="nm">3</span>), (<span class="nm">3</span>,<span class="nm">4</span>)])
+
+<span class="cm"># সব কিছু মুছা</span>
+G1.<span class="fn">clear</span>()  <span class="cm"># ⚠️ সব যাবে!</span></pre>
+  </div>
+</section>
+
+<!-- ACCESSORS -->
+<section class="section" id="access">
+  <div class="section-badge b1">মূল ধারণা</div>
+  <h2 class="st">Accessors — গ্রাফের তথ্য জানা</h2>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Properties দেখা</span></div>
+    <pre><span class="cm"># নোড দেখা</span>
+<span class="fn">list</span>(G1.nodes)               <span class="cm"># [1, 2, 3, ...]</span>
+G1.nodes[<span class="nm">7</span>]                  <span class="cm"># নোড ৭ এর attributes</span>
+G1.nodes(data=<span class="kw">True</span>)         <span class="cm"># সব নোড ও attributes</span>
+
+<span class="cm"># edge দেখা</span>
+<span class="fn">list</span>(G1.edges)               <span class="cm"># [(1,2), (2,3), ...]</span>
+G1.edges(data=<span class="kw">True</span>)         <span class="cm"># edge ও attributes</span>
+
+<span class="cm"># সংখ্যা</span>
+G1.<span class="fn">number_of_nodes</span>()        <span class="cm"># মোট নোড</span>
+G1.<span class="fn">number_of_edges</span>()        <span class="cm"># মোট edge</span>
+
+<span class="cm"># প্রতিবেশী</span>
+<span class="fn">list</span>(G1.adj[<span class="nm">3</span>])             <span class="cm"># নোড ৩ এর প্রতিবেশীরা</span></pre>
+  </div>
+</section>
+
+<!-- DEGREE -->
+<section class="section" id="degree">
+  <div class="section-badge b1">মূল ধারণা</div>
+  <h2 class="st">Degree — নোডের ডিগ্রি</h2>
+  <p>কোনো নোডের <strong>degree</strong> হলো সেই নোডের সাথে কতটি edge আছে। সহজ কথায় — কতজন সরাসরি প্রতিবেশী।</p>
+  <div class="dc">
+    <svg viewBox="0 0 580 240" xmlns="http://www.w3.org/2000/svg" style="max-width:580px;width:100%;">
+      <rect width="580" height="240" fill="#161b22" rx="10"/>
+      <text x="290" y="24" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#75DFC1" font-weight="600">Degree বোঝার উদাহরণ</text>
+      <line x1="200" y1="110" x2="100" y2="65" stroke="#30363d" stroke-width="2"/>
+      <line x1="200" y1="110" x2="100" y2="155" stroke="#30363d" stroke-width="2"/>
+      <line x1="200" y1="110" x2="300" y2="65" stroke="#30363d" stroke-width="2"/>
+      <line x1="200" y1="110" x2="300" y2="155" stroke="#30363d" stroke-width="2"/>
+      <line x1="200" y1="110" x2="200" y2="190" stroke="#30363d" stroke-width="2"/>
+      <circle cx="200" cy="110" r="33" fill="#1c2230" stroke="#f7c948" stroke-width="3"/>
+      <text x="200" y="105" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#f7c948" font-weight="700">কেন্দ্র</text>
+      <text x="200" y="120" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#f7c948">degree=5</text>
+      <circle cx="100" cy="65" r="22" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="100" y="61" text-anchor="middle" font-family="monospace" font-size="11" fill="#75DFC1">A</text><text x="100" y="76" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#5c6370">deg=1</text>
+      <circle cx="300" cy="65" r="22" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="300" y="61" text-anchor="middle" font-family="monospace" font-size="11" fill="#75DFC1">B</text><text x="300" y="76" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#5c6370">deg=1</text>
+      <circle cx="100" cy="155" r="22" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="100" y="151" text-anchor="middle" font-family="monospace" font-size="11" fill="#75DFC1">C</text><text x="100" y="166" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#5c6370">deg=1</text>
+      <circle cx="300" cy="155" r="22" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="300" y="151" text-anchor="middle" font-family="monospace" font-size="11" fill="#75DFC1">D</text><text x="300" y="166" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#5c6370">deg=1</text>
+      <circle cx="200" cy="190" r="22" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="200" y="186" text-anchor="middle" font-family="monospace" font-size="11" fill="#75DFC1">E</text><text x="200" y="201" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#5c6370">deg=1</text>
+      <!-- DiGraph in/out -->
+      <defs><marker id="b1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#e06c75"/></marker>
+      <marker id="b2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#61afef"/></marker></defs>
+      <text x="460" y="50" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#61afef" font-weight="600">DiGraph: in ও out degree</text>
+      <line x1="415" y1="100" x2="453" y2="125" stroke="#e06c75" stroke-width="2" marker-end="url(#b1)"/>
+      <line x1="510" y1="100" x2="472" y2="125" stroke="#e06c75" stroke-width="2" marker-end="url(#b1)"/>
+      <line x1="462" y1="155" x2="462" y2="190" stroke="#61afef" stroke-width="2" marker-end="url(#b2)"/>
+      <line x1="462" y1="155" x2="510" y2="185" stroke="#61afef" stroke-width="2" marker-end="url(#b2)"/>
+      <circle cx="462" cy="135" r="27" fill="#1c2230" stroke="#f7c948" stroke-width="2"/><text x="462" y="130" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#f7c948">X</text><text x="462" y="145" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#5c6370">in=2,out=2</text>
+      <circle cx="405" cy="90" r="18" fill="#1c2230" stroke="#e06c75" stroke-width="1.5"/><text x="405" y="95" text-anchor="middle" font-family="monospace" font-size="11" fill="#e06c75">P</text>
+      <circle cx="517" cy="90" r="18" fill="#1c2230" stroke="#e06c75" stroke-width="1.5"/><text x="517" y="95" text-anchor="middle" font-family="monospace" font-size="11" fill="#e06c75">Q</text>
+      <circle cx="462" cy="200" r="18" fill="#1c2230" stroke="#61afef" stroke-width="1.5"/><text x="462" y="205" text-anchor="middle" font-family="monospace" font-size="11" fill="#61afef">R</text>
+      <circle cx="518" cy="195" r="18" fill="#1c2230" stroke="#61afef" stroke-width="1.5"/><text x="518" y="200" text-anchor="middle" font-family="monospace" font-size="11" fill="#61afef">S</text>
+      <text x="460" y="230" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#5c6370">লাল=আসছে(in) | নীল=যাচ্ছে(out)</text>
+    </svg>
+    <div class="dc-cap">চিত্র ৪ — Degree: কেন্দ্র নোডের degree=5 | DiGraph-এ in_degree ও out_degree আলাদা</div>
+  </div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Degree বের করা</span></div>
+    <pre><span class="cm"># Undirected graph</span>
+G1.degree[<span class="nm">12</span>]              <span class="cm"># নোড ১২ এর degree</span>
+<span class="fn">dict</span>(G1.degree())          <span class="cm"># সব নোডের degree</span>
+
+<span class="cm"># Directed graph</span>
+G2.in_degree[<span class="nm">5</span>]            <span class="cm"># আসছে কতটা</span>
+G2.out_degree[<span class="nm">5</span>]           <span class="cm"># যাচ্ছে কতটা</span>
+
+<span class="cm"># সবচেয়ে connected নোড খোঁজা (hub)</span>
+max_node = <span class="fn">max</span>(G1.degree(), key=<span class="kw">lambda</span> x: x[<span class="nm">1</span>])
+<span class="fn">print</span>(<span class="str">f"সবচেয়ে connected: {max_node[0]}, degree: {max_node[1]}"</span>)</pre>
+  </div>
+</section>
+
+<!-- VISUALIZATION -->
+<section class="section" id="viz">
+  <div class="section-badge b1">মূল ধারণা</div>
+  <h2 class="st">গ্রাফ ভিজ্যুয়ালাইজেশন</h2>
+  <div class="cg">
+    <div class="cc"><div class="ic">⭕</div><h4>circular_layout</h4><p>নোডগুলো বৃত্তে সাজানো — ছোট গ্রাফে পরিষ্কার দেখায়।</p></div>
+    <div class="cc"><div class="ic">🌸</div><h4>spring_layout</h4><p>ডিফল্ট — connected নোড কাছে, disconnected দূরে।</p></div>
+    <div class="cc"><div class="ic">🎲</div><h4>random_layout</h4><p>র‍্যান্ডম সাজানো — বড় গ্রাফ দ্রুত দেখতে।</p></div>
+    <div class="cc"><div class="ic">📐</div><h4>planar_layout</h4><p>Edge ছেদ ছাড়া আঁকা (যদি planar হয়)।</p></div>
+  </div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">বিভিন্ন layout</span></div>
+    <pre><span class="cm"># একসাথে ৪টি layout দেখানো</span>
+layouts = {
+    <span class="str">"Circular"</span>: nx.circular_layout,
+    <span class="str">"Spring"</span>: nx.spring_layout,
+    <span class="str">"Random"</span>: nx.random_layout,
+    <span class="str">"Planar"</span>: nx.planar_layout
+}
+options = {<span class="str">'node_color'</span>:<span class="str">'#75DFC1'</span>, <span class="str">'node_size'</span>:<span class="nm">500</span>, <span class="str">'with_labels'</span>:<span class="kw">True</span>}
+
+plt.figure(figsize=(<span class="nm">15</span>, <span class="nm">10</span>))
+<span class="kw">for</span> i, (name, layout) <span class="kw">in</span> <span class="fn">enumerate</span>(layouts.items(), start=<span class="nm">1</span>):
+    plt.<span class="fn">subplot</span>(<span class="nm">2</span>, <span class="nm">2</span>, i)
+    nx.<span class="fn">draw</span>(G1, pos=<span class="fn">layout</span>(G1), **options)
+    plt.<span class="fn">title</span>(name)
+plt.<span class="fn">tight_layout</span>(); plt.<span class="fn">show</span>()
+
+<span class="cm"># Edge weight দেখানো</span>
+pos = nx.<span class="fn">spring_layout</span>(G4)
+nx.<span class="fn">draw</span>(G4, pos, with_labels=<span class="kw">True</span>)
+nx.<span class="fn">draw_networkx_edge_labels</span>(G4, pos,
+    edge_labels=nx.<span class="fn">get_edge_attributes</span>(G4, <span class="str">'weight'</span>))</pre>
+  </div>
+</section>
+
+<!-- EXERCISE NB01 -->
+<section class="section" id="ex1">
+  <div class="section-badge be">💪 Exercise — মূল ধারণা</div>
+  <h2 class="st">Interview-level Exercise</h2>
+
+  <div class="exb">
+    <div class="exh"><div class="exn">1</div><div><h4>সোশ্যাল নেটওয়ার্ক গ্রাফ তৈরি</h4><p>ML Engineering · Graph Construction · Beginner</p></div></div>
+    <div class="exbody">
+      <p><strong>সমস্যা:</strong> ৮ জন ML researcher আছে। তারা যদি একই paper co-author করে তাহলে edge আছে (weight = যতটি paper একসাথে লিখেছে):</p>
+      <ul class="ul">
+        <li>R0–R1: 5 | R0–R2: 3 | R1–R3: 7 | R2–R3: 2 | R3–R4: 6</li>
+        <li>R4–R5: 4 | R5–R6: 8 | R6–R7: 1 | R7–R0: 9</li>
+      </ul>
+      <p><strong>কাজ:</strong> (a) Weighted undirected graph তৈরি করো (b) সবচেয়ে productive researcher খোঁজো (degree দিয়ে) (c) গ্রাফ আঁকো weight সহ।</p>
+      <p><strong>ইন্টারভিউ প্রশ্ন:</strong> co-authorship network-এ graph কেন ব্যবহার করা হয়? Adjacency matrix vs list — sparse graph-এ কোনটা বেশি memory efficient?</p>
+      <button class="ht" onclick="toggleHint('h1')">💡 হিন্ট</button>
+      <button class="st2" onclick="toggleSol('s1')">✅ সমাধান</button>
+      <div class="hc" id="h1"><code>add_weighted_edges_from()</code> ব্যবহার করো। সবচেয়ে connected: <code>max(G.degree(), key=lambda x: x[1])</code>।</div>
+      <div class="sc" id="s1">
+        <div class="cb"><div class="ch"><span class="cl">Python</span><span class="ct">সমাধান</span></div>
+        <pre>G = nx.<span class="cls">Graph</span>()
+edges = [(<span class="str">'R0'</span>,<span class="str">'R1'</span>,<span class="nm">5</span>),(<span class="str">'R0'</span>,<span class="str">'R2'</span>,<span class="nm">3</span>),(<span class="str">'R1'</span>,<span class="str">'R3'</span>,<span class="nm">7</span>),
+         (<span class="str">'R2'</span>,<span class="str">'R3'</span>,<span class="nm">2</span>),(<span class="str">'R3'</span>,<span class="str">'R4'</span>,<span class="nm">6</span>),(<span class="str">'R4'</span>,<span class="str">'R5'</span>,<span class="nm">4</span>),
+         (<span class="str">'R5'</span>,<span class="str">'R6'</span>,<span class="nm">8</span>),(<span class="str">'R6'</span>,<span class="str">'R7'</span>,<span class="nm">1</span>),(<span class="str">'R7'</span>,<span class="str">'R0'</span>,<span class="nm">9</span>)]
+G.<span class="fn">add_weighted_edges_from</span>(edges)
+<span class="fn">print</span>(<span class="str">"নোড:"</span>, G.<span class="fn">number_of_nodes</span>(), <span class="str">"| Edge:"</span>, G.<span class="fn">number_of_edges</span>())
+top = <span class="fn">max</span>(G.degree(), key=<span class="kw">lambda</span> x: x[<span class="nm">1</span>])
+<span class="fn">print</span>(<span class="str">f"সবচেয়ে productive: {top[0]} (degree={top[1]})"</span>)
+pos = nx.<span class="fn">circular_layout</span>(G)
+nx.<span class="fn">draw</span>(G, pos, with_labels=<span class="kw">True</span>, node_color=<span class="str">'#75DFC1'</span>, node_size=<span class="nm">700</span>)
+nx.<span class="fn">draw_networkx_edge_labels</span>(G, pos, edge_labels=nx.<span class="fn">get_edge_attributes</span>(G,<span class="str">'weight'</span>))</pre></div>
+        <p><strong>উত্তর — ইন্টারভিউ:</strong> Graph ব্যবহার করা হয় কারণ researcher collaboration non-linear structure। Sparse graph-এ adjacency list বেশি efficient (O(V+E) memory vs matrix এর O(V²))।</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="exb">
+    <div class="exh"><div class="exn">2</div><div><h4>ML Pipeline Dependency Graph</h4><p>ML Engineering · Directed Graph · Intermediate</p></div></div>
+    <div class="exbody">
+      <p><strong>সমস্যা:</strong> একটি ML pipeline-এ dependency: DataIngestion → [DataCleaning, FeatureExtraction] → ModelTraining → [ModelEvaluation, ModelServing] → Monitoring</p>
+      <p><strong>কাজ:</strong> (a) DiGraph তৈরি করো (b) কোন ধাপ সবচেয়ে critical (সবচেয়ে বেশি in_degree)? (c) topological sort করো (কোন ক্রমে কাজ করতে হবে)।</p>
+      <button class="ht" onclick="toggleHint('h2')">💡 হিন্ট</button>
+      <button class="st2" onclick="toggleSol('s2')">✅ সমাধান</button>
+      <div class="hc" id="h2">Topological sort: <code>list(nx.topological_sort(G))</code> — এটা শুধু DAG-এ কাজ করে।</div>
+      <div class="sc" id="s2">
+        <div class="cb"><div class="ch"><span class="cl">Python</span></div>
+        <pre>G_pipe = nx.<span class="cls">DiGraph</span>()
+G_pipe.<span class="fn">add_edges_from</span>([
+    (<span class="str">'DataIngestion'</span>,<span class="str">'DataCleaning'</span>), (<span class="str">'DataIngestion'</span>,<span class="str">'FeatureExtraction'</span>),
+    (<span class="str">'DataCleaning'</span>,<span class="str">'ModelTraining'</span>), (<span class="str">'FeatureExtraction'</span>,<span class="str">'ModelTraining'</span>),
+    (<span class="str">'ModelTraining'</span>,<span class="str">'ModelEvaluation'</span>), (<span class="str">'ModelTraining'</span>,<span class="str">'ModelServing'</span>),
+    (<span class="str">'ModelEvaluation'</span>,<span class="str">'ModelServing'</span>), (<span class="str">'ModelServing'</span>,<span class="str">'Monitoring'</span>)
+])
+critical = <span class="fn">max</span>(G_pipe.in_degree(), key=<span class="kw">lambda</span> x: x[<span class="nm">1</span>])
+<span class="fn">print</span>(<span class="str">f"Critical: {critical[0]} (in_degree={critical[1]})"</span>)
+topo = <span class="fn">list</span>(nx.<span class="fn">topological_sort</span>(G_pipe))
+<span class="fn">print</span>(<span class="str">"Execution order:"</span>, topo)</pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     NB02 — ADJACENCY MATRIX / LIST
+══════════════════════════════════════════ -->
+<section class="section" id="adj-mat">
+  <div class="section-badge b2">অ্যালগরিদম</div>
+  <h2 class="st">Adjacency Matrix — সংলগ্নতা ম্যাট্রিক্স</h2>
+  <p>গ্রাফকে কম্পিউটারে রাখার একটি উপায়: <strong>n×n বর্গ ম্যাট্রিক্স</strong> যেখানে <code>A[i][j]=1</code> মানে নোড i ও j এর মধ্যে edge আছে, <code>0</code> মানে নেই।</p>
+  <div class="dc">
+    <svg viewBox="0 0 620 270" xmlns="http://www.w3.org/2000/svg" style="max-width:620px;width:100%;">
+      <rect width="620" height="270" fill="#161b22" rx="10"/>
+      <text x="310" y="26" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#75DFC1" font-weight="600">গ্রাফ → Adjacency Matrix</text>
+      <!-- Graph left -->
+      <line x1="80" y1="120" x2="160" y2="75" stroke="#30363d" stroke-width="2"/>
+      <line x1="160" y1="75" x2="210" y2="145" stroke="#30363d" stroke-width="2"/>
+      <line x1="80" y1="120" x2="210" y2="145" stroke="#30363d" stroke-width="2"/>
+      <line x1="80" y1="120" x2="120" y2="195" stroke="#30363d" stroke-width="2"/>
+      <circle cx="80" cy="120" r="22" fill="#1c2230" stroke="#75DFC1" stroke-width="2"/><text x="80" y="125" text-anchor="middle" font-family="monospace" font-size="14" fill="#75DFC1" font-weight="700">1</text>
+      <circle cx="160" cy="75" r="22" fill="#1c2230" stroke="#61afef" stroke-width="2"/><text x="160" y="80" text-anchor="middle" font-family="monospace" font-size="14" fill="#61afef" font-weight="700">2</text>
+      <circle cx="210" cy="145" r="22" fill="#1c2230" stroke="#c678dd" stroke-width="2"/><text x="210" y="150" text-anchor="middle" font-family="monospace" font-size="14" fill="#c678dd" font-weight="700">3</text>
+      <circle cx="120" cy="195" r="22" fill="#1c2230" stroke="#e06c75" stroke-width="2"/><text x="120" y="200" text-anchor="middle" font-family="monospace" font-size="14" fill="#e06c75" font-weight="700">4</text>
+      <!-- Arrow -->
+      <text x="270" y="140" text-anchor="middle" font-family="monospace" font-size="22" fill="#f7c948">→</text>
+      <!-- Matrix -->
+      <text x="320" y="60" font-family="monospace" font-size="13" fill="#8b949e">   1  2  3  4</text>
+      <rect x="310" y="70" width="160" height="36" rx="3" fill="#1c2230" stroke="#30363d"/><text x="320" y="92" font-family="monospace" font-size="13" fill="#75DFC1" font-weight="700">1</text><text x="345" y="92" font-family="monospace" font-size="13" fill="#5c6370">0</text><text x="385" y="92" font-family="monospace" font-size="13" fill="#3fb950" font-weight="700">1</text><text x="425" y="92" font-family="monospace" font-size="13" fill="#3fb950" font-weight="700">1</text><text x="465" y="92" font-family="monospace" font-size="13" fill="#3fb950" font-weight="700">1</text>
+      <rect x="310" y="110" width="160" height="36" rx="3" fill="#161b22" stroke="#30363d"/><text x="320" y="132" font-family="monospace" font-size="13" fill="#61afef" font-weight="700">2</text><text x="345" y="132" font-family="monospace" font-size="13" fill="#3fb950" font-weight="700">1</text><text x="385" y="132" font-family="monospace" font-size="13" fill="#5c6370">0</text><text x="425" y="132" font-family="monospace" font-size="13" fill="#3fb950" font-weight="700">1</text><text x="465" y="132" font-family="monospace" font-size="13" fill="#5c6370">0</text>
+      <rect x="310" y="150" width="160" height="36" rx="3" fill="#1c2230" stroke="#30363d"/><text x="320" y="172" font-family="monospace" font-size="13" fill="#c678dd" font-weight="700">3</text><text x="345" y="172" font-family="monospace" font-size="13" fill="#3fb950" font-weight="700">1</text><text x="385" y="172" font-family="monospace" font-size="13" fill="#3fb950" font-weight="700">1</text><text x="425" y="172" font-family="monospace" font-size="13" fill="#5c6370">0</text><text x="465" y="172" font-family="monospace" font-size="13" fill="#5c6370">0</text>
+      <rect x="310" y="190" width="160" height="36" rx="3" fill="#161b22" stroke="#30363d"/><text x="320" y="212" font-family="monospace" font-size="13" fill="#e06c75" font-weight="700">4</text><text x="345" y="212" font-family="monospace" font-size="13" fill="#3fb950" font-weight="700">1</text><text x="385" y="212" font-family="monospace" font-size="13" fill="#5c6370">0</text><text x="425" y="212" font-family="monospace" font-size="13" fill="#5c6370">0</text><text x="465" y="212" font-family="monospace" font-size="13" fill="#5c6370">0</text>
+      <text x="310" y="250" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#5c6370">সবুজ 1=edge আছে | ধূসর 0=নেই | Undirected হওয়ায় symmetric</text>
+    </svg>
+    <div class="dc-cap">চিত্র ৫ — Adjacency Matrix: row i ও column j তে 1 থাকলে i-j edge আছে</div>
+  </div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Matrix ও List বের করা</span></div>
+    <pre><span class="cm"># GML ফাইল থেকে গ্রাফ লোড</span>
+G1 = nx.<span class="fn">read_gml</span>(<span class="str">"g1.gml"</span>)
+
+<span class="cm"># Adjacency Matrix (sparse format)</span>
+A = nx.<span class="fn">adjacency_matrix</span>(G1)
+<span class="fn">print</span>(A.<span class="fn">todense</span>())        <span class="cm"># dense matrix হিসেবে দেখা</span>
+
+<span class="cm"># Adjacency List</span>
+adj = nx.<span class="fn">to_dict_of_lists</span>(G1)
+<span class="fn">print</span>(adj)
+<span class="cm"># {1: [2, 3], 2: [1, 4], ...}</span>
+
+<span class="cm"># সেভ করা</span>
+nx.<span class="fn">write_gml</span>(G1, <span class="str">"saved.gml"</span>)</pre>
+  </div>
+  <span id="adj-list"></span>
+  <table class="tbl">
+    <tr><th>বিষয়</th><th>Adjacency Matrix</th><th>Adjacency List</th></tr>
+    <tr><td>Memory</td><td>O(V²) — সব সময়</td><td>O(V+E) — sparse-এ ভালো</td></tr>
+    <tr><td>Edge check</td><td>O(1) সরাসরি</td><td>O(degree) খুঁজতে হয়</td></tr>
+    <tr><td>কখন</td><td>Dense graph, matrix op</td><td>Sparse graph, সাধারণ কাজ</td></tr>
+    <tr><td>NetworkX</td><td><code>adjacency_matrix(G)</code></td><td><code>to_dict_of_lists(G)</code></td></tr>
+  </table>
+</section>
+
+<!-- CONNECTIVITY -->
+<section class="section" id="connect">
+  <div class="section-badge b2">অ্যালগরিদম</div>
+  <h2 class="st">Connectivity — সংযোগ সম্পর্ক</h2>
+  <div class="cg">
+    <div class="cc"><div class="ic">🔗</div><h4>Connected</h4><p>যেকোনো দুটি নোড থেকে পথ আছে। "এক টুকরো" গ্রাফ।</p></div>
+    <div class="cc"><div class="ic">💪</div><h4>Strongly Connected</h4><p>DiGraph-এ: u→v এবং v→u উভয় দিকেই পথ আছে।</p></div>
+    <div class="cc"><div class="ic">🤝</div><h4>Weakly Connected</h4><p>DiGraph-এ direction ভুললে connected হয়।</p></div>
+    <div class="cc"><div class="ic">🏝️</div><h4>Connected Component</h4><p>গ্রাফের আলাদা "টুকরো" — একটি connected subgraph।</p></div>
+  </div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Connectivity পরীক্ষা</span></div>
+    <pre><span class="cm"># Undirected</span>
+nx.<span class="fn">is_connected</span>(G1)          <span class="cm"># True/False</span>
+
+<span class="cm"># Directed</span>
+G2 = nx.<span class="cls">DiGraph</span>([(1,2),(2,3),(3,1),(4,5),(5,6),(6,4),(7,5)])
+strong = <span class="fn">list</span>(nx.<span class="fn">strongly_connected_components</span>(G2))
+<span class="fn">print</span>(<span class="str">"Strongly connected:"</span>, strong)
+<span class="cm"># [{1,2,3}, {4,5,6}, {7}]</span>
+
+weak = <span class="fn">list</span>(nx.<span class="fn">weakly_connected_components</span>(G2))
+<span class="fn">print</span>(<span class="str">"Weakly connected:"</span>, weak)
+<span class="cm"># [{1,2,3,4,5,6,7}] direction বাদে সব যুক্ত</span></pre>
+  </div>
+</section>
+
+<!-- CYCLES TREES FORESTS -->
+<section class="section" id="cycles">
+  <div class="section-badge b2">অ্যালগরিদম</div>
+  <h2 class="st">Cycle, Tree ও Forest</h2>
+  <div class="dc">
+    <svg viewBox="0 0 660 240" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%;">
+      <rect width="660" height="240" fill="#161b22" rx="10"/>
+      <!-- Cycle -->
+      <text x="105" y="26" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#e06c75" font-weight="600">Cycle (চক্র)</text>
+      <polygon points="105,50 55,130 155,130" fill="none" stroke="#30363d" stroke-width="2"/>
+      <line x1="55" y1="130" x2="155" y2="130" stroke="#e06c75" stroke-width="2.5" stroke-dasharray="4,3"/>
+      <circle cx="105" cy="50" r="20" fill="#1c2230" stroke="#e06c75" stroke-width="2"/><text x="105" y="55" text-anchor="middle" font-family="monospace" font-size="13" fill="#e06c75">A</text>
+      <circle cx="55" cy="130" r="20" fill="#1c2230" stroke="#e06c75" stroke-width="2"/><text x="55" y="135" text-anchor="middle" font-family="monospace" font-size="13" fill="#e06c75">B</text>
+      <circle cx="155" cy="130" r="20" fill="#1c2230" stroke="#e06c75" stroke-width="2"/><text x="155" y="135" text-anchor="middle" font-family="monospace" font-size="13" fill="#e06c75">C</text>
+      <text x="105" y="168" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#5c6370">A→B→C→A: চক্র!</text>
+      <text x="105" y="183" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#e06c75">লাল = cycle edge</text>
+      <!-- Tree -->
+      <text x="330" y="26" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#3fb950" font-weight="600">Tree (গাছ)</text>
+      <line x1="330" y1="50" x2="270" y2="115" stroke="#30363d" stroke-width="2"/>
+      <line x1="330" y1="50" x2="390" y2="115" stroke="#30363d" stroke-width="2"/>
+      <line x1="270" y1="115" x2="240" y2="180" stroke="#30363d" stroke-width="2"/>
+      <line x1="270" y1="115" x2="300" y2="180" stroke="#30363d" stroke-width="2"/>
+      <line x1="390" y1="115" x2="420" y2="180" stroke="#30363d" stroke-width="2"/>
+      <circle cx="330" cy="50" r="20" fill="#1c2230" stroke="#3fb950" stroke-width="2"/><text x="330" y="55" text-anchor="middle" font-family="monospace" font-size="13" fill="#3fb950">R</text>
+      <circle cx="270" cy="115" r="18" fill="#1c2230" stroke="#3fb950" stroke-width="1.5"/><text x="270" y="120" text-anchor="middle" font-family="monospace" font-size="12" fill="#3fb950">A</text>
+      <circle cx="390" cy="115" r="18" fill="#1c2230" stroke="#3fb950" stroke-width="1.5"/><text x="390" y="120" text-anchor="middle" font-family="monospace" font-size="12" fill="#3fb950">B</text>
+      <circle cx="240" cy="180" r="15" fill="#1c2230" stroke="#3fb950" stroke-width="1.5"/><text x="240" y="185" text-anchor="middle" font-family="monospace" font-size="11" fill="#3fb950">C</text>
+      <circle cx="300" cy="180" r="15" fill="#1c2230" stroke="#3fb950" stroke-width="1.5"/><text x="300" y="185" text-anchor="middle" font-family="monospace" font-size="11" fill="#3fb950">D</text>
+      <circle cx="420" cy="180" r="15" fill="#1c2230" stroke="#3fb950" stroke-width="1.5"/><text x="420" y="185" text-anchor="middle" font-family="monospace" font-size="11" fill="#3fb950">E</text>
+      <text x="330" y="215" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#5c6370">n নোড = n-1 edge | কোনো cycle নেই</text>
+      <!-- Forest -->
+      <text x="570" y="26" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="12" fill="#c678dd" font-weight="600">Forest (একাধিক Tree)</text>
+      <line x1="545" y1="60" x2="525" y2="120" stroke="#30363d" stroke-width="2"/>
+      <line x1="545" y1="60" x2="565" y2="120" stroke="#30363d" stroke-width="2"/>
+      <line x1="600" y1="70" x2="600" y2="130" stroke="#30363d" stroke-width="2"/>
+      <circle cx="545" cy="60" r="18" fill="#1c2230" stroke="#c678dd" stroke-width="2"/><text x="545" y="65" text-anchor="middle" font-family="monospace" font-size="12" fill="#c678dd">1</text>
+      <circle cx="525" cy="120" r="15" fill="#1c2230" stroke="#c678dd" stroke-width="1.5"/><text x="525" y="125" text-anchor="middle" font-family="monospace" font-size="11" fill="#c678dd">2</text>
+      <circle cx="565" cy="120" r="15" fill="#1c2230" stroke="#c678dd" stroke-width="1.5"/><text x="565" y="125" text-anchor="middle" font-family="monospace" font-size="11" fill="#c678dd">3</text>
+      <circle cx="600" cy="70" r="18" fill="#1c2230" stroke="#c678dd" stroke-width="2"/><text x="600" y="75" text-anchor="middle" font-family="monospace" font-size="12" fill="#c678dd">4</text>
+      <circle cx="600" cy="130" r="15" fill="#1c2230" stroke="#c678dd" stroke-width="1.5"/><text x="600" y="135" text-anchor="middle" font-family="monospace" font-size="11" fill="#c678dd">5</text>
+      <text x="570" y="175" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#5c6370">দুটি tree = একটি forest</text>
+    </svg>
+    <div class="dc-cap">চিত্র ৬ — Cycle: শুরু=শেষ | Tree: connected+no cycle | Forest: একাধিক tree</div>
+  </div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Cycle, Tree, Forest</span></div>
+    <pre><span class="cm"># Tree/Forest চেক</span>
+nx.<span class="fn">is_tree</span>(G)           <span class="cm"># connected + no cycle</span>
+nx.<span class="fn">is_forest</span>(G)         <span class="cm"># no cycle (connected না হলেও হয়)</span>
+
+<span class="cm"># Directed graph-এ সব cycle খোঁজা</span>
+cycles = <span class="fn">list</span>(nx.<span class="fn">simple_cycles</span>(G2))
+<span class="fn">print</span>(<span class="str">"Cycles:"</span>, cycles)
+
+<span class="cm"># Cycle ভাঙতে edge মুছা</span>
+G2.<span class="fn">remove_edges_from</span>([(1,2), (4,5)])
+<span class="fn">print</span>(<span class="str">"Forest?"</span>, nx.<span class="fn">is_forest</span>(G2))
+
+<span class="cm"># Subgraph পরীক্ষা</span>
+sub = G2.<span class="fn">subgraph</span>([1,2,3])
+<span class="fn">print</span>(<span class="str">"Tree?"</span>, nx.<span class="fn">is_tree</span>(sub))</pre>
+  </div>
+</section>
+
+<!-- BFS DFS -->
+<section class="section" id="bfsdfs">
+  <div class="section-badge b2">অ্যালগরিদম</div>
+  <h2 class="st">BFS ও DFS — গ্রাফ অনুসন্ধান</h2>
+  <div class="box bk">
+    <div class="box-t">🎮 শিশুদের মতো বোঝো</div>
+    <p><strong>BFS (Breadth-First)</strong> = গোলকধাঁধায় আছো। প্রথমে ১ পদক্ষেপের সব রাস্তা চেক করো, তারপর ২ পদক্ষেপের... স্তরে স্তরে খোঁজো। Shortest path খুঁজতে দারুণ।</p>
+    <p style="margin-top:8px;"><strong>DFS (Depth-First)</strong> = একটি রাস্তায় ঢুকলে একেবারে শেষ পর্যন্ত যাও।막�লে ফিরে এসো। Cycle detect ও maze solve-এ ভালো।</p>
+  </div>
+  <div class="dc">
+    <svg viewBox="0 0 660 290" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;width:100%;">
+      <rect width="660" height="290" fill="#161b22" rx="10"/>
+      <!-- BFS -->
+      <text x="160" y="26" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#61afef" font-weight="600">BFS — স্তরে স্তরে</text>
+      <line x1="160" y1="62" x2="100" y2="130" stroke="#61afef" stroke-width="2"/>
+      <line x1="160" y1="62" x2="220" y2="130" stroke="#61afef" stroke-width="2"/>
+      <line x1="100" y1="130" x2="65" y2="205" stroke="#61afef" stroke-width="2"/>
+      <line x1="100" y1="130" x2="135" y2="205" stroke="#61afef" stroke-width="2"/>
+      <line x1="220" y1="130" x2="195" y2="205" stroke="#61afef" stroke-width="2"/>
+      <line x1="220" y1="130" x2="255" y2="205" stroke="#61afef" stroke-width="2"/>
+      <text x="28" y="68" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#f7c948">স্তর ০</text>
+      <text x="28" y="135" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#f7c948">স্তর ১</text>
+      <text x="28" y="210" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#f7c948">স্তর ২</text>
+      <circle cx="160" cy="62" r="22" fill="#1c4a78" stroke="#61afef" stroke-width="2.5"/><text x="160" y="58" text-anchor="middle" font-family="monospace" font-size="11" fill="#61afef">①</text><text x="160" y="73" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#75DFC1">শুরু</text>
+      <circle cx="100" cy="130" r="20" fill="#1c3050" stroke="#61afef" stroke-width="2"/><text x="100" y="135" text-anchor="middle" font-family="monospace" font-size="13" fill="#61afef">②</text>
+      <circle cx="220" cy="130" r="20" fill="#1c3050" stroke="#61afef" stroke-width="2"/><text x="220" y="135" text-anchor="middle" font-family="monospace" font-size="13" fill="#61afef">③</text>
+      <circle cx="65" cy="205" r="18" fill="#1c2230" stroke="#61afef" stroke-width="1.5"/><text x="65" y="210" text-anchor="middle" font-family="monospace" font-size="12" fill="#61afef">④</text>
+      <circle cx="135" cy="205" r="18" fill="#1c2230" stroke="#61afef" stroke-width="1.5"/><text x="135" y="210" text-anchor="middle" font-family="monospace" font-size="12" fill="#61afef">⑤</text>
+      <circle cx="195" cy="205" r="18" fill="#1c2230" stroke="#61afef" stroke-width="1.5"/><text x="195" y="210" text-anchor="middle" font-family="monospace" font-size="12" fill="#61afef">⑥</text>
+      <circle cx="255" cy="205" r="18" fill="#1c2230" stroke="#61afef" stroke-width="1.5"/><text x="255" y="210" text-anchor="middle" font-family="monospace" font-size="12" fill="#61afef">⑦</text>
+      <text x="160" y="255" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#5c6370">① → ②③ → ④⑤⑥⑦ (layer by layer)</text>
+      <!-- Divider -->
+      <line x1="330" y1="15" x2="330" y2="275" stroke="#21262d" stroke-width="1.5"/>
+      <!-- DFS -->
+      <text x="500" y="26" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#c678dd" font-weight="600">DFS — গভীরে আগে</text>
+      <line x1="500" y1="62" x2="440" y2="130" stroke="#c678dd" stroke-width="2"/>
+      <line x1="500" y1="62" x2="560" y2="130" stroke="#c678dd" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="440" y1="130" x2="410" y2="205" stroke="#c678dd" stroke-width="2"/>
+      <line x1="440" y1="130" x2="470" y2="205" stroke="#c678dd" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="410" y1="205" x2="400" y2="260" stroke="#c678dd" stroke-width="2"/>
+      <circle cx="500" cy="62" r="22" fill="#3d1a5c" stroke="#c678dd" stroke-width="2.5"/><text x="500" y="58" text-anchor="middle" font-family="monospace" font-size="11" fill="#c678dd">①</text><text x="500" y="73" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#75DFC1">শুরু</text>
+      <circle cx="440" cy="130" r="20" fill="#2d1040" stroke="#c678dd" stroke-width="2"/><text x="440" y="135" text-anchor="middle" font-family="monospace" font-size="13" fill="#c678dd">②</text>
+      <circle cx="560" cy="130" r="20" fill="#1c2230" stroke="#c678dd" stroke-width="1.5"/><text x="560" y="135" text-anchor="middle" font-family="monospace" font-size="13" fill="#5c6370">⑥</text>
+      <circle cx="410" cy="205" r="18" fill="#2d1040" stroke="#c678dd" stroke-width="2"/><text x="410" y="210" text-anchor="middle" font-family="monospace" font-size="12" fill="#c678dd">③</text>
+      <circle cx="470" cy="205" r="18" fill="#1c2230" stroke="#c678dd" stroke-width="1.5"/><text x="470" y="210" text-anchor="middle" font-family="monospace" font-size="12" fill="#5c6370">⑤</text>
+      <circle cx="400" cy="260" r="16" fill="#2d1040" stroke="#c678dd" stroke-width="2"/><text x="400" y="265" text-anchor="middle" font-family="monospace" font-size="11" fill="#c678dd">④</text>
+      <text x="500" y="285" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#5c6370">① → ② → ③ → ④ (শেষে গিয়ে ফিরে)</text>
+    </svg>
+    <div class="dc-cap">চিত্র ৭ — BFS: স্তরে স্তরে | DFS: একটি শাখা শেষ করে ফিরে আসে</div>
+  </div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">BFS ও DFS</span></div>
+    <pre>G3 = nx.<span class="cls">Graph</span>()
+G3.<span class="fn">add_edges_from</span>([(1,2),(1,3),(1,4),(2,5),(2,6),(3,7),(3,8),(4,9),(4,10)])
+
+<span class="cm"># BFS — নোড ১ থেকে শুরু</span>
+bfs_order = <span class="fn">list</span>(nx.<span class="fn">bfs_tree</span>(G3, source=<span class="nm">1</span>).nodes())
+<span class="fn">print</span>(<span class="str">"BFS:"</span>, bfs_order)
+<span class="cm"># [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] — স্তরে স্তরে</span>
+
+<span class="cm"># DFS — নোড ১ থেকে শুরু</span>
+dfs_order = <span class="fn">list</span>(nx.<span class="fn">dfs_tree</span>(G3, source=<span class="nm">1</span>).nodes())
+<span class="fn">print</span>(<span class="str">"DFS:"</span>, dfs_order)
+<span class="cm"># [1, 2, 5, 6, 3, 7, 8, 4, 9, 10] — একটি শাখা পুরো শেষ করে</span></pre>
+  </div>
+</section>
+
+<!-- KRUSKAL -->
+<section class="section" id="kruskal">
+  <div class="section-badge b2">অ্যালগরিদম</div>
+  <h2 class="st">Kruskal Algorithm — Minimum Spanning Tree (MST)</h2>
+  <p><strong>MST</strong> হলো সেই subgraph যা সব নোড কানেক্ট রাখে কিন্তু মোট edge weight সবচেয়ে কম।</p>
+  <div class="box bk"><div class="box-t">🏙️ বাস্তব উদাহরণ</div><p>১০টি শহরে ইন্টারনেট ক্যাবল বসাতে চাও। সব শহর কানেক্ট করো কিন্তু মোট খরচ সবচেয়ে কম রাখো। এটাই MST সমস্যা — Kruskal এটা সমাধান করে।</p></div>
+  <h4 class="mini">Kruskal কীভাবে কাজ করে?</h4>
+  <ol class="sl">
+    <li>সব edge weight অনুযায়ী ছোট থেকে বড় সাজাও</li>
+    <li>সবচেয়ে ছোট edge নাও</li>
+    <li>যদি এই edge যোগ করলে cycle হয় — বাদ দাও</li>
+    <li>সব নোড কানেক্ট না হওয়া পর্যন্ত ২-৩ ধাপ চালু রাখো</li>
+  </ol>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Kruskal MST</span></div>
+    <pre>G4 = nx.<span class="cls">Graph</span>()
+edges = [
+    (<span class="str">'A'</span>,<span class="str">'B'</span>,<span class="nm">1</span>),(<span class="str">'A'</span>,<span class="str">'C'</span>,<span class="nm">4</span>),(<span class="str">'B'</span>,<span class="str">'C'</span>,<span class="nm">2</span>),(<span class="str">'B'</span>,<span class="str">'D'</span>,<span class="nm">6</span>),
+    (<span class="str">'C'</span>,<span class="str">'E'</span>,<span class="nm">3</span>),(<span class="str">'D'</span>,<span class="str">'E'</span>,<span class="nm">5</span>),(<span class="str">'D'</span>,<span class="str">'F'</span>,<span class="nm">7</span>),(<span class="str">'E'</span>,<span class="str">'F'</span>,<span class="nm">8</span>),
+    (<span class="str">'E'</span>,<span class="str">'G'</span>,<span class="nm">9</span>),(<span class="str">'F'</span>,<span class="str">'G'</span>,<span class="nm">10</span>)
+]
+G4.<span class="fn">add_weighted_edges_from</span>(edges)
+
+<span class="cm"># Kruskal MST</span>
+G4_mst = nx.tree.<span class="fn">minimum_spanning_tree</span>(G4)
+
+pos = nx.<span class="fn">spring_layout</span>(G4)
+nx.<span class="fn">draw</span>(G4_mst, pos, with_labels=<span class="kw">True</span>, node_color=<span class="str">'#75DFC1'</span>)
+nx.<span class="fn">draw_networkx_edge_labels</span>(G4_mst, pos,
+    edge_labels=nx.<span class="fn">get_edge_attributes</span>(G4_mst, <span class="str">'weight'</span>))
+plt.<span class="fn">show</span>()
+
+<span class="fn">print</span>(<span class="str">"মূল গ্রাফ মোট weight:"</span>, G4.<span class="fn">size</span>(weight=<span class="str">'weight'</span>))
+<span class="fn">print</span>(<span class="str">"MST weight:"</span>, G4_mst.<span class="fn">size</span>(weight=<span class="str">'weight'</span>))
+<span class="fn">print</span>(<span class="str">"সাশ্রয়:"</span>, G4.<span class="fn">size</span>(weight=<span class="str">'weight'</span>)-G4_mst.<span class="fn">size</span>(weight=<span class="str">'weight'</span>))</pre>
+  </div>
+</section>
+
+<!-- DIJKSTRA -->
+<section class="section" id="dijkstra">
+  <div class="section-badge b2">অ্যালগরিদম</div>
+  <h2 class="st">Dijkstra Algorithm — সর্বসংক্ষিপ্ত পথ</h2>
+  <p>Dijkstra দিয়ে দুটি নোডের মধ্যে <strong>সবচেয়ে কম weight-এর পথ</strong> খোঁজা যায়।</p>
+  <div class="box bk"><div class="box-t">🗺️ Google Maps-এর মতো</div><p>ঢাকা থেকে চট্টগ্রাম — কোন রাস্তায় সবচেয়ে কম সময় লাগবে? Dijkstra এটাই করে।</p></div>
+  <h4 class="mini">Dijkstra কীভাবে কাজ করে?</h4>
+  <ol class="sl">
+    <li>শুরু নোডের দূরত্ব = 0, বাকি সব = ∞</li>
+    <li>শুরুর প্রতিবেশীদের দূরত্ব আপডেট করো</li>
+    <li>সবচেয়ে কম দূরত্বের নোড বেছে নাও</li>
+    <li>সেই নোডের প্রতিবেশীদের দূরত্ব আপডেট করো (ছোট হলে)</li>
+    <li>সব নোড visited না হওয়া পর্যন্ত চালু রাখো</li>
+  </ol>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Dijkstra Implementation</span></div>
+    <pre><span class="cm"># দুটি নোডের মধ্যে সর্বসংক্ষিপ্ত পথ</span>
+path = nx.<span class="fn">shortest_path</span>(G4, source=<span class="str">'A'</span>, target=<span class="str">'D'</span>, weight=<span class="str">'weight'</span>)
+<span class="fn">print</span>(<span class="str">"A→D পথ:"</span>, path)
+
+<span class="cm"># E থেকে সব নোডে পথ</span>
+all_paths = nx.<span class="fn">shortest_path</span>(G4, source=<span class="str">'E'</span>, weight=<span class="str">'weight'</span>)
+<span class="fn">print</span>(<span class="str">"E থেকে সব পথ:"</span>, all_paths)
+
+<span class="cm"># দূরত্ব</span>
+length = nx.<span class="fn">shortest_path_length</span>(G4, source=<span class="str">'A'</span>, target=<span class="str">'D'</span>, weight=<span class="str">'weight'</span>)
+<span class="fn">print</span>(<span class="str">"A-D দূরত্ব:"</span>, length)
+
+<span class="cm"># গড় shortest path</span>
+avg = nx.<span class="fn">average_shortest_path_length</span>(G4, weight=<span class="str">'weight'</span>)
+avg_mst = nx.<span class="fn">average_shortest_path_length</span>(G4_mst, weight=<span class="str">'weight'</span>)
+<span class="fn">print</span>(<span class="str">f"গড় — মূল: {avg:.2f} | MST: {avg_mst:.2f}"</span>)</pre>
+  </div>
+  <table class="tbl">
+    <tr><th>বিষয়</th><th>Kruskal</th><th>Dijkstra</th></tr>
+    <tr><td>লক্ষ্য</td><td>সব নোড কানেক্ট, মোট weight কম</td><td>নির্দিষ্ট পথ, দূরত্ব কম</td></tr>
+    <tr><td>ফলাফল</td><td>Minimum Spanning Tree</td><td>Shortest Path</td></tr>
+    <tr><td>ব্যবহার</td><td>Network design, cable</td><td>GPS, routing</td></tr>
+  </table>
+</section>
+
+<!-- EXERCISE NB02 -->
+<section class="section" id="ex2">
+  <div class="section-badge be">💪 Exercise — অ্যালগরিদম</div>
+  <h2 class="st">Interview-level Exercise</h2>
+
+  <div class="exb">
+    <div class="exh"><div class="exn">3</div><div><h4>ML Cluster Network Analysis</h4><p>ML Engineering · Dijkstra · Intermediate</p></div></div>
+    <div class="exbody">
+      <p><strong>সমস্যা:</strong> Distributed ML training cluster-এ node-to-node transfer time (ms):</p>
+      <ul class="ul">
+        <li>GPU1→GPU2: 5ms | GPU1→Storage: 20ms | GPU2→GPU3: 8ms</li>
+        <li>GPU2→Storage: 15ms | GPU3→Server: 3ms | Storage→Server: 12ms | Server→API: 6ms</li>
+      </ul>
+      <p><strong>কাজ:</strong> (a) DiGraph তৈরি করো (b) GPU1 থেকে API-তে সবচেয়ে দ্রুত পথ খোঁজো (c) সব পথের latency বের করো।</p>
+      <p><strong>ইন্টারভিউ:</strong> Negative weight edge হলে Dijkstra কাজ করে না — কোন algorithm ব্যবহার করবে?</p>
+      <button class="ht" onclick="toggleHint('h3')">💡 হিন্ট</button>
+      <button class="st2" onclick="toggleSol('s3')">✅ সমাধান</button>
+      <div class="hc" id="h3">Negative weight → Bellman-Ford: <code>nx.bellman_ford_path(G, source, target)</code></div>
+      <div class="sc" id="s3">
+        <div class="cb"><div class="ch"><span class="cl">Python</span></div>
+        <pre>G_c = nx.<span class="cls">DiGraph</span>()
+G_c.<span class="fn">add_weighted_edges_from</span>([
+    (<span class="str">'GPU1'</span>,<span class="str">'GPU2'</span>,<span class="nm">5</span>),(<span class="str">'GPU1'</span>,<span class="str">'Storage'</span>,<span class="nm">20</span>),
+    (<span class="str">'GPU2'</span>,<span class="str">'GPU3'</span>,<span class="nm">8</span>),(<span class="str">'GPU2'</span>,<span class="str">'Storage'</span>,<span class="nm">15</span>),
+    (<span class="str">'GPU3'</span>,<span class="str">'Server'</span>,<span class="nm">3</span>),(<span class="str">'Storage'</span>,<span class="str">'Server'</span>,<span class="nm">12</span>),
+    (<span class="str">'Server'</span>,<span class="str">'API'</span>,<span class="nm">6</span>)
+])
+path = nx.<span class="fn">shortest_path</span>(G_c,<span class="str">'GPU1'</span>,<span class="str">'API'</span>,weight=<span class="str">'weight'</span>)
+lat = nx.<span class="fn">shortest_path_length</span>(G_c,<span class="str">'GPU1'</span>,<span class="str">'API'</span>,weight=<span class="str">'weight'</span>)
+<span class="fn">print</span>(<span class="str">f"পথ: {' → '.join(path)} | Latency: {lat}ms"</span>)
+<span class="cm"># GPU1 → GPU2 → GPU3 → Server → API = 22ms</span></pre></div>
+        <p><strong>উত্তর:</strong> Negative weight → <strong>Bellman-Ford</strong> algorithm ব্যবহার করতে হবে। Dijkstra negative weight handle করতে পারে না কারণ এটা greedy — একবার confirmed node আর revisit করে না।</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="exb">
+    <div class="exh"><div class="exn">4</div><div><h4>Feature Dependency BFS Analysis</h4><p>ML Engineering · BFS · Intermediate</p></div></div>
+    <div class="exbody">
+      <p><strong>সমস্যা:</strong> ML model-এ feature dependency: <code>raw_data → [age, income, location] → [age_group, income_level] → [risk_score] → [prediction]</code></p>
+      <p><strong>কাজ:</strong> BFS দিয়ে প্রতিটি feature কত ধাপে পাওয়া যায় বের করো।</p>
+      <button class="ht" onclick="toggleHint('h4')">💡 হিন্ট</button>
+      <button class="st2" onclick="toggleSol('s4')">✅ সমাধান</button>
+      <div class="hc" id="h4"><code>nx.single_source_shortest_path_length(G, source)</code> — এটা BFS দিয়ে প্রতিটি নোডের দূরত্ব (স্তর) দেয়।</div>
+      <div class="sc" id="s4">
+        <div class="cb"><div class="ch"><span class="cl">Python</span></div>
+        <pre>G_f = nx.<span class="cls">DiGraph</span>()
+G_f.<span class="fn">add_edges_from</span>([
+    (<span class="str">'raw_data'</span>,<span class="str">'age'</span>),(<span class="str">'raw_data'</span>,<span class="str">'income'</span>),(<span class="str">'raw_data'</span>,<span class="str">'location'</span>),
+    (<span class="str">'age'</span>,<span class="str">'age_group'</span>),(<span class="str">'income'</span>,<span class="str">'income_level'</span>),
+    (<span class="str">'age_group'</span>,<span class="str">'risk_score'</span>),(<span class="str">'income_level'</span>,<span class="str">'risk_score'</span>),
+    (<span class="str">'location'</span>,<span class="str">'risk_score'</span>),(<span class="str">'risk_score'</span>,<span class="str">'prediction'</span>)
+])
+levels = nx.<span class="fn">single_source_shortest_path_length</span>(G_f, <span class="str">'raw_data'</span>)
+<span class="kw">for</span> feat, lv <span class="kw">in</span> <span class="fn">sorted</span>(levels.items(), key=<span class="kw">lambda</span> x: x[<span class="nm">1</span>]):
+    <span class="fn">print</span>(<span class="str">f"  স্তর {lv}: {feat}"</span>)</pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     NB03 — COMMUNITY DETECTION
+══════════════════════════════════════════ -->
+<section class="section" id="comm-intro">
+  <div class="section-badge b3">Community ও Centrality</div>
+  <h2 class="st">Community Detection — সম্প্রদায় আবিষ্কার</h2>
+  <p><strong>Community</strong> হলো গ্রাফের এমন একটি দল যারা নিজেদের মধ্যে বেশি যুক্ত এবং বাইরের সাথে কম। সহজ কথায় — একটি "ক্লাস্টার" বা "গ্রুপ"।</p>
+  <div class="box bk"><div class="box-t">🏫 বাস্তব উদাহরণ</div>
+    <ul class="ul">
+      <li><strong>Facebook:</strong> একই স্কুলের বন্ধুরা → একটি community</li>
+      <li><strong>Amazon:</strong> একই ধরনের পণ্য কিনলে → একটি customer segment</li>
+      <li><strong>Fraud Detection:</strong> একই ফ্রড নেটওয়ার্কের সদস্যরা → একটি community</li>
+      <li><strong>Gene Networks:</strong> একই জৈবিক ফাংশনের gene → একটি community</li>
+    </ul>
+  </div>
+  <div class="dc">
+    <svg viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg" style="max-width:620px;width:100%;">
+      <rect width="620" height="260" fill="#161b22" rx="10"/>
+      <text x="310" y="26" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#75DFC1" font-weight="600">Community Detection — দলবদ্ধ নোড</text>
+      <!-- Community 1 -->
+      <ellipse cx="145" cy="135" rx="105" ry="85" fill="rgba(97,175,239,0.05)" stroke="#61afef" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="145" y="232" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#61afef">Community 1</text>
+      <!-- Community 2 -->
+      <ellipse cx="360" cy="120" rx="95" ry="78" fill="rgba(198,120,221,0.05)" stroke="#c678dd" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="360" y="210" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#c678dd">Community 2</text>
+      <!-- Community 3 -->
+      <ellipse cx="515" cy="155" rx="75" ry="68" fill="rgba(63,185,80,0.05)" stroke="#3fb950" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="515" y="232" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#3fb950">Community 3</text>
+      <!-- Intra edges (thick) -->
+      <line x1="90" y1="110" x2="145" y2="82" stroke="#61afef" stroke-width="2.5"/>
+      <line x1="145" y1="82" x2="205" y2="110" stroke="#61afef" stroke-width="2.5"/>
+      <line x1="90" y1="110" x2="120" y2="168" stroke="#61afef" stroke-width="2.5"/>
+      <line x1="120" y1="168" x2="180" y2="168" stroke="#61afef" stroke-width="2.5"/>
+      <line x1="145" y1="82" x2="120" y2="168" stroke="#61afef" stroke-width="2.5"/>
+      <line x1="310" y1="95" x2="375" y2="75" stroke="#c678dd" stroke-width="2.5"/>
+      <line x1="375" y1="75" x2="425" y2="105" stroke="#c678dd" stroke-width="2.5"/>
+      <line x1="310" y1="95" x2="335" y2="155" stroke="#c678dd" stroke-width="2.5"/>
+      <line x1="335" y1="155" x2="405" y2="150" stroke="#c678dd" stroke-width="2.5"/>
+      <line x1="470" y1="135" x2="535" y2="128" stroke="#3fb950" stroke-width="2.5"/>
+      <line x1="535" y1="128" x2="545" y2="190" stroke="#3fb950" stroke-width="2.5"/>
+      <line x1="470" y1="135" x2="490" y2="195" stroke="#3fb950" stroke-width="2.5"/>
+      <!-- Inter edges (thin dashed) -->
+      <line x1="205" y1="110" x2="310" y2="95" stroke="#30363d" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="425" y1="105" x2="470" y2="135" stroke="#30363d" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <!-- Nodes -->
+      <circle cx="90" cy="110" r="17" fill="#1c2230" stroke="#61afef" stroke-width="2"/><text x="90" y="115" text-anchor="middle" font-family="monospace" font-size="10" fill="#61afef">1</text>
+      <circle cx="145" cy="82" r="17" fill="#1c2230" stroke="#61afef" stroke-width="2"/><text x="145" y="87" text-anchor="middle" font-family="monospace" font-size="10" fill="#61afef">2</text>
+      <circle cx="205" cy="110" r="17" fill="#1c2230" stroke="#61afef" stroke-width="2"/><text x="205" y="115" text-anchor="middle" font-family="monospace" font-size="10" fill="#61afef">3</text>
+      <circle cx="120" cy="168" r="17" fill="#1c2230" stroke="#61afef" stroke-width="2"/><text x="120" y="173" text-anchor="middle" font-family="monospace" font-size="10" fill="#61afef">4</text>
+      <circle cx="180" cy="168" r="17" fill="#1c2230" stroke="#61afef" stroke-width="2"/><text x="180" y="173" text-anchor="middle" font-family="monospace" font-size="10" fill="#61afef">5</text>
+      <circle cx="310" cy="95" r="17" fill="#1c2230" stroke="#c678dd" stroke-width="2"/><text x="310" y="100" text-anchor="middle" font-family="monospace" font-size="10" fill="#c678dd">6</text>
+      <circle cx="375" cy="75" r="17" fill="#1c2230" stroke="#c678dd" stroke-width="2"/><text x="375" y="80" text-anchor="middle" font-family="monospace" font-size="10" fill="#c678dd">7</text>
+      <circle cx="425" cy="105" r="17" fill="#1c2230" stroke="#c678dd" stroke-width="2"/><text x="425" y="110" text-anchor="middle" font-family="monospace" font-size="10" fill="#c678dd">8</text>
+      <circle cx="335" cy="155" r="17" fill="#1c2230" stroke="#c678dd" stroke-width="2"/><text x="335" y="160" text-anchor="middle" font-family="monospace" font-size="10" fill="#c678dd">9</text>
+      <circle cx="405" cy="150" r="17" fill="#1c2230" stroke="#c678dd" stroke-width="2"/><text x="405" y="155" text-anchor="middle" font-family="monospace" font-size="10" fill="#c678dd">10</text>
+      <circle cx="470" cy="135" r="17" fill="#1c2230" stroke="#3fb950" stroke-width="2"/><text x="470" y="140" text-anchor="middle" font-family="monospace" font-size="10" fill="#3fb950">11</text>
+      <circle cx="535" cy="128" r="17" fill="#1c2230" stroke="#3fb950" stroke-width="2"/><text x="535" y="133" text-anchor="middle" font-family="monospace" font-size="10" fill="#3fb950">12</text>
+      <circle cx="545" cy="190" r="17" fill="#1c2230" stroke="#3fb950" stroke-width="2"/><text x="545" y="195" text-anchor="middle" font-family="monospace" font-size="10" fill="#3fb950">13</text>
+      <circle cx="490" cy="195" r="17" fill="#1c2230" stroke="#3fb950" stroke-width="2"/><text x="490" y="200" text-anchor="middle" font-family="monospace" font-size="10" fill="#3fb950">14</text>
+    </svg>
+    <div class="dc-cap">চিত্র ৮ — Community Detection: মোটা রেখা = ভেতরের connection (বেশি) | ছেদা রেখা = বাইরের connection (কম)</div>
+  </div>
+</section>
+
+<!-- KARATE NETWORK -->
+<section class="section" id="karate">
+  <div class="section-badge b3">Community ও Centrality</div>
+  <h2 class="st">Zachary's Karate Club Network</h2>
+  <div class="box bi"><div class="box-t">📖 গল্পটা কী?</div>
+    <p>১৯৭০-এর দশকে Wayne Zachary একটি বিশ্ববিদ্যালয়ের কারাতে ক্লাব নিয়ে গবেষণা করেন। ৩৪ সদস্যের ক্লাবে অ্যাডমিন "John A" ও প্রশিক্ষক "Mr. Hi" এর বিবাদে ক্লাব দুভাগ হয়। NetworkX-এ এই ডেটা built-in আছে — community detection টেস্টের ক্লাসিক উদাহরণ।</p>
+  </div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Karate Club বিশ্লেষণ</span></div>
+    <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+np.random.<span class="fn">seed</span>(<span class="nm">1</span>)
+
+<span class="cm"># Built-in karate club graph</span>
+z = nx.<span class="fn">karate_club_graph</span>()
+<span class="fn">print</span>(<span class="str">"সদস্য (নোড):"</span>, z.<span class="fn">order</span>())    <span class="cm"># 34</span>
+<span class="fn">print</span>(<span class="str">"বন্ধুত্ব (edge):"</span>, z.<span class="fn">size</span>())  <span class="cm"># 78</span>
+<span class="fn">print</span>(<span class="str">"Connected:"</span>, nx.<span class="fn">is_connected</span>(z))
+
+A = nx.<span class="fn">adjacency_matrix</span>(z)
+diameter = nx.<span class="fn">diameter</span>(z)           <span class="cm"># সর্বোচ্চ shortest path দৈর্ঘ্য</span>
+density = nx.<span class="fn">density</span>(z)             <span class="cm"># edge/সম্ভাব্য সর্বোচ্চ edge</span>
+<span class="fn">print</span>(<span class="str">f"Diameter: {diameter} | Density: {density:.4f}"</span>)
+
+<span class="cm"># দুটি community আলাদা রঙে দেখানো</span>
+mr_hi = [<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>,<span class="nm">4</span>,<span class="nm">5</span>,<span class="nm">6</span>,<span class="nm">7</span>,<span class="nm">8</span>,<span class="nm">10</span>,<span class="nm">11</span>,<span class="nm">12</span>,<span class="nm">13</span>,<span class="nm">16</span>,<span class="nm">17</span>,<span class="nm">19</span>,<span class="nm">21</span>]
+john_a = [<span class="nm">9</span>,<span class="nm">14</span>,<span class="nm">15</span>,<span class="nm">18</span>,<span class="nm">20</span>,<span class="nm">22</span>,<span class="nm">23</span>,<span class="nm">24</span>,<span class="nm">25</span>,<span class="nm">26</span>,<span class="nm">27</span>,<span class="nm">28</span>,<span class="nm">29</span>,<span class="nm">30</span>,<span class="nm">31</span>,<span class="nm">32</span>]
+
+pos = nx.<span class="fn">fruchterman_reingold_layout</span>(z)
+plt.figure(figsize=(<span class="nm">15</span>,<span class="nm">8</span>))
+nx.<span class="fn">draw_networkx_nodes</span>(z, pos, nodelist=[<span class="nm">0</span>]+mr_hi, node_color=<span class="str">"#61afef"</span>)
+nx.<span class="fn">draw_networkx_nodes</span>(z, pos, nodelist=[<span class="nm">33</span>]+john_a, node_color=<span class="str">"#75DFC1"</span>)
+nx.<span class="fn">draw_networkx_edges</span>(z, pos, alpha=<span class="nm">0.3</span>)
+nx.<span class="fn">draw_networkx_labels</span>(z, pos, {<span class="nm">0</span>:<span class="str">"Mr.Hi"</span>,<span class="nm">33</span>:<span class="str">"John"</span>}, font_color=<span class="str">"white"</span>)
+plt.<span class="fn">show</span>()</pre>
+  </div>
+</section>
+
+<!-- AGGLOMERATIVE -->
+<section class="section" id="agglo">
+  <div class="section-badge b3">Community ও Centrality</div>
+  <h2 class="st">Agglomerative Approach — মিলিত পদ্ধতি</h2>
+  <p>প্রথমে প্রতিটি নোড আলাদা cluster। তারপর সবচেয়ে কাছের দুটি cluster মেলানো হয়। Similarity measure হিসেবে shortest path ব্যবহার করা হয়।</p>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Hierarchical Clustering + Dendrogram</span></div>
+    <pre><span class="kw">from</span> scipy.cluster.hierarchy <span class="kw">import</span> linkage, dendrogram
+
+<span class="cm"># ধাপ ১: সব নোডের মধ্যে shortest path বের করা</span>
+path_length = <span class="fn">dict</span>(nx.<span class="fn">all_pairs_shortest_path_length</span>(z))
+
+<span class="cm"># ধাপ ২: Distance matrix তৈরি</span>
+n = <span class="fn">len</span>(z.nodes())
+distances = np.<span class="fn">zeros</span>((n, n))
+<span class="kw">for</span> u <span class="kw">in</span> path_length.keys():
+    <span class="kw">for</span> v <span class="kw">in</span> path_length[u].keys():
+        distances[u][v] = path_length[u][v]
+
+<span class="cm"># ধাপ ৩: Hierarchical Clustering (Ward's method)</span>
+hclust = <span class="fn">linkage</span>(distances, method=<span class="str">'ward'</span>)
+
+<span class="cm"># ধাপ ৪: Dendrogram দেখানো</span>
+plt.figure(figsize=(<span class="nm">20</span>,<span class="nm">8</span>))
+plt.<span class="fn">title</span>(<span class="str">"Dendrogram — Karate Club"</span>)
+<span class="fn">dendrogram</span>(hclust, color_threshold=<span class="nm">17</span>)
+plt.<span class="fn">show</span>()</pre>
+  </div>
+  <div class="box bi"><div class="box-t">🌳 Dendrogram কী?</div>
+    <p>Hierarchical clustering-এর tree visualization। নিচে প্রতিটি নোড আলাদা। উপরে উঠলে cluster মেলানো হয়। উচ্চতা যত বেশি — দুটি cluster তত আলাদা ছিল।</p>
+  </div>
+</section>
+
+<!-- LOUVAIN -->
+<section class="section" id="louvain">
+  <div class="section-badge b3">Community ও Centrality</div>
+  <h2 class="st">Louvain Method — Modularity Maximization</h2>
+  <div class="box bd"><div class="box-t">📐 Modularity কী?</div>
+    <p>Modularity বলে community কতটা "ভালো" ভাগ হয়েছে। মান -1 থেকে 1। <strong>0.3 এর বেশি হলে ভালো</strong> community structure।</p>
+    <p>সহজ কথায়: একটি community-তে expected-এর চেয়ে বেশি connection থাকলে সেটা ভালো community।</p>
+  </div>
+  <h4 class="mini">Louvain কীভাবে কাজ করে?</h4>
+  <ol class="sl">
+    <li>প্রতিটি নোড আলাদা community থেকে শুরু</li>
+    <li>প্রতিটি নোডকে প্রতিবেশীর community-তে রেখে দেখো modularity বাড়ে কিনা</li>
+    <li>বাড়লে ওখানে রাখো</li>
+    <li>স্থিতিশীল না হওয়া পর্যন্ত চালু রাখো</li>
+  </ol>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Louvain Community Detection</span></div>
+    <pre><span class="kw">from</span> community.community_louvain <span class="kw">import</span> best_partition
+
+<span class="cm"># সেরা partition খোঁজা</span>
+best_part = <span class="fn">best_partition</span>(z)
+<span class="fn">print</span>(<span class="str">"Community assignment:"</span>, best_part)
+<span class="cm"># {0: 1, 1: 1, 2: 0, ...} → নোড: community_id</span>
+
+<span class="cm"># ভিজ্যুয়ালাইজেশন</span>
+plt.figure(figsize=(<span class="nm">12</span>,<span class="nm">10</span>))
+pos = nx.<span class="fn">fruchterman_reingold_layout</span>(z)
+node_cluster = <span class="fn">list</span>(best_part.values())
+nx.<span class="fn">draw_networkx_nodes</span>(z, pos, node_color=node_cluster, cmap=plt.cm.Set1)
+nx.<span class="fn">draw_networkx_edges</span>(z, pos, alpha=<span class="nm">0.5</span>)
+nx.<span class="fn">draw_networkx_labels</span>(z, pos)
+plt.<span class="fn">show</span>()</pre>
+  </div>
+</section>
+
+<!-- GIRVAN NEWMAN -->
+<section class="section" id="girvan">
+  <div class="section-badge b3">Community ও Centrality</div>
+  <h2 class="st">Girvan-Newman — বিভাজন পদ্ধতি</h2>
+  <p>Louvain মেলানোর মাধ্যমে community খোঁজে, Girvan-Newman <strong>ভাঙার মাধ্যমে</strong>। যে edge দুটি community-র মধ্যে "সেতু" — সেটা সরালেই community আলাদা হয়।</p>
+  <div class="box bd"><div class="box-t">📐 Edge Betweenness</div>
+    <p>সব নোড-জোড়ার মধ্যে shortest path গণনা করলে যে edge সবচেয়ে বেশিবার ব্যবহৃত হয় — সেটার edge betweenness সবচেয়ে বেশি। এই "bridge" edge-ই community আলাদা করে।</p>
+  </div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Girvan-Newman Algorithm</span></div>
+    <pre><span class="kw">from</span> networkx.algorithms.community <span class="kw">import</span> girvan_newman
+<span class="kw">from</span> networkx.algorithms.community.quality <span class="kw">import</span> performance
+
+<span class="cm"># Community generator</span>
+communities_gen = nx.algorithms.community.<span class="fn">girvan_newman</span>(z)
+
+<span class="cm"># প্রথম partition</span>
+community = <span class="fn">next</span>(communities_gen)
+<span class="fn">print</span>(<span class="str">"Performance:"</span>, <span class="fn">performance</span>(z, community))
+
+<span class="cm"># সেরা partition খোঁজা</span>
+communities_gen = nx.algorithms.community.<span class="fn">girvan_newman</span>(z)
+best_score, best_part, scores = <span class="nm">0</span>, <span class="kw">None</span>, []
+<span class="kw">for</span> partition <span class="kw">in</span> communities_gen:
+    score = <span class="fn">performance</span>(z, partition)
+    <span class="kw">if</span> score >= best_score:
+        best_part, best_score = partition, score
+    scores.<span class="fn">append</span>(score)
+
+plt.<span class="fn">plot</span>(<span class="fn">range</span>(<span class="fn">len</span>(scores)), scores)
+plt.<span class="fn">xlabel</span>(<span class="str">'Iteration'</span>); plt.<span class="fn">ylabel</span>(<span class="str">'Performance'</span>)
+plt.<span class="fn">show</span>()
+<span class="fn">print</span>(<span class="str">f"সেরা score: {best_score:.4f}"</span>)</pre>
+  </div>
+  <table class="tbl">
+    <tr><th>বিষয়</th><th>Louvain</th><th>Girvan-Newman</th></tr>
+    <tr><td>কৌশল</td><td>নোড মেলানো (bottom-up)</td><td>Edge সরানো (top-down)</td></tr>
+    <tr><td>গতি</td><td>দ্রুত — বড় গ্রাফে</td><td>ধীর — ছোট গ্রাফে</td></tr>
+    <tr><td>Metric</td><td>Modularity maximize</td><td>Edge Betweenness</td></tr>
+    <tr><td>NetworkX</td><td><code>best_partition()</code></td><td><code>girvan_newman()</code></td></tr>
+  </table>
+</section>
+
+<!-- EXERCISE NB03 -->
+<section class="section" id="ex3">
+  <div class="section-badge be">💪 Exercise — Community</div>
+  <h2 class="st">Interview-level Exercise</h2>
+  <div class="exb">
+    <div class="exh"><div class="exn">5</div><div><h4>Customer Segmentation Graph</h4><p>ML Engineering · Louvain · Advanced</p></div></div>
+    <div class="exbody">
+      <p><strong>সমস্যা:</strong> ই-কমার্স platform-এর customer co-purchase data। দুজন customer একই পণ্য কিনলে edge আছে। Louvain দিয়ে segment খোঁজো।</p>
+      <ul class="ul">
+        <li>Tech buyers: C1-C2, C1-C3, C2-C3, C2-C4, C3-C5</li>
+        <li>Fashion buyers: C6-C7, C6-C8, C7-C9, C8-C9, C7-C10</li>
+        <li>Home buyers: C11-C12, C12-C13, C13-C14, C14-C15, C11-C15</li>
+        <li>Bridges: C4-C6, C10-C11</li>
+      </ul>
+      <p><strong>কাজ:</strong> (a) Graph তৈরি করো (b) Louvain দিয়ে segment খোঁজো (c) প্রতিটি segment-এর density বের করো।</p>
+      <p><strong>ইন্টারভিউ:</strong> Real-time recommendation system-এ community detection ব্যবহারের সুবিধা ও অসুবিধা কী?</p>
+      <button class="ht" onclick="toggleHint('h5')">💡 হিন্ট</button>
+      <button class="st2" onclick="toggleSol('s5')">✅ সমাধান</button>
+      <div class="hc" id="h5"><code>collections.Counter(best_part.values())</code> দিয়ে প্রতিটি community-র আকার বের করো।</div>
+      <div class="sc" id="s5">
+        <div class="cb"><div class="ch"><span class="cl">Python</span></div>
+        <pre><span class="kw">import</span> collections
+<span class="kw">from</span> community.community_louvain <span class="kw">import</span> best_partition
+
+G_c = nx.<span class="cls">Graph</span>()
+G_c.<span class="fn">add_edges_from</span>([
+    (<span class="str">'C1'</span>,<span class="str">'C2'</span>),(<span class="str">'C1'</span>,<span class="str">'C3'</span>),(<span class="str">'C2'</span>,<span class="str">'C3'</span>),(<span class="str">'C2'</span>,<span class="str">'C4'</span>),(<span class="str">'C3'</span>,<span class="str">'C5'</span>),
+    (<span class="str">'C6'</span>,<span class="str">'C7'</span>),(<span class="str">'C6'</span>,<span class="str">'C8'</span>),(<span class="str">'C7'</span>,<span class="str">'C9'</span>),(<span class="str">'C8'</span>,<span class="str">'C9'</span>),(<span class="str">'C7'</span>,<span class="str">'C10'</span>),
+    (<span class="str">'C11'</span>,<span class="str">'C12'</span>),(<span class="str">'C12'</span>,<span class="str">'C13'</span>),(<span class="str">'C13'</span>,<span class="str">'C14'</span>),(<span class="str">'C14'</span>,<span class="str">'C15'</span>),(<span class="str">'C11'</span>,<span class="str">'C15'</span>),
+    (<span class="str">'C4'</span>,<span class="str">'C6'</span>),(<span class="str">'C10'</span>,<span class="str">'C11'</span>)
+])
+bp = <span class="fn">best_partition</span>(G_c)
+sizes = collections.<span class="fn">Counter</span>(bp.values())
+<span class="fn">print</span>(<span class="str">"Segment sizes:"</span>, sizes)
+<span class="kw">for</span> cid <span class="kw">in</span> <span class="fn">set</span>(bp.values()):
+    members = [c <span class="kw">for</span> c,v <span class="kw">in</span> bp.items() <span class="kw">if</span> v == cid]
+    sub = G_c.<span class="fn">subgraph</span>(members)
+    <span class="fn">print</span>(<span class="str">f"Segment {cid}: {members}, density={nx.density(sub):.3f}"</span>)</pre></div>
+        <p><strong>ইন্টারভিউ উত্তর:</strong> সুবিধা — implicit group খোঁজা, cold start problem কমায়। অসুবিধা — computationally expensive, real-time update কঠিন, community unstable হতে পারে।</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     NB04 — PAGERANK
+══════════════════════════════════════════ -->
+<section class="section" id="pr-intro">
+  <div class="section-badge b4">Advanced Topics</div>
+  <h2 class="st">PageRank — Google কীভাবে পেজ র‍্যাংক করে</h2>
+  <p><strong>PageRank</strong> হলো Larry Page এর তৈরি অ্যালগরিদম। মূল ধারণা: <em>"যে পেজে বেশি ও গুরুত্বপূর্ণ পেজ লিংক করে, সেটা বেশি গুরুত্বপূর্ণ।"</em></p>
+  <div class="box bk"><div class="box-t">🗳️ ভোটের মতো চিন্তা করো</div>
+    <p>প্রতিটি webpage অন্য page-কে "ভোট" দেয় যখন তাকে link করে। কিন্তু সব ভোট সমান না — গুরুত্বপূর্ণ page-এর ভোট বেশি মূল্যবান। PageRank এই মূল্য বারবার আপডেট করে যতক্ষণ stable না হয়।</p>
+  </div>
+  <div class="dc">
+    <svg viewBox="0 0 620 250" xmlns="http://www.w3.org/2000/svg" style="max-width:620px;width:100%;">
+      <rect width="620" height="250" fill="#161b22" rx="10"/>
+      <text x="310" y="26" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="13" fill="#e06c75" font-weight="600">PageRank — Link = ভোট</text>
+      <defs>
+        <marker id="pra" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#e06c75"/></marker>
+        <marker id="prb" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#f7c948"/></marker>
+      </defs>
+      <line x1="75" y1="72" x2="258" y2="128" stroke="#e06c75" stroke-width="1.5" marker-end="url(#pra)"/>
+      <line x1="75" y1="148" x2="257" y2="148" stroke="#e06c75" stroke-width="1.5" marker-end="url(#pra)"/>
+      <line x1="75" y1="215" x2="258" y2="168" stroke="#e06c75" stroke-width="1.5" marker-end="url(#pra)"/>
+      <line x1="185" y1="58" x2="260" y2="130" stroke="#e06c75" stroke-width="1.5" marker-end="url(#pra)"/>
+      <line x1="320" y1="140" x2="430" y2="95" stroke="#f7c948" stroke-width="2" marker-end="url(#prb)"/>
+      <line x1="320" y1="158" x2="430" y2="195" stroke="#f7c948" stroke-width="2" marker-end="url(#prb)"/>
+      <circle cx="75" cy="72" r="22" fill="#1c2230" stroke="#30363d" stroke-width="1.5"/><text x="75" y="68" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#8b949e">site1</text><text x="75" y="81" text-anchor="middle" font-family="monospace" font-size="10" fill="#5c6370">PR=0.1</text>
+      <circle cx="75" cy="148" r="22" fill="#1c2230" stroke="#30363d" stroke-width="1.5"/><text x="75" y="144" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#8b949e">site2</text><text x="75" y="157" text-anchor="middle" font-family="monospace" font-size="10" fill="#5c6370">PR=0.2</text>
+      <circle cx="75" cy="215" r="22" fill="#1c2230" stroke="#30363d" stroke-width="1.5"/><text x="75" y="211" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#8b949e">site3</text><text x="75" y="224" text-anchor="middle" font-family="monospace" font-size="10" fill="#5c6370">PR=0.1</text>
+      <circle cx="185" cy="58" r="22" fill="#1c2230" stroke="#30363d" stroke-width="1.5"/><text x="185" y="54" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#8b949e">site4</text><text x="185" y="67" text-anchor="middle" font-family="monospace" font-size="10" fill="#5c6370">PR=0.3</text>
+      <circle cx="290" cy="148" r="42" fill="#2d1020" stroke="#e06c75" stroke-width="3"/>
+      <text x="290" y="140" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#e06c75" font-weight="700">জনপ্রিয়</text>
+      <text x="290" y="155" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="10" fill="#e06c75">পেজ</text>
+      <text x="290" y="168" text-anchor="middle" font-family="monospace" font-size="10" fill="#f7c948">PR=0.82</text>
+      <circle cx="460" cy="95" r="28" fill="#1c2230" stroke="#f7c948" stroke-width="2"/><text x="460" y="91" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#f7c948">লিংকড</text><text x="460" y="105" text-anchor="middle" font-family="monospace" font-size="9" fill="#f7c948">PR=0.5</text>
+      <circle cx="460" cy="195" r="28" fill="#1c2230" stroke="#f7c948" stroke-width="2"/><text x="460" y="191" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="9" fill="#f7c948">লিংকড</text><text x="460" y="205" text-anchor="middle" font-family="monospace" font-size="9" fill="#f7c948">PR=0.5</text>
+      <text x="310" y="240" text-anchor="middle" font-family="Hind Siliguri,sans-serif" font-size="11" fill="#5c6370">বেশি link → বেশি PageRank | গুরুত্বপূর্ণ পেজের link বেশি মূল্যবান</text>
+    </svg>
+    <div class="dc-cap">চিত্র ৯ — PageRank: যত বেশি ও গুরুত্বপূর্ণ পেজ লিংক করে, তত বেশি PageRank</div>
+  </div>
+</section>
+
+<section class="section" id="pr-simple">
+  <div class="section-badge b4">Advanced Topics</div>
+  <h2 class="st">Simple PageRank Algorithm</h2>
+  <div class="box bd"><div class="box-t">📐 সূত্র</div>
+    <p>Initial: PR(Ai; 0) = 1/N (সব পেজ সমান)</p>
+    <p>Update: PR(Ai; t+1) = Σ [PR(Aj; t) / L(Aj)] — যেখানে Aj, Ai কে point করে এবং L(Aj) = Aj এর outgoing link সংখ্যা</p>
+  </div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Simple PageRank</span></div>
+    <pre><span class="cm"># Political blog graph লোড</span>
+Gr = nx.<span class="fn">read_gml</span>(<span class="str">'polblogs.gml'</span>)
+<span class="fn">print</span>(<span class="str">f"নোড: {nx.number_of_nodes(Gr)}, Edge: {nx.number_of_edges(Gr)}"</span>)
+
+<span class="cm"># একটি সাইটের neighborhood subgraph</span>
+L = <span class="fn">list</span>(Gr.adj[<span class="str">'alternateworlds.blogspot.com'</span>])
+G = Gr.<span class="fn">subgraph</span>(L)
+N = nx.<span class="fn">number_of_nodes</span>(G)
+dic = <span class="fn">dict</span>((L[i], i) <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(N))
+
+<span class="kw">def</span> <span class="fn">PageRankSimple</span>(G, dic, pr_old):
+    N = nx.<span class="fn">number_of_nodes</span>(G)
+    pr_new = np.<span class="fn">ones</span>(N)
+    <span class="kw">for</span> site <span class="kw">in</span> G.nodes():
+        s = <span class="nm">0</span>
+        <span class="kw">for</span> nb <span class="kw">in</span> G.<span class="fn">predecessors</span>(site):
+            s += pr_old[dic[nb]] / G.<span class="fn">out_degree</span>(nb)
+        <span class="kw">for</span> n <span class="kw">in</span> G.nodes():
+            <span class="kw">if</span> G.<span class="fn">out_degree</span>(n) == <span class="nm">0</span>:
+                s += pr_old[dic[n]] / N
+        pr_new[dic[site]] = s
+    <span class="kw">return</span> pr_new
+
+<span class="cm"># ৩ iteration</span>
+pr = np.<span class="fn">ones</span>(N) / N
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):
+    pr = <span class="fn">PageRankSimple</span>(G, dic, pr)
+    <span class="fn">print</span>(<span class="str">f"iter {i+1}: sum={np.sum(pr):.4f}"</span>)
+
+<span class="cm"># শীর্ষ ৪ পেজ</span>
+<span class="kw">for</span> i <span class="kw">in</span> np.<span class="fn">argsort</span>(pr)[<span class="nm">-4</span>:]:
+    <span class="fn">print</span>(<span class="str">f"  {list(dic.items())[i][0]}: PR={pr[i]:.4f}"</span>)</pre>
+  </div>
+</section>
+
+<section class="section" id="pr-df">
+  <div class="section-badge b4">Advanced Topics</div>
+  <h2 class="st">Damping Factor সহ PageRank</h2>
+  <div class="box bd"><div class="box-t">📐 Damping Factor সূত্র</div>
+    <p>PR(Ai; t+1) = <strong>(1-d)/N</strong> + <strong>d</strong> × Σ [PR(Aj;t) / L(Aj)]</p>
+    <p>d=0.85 মানে: ৮৫% সময় link follow করে, ১৫% সময় random পেজে যায়। বাস্তবসম্মত।</p>
+  </div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">PageRank with Damping Factor</span></div>
+    <pre><span class="kw">def</span> <span class="fn">PageRankDF</span>(G, dic, pr_old, d=<span class="nm">0.85</span>):
+    N = nx.<span class="fn">number_of_nodes</span>(G)
+    pr_new = np.<span class="fn">ones</span>(N)
+    <span class="kw">for</span> site <span class="kw">in</span> G.nodes():
+        s = <span class="nm">0</span>
+        <span class="kw">for</span> nb <span class="kw">in</span> G.<span class="fn">predecessors</span>(site):
+            s += pr_old[dic[nb]] / G.<span class="fn">out_degree</span>(nb)
+        <span class="kw">for</span> n <span class="kw">in</span> G.nodes():
+            <span class="kw">if</span> G.<span class="fn">out_degree</span>(n) == <span class="nm">0</span>:
+                s += pr_old[dic[n]] / N
+        pr_new[dic[site]] = (<span class="nm">1</span>-d)/N + d*s
+    <span class="kw">return</span> pr_new
+
+pr = np.<span class="fn">ones</span>(N) / N
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>):
+    pr = <span class="fn">PageRankDF</span>(G, dic, pr)
+    <span class="fn">print</span>(<span class="str">f"iter {i+1}: sum={np.sum(pr):.4f}"</span>)</pre>
+  </div>
+</section>
+
+<section class="section" id="pr-mat">
+  <div class="section-badge b4">Advanced Topics</div>
+  <h2 class="st">Matrix Form — পুরো গ্রাফে PageRank</h2>
+  <div class="box bd"><div class="box-t">📐 Matrix সূত্র</div>
+    <p>R(t+1) = d·M·R(t) + (1-d)/N · <strong>1</strong></p>
+    <p>যেখানে M[i][j] = 1/L(Aj) যদি j→i edge থাকে, নয়তো 0। Column-of-zeros হলে সব coefficient = 1/N।</p>
+  </div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Matrix PageRank — পুরো গ্রাফে</span></div>
+    <pre><span class="cm"># Matrix M তৈরি</span>
+nodes = <span class="fn">list</span>(Gr.nodes())
+N = <span class="fn">len</span>(nodes)
+dic = <span class="fn">dict</span>((nodes[i], i) <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(N))
+M = np.<span class="fn">zeros</span>((N, N))
+<span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(N):
+    succs = <span class="fn">list</span>(Gr.<span class="fn">successors</span>(nodes[j]))
+    nl = <span class="fn">len</span>(succs)
+    <span class="kw">for</span> succ <span class="kw">in</span> succs:
+        M[dic[succ], j] = <span class="nm">1</span>/nl
+<span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(N):
+    <span class="kw">if</span> np.<span class="fn">sum</span>(M[:,j]) == <span class="nm">0</span>:
+        M[:,j] = np.<span class="fn">ones</span>(N)/N
+
+<span class="cm"># Iteration</span>
+d = <span class="nm">0.85</span>
+iters = <span class="fn">int</span>(<span class="fn">round</span>(np.<span class="fn">log</span>(N)))
+pr = np.<span class="fn">ones</span>(N)/N
+<span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(iters):
+    pr = d * np.<span class="fn">matmul</span>(M, pr) + (<span class="nm">1</span>-d)/N
+<span class="fn">print</span>(<span class="str">f"Sum: {np.sum(pr):.4f}"</span>)
+
+<span class="cm"># শীর্ষ ১০ পেজ</span>
+<span class="kw">for</span> i <span class="kw">in</span> np.<span class="fn">argsort</span>(pr)[<span class="nm">-10</span>:]:
+    <span class="fn">print</span>(<span class="str">f"  {nodes[i]}: {pr[i]:.6f}"</span>)
+
+<span class="cm"># NetworkX built-in PageRank (সরাসরি ব্যবহারযোগ্য)</span>
+pr_nx = nx.<span class="fn">pagerank</span>(Gr, alpha=<span class="nm">0.85</span>)
+top10 = <span class="fn">sorted</span>(pr_nx, key=pr_nx.get, reverse=<span class="kw">True</span>)[:<span class="nm">10</span>]
+<span class="fn">print</span>(<span class="str">"NetworkX PageRank top 10:"</span>, top10)</pre>
+  </div>
+</section>
+
+<!-- EXERCISE NB04 -->
+<section class="section" id="ex4">
+  <div class="section-badge be">💪 Exercise — Advanced</div>
+  <h2 class="st">Interview-level Exercise</h2>
+  <div class="exb">
+    <div class="exh"><div class="exn">6</div><div><h4>Model Importance Ranking with PageRank</h4><p>ML Engineering · PageRank · Advanced</p></div></div>
+    <div class="exbody">
+      <p><strong>সমস্যা:</strong> তোমার ML system-এ বিভিন্ন model এবং feature store আছে। একটি model অন্য model-এর output ব্যবহার করে (dependency)। PageRank দিয়ে কোন model সবচেয়ে গুরুত্বপূর্ণ বের করো।</p>
+      <ul class="ul">
+        <li>FeatureModel → [ScoringModel, RankingModel, FraudModel]</li>
+        <li>ScoringModel → [RankingModel, RecoModel] | FraudModel → [RankingModel]</li>
+        <li>RankingModel → [FinalOutput] | RecoModel → [FinalOutput]</li>
+      </ul>
+      <p><strong>কাজ:</strong> (a) DiGraph তৈরি করো (b) NetworkX built-in PageRank ব্যবহার করো (c) top 3 critical model খোঁজো।</p>
+      <button class="ht" onclick="toggleHint('h6')">💡 হিন্ট</button>
+      <button class="st2" onclick="toggleSol('s6')">✅ সমাধান</button>
+      <div class="hc" id="h6"><code>nx.pagerank(G, alpha=0.85)</code> একটি dict return করে। <code>sorted(pr, key=pr.get, reverse=True)[:3]</code> দিয়ে top 3 পাওয়া যায়।</div>
+      <div class="sc" id="s6">
+        <div class="cb"><div class="ch"><span class="cl">Python</span></div>
+        <pre>G_ml = nx.<span class="cls">DiGraph</span>()
+G_ml.<span class="fn">add_edges_from</span>([
+    (<span class="str">'FeatureModel'</span>,<span class="str">'ScoringModel'</span>), (<span class="str">'FeatureModel'</span>,<span class="str">'RankingModel'</span>),
+    (<span class="str">'FeatureModel'</span>,<span class="str">'FraudModel'</span>), (<span class="str">'ScoringModel'</span>,<span class="str">'RankingModel'</span>),
+    (<span class="str">'ScoringModel'</span>,<span class="str">'RecoModel'</span>), (<span class="str">'FraudModel'</span>,<span class="str">'RankingModel'</span>),
+    (<span class="str">'RankingModel'</span>,<span class="str">'FinalOutput'</span>), (<span class="str">'RecoModel'</span>,<span class="str">'FinalOutput'</span>)
+])
+pr = nx.<span class="fn">pagerank</span>(G_ml, alpha=<span class="nm">0.85</span>)
+top3 = <span class="fn">sorted</span>(pr, key=pr.get, reverse=<span class="kw">True</span>)[:<span class="nm">3</span>]
+<span class="fn">print</span>(<span class="str">"Top 3 critical models:"</span>, top3)
+<span class="kw">for</span> m,v <span class="kw">in</span> <span class="fn">sorted</span>(pr.items(), key=<span class="kw">lambda</span> x:-x[<span class="nm">1</span>]):
+    <span class="fn">print</span>(<span class="str">f"  {m}: {v:.4f}"</span>)</pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     NB05 — LES MISERABLES USE CASE
+══════════════════════════════════════════ -->
+<section class="section" id="lesmis">
+  <div class="section-badge b5">Use Case</div>
+  <h2 class="st">Les Misérables — চরিত্র নেটওয়ার্ক</h2>
+  <div class="box bi"><div class="box-t">📖 কী করবো?</div>
+    <p>Victor Hugo-র বিখ্যাত উপন্যাস Les Misérables-এ চরিত্ররা একই অধ্যায়ে থাকলে তাদের মধ্যে edge আছে। আমরা এই নেটওয়ার্কে community detection করবো — কোন চরিত্ররা একসাথে বেশি দেখা যায়?</p>
+  </div>
+  <div class="cb">
+    <div class="ch"><span class="cl">Python</span><span class="ct">Les Misérables সম্পূর্ণ বিশ্লেষণ</span></div>
+    <pre><span class="kw">import</span> networkx <span class="kw">as</span> nx
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">from</span> community.community_louvain <span class="kw">import</span> best_partition
+<span class="kw">from</span> networkx.algorithms.community.quality <span class="kw">import</span> coverage
+
+<span class="cm"># ধাপ (a): গ্রাফ লোড</span>
+G = nx.<span class="fn">read_gml</span>(<span class="str">'lesmis.gml'</span>)
+
+<span class="cm"># ধাপ (b): প্রথম visualization</span>
+pos = nx.<span class="fn">fruchterman_reingold_layout</span>(G)
+plt.figure(figsize=(<span class="nm">20</span>,<span class="nm">10</span>))
+nx.<span class="fn">draw_networkx_nodes</span>(G, pos)
+nx.<span class="fn">draw_networkx_edges</span>(G, pos, edge_color=<span class="str">"#75DFC1"</span>)
+nx.<span class="fn">draw_networkx_labels</span>(G, pos)
+plt.<span class="fn">show</span>()
+
+<span class="cm"># ধাপ (c): সবচেয়ে বেশি degree-র ৫ চরিত্র</span>
+deg_dict = <span class="fn">dict</span>(G.degree())
+<span class="kw">for</span> char <span class="kw">in</span> <span class="fn">sorted</span>(deg_dict, key=deg_dict.get)[<span class="nm">-5</span>:]:
+    <span class="fn">print</span>(<span class="str">f"{char}: {G.degree(char)} অন্য চরিত্রের সাথে"</span>)
+
+<span class="cm"># ধাপ (d): Louvain Community Detection</span>
+best_part = <span class="fn">best_partition</span>(G)
+
+<span class="cm"># ধাপ (e): Community visualization</span>
+plt.figure(figsize=(<span class="nm">20</span>,<span class="nm">10</span>))
+pos = nx.<span class="fn">fruchterman_reingold_layout</span>(G)
+nx.<span class="fn">draw_networkx_nodes</span>(G, pos, node_color=<span class="fn">list</span>(best_part.values()))
+nx.<span class="fn">draw_networkx_edges</span>(G, pos, alpha=<span class="nm">0.5</span>)
+nx.<span class="fn">draw_networkx_labels</span>(G, pos)
+plt.<span class="fn">show</span>()
+
+<span class="cm"># ধাপ (f): Coverage metric দিয়ে performance মাপা</span>
+num_comm = <span class="fn">len</span>(<span class="fn">set</span>(best_part.values()))
+sequence = [[] <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(num_comm)]
+<span class="kw">for</span> node, comm <span class="kw">in</span> <span class="fn">sorted</span>(best_part.items(), key=<span class="kw">lambda</span> t: t[<span class="nm">1</span>]):
+    sequence[comm].<span class="fn">append</span>(node)
+<span class="fn">print</span>(<span class="str">f"Coverage score: {coverage(G, sequence):.4f}"</span>)</pre>
+  </div>
+</section>
+
+<!-- EXERCISE NB05 -->
+<section class="section" id="ex5">
+  <div class="section-badge be">💪 Exercise — Use Case</div>
+  <h2 class="st">Interview-level Exercise</h2>
+  <div class="exb">
+    <div class="exh"><div class="exn">7</div><div><h4>Knowledge Graph Analysis</h4><p>ML Engineering · Full Pipeline · Advanced</p></div></div>
+    <div class="exbody">
+      <p><strong>সমস্যা:</strong> একটি NLP knowledge graph আছে যেখানে entities ও তাদের relations আছে। এই graph analyze করে ML pipeline তৈরি করো।</p>
+      <p><strong>কাজ:</strong> (a) কৃত্রিম knowledge graph তৈরি করো (b) Community detection করো (c) PageRank দিয়ে central entity খোঁজো (d) Shortest path দিয়ে entity connectivity বের করো (e) সব result একটি report-এ সংযুক্ত করো।</p>
+      <button class="ht" onclick="toggleHint('h7')">💡 হিন্ট</button>
+      <button class="st2" onclick="toggleSol('s7')">✅ সমাধান</button>
+      <div class="hc" id="h7">Knowledge graph undirected হলে Louvain ব্যবহার করো। PageRank directed graph-এ বেশি meaningful।</div>
+      <div class="sc" id="s7">
+        <div class="cb"><div class="ch"><span class="cl">Python</span></div>
+        <pre><span class="kw">from</span> community.community_louvain <span class="kw">import</span> best_partition
+
+<span class="cm"># (a) Knowledge Graph তৈরি</span>
+KG = nx.<span class="cls">Graph</span>()
+entities = [(<span class="str">'Python'</span>,<span class="str">'ML'</span>),(<span class="str">'Python'</span>,<span class="str">'DataScience'</span>),(<span class="str">'ML'</span>,<span class="str">'DeepLearning'</span>),
+            (<span class="str">'ML'</span>,<span class="str">'NLP'</span>),(<span class="str">'DeepLearning'</span>,<span class="str">'CNN'</span>),(<span class="str">'DeepLearning'</span>,<span class="str">'RNN'</span>),
+            (<span class="str">'NLP'</span>,<span class="str">'Transformer'</span>),(<span class="str">'NLP'</span>,<span class="str">'BERT'</span>),(<span class="str">'DataScience'</span>,<span class="str">'Statistics'</span>),
+            (<span class="str">'DataScience'</span>,<span class="str">'Visualization'</span>),(<span class="str">'Transformer'</span>,<span class="str">'BERT'</span>),
+            (<span class="str">'BERT'</span>,<span class="str">'GPT'</span>),(<span class="str">'GPT'</span>,<span class="str">'LLM'</span>),(<span class="str">'RNN'</span>,<span class="str">'LSTM'</span>)]
+KG.<span class="fn">add_edges_from</span>(entities)
+
+<span class="cm"># (b) Community Detection</span>
+bp = <span class="fn">best_partition</span>(KG)
+<span class="fn">print</span>(<span class="str">"Communities:"</span>)
+<span class="kw">for</span> cid <span class="kw">in</span> <span class="fn">set</span>(bp.values()):
+    members = [k <span class="kw">for</span> k,v <span class="kw">in</span> bp.items() <span class="kw">if</span> v==cid]
+    <span class="fn">print</span>(<span class="str">f"  Cluster {cid}: {members}"</span>)
+
+<span class="cm"># (c) Most central entity (degree centrality)</span>
+centrality = nx.<span class="fn">degree_centrality</span>(KG)
+top = <span class="fn">sorted</span>(centrality, key=centrality.get, reverse=<span class="kw">True</span>)[:<span class="nm">3</span>]
+<span class="fn">print</span>(<span class="str">"\nTop central entities:"</span>, top)
+
+<span class="cm"># (d) Path: Python → LLM</span>
+path = nx.<span class="fn">shortest_path</span>(KG, <span class="str">'Python'</span>, <span class="str">'LLM'</span>)
+<span class="fn">print</span>(<span class="str">f"\nPython → LLM পথ: {' → '.join(path)}"</span>)</pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     ALGORITHM REFERENCE SECTION
+══════════════════════════════════════════ -->
+<section class="section" id="ref-bfs">
+  <div class="section-badge ba">Algorithm Reference</div>
+  <h2 class="st">🔍 সমস্ত Algorithm — সম্পূর্ণ রেফারেন্স</h2>
+  <p>এই অংশে প্রতিটি অ্যালগরিদম শিশুদের মতো সহজ ভাষায়, তারপর formal definition, complexity এবং Python implementation দেওয়া হয়েছে।</p>
+
+  <!-- BFS -->
+  <div class="ac">
+    <div class="ach">
+      <div class="ai" style="background:rgba(97,175,239,.15);">🌊</div>
+      <div><h3>BFS — Breadth-First Search (প্রশস্ততা-প্রথম অনুসন্ধান)</h3><p>স্তরে স্তরে, কাছ থেকে দূরে খোঁজো</p></div>
+    </div>
+    <div class="acb">
+      <div class="box bi"><div class="box-t">👶 শিশুদের ভাষায়</div>
+        <p>তুমি একটি গাছে আছো (tree)। প্রথমে তোমার ডালের সব পাতা দেখো, তারপর সেই পাতাগুলোর ডালের পাতা দেখো... এভাবে ধাপে ধাপে বাইরে যাও। কোনো একটি নির্দিষ্ট পাতা খুঁজলে সবচেয়ে কম ধাপে পাবে।</p>
+      </div>
+      <div class="cr">
+        <span class="cb2 ct2">Time: O(V+E)</span>
+        <span class="cb2 cs">Space: O(V)</span>
+        <span class="cb2" style="background:rgba(63,185,80,.08);color:#3fb950;border:1px solid rgba(63,185,80,.22);">Shortest path (unweighted)</span>
+      </div>
+      <h4 class="mini">কোথায় ব্যবহার?</h4>
+      <ul class="ul">
+        <li>Shortest path (unweighted graph) খোঁজা</li>
+        <li>Social network-এ "degrees of separation" বের করা</li>
+        <li>Web crawler — কাছের পেজ আগে index করা</li>
+        <li>ML Pipeline-এ feature dependency level বের করা</li>
+      </ul>
+      <div class="cb">
+        <div class="ch"><span class="cl">Python</span><span class="ct">BFS — সম্পূর্ণ Implementation</span></div>
+        <pre><span class="kw">import</span> networkx <span class="kw">as</span> nx
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="cm"># ── NetworkX দিয়ে (সহজ) ──</span>
+G = nx.<span class="cls">Graph</span>()
+G.<span class="fn">add_edges_from</span>([(1,2),(1,3),(2,4),(2,5),(3,6),(3,7)])
+
+bfs_tree = nx.<span class="fn">bfs_tree</span>(G, source=<span class="nm">1</span>)
+bfs_order = <span class="fn">list</span>(bfs_tree.nodes())
+<span class="fn">print</span>(<span class="str">"BFS order:"</span>, bfs_order)  <span class="cm"># [1,2,3,4,5,6,7]</span>
+
+<span class="cm"># প্রতিটি নোড কত ধাপে পাওয়া যায়</span>
+levels = nx.<span class="fn">single_source_shortest_path_length</span>(G, <span class="nm">1</span>)
+<span class="fn">print</span>(<span class="str">"Levels:"</span>, <span class="fn">dict</span>(levels))
+
+<span class="cm"># ── Scratch থেকে BFS (বুঝতে) ──</span>
+<span class="kw">def</span> <span class="fn">bfs_scratch</span>(graph_adj, start):
+    visited = {start}
+    queue = deque([start])
+    order = []
+    <span class="kw">while</span> queue:
+        node = queue.<span class="fn">popleft</span>()      <span class="cm"># সামনে থেকে নাও</span>
+        order.<span class="fn">append</span>(node)
+        <span class="kw">for</span> neighbor <span class="kw">in</span> graph_adj.get(node, []):
+            <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+                visited.<span class="fn">add</span>(neighbor)
+                queue.<span class="fn">append</span>(neighbor)  <span class="cm"># পেছনে দাও</span>
+    <span class="kw">return</span> order
+
+adj = {<span class="nm">1</span>:[<span class="nm">2</span>,<span class="nm">3</span>], <span class="nm">2</span>:[<span class="nm">4</span>,<span class="nm">5</span>], <span class="nm">3</span>:[<span class="nm">6</span>,<span class="nm">7</span>], <span class="nm">4</span>:[], <span class="nm">5</span>:[], <span class="nm">6</span>:[], <span class="nm">7</span>:[]}
+<span class="fn">print</span>(<span class="fn">bfs_scratch</span>(adj, <span class="nm">1</span>))</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- DFS -->
+  <div class="ac" id="ref-dfs">
+    <div class="ach">
+      <div class="ai" style="background:rgba(198,120,221,.15);">🌀</div>
+      <div><h3>DFS — Depth-First Search (গভীরতা-প্রথম অনুসন্ধান)</h3><p>একটি পথে শেষ পর্যন্ত যাও, তারপর ফিরে আসো</p></div>
+    </div>
+    <div class="acb">
+      <div class="box bd"><div class="box-t">👶 শিশুদের ভাষায়</div>
+        <p>তুমি গোলকধাঁধায় আছো। একটি রাস্তায় ঢুকলে একেবারে দেওয়ালে না ঠেকা পর্যন্ত যাও। দেওয়াল পেলে ফিরে এসো এবং অন্য রাস্তা চেষ্টা করো। সব রাস্তা অন্বেষণ করা যায়।</p>
+      </div>
+      <div class="cr">
+        <span class="cb2 ct2">Time: O(V+E)</span>
+        <span class="cb2 cs">Space: O(V)</span>
+        <span class="cb2" style="background:rgba(63,185,80,.08);color:#3fb950;border:1px solid rgba(63,185,80,.22);">Cycle detect · Topological sort</span>
+      </div>
+      <div class="cb">
+        <div class="ch"><span class="cl">Python</span><span class="ct">DFS — সম্পূর্ণ Implementation</span></div>
+        <pre><span class="cm"># ── NetworkX দিয়ে ──</span>
+dfs_order = <span class="fn">list</span>(nx.<span class="fn">dfs_tree</span>(G, source=<span class="nm">1</span>).nodes())
+<span class="fn">print</span>(<span class="str">"DFS:"</span>, dfs_order)
+
+<span class="cm"># Cycle detection</span>
+<span class="fn">print</span>(<span class="str">"Cycle আছে?"</span>, <span class="kw">not</span> nx.<span class="fn">is_forest</span>(G))
+
+<span class="cm"># Topological sort (DAG-এ)</span>
+dag = nx.<span class="cls">DiGraph</span>([(1,2),(1,3),(2,4),(3,4)])
+topo = <span class="fn">list</span>(nx.<span class="fn">topological_sort</span>(dag))
+<span class="fn">print</span>(<span class="str">"Topological order:"</span>, topo)
+
+<span class="cm"># ── Scratch থেকে DFS (recursive) ──</span>
+<span class="kw">def</span> <span class="fn">dfs_scratch</span>(graph_adj, start, visited=<span class="kw">None</span>):
+    <span class="kw">if</span> visited <span class="kw">is</span> <span class="kw">None</span>: visited = <span class="fn">set</span>()
+    visited.<span class="fn">add</span>(start)
+    order = [start]
+    <span class="kw">for</span> nb <span class="kw">in</span> graph_adj.get(start, []):
+        <span class="kw">if</span> nb <span class="kw">not in</span> visited:
+            order.<span class="fn">extend</span>(<span class="fn">dfs_scratch</span>(graph_adj, nb, visited))
+    <span class="kw">return</span> order
+
+<span class="fn">print</span>(<span class="fn">dfs_scratch</span>(adj, <span class="nm">1</span>))  <span class="cm"># [1,2,4,5,3,6,7]</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- KRUSKAL -->
+  <div class="ac" id="ref-kruskal">
+    <div class="ach">
+      <div class="ai" style="background:rgba(247,201,72,.15);">🌲</div>
+      <div><h3>Kruskal's Algorithm — Minimum Spanning Tree</h3><p>সবচেয়ে কম খরচে সব নোড কানেক্ট করো</p></div>
+    </div>
+    <div class="acb">
+      <div class="box bw"><div class="box-t">👶 শিশুদের ভাষায়</div>
+        <p>১০টি বাড়িতে বিদ্যুৎ দিতে হবে। প্রতিটি বাড়ির মধ্যে তার টানার খরচ আলাদা। সবচেয়ে সস্তা তার দিয়ে শুরু করো। চক্র (loop) হলে সেটা বাদ দাও। সব বাড়ি কানেক্ট না হওয়া পর্যন্ত চালাও।</p>
+      </div>
+      <div class="cr">
+        <span class="cb2 ct2">Time: O(E log E)</span>
+        <span class="cb2 cs">Space: O(V+E)</span>
+        <span class="cb2" style="background:rgba(63,185,80,.08);color:#3fb950;border:1px solid rgba(63,185,80,.22);">Greedy Algorithm</span>
+      </div>
+      <div class="cb">
+        <div class="ch"><span class="cl">Python</span><span class="ct">Kruskal — NetworkX ও Scratch</span></div>
+        <pre><span class="cm"># ── NetworkX দিয়ে (সহজ) ──</span>
+G_w = nx.<span class="cls">Graph</span>()
+G_w.<span class="fn">add_weighted_edges_from</span>([
+    (<span class="str">'A'</span>,<span class="str">'B'</span>,<span class="nm">1</span>),(<span class="str">'A'</span>,<span class="str">'C'</span>,<span class="nm">4</span>),(<span class="str">'B'</span>,<span class="str">'C'</span>,<span class="nm">2</span>),
+    (<span class="str">'B'</span>,<span class="str">'D'</span>,<span class="nm">6</span>),(<span class="str">'C'</span>,<span class="str">'D'</span>,<span class="nm">3</span>)
+])
+mst = nx.tree.<span class="fn">minimum_spanning_tree</span>(G_w)
+<span class="fn">print</span>(<span class="str">"MST edges:"</span>, <span class="fn">list</span>(mst.edges(data=<span class="kw">True</span>)))
+<span class="fn">print</span>(<span class="str">"MST weight:"</span>, mst.<span class="fn">size</span>(weight=<span class="str">'weight'</span>))
+
+<span class="cm"># ── Scratch থেকে Kruskal ──</span>
+<span class="kw">def</span> <span class="fn">kruskal</span>(nodes, edges):
+    <span class="cm"># Union-Find (Disjoint Set)</span>
+    parent = {n: n <span class="kw">for</span> n <span class="kw">in</span> nodes}
+    <span class="kw">def</span> <span class="fn">find</span>(x):
+        <span class="kw">while</span> parent[x] != x: x = parent[x]
+        <span class="kw">return</span> x
+    <span class="kw">def</span> <span class="fn">union</span>(a, b):
+        parent[<span class="fn">find</span>(a)] = <span class="fn">find</span>(b)
+    mst_edges = []
+    <span class="kw">for</span> w, u, v <span class="kw">in</span> <span class="fn">sorted</span>((w,u,v) <span class="kw">for</span> u,v,w <span class="kw">in</span> edges):
+        <span class="kw">if</span> <span class="fn">find</span>(u) != <span class="fn">find</span>(v):  <span class="cm"># cycle হবে না</span>
+            <span class="fn">union</span>(u, v)
+            mst_edges.<span class="fn">append</span>((u, v, w))
+    <span class="kw">return</span> mst_edges
+
+result = <span class="fn">kruskal</span>([<span class="str">'A'</span>,<span class="str">'B'</span>,<span class="str">'C'</span>,<span class="str">'D'</span>],
+                  [(<span class="str">'A'</span>,<span class="str">'B'</span>,<span class="nm">1</span>),(<span class="str">'A'</span>,<span class="str">'C'</span>,<span class="nm">4</span>),(<span class="str">'B'</span>,<span class="str">'C'</span>,<span class="nm">2</span>),(<span class="str">'B'</span>,<span class="str">'D'</span>,<span class="nm">6</span>),(<span class="str">'C'</span>,<span class="str">'D'</span>,<span class="nm">3</span>)])
+<span class="fn">print</span>(<span class="str">"MST:"</span>, result)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIJKSTRA -->
+  <div class="ac" id="ref-dijkstra">
+    <div class="ach">
+      <div class="ai" style="background:rgba(224,108,117,.15);">🗺️</div>
+      <div><h3>Dijkstra's Algorithm — Shortest Path</h3><p>এক নোড থেকে অন্য নোডে সবচেয়ে কম খরচের পথ</p></div>
+    </div>
+    <div class="acb">
+      <div class="box bd"><div class="box-t">👶 শিশুদের ভাষায়</div>
+        <p>তুমি একটি শহরে আছো এবং অন্য একটি শহরে যেতে চাও। সামনে অনেক রাস্তা। প্রথমে সবচেয়ে কাছের শহরে যাও। সেখান থেকে আবার সবচেয়ে কাছেরটায়। এভাবে চলতে থাকো। কিন্তু যদি কোনো শহরে পৌঁছানোর আরও ছোট পথ পাও, সেটা আপডেট করো।</p>
+      </div>
+      <div class="cr">
+        <span class="cb2 ct2">Time: O((V+E) log V)</span>
+        <span class="cb2 cs">Space: O(V)</span>
+        <span class="cb2" style="background:rgba(247,201,72,.08);color:#f7c948;border:1px solid rgba(247,201,72,.22);">⚠️ Negative weight-এ কাজ করে না</span>
+      </div>
+      <div class="cb">
+        <div class="ch"><span class="cl">Python</span><span class="ct">Dijkstra — NetworkX ও Scratch</span></div>
+        <pre><span class="cm"># ── NetworkX দিয়ে ──</span>
+path = nx.<span class="fn">shortest_path</span>(G_w, <span class="str">'A'</span>, <span class="str">'D'</span>, weight=<span class="str">'weight'</span>)
+dist = nx.<span class="fn">shortest_path_length</span>(G_w, <span class="str">'A'</span>, <span class="str">'D'</span>, weight=<span class="str">'weight'</span>)
+<span class="fn">print</span>(<span class="str">f"Path: {path}, Distance: {dist}"</span>)
+
+<span class="cm"># Negative weight → Bellman-Ford</span>
+<span class="cm"># nx.bellman_ford_path(G, source, target, weight='weight')</span>
+
+<span class="cm"># ── Scratch থেকে Dijkstra ──</span>
+<span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">dijkstra</span>(adj_weighted, start):
+    dist = {node: <span class="fn">float</span>(<span class="str">'inf'</span>) <span class="kw">for</span> node <span class="kw">in</span> adj_weighted}
+    dist[start] = <span class="nm">0</span>
+    heap = [(<span class="nm">0</span>, start)]  <span class="cm"># (দূরত্ব, নোড)</span>
+    <span class="kw">while</span> heap:
+        d, u = heapq.<span class="fn">heappop</span>(heap)
+        <span class="kw">if</span> d > dist[u]: <span class="kw">continue</span>
+        <span class="kw">for</span> v, w <span class="kw">in</span> adj_weighted.get(u, []):
+            <span class="kw">if</span> dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+                heapq.<span class="fn">heappush</span>(heap, (dist[v], v))
+    <span class="kw">return</span> dist
+
+graph = {
+    <span class="str">'A'</span>: [(<span class="str">'B'</span>,<span class="nm">1</span>),(<span class="str">'C'</span>,<span class="nm">4</span>)],
+    <span class="str">'B'</span>: [(<span class="str">'C'</span>,<span class="nm">2</span>),(<span class="str">'D'</span>,<span class="nm">6</span>)],
+    <span class="str">'C'</span>: [(<span class="str">'D'</span>,<span class="nm">3</span>)],
+    <span class="str">'D'</span>: []
+}
+<span class="fn">print</span>(<span class="fn">dijkstra</span>(graph, <span class="str">'A'</span>))  <span class="cm"># {'A':0,'B':1,'C':3,'D':6}</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOUVAIN -->
+  <div class="ac" id="ref-louvain">
+    <div class="ach">
+      <div class="ai" style="background:rgba(240,198,116,.15);">🏘️</div>
+      <div><h3>Louvain Method — Community Detection</h3><p>Modularity maximize করে community খোঁজো</p></div>
+    </div>
+    <div class="acb">
+      <div class="box bw"><div class="box-t">👶 শিশুদের ভাষায়</div>
+        <p>একটি স্কুলে অনেক বাচ্চা আছে। প্রথমে সবাই আলাদা দলে। তারপর দেখো কে কার সাথে বেশি খেলে — তাদের একই দলে রাখো। এভাবে চলতে থাকে যতক্ষণ দলগুলো স্থিতিশীল না হয়।</p>
+      </div>
+      <div class="cr">
+        <span class="cb2 ct2">Time: O(n log n)</span>
+        <span class="cb2 cs">Space: O(n+m)</span>
+        <span class="cb2" style="background:rgba(63,185,80,.08);color:#3fb950;border:1px solid rgba(63,185,80,.22);">বড় গ্রাফে দ্রুত</span>
+      </div>
+      <div class="cb">
+        <div class="ch"><span class="cl">Python</span><span class="ct">Louvain — সম্পূর্ণ Implementation</span></div>
+        <pre><span class="kw">from</span> community.community_louvain <span class="kw">import</span> best_partition
+<span class="kw">import</span> networkx.algorithms.community <span class="kw">as</span> nx_comm
+
+z = nx.<span class="fn">karate_club_graph</span>()
+
+<span class="cm"># Louvain (python-louvain লাইব্রেরি)</span>
+bp = <span class="fn">best_partition</span>(z)
+
+<span class="cm"># NetworkX built-in (greedy modularity)</span>
+greedy_comm = nx_comm.<span class="fn">greedy_modularity_communities</span>(z)
+
+<span class="cm"># Modularity score বের করা</span>
+modularity = nx_comm.modularity.<span class="fn">modularity</span>(z,
+    [{k <span class="kw">for</span> k,v <span class="kw">in</span> bp.items() <span class="kw">if</span> v==c} <span class="kw">for</span> c <span class="kw">in</span> <span class="fn">set</span>(bp.values())])
+<span class="fn">print</span>(<span class="str">f"Modularity: {modularity:.4f}"</span>)
+
+<span class="cm"># Community-র সদস্য দেখা</span>
+<span class="kw">for</span> cid <span class="kw">in</span> <span class="fn">set</span>(bp.values()):
+    members = [k <span class="kw">for</span> k,v <span class="kw">in</span> bp.items() <span class="kw">if</span> v == cid]
+    <span class="fn">print</span>(<span class="str">f"Community {cid} ({len(members)} members): {members[:5]}..."</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- GIRVAN NEWMAN -->
+  <div class="ac" id="ref-girvan">
+    <div class="ach">
+      <div class="ai" style="background:rgba(224,108,117,.15);">✂️</div>
+      <div><h3>Girvan-Newman Algorithm — Divisive Community Detection</h3><p>Bridge edge কেটে community আলাদা করো</p></div>
+    </div>
+    <div class="acb">
+      <div class="box bd"><div class="box-t">👶 শিশুদের ভাষায়</div>
+        <p>দুটি গ্রাম আছে, মাঝখানে একটি সেতু। সেতুটা কাটলে গ্রাম দুটো আলাদা হয়। Girvan-Newman এই "সেতু" edge-গুলো খোঁজে এবং কাটে। সেতু = এমন edge যেটা সবচেয়ে বেশি shortest path-এর মধ্যে দিয়ে যায়।</p>
+      </div>
+      <div class="cr">
+        <span class="cb2 ct2">Time: O(m²n)</span>
+        <span class="cb2 cs">Space: O(m+n)</span>
+        <span class="cb2" style="background:rgba(247,201,72,.08);color:#f7c948;border:1px solid rgba(247,201,72,.22);">ছোট গ্রাফে ভালো</span>
+      </div>
+      <div class="cb">
+        <div class="ch"><span class="cl">Python</span><span class="ct">Girvan-Newman — সম্পূর্ণ Implementation</span></div>
+        <pre><span class="kw">from</span> networkx.algorithms.community <span class="kw">import</span> girvan_newman
+<span class="kw">from</span> networkx.algorithms.community.quality <span class="kw">import</span> performance, coverage
+
+<span class="cm"># Generator তৈরি</span>
+gen = girvan_newman(z)
+
+<span class="cm"># সেরা k-community খোঁজা</span>
+best_score, best_part = <span class="nm">0</span>, <span class="kw">None</span>
+scores = []
+<span class="kw">for</span> part <span class="kw">in</span> gen:
+    sc = <span class="fn">performance</span>(z, part)
+    <span class="kw">if</span> sc >= best_score:
+        best_score, best_part = sc, part
+    scores.<span class="fn">append</span>(sc)
+    <span class="kw">if</span> <span class="fn">len</span>(scores) > <span class="nm">30</span>: <span class="kw">break</span>   <span class="cm"># বেশি iteration এড়াতে</span>
+
+<span class="fn">print</span>(<span class="str">f"সেরা score: {best_score:.4f}"</span>)
+<span class="fn">print</span>(<span class="str">f"Communities সংখ্যা: {len(best_part)}"</span>)
+
+<span class="cm"># Edge betweenness দেখা</span>
+eb = nx.<span class="fn">edge_betweenness_centrality</span>(z)
+top_bridges = <span class="fn">sorted</span>(eb, key=eb.get, reverse=<span class="kw">True</span>)[:<span class="nm">5</span>]
+<span class="fn">print</span>(<span class="str">"Top bridge edges:"</span>, top_bridges)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGERANK -->
+  <div class="ac" id="ref-pr">
+    <div class="ach">
+      <div class="ai" style="background:rgba(117,223,193,.15);">📊</div>
+      <div><h3>PageRank Algorithm — Node Importance Ranking</h3><p>কোন নোড সবচেয়ে গুরুত্বপূর্ণ? Link-এর মাধ্যমে বের করো</p></div>
+    </div>
+    <div class="acb">
+      <div class="box bk"><div class="box-t">👶 শিশুদের ভাষায়</div>
+        <p>স্কুলে যার বেশি বন্ধু আছে সে বেশি popular। কিন্তু popular বন্ধুর সাথে বন্ধুত্ব আরও মূল্যবান। PageRank এই "popularity score" বারবার হিসাব করে যতক্ষণ stable না হয়। শুরুতে সবার score সমান।</p>
+      </div>
+      <div class="cr">
+        <span class="cb2 ct2">Time: O(k(V+E))</span>
+        <span class="cb2 cs">Space: O(V+E)</span>
+        <span class="cb2" style="background:rgba(63,185,80,.08);color:#3fb950;border:1px solid rgba(63,185,80,.22);">Directed graph-এ বেশি meaningful</span>
+      </div>
+      <div class="cb">
+        <div class="ch"><span class="cl">Python</span><span class="ct">PageRank — সম্পূর্ণ Implementation</span></div>
+        <pre><span class="cm"># ── NetworkX built-in (সহজ) ──</span>
+G_dir = nx.<span class="cls">DiGraph</span>([(<span class="str">'A'</span>,<span class="str">'B'</span>),(<span class="str">'A'</span>,<span class="str">'C'</span>),(<span class="str">'B'</span>,<span class="str">'C'</span>),
+                      (<span class="str">'C'</span>,<span class="str">'A'</span>),(<span class="str">'D'</span>,<span class="str">'C'</span>)])
+pr = nx.<span class="fn">pagerank</span>(G_dir, alpha=<span class="nm">0.85</span>)
+<span class="fn">print</span>(<span class="str">"PageRank:"</span>, pr)
+top = <span class="fn">sorted</span>(pr, key=pr.get, reverse=<span class="kw">True</span>)[<span class="nm">0</span>]
+<span class="fn">print</span>(<span class="str">f"সবচেয়ে গুরুত্বপূর্ণ: {top} (PR={pr[top]:.4f})"</span>)
+
+<span class="cm"># ── Matrix form (সম্পূর্ণ গ্রাফে) ──</span>
+<span class="kw">def</span> <span class="fn">pagerank_matrix</span>(G, d=<span class="nm">0.85</span>, iters=<span class="nm">50</span>):
+    nodes = <span class="fn">list</span>(G.nodes())
+    N = <span class="fn">len</span>(nodes)
+    idx = {n:i <span class="kw">for</span> i,n <span class="kw">in</span> <span class="fn">enumerate</span>(nodes)}
+    M = np.<span class="fn">zeros</span>((N,N))
+    <span class="kw">for</span> j,node <span class="kw">in</span> <span class="fn">enumerate</span>(nodes):
+        succs = <span class="fn">list</span>(G.<span class="fn">successors</span>(node))
+        nl = <span class="fn">len</span>(succs)
+        <span class="kw">if</span> nl > <span class="nm">0</span>:
+            <span class="kw">for</span> s <span class="kw">in</span> succs: M[idx[s],j] = <span class="nm">1</span>/nl
+        <span class="kw">else</span>:
+            M[:,j] = <span class="nm">1</span>/N
+    pr = np.<span class="fn">ones</span>(N)/N
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(iters):
+        pr = d*np.<span class="fn">matmul</span>(M,pr) + (<span class="nm">1</span>-d)/N
+    <span class="kw">return</span> {nodes[i]: pr[i] <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(N)}
+
+result = <span class="fn">pagerank_matrix</span>(G_dir)
+<span class="fn">print</span>(<span class="str">"Matrix PageRank:"</span>, result)</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     ML ENGINEERING PROJECT EXERCISES
+══════════════════════════════════════════ -->
+<section class="section" id="ml-ex">
+  <div class="section-badge ba">🏭 ML Engineering Projects</div>
+  <h2 class="st">Real-world ML Engineering Exercises</h2>
+  <p>এই exercises গুলো সরাসরি production ML system-এ ব্যবহারযোগ্য। প্রতিটি একটি বাস্তব সমস্যার সমাধান।</p>
+
+  <!-- PROJECT 1 -->
+  <div class="exb">
+    <div class="exh"><div class="exn">P1</div><div><h4>Fraud Detection Graph — Transaction Network</h4><p>Production ML · Anomaly Detection · Graph Features</p></div></div>
+    <div class="exbody">
+      <p><strong>পটভূমি:</strong> একটি fintech company-তে fraud detection করতে হবে। Transaction network তৈরি করো এবং graph-based features বের করো যা ML model-এ ব্যবহার করা যাবে।</p>
+      <p><strong>কাজ:</strong> (a) Transaction graph তৈরি করো (account = node, transaction = weighted directed edge) (b) প্রতিটি account-এর in/out degree, PageRank, betweenness centrality বের করো (c) Suspicious community খোঁজো (dense subgraph যেখানে অনেক circular transaction) (d) Feature matrix তৈরি করো ML-এর জন্য।</p>
+      <button class="ht" onclick="toggleHint('hp1')">💡 হিন্ট</button>
+      <button class="st2" onclick="toggleSol('sp1')">✅ সমাধান</button>
+      <div class="hc" id="hp1">Betweenness centrality: <code>nx.betweenness_centrality(G)</code>। Feature matrix-এর জন্য pandas DataFrame ব্যবহার করো।</div>
+      <div class="sc" id="sp1">
+        <div class="cb"><div class="ch"><span class="cl">Python</span><span class="ct">Fraud Detection Graph Pipeline</span></div>
+        <pre><span class="kw">import</span> networkx <span class="kw">as</span> nx
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> community.community_louvain <span class="kw">import</span> best_partition
+
+<span class="cm"># Transaction data (synthetic)</span>
+transactions = [
+    (<span class="str">'ACC001'</span>,<span class="str">'ACC002'</span>,<span class="nm">5000</span>), (<span class="str">'ACC001'</span>,<span class="str">'ACC003'</span>,<span class="nm">3000</span>),
+    (<span class="str">'ACC002'</span>,<span class="str">'ACC004'</span>,<span class="nm">4500</span>), (<span class="str">'ACC003'</span>,<span class="str">'ACC004'</span>,<span class="nm">2000</span>),
+    (<span class="str">'ACC004'</span>,<span class="str">'ACC001'</span>,<span class="nm">7000</span>),  <span class="cm"># suspicious cycle!</span>
+    (<span class="str">'ACC005'</span>,<span class="str">'ACC006'</span>,<span class="nm">500</span>),  (<span class="str">'ACC006'</span>,<span class="str">'ACC007'</span>,<span class="nm">600</span>),
+    (<span class="str">'ACC008'</span>,<span class="str">'ACC009'</span>,<span class="nm">1000</span>), (<span class="str">'ACC009'</span>,<span class="str">'ACC010'</span>,<span class="nm">1200</span>),
+    (<span class="str">'ACC010'</span>,<span class="str">'ACC008'</span>,<span class="nm">900</span>),   <span class="cm"># another cycle!</span>
+]
+
+<span class="cm"># Graph তৈরি</span>
+G = nx.<span class="cls">DiGraph</span>()
+<span class="kw">for</span> src, dst, amt <span class="kw">in</span> transactions:
+    G.<span class="fn">add_edge</span>(src, dst, weight=amt)
+
+<span class="cm"># Graph features বের করা</span>
+features = {}
+pr = nx.<span class="fn">pagerank</span>(G, alpha=<span class="nm">0.85</span>)
+bc = nx.<span class="fn">betweenness_centrality</span>(G)
+
+<span class="kw">for</span> node <span class="kw">in</span> G.nodes():
+    features[node] = {
+        <span class="str">'in_degree'</span>: G.<span class="fn">in_degree</span>(node),
+        <span class="str">'out_degree'</span>: G.<span class="fn">out_degree</span>(node),
+        <span class="str">'in_amount'</span>: <span class="fn">sum</span>(d[<span class="str">'weight'</span>] <span class="kw">for</span> _,_,d <span class="kw">in</span> G.<span class="fn">in_edges</span>(node, data=<span class="kw">True</span>)),
+        <span class="str">'out_amount'</span>: <span class="fn">sum</span>(d[<span class="str">'weight'</span>] <span class="kw">for</span> _,_,d <span class="kw">in</span> G.<span class="fn">out_edges</span>(node, data=<span class="kw">True</span>)),
+        <span class="str">'pagerank'</span>: pr.get(node, <span class="nm">0</span>),
+        <span class="str">'betweenness'</span>: bc.get(node, <span class="nm">0</span>),
+    }
+
+<span class="cm"># Feature DataFrame</span>
+df_features = pd.<span class="cls">DataFrame</span>(features).<span class="fn">T</span>
+<span class="fn">print</span>(<span class="str">"Feature Matrix:"</span>)
+<span class="fn">print</span>(df_features.<span class="fn">round</span>(<span class="nm">4</span>))
+
+<span class="cm"># Suspicious cycle detection</span>
+cycles = <span class="fn">list</span>(nx.<span class="fn">simple_cycles</span>(G))
+<span class="fn">print</span>(<span class="str">f"\n⚠️ {len(cycles)} suspicious cycle(s) found:"</span>)
+<span class="kw">for</span> c <span class="kw">in</span> cycles:
+    <span class="fn">print</span>(<span class="str">f"  {' → '.join(c)} → {c[0]}"</span>)
+
+<span class="cm"># Community-based fraud ring detection</span>
+G_undir = G.<span class="fn">to_undirected</span>()
+communities = <span class="fn">best_partition</span>(G_undir)
+df_features[<span class="str">'community'</span>] = pd.<span class="cls">Series</span>(communities)
+<span class="fn">print</span>(<span class="str">"\nAccount communities:"</span>)
+<span class="fn">print</span>(df_features[[<span class="str">'community'</span>,<span class="str">'pagerank'</span>,<span class="str">'in_amount'</span>,<span class="str">'out_amount'</span>]])</pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT 2 -->
+  <div class="exb">
+    <div class="exh"><div class="exn">P2</div><div><h4>MLOps Pipeline Dependency Analyzer</h4><p>Production ML · DAG Analysis · Pipeline Optimization</p></div></div>
+    <div class="exbody">
+      <p><strong>পটভূমি:</strong> তোমার MLOps platform-এ অনেক job আছে যাদের dependencies আছে। কোনো job fail করলে কোন কোন downstream job affected হবে? Critical path কোনটা?</p>
+      <p><strong>কাজ:</strong> (a) Job dependency DAG তৈরি করো (b) কোনো job fail করলে কতটি downstream job affected হবে বের করো (c) Longest path (critical path) বের করো (d) Bottleneck job খোঁজো।</p>
+      <button class="ht" onclick="toggleHint('hp2')">💡 হিন্ট</button>
+      <button class="st2" onclick="toggleSol('sp2')">✅ সমাধান</button>
+      <div class="hc" id="hp2">Descendants: <code>nx.descendants(G, node)</code> দিয়ে কোনো নোড থেকে সব reachable নোড পাওয়া যায়। Longest path: <code>nx.dag_longest_path(G)</code>।</div>
+      <div class="sc" id="sp2">
+        <div class="cb"><div class="ch"><span class="cl">Python</span><span class="ct">MLOps DAG Analyzer</span></div>
+        <pre>G_dag = nx.<span class="cls">DiGraph</span>()
+jobs = [
+    (<span class="str">'data_ingest'</span>, <span class="str">'data_validate'</span>),
+    (<span class="str">'data_validate'</span>, <span class="str">'feature_eng'</span>),
+    (<span class="str">'data_validate'</span>, <span class="str">'data_split'</span>),
+    (<span class="str">'feature_eng'</span>, <span class="str">'model_train'</span>),
+    (<span class="str">'data_split'</span>, <span class="str">'model_train'</span>),
+    (<span class="str">'model_train'</span>, <span class="str">'model_eval'</span>),
+    (<span class="str">'model_train'</span>, <span class="str">'model_explain'</span>),
+    (<span class="str">'model_eval'</span>, <span class="str">'model_register'</span>),
+    (<span class="str">'model_register'</span>, <span class="str">'model_deploy'</span>),
+    (<span class="str">'model_deploy'</span>, <span class="str">'monitoring'</span>),
+]
+G_dag.<span class="fn">add_edges_from</span>(jobs)
+
+<span class="cm"># Failure impact analysis</span>
+<span class="fn">print</span>(<span class="str">"Job failure impact:"</span>)
+<span class="kw">for</span> job <span class="kw">in</span> G_dag.nodes():
+    affected = nx.<span class="fn">descendants</span>(G_dag, job)
+    <span class="fn">print</span>(<span class="str">f"  {job}: {len(affected)} downstream jobs"</span>)
+
+<span class="cm"># Critical path</span>
+critical = nx.<span class="fn">dag_longest_path</span>(G_dag)
+<span class="fn">print</span>(<span class="str">f"\nCritical path: {' → '.join(critical)}"</span>)
+
+<span class="cm"># Bottleneck (highest in+out degree)</span>
+bottleneck = <span class="fn">max</span>(G_dag.nodes(), key=<span class="kw">lambda</span> n:
+    G_dag.<span class="fn">in_degree</span>(n)+G_dag.<span class="fn">out_degree</span>(n))
+<span class="fn">print</span>(<span class="str">f"Bottleneck job: {bottleneck}"</span>)</pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT 3 -->
+  <div class="exb">
+    <div class="exh"><div class="exn">P3</div><div><h4>Recommendation System — User-Item Graph</h4><p>Production ML · Bipartite Graph · Collaborative Filtering</p></div></div>
+    <div class="exbody">
+      <p><strong>পটভূমি:</strong> একটি streaming platform-এ user-movie interaction graph তৈরি করো এবং graph-based recommendation বের করো।</p>
+      <p><strong>কাজ:</strong> (a) Bipartite graph তৈরি করো (users + movies) (b) User-user similarity বের করো (common movies দিয়ে) (c) Movie recommendation: কোন user কোন movie দেখেনি কিন্তু similar user দেখেছে? (d) PageRank দিয়ে সবচেয়ে popular movies খোঁজো।</p>
+      <button class="ht" onclick="toggleHint('hp3')">💡 হিন্ট</button>
+      <button class="st2" onclick="toggleSol('sp3')">✅ সমাধান</button>
+      <div class="hc" id="hp3">Bipartite graph: <code>nx.is_bipartite(G)</code> দিয়ে confirm করো। Common neighbors: <code>list(nx.common_neighbors(G, u, v))</code>।</div>
+      <div class="sc" id="sp3">
+        <div class="cb"><div class="ch"><span class="cl">Python</span><span class="ct">Graph-based Recommendation System</span></div>
+        <pre>B = nx.<span class="cls">Graph</span>()
+<span class="cm"># users ও movies আলাদা bipartite sets</span>
+users = [<span class="str">'U1'</span>,<span class="str">'U2'</span>,<span class="str">'U3'</span>,<span class="str">'U4'</span>]
+movies = [<span class="str">'M1'</span>,<span class="str">'M2'</span>,<span class="str">'M3'</span>,<span class="str">'M4'</span>,<span class="str">'M5'</span>]
+B.<span class="fn">add_nodes_from</span>(users, bipartite=<span class="nm">0</span>)
+B.<span class="fn">add_nodes_from</span>(movies, bipartite=<span class="nm">1</span>)
+watched = [(<span class="str">'U1'</span>,<span class="str">'M1'</span>),(<span class="str">'U1'</span>,<span class="str">'M2'</span>),(<span class="str">'U1'</span>,<span class="str">'M3'</span>),
+           (<span class="str">'U2'</span>,<span class="str">'M1'</span>),(<span class="str">'U2'</span>,<span class="str">'M4'</span>),
+           (<span class="str">'U3'</span>,<span class="str">'M2'</span>),(<span class="str">'U3'</span>,<span class="str">'M3'</span>),(<span class="str">'U3'</span>,<span class="str">'M5'</span>),
+           (<span class="str">'U4'</span>,<span class="str">'M4'</span>),(<span class="str">'U4'</span>,<span class="str">'M5'</span>)]
+B.<span class="fn">add_edges_from</span>(watched)
+
+<span class="cm"># User-user similarity (common movies)</span>
+<span class="fn">print</span>(<span class="str">"User similarity (common movies):"</span>)
+<span class="kw">for</span> i, u1 <span class="kw">in</span> <span class="fn">enumerate</span>(users):
+    <span class="kw">for</span> u2 <span class="kw">in</span> users[i+<span class="nm">1</span>:]:
+        common = <span class="fn">list</span>(nx.<span class="fn">common_neighbors</span>(B, u1, u2))
+        <span class="kw">if</span> common:
+            <span class="fn">print</span>(<span class="str">f"  {u1}-{u2}: {common}"</span>)
+
+<span class="cm"># Recommendation for U1</span>
+u1_movies = <span class="fn">set</span>(B.<span class="fn">neighbors</span>(<span class="str">'U1'</span>))
+similar_users = [u <span class="kw">for</span> u <span class="kw">in</span> users
+    <span class="kw">if</span> u != <span class="str">'U1'</span> <span class="kw">and</span> <span class="fn">len</span>(<span class="fn">list</span>(nx.<span class="fn">common_neighbors</span>(B,<span class="str">'U1'</span>,u))) > <span class="nm">0</span>]
+recos = <span class="fn">set</span>()
+<span class="kw">for</span> su <span class="kw">in</span> similar_users:
+    recos.<span class="fn">update</span>(<span class="fn">set</span>(B.<span class="fn">neighbors</span>(su)) - u1_movies)
+<span class="fn">print</span>(<span class="str">f"\nU1-এর জন্য Recommendation: {recos}"</span>)
+
+<span class="cm"># Movie popularity (degree)</span>
+movie_pop = {m: B.<span class="fn">degree</span>(m) <span class="kw">for</span> m <span class="kw">in</span> movies}
+<span class="fn">print</span>(<span class="str">"Movie popularity:"</span>, <span class="fn">sorted</span>(movie_pop.items(), key=<span class="kw">lambda</span> x:-x[<span class="nm">1</span>]))</pre></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECT 4 -->
+  <div class="exb">
+    <div class="exh"><div class="exn">P4</div><div><h4>Knowledge Graph Embedding Preparation</h4><p>Advanced ML · Knowledge Graph · NLP · Graph2Vec</p></div></div>
+    <div class="exbody">
+      <p><strong>পটভূমি:</strong> একটি NLP system-এর জন্য entity relationship knowledge graph তৈরি করো এবং graph statistics বের করো যা graph embedding (Node2Vec, GraphSAGE) train করার আগে প্রয়োজন।</p>
+      <p><strong>কাজ:</strong> (a) Multi-relational knowledge graph তৈরি করো (b) Graph statistics বের করো: density, diameter, avg clustering coefficient (c) Degree distribution plot করো (d) Train/test split-এর জন্য random edge sampling করো।</p>
+      <button class="ht" onclick="toggleHint('hp4')">💡 হিন্ট</button>
+      <button class="st2" onclick="toggleSol('sp4')">✅ সমাধান</button>
+      <div class="hc" id="hp4">Clustering coefficient: <code>nx.average_clustering(G)</code>। Random edge sampling: <code>random.sample(list(G.edges()), k)</code>।</div>
+      <div class="sc" id="sp4">
+        <div class="cb"><div class="ch"><span class="cl">Python</span><span class="ct">Knowledge Graph Analysis Pipeline</span></div>
+        <pre><span class="kw">import</span> random
+
+KG = nx.<span class="cls">Graph</span>()
+triples = [
+    (<span class="str">'Python'</span>,<span class="str">'ML'</span>), (<span class="str">'Python'</span>,<span class="str">'DataScience'</span>),
+    (<span class="str">'ML'</span>,<span class="str">'NLP'</span>), (<span class="str">'ML'</span>,<span class="str">'CV'</span>), (<span class="str">'ML'</span>,<span class="str">'RL'</span>),
+    (<span class="str">'NLP'</span>,<span class="str">'Transformer'</span>), (<span class="str">'NLP'</span>,<span class="str">'BERT'</span>), (<span class="str">'NLP'</span>,<span class="str">'GPT'</span>),
+    (<span class="str">'BERT'</span>,<span class="str">'GPT'</span>), (<span class="str">'GPT'</span>,<span class="str">'LLM'</span>), (<span class="str">'Transformer'</span>,<span class="str">'BERT'</span>),
+    (<span class="str">'CV'</span>,<span class="str">'CNN'</span>), (<span class="str">'CV'</span>,<span class="str">'YOLO'</span>), (<span class="str">'RL'</span>,<span class="str">'DQN'</span>), (<span class="str">'RL'</span>,<span class="str">'PPO'</span>),
+    (<span class="str">'DataScience'</span>,<span class="str">'Statistics'</span>), (<span class="str">'DataScience'</span>,<span class="str">'Pandas'</span>)
+]
+KG.<span class="fn">add_edges_from</span>(triples)
+
+<span class="cm"># Graph Statistics</span>
+stats = {
+    <span class="str">'nodes'</span>: KG.<span class="fn">number_of_nodes</span>(),
+    <span class="str">'edges'</span>: KG.<span class="fn">number_of_edges</span>(),
+    <span class="str">'density'</span>: nx.<span class="fn">density</span>(KG),
+    <span class="str">'avg_degree'</span>: <span class="fn">sum</span>(<span class="fn">dict</span>(KG.degree()).values()) / KG.<span class="fn">number_of_nodes</span>(),
+    <span class="str">'avg_clustering'</span>: nx.<span class="fn">average_clustering</span>(KG),
+    <span class="str">'connected'</span>: nx.<span class="fn">is_connected</span>(KG),
+}
+<span class="fn">print</span>(<span class="str">"Graph Statistics:"</span>)
+<span class="kw">for</span> k, v <span class="kw">in</span> stats.items():
+    <span class="fn">print</span>(<span class="str">f"  {k}: {v:.4f}"</span> <span class="kw">if</span> <span class="fn">isinstance</span>(v, <span class="fn">float</span>) <span class="kw">else</span> <span class="str">f"  {k}: {v}"</span>)
+
+<span class="cm"># Train/Test edge split (80/20)</span>
+all_edges = <span class="fn">list</span>(KG.edges())
+random.<span class="fn">shuffle</span>(all_edges)
+split = <span class="fn">int</span>(<span class="nm">0.8</span> * <span class="fn">len</span>(all_edges))
+train_edges = all_edges[:split]
+test_edges = all_edges[split:]
+<span class="fn">print</span>(<span class="str">f"\nTrain edges: {len(train_edges)} | Test edges: {len(test_edges)}"</span>)
+
+<span class="cm"># Degree distribution</span>
+degrees = [d <span class="kw">for</span> _, d <span class="kw">in</span> KG.degree()]
+<span class="fn">print</span>(<span class="str">f"Degree: min={min(degrees)}, max={max(degrees)}, avg={np.mean(degrees):.2f}"</span>)</pre></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     CLOSING / QUICK REFERENCE
+══════════════════════════════════════════ -->
+<section class="section">
+  <div class="section-badge b5">Quick Reference</div>
+  <h2 class="st">NetworkX Quick Reference — সব Important Functions</h2>
+  <table class="tbl">
+    <tr><th>কাজ</th><th>Function</th><th>উদাহরণ</th></tr>
+    <tr><td>Graph তৈরি</td><td><code>nx.Graph() / nx.DiGraph()</code></td><td>G = nx.Graph()</td></tr>
+    <tr><td>Node যোগ</td><td><code>add_node / add_nodes_from</code></td><td>G.add_node(1, color='red')</td></tr>
+    <tr><td>Edge যোগ</td><td><code>add_edge / add_edges_from / add_weighted_edges_from</code></td><td>G.add_edge(1,2,weight=5)</td></tr>
+    <tr><td>Node মুছা</td><td><code>remove_node / remove_nodes_from</code></td><td>G.remove_node(1)</td></tr>
+    <tr><td>Edge মুছা</td><td><code>remove_edge / remove_edges_from</code></td><td>G.remove_edge(1,2)</td></tr>
+    <tr><td>Degree</td><td><code>G.degree / in_degree / out_degree</code></td><td>G.degree[5]</td></tr>
+    <tr><td>Adjacency Matrix</td><td><code>nx.adjacency_matrix(G)</code></td><td>.todense()</td></tr>
+    <tr><td>Adjacency List</td><td><code>nx.to_dict_of_lists(G)</code></td><td>{1: [2,3], ...}</td></tr>
+    <tr><td>Connected?</td><td><code>nx.is_connected(G)</code></td><td>True/False</td></tr>
+    <tr><td>Components</td><td><code>nx.strongly/weakly_connected_components</code></td><td>list(...)</td></tr>
+    <tr><td>BFS</td><td><code>nx.bfs_tree(G, source)</code></td><td>list(tree.nodes())</td></tr>
+    <tr><td>DFS</td><td><code>nx.dfs_tree(G, source)</code></td><td>list(tree.nodes())</td></tr>
+    <tr><td>MST (Kruskal)</td><td><code>nx.tree.minimum_spanning_tree(G)</code></td><td>.size(weight='weight')</td></tr>
+    <tr><td>Shortest Path</td><td><code>nx.shortest_path(G, source, target)</code></td><td>weight='weight'</td></tr>
+    <tr><td>Path Length</td><td><code>nx.shortest_path_length</code></td><td>avg: average_shortest_path_length</td></tr>
+    <tr><td>Community (Louvain)</td><td><code>best_partition(G)</code></td><td>from community.community_louvain</td></tr>
+    <tr><td>Community (GN)</td><td><code>nx.algorithms.community.girvan_newman</code></td><td>next(gen)</td></tr>
+    <tr><td>PageRank</td><td><code>nx.pagerank(G, alpha=0.85)</code></td><td>dict: node→score</td></tr>
+    <tr><td>Centrality</td><td><code>nx.betweenness/degree/closeness_centrality</code></td><td>dict</td></tr>
+    <tr><td>GML read/write</td><td><code>nx.read_gml / nx.write_gml</code></td><td>path, encoding</td></tr>
+    <tr><td>Visualization</td><td><code>nx.draw / draw_networkx / draw_circular</code></td><td>pos, node_color, with_labels</td></tr>
+  </table>
+</section>
+
+</div><!-- end .content -->
+</main>
+
+<button id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+function toggleHint(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+function toggleSol(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// Progress bar
+window.addEventListener('scroll', () => {
+  const s = document.documentElement;
+  const pct = (s.scrollTop/(s.scrollHeight-s.clientHeight))*100;
+  document.getElementById('pb').style.width = pct+'%';
+  const btt = document.getElementById('btt');
+  if(s.scrollTop > 400) btt.classList.add('vis');
+  else btt.classList.remove('vis');
+});
+
+// Active nav link
+const links = document.querySelectorAll('.nav-link');
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      links.forEach(l=>l.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+      if(active) active.classList.add('active');
+    }
+  });
+},{threshold:0.3});
+document.querySelectorAll('section[id]').forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>

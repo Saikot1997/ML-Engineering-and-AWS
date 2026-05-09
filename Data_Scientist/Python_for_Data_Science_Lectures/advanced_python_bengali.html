@@ -1,0 +1,2942 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Python — সম্পূর্ণ বাংলা গাইড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#1f2937;--card:#1c2333;
+  --border:#30363d;--accent:#f78166;--accent2:#79c0ff;
+  --accent3:#56d364;--accent4:#e3b341;--accent5:#bc8cff;
+  --text:#e6edf3;--muted:#8b949e;--code-bg:#0d1117;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Hind Siliguri',sans-serif;font-size:17px;line-height:1.85;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0d1117,#1a1040,#0d1117);padding:72px 40px 52px;text-align:center;border-bottom:2px solid var(--border);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(121,192,255,0.07),transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(188,140,255,0.07),transparent 60%);}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4.5vw,3.2rem);background:linear-gradient(135deg,var(--accent2),var(--accent5),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:14px;position:relative;}
+.hero p{color:var(--muted);font-size:1.05rem;max-width:680px;margin:0 auto 8px;}
+.badge{display:inline-block;background:rgba(86,211,100,0.12);border:1px solid var(--accent3);color:var(--accent3);padding:4px 14px;border-radius:20px;font-size:0.82rem;margin-top:14px;}
+
+/* PYODIDE BANNER */
+.py-banner{background:linear-gradient(90deg,rgba(86,211,100,0.08),rgba(121,192,255,0.08));border:1px solid rgba(86,211,100,0.25);border-radius:10px;padding:12px 20px;margin:20px auto;max-width:700px;display:flex;align-items:center;gap:12px;font-size:0.9rem;}
+.py-banner span{color:var(--accent3);font-weight:700;}
+#py-status{color:var(--muted);font-size:0.82rem;}
+
+/* NAV */
+.toc{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 32px;position:sticky;top:0;z-index:100;}
+.toc-inner{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;gap:7px;}
+.toc a{color:var(--muted);text-decoration:none;font-size:0.8rem;padding:4px 11px;border:1px solid var(--border);border-radius:6px;transition:all .2s;}
+.toc a:hover{color:var(--accent2);border-color:var(--accent2);}
+
+/* LAYOUT */
+.container{max-width:980px;margin:0 auto;padding:36px 22px;}
+
+/* CHAPTER */
+.chapter{margin:56px 0 0;padding:28px 32px;background:var(--card);border:1px solid var(--border);border-radius:14px;border-left:4px solid var(--accent2);}
+.chapter-num{font-size:0.72rem;letter-spacing:3px;text-transform:uppercase;color:var(--accent2);margin-bottom:7px;font-weight:700;}
+.chapter h2{font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--text);margin-bottom:10px;}
+.chapter p{color:var(--muted);font-size:0.97rem;}
+
+/* SECTION */
+.section{margin:36px 0;}
+.section h3{font-size:1.3rem;color:var(--accent4);margin-bottom:18px;padding-bottom:9px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;}
+.section h4{font-size:1.05rem;color:var(--accent5);margin:22px 0 10px;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:20px;margin:18px 0;}
+.card.green{border-left:3px solid var(--accent3);}.card.blue{border-left:3px solid var(--accent2);}
+.card.orange{border-left:3px solid var(--accent);}.card.purple{border-left:3px solid var(--accent5);}
+.card.yellow{border-left:3px solid var(--accent4);}
+.card-title{font-weight:700;font-size:0.97rem;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.card.green .card-title{color:var(--accent3);}.card.blue .card-title{color:var(--accent2);}
+.card.orange .card-title{color:var(--accent);}.card.purple .card-title{color:var(--accent5);}
+.card.yellow .card-title{color:var(--accent4);}
+
+/* CODE RUNNER */
+.code-block{margin:18px 0;border:1px solid var(--border);border-radius:11px;overflow:hidden;}
+.code-header{background:var(--bg3);padding:9px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.code-lang{font-size:0.75rem;color:var(--muted);font-family:'Fira Code',monospace;}
+.run-btn{background:var(--accent3);color:#000;border:none;padding:5px 14px;border-radius:6px;font-size:0.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Hind Siliguri',sans-serif;transition:all .2s;}
+.run-btn:hover{background:#4fc25a;transform:scale(1.03);}
+.run-btn:disabled{background:#333;color:#666;cursor:not-allowed;transform:none;}
+.run-btn .spin{display:none;}
+.run-btn.running .spin{display:inline;}
+.run-btn.running .play{display:none;}
+textarea.code-edit{width:100%;background:var(--code-bg);color:#e6edf3;font-family:'Fira Code',monospace;font-size:0.85rem;padding:18px 20px;border:none;outline:none;resize:vertical;min-height:120px;line-height:1.7;tab-size:4;}
+.output-area{background:#0a0e15;border-top:1px solid var(--border);padding:14px 18px;min-height:36px;font-family:'Fira Code',monospace;font-size:0.82rem;white-space:pre-wrap;color:#e6edf3;}
+.output-area.error{color:#ff7b72;}
+.output-area.empty{color:var(--muted);font-style:italic;font-family:'Hind Siliguri',sans-serif;font-size:0.85rem;}
+.output-label{font-size:0.7rem;color:var(--muted);padding:6px 18px 0;background:#0a0e15;border-top:1px solid var(--border);font-family:'Hind Siliguri',sans-serif;}
+
+/* STATIC CODE (display only) */
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:18px 22px;overflow-x:auto;margin:14px 0;}
+code{font-family:'Fira Code',monospace;font-size:0.85rem;color:#e6edf3;}
+.ic{background:rgba(121,192,255,0.1);border:1px solid rgba(121,192,255,0.2);color:var(--accent2);padding:1px 6px;border-radius:4px;font-family:'Fira Code',monospace;font-size:0.83em;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.str{color:#a5d6ff;}.num{color:#79c0ff;}
+.cls{color:#ffa657;}.cm{color:#6e7681;font-style:italic;}
+
+/* DIAGRAM */
+.diagram-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:22px;margin:22px 0;text-align:center;overflow-x:auto;}
+.diagram-title{color:var(--muted);font-size:0.82rem;margin-top:10px;font-style:italic;}
+
+/* CALLOUT */
+.callout{display:flex;gap:12px;align-items:flex-start;padding:14px 18px;border-radius:9px;margin:18px 0;}
+.callout.info{background:rgba(121,192,255,0.07);border:1px solid rgba(121,192,255,0.18);}
+.callout.warn{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.18);}
+.callout.tip{background:rgba(86,211,100,0.07);border:1px solid rgba(86,211,100,0.18);}
+.callout.danger{background:rgba(247,129,102,0.07);border:1px solid rgba(247,129,102,0.18);}
+.callout-icon{font-size:1.2rem;flex-shrink:0;margin-top:3px;}
+.callout p{margin:0;font-size:0.93rem;line-height:1.7;}
+
+/* EXERCISE */
+.exercise{background:linear-gradient(135deg,rgba(188,140,255,0.04),rgba(121,192,255,0.04));border:1px solid rgba(188,140,255,0.28);border-radius:13px;padding:24px;margin:28px 0;}
+.exercise-header{display:flex;align-items:center;gap:9px;color:var(--accent5);font-weight:700;font-size:1rem;margin-bottom:14px;}
+.elevel{display:inline-block;padding:2px 9px;border-radius:20px;font-size:0.72rem;font-weight:700;margin-left:auto;}
+.easy{background:rgba(86,211,100,0.12);color:var(--accent3);border:1px solid var(--accent3);}
+.medium{background:rgba(227,179,65,0.12);color:var(--accent4);border:1px solid var(--accent4);}
+.hard{background:rgba(247,129,102,0.12);color:var(--accent);border:1px solid var(--accent);}
+.exercise ol,.exercise ul{padding-left:18px;}
+.exercise li{margin:7px 0;}
+details summary{cursor:pointer;color:var(--accent5);font-weight:600;padding:7px 0;user-select:none;}
+details summary:hover{color:var(--accent2);}
+details[open] summary{color:var(--accent2);}
+
+/* TABLE */
+.ctable{width:100%;border-collapse:collapse;margin:18px 0;}
+.ctable th{background:var(--bg3);color:var(--accent2);padding:11px 14px;text-align:left;border:1px solid var(--border);font-weight:600;font-size:0.9rem;}
+.ctable td{padding:10px 14px;border:1px solid var(--border);font-size:0.88rem;}
+.ctable tr:nth-child(even) td{background:rgba(255,255,255,0.018);}
+
+/* ALGO */
+.algo-card{background:var(--card);border:1px solid var(--border);border-radius:13px;margin:28px 0;overflow:hidden;}
+.algo-header{background:linear-gradient(90deg,var(--bg3),var(--card));padding:18px 26px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:13px;}
+.algo-icon{font-size:1.9rem;}
+.algo-header h3{color:var(--accent4);font-size:1.15rem;margin:0;}
+.algo-header p{color:var(--muted);font-size:0.84rem;margin:3px 0 0;}
+.algo-body{padding:22px 26px;}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:640px){.two-col{grid-template-columns:1fr;}.hero{padding:46px 18px 36px;}.container{padding:22px 14px;}.chapter{padding:18px 16px;}}
+
+/* FOOTER */
+footer{text-align:center;padding:52px 20px 36px;border-top:1px solid var(--border);color:var(--muted);font-size:0.85rem;margin-top:70px;}
+
+/* ANIM */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.hero>*{animation:fadeUp .5s ease both;}
+.hero h1{animation-delay:.08s;}.hero p{animation-delay:.16s;}.hero .badge{animation-delay:.24s;}
+@keyframes spin{to{transform:rotate(360deg);}}.spin{animation:spin .8s linear infinite;display:inline-block;}
+
+  /* SVG responsive fix */
+  svg { max-width: 100%; height: auto; display: block; margin: 1rem auto; }
+
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>🐍 Advanced Python<br>সম্পূর্ণ বাংলা গাইড</h1>
+  <p>Annotations · Decorators · Multithreading · Async · Algorithms<br>একদম newbie থেকে ML Engineer পর্যন্ত — সব কিছু বাংলায়</p>
+  <span class="badge">✅ Browser-এই Python চালাও — Pyodide powered</span>
+
+  <div class="py-banner">
+    <span>🟢 Live Python Runner</span>
+    <div>প্রতিটা code block-এ <strong>▶ Run</strong> বাটন আছে — browser-এই Python চালাও, কোনো install ছাড়া।<br>
+    <span id="py-status">⏳ Pyodide লোড হচ্ছে... একটু অপেক্ষা করো (~৫-১০ সেকেন্ড)</span></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="toc">
+  <div class="toc-inner">
+    <a href="#nb1">📌 Annotations</a>
+    <a href="#nb2">🎨 Decorators</a>
+    <a href="#nb3">⚡ Multithreading</a>
+    <a href="#nb4">🔄 Async</a>
+    <a href="#algorithms">🧠 Algorithms</a>
+    <a href="#interview">💼 Interview</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ══════════════════════════════════════════════════
+══════════════════════════════════════════════════ -->
+<div id="nb1" class="chapter">
+  <div class="chapter-num">অধ্যায় ০১</div>
+  <h2>Type Annotations ও Python-এ Typing</h2>
+  <p>Python-এ variable-এর ধরন (type) কীভাবে কাজ করে, Static vs Dynamic typing কী এবং কীভাবে annotation দিয়ে code আরও নিরাপদ করা যায়।</p>
+</div>
+
+<!-- 1.1 Type কী -->
+<div class="section">
+  <h3>🍎 ১.১ — Type মানে কী? রান্নাঘরের উদাহরণে</h3>
+  <p>ধরো তোমার রান্নাঘরে বিভিন্ন পাত্র আছে। একটায় চাল, একটায় ডাল, একটায় তেল। প্রতিটা পাত্রের একটা <strong>ধরন</strong> (type) আছে — এটা পানির পাত্র, এটা তেলের। Computer-এ data-ও ঠিক তেমন।</p>
+
+  <div class="two-col">
+    <div class="card blue">
+      <div class="card-title">🔢 সংখ্যা (Number Types)</div>
+      <p><span class="ic">int</span> = পূর্ণ সংখ্যা → <span class="ic">5, -3, 100</span><br>
+         <span class="ic">float</span> = দশমিক → <span class="ic">3.14, -0.5</span><br>
+         <span class="ic">complex</span> = জটিল → <span class="ic">2+3j</span></p>
+    </div>
+    <div class="card green">
+      <div class="card-title">📝 অন্যান্য Types</div>
+      <p><span class="ic">str</span> = লেখা → <span class="ic">"আমি", "Hello"</span><br>
+         <span class="ic">bool</span> = সত্য/মিথ্যা → <span class="ic">True, False</span><br>
+         <span class="ic">list</span> = তালিকা → <span class="ic">[1, 2, 3]</span></p>
+    </div>
+  </div>
+
+  <!-- LIVE CODE 1 -->
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · type() ফাংশন ব্যবহার</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+# type() ফাংশন — যেকোনো variable-এর ধরন বলে দেয়
+a = 2
+print("a-এর type:", type(a))       # int — পূর্ণ সংখ্যা
+
+b = "আমি Hoimi"
+print("b-এর type:", type(b))       # str — লেখা
+
+c = 3.14
+print("c-এর type:", type(c))       # float — দশমিক
+
+d = True
+print("d-এর type:", type(d))       # bool — সত্য/মিথ্যা
+
+e = [1, 2, 3]
+print("e-এর type:", type(e))       # list — তালিকা
+
+# isinstance() দিয়ে type check
+print("a কি int?", isinstance(a, int))       # True
+print("b কি int?", isinstance(b, int))       # False
+    </textarea>
+    <div class="output-label">আউটপুট:</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+</div>
+
+<!-- 1.2 Static vs Dynamic -->
+<div class="section">
+  <h3>⚖️ ১.২ — Static vs Dynamic Typing</h3>
+  <p>Programming language-গুলো দুই ধরনের typing ব্যবহার করে। নিচের diagram-এ তুলনা দেখো:</p>
+
+  <div class="diagram-wrap">
+    <!-- FIXED SVG: Static vs Dynamic, no overlap, clean layout -->
+    <svg width="680" height="300" viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">
+      <!-- Left panel: Static -->
+      <rect x="10" y="10" width="310" height="280" rx="12" fill="#1f2937" stroke="#30363d" stroke-width="1.5"/>
+      <!-- header -->
+      <rect x="10" y="10" width="310" height="46" rx="12" fill="#1e3a5f"/>
+      <rect x="10" y="42" width="310" height="14" fill="#1e3a5f"/>
+      <text x="165" y="40" text-anchor="middle" font-family="Hind Siliguri" font-size="14" font-weight="700" fill="#79c0ff">🔒 Static Typing</text>
+      <text x="165" y="55" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">Java, C, C++</text>
+
+      <!-- Code example box -->
+      <rect x="28" y="68" width="274" height="70" rx="7" fill="#0d1117" stroke="#30363d"/>
+      <text x="44" y="88" font-family="Fira Code" font-size="12" fill="#ffa657">int</text>
+      <text x="72" y="88" font-family="Fira Code" font-size="12" fill="#e6edf3"> a = 5;</text>
+      <text x="44" y="106" font-family="Fira Code" font-size="12" fill="#ffa657">String</text>
+      <text x="90" y="106" font-family="Fira Code" font-size="12" fill="#e6edf3"> b = </text>
+      <text x="122" y="106" font-family="Fira Code" font-size="12" fill="#a5d6ff">"Hello"</text>
+      <text x="44" y="124" font-family="Fira Code" font-size="12" fill="#ffa657">float</text>
+      <text x="80" y="124" font-family="Fira Code" font-size="12" fill="#e6edf3"> c = 3.14f;</text>
+
+      <!-- Pros -->
+      <text x="28" y="158" font-family="Hind Siliguri" font-size="12" fill="#56d364" font-weight="700">✅ সুবিধা:</text>
+      <text x="28" y="176" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">• Type error আগেই ধরা পড়ে</text>
+      <text x="28" y="193" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">• Code পড়তে সহজ</text>
+      <text x="28" y="210" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">• দ্রুত execute হয়</text>
+      <!-- Cons -->
+      <text x="28" y="233" font-family="Hind Siliguri" font-size="12" fill="#ff7b72" font-weight="700">❌ অসুবিধা:</text>
+      <text x="28" y="250" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">• লিখতে সময় বেশি লাগে</text>
+      <text x="28" y="267" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">• Rigid — নমনীয় নয়</text>
+
+      <!-- Right panel: Dynamic -->
+      <rect x="360" y="10" width="310" height="280" rx="12" fill="#1f2937" stroke="#30363d" stroke-width="1.5"/>
+      <!-- header -->
+      <rect x="360" y="10" width="310" height="46" rx="12" fill="#1a3820"/>
+      <rect x="360" y="42" width="310" height="14" fill="#1a3820"/>
+      <text x="515" y="40" text-anchor="middle" font-family="Hind Siliguri" font-size="14" font-weight="700" fill="#56d364">🌊 Dynamic Typing</text>
+      <text x="515" y="55" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">Python, JavaScript, Ruby</text>
+
+      <!-- Code example box -->
+      <rect x="378" y="68" width="274" height="70" rx="7" fill="#0d1117" stroke="#30363d"/>
+      <text x="394" y="88" font-family="Fira Code" font-size="12" fill="#e6edf3">a = 5</text>
+      <text x="394" y="106" font-family="Fira Code" font-size="12" fill="#e6edf3">b = </text>
+      <text x="422" y="106" font-family="Fira Code" font-size="12" fill="#a5d6ff">"Hello"</text>
+      <text x="394" y="124" font-family="Fira Code" font-size="12" fill="#e6edf3">c = 3.14</text>
+      <!-- no type declaration needed label -->
+      <text x="540" y="106" font-family="Hind Siliguri" font-size="10" fill="#56d364">← type লিখতে হয় না!</text>
+
+      <!-- Pros -->
+      <text x="378" y="158" font-family="Hind Siliguri" font-size="12" fill="#56d364" font-weight="700">✅ সুবিধা:</text>
+      <text x="378" y="176" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">• দ্রুত লেখা যায়</text>
+      <text x="378" y="193" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">• নমনীয় (Flexible)</text>
+      <text x="378" y="210" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">• শেখা সহজ</text>
+      <!-- Cons -->
+      <text x="378" y="233" font-family="Hind Siliguri" font-size="12" fill="#ff7b72" font-weight="700">❌ অসুবিধা:</text>
+      <text x="378" y="250" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">• Runtime-এ error আসে</text>
+      <text x="378" y="267" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">• Debug করা কঠিন</text>
+
+      <!-- VS text in middle -->
+      <circle cx="340" cy="150" r="22" fill="#2d1f40" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="340" y="156" text-anchor="middle" font-family="Playfair Display" font-size="14" fill="#bc8cff" font-weight="700">VS</text>
+    </svg>
+    <p class="diagram-title">চিত্র ১: Static vs Dynamic Typing — পাশাপাশি তুলনা</p>
+  </div>
+
+  <!-- Memory Model SVG — FIXED: no overlap, clear arrows -->
+  <h4>🧠 Python Memory Model — Variable আসলে Pointer!</h4>
+  <p>Python-এ variable সরাসরি মান ধরে না — এটা memory-তে object-এর <strong>ঠিকানা (pointer)</strong> ধরে। এজন্য একই variable-এ ভিন্ন type রাখা যায়।</p>
+
+  <div class="diagram-wrap">
+    <svg width="620" height="340" viewBox="0 0 620 340" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">
+      <defs>
+        <marker id="m1" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+          <polygon points="0 0,9 3.5,0 7" fill="#79c0ff"/>
+        </marker>
+        <marker id="m2" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+          <polygon points="0 0,9 3.5,0 7" fill="#e3b341"/>
+        </marker>
+        <marker id="m3" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+          <polygon points="0 0,9 3.5,0 7" fill="#30363d"/>
+        </marker>
+      </defs>
+
+      <!-- Section label: Step 1 -->
+      <text x="10" y="22" font-family="Hind Siliguri" font-size="13" fill="#79c0ff" font-weight="700">ধাপ ১ — x = 7 লিখলে কী হয়?</text>
+
+      <!-- Variable box -->
+      <rect x="10" y="32" width="100" height="56" rx="8" fill="#1e3a5f" stroke="#79c0ff" stroke-width="2"/>
+      <text x="60" y="54" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">Variable (নাম)</text>
+      <text x="60" y="76" text-anchor="middle" font-family="Fira Code" font-size="22" fill="#79c0ff" font-weight="700">x</text>
+
+      <!-- Arrow: x → 7 -->
+      <line x1="112" y1="60" x2="195" y2="60" stroke="#79c0ff" stroke-width="2" marker-end="url(#m1)"/>
+      <text x="154" y="50" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#8b949e">pointer (ঠিকানা)</text>
+
+      <!-- Object box: 7 -->
+      <rect x="197" y="32" width="110" height="56" rx="8" fill="#1a3820" stroke="#56d364" stroke-width="2"/>
+      <text x="252" y="54" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">Object (মান)</text>
+      <text x="252" y="76" text-anchor="middle" font-family="Fira Code" font-size="22" fill="#56d364" font-weight="700">7</text>
+
+      <!-- type label -->
+      <rect x="317" y="42" width="70" height="24" rx="5" fill="#0d1117" stroke="#30363d"/>
+      <text x="352" y="58" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">type: int</text>
+
+      <!-- id() explanation -->
+      <rect x="410" y="28" width="195" height="68" rx="8" fill="#1f2937" stroke="#30363d"/>
+      <text x="507" y="50" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#e3b341" font-weight="700">id() কী বলবে?</text>
+      <text x="507" y="68" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#8b949e">id(x) == id(7) → True</text>
+      <text x="507" y="84" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">কারণ x আর 7 একই object!</text>
+
+      <!-- Divider -->
+      <line x1="10" y1="110" x2="610" y2="110" stroke="#30363d" stroke-width="1" stroke-dasharray="5,4"/>
+      <text x="305" y="124" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">↓ এখন x = "কিছু লেখা" করলে কী হয়? ↓</text>
+
+      <!-- Section label: Step 2 -->
+      <text x="10" y="148" font-family="Hind Siliguri" font-size="13" fill="#e3b341" font-weight="700">ধাপ ২ — x = "কিছু লেখা" (পুনরায় assign)</text>
+
+      <!-- Variable box: x (now pointing down) -->
+      <rect x="10" y="158" width="100" height="56" rx="8" fill="#3b2800" stroke="#e3b341" stroke-width="2"/>
+      <text x="60" y="180" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">Variable (নাম)</text>
+      <text x="60" y="202" text-anchor="middle" font-family="Fira Code" font-size="22" fill="#e3b341" font-weight="700">x</text>
+
+      <!-- Old object (7) now orphaned -->
+      <rect x="197" y="158" width="110" height="56" rx="8" fill="#1a1a1a" stroke="#333" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="252" y="180" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#444">পুরনো object</text>
+      <text x="252" y="200" text-anchor="middle" font-family="Fira Code" font-size="22" fill="#444">7</text>
+
+      <!-- Strikethrough arrow (old) -->
+      <line x1="112" y1="186" x2="195" y2="186" stroke="#333" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#m3)"/>
+
+      <!-- New pointer: x → string (diagonal down) -->
+      <line x1="60" y1="215" x2="60" y2="258" stroke="#e3b341" stroke-width="2"/>
+      <line x1="60" y1="258" x2="185" y2="258" stroke="#e3b341" stroke-width="2" marker-end="url(#m2)"/>
+
+      <!-- New object: string -->
+      <rect x="187" y="234" width="160" height="52" rx="8" fill="#2d1f40" stroke="#bc8cff" stroke-width="2"/>
+      <text x="267" y="256" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">নতুন Object</text>
+      <text x="267" y="274" text-anchor="middle" font-family="Fira Code" font-size="13" fill="#bc8cff" font-weight="700">"কিছু লেখা"</text>
+
+      <!-- type label -->
+      <rect x="357" y="244" width="70" height="24" rx="5" fill="#0d1117" stroke="#30363d"/>
+      <text x="392" y="260" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">type: str</text>
+
+      <!-- Explanation box -->
+      <rect x="440" y="148" width="170" height="145" rx="8" fill="#1f2937" stroke="#30363d"/>
+      <text x="525" y="172" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#79c0ff" font-weight="700">কী ঘটলো?</text>
+      <text x="455" y="192" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">• x আগে 7-কে point করতো</text>
+      <text x="455" y="210" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">• এখন string-কে point করে</text>
+      <text x="455" y="228" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">• 7 এখন কেউ ধরে না</text>
+      <text x="455" y="246" font-family="Hind Siliguri" font-size="11" fill="#e6edf3">  → garbage collected হবে</text>
+      <text x="455" y="268" font-family="Hind Siliguri" font-size="11" fill="#56d364">• কোনো error নেই! ✅</text>
+      <text x="455" y="284" font-family="Hind Siliguri" font-size="10" fill="#8b949e">এটাই Dynamic Typing!</text>
+
+      <!-- bottom note -->
+      <text x="305" y="318" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#8b949e">Python-এ variable = pointer। Object-এ type থাকে, variable-এ নয়।</text>
+    </svg>
+    <p class="diagram-title">চিত্র ২: Python Variable → Pointer Model (id() দিয়ে দেখা যায়)</p>
+  </div>
+
+  <!-- LIVE CODE: id() demo -->
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · Dynamic Typing এবং id() দেখো</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+# ১. Dynamic typing — একই variable-এ ভিন্ন type
+x = 7
+print("x =", x, "| type:", type(x).__name__, "| id:", id(x))
+
+x = "কিছু লেখা"  # pointer নতুন object-এ গেল
+print("x =", x, "| type:", type(x).__name__, "| id:", id(x))
+
+# ২. id() দিয়ে দেখো — একই value একই object!
+a = 5
+b = 5
+print("\na এবং b দুটোই 5:")
+print("id(a):", id(a))
+print("id(b):", id(b))
+print("id(a) == id(b)?", id(a) == id(b))
+# True — Python -5 থেকে 256 পর্যন্ত integer cache করে রাখে!
+
+# ৩. বড় সংখ্যায় আলাদা object হয়
+c = 1000
+d = 1000
+print("\nc এবং d দুটোই 1000:")
+print("id(c) == id(d)?", id(c) == id(d))
+# False — বড় সংখ্যা cache হয় না, আলাদা object!
+    </textarea>
+    <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+</div>
+
+<!-- 1.3 Annotations -->
+<div class="section">
+  <h3>🏷️ ১.৩ — Annotations: Python-এ Type Hint দাও</h3>
+  <p>Python-এ static typing নেই, কিন্তু আমরা <strong>annotation</strong> দিয়ে hint দিতে পারি — "এই parameter এই type-এর হওয়া উচিত"। এটা বাধ্যতামূলক নয়, শুধু suggestion।</p>
+
+  <!-- Annotation anatomy SVG — FIXED: labels don't overlap code -->
+  <div class="diagram-wrap">
+    <svg width="640" height="220" viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">
+      <defs>
+        <marker id="an1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#79c0ff"/>
+        </marker>
+        <marker id="an2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#56d364"/>
+        </marker>
+        <marker id="an3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#d2a8ff"/>
+        </marker>
+      </defs>
+
+      <!-- Code background -->
+      <rect x="10" y="50" width="620" height="52" rx="8" fill="#0d1117" stroke="#30363d"/>
+
+      <!-- Code text — carefully spaced so no overlap -->
+      <text y="82" font-family="Fira Code" font-size="14">
+        <tspan x="20" fill="#ff7b72">def </tspan>
+        <tspan fill="#d2a8ff">rectangle_area</tspan>
+        <tspan fill="#e6edf3">(</tspan>
+        <tspan fill="#ffa657">length</tspan>
+        <tspan fill="#79c0ff">: float</tspan>
+        <tspan fill="#e6edf3">, </tspan>
+        <tspan fill="#ffa657">width</tspan>
+        <tspan fill="#79c0ff">: float</tspan>
+        <tspan fill="#e6edf3">) </tspan>
+        <tspan fill="#56d364">-&gt; float</tspan>
+        <tspan fill="#e6edf3">:</tspan>
+      </text>
+
+      <!-- Pointer 1: function name label (above) -->
+      <line x1="120" y1="50" x2="120" y2="30" stroke="#d2a8ff" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#an3)"/>
+      <rect x="50" y="8" width="145" height="22" rx="5" fill="#2d1f40" stroke="#bc8cff"/>
+      <text x="122" y="23" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#d2a8ff">function-এর নাম</text>
+
+      <!-- Pointer 2: parameter type (below) — pointing to ": float" after length -->
+      <line x1="300" y1="102" x2="300" y2="140" stroke="#79c0ff" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#an1)"/>
+      <rect x="218" y="141" width="165" height="38" rx="6" fill="#1e3a5f" stroke="#79c0ff"/>
+      <text x="300" y="157" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#79c0ff" font-weight="700">Parameter Annotation</text>
+      <text x="300" y="173" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">argument-এর type hint</text>
+
+      <!-- Pointer 3: return type (below right) -->
+      <line x1="520" y1="102" x2="520" y2="140" stroke="#56d364" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#an2)"/>
+      <rect x="435" y="141" width="165" height="38" rx="6" fill="#1a3820" stroke="#56d364"/>
+      <text x="517" y="157" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#56d364" font-weight="700">Return Annotation</text>
+      <text x="517" y="173" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">output-এর type hint</text>
+
+      <!-- legend row -->
+      <rect x="10" y="196" width="620" height="22" rx="5" fill="#1f2937"/>
+      <circle cx="28" cy="207" r="5" fill="#d2a8ff"/><text x="38" y="211" font-family="Hind Siliguri" font-size="10" fill="#8b949e">function name</text>
+      <circle cx="160" cy="207" r="5" fill="#79c0ff"/><text x="170" y="211" font-family="Hind Siliguri" font-size="10" fill="#8b949e">parameter type</text>
+      <circle cx="300" cy="207" r="5" fill="#56d364"/><text x="310" y="211" font-family="Hind Siliguri" font-size="10" fill="#8b949e">return type (-&gt; এর পরে)</text>
+      <circle cx="460" cy="207" r="5" fill="#ffa657"/><text x="470" y="211" font-family="Hind Siliguri" font-size="10" fill="#8b949e">parameter নাম</text>
+    </svg>
+    <p class="diagram-title">চিত্র ৩: Function Annotation-এর গঠন (Anatomy)</p>
+  </div>
+
+  <!-- LIVE CODE: Annotations -->
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · Type Annotation ব্যবহার</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+# ১. Annotation সহ function — : type এবং -> type
+def rectangle_area(length: float, width: float) -> float:
+    """আয়তক্ষেত্রের ক্ষেত্রফল বের করে।
+    length: দৈর্ঘ্য (float)
+    width: প্রস্থ (float)
+    return: ক্ষেত্রফল (float)
+    """
+    return length * width
+
+# ২. Annotation দেখো — __annotations__ attribute
+print("Annotations:", rectangle_area.__annotations__)
+# {'length': <class 'float'>, 'width': <class 'float'>, 'return': <class 'float'>}
+
+# ৩. সঠিক type দিয়ে call
+result = rectangle_area(5.0, 3.0)
+print(f"৫ × ৩ = {result}")  # 15.0
+
+# ৪. ভুল type দিলেও Python error দেয় না! (শুধু hint)
+wrong = rectangle_area("৫", "৩")  # str দিলাম, float expected ছিল
+print(f"ভুল type দিলে: {wrong}")   # "৫৩" — string concatenation!
+
+# ৫. None return annotation
+def greet(name: str) -> None:
+    """শুধু print করে, কিছু return করে না।"""
+    print(f"হ্যালো, {name}! 👋")
+
+greet("Hoimi")
+    </textarea>
+    <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-icon">⚠️</div>
+    <p><strong>মনে রাখো:</strong> Annotation Python কে <em>কখনো</em> বাধ্য করে না। এটা শুধু programmer ও IDE-এর জন্য hint। Real type enforcement-এর জন্য MyPy বা Pydantic লাগে।</p>
+  </div>
+
+  <!-- LIVE CODE: complex annotations -->
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · ML Pipeline-এ Annotation (typing module)</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+from typing import List, Dict, Optional, Tuple
+
+# List[float] = float-এর list
+# Dict[str, float] = key হবে str, value হবে float
+# Optional[str] = str অথবা None হতে পারে
+
+def normalize(
+    data: List[float],           # float-এর তালিকা নেবে
+    method: str = "minmax",      # পদ্ধতির নাম (default: minmax)
+    label: Optional[str] = None  # label থাকলে str, না থাকলে None
+) -> Dict[str, List[float]]:    # dict return করবে
+    """Feature normalization করে।"""
+
+    if method == "minmax":
+        mn, mx = min(data), max(data)
+        # প্রতিটা মান 0-1 এর মধ্যে নিয়ে আসা
+        normalized = [(x - mn) / (mx - mn) for x in data]
+    elif method == "zscore":
+        mean = sum(data) / len(data)
+        std = (sum((x - mean)**2 for x in data) / len(data))**0.5
+        # mean বিয়োগ করে std দিয়ে ভাগ
+        normalized = [(x - mean) / std for x in data]
+    else:
+        raise ValueError(f"অজানা method: {method}")
+
+    # result dictionary হিসেবে return করি
+    result = {"original": data, "normalized": normalized}
+    if label:
+        result["label"] = [label] * len(data)
+    return result
+
+# ML feature column
+features = [10.0, 20.0, 30.0, 40.0, 50.0]
+
+# minmax normalization
+result = normalize(features, "minmax", label="age")
+print("Minmax normalized:", [round(x, 2) for x in result["normalized"]])
+# প্রত্যাশিত: [0.0, 0.25, 0.5, 0.75, 1.0]
+
+# zscore normalization
+result2 = normalize(features, "zscore")
+print("Z-score normalized:", [round(x, 2) for x in result2["normalized"]])
+# প্রত্যাশিত: [-1.41, -0.71, 0.0, 0.71, 1.41]
+
+# Annotation দেখো
+print("\nAnnotations:", normalize.__annotations__)
+    </textarea>
+    <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+</div>
+
+<!-- Exercise 1 -->
+<div class="exercise">
+  <div class="exercise-header">💼 Interview Exercise — Annotations <span class="elevel medium">Medium</span></div>
+  <p><strong>ML Context:</strong> তুমি একটা sensor data preprocessing pipeline বানাচ্ছো।</p>
+  <ol>
+    <li>Annotation সহ <span class="ic">clip_features(data, min_val, max_val)</span> function লেখো যেটা data-কে [min_val, max_val] এ clip করে।</li>
+    <li><span class="ic">__annotations__</span> print করো।</li>
+    <li>Interview: <em>"Static typing কেন IoT/Edge ML-এ জরুরি?"</em></li>
+  </ol>
+  <details>
+    <summary>✅ উত্তর ও ব্যাখ্যা দেখো</summary>
+    <div class="code-block" style="margin-top:12px">
+      <div class="code-header">
+        <span class="code-lang">python · Solution</span>
+        <button class="run-btn" onclick="runCode(this)">
+          <span class="play">▶ Run করো</span><span class="spin">↻</span>
+        </button>
+      </div>
+      <textarea class="code-edit">
+from typing import List
+
+def clip_features(
+    data: List[float],   # input: float-এর তালিকা
+    min_val: float,      # নিচের সীমা
+    max_val: float       # উপরের সীমা
+) -> List[float]:        # output: clipped float তালিকা
+    """
+    Sensor data outlier remove করে।
+    min_val-এর নিচে গেলে min_val, max_val-এর উপরে গেলে max_val করে।
+    IoT sensor-এ noise/spike remove করতে ব্যবহার হয়।
+    """
+    # প্রতিটা মান min ও max এর মধ্যে আটকে দাও
+    return [max(min_val, min(max_val, x)) for x in data]
+
+# Annotations দেখো
+print("Annotations:", clip_features.__annotations__)
+
+# Test — sensor readings (কিছু outlier আছে)
+sensor_data = [-5.0, 10.0, 23.5, 98.0, 45.0, -2.0, 110.0]
+clipped = clip_features(sensor_data, min_val=0.0, max_val=100.0)
+print("Original: ", sensor_data)
+print("Clipped:  ", clipped)
+# প্রত্যাশিত: [0.0, 10.0, 23.5, 98.0, 45.0, 0.0, 100.0]
+
+# Interview উত্তর:
+print("""
+Interview উত্তর:
+IoT/Edge ML-এ static typing জরুরি কারণ:
+- Sensor data int vs float mix করলে silent bug হয়
+- Edge device-এ debug করা কঠিন (কোনো IDE নেই)
+- Firmware update ছাড়া production-এ error ধরা যায় না
+- MyPy দিয়ে CI-তে আগেই চেক করা যায়
+""")
+      </textarea>
+      <div class="output-label">আউটপুট:</div>
+      <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+    </div>
+  </details>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+══════════════════════════════════════════════════ -->
+<div id="nb2" class="chapter">
+  <div class="chapter-num">অধ্যায় ০২</div>
+  <h2>Decorators — Function-এর রূপ বদলাও</h2>
+  <p>Decorator হলো এমন একটা tool যেটা একটা function-কে না বদলেই তার আচরণ পরিবর্তন করে। মূল function অক্ষত থাকে, শুধু চারপাশে নতুন কাজ যোগ হয়।</p>
+</div>
+
+<div class="section">
+  <h3>🧅 ২.১ — Decorator কীভাবে কাজ করে?</h3>
+  <p>ধরো তুমি একটা সাধারণ রুটি বানাচ্ছো। Decorator হলো সেই প্রক্রিয়া যেটা রুটিতে মাখন লাগায়, টোস্ট করে — কিন্তু রুটির recipe বদলায় না।</p>
+
+  <!-- Decorator flow SVG — FIXED layout -->
+  <div class="diagram-wrap">
+    <svg width="640" height="240" viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">
+      <defs>
+        <marker id="df1" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+          <polygon points="0 0,9 3.5,0 7" fill="#bc8cff"/>
+        </marker>
+        <marker id="df2" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+          <polygon points="0 0,9 3.5,0 7" fill="#56d364"/>
+        </marker>
+      </defs>
+
+      <!-- Step 1: original function -->
+      <rect x="10" y="80" width="150" height="80" rx="9" fill="#1f2937" stroke="#30363d" stroke-width="1.5"/>
+      <text x="85" y="110" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#e6edf3" font-weight="700">Original Function</text>
+      <text x="85" y="128" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#d2a8ff">def greet():</text>
+      <text x="85" y="146" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#a5d6ff">  print("hello")</text>
+
+      <!-- Arrow 1 -->
+      <line x1="162" y1="120" x2="205" y2="120" stroke="#bc8cff" stroke-width="2" marker-end="url(#df1)"/>
+      <text x="183" y="112" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#bc8cff">@decorator</text>
+      <text x="183" y="134" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#8b949e">apply করো</text>
+
+      <!-- Decorated wrapper (3 layers clearly separated) -->
+      <rect x="207" y="20" width="220" height="200" rx="10" fill="#2d1f40" stroke="#bc8cff" stroke-width="2"/>
+      <text x="317" y="44" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#bc8cff" font-weight="700">Decorated Function</text>
+
+      <!-- Layer 1: before -->
+      <rect x="222" y="54" width="190" height="40" rx="7" fill="#3b2800" stroke="#e3b341" stroke-width="1.5"/>
+      <text x="317" y="70" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#e3b341" font-weight="700">আগের কাজ (Before)</text>
+      <text x="317" y="86" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#8b949e">print("শুরু হলো ▶")</text>
+
+      <!-- down arrow inside -->
+      <line x1="317" y1="96" x2="317" y2="108" stroke="#8b949e" stroke-width="1.5"/>
+      <polygon points="311,106 317,114 323,106" fill="#8b949e"/>
+
+      <!-- Layer 2: original -->
+      <rect x="222" y="116" width="190" height="40" rx="7" fill="#1a3820" stroke="#56d364" stroke-width="1.5"/>
+      <text x="317" y="132" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#56d364" font-weight="700">Original function()</text>
+      <text x="317" y="148" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#8b949e">print("hello")</text>
+
+      <!-- down arrow inside -->
+      <line x1="317" y1="158" x2="317" y2="170" stroke="#8b949e" stroke-width="1.5"/>
+      <polygon points="311,168 317,176 323,168" fill="#8b949e"/>
+
+      <!-- Layer 3: after -->
+      <rect x="222" y="178" width="190" height="36" rx="7" fill="#1e3a5f" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="317" y="194" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#79c0ff" font-weight="700">পরের কাজ (After)</text>
+      <text x="317" y="208" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#8b949e">print("শেষ হলো ■")</text>
+
+      <!-- Arrow 2: output -->
+      <line x1="429" y1="120" x2="468" y2="120" stroke="#56d364" stroke-width="2" marker-end="url(#df2)"/>
+
+      <!-- Output box -->
+      <rect x="470" y="76" width="158" height="92" rx="9" fill="#1f2937" stroke="#30363d" stroke-width="1.5"/>
+      <text x="549" y="100" text-anchor="middle" font-family="Hind Siliguri" font-size="12" fill="#e6edf3" font-weight="700">Output</text>
+      <text x="549" y="120" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#e3b341">শুরু হলো ▶</text>
+      <text x="549" y="138" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#56d364">hello</text>
+      <text x="549" y="156" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#79c0ff">শেষ হলো ■</text>
+    </svg>
+    <p class="diagram-title">চিত্র ৪: Decorator — Function-কে তিনটা Layer দিয়ে Wrap করে</p>
+  </div>
+
+  <!-- LIVE CODE: basic decorator -->
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · প্রথম Decorator — step by step</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+# ====== DECORATOR এর সম্পূর্ণ গঠন ======
+
+# এই function-টাই decorator
+def print_before_execution(function):
+    """
+    যেকোনো function-কে নেয়,
+    তার নাম print করে, তারপর function চালায়।
+    """
+
+    # wrapper হলো নতুন function যেটা return হবে
+    def wrapper(*args, **kwargs):
+        # *args: সব positional argument (tuple হিসেবে)
+        # **kwargs: সব keyword argument (dict হিসেবে)
+        print(f"🚀 '{function.__name__}' শুরু হচ্ছে...")
+        result = function(*args, **kwargs)  # আসল function call করো
+        print(f"✅ '{function.__name__}' শেষ হলো।")
+        return result  # আসল result return করো
+
+    return wrapper  # wrapper function return করো
+
+# @ দিয়ে decorator apply করো
+# এটা আসলে: say_hello = print_before_execution(say_hello)
+@print_before_execution
+def say_hello(name: str):
+    print(f"হ্যালো, {name}!")
+
+# @ ছাড়া manual apply (একই কাজ):
+# say_hello = print_before_execution(say_hello)
+
+say_hello("Hoimi")
+print()
+say_hello("Bangladesh")
+    </textarea>
+    <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+
+  <h4>*args এবং **kwargs বোঝো</h4>
+  <div class="two-col">
+    <div class="card blue">
+      <div class="card-title">📦 *args — যেকোনো সংখ্যক argument</div>
+      <p><span class="ic">*</span> মানে "সব positional argument একটা tuple-এ নাও"। Decorator-এ দরকার কারণ wrapped function কত argument নেবে আমরা জানি না।</p>
+    </div>
+    <div class="card purple">
+      <div class="card-title">📖 **kwargs — নামসহ argument</div>
+      <p><span class="ic">**</span> মানে "সব keyword argument একটা dict-এ নাও"। যেমন <span class="ic">f(a=1, b=2)</span> দিলে <span class="ic">kwargs = {'a':1,'b':2}</span>।</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · *args ও **kwargs demo</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+# *args — positional arguments → tuple হিসেবে আসে
+def sum_all(*args):
+    print("args:", args)        # tuple
+    return sum(args)
+
+print(sum_all(1, 2, 3))         # args: (1, 2, 3) → 6
+print(sum_all(10, 20, 30, 40))  # args: (10, 20, 30, 40) → 100
+
+# **kwargs — keyword arguments → dict হিসেবে আসে
+def show_info(**kwargs):
+    print("kwargs:", kwargs)    # dict
+    for key, val in kwargs.items():
+        print(f"  {key}: {val}")
+
+show_info(name="Hoimi", role="ML Engineer", city="Sylhet")
+# kwargs: {'name': 'Hoimi', 'role': 'ML Engineer', 'city': 'Sylhet'}
+
+# একসাথে — decorator-এ ঠিক এটাই ব্যবহার হয়
+def show_all(a, b, *args, name="default", **kwargs):
+    print(f"a={a}, b={b}, extra_positional={args}, name={name}, extra_kw={kwargs}")
+
+show_all(1, 2, 3, 4, name="Hoimi", city="Sylhet")
+    </textarea>
+    <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>⏱️ ২.২ — Practical ML Decorators</h3>
+
+  <!-- LIVE CODE: execution_time decorator -->
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · execution_time Decorator (ML-এ সবচেয়ে বেশি ব্যবহৃত)</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+import time
+from functools import wraps
+
+def execution_time(function):
+    """
+    Function-এর execution time measure করে print করে।
+    ML training loop, data loading-এর সময় মাপতে ব্যবহার হয়।
+    """
+    @wraps(function)  # function-এর metadata রক্ষা করে (গুরুত্বপূর্ণ!)
+    def wrapper(*args, **kwargs):
+        start = time.time()          # শুরুর সময় নোট করো
+        result = function(*args, **kwargs)  # আসল function চালাও
+        elapsed = time.time() - start  # কত সময় লাগলো
+        print(f"⏱️ '{function.__name__}': {elapsed:.4f} সেকেন্ড")
+        return result
+    return wrapper
+
+# Training simulation
+@execution_time
+def train_model(epochs: int, lr: float = 0.01) -> float:
+    """Model train করে final loss return করে।"""
+    loss = 1.0
+    for e in range(epochs):
+        time.sleep(0.001)  # প্রতিটা epoch-এ কিছু কাজ
+        loss *= 0.99       # loss কমছে
+    return round(loss, 4)
+
+# Data loading simulation
+@execution_time
+def load_dataset(n_samples: int) -> list:
+    """Dataset load করে।"""
+    time.sleep(0.05)  # disk I/O simulate
+    return list(range(n_samples))
+
+# দেখো কত সময় লাগছে
+final_loss = train_model(50)
+print(f"Final loss: {final_loss}")
+
+data = load_dataset(1000)
+print(f"Loaded {len(data)} samples")
+    </textarea>
+    <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+
+  <!-- LIVE CODE: parameterized decorator -->
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · Parameterized Decorator — input validation</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+from functools import wraps
+
+def entry_contains(required_str: str):
+    """
+    Parameterized decorator — তিনটা layer:
+    entry_contains(param) → decorator → wrapper
+    
+    ML use: file extension check, data format validation
+    """
+    def decorator(function):       # আসল decorator
+        @wraps(function)
+        def wrapper(*args, **kwargs):  # function-কে wrap করে
+            # প্রথম argument-এ required_str আছে কিনা দেখো
+            first_arg = str(args[0]) if args else ""
+            if required_str not in first_arg:
+                print(f"❌ Error: Input-এ '{required_str}' থাকা দরকার!")
+                print(f"   পেয়েছি: '{first_arg}'")
+                return None
+            return function(*args, **kwargs)  # valid হলে চালাও
+        return wrapper
+    return decorator   # decorator return করো
+
+# .csv extension check
+@entry_contains('.csv')
+def load_csv(filepath: str) -> str:
+    """CSV file load করে।"""
+    return f"✅ Loaded: {filepath}"
+
+# Test
+print(load_csv("train_data.csv"))     # ✅ কাজ করবে
+print(load_csv("model.pkl"))           # ❌ error
+print(load_csv("features.csv.gz"))    # ✅ .csv আছে তাই কাজ করবে
+
+# ML model format check
+@entry_contains('.pkl')
+def load_model(path: str):
+    return f"✅ Model loaded: {path}"
+
+print(load_model("best_model.pkl"))   # ✅
+print(load_model("model.h5"))          # ❌
+    </textarea>
+    <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>🔗 ২.৩ — Decorator Chaining ও @wraps</h3>
+
+  <!-- Chaining SVG — FIXED: clear nested layers, no overlap -->
+  <div class="diagram-wrap">
+    <svg width="580" height="190" viewBox="0 0 580 190" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">
+      <!-- Outermost: execution_time -->
+      <rect x="10" y="10" width="560" height="170" rx="12" fill="rgba(188,140,255,0.06)" stroke="#bc8cff" stroke-width="2"/>
+      <text x="26" y="32" font-family="Hind Siliguri" font-size="11" fill="#bc8cff" font-weight="700">@execution_time  ← উপরে = বাইরের layer (শেষে apply)</text>
+
+      <!-- Middle: entry_contains -->
+      <rect x="30" y="44" width="520" height="125" rx="10" fill="rgba(227,179,65,0.06)" stroke="#e3b341" stroke-width="2"/>
+      <text x="46" y="64" font-family="Hind Siliguri" font-size="11" fill="#e3b341" font-weight="700">@entry_contains('.csv')  ← নিচে = ভেতরের layer (আগে apply)</text>
+
+      <!-- Core function -->
+      <rect x="50" y="76" width="480" height="82" rx="8" fill="#1f2937" stroke="#56d364" stroke-width="2"/>
+      <text x="290" y="104" text-anchor="middle" font-family="Fira Code" font-size="13" fill="#56d364">def load_csv(filepath):</text>
+      <text x="290" y="122" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#8b949e">আসল function — কিছুই বদলায়নি</text>
+      <text x="290" y="140" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">Execution order: entry_contains চেক → execution_time মাপে → load_csv চলে</text>
+    </svg>
+    <p class="diagram-title">চিত্র ৫: Decorator Chaining — ভেতর থেকে বাইরে apply, বাইরে থেকে ভেতরে execute</p>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · Chaining + @wraps দিয়ে metadata রক্ষা</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+import time
+from functools import wraps
+
+# --- Decorator 1: execution_time ---
+def execution_time(func):
+    @wraps(func)   # ← এটা না দিলে func.__name__ হয়ে যায় 'wrapper'!
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        print(f"⏱️ সময়: {time.time()-start:.4f}s")
+        return result
+    return wrapper
+
+# --- Decorator 2: entry_contains ---
+def entry_contains(required: str):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if args and required not in str(args[0]):
+                print(f"❌ '{required}' নেই input-এ!")
+                return None
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+# --- @wraps ছাড়া কী হয়? ---
+def bad_decorator(func):
+    def wrapper(*args, **kwargs):   # @wraps নেই!
+        return func(*args, **kwargs)
+    return wrapper
+
+@bad_decorator
+def my_function():
+    """আমার গুরুত্বপূর্ণ documentation।"""
+    pass
+
+print("@wraps ছাড়া:")
+print("  __name__:", my_function.__name__)  # 'wrapper' — ভুল!
+print("  __doc__: ", my_function.__doc__)   # None — হারিয়ে গেছে!
+
+# --- @wraps সহ ---
+def good_decorator(func):
+    @wraps(func)   # metadata copy করে
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
+
+@good_decorator
+def my_function2():
+    """আমার গুরুত্বপূর্ণ documentation।"""
+    pass
+
+print("\n@wraps সহ:")
+print("  __name__:", my_function2.__name__)  # 'my_function2' ✅
+print("  __doc__: ", my_function2.__doc__)   # documentation ✅
+
+# --- Chain করো ---
+@entry_contains('.csv')
+@execution_time
+def load_csv(filepath: str) -> str:
+    """CSV file load করে।"""
+    time.sleep(0.01)
+    return f"Loaded: {filepath}"
+
+result = load_csv("train.csv")
+print(f"\nResult: {result}")
+print(f"Function name: {load_csv.__name__}")  # 'load_csv' ✅ (@wraps কাজ করছে)
+    </textarea>
+    <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>⚡ ২.৪ — @lru_cache: Speed Magic</h3>
+  <p><span class="ic">@lru_cache</span> একটা powerful decorator — একই input দিলে আবার calculate না করে stored result দেয়। ML-এ embedding, tokenization-এ অনেক time save করে।</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · @lru_cache দিয়ে Speed Optimization</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+import time
+from functools import lru_cache
+
+# --- Cache ছাড়া recursive fibonacci (ধীর) ---
+def fib_slow(n: int) -> int:
+    """Cache ছাড়া — একই calculation বারবার করে।"""
+    if n <= 1:
+        return n
+    return fib_slow(n-1) + fib_slow(n-2)
+
+# --- Cache সহ fibonacci (দ্রুত) ---
+@lru_cache(maxsize=None)  # maxsize=None মানে unlimited cache
+def fib_fast(n: int) -> int:
+    """Cache সহ — একবার হিসেব করে মনে রাখে।"""
+    if n <= 1:
+        return n
+    return fib_fast(n-1) + fib_fast(n-2)
+
+# তুলনা করো
+t1 = time.time()
+print("fib(30) ধীরে:", fib_slow(30))
+slow_time = time.time() - t1
+print(f"সময়: {slow_time:.4f}s")
+
+t1 = time.time()
+print("fib(30) দ্রুত:", fib_fast(30))
+fast_time = time.time() - t1
+print(f"সময়: {fast_time:.6f}s")
+
+print(f"\nCache {slow_time/max(fast_time, 0.000001):.0f}x দ্রুত করেছে!")
+
+# --- ML Use Case: Expensive feature extraction ---
+@lru_cache(maxsize=128)
+def compute_word_features(word: str) -> tuple:
+    """
+    Word-এর features calculate করে।
+    একই word বারবার আসলে cache থেকে দেয়।
+    NLP pipeline-এ vocabulary build করতে কাজে লাগে।
+    """
+    time.sleep(0.1)  # heavy computation simulate (model inference)
+    # বাস্তবে: return embedding_model.encode(word)
+    features = (len(word), sum(ord(c) for c in word), word.upper() == word)
+    return features
+
+# প্রথমবার: 0.1s লাগবে
+t = time.time()
+f1 = compute_word_features("machine")
+print(f"\n'machine' প্রথমবার: {time.time()-t:.3f}s → {f1}")
+
+# দ্বিতীয়বার: তাৎক্ষণিক!
+t = time.time()
+f2 = compute_word_features("machine")
+print(f"'machine' দ্বিতীয়বার: {time.time()-t:.6f}s → {f2}")
+
+# Cache info দেখো
+info = compute_word_features.cache_info()
+print(f"\nCache info: hits={info.hits}, misses={info.misses}, size={info.currsize}")
+    </textarea>
+    <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+</div>
+
+<!-- Exercise 2 -->
+<div class="exercise">
+  <div class="exercise-header">💼 Interview Exercise — Decorators <span class="elevel hard">Hard</span></div>
+  <p><strong>ML API Scenario:</strong> Production ML service-এ চাই।</p>
+  <ol>
+    <li><span class="ic">@retry(max_attempts=3, delay=0.1)</span> decorator বানাও — fail হলে retry করে।</li>
+    <li><span class="ic">@validate_no_nan</span> decorator — NaN থাকলে error।</li>
+    <li>Chain করে <span class="ic">make_prediction(features)</span> function-এ apply করো।</li>
+  </ol>
+  <details>
+    <summary>✅ Solution দেখো</summary>
+    <div class="code-block" style="margin-top:12px">
+      <div class="code-header">
+        <span class="code-lang">python · Retry + Validation Decorator Chain</span>
+        <button class="run-btn" onclick="runCode(this)">
+          <span class="play">▶ Run করো</span><span class="spin">↻</span>
+        </button>
+      </div>
+      <textarea class="code-edit">
+import time, math, random
+from functools import wraps
+
+# ১. Retry Decorator (parameterized)
+def retry(max_attempts: int = 3, delay: float = 0.1):
+    """
+    Function fail হলে max_attempts বার retry করে।
+    ML API call timeout হলে এটা ব্যবহার হয়।
+    """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            last_error = None
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    return func(*args, **kwargs)  # চেষ্টা করো
+                except Exception as e:
+                    last_error = e
+                    print(f"⚠️ Attempt {attempt}/{max_attempts} failed: {e}")
+                    if attempt < max_attempts:
+                        time.sleep(delay)   # retry-র আগে অপেক্ষা
+            # সব attempt শেষ — error raise করো
+            raise RuntimeError(f"সব {max_attempts}টা attempt ব্যর্থ! Last: {last_error}")
+        return wrapper
+    return decorator
+
+# ২. NaN Validation Decorator
+def validate_no_nan(func):
+    """
+    Input list-এ NaN (Not a Number) আছে কিনা check করে।
+    Sensor data, user input-এ NaN থাকতে পারে।
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        features = args[0] if args else []
+        nan_indices = [i for i, x in enumerate(features) if math.isnan(x)]
+        if nan_indices:
+            raise ValueError(f"❌ NaN পাওয়া গেছে index-এ: {nan_indices}")
+        print(f"✅ Input valid — {len(features)}টা feature, কোনো NaN নেই")
+        return func(*args, **kwargs)
+    return wrapper
+
+# ৩. Chain করো (নিচের আগে apply হয়)
+attempt_count = [0]  # mutable count
+
+@retry(max_attempts=3, delay=0.05)   # বাইরের layer
+@validate_no_nan                      # ভেতরের layer
+def make_prediction(features: list) -> float:
+    """Features নিয়ে ML prediction করে।"""
+    attempt_count[0] += 1
+    # প্রথম ২ attempt fail করাই — demo-র জন্য
+    if attempt_count[0] < 3:
+        raise ConnectionError(f"API timeout (attempt {attempt_count[0]})")
+    # ৩য় attempt-এ সফল
+    return round(sum(features) / len(features), 4)
+
+# Test 1: valid input
+print("=== Test 1: Valid Input ===")
+result = make_prediction([1.0, 2.0, 3.0, 4.0, 5.0])
+print(f"Prediction: {result}\n")
+
+# Test 2: NaN input (validation fail করবে)
+print("=== Test 2: NaN Input ===")
+try:
+    make_prediction([1.0, float('nan'), 3.0])
+except ValueError as e:
+    print(f"Caught: {e}\n")
+      </textarea>
+      <div class="output-label">আউটপুট:</div>
+      <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+    </div>
+  </details>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+══════════════════════════════════════════════════ -->
+<div id="nb3" class="chapter">
+  <div class="chapter-num">অধ্যায় ০৩</div>
+  <h2>Multithreading &amp; Multiprocessing</h2>
+  <p>একসাথে অনেক কাজ করা — Concurrent ও Parallel programming Python-এ কীভাবে কাজ করে।</p>
+</div>
+
+<div class="section">
+  <h3>🏭 ৩.১ — Core Concepts</h3>
+
+  <div class="two-col">
+    <div class="card blue">
+      <div class="card-title">🖥️ CPU (Central Processing Unit)</div>
+      <p>Computer-এর মস্তিষ্ক। Instructions execute করে। Modern CPU-তে একাধিক <strong>core</strong> থাকে — প্রতিটা core আলাদা task করতে পারে।</p>
+    </div>
+    <div class="card green">
+      <div class="card-title">🧠 Process vs Thread</div>
+      <p><strong>Process:</strong> চলমান program, নিজস্ব memory।<br>
+      <strong>Thread:</strong> Process-এর অংশ, memory share করে।</p>
+    </div>
+  </div>
+
+  <!-- Sync vs Async SVG — FIXED: timeline bars don't overlap -->
+  <div class="diagram-wrap">
+    <svg width="640" height="260" viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">
+      <!-- Left: Sequential -->
+      <rect x="10" y="10" width="290" height="240" rx="11" fill="#1f2937" stroke="#30363d" stroke-width="1.5"/>
+      <rect x="10" y="10" width="290" height="38" rx="11" fill="#3b0a0a"/>
+      <rect x="10" y="34" width="290" height="14" fill="#3b0a0a"/>
+      <text x="155" y="34" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#ff7b72" font-weight="700">🐌 Sequential (একটার পর একটা)</text>
+
+      <!-- Timeline axis -->
+      <line x1="30" y1="65" x2="30" y2="235" stroke="#444" stroke-width="1.5"/>
+      <text x="26" y="62" text-anchor="end" font-family="Hind Siliguri" font-size="9" fill="#8b949e">t=0</text>
+
+      <!-- Task 1 bar: t=0 to t=3 (height=60) -->
+      <rect x="36" y="66" width="110" height="55" rx="5" fill="#1e3a5f" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="91" y="88" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#79c0ff" font-weight="700">Task 1</text>
+      <text x="91" y="104" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">3 সেকেন্ড</text>
+      <text x="91" y="118" text-anchor="middle" font-family="Fira Code" font-size="9" fill="#56d364">████████</text>
+
+      <!-- wait label -->
+      <text x="160" y="98" font-family="Hind Siliguri" font-size="10" fill="#ff7b72">← Task 2 অপেক্ষায়</text>
+
+      <!-- Task 2 bar: starts after Task 1 -->
+      <rect x="36" y="130" width="80" height="50" rx="5" fill="#1a3820" stroke="#56d364" stroke-width="1.5"/>
+      <text x="76" y="150" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#56d364" font-weight="700">Task 2</text>
+      <text x="76" y="166" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">2 সেকেন্ড</text>
+
+      <!-- wait label -->
+      <text x="126" y="158" font-family="Hind Siliguri" font-size="10" fill="#ff7b72">← Task 3 অপেক্ষায়</text>
+
+      <!-- Task 3 bar -->
+      <rect x="36" y="190" width="60" height="40" rx="5" fill="#2d1f40" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="66" y="210" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#bc8cff" font-weight="700">Task 3</text>
+      <text x="66" y="224" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">1s</text>
+
+      <!-- Total time label -->
+      <text x="155" y="248" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#ff7b72" font-weight="700">মোট = 3+2+1 = 6 সেকেন্ড</text>
+
+      <!-- Right: Concurrent/Parallel -->
+      <rect x="340" y="10" width="290" height="240" rx="11" fill="#1f2937" stroke="#30363d" stroke-width="1.5"/>
+      <rect x="340" y="10" width="290" height="38" rx="11" fill="#1a3820"/>
+      <rect x="340" y="34" width="290" height="14" fill="#1a3820"/>
+      <text x="485" y="34" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#56d364" font-weight="700">🚀 Concurrent/Parallel</text>
+
+      <!-- Timeline axis -->
+      <line x1="360" y1="65" x2="360" y2="235" stroke="#444" stroke-width="1.5"/>
+      <text x="356" y="62" text-anchor="end" font-family="Hind Siliguri" font-size="9" fill="#8b949e">t=0</text>
+
+      <!-- All tasks start at same time, different lengths -->
+      <!-- Task 1: 3s -->
+      <rect x="366" y="66" width="130" height="35" rx="5" fill="#1e3a5f" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="431" y="82" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#79c0ff" font-weight="700">Task 1 — 3s</text>
+      <text x="431" y="96" text-anchor="middle" font-family="Fira Code" font-size="9" fill="#56d364">████████████</text>
+
+      <!-- Task 2: 2s -->
+      <rect x="366" y="110" width="90" height="35" rx="5" fill="#1a3820" stroke="#56d364" stroke-width="1.5"/>
+      <text x="411" y="126" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#56d364" font-weight="700">Task 2 — 2s</text>
+      <text x="411" y="140" text-anchor="middle" font-family="Fira Code" font-size="9" fill="#56d364">████████</text>
+
+      <!-- Task 2 done checkmark -->
+      <text x="462" y="132" font-family="Hind Siliguri" font-size="14" fill="#56d364">✓</text>
+
+      <!-- Task 3: 1s -->
+      <rect x="366" y="154" width="50" height="35" rx="5" fill="#2d1f40" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="391" y="170" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#bc8cff" font-weight="700">Task3 1s</text>
+      <text x="391" y="184" text-anchor="middle" font-family="Fira Code" font-size="9" fill="#56d364">████</text>
+      <text x="422" y="176" font-family="Hind Siliguri" font-size="14" fill="#56d364">✓</text>
+
+      <!-- Finish line at t=3 -->
+      <line x1="496" y1="66" x2="496" y2="200" stroke="#e3b341" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="500" y="82" font-family="Hind Siliguri" font-size="9" fill="#e3b341">t=3s</text>
+      <text x="500" y="194" font-family="Hind Siliguri" font-size="9" fill="#e3b341">সব শেষ!</text>
+
+      <!-- Total time label -->
+      <text x="485" y="248" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#56d364" font-weight="700">মোট = max(3,2,1) = 3 সেকেন্ড 🎉</text>
+    </svg>
+    <p class="diagram-title">চিত্র ৬: Sequential vs Concurrent/Parallel — সময়ের পার্থক্য স্পষ্ট</p>
+  </div>
+
+  <table class="ctable">
+    <tr><th>বিষয়</th><th>Process</th><th>Thread</th></tr>
+    <tr><td>Memory</td><td>নিজস্ব আলাদা memory</td><td>একসাথে share করে</td></tr>
+    <tr><td>তৈরির খরচ</td><td>বেশি (ভারী)</td><td>কম (হালকা)</td></tr>
+    <tr><td>Python GIL</td><td>প্রভাবিত নয় ✅</td><td>GIL দ্বারা সীমাবদ্ধ ⚠️</td></tr>
+    <tr><td>কখন ব্যবহার</td><td>CPU-bound (calculation)</td><td>I/O-bound (wait)</td></tr>
+    <tr><td>ML example</td><td>Training, preprocessing</td><td>Data download, API call</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <h3>🔒 ৩.২ — Python GIL কী এবং কেন?</h3>
+
+  <div class="callout danger">
+    <div class="callout-icon">⚠️</div>
+    <p><strong>GIL (Global Interpreter Lock):</strong> CPython-এর একটা lock যেটা নিশ্চিত করে <em>একসময়ে শুধু একটা thread</em> Python interpreter access করতে পারে। এজন্য Python-এ multithreading CPU-bound কাজে সত্যিকারের speedup দেয় না। Solution: <strong>multiprocessing</strong>।</p>
+  </div>
+
+  <!-- GIL SVG — FIXED: threads clearly separated -->
+  <div class="diagram-wrap">
+    <svg width="600" height="170" viewBox="0 0 600 170" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">
+      <!-- Title -->
+      <text x="300" y="20" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#ff7b72" font-weight="700">GIL — একসময়ে শুধু একটা Thread চলে</text>
+
+      <!-- Time axis -->
+      <line x1="20" y1="40" x2="585" y2="40" stroke="#444" stroke-width="1"/>
+      <text x="20" y="36" font-family="Hind Siliguri" font-size="9" fill="#8b949e">t →</text>
+
+      <!-- Thread 1 label -->
+      <text x="14" y="72" text-anchor="end" font-family="Hind Siliguri" font-size="10" fill="#79c0ff">Thread 1</text>
+      <!-- Thread 1 active blocks (GIL held) and gap (GIL released) -->
+      <rect x="20" y="50" width="90" height="26" rx="4" fill="#1e3a5f" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="65" y="67" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#79c0ff">🔒 GIL 활성</text>
+      <!-- gap: GIL released -->
+      <rect x="115" y="50" width="70" height="26" rx="4" fill="#111" stroke="#333" stroke-dasharray="3,2"/>
+      <text x="150" y="67" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#444">대기</text>
+      <rect x="190" y="50" width="100" height="26" rx="4" fill="#1e3a5f" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="240" y="67" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#79c0ff">🔒 GIL</text>
+      <rect x="295" y="50" width="60" height="26" rx="4" fill="#111" stroke="#333" stroke-dasharray="3,2"/>
+      <rect x="360" y="50" width="110" height="26" rx="4" fill="#1e3a5f" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="415" y="67" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#79c0ff">🔒 GIL</text>
+      <rect x="475" y="50" width="110" height="26" rx="4" fill="#111" stroke="#333" stroke-dasharray="3,2"/>
+
+      <!-- Thread 2 label -->
+      <text x="14" y="116" text-anchor="end" font-family="Hind Siliguri" font-size="10" fill="#56d364">Thread 2</text>
+      <!-- Thread 2: opposite pattern (active when T1 is waiting) -->
+      <rect x="20" y="94" width="90" height="26" rx="4" fill="#111" stroke="#333" stroke-dasharray="3,2"/>
+      <text x="65" y="111" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#444">অপেক্ষা</text>
+      <rect x="115" y="94" width="70" height="26" rx="4" fill="#1a3820" stroke="#56d364" stroke-width="1.5"/>
+      <text x="150" y="111" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#56d364">🔒 GIL</text>
+      <rect x="190" y="94" width="100" height="26" rx="4" fill="#111" stroke="#333" stroke-dasharray="3,2"/>
+      <rect x="295" y="94" width="60" height="26" rx="4" fill="#1a3820" stroke="#56d364" stroke-width="1.5"/>
+      <text x="325" y="111" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#56d364">🔒</text>
+      <rect x="360" y="94" width="110" height="26" rx="4" fill="#111" stroke="#333" stroke-dasharray="3,2"/>
+      <rect x="475" y="94" width="110" height="26" rx="4" fill="#1a3820" stroke="#56d364" stroke-width="1.5"/>
+      <text x="530" y="111" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#56d364">🔒 GIL</text>
+
+      <!-- Legend -->
+      <rect x="20" y="140" width="16" height="14" rx="3" fill="#1e3a5f" stroke="#79c0ff"/>
+      <text x="40" y="152" font-family="Hind Siliguri" font-size="10" fill="#8b949e">GIL ধরে চলছে</text>
+      <rect x="160" y="140" width="16" height="14" rx="3" fill="#111" stroke="#333" stroke-dasharray="3,2"/>
+      <text x="180" y="152" font-family="Hind Siliguri" font-size="10" fill="#8b949e">GIL-এর জন্য অপেক্ষা</text>
+      <text x="340" y="152" font-family="Hind Siliguri" font-size="10" fill="#e3b341">⚡ Solution: Multiprocessing ব্যবহার করো!</text>
+    </svg>
+    <p class="diagram-title">চিত্র ৭: GIL — Thread-রা পালাক্রমে চলে, একসাথে নয়। CPU-bound কাজে কোনো benefit নেই।</p>
+  </div>
+
+  <!-- LIVE CODE: Threading demo -->
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · Multithreading — I/O bound কাজে speedup</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+import threading
+import time
+
+# I/O bound কাজ — download simulate করা
+def download_data(source: str, delay: float, results: list):
+    """
+    একটা data source থেকে download করে।
+    delay = network latency simulate করে।
+    results = shared list-এ result রাখি।
+    """
+    print(f"  ⬇️  {source} শুরু...")
+    time.sleep(delay)       # network wait simulate
+    results.append(f"✅ {source} ({delay}s)")
+    print(f"  ✅ {source} শেষ!")
+
+sources = [
+    ("Train Dataset", 0.3),
+    ("Val Dataset", 0.2),
+    ("Test Dataset", 0.15),
+    ("Config", 0.1),
+]
+
+# --- Sequential (ধীর) ---
+print("=== Sequential ===")
+results_seq = []
+t_start = time.time()
+for name, delay in sources:
+    download_data(name, delay, results_seq)
+seq_time = time.time() - t_start
+print(f"Sequential সময়: {seq_time:.2f}s\n")
+
+# --- Threaded (দ্রুত) ---
+print("=== Threaded ===")
+results_thr = []
+threads = []
+t_start = time.time()
+
+for name, delay in sources:
+    # প্রতিটার জন্য আলাদা Thread তৈরি করো
+    t = threading.Thread(
+        target=download_data,
+        args=(name, delay, results_thr)
+    )
+    threads.append(t)
+    t.start()   # Thread শুরু করো (অপেক্ষা না করে)
+
+# সব thread শেষ হওয়ার জন্য অপেক্ষা করো
+for t in threads:
+    t.join()    # join() মানে "এই thread শেষ না হওয়া পর্যন্ত থামো"
+
+thr_time = time.time() - t_start
+print(f"\nThreaded সময়: {thr_time:.2f}s")
+print(f"Speedup: {seq_time/thr_time:.1f}x দ্রুত! 🚀")
+print(f"Downloaded: {len(results_thr)}টা source")
+    </textarea>
+    <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+
+  <!-- LIVE CODE: Multiprocessing (simulated — browser can't fork) -->
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · Multiprocessing Simulation (CPU-bound কাজ)</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+import time
+import math
+
+# Browser-এ multiprocessing.Pool চলে না (OS process fork নেই)
+# তাই আমরা concept simulate করবো
+
+def heavy_math(x: float) -> float:
+    """
+    CPU-intensive calculation।
+    বাস্তবে: ML feature engineering, matrix operations।
+    """
+    result = 0
+    for k in range(1, 100):
+        result += x * math.sqrt(abs(x)) / k
+    return round(result, 4)
+
+numbers = list(range(1, 201))  # 200টা সংখ্যায় calculation
+
+# Sequential execution
+print("=== Sequential (একটার পর একটা) ===")
+t1 = time.time()
+results_seq = [heavy_math(n) for n in numbers]
+seq_time = time.time() - t1
+print(f"Sequential সময়: {seq_time:.4f}s")
+print(f"প্রথম ৫টা result: {results_seq[:5]}")
+
+# Batch simulation (Multiprocessing-এর ধারণা)
+print("\n=== Multiprocessing Concept (Simulated) ===")
+print("Real code (Python script-এ চলবে):")
+print("""
+from multiprocessing import Pool
+
+def heavy_math(x):
+    result = 0
+    for k in range(1, 100):
+        result += x * math.sqrt(abs(x)) / k
+    return result
+
+# 4 core-এ distribute করো
+with Pool(4) as pool:
+    results = pool.map(heavy_math, range(1, 201))
+    
+# Sequential-এর ~4x দ্রুত হবে (4 core থাকলে)
+""")
+
+print(f"Sequential result sample: {results_seq[:5]}")
+print(f"\nMultiprocessing কখন ব্যবহার করবে:")
+print("  ✅ CPU-bound: matrix calc, feature engineering, image processing")
+print("  ✅ Training data preprocessing parallel করতে")
+print("  ❌ I/O-bound: threading বা async বেশি efficient")
+print(f"\nতোমার ML project-এ:")
+print("  - AutoSense-Edge CAN bus data parsing → Multiprocessing")
+print("  - API থেকে data fetch → Threading বা Async")
+    </textarea>
+    <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+══════════════════════════════════════════════════ -->
+<div id="nb4" class="chapter">
+  <div class="chapter-num">অধ্যায় ০৪</div>
+  <h2>Asynchronous Functions &amp; Coroutines</h2>
+  <p>asyncio দিয়ে concurrent programming — thread-এর চেয়ে হালকা, দ্রুত, এবং Python-native।</p>
+</div>
+
+<div class="section">
+  <h3>☕ ৪.১ — Async কী? কফির দোকানের উদাহরণে</h3>
+
+  <div class="two-col">
+    <div class="card orange">
+      <div class="card-title">😓 Synchronous কফিশপ</div>
+      <p>Barista একজনের order নেয় → machine-এ দেয় → 3 মিনিট দাঁড়িয়ে থাকে → কফি দেয় → পরের জন। লম্বা লাইন!</p>
+    </div>
+    <div class="card green">
+      <div class="card-title">😊 Async কফিশপ</div>
+      <p>Barista order নেয় → machine চালায় → পরের order নেয় → machine-এর কফি দেয়। সবাই দ্রুত পায়!</p>
+    </div>
+  </div>
+
+  <!-- Event Loop SVG — FIXED: coroutines clearly separated -->
+  <div class="diagram-wrap">
+    <svg width="620" height="260" viewBox="0 0 620 260" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">
+      <defs>
+        <marker id="el1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#e3b341"/>
+        </marker>
+      </defs>
+
+      <!-- Event Loop circle/box -->
+      <rect x="10" y="30" width="155" height="200" rx="12" fill="#3b2800" stroke="#e3b341" stroke-width="2"/>
+      <text x="87" y="58" text-anchor="middle" font-family="Hind Siliguri" font-size="13" fill="#e3b341" font-weight="700">Event Loop</text>
+      <text x="87" y="74" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#8b949e">asyncio-এর মস্তিষ্ক</text>
+
+      <!-- Coroutines in queue -->
+      <rect x="22" y="86" width="131" height="28" rx="6" fill="#1f2937" stroke="#bc8cff"/>
+      <text x="87" y="104" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#bc8cff">coroutine_1()</text>
+
+      <rect x="22" y="122" width="131" height="28" rx="6" fill="#1f2937" stroke="#79c0ff"/>
+      <text x="87" y="140" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#79c0ff">coroutine_2()</text>
+
+      <rect x="22" y="158" width="131" height="28" rx="6" fill="#1f2937" stroke="#56d364"/>
+      <text x="87" y="176" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#56d364">coroutine_3()</text>
+
+      <!-- Rotating arrow -->
+      <text x="87" y="222" text-anchor="middle" font-family="Hind Siliguri" font-size="22" fill="#e3b341">↺</text>
+      <text x="87" y="238" text-anchor="middle" font-family="Hind Siliguri" font-size="8" fill="#8b949e">iterate করে</text>
+
+      <!-- Arrow out -->
+      <line x1="167" y1="130" x2="205" y2="130" stroke="#e3b341" stroke-width="2" marker-end="url(#el1)"/>
+
+      <!-- Execution timeline panel -->
+      <rect x="207" y="20" width="400" height="230" rx="10" fill="#1f2937" stroke="#30363d"/>
+      <text x="407" y="42" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#8b949e">Concurrent Execution Timeline</text>
+
+      <!-- Time axis inside -->
+      <line x1="220" y1="55" x2="595" y2="55" stroke="#444" stroke-width="1"/>
+      <text x="218" y="51" text-anchor="end" font-family="Hind Siliguri" font-size="9" fill="#8b949e">t=0</text>
+
+      <!-- C1: run → await → resume (3 segments, clearly spaced) -->
+      <text x="216" y="80" text-anchor="end" font-family="Hind Siliguri" font-size="10" fill="#bc8cff">C1:</text>
+      <rect x="220" y="62" width="75" height="24" rx="4" fill="#2d1f40" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="257" y="78" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#bc8cff">চলছে ▶</text>
+      <rect x="300" y="62" width="65" height="24" rx="4" fill="#111" stroke="#444" stroke-dasharray="3,2"/>
+      <text x="332" y="78" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#555">await ⏳</text>
+      <rect x="370" y="62" width="80" height="24" rx="4" fill="#2d1f40" stroke="#bc8cff" stroke-width="1.5"/>
+      <text x="410" y="78" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#bc8cff">resume ✓</text>
+
+      <!-- C2: slightly offset pattern -->
+      <text x="216" y="120" text-anchor="end" font-family="Hind Siliguri" font-size="10" fill="#79c0ff">C2:</text>
+      <rect x="220" y="102" width="50" height="24" rx="4" fill="#1e3a5f" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="245" y="118" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#79c0ff">চলছে ▶</text>
+      <rect x="275" y="102" width="80" height="24" rx="4" fill="#111" stroke="#444" stroke-dasharray="3,2"/>
+      <text x="315" y="118" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#555">await ⏳</text>
+      <rect x="360" y="102" width="60" height="24" rx="4" fill="#1e3a5f" stroke="#79c0ff" stroke-width="1.5"/>
+      <text x="390" y="118" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#79c0ff">done ✓</text>
+
+      <!-- C3: another pattern -->
+      <text x="216" y="160" text-anchor="end" font-family="Hind Siliguri" font-size="10" fill="#56d364">C3:</text>
+      <rect x="220" y="142" width="65" height="24" rx="4" fill="#1a3820" stroke="#56d364" stroke-width="1.5"/>
+      <text x="252" y="158" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#56d364">চলছে ▶</text>
+      <rect x="290" y="142" width="50" height="24" rx="4" fill="#111" stroke="#444" stroke-dasharray="3,2"/>
+      <text x="315" y="158" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#555">await</text>
+      <rect x="345" y="142" width="90" height="24" rx="4" fill="#1a3820" stroke="#56d364" stroke-width="1.5"/>
+      <text x="390" y="158" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#56d364">resume → done ✓</text>
+
+      <!-- Key insight -->
+      <rect x="220" y="185" width="375" height="54" rx="7" fill="#1e3a5f" stroke="#79c0ff"/>
+      <text x="407" y="204" text-anchor="middle" font-family="Hind Siliguri" font-size="11" fill="#79c0ff" font-weight="700">🔑 Key Insight</text>
+      <text x="407" y="220" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#e6edf3">await-এর সময় (⏳) event loop অন্য coroutine চালায়</text>
+      <text x="407" y="235" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#8b949e">Waiting time নষ্ট হয় না → efficient I/O!</text>
+    </svg>
+    <p class="diagram-title">চিত্র ৮: Event Loop — Coroutine-রা await-এ yield করে, অন্যকে সুযোগ দেয়</p>
+  </div>
+</div>
+
+<div class="section">
+  <h3>🔧 ৪.২ — async/await Syntax ও asyncio</h3>
+
+  <div class="card blue">
+    <div class="card-title">📚 Key Keywords</div>
+    <p>
+      <span class="ic">async def</span> → Coroutine function তৈরি করে<br>
+      <span class="ic">await</span> → Result-এর জন্য অপেক্ষা করো (এই সময়ে অন্য coroutine চলে)<br>
+      <span class="ic">asyncio.run()</span> → Script-এ event loop শুরু করো<br>
+      <span class="ic">asyncio.gather()</span> → অনেক coroutine একসাথে চালাও<br>
+      <span class="ic">asyncio.sleep()</span> → Non-blocking sleep (<span class="ic">time.sleep()</span> blocking!)
+    </p>
+  </div>
+
+  <!-- LIVE CODE: basic async -->
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · async/await — step by step</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+import asyncio
+import time
+
+# ১. সবচেয়ে সহজ coroutine
+async def say_hello():
+    """
+    async def মানে এটা coroutine function।
+    call করলে coroutine object return করে (সাথে সাথে run হয় না)।
+    """
+    print("হ্যালো async দুনিয়া! 🌏")
+
+# ২. await দিয়ে অপেক্ষা করো
+async def fetch_data(name: str, delay: float) -> str:
+    """
+    Data fetch simulate করে।
+    asyncio.sleep() — Non-blocking! এই সময়ে অন্য coroutine চলে।
+    time.sleep() হলে পুরো program আটকে যেত।
+    """
+    print(f"  ⬇️  {name} শুরু হলো")
+    await asyncio.sleep(delay)    # Non-blocking wait ← key!
+    print(f"  ✅ {name} শেষ ({delay}s)")
+    return f"Data: {name}"
+
+# ৩. asyncio.gather() — সব একসাথে চালাও
+async def main():
+    # --- Sequential (ধীর) ---
+    print("=== Sequential ===")
+    t = time.time()
+    r1 = await fetch_data("Train", 0.2)
+    r2 = await fetch_data("Val", 0.15)
+    r3 = await fetch_data("Test", 0.1)
+    print(f"Sequential সময়: {time.time()-t:.2f}s\n")
+
+    # --- Concurrent with gather() (দ্রুত) ---
+    print("=== Concurrent (gather) ===")
+    t = time.time()
+    # তিনটা একসাথে শুরু হয়, await-এ একে অপরকে সুযোগ দেয়
+    results = await asyncio.gather(
+        fetch_data("Train", 0.2),
+        fetch_data("Val", 0.15),
+        fetch_data("Test", 0.1)
+    )
+    print(f"Concurrent সময়: {time.time()-t:.2f}s")
+    print(f"Results: {results}")
+
+# Jupyter-এ await main() দিয়ে চালাই
+# Script-এ asyncio.run(main()) দিয়ে চালাই
+
+# Browser/Pyodide-এ:
+await main()
+    </textarea>
+    <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+
+  <!-- LIVE CODE: tasks -->
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">python · asyncio.create_task() — ML API Ensemble Inference</span>
+      <button class="run-btn" onclick="runCode(this)">
+        <span class="play">▶ Run করো</span><span class="spin">↻</span>
+      </button>
+    </div>
+    <textarea class="code-edit">
+import asyncio
+import time
+
+# Model registry — dict (hash table)
+MODEL_REGISTRY = {
+    "bert-base":     {"type": "nlp",   "latency": 0.15},
+    "roberta-large": {"type": "nlp",   "latency": 0.20},
+    "distilbert":    {"type": "nlp",   "latency": 0.08},
+}
+
+async def model_inference(model_id: str, text: str) -> dict:
+    """
+    একটা ML model-এ inference করে।
+    latency simulate করতে asyncio.sleep() ব্যবহার করি।
+    বাস্তবে: aiohttp দিয়ে REST API call করা হয়।
+    """
+    info = MODEL_REGISTRY[model_id]
+    await asyncio.sleep(info["latency"])   # API call latency
+    # Fake prediction
+    score = sum(ord(c) for c in text) % 2
+    return {
+        "model": model_id,
+        "prediction": "positive" if score else "negative",
+        "confidence": round(0.75 + info["latency"] * 0.5, 3),
+        "latency_ms": info["latency"] * 1000
+    }
+
+async def ensemble_inference(text: str) -> list:
+    """
+    সব model-এ একসাথে inference করো — Ensemble!
+    gather() সব result collect করে list-এ দেয়।
+    """
+    print(f"Input: '{text}'")
+    print(f"{len(MODEL_REGISTRY)}টা model-এ inference শুরু...\n")
+
+    t = time.time()
+
+    # gather() — সব coroutine একসাথে চালায়
+    predictions = await asyncio.gather(*[
+        model_inference(mid, text)
+        for mid in MODEL_REGISTRY
+    ])
+
+    elapsed = time.time() - t
+
+    print("Results:")
+    for pred in predictions:
+        print(f"  {pred['model']:15s} → {pred['prediction']:10s} "
+              f"({pred['confidence']:.3f} confidence, {pred['latency_ms']:.0f}ms)")
+
+    # Majority vote
+    pos = sum(1 for p in predictions if p['prediction'] == 'positive')
+    final = "positive" if pos > len(predictions)/2 else "negative"
+    print(f"\nEnsemble result: {final}")
+    print(f"মোট সময়: {elapsed:.3f}s "
+          f"(sequential হলে {sum(MODEL_REGISTRY[m]['latency'] for m in MODEL_REGISTRY):.3f}s)")
+    return predictions
+
+# চালাও
+await ensemble_inference("machine learning is amazing")
+    </textarea>
+    <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+    <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+  </div>
+</div>
+
+<!-- Exercise 4 -->
+<div class="exercise">
+  <div class="exercise-header">💼 Interview Exercise — Async <span class="elevel hard">Hard</span></div>
+  <ol>
+    <li>Async function লেখো যেটা Wikipedia summary fetch করে (simulate)। ৩টা topic-এ একসাথে করো।</li>
+    <li>Interview: <em>"time.sleep() আর asyncio.sleep() পার্থক্য কী?"</em></li>
+    <li>Interview: <em>"FastAPI-তে async কেন ব্যবহার করা হয়?"</em></li>
+  </ol>
+  <details>
+    <summary>✅ Solution ও Interview উত্তর</summary>
+    <div class="code-block" style="margin-top:12px">
+      <div class="code-header">
+        <span class="code-lang">python · Async Wikipedia (simulated) + Interview answers</span>
+        <button class="run-btn" onclick="runCode(this)">
+          <span class="play">▶ Run করো</span><span class="spin">↻</span>
+        </button>
+      </div>
+      <textarea class="code-edit">
+import asyncio
+import time
+
+# Simulated Wikipedia summaries
+WIKI_DB = {
+    "Coroutine": "A coroutine is a type of subroutine that allows pausing and resuming execution.",
+    "Threading": "Threading is a mechanism for concurrent execution within a single process.",
+    "Concurrent computing": "Concurrent computing involves multiple computations executing simultaneously.",
+}
+
+async def fetch_wiki(topic: str, delay: float = 0.2) -> dict:
+    """
+    Wikipedia summary fetch করে (simulated)।
+    বাস্তবে: aiohttp দিয়ে wikipedia API call।
+    """
+    print(f"  📖 '{topic}' fetch শুরু")
+    await asyncio.sleep(delay)   # network delay simulate
+    summary = WIKI_DB.get(topic, "Not found")[:60] + "..."
+    print(f"  ✅ '{topic}' পাওয়া গেছে")
+    return {"topic": topic, "summary": summary}
+
+async def fetch_all_topics():
+    """৩টা topic একসাথে fetch করো।"""
+    topics = ["Coroutine", "Threading", "Concurrent computing"]
+
+    print("=== Sequential (ধীর) ===")
+    t = time.time()
+    results = []
+    for topic in topics:
+        r = await fetch_wiki(topic, 0.15)
+        results.append(r)
+    print(f"Sequential: {time.time()-t:.2f}s\n")
+
+    print("=== Concurrent gather() (দ্রুত) ===")
+    t = time.time()
+    results = await asyncio.gather(*[fetch_wiki(t, 0.15) for t in topics])
+    print(f"Concurrent: {time.time()-t:.2f}s\n")
+
+    print("Summaries:")
+    for r in results:
+        print(f"  {r['topic']}: {r['summary']}")
+
+await fetch_all_topics()
+
+print("""
+Interview উত্তর:
+
+Q: time.sleep() বনাম asyncio.sleep()?
+A: time.sleep() blocking — পুরো thread/program থামে।
+   asyncio.sleep() non-blocking — এই সময়ে event loop
+   অন্য coroutine চালায়। Async function-এ সবসময়
+   asyncio.sleep() ব্যবহার করতে হয়।
+
+Q: FastAPI-তে async কেন?
+A: ML API I/O bound — database, model inference API,
+   file read/write। async দিয়ে একটা server হাজারো
+   concurrent request handle করতে পারে thread pool
+   ছাড়াই। অনেক বেশি throughput পাওয়া যায়।
+""")
+      </textarea>
+      <div class="output-label">আউটপুট:</div>
+      <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+    </div>
+  </details>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     ALGORITHMS
+══════════════════════════════════════════════════ -->
+<div id="algorithms" class="chapter" style="border-left-color:var(--accent3)">
+  <div class="chapter-num">বোনাস · Algorithms</div>
+  <h2>🧠 Algorithms — বাচ্চার মতো বোঝো, Engineer-এর মতো ব্যবহার করো</h2>
+  <p>প্রতিটা algorithm: সহজ উদাহরণ → SVG diagram → Python code (বাংলা comment সহ) → ML use case → Live runner।</p>
+</div>
+
+<!-- ALGO 1: Bubble Sort -->
+<div class="algo-card">
+  <div class="algo-header">
+    <div class="algo-icon">🫧</div>
+    <div>
+      <h3>Bubble Sort</h3>
+      <p>সময়: O(n²) · বাচ্চার উদাহরণ: বড় বুদবুদ উপরে ভাসে · ML: concept বোঝার জন্য</p>
+    </div>
+  </div>
+  <div class="algo-body">
+    <p><strong>বাচ্চার ব্যাখ্যা:</strong> ৫জন মানুষ লাইনে দাঁড়িয়ে। তুমি প্রথম দুজনের উচ্চতা তুলনা করো, বড়জন পিছনে সরে। তারপর ২য় ও ৩য়... প্রতিটা round-এ সবচেয়ে বড়জন একদম পিছনে "ভেসে" যায়।</p>
+
+    <div class="diagram-wrap">
+      <svg width="560" height="190" viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg" style="max-width:100%">
+        <!-- Initial array -->
+        <text x="10" y="20" font-family="Hind Siliguri" font-size="12" fill="#8b949e">শুরু: [5, 3, 8, 1, 2]</text>
+
+        <!-- Array boxes — initial (y=30) -->
+        <g transform="translate(10,28)">
+          <rect x="0"   y="0" width="46" height="46" rx="7" fill="#1e3a5f" stroke="#79c0ff" stroke-width="2"/>
+          <text x="23"  y="29" text-anchor="middle" font-family="Fira Code" font-size="20" fill="#79c0ff" font-weight="700">5</text>
+          <rect x="52"  y="0" width="46" height="46" rx="7" fill="#1e3a5f" stroke="#79c0ff" stroke-width="2"/>
+          <text x="75"  y="29" text-anchor="middle" font-family="Fira Code" font-size="20" fill="#79c0ff" font-weight="700">3</text>
+          <rect x="104" y="0" width="46" height="46" rx="7" fill="#1e3a5f" stroke="#79c0ff" stroke-width="2"/>
+          <text x="127" y="29" text-anchor="middle" font-family="Fira Code" font-size="20" fill="#79c0ff" font-weight="700">8</text>
+          <rect x="156" y="0" width="46" height="46" rx="7" fill="#1e3a5f" stroke="#79c0ff" stroke-width="2"/>
+          <text x="179" y="29" text-anchor="middle" font-family="Fira Code" font-size="20" fill="#79c0ff" font-weight="700">1</text>
+          <rect x="208" y="0" width="46" height="46" rx="7" fill="#1e3a5f" stroke="#79c0ff" stroke-width="2"/>
+          <text x="231" y="29" text-anchor="middle" font-family="Fira Code" font-size="20" fill="#79c0ff" font-weight="700">2</text>
+          <!-- Compare indicator -->
+          <rect x="0" y="50" width="100" height="18" rx="4" fill="rgba(227,179,65,0.15)" stroke="#e3b341"/>
+          <text x="50" y="62" text-anchor="middle" font-family="Hind Siliguri" font-size="10" fill="#e3b341">5&gt;3 → swap!</text>
+        </g>
+
+        <!-- After pass 1 label -->
+        <text x="10" y="112" font-family="Hind Siliguri" font-size="12" fill="#8b949e">1st pass পরে: [3, 5, 1, 2, 8] — 8 শেষে গেছে</text>
+
+        <!-- After pass 1 boxes (y=118) -->
+        <g transform="translate(10,116)">
+          <rect x="0"   y="0" width="42" height="38" rx="6" fill="#1f2937" stroke="#30363d"/>
+          <text x="21"  y="24" text-anchor="middle" font-family="Fira Code" font-size="17" fill="#e6edf3" font-weight="700">3</text>
+          <rect x="48"  y="0" width="42" height="38" rx="6" fill="#1f2937" stroke="#30363d"/>
+          <text x="69"  y="24" text-anchor="middle" font-family="Fira Code" font-size="17" fill="#e6edf3" font-weight="700">5</text>
+          <rect x="96"  y="0" width="42" height="38" rx="6" fill="#1f2937" stroke="#30363d"/>
+          <text x="117" y="24" text-anchor="middle" font-family="Fira Code" font-size="17" fill="#e6edf3" font-weight="700">1</text>
+          <rect x="144" y="0" width="42" height="38" rx="6" fill="#1f2937" stroke="#30363d"/>
+          <text x="165" y="24" text-anchor="middle" font-family="Fira Code" font-size="17" fill="#e6edf3" font-weight="700">2</text>
+          <rect x="192" y="0" width="42" height="38" rx="6" fill="#1a3820" stroke="#56d364" stroke-width="2"/>
+          <text x="213" y="24" text-anchor="middle" font-family="Fira Code" font-size="17" fill="#56d364" font-weight="700">8</text>
+          <text x="213" y="48" text-anchor="middle" font-family="Hind Siliguri" font-size="9" fill="#56d364">sorted ✓</text>
+        </g>
+
+        <!-- Final sorted row -->
+        <text x="10" y="178" font-family="Hind Siliguri" font-size="12" fill="#8b949e">শেষ ফলাফল: </text>
+        <g transform="translate(130,162)">
+          <rect x="0"   y="0" width="38" height="30" rx="5" fill="#1a3820" stroke="#56d364"/>
+          <text x="19"  y="20" text-anchor="middle" font-family="Fira Code" font-size="15" fill="#56d364" font-weight="700">1</text>
+          <rect x="44"  y="0" width="38" height="30" rx="5" fill="#1a3820" stroke="#56d364"/>
+          <text x="63"  y="20" text-anchor="middle" font-family="Fira Code" font-size="15" fill="#56d364" font-weight="700">2</text>
+          <rect x="88"  y="0" width="38" height="30" rx="5" fill="#1a3820" stroke="#56d364"/>
+          <text x="107" y="20" text-anchor="middle" font-family="Fira Code" font-size="15" fill="#56d364" font-weight="700">3</text>
+          <rect x="132" y="0" width="38" height="30" rx="5" fill="#1a3820" stroke="#56d364"/>
+          <text x="151" y="20" text-anchor="middle" font-family="Fira Code" font-size="15" fill="#56d364" font-weight="700">5</text>
+          <rect x="176" y="0" width="38" height="30" rx="5" fill="#1a3820" stroke="#56d364"/>
+          <text x="195" y="20" text-anchor="middle" font-family="Fira Code" font-size="15" fill="#56d364" font-weight="700">8</text>
+        </g>
+      </svg>
+      <p class="diagram-title">চিত্র ৯: Bubble Sort — প্রতি pass-এ সবচেয়ে বড় element শেষে যায়</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">python · Bubble Sort + ML Use Case</span>
+        <button class="run-btn" onclick="runCode(this)">
+          <span class="play">▶ Run করো</span><span class="spin">↻</span>
+        </button>
+      </div>
+      <textarea class="code-edit">
+def bubble_sort(arr: list) -> list:
+    """
+    Bubble Sort — O(n²) time complexity।
+    প্রতিটা pass-এ সবচেয়ে বড় element শেষে যায়।
+    n টা element-এর জন্য n-1 টা pass লাগে।
+    """
+    n = len(arr)
+    arr = arr.copy()    # original array বদলাবো না
+
+    for i in range(n):  # মোট n টা pass
+        swapped = False
+        for j in range(0, n - i - 1):   # প্রতি pass-এ শেষ i টা already sorted
+            if arr[j] > arr[j + 1]:     # পাশাপাশি দুটো তুলনা করো
+                # Swap (Python এর elegant way)
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+        # Optimization: যদি কোনো swap না হয়, array sorted
+        if not swapped:
+            break
+
+    return arr
+
+# Test
+print("Test 1:", bubble_sort([5, 3, 8, 1, 2]))
+# প্রত্যাশিত: [1, 2, 3, 5, 8]
+
+print("Test 2:", bubble_sort([10, 9, 8, 7, 6, 5]))
+# প্রত্যাশিত: [5, 6, 7, 8, 9, 10]
+
+print("Test 3:", bubble_sort([1]))  # single element
+# প্রত্যাশিত: [1]
+
+# ===== ML Use Case: Feature importance sort =====
+feature_importances = [
+    ("age", 0.30),
+    ("income", 0.50),
+    ("credit_score", 0.15),
+    ("loan_amount", 0.05),
+]
+
+# Importance অনুযায়ী sort (descending)
+sorted_features = sorted(feature_importances, key=lambda x: x[1], reverse=True)
+
+print("\nFeature Importance (sorted):")
+for rank, (feat, imp) in enumerate(sorted_features, 1):
+    bar = "█" * int(imp * 20)
+    print(f"  {rank}. {feat:15s}: {imp:.2f} {bar}")
+
+# প্রত্যাশিত আউটপুট:
+# 1. income        : 0.50 ██████████
+# 2. age           : 0.30 ██████
+# 3. credit_score  : 0.15 ███
+# 4. loan_amount   : 0.05 █
+      </textarea>
+      <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+      <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+    </div>
+  </div>
+</div>
+
+<!-- ALGO 2: Binary Search -->
+<div class="algo-card">
+  <div class="algo-header">
+    <div class="algo-icon">🎯</div>
+    <div>
+      <h3>Binary Search</h3>
+      <p>সময়: O(log n) · বাচ্চার উদাহরণ: সংখ্যা অনুমান খেলা · ML: threshold/hyperparameter search</p>
+    </div>
+  </div>
+  <div class="algo-body">
+    <p><strong>বাচ্চার ব্যাখ্যা:</strong> কেউ ১-১০০ সংখ্যা ভেবেছে। তুমি বলো "৫০?" — "বেশি" → ১-৪৯। "২৫?" — "কম" → ২৬-৪৯। প্রতিবার অর্ধেক বাদ দিয়ে মাত্র ৭টা guess-এই ১০০-এর মধ্যে যেকোনো সংখ্যা পাওয়া যায়!</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">python · Binary Search + ML Threshold Finder</span>
+        <button class="run-btn" onclick="runCode(this)">
+          <span class="play">▶ Run করো</span><span class="spin">↻</span>
+        </button>
+      </div>
+      <textarea class="code-edit">
+def binary_search(arr: list, target) -> int:
+    """
+    Sorted array-এ target খোঁজে।
+    return: target-এর index। না পেলে -1।
+    
+    O(log n) — ১ million element-এ max ২০টা comparison!
+    Linear search হলে max ১ million comparison।
+    """
+    left = 0             # খোঁজার শুরু index
+    right = len(arr) - 1  # খোঁজার শেষ index
+
+    steps = 0  # কত step লাগলো দেখি
+    while left <= right:
+        steps += 1
+        mid = (left + right) // 2    # মাঝের index
+
+        if arr[mid] == target:
+            print(f"  ✅ পাওয়া গেছে! index={mid}, {steps}টা step লেগেছে")
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1    # ডান দিকে খোঁজো
+            print(f"  Step {steps}: arr[{mid}]={arr[mid]} < {target} → ডানে যাও")
+        else:
+            right = mid - 1   # বাম দিকে খোঁজো
+            print(f"  Step {steps}: arr[{mid}]={arr[mid]} > {target} → বামে যাও")
+
+    print(f"  ❌ পাওয়া যায়নি, {steps}টা step লেগেছে")
+    return -1
+
+# Test
+data = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+print(f"Array: {data}")
+print("\n7 খুঁজি:")
+binary_search(data, 7)
+
+print("\n12 খুঁজি (নেই):")
+binary_search(data, 12)
+
+# ===== ML Use Case: Optimal Classification Threshold =====
+print("\n===== ML: Optimal Threshold Finder =====")
+
+# Model-এর বিভিন্ন threshold-এ precision scores
+thresholds = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+precisions  = [0.55, 0.62, 0.68, 0.74, 0.80, 0.85, 0.89, 0.93, 0.97]
+
+target_precision = 0.80  # আমরা ৮০% precision চাই
+
+idx = binary_search(precisions, target_precision)
+if idx != -1:
+    print(f"\nTarget precision {target_precision} পাওয়া গেছে!")
+    print(f"Optimal threshold: {thresholds[idx]}")
+    print(f"এই threshold-এ precision: {precisions[idx]}")
+      </textarea>
+      <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+      <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+    </div>
+  </div>
+</div>
+
+<!-- ALGO 3: Recursion + DP -->
+<div class="algo-card">
+  <div class="algo-header">
+    <div class="algo-icon">🌀</div>
+    <div>
+      <h3>Recursion + Dynamic Programming</h3>
+      <p>Recursion: নিজেকে ডাকো · DP: result মনে রাখো · ML: Decision Tree, sequence modeling</p>
+    </div>
+  </div>
+  <div class="algo-body">
+    <p><strong>বাচ্চার ব্যাখ্যা (Recursion):</strong> সিঁড়ি দিয়ে ৫ নম্বর ধাপে উঠতে হবে। তুমি ভাবো: "৪ নম্বর থেকে এক ধাপ উঠলেই ৫-এ। ৪-এ উঠতে ৩ থেকে..." এভাবে ১ পর্যন্ত যাই, তারপর উত্তর উঠে আসে।</p>
+    <p><strong>বাচ্চার ব্যাখ্যা (DP):</strong> পরীক্ষায় যদি একই হিসেব বারবার আসে, প্রতিবার নতুন করে করো না — খাতায় লিখে রাখো। DP-তে আমরা "মনে রাখার খাতা" (memo) তৈরি করি।</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">python · Recursion → DP → ML Decision Tree</span>
+        <button class="run-btn" onclick="runCode(this)">
+          <span class="play">▶ Run করো</span><span class="spin">↻</span>
+        </button>
+      </div>
+      <textarea class="code-edit">
+import time
+
+# ১. Recursion (ধীর) — Fibonacci
+def fib_recursive(n: int) -> int:
+    """
+    Fibonacci: F(n) = F(n-1) + F(n-2)
+    সমস্যা: F(5) = F(4)+F(3) = (F(3)+F(2)) + (F(2)+F(1))...
+    একই calculation বারবার করে! O(2^n) সময় লাগে।
+    """
+    if n <= 1:
+        return n            # Base case — থামো
+    return fib_recursive(n-1) + fib_recursive(n-2)   # Recursive call
+
+# ২. Dynamic Programming (দ্রুত) — memoization
+def fib_dp(n: int, memo: dict = {}) -> int:
+    """
+    একই calculation দ্বিতীয়বার করার আগে memo check করো।
+    O(n) সময়, O(n) space। অনেক দ্রুত!
+    """
+    if n in memo:
+        return memo[n]      # আগে হিসেব করেছি → সরাসরি দাও
+    if n <= 1:
+        return n
+    memo[n] = fib_dp(n-1, memo) + fib_dp(n-2, memo)  # হিসেব করে মনে রাখো
+    return memo[n]
+
+# তুলনা
+print("=== Fibonacci তুলনা ===")
+for n in [10, 25, 30]:
+    t1 = time.time()
+    r1 = fib_recursive(n)
+    t_slow = time.time() - t1
+
+    memo = {}
+    t1 = time.time()
+    r2 = fib_dp(n, memo)
+    t_fast = time.time() - t1
+
+    speedup = t_slow / max(t_fast, 1e-9)
+    print(f"  fib({n:2d}) = {r1:8d} | slow: {t_slow:.4f}s | fast: {t_fast:.6f}s | {speedup:.0f}x দ্রুত")
+
+# ৩. ML Use Case: Decision Tree Traversal (Recursion)
+print("\n===== ML: Decision Tree Prediction =====")
+
+# Simple decision tree structure (dict হিসেবে)
+decision_tree = {
+    "feature": "age",
+    "threshold": 30,
+    "left": {                # age ≤ 30
+        "feature": "income",
+        "threshold": 50000,
+        "left": {"prediction": 0, "label": "Low Risk"},   # income ≤ 50k
+        "right": {"prediction": 1, "label": "Medium Risk"} # income > 50k
+    },
+    "right": {               # age > 30
+        "prediction": 1,
+        "label": "High Risk"
+    }
+}
+
+def predict(node: dict, sample: dict) -> str:
+    """
+    Recursive decision tree traversal।
+    Leaf node পেলে (prediction আছে) থামো।
+    নাহলে feature check করে বাম/ডানে যাও।
+    """
+    if "prediction" in node:    # leaf node — থামো
+        return node["label"]
+    feat = node["feature"]
+    threshold = node["threshold"]
+    if sample[feat] <= threshold:
+        return predict(node["left"], sample)    # recursive!
+    return predict(node["right"], sample)
+
+# Test cases
+test_samples = [
+    {"age": 25, "income": 40000},   # young, low income
+    {"age": 25, "income": 70000},   # young, high income
+    {"age": 45, "income": 30000},   # old
+]
+
+for sample in test_samples:
+    result = predict(decision_tree, sample)
+    print(f"  age={sample['age']}, income={sample['income']:,} → {result}")
+      </textarea>
+      <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+      <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+    </div>
+  </div>
+</div>
+
+<!-- ALGO 4: BFS + DFS -->
+<div class="algo-card">
+  <div class="algo-header">
+    <div class="algo-icon">🗺️</div>
+    <div>
+      <h3>BFS &amp; DFS — Graph Traversal</h3>
+      <p>BFS: পাশ থেকে পাশ (Queue) · DFS: গভীরে যাও (Stack) · ML: Knowledge Graph, Neural Net</p>
+    </div>
+  </div>
+  <div class="algo-body">
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">python · BFS + DFS + ML Pipeline Graph</span>
+        <button class="run-btn" onclick="runCode(this)">
+          <span class="play">▶ Run করো</span><span class="spin">↻</span>
+        </button>
+      </div>
+      <textarea class="code-edit">
+from collections import deque
+
+# Graph — adjacency list (প্রতিটা node-এর প্রতিবেশী)
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B'],
+    'F': ['C']
+}
+
+# ১. BFS — Breadth First Search (পাশ থেকে পাশ)
+def bfs(graph: dict, start: str) -> list:
+    """
+    Queue ব্যবহার করে। Level by level visit করে।
+    Shortest path খুঁজতে BFS ব্যবহার হয়।
+    
+    ML use: Neural architecture-এ shortest dependency path।
+    """
+    visited = set()          # visit করা node রাখি
+    queue = deque([start])   # শুরু করি start থেকে
+    order = []
+
+    while queue:
+        node = queue.popleft()     # সামনে থেকে নাও (FIFO)
+        if node not in visited:
+            visited.add(node)
+            order.append(node)
+            # এই node-এর প্রতিবেশীদের queue-তে যোগ করো
+            queue.extend(graph[node])
+
+    return order
+
+# ২. DFS — Depth First Search (গভীরে যাও)
+def dfs(graph: dict, node: str, visited: set = None) -> list:
+    """
+    Recursion ব্যবহার করে। একটা path ধরে শেষ পর্যন্ত যায়।
+    Cycle detection, topological sort-এ DFS ব্যবহার হয়।
+    
+    ML use: Decision tree traversal, DFS on computation graph।
+    """
+    if visited is None:
+        visited = set()
+
+    visited.add(node)
+    order = [node]
+
+    for neighbor in graph[node]:
+        if neighbor not in visited:
+            # Recursive call — গভীরে যাও
+            order.extend(dfs(graph, neighbor, visited))
+
+    return order
+
+print("Graph:", graph)
+print("\nBFS (A থেকে):", bfs(graph, 'A'))
+# প্রত্যাশিত: ['A', 'B', 'C', 'D', 'E', 'F'] (level by level)
+
+print("DFS (A থেকে):", dfs(graph, 'A'))
+# প্রত্যাশিত: ['A', 'B', 'D', 'E', 'C', 'F'] (গভীরে)
+
+# ===== ML Use Case: ML Pipeline dependency graph =====
+print("\n===== ML Pipeline Graph =====")
+ml_pipeline = {
+    "raw_data":       ["preprocess"],
+    "preprocess":     ["feature_eng", "split"],
+    "feature_eng":    ["train"],
+    "split":          ["train", "evaluate"],
+    "train":          ["evaluate"],
+    "evaluate":       ["deploy"],
+    "deploy":         []
+}
+
+print("ML Pipeline execution order (BFS):")
+order = bfs(ml_pipeline, "raw_data")
+for i, step in enumerate(order, 1):
+    print(f"  {i}. {step}")
+      </textarea>
+      <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+      <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+    </div>
+  </div>
+</div>
+
+<!-- ALGO 5: Hash Table -->
+<div class="algo-card">
+  <div class="algo-header">
+    <div class="algo-icon">🗂️</div>
+    <div>
+      <h3>Hash Table (Dictionary)</h3>
+      <p>O(1) lookup · ML: Feature store, vocabulary, model registry, embedding cache</p>
+    </div>
+  </div>
+  <div class="algo-body">
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">python · Hash Table — ML Feature Store ও Vocabulary</span>
+        <button class="run-btn" onclick="runCode(this)">
+          <span class="play">▶ Run করো</span><span class="spin">↻</span>
+        </button>
+      </div>
+      <textarea class="code-edit">
+import time
+from functools import lru_cache
+
+# ১. Python dict = built-in hash table
+# O(1) lookup — list (O(n)) থেকে অনেক দ্রুত!
+
+# ২. Word Vocabulary (NLP-এ সবচেয়ে বেশি ব্যবহার)
+vocab = {"<PAD>": 0, "<UNK>": 1, "আমি": 2, "তুমি": 3, "সে": 4,
+         "machine": 5, "learning": 6, "deep": 7, "neural": 8}
+
+def tokenize(sentence: str, vocab: dict) -> list:
+    """
+    Sentence → token IDs convert করে।
+    vocab dict দিয়ে O(1) lookup করে।
+    """
+    words = sentence.lower().split()
+    # vocab-এ না থাকলে <UNK> (unknown) token দাও
+    return [vocab.get(w, vocab["<UNK>"]) for w in words]
+
+print("=== NLP Tokenization ===")
+sentence = "machine learning and deep neural networks"
+tokens = tokenize(sentence, vocab)
+print(f"Sentence: '{sentence}'")
+print(f"Tokens:    {tokens}")
+
+# ৩. Feature Store (ML production-এ ব্যবহৃত)
+print("\n=== Feature Store ===")
+feature_store = {}
+
+def save_features(user_id: str, features: dict):
+    """Feature store-এ save করো। O(1)"""
+    feature_store[user_id] = features
+    print(f"  Saved features for user: {user_id}")
+
+def get_features(user_id: str) -> dict:
+    """Feature store থেকে retrieve করো। O(1)"""
+    return feature_store.get(user_id, {})
+
+save_features("user_001", {"age": 25, "income": 50000, "score": 0.85})
+save_features("user_002", {"age": 32, "income": 75000, "score": 0.92})
+
+features = get_features("user_001")
+print(f"  user_001 features: {features}")
+
+# ৪. Embedding Cache (expensive computation cache করো)
+embedding_cache = {}
+compute_count = [0]  # কতবার compute হলো
+
+def get_embedding(text: str) -> list:
+    """
+    Text embedding cache করো।
+    Same text-এ দ্বিতীয়বার compute করতে হয় না।
+    """
+    if text in embedding_cache:
+        print(f"  ⚡ Cache hit: '{text}'")
+        return embedding_cache[text]
+
+    # Heavy computation (simulate)
+    compute_count[0] += 1
+    embedding = [ord(c) % 50 / 50 for c in text[:5]]
+    embedding_cache[text] = embedding
+    print(f"  🔄 Computed: '{text}' (total computed: {compute_count[0]})")
+    return embedding
+
+print("\n=== Embedding Cache ===")
+get_embedding("machine learning")
+get_embedding("deep learning")
+get_embedding("machine learning")   # Cache hit!
+get_embedding("machine learning")   # Cache hit again!
+print(f"  Total computations: {compute_count[0]} (2 unique texts)")
+      </textarea>
+      <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+      <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+    </div>
+  </div>
+</div>
+
+<!-- ALGO 6: Stack + Queue -->
+<div class="algo-card">
+  <div class="algo-header">
+    <div class="algo-icon">📚</div>
+    <div>
+      <h3>Stack &amp; Queue</h3>
+      <p>Stack: LIFO (বইয়ের স্তূপ) · Queue: FIFO (লাইন) · ML: backprop, batch processing</p>
+    </div>
+  </div>
+  <div class="algo-body">
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">python · Stack + Queue — ML Batch Pipeline</span>
+        <button class="run-btn" onclick="runCode(this)">
+          <span class="play">▶ Run করো</span><span class="spin">↻</span>
+        </button>
+      </div>
+      <textarea class="code-edit">
+from collections import deque
+
+# ===== STACK (LIFO) =====
+# বইয়ের স্তূপ — শেষে রাখা বই আগে নাও
+print("=== Stack (LIFO) ===")
+
+class Stack:
+    """LIFO data structure — শেষে push, শেষ থেকে pop।"""
+    def __init__(self): self.items = []
+    def push(self, x): self.items.append(x)     # উপরে রাখো
+    def pop(self): return self.items.pop()        # উপর থেকে নাও
+    def peek(self): return self.items[-1] if self.items else None
+    def is_empty(self): return len(self.items) == 0
+    def size(self): return len(self.items)
+
+# ML Use Case: Neural Network Backpropagation
+# Forward pass: input → hidden1 → hidden2 → output
+# Backward pass: উল্টো order-এ gradient flow করে (Stack!)
+
+nn_layers = ["input", "dense_1", "dense_2", "output"]
+backprop_stack = Stack()
+
+print("Forward pass (layer stack তৈরি হচ্ছে):")
+for layer in nn_layers:
+    backprop_stack.push(layer)
+    print(f"  Push: {layer}")
+
+print("\nBackward pass (gradient flow — উল্টো order):")
+while not backprop_stack.is_empty():
+    layer = backprop_stack.pop()
+    print(f"  Gradient → {layer}")
+
+# ===== QUEUE (FIFO) =====
+# লাইন — যে আগে এসেছে সে আগে যাবে
+print("\n=== Queue (FIFO) ===")
+
+batch_queue = deque()
+
+# Training data batch করো
+print("Batches queue-এ যোগ করা হচ্ছে:")
+for i in range(1, 6):
+    batch = f"batch_{i:02d} ({i*100} samples)"
+    batch_queue.append(batch)
+    print(f"  Enqueue: {batch}")
+
+print("\nTraining order (FIFO — আগে এসেছে আগে train হবে):")
+epoch_loss = []
+while batch_queue:
+    batch = batch_queue.popleft()    # সামনে থেকে নাও
+    # Simulate training
+    loss = round(1.0 / (len(epoch_loss) + 1), 3)
+    epoch_loss.append(loss)
+    print(f"  Training {batch} → loss: {loss}")
+
+print(f"\nFinal losses: {epoch_loss}")
+print("Loss কমছে = model শিখছে! ✅")
+      </textarea>
+      <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+      <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+    </div>
+  </div>
+</div>
+
+<!-- ALGO 7: Merge Sort -->
+<div class="algo-card">
+  <div class="algo-header">
+    <div class="algo-icon">⚔️</div>
+    <div>
+      <h3>Merge Sort — Divide &amp; Conquer</h3>
+      <p>O(n log n) · ভাগ করো জয় করো · ML: Large dataset sort, external merge sort</p>
+    </div>
+  </div>
+  <div class="algo-body">
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">python · Merge Sort + Model Selection</span>
+        <button class="run-btn" onclick="runCode(this)">
+          <span class="play">▶ Run করো</span><span class="spin">↻</span>
+        </button>
+      </div>
+      <textarea class="code-edit">
+def merge_sort(arr: list) -> list:
+    """
+    Merge Sort — O(n log n) time, O(n) space।
+    
+    কৌশল (Divide & Conquer):
+    ১. Array অর্ধেক করো
+    ২. দুই অংশ আলাদাভাবে sort করো (recursive)
+    ৩. Sorted দুটো অংশ merge করো
+    """
+    if len(arr) <= 1:
+        return arr              # Base case: ১টা বা ০টা → sorted
+
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])    # বাম অংশ sort করো
+    right = merge_sort(arr[mid:])   # ডান অংশ sort করো
+    return merge(left, right)       # merge করো
+
+def merge(left: list, right: list) -> list:
+    """
+    দুটো sorted list merge করে একটা sorted list বানায়।
+    প্রতিটা step-এ ছোট element নাও।
+    """
+    result = []
+    i = j = 0
+
+    # দুটো list থেকে ছোটটা নাও
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i]); i += 1
+        else:
+            result.append(right[j]); j += 1
+
+    # বাকি element যোগ করো
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+# Test
+print("Test:", merge_sort([38, 27, 43, 3, 9, 82, 10]))
+# প্রত্যাশিত: [3, 9, 10, 27, 38, 43, 82]
+
+# ===== ML Use Case: Model Selection (sort by performance) =====
+print("\n===== ML Model Selection (Merge Sort) =====")
+
+model_results = [
+    {"model": "Random Forest",    "accuracy": 0.87, "f1": 0.85},
+    {"model": "XGBoost",          "accuracy": 0.91, "f1": 0.90},
+    {"model": "Logistic Reg.",    "accuracy": 0.82, "f1": 0.80},
+    {"model": "SVM",              "accuracy": 0.89, "f1": 0.88},
+    {"model": "Neural Network",   "accuracy": 0.93, "f1": 0.92},
+    {"model": "KNN",              "accuracy": 0.78, "f1": 0.76},
+]
+
+# Accuracy অনুযায়ী sort (descending)
+sorted_models = sorted(model_results, key=lambda x: x["accuracy"], reverse=True)
+
+print(f"{'Rank':<5} {'Model':<20} {'Accuracy':>10} {'F1 Score':>10}")
+print("-" * 50)
+for rank, m in enumerate(sorted_models, 1):
+    bar = "█" * int(m["accuracy"] * 20)
+    print(f"{rank:<5} {m['model']:<20} {m['accuracy']:>10.3f} {m['f1']:>10.3f}  {bar}")
+
+print(f"\n🏆 Best model: {sorted_models[0]['model']} ({sorted_models[0]['accuracy']:.1%} accuracy)")
+      </textarea>
+      <div class="output-label">আউটপুট (প্রত্যাশিত):</div>
+      <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     INTERVIEW Q&A
+══════════════════════════════════════════════════ -->
+<div id="interview" class="chapter" style="border-left-color:var(--accent)">
+  <div class="chapter-num">সর্বশেষ অধ্যায়</div>
+  <h2>💼 Interview Preparation — Top 15 Q&amp;A</h2>
+  <p>ML Engineering ও Python interview-এ সবচেয়ে বেশি জিজ্ঞেস করা প্রশ্ন এবং সম্পূর্ণ উত্তর।</p>
+</div>
+
+<div class="section">
+  <div style="display:flex;flex-direction:column;gap:10px">
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q1: Python-এ type annotation কি বাধ্যতামূলক? MyPy ছাড়া কি কাজ করে?</summary>
+      <div style="padding:14px 18px;background:var(--bg)">Annotation বাধ্যতামূলক নয় — শুধু hint। Python interpreter enforce করে না। MyPy ছাড়াও code চলে, কিন্তু MyPy দিয়ে static check করা যায়। Production-এ CI/CD-এ MyPy চালানো হয়। Pydantic (FastAPI-তে) annotation enforce করে runtime-এ।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q2: Decorator কী? @ syntax ছাড়া কীভাবে লেখা যায়?</summary>
+      <div style="padding:14px 18px;background:var(--bg)">Decorator একটা function যেটা অন্য function-কে argument নেয়, নতুন behavior wrap করে, এবং modified version return করে। <code>@dec</code> হলো <code>func = dec(func)</code>-এর shorthand। Framework: FastAPI (<code>@app.get</code>), pytest (<code>@pytest.mark</code>), Flask (<code>@app.route</code>)।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q3: @functools.wraps কেন দরকার?</summary>
+      <div style="padding:14px 18px;background:var(--bg)">Decorator apply করলে function-এর <code>__name__</code>, <code>__doc__</code>, <code>__annotations__</code> হারায়। <code>@wraps(func)</code> এই metadata wrapper-এ copy করে। Production logging, debugging, documentation tool, API schema generation-এ এটা critical।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q4: Python GIL কী? ML-এ কীভাবে bypass করবে?</summary>
+      <div style="padding:14px 18px;background:var(--bg)">GIL = Global Interpreter Lock। CPython-এর mutex যেটা একসাথে একটাই thread Python bytecode চালাতে দেয়। CPU-bound ML training-এ multithreading কাজ করে না। Bypass: (১) <code>multiprocessing</code> — আলাদা process, আলাদা GIL। (২) NumPy/PyTorch C extension — GIL release করে। (৩) asyncio — I/O bound কাজে GIL সমস্যা নেই।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q5: Thread, Process, Coroutine পার্থক্য কী?</summary>
+      <div style="padding:14px 18px;background:var(--bg)"><strong>Thread:</strong> OS-managed, shared memory, GIL সীমাবদ্ধ, I/O bound-এ ভালো। <strong>Process:</strong> নিজস্ব memory, GIL bypass, CPU bound-এ ভালো, overhead বেশি। <strong>Coroutine:</strong> User-managed, একটা thread-এ, explicit yield (await), I/O bound-এ সবচেয়ে efficient, হাজারো coroutine সম্ভব।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q6: asyncio.gather() বনাম asyncio.create_task() পার্থক্য?</summary>
+      <div style="padding:14px 18px;background:var(--bg)"><code>gather()</code>: সব coroutine একসাথে schedule করে, সব শেষ হলে সব result list-এ দেয়। <code>create_task()</code>: immediately event loop-এ schedule হয়, individually await করা যায়, cancel করা যায়। ML ensemble inference-এ gather() সহজ। Individual task control দরকার হলে create_task()।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q7: @lru_cache কখন ব্যবহার করবে? কী কী সীমাবদ্ধতা আছে?</summary>
+      <div style="padding:14px 18px;background:var(--bg)">ব্যবহার: Pure function (same input → same output), expensive computation, repeated input। ML-এ: tokenization cache, embedding cache, feature computation। সীমাবদ্ধতা: Arguments hashable হতে হবে (list চলবে না, tuple চলবে), memory বাড়ে, thread-safe নয়।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q8: Binary Search-এর O(log n) মানে কী? ML-এ কোথায় দেখা যায়?</summary>
+      <div style="padding:14px 18px;background:var(--bg)">O(log n) মানে input দ্বিগুণ হলে মাত্র ১টা step বাড়ে। ১M element-এ max ২০ step! Linear O(n)-এ max ১M step। ML-এ: threshold optimization, hyperparameter grid search (sorted), nearest neighbor search (approximate), sorted model leaderboard query।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q9: Dynamic Programming কী? Memoization বনাম Tabulation?</summary>
+      <div style="padding:14px 18px;background:var(--bg)">DP = Overlapping subproblem-এর result store করে reuse করা। <strong>Memoization (top-down):</strong> Recursive + cache, natural লেখা, stack overflow risk। <strong>Tabulation (bottom-up):</strong> Iterative, table fill করো, বেশি efficient। ML-এ: Viterbi (sequence labeling), CRF, RL value function, Levenshtein distance (NLP)।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q10: BFS বনাম DFS — কোনটা কখন?</summary>
+      <div style="padding:14px 18px;background:var(--bg)"><strong>BFS (Queue):</strong> Shortest path, level-order traversal, closest node খুঁজতে। ML-এ: Knowledge graph shortest relation, neural layer dependency। <strong>DFS (Stack/Recursion):</strong> Cycle detection, topological sort, deeper exploration। ML-এ: Decision tree traversal, computation graph, hyperparameter tree search।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q11: I/O bound বনাম CPU bound — কীভাবে চিনবে? কী ব্যবহার করবে?</summary>
+      <div style="padding:14px 18px;background:var(--bg)"><strong>I/O bound:</strong> Program বেশিরভাগ সময় wait করে (network, disk, API)। → Threading বা Async। <strong>CPU bound:</strong> Program বেশিরভাগ সময় calculation করে (matrix ops, image processing)। → Multiprocessing। ML-এ: Data download = I/O, Training = CPU, API call = I/O, Feature engineering = CPU।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q12: Python-এ id() কী? Variable কীভাবে memory-তে থাকে?</summary>
+      <div style="padding:14px 18px;background:var(--bg)"><code>id()</code> object-এর memory address return করে। Python-এ variable = pointer — সরাসরি মান ধরে না, object-এর address ধরে। <code>a = 5; b = 5</code> → <code>id(a) == id(b)</code> True (Python -5~256 integer cache করে, "interning")। <code>a = 1000; b = 1000</code> → আলাদা id (বড় integer cache হয় না)।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q13: Decorator chain-এ কোনটা আগে apply হয়?</summary>
+      <div style="padding:14px 18px;background:var(--bg)">নিচের decorator আগে apply হয়। <code>@A @B def f</code> = <code>f = A(B(f))</code>। Execution-এ A-এর wrapper আগে চলে (বাইরে), তারপর B, তারপর f। Analogy: পেঁয়াজ কাটো — বাইরের খোসা প্রথমে ধরো কিন্তু ভেতরের আগে লাগানো।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q14: time.sleep() বনাম asyncio.sleep() — কখন কোনটা?</summary>
+      <div style="padding:14px 18px;background:var(--bg)"><code>time.sleep()</code> blocking — পুরো OS thread থামে, অন্য কিছু হয় না। <code>asyncio.sleep()</code> non-blocking — event loop অন্য coroutine চালায়। Async function-এ সবসময় <code>asyncio.sleep()</code> ব্যবহার করো, নাহলে পুরো async benefit নষ্ট। Regular sync code-এ <code>time.sleep()</code>।</div>
+    </details>
+
+    <details style="border:1px solid var(--border);border-radius:9px;padding:0;overflow:hidden">
+      <summary style="padding:14px 18px;background:var(--bg2);margin:0;border-radius:0">Q15: Hash table কেন O(1)? সবসময় কি O(1)?</summary>
+      <div style="padding:14px 18px;background:var(--bg)">Hash function key-কে direct index-এ convert করে। Average case O(1)। Worst case O(n) — hash collision হলে (বিরল)। Python dict high-quality hash function ব্যবহার করে, collision খুব কম। ML-এ vocabulary (millions of words) থেকে O(1)-এ token id পাওয়া → tokenizer দ্রুত হয়।</div>
+    </details>
+
+  </div>
+</div>
+
+<!-- Final Project -->
+<div class="exercise" style="background:linear-gradient(135deg,rgba(86,211,100,0.04),rgba(121,192,255,0.04));border-color:rgba(86,211,100,0.28);margin-top:32px">
+  <div class="exercise-header" style="color:var(--accent3)">
+    🚀 Final Project — Complete ML Service (সব concept একসাথে)
+    <span class="elevel hard">Production</span>
+  </div>
+  <p>সব শেখা ব্যবহার করো: Annotation + Decorator + Async + Hash Table + @lru_cache + Algorithm।</p>
+  <details>
+    <summary>✅ Full Solution চালাও</summary>
+    <div class="code-block" style="margin-top:14px">
+      <div class="code-header">
+        <span class="code-lang">python · Complete ML Inference Service</span>
+        <button class="run-btn" onclick="runCode(this)">
+          <span class="play">▶ Run করো</span><span class="spin">↻</span>
+        </button>
+      </div>
+      <textarea class="code-edit">
+import asyncio, time, math
+from typing import List, Dict, Optional
+from functools import wraps, lru_cache
+
+# ===== ১. DECORATORS =====
+
+def timer(func):
+    """Execution time measure করে।"""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        t = time.time()
+        result = func(*args, **kwargs)
+        print(f"  ⏱️  {func.__name__}: {time.time()-t:.4f}s")
+        return result
+    return wrapper
+
+def validate_input(func):
+    """Input features valid কিনা check করে।"""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        features = args[0] if args else []
+        if not features:
+            raise ValueError("Empty features!")
+        if any(math.isnan(x) for x in features):
+            raise ValueError(f"NaN detected!")
+        return func(*args, **kwargs)
+    return wrapper
+
+# ===== ২. MODEL REGISTRY (Hash Table) =====
+MODEL_REGISTRY: Dict[str, Dict] = {
+    "classifier_v1": {"type": "classification", "accuracy": 0.94},
+    "regressor_v2":  {"type": "regression",     "rmse": 0.12},
+    "anomaly_v1":    {"type": "anomaly",         "precision": 0.88},
+}
+
+# ===== ৩. EMBEDDING CACHE (lru_cache) =====
+@lru_cache(maxsize=512)
+def get_embedding(text: str) -> tuple:
+    """
+    Text embedding — lru_cache দিয়ে।
+    args hashable হতে হবে → tuple return করি।
+    """
+    return tuple(ord(c) % 100 for c in text[:8])
+
+# ===== ৪. ASYNC INFERENCE =====
+async def model_inference(
+    model_id: str,
+    features: List[float]
+) -> Dict:
+    """Async model inference — ML API call simulate।"""
+    info = MODEL_REGISTRY.get(model_id, {})
+    await asyncio.sleep(0.05)   # API latency
+    pred = sum(features) / len(features)
+    return {"model": model_id, "pred": round(pred, 4), **info}
+
+# ===== ৫. PREPROCESSING (Algorithm + Decorator) =====
+@timer
+@validate_input
+def preprocess(features: List[float]) -> List[float]:
+    """
+    Features normalize করে।
+    Algorithm: min-max normalization O(n)।
+    """
+    mn, mx = min(features), max(features)
+    if mx == mn:
+        return [0.0] * len(features)
+    return [round((x - mn) / (mx - mn), 4) for x in features]
+
+# ===== ৬. BINARY SEARCH — Optimal threshold =====
+def find_threshold(
+    precisions: List[float],
+    thresholds: List[float],
+    target: float
+) -> Optional[float]:
+    """Binary search দিয়ে optimal threshold খোঁজে।"""
+    left, right = 0, len(precisions) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if abs(precisions[mid] - target) < 0.01:
+            return thresholds[mid]
+        elif precisions[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return None
+
+# ===== ৭. MAIN PIPELINE =====
+async def run_ml_pipeline(raw_features: List[float], text: str):
+    print("=" * 50)
+    print("🚀 ML Inference Pipeline শুরু")
+    print("=" * 50)
+
+    # Step 1: Preprocess
+    print("\n📊 Step 1: Preprocessing")
+    processed = preprocess(raw_features)
+    print(f"  Input:  {raw_features}")
+    print(f"  Output: {processed}")
+
+    # Step 2: Embedding (cached)
+    print("\n🔤 Step 2: Text Embedding")
+    emb1 = get_embedding(text)
+    emb2 = get_embedding(text)   # Cache hit!
+    info = get_embedding.cache_info()
+    print(f"  Embedding: {emb1[:4]}...")
+    print(f"  Cache: {info.hits} hits, {info.misses} misses")
+
+    # Step 3: Async ensemble inference
+    print("\n🤖 Step 3: Ensemble Inference (Async)")
+    t = time.time()
+    results = await asyncio.gather(*[
+        model_inference(mid, processed)
+        for mid in MODEL_REGISTRY
+    ])
+    print(f"  ৩টা model একসাথে: {time.time()-t:.3f}s")
+    for r in results:
+        print(f"    {r['model']:15s}: {r['pred']}")
+
+    # Step 4: Binary search threshold
+    print("\n🎯 Step 4: Optimal Threshold (Binary Search)")
+    thresholds = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    precisions  = [0.60, 0.68, 0.75, 0.81, 0.87, 0.92, 0.97]
+    optimal = find_threshold(precisions, thresholds, target=0.81)
+    print(f"  Target precision: 0.81 → Threshold: {optimal}")
+
+    print("\n✅ Pipeline সম্পন্ন!")
+
+# চালাও
+await run_ml_pipeline(
+    raw_features=[10.0, 25.0, 5.0, 40.0, 15.0],
+    text="machine learning pipeline"
+)
+      </textarea>
+      <div class="output-label">আউটপুট:</div>
+      <div class="output-area empty">▶ Run করো বোতামে চাপো</div>
+    </div>
+  </details>
+</div>
+
+</div><!-- /container -->
+
+<footer>
+  <p>🐍 Advanced Python — সম্পূর্ণ বাংলা গাইড</p>
+  <p style="margin-top:6px">Annotations · Decorators · Multithreading · Async · Algorithms</p>
+  <p style="margin-top:14px;color:#333">Pyodide দ্বারা powered · Claude (Anthropic) দ্বারা তৈরি</p>
+</footer>
+
+<!-- ══════════════════════════════════════════════════
+     PYODIDE RUNTIME
+══════════════════════════════════════════════════ -->
+<script>
+// Load Pyodide
+let pyodide = null;
+
+async function loadPyodide() {
+  const status = document.getElementById('py-status');
+  try {
+    status.textContent = '⏳ Pyodide লোড হচ্ছে...';
+    // Load from CDN
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js';
+    document.head.appendChild(script);
+    await new Promise((res, rej) => { script.onload = res; script.onerror = rej; });
+
+    pyodide = await loadPyodide({ indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/' });
+    status.textContent = '✅ Python চালানোর জন্য প্রস্তুত!';
+    status.style.color = 'var(--accent3)';
+
+    // Enable all run buttons
+    document.querySelectorAll('.run-btn').forEach(btn => {
+      btn.disabled = false;
+    });
+  } catch(e) {
+    status.textContent = '❌ Pyodide load failed. Internet connection check করো।';
+    status.style.color = 'var(--accent)';
+  }
+}
+
+// Initially disable buttons until loaded
+document.querySelectorAll('.run-btn').forEach(btn => btn.disabled = true);
+loadPyodide();
+
+// Run code from a button click
+async function runCode(btn) {
+  if (!pyodide) {
+    alert('Pyodide এখনো লোড হয়নি। একটু অপেক্ষা করো।');
+    return;
+  }
+
+  const block = btn.closest('.code-block');
+  const textarea = block.querySelector('textarea.code-edit');
+  const outputEl = block.querySelector('.output-area');
+  const code = textarea.value;
+
+  // UI state: running
+  btn.classList.add('running');
+  btn.disabled = true;
+  outputEl.className = 'output-area';
+  outputEl.textContent = '⏳ চলছে...';
+
+  // Capture stdout/stderr
+  const outputLines = [];
+
+  try {
+    // Redirect stdout
+    pyodide.runPython(`
+import sys, io
+_old_stdout = sys.stdout
+_old_stderr = sys.stderr
+sys.stdout = io.StringIO()
+sys.stderr = io.StringIO()
+`);
+
+    // Run user code
+    // Wrap in async if needed (for await statements)
+    let runnable = code;
+    if (code.includes('await ')) {
+      // Pyodide supports top-level await via runPythonAsync
+      await pyodide.runPythonAsync(code);
+    } else {
+      pyodide.runPython(code);
+    }
+
+    // Capture output
+    const stdout = pyodide.runPython('sys.stdout.getvalue()');
+    const stderr = pyodide.runPython('sys.stderr.getvalue()');
+
+    // Restore
+    pyodide.runPython(`
+sys.stdout = _old_stdout
+sys.stderr = _old_stderr
+`);
+
+    const combined = (stdout + stderr).trim();
+    if (combined) {
+      outputEl.className = 'output-area';
+      outputEl.textContent = combined;
+    } else {
+      outputEl.className = 'output-area empty';
+      outputEl.textContent = '(কোনো output নেই)';
+    }
+  } catch (err) {
+    try {
+      pyodide.runPython('sys.stdout = _old_stdout; sys.stderr = _old_stderr');
+    } catch(e) {}
+
+    let msg = err.message || String(err);
+    // Extract last meaningful line from traceback
+    const lines = msg.split('\n').filter(l => l.trim());
+    const lastLines = lines.slice(-4).join('\n');
+    outputEl.className = 'output-area error';
+    outputEl.textContent = '❌ Error:\n' + lastLines;
+  }
+
+  // Reset button
+  btn.classList.remove('running');
+  btn.disabled = false;
+}
+
+// Tab support in textareas
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Tab' && e.target.tagName === 'TEXTAREA') {
+    e.preventDefault();
+    const ta = e.target;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    ta.value = ta.value.substring(0, start) + '    ' + ta.value.substring(end);
+    ta.selectionStart = ta.selectionEnd = start + 4;
+  }
+});
+</script>
+</body>
+</html>
