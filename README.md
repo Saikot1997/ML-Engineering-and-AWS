@@ -3,6 +3,7 @@
 > A personal knowledge base documenting my ML Engineering journey — covering Data Science, MLOps, and AWS — structured as a self-hosted learning portal.
 > All lecture notes and explanations are written in **Bengali (বাংলা)**.
 
+🌐 **Live Site:** [https://saikot1997.github.io/ML-Engineering-and-AWS/](https://saikot1997.github.io/ML-Engineering-and-AWS/)
 ---
 
 ## 👤 About
